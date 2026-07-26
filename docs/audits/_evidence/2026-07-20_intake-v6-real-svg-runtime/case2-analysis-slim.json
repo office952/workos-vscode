@@ -1,0 +1,166 @@
+﻿{
+    "tag":  "case2",
+    "sourceFileName":  "gradi-curat.svg",
+    "widthMm":  5086.99,
+    "heightMm":  600.03,
+    "viewBox":  "0 0 519.77114 61.30898",
+    "unit":  null,
+    "layers":  [
+                   {
+                       "key":  null,
+                       "name":  "pseudo maria (blue)",
+                       "id":  "pseudo:maria",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   },
+                   {
+                       "key":  null,
+                       "name":  "pseudo soare (red)",
+                       "id":  "pseudo:soare",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   },
+                   {
+                       "key":  null,
+                       "name":  "pseudo ana (green)",
+                       "id":  "pseudo:ana",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   },
+                   {
+                       "key":  null,
+                       "name":  "pseudo gradinita (orange)",
+                       "id":  "pseudo:gradinita",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   },
+                   {
+                       "key":  null,
+                       "name":  "Logo 1",
+                       "id":  "logo_instance_001",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   },
+                   {
+                       "key":  null,
+                       "name":  "Logo 2",
+                       "id":  "logo_instance_002",
+                       "suggestedRole":  null,
+                       "confirmedRole":  null,
+                       "dominantFill":  null,
+                       "pathCount":  null,
+                       "closedContourCount":  null,
+                       "openContourCount":  null,
+                       "boundsMm":  null,
+                       "label":  null
+                   }
+               ],
+    "warnings":  [
+                     {
+                         "code":  "FILLED_AREA_NOT_AVAILABLE",
+                         "severity":  "warning",
+                         "message":  "Element types present (e.g. \u003cpath\u003e) do not support geometric area calculation. Use boundingAreaSqm as reference.",
+                         "scope":  "document"
+                     },
+                     {
+                         "code":  "PERIMETER_CONFIDENCE_MEDIUM",
+                         "severity":  "warning",
+                         "message":  "Perimeter should be validated against CAD reference for high confidence.",
+                         "scope":  "benchmark"
+                     }
+                 ],
+    "errors":  [
+
+               ],
+    "confidence":  {
+                       "dimensions":  "high",
+                       "perimeter":  "medium",
+                       "area":  "low",
+                       "layers":  "high",
+                       "colors":  "high"
+                   },
+    "nestingSummary":  {
+                           "groups":  null,
+                           "mode":  null,
+                           "notes":  null
+                       },
+    "partsCount":  1,
+    "closedCandidateCount":  1,
+    "colors":  [
+                   null
+               ],
+    "layerRoleConfirmation":  {
+                                  "status":  null,
+                                  "layers":  [
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "pseudo:maria",
+                                                     "auto":  "face",
+                                                     "state":  "pending"
+                                                 },
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "pseudo:soare",
+                                                     "auto":  "face",
+                                                     "state":  "pending"
+                                                 },
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "pseudo:ana",
+                                                     "auto":  "face",
+                                                     "state":  "pending"
+                                                 },
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "pseudo:gradinita",
+                                                     "auto":  "face",
+                                                     "state":  "pending"
+                                                 },
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "logo_instance_001",
+                                                     "auto":  "support_panel",
+                                                     "state":  "pending"
+                                                 },
+                                                 {
+                                                     "conf":  "high",
+                                                     "key":  "logo_instance_002",
+                                                     "auto":  "support_panel",
+                                                     "state":  "pending"
+                                                 }
+                                             ]
+                              },
+    "finish_seg":  null,
+    "readiness":  "product_composition_not_confirmed",
+    "composition":  null
+}

@@ -1,0 +1,70 @@
+{
+  "gate": "W6-T04",
+  "timestamp_utc": "2026-07-15T00:17:40.719739+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "blocked_order_id": 23150,
+  "allowed_order_id": 23099,
+  "db_mutations": [
+    "reset_and_seed_blocked_fixture_23150",
+    "operational_resolutions_on_23150"
+  ],
+  "checks": {
+    "initial_blockers": {
+      "count": 3,
+      "codes": [
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE"
+      ],
+      "production_release_blocked": true
+    },
+    "after_one_resolution": {
+      "resolve_status": 200,
+      "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+      "production_release_blocked": true,
+      "unresolved_blocking": [
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE"
+      ]
+    },
+    "idempotent_repeat": {
+      "status_code": 200,
+      "idempotent": true
+    },
+    "after_full_resolution": {
+      "production_release_blocked": false,
+      "production_release_status": "RELEASE_ALLOWED",
+      "resolved_codes": [
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE"
+      ]
+    },
+    "snapshot_immutability": {
+      "hash_before": "573a5a769e00b182",
+      "hash_after": "573a5a769e00b182",
+      "unchanged": true
+    },
+    "operator_forbidden": {
+      "covered_by": "backend_pytest_test_unauthorized_resolution_rejected",
+      "note": "Dev bypass token resolves as admin; operator 403 proven in focused pytest."
+    },
+    "allowed_order_23099": {
+      "production_release_blocked": false,
+      "production_release_status": "RELEASE_ALLOWED"
+    }
+  },
+  "fixture_seed": {
+    "order_id": 23150,
+    "order_code": "ORD-W6T03-BLOCK-GATE",
+    "owner_codes": [
+      "INTERNAL_SABLON_FOREX_COST",
+      "INTERNAL_MONTAJ_RULE",
+      "INTERNAL_CONSUMABLES_RULE",
+      "INTERNAL_AMBALARE_RULE"
+    ],
+    "canonical_order_23099_touched": false
+  },
+  "passed": true,
+  "failed_checks": []
+}

@@ -1,0 +1,8 @@
+{
+  "task": "OWNER-DECISION-07",
+  "verdict": "OWNER_FLEX_EXECUTION_GATE_CONFIRMED_FLEX_01_ONLY",
+  "recommended_next": "FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION",
+  "after_flex_01": "PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY before FLEX-02 GO",
+  "do_not_auto_start": true,
+  "sandu": "PAUSED — APP-AUTH-06G unchanged"
+}

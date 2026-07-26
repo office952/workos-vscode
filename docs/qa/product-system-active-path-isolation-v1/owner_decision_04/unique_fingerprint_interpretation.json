@@ -1,0 +1,174 @@
+{
+  "task": "OWNER-DECISION-04",
+  "summary": {
+    "unique_fingerprints": 16,
+    "raw_observations": 420,
+    "duplicate_observations": 404,
+    "unique_discrepancy_patterns": 11,
+    "employees_with_actionable_drift": 1,
+    "operations_with_actionable_drift": 5,
+    "domains": ["competence", "eligibility", "explicit_mapping"],
+    "note": "180 raw actionable classifications are mostly 20x repetitions of 9 unique actionable fingerprints across the HTTP batch; not 180 independent operational problems."
+  },
+  "actionable_fingerprint_review": [
+    {
+      "fingerprint": "parity_fp_v1:1b8d59931088929ae16f30ad31efdf9deae7eeca8fd62a3ca27f044b29847294",
+      "frequency": 40,
+      "domain": "competence",
+      "comparison_result": "value_conflict",
+      "consumer": "employee_mobile_available + operational_registry_eligible_employees",
+      "entity_scope": "employee_id=4",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Human confirms registry vs legacy competence truth for Sandu",
+      "owner_confidence": "high",
+      "not_a_defect": "Parity exposes drift; does not pick canonical winner"
+    },
+    {
+      "fingerprint": "parity_fp_v1:830f4323b7ff71c67b0d00c7d0ee0d74dcba3b15f3b3c3f68bc5cdf2307cc68e",
+      "frequency": 40,
+      "domain": "eligibility",
+      "comparison_result": "operational_eligible_canonical_ineligible",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=volumetric_letter_assembly",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Confirm explicit mapping policy vs registry competence requirement",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:b99d3923b1c8778a404481cf0190e5f2c28e5ad2bfdf05d7125a76d6462781be",
+      "frequency": 40,
+      "domain": "eligibility",
+      "comparison_result": "operational_eligible_canonical_ineligible",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=vinyl_cutting",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Same as mapping-without-competence family",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:1ec1a24097b815c7767e774965a69ae20086ab41dced94d208d0341b42a00373",
+      "frequency": 20,
+      "domain": "eligibility",
+      "comparison_result": "operational_eligible_canonical_ineligible",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=led_assembly",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Confirm explicit mapping policy",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:757a2fc1865c1ddad8df14c8bceecc3efd2ac5f5ded9f4d857eab53152e314ab",
+      "frequency": 20,
+      "domain": "eligibility",
+      "comparison_result": "operational_eligible_canonical_ineligible",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=led_wiring",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Confirm explicit mapping policy",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:3a92d4526aed524992b1cf688e8916f170f568608aa08ec77adbd40fd9dd8fc2",
+      "frequency": 20,
+      "domain": "eligibility",
+      "comparison_result": "operational_eligible_canonical_ineligible",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=installation_prep",
+      "owner_category": "CONFIRMATION_REQUIRED",
+      "expected_action": "Confirm explicit mapping policy",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:03708dc96d239f3e6874d33084a631f5a6554cf5dc2766eb29c05154f69c58f0",
+      "frequency": 40,
+      "domain": "explicit_mapping",
+      "comparison_result": "missing_required_competence",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=volumetric_letter_assembly",
+      "owner_category": "POLICY_DECISION",
+      "expected_action": "Decide whether explicit mapping may bypass registry competence in observe phase",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:4c1eeaf5c0227bd657ab7e350d1d2f08e21a90a4acb2afba5227d97d4365131d",
+      "frequency": 40,
+      "domain": "explicit_mapping",
+      "comparison_result": "missing_required_competence",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=vinyl_cutting",
+      "owner_category": "POLICY_DECISION",
+      "expected_action": "Same explicit-mapping policy family",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:1bb7cc713a4a48b3196515400b1b6232697d73775ec22a2c6edc5fe110c2829f",
+      "frequency": 20,
+      "domain": "explicit_mapping",
+      "comparison_result": "missing_required_competence",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=led_assembly",
+      "owner_category": "POLICY_DECISION",
+      "expected_action": "Same explicit-mapping policy family",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:1be32d24cbb21dc04baa4c8b59caf031bca75dbd77b5daf3d8de6070d8c7a955",
+      "frequency": 20,
+      "domain": "explicit_mapping",
+      "comparison_result": "missing_required_competence",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=led_wiring",
+      "owner_category": "POLICY_DECISION",
+      "expected_action": "Same explicit-mapping policy family",
+      "owner_confidence": "high"
+    },
+    {
+      "fingerprint": "parity_fp_v1:1786a41e91e429425fa8ae0295e257462d28127d82e13546bbc25ba8fc38e445",
+      "frequency": 20,
+      "domain": "explicit_mapping",
+      "comparison_result": "missing_required_competence",
+      "consumer": "employee_mobile_available",
+      "entity_scope": "employee_id=4, operation=installation_prep",
+      "owner_category": "POLICY_DECISION",
+      "expected_action": "Same explicit-mapping policy family",
+      "owner_confidence": "high"
+    }
+  ],
+  "non_actionable_fingerprints": [
+    {
+      "fingerprint": "parity_fp_v1:5b5190f1d6ea816e632c1de83d5dd438a2e5e97c40f562f90921aabf5cc00279",
+      "frequency": 20,
+      "owner_category": "EXPECTED_TRANSITION",
+      "meaning": "Employee 1 competence aligned on print eligibility probe"
+    },
+    {
+      "fingerprint": "parity_fp_v1:a318c09b88243f10166cd5b6c9a148f536cd3a04069c9ad0590dea8ce8b360e9",
+      "frequency": 20,
+      "owner_category": "EXPECTED_TRANSITION",
+      "meaning": "Employee 2 competence aligned"
+    },
+    {
+      "fingerprint": "parity_fp_v1:93e81c6fd105d1fcca2a3c1a8a11489bab23c308feb200902c0a72ddefc4a586",
+      "frequency": 20,
+      "owner_category": "EXPECTED_TRANSITION",
+      "meaning": "Employee 1 eligibility aligned"
+    },
+    {
+      "fingerprint": "parity_fp_v1:7542aad284cf6a31cb9d8cb620bd0f0b0b1496576cec49dbada676a36a252452",
+      "frequency": 20,
+      "owner_category": "EXPECTED_TRANSITION",
+      "meaning": "Employee 2 eligibility aligned"
+    },
+    {
+      "fingerprint": "parity_fp_v1:83c881d5c3dfebb12f0e4e1a455de82972398b7faf963344c63b9c6829def3da",
+      "frequency": 20,
+      "owner_category": "EXPECTED_TRANSITION",
+      "meaning": "Employee 4 operational eligibility for print matches canonical on endpoint probe despite competence conflict elsewhere"
+    }
+  ],
+  "signal_interpretation_rows": [
+    {"fingerprint_short": "1b8d5993", "frequency": 40, "domain": "competence", "meaning": "Registry vs legacy competence conflict for Sandu", "confidence": "high", "follow_up": "Owner confirmation of source of truth"},
+    {"fingerprint_short": "830f4323", "frequency": 40, "domain": "eligibility", "meaning": "Operation visible operationally but not canonically eligible", "confidence": "high", "follow_up": "Policy on explicit mapping"},
+    {"fingerprint_short": "03708dc9", "frequency": 40, "domain": "explicit_mapping", "meaning": "Explicit mapping used without registry competence", "confidence": "high", "follow_up": "Document transitional policy A6"}
+  ]
+}

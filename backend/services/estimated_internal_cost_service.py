@@ -20,7 +20,11 @@ from data.internal_cost_rules_volumetric_v2 import (
     InternalOperationRule,
     InternalOverheadRule,
 )
-from schemas.aggregate_cost_bom import AggregateExpandedCostBom, CostBomCostableMaterial
+from schemas.aggregate_cost_bom import (
+    AggregateExpandedCostBom,
+    CostBomCostableMaterial,
+    CostBomCostableOperation,
+)
 from schemas.estimated_internal_cost import (
     ESTIMATED_INTERNAL_COST_SOURCE,
     CapacityHint,
@@ -31,7 +35,7 @@ from schemas.estimated_internal_cost import (
     InternalProvenanceEntry,
 )
 from schemas.product_definition import ProductDefinitionPreview
-from services.aggregate_cost_bom_adapter import AggregateCostBomAdapter
+from services.aggregate_cost_bom_adapter import AggregateCostBomBuilderService
 from services.formula_handlers import resolve_formula
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
 from services.product_definition_builder_service import (
@@ -41,7 +45,7 @@ from services.product_definition_builder_service import (
     _read_bool,
     _read_string,
 )
-from services.product_aggregate_service import ProductAggregateService
+from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 GATE_ONLY_MODULES = frozenset({"geometry_svg"})
@@ -58,6 +62,131 @@ CRITICAL_GEOMETRY_KEYS = frozenset(
         "return_depth_mm",
     }
 )
+
+SEGMENT_NAMESPACE_SEP = "::"
+WARNING_LINKED_SEGMENT_FINISH_PARTIAL = "LINKED_SEGMENT_FINISH_PARTIAL"
+ARTWORK_OWNED_LOGO_MATERIAL_CODES = frozenset(
+    {
+        "print_media",
+        "laminate_media",
+    }
+)
+ARTWORK_OWNED_LOGO_OPERATION_CODES = frozenset(
+    {
+        "logo_face_print",
+        "logo_face_laminate",
+        "logo_finish_application",
+    }
+)
+LOGO_OPERATION_FORMULA_BASIS = {
+    "logo_area": "m2",
+    "logo_perimeter": "ml",
+    "logo_led_modules": "piece",
+    "logo_psu_count": "piece",
+}
+
+
+def _text(value: Any) -> str:
+    return str(value or "").strip()
+
+
+def _is_linked_logo_bom_material(mat: CostBomCostableMaterial) -> bool:
+    if _text(mat.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return SEGMENT_NAMESPACE_SEP in _text(mat.component_ref)
+
+
+def _is_linked_logo_bom_operation(op: CostBomCostableOperation) -> bool:
+    if _text(op.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return SEGMENT_NAMESPACE_SEP in _text(op.component_ref)
+
+
+def _linked_logo_segment_key(component_ref: str | None) -> str | None:
+    ref = _text(component_ref)
+    if SEGMENT_NAMESPACE_SEP not in ref:
+        return None
+    return ref.split(SEGMENT_NAMESPACE_SEP, 1)[1]
+
+
+def _artwork_finish_area_for_segment(payload: dict[str, Any], segment_key: str) -> float | None:
+    from services.intake_v6_layer_identity import artwork_finish_for_segment
+
+    row = artwork_finish_for_segment(payload, segment_key)
+    if not row:
+        return None
+    for field in ("estimated_area_m2", "face_area_m2", "area_m2", "artwork_area_m2"):
+        qty = _positive_number(row.get(field))
+        if qty is not None:
+            return qty
+    geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
+    for box in geometry.get("artwork_boxes") or []:
+        if not isinstance(box, dict):
+            continue
+        if _text(box.get("layer_key")) == segment_key:
+            qty = _positive_number(box.get("area_m2"))
+            if qty is not None:
+                return qty
+    return None
+
+
+def _enrich_payload_artwork_finishes_from_pd(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> None:
+    linked = pd.linked_template_runtime_segments
+    if not isinstance(linked, dict):
+        return
+    segments = linked.get("segments")
+    if not isinstance(segments, list) or not segments:
+        return
+    finish_setup = payload.setdefault("finish_setup", {})
+    artwork_finishes = list(finish_setup.get("artwork_finishes") or [])
+    by_key = {_text(row.get("layer_key")): dict(row) for row in artwork_finishes if isinstance(row, dict)}
+    for segment in segments:
+        if not isinstance(segment, dict):
+            continue
+        segment_key = _text(segment.get("segment_key"))
+        if not segment_key:
+            continue
+        row = by_key.setdefault(segment_key, {"layer_key": segment_key})
+        finish = segment.get("finish") if isinstance(segment.get("finish"), dict) else {}
+        for key, value in finish.items():
+            if key not in row:
+                row[key] = value
+    finish_setup["artwork_finishes"] = list(by_key.values())
+
+
+def _segment_finish_row(payload: dict[str, Any], segment_key: str) -> dict[str, Any]:
+    finish_setup = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    for row in finish_setup.get("artwork_finishes") or []:
+        if isinstance(row, dict) and _text(row.get("layer_key")) == segment_key:
+            return dict(row)
+    return {}
+
+
+def _segment_geometry_area_for_segment(payload: dict[str, Any], segment_key: str) -> float | None:
+    row = _segment_finish_row(payload, segment_key)
+    for field in ("svg_area_m2", "face_area_m2", "bounding_area_m2"):
+        qty = _positive_number(row.get(field))
+        if qty is not None:
+            return qty
+    return None
+
+
+def _segment_geometry_perimeter_for_segment(payload: dict[str, Any], segment_key: str) -> float | None:
+    row = _segment_finish_row(payload, segment_key)
+    for field in ("svg_perimeter_ml", "perimeter_ml", "perimeter_m"):
+        qty = _positive_number(row.get(field))
+        if qty is not None:
+            return qty
+    return None
+
+
+def _segment_led_module_count_for_segment(payload: dict[str, Any], segment_key: str) -> float | None:
+    row = _segment_finish_row(payload, segment_key)
+    for field in ("emblem_led_module_count", "led_module_count"):
+        qty = _positive_number(row.get(field))
+        if qty is not None:
+            return qty
+    return None
 
 
 def _get_by_path(root: Any, path: str) -> Any:
@@ -120,7 +249,9 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         out["client"] = merged_client
     if "svg_source" not in out and _read_string(out.get("vector_file")):
         out["svg_source"] = {"file_name": out.get("vector_file")}
-    return out
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
+    return merge_acm_boxed_mounting_derived_fields(out)
 
 
 def _payload_from_sources(
@@ -145,8 +276,53 @@ def _payload_from_sources(
                     payload.setdefault("client", {})[key] = value
                 else:
                     payload.setdefault("quote_geometry", {})[key] = value
+        _enrich_payload_artwork_finishes_from_pd(pd, payload)
         return payload
     return {}
+
+
+def _overlay_canonical_quantity_builder(
+    template_code: str,
+    payload: dict[str, Any],
+    *,
+    pd: ProductDefinitionPreview | None = None,
+) -> dict[str, Any]:
+    """Prefer Quantity Builder letter quantities over raw parallel payload fields.
+
+    Adapter only — does not change EIC formulas, rates, or CostEngine.
+    """
+    if not str(template_code or "").startswith("TPL-VOLUMETRIC-LETTERS"):
+        return payload
+    from services.letter_group_instance_authority import build_volumetric_letters_commercial_quantities
+    from services.volum_aluminiu_quantity_ownership import (
+        apply_confirmed_perimeter_quote_geometry_bridge,
+    )
+
+    geom = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    qty = build_volumetric_letters_commercial_quantities(
+        quote_geometry=geom,
+        finish_setup=finish,
+        product_truth_job_revision=getattr(pd, "product_truth_job_revision", None) if pd else None,
+        product_truth_content_hash=getattr(pd, "product_truth_content_hash", None) if pd else None,
+        product_truth_status=getattr(pd, "product_truth_status", None) if pd else None,
+    )
+    out = dict(payload)
+    out_geom = dict(geom)
+    out_finish = dict(finish)
+    if qty.get("letter_face_area_m2") is not None:
+        out_geom["letter_face_area_m2"] = qty["letter_face_area_m2"]
+    if qty.get("letter_perimeter_m") is not None:
+        out_geom["letter_perimeter_m"] = qty["letter_perimeter_m"]
+    if qty.get("led_module_count") is not None:
+        out_finish["led_module_count"] = qty["led_module_count"]
+        out_finish["letter_led_module_count"] = qty["led_module_count"]
+    out["quote_geometry"] = out_geom
+    out["finish_setup"] = out_finish
+    out["volumetric_letters_commercial_quantities"] = qty
+    # Confirmed Product Truth wins over letter_group / quote_geometry for return perimeter.
+    out, _perimeter_authority = apply_confirmed_perimeter_quote_geometry_bridge(out)
+    return out
 
 
 def _merged_values(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> dict[str, Any]:
@@ -166,7 +342,7 @@ def _module_is_active(state: str) -> bool:
     return state in ("always_on", "active", "conditional_active")
 
 
-def _resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> set[str]:
+def _legacy_resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> set[str]:
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
     quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
     svg_source = payload.get("svg_source") if isinstance(payload.get("svg_source"), dict) else {}
@@ -200,8 +376,16 @@ def _resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):
@@ -213,8 +397,18 @@ def _resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any
         if _module_is_active(mod.state):
             active.add(code)
 
+    from services.acm_quote_input_helpers import is_acm_boxed_mounting_standalone_root_template
+
+    if is_acm_boxed_mounting_standalone_root_template(pd.template_code):
+        active.add("structura_suport")
+        return active
+
     mounting = _read_string(finish.get("mounting_system") or payload.get("mounting_system"))
-    if mounting:
+    from services.mounting_solution_service import is_structura_suport_active
+
+    if is_structura_suport_active(finish if isinstance(finish, dict) else {}):
+        active.add("structura_suport")
+    elif mounting:
         if mounting in BAR_MOUNTING:
             active.add("structura_suport")
         else:
@@ -227,6 +421,17 @@ def _resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any
     elif illuminated is False or (lighting and lighting.lower() == "none"):
         active.discard("sistem_led")
     return active
+
+
+def _resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> set[str]:
+    from services.offer_scope_resolver_service import resolve_pricing_active_modules
+
+    return resolve_pricing_active_modules(
+        pd=pd,
+        payload=payload,
+        quote_input=payload,
+        legacy_fn=lambda p, qi: _legacy_resolve_active_modules(p, qi or {}),
+    )
 
 
 def _extract_quantity(payload: dict[str, Any], values: dict[str, Any], paths: tuple[str, ...]) -> float | int | None:
@@ -243,7 +448,11 @@ def _extract_quantity(payload: dict[str, Any], values: dict[str, Any], paths: tu
 
 
 def _sablon_enabled(payload: dict[str, Any]) -> bool:
+    from services.mounting_scope_service import is_mounting_preparation_active
+
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if not is_mounting_preparation_active(finish):
+        return False
     enabled = _read_bool(finish.get("mounting_template_enabled"))
     if enabled is None:
         enabled = _read_bool(payload.get("mounting_template_enabled"))
@@ -263,8 +472,19 @@ def _estimate_material_quantity(
     values: dict[str, Any],
 ) -> tuple[float | int | None, list[str]]:
     code = (mat.resolved_material_code or mat.material_code or "").upper()
+    material_code = _text(mat.material_code).lower()
     unit = (mat.unit or "").lower()
     warnings: list[str] = []
+
+    if _is_linked_logo_bom_material(mat):
+        segment_key = _linked_logo_segment_key(mat.component_ref)
+        if material_code in ARTWORK_OWNED_LOGO_MATERIAL_CODES:
+            if segment_key:
+                area = _artwork_finish_area_for_segment(payload, segment_key)
+                if area is not None:
+                    return area, warnings
+            return None, warnings
+        return None, warnings
 
     if "LED-MODULE" in code:
         qty = _extract_quantity(payload, values, ("finish_setup.led_module_count", "led_module_count"))
@@ -279,6 +499,15 @@ def _estimate_material_quantity(
             values,
             ("finish_setup.mounting_template_area_m2", "mounting_template_area_m2"),
         ), warnings
+    if mat.source_template_code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" and "ACM-BOND" in code:
+        component_ref = _text(mat.component_ref)
+        if component_ref == "comp_casetted_returns":
+            qty = _extract_quantity(payload, values, ("return_strip_area_m2",))
+            return qty, warnings
+        qty = _extract_quantity(payload, values, ("panel_area_m2",))
+        return qty, warnings
+    if "SURUBURI" in code and mat.source_template_code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1":
+        return 1, warnings
     if "PROFIL-LATERAL" in code or unit == "ml":
         return _extract_quantity(
             payload,
@@ -304,12 +533,156 @@ def _estimate_material_quantity(
     return None, warnings
 
 
+def _resolve_logo_operation_internal_rate(
+    operation_code: str,
+    *,
+    op: CostBomCostableOperation | None = None,
+) -> tuple[float | None, str, str]:
+    """Return owner-approved logo artwork internal rate from canonical catalog only."""
+    from data.internal_cost_rules_volumetric_v2 import LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE
+    from services.logo_artwork_cost_ownership import is_canonical_logo_artwork_operation_row
+
+    if op is not None and operation_code in ARTWORK_OWNED_LOGO_OPERATION_CODES:
+        if not is_canonical_logo_artwork_operation_row(
+            operation_code=operation_code,
+            component_ref=op.component_ref,
+            provenance=op.provenance,
+            status=getattr(op, "status", None),
+            source_template_code=op.source_template_code,
+        ):
+            return (
+                None,
+                "INT_LOGO_OP_RATE_MISSING",
+                "internal_cost_rules_volumetric_v2:non_canonical_logo_owner",
+            )
+
+    rate_entry = LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE.get(operation_code)
+    if rate_entry is not None and rate_entry.status == "active":
+        return float(rate_entry.internal_unit_cost), rate_entry.rule_code, rate_entry.source
+    return None, "INT_LOGO_OP_RATE_MISSING", "internal_cost_rules_volumetric_v2:logo_operation_rate_missing"
+
+
+def _logo_operation_basis_type(op: CostBomCostableOperation) -> str:
+    formula_id = _text(op.formula_id)
+    return LOGO_OPERATION_FORMULA_BASIS.get(formula_id, "unknown")
+
+
+def _logo_operation_unit(op: CostBomCostableOperation) -> str | None:
+    basis = _logo_operation_basis_type(op)
+    if basis == "m2":
+        return "m2"
+    if basis == "ml":
+        return "ml"
+    if basis == "piece":
+        return "buc"
+    return None
+
+
+def _estimate_logo_operation_quantity(
+    op: CostBomCostableOperation,
+    payload: dict[str, Any],
+    values: dict[str, Any],
+) -> tuple[float | int | None, list[str]]:
+    segment_key = _linked_logo_segment_key(op.component_ref)
+    if not segment_key:
+        return None, []
+
+    operation_code = _text(op.operation_code)
+    formula_id = _text(op.formula_id)
+    warnings: list[str] = []
+
+    if operation_code in ARTWORK_OWNED_LOGO_OPERATION_CODES:
+        area = _artwork_finish_area_for_segment(payload, segment_key)
+        if area is not None:
+            warnings.append(f"quantity_source=artwork_finish:{segment_key}")
+        return area, warnings
+
+    if formula_id == "logo_area":
+        area = _segment_geometry_area_for_segment(payload, segment_key)
+        if area is not None:
+            warnings.append(f"quantity_source=segment_geometry_area:{segment_key}")
+        return area, warnings
+
+    if formula_id == "logo_perimeter":
+        perimeter = _segment_geometry_perimeter_for_segment(payload, segment_key)
+        if perimeter is not None:
+            warnings.append(f"quantity_source=segment_geometry_perimeter:{segment_key}")
+        return perimeter, warnings
+
+    if formula_id == "logo_led_modules":
+        count = _segment_led_module_count_for_segment(payload, segment_key)
+        if count is not None:
+            warnings.append(f"quantity_source=segment_led_module_count:{segment_key}")
+        return count, warnings
+
+    return None, warnings
+
+
+def _build_logo_operation_line_from_bom(
+    op: CostBomCostableOperation,
+    *,
+    quantity: float | int | None,
+    unit_cost: float | None,
+    rule_code: str,
+    source: str,
+    warnings: list[str],
+) -> EstimatedInternalCostLine:
+    basis_type = _logo_operation_basis_type(op)
+    subtotal = None
+    if unit_cost is not None and quantity is not None and basis_type != "unknown":
+        subtotal = round(float(quantity) * float(unit_cost), 4)
+    line_warnings = list(warnings)
+    if op.workcenter:
+        line_warnings.append(f"workcenter_reference={op.workcenter}")
+    if op.provenance:
+        line_warnings.append(f"bom_provenance={op.provenance}")
+    if op.source_template_code:
+        line_warnings.append(f"source_template_code={op.source_template_code}")
+    return EstimatedInternalCostLine(
+        code=f"operation_{op.operation_code}",
+        label=op.label or op.operation_code,
+        module_code=op.mini_module_code,
+        component_code=op.component_ref,
+        line_type="operation",
+        basis_type=basis_type,  # type: ignore[arg-type]
+        quantity=quantity,
+        unit=_logo_operation_unit(op),
+        internal_unit_cost=unit_cost,
+        subtotal=subtotal,
+        rule_code=rule_code,
+        source=source,
+        owner_decision_required=unit_cost is None,
+        warnings=line_warnings,
+    )
+
+
 def _operation_rule_applies(rule: InternalOperationRule, active_modules: set[str], payload: dict[str, Any]) -> bool:
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+    from services.offer_scope_led_subscope_service import (
+        eic_line_led_subscope,
+        led_consumer_row_allowed,
+        partial_led_subscope_filter,
+    )
+
     module_key = rule.module_gate or rule.module_code
     if rule.always_include and rule.criticality == "optional":
         return module_key in active_modules or rule.module_code in active_modules
     if module_key not in active_modules and rule.module_code not in active_modules:
         return False
+
+    scope = payload.get("offer_scope") if isinstance(payload.get("offer_scope"), dict) else {}
+    sold_led = partial_led_subscope_filter(frozenset(scope.get("sold_modules") or []))
+    mount_decision = resolve_lighting_mount_consumers(payload, payload)
+    if sold_led is not None and rule.module_code == "sistem_led":
+        sub = eic_line_led_subscope(rule.line_code)
+        if not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led,
+            eic_line_code=rule.line_code,
+            mount_decision=mount_decision,
+        ):
+            return False
+
     if rule.line_code.startswith("sablon_montaj"):
         if not _sablon_enabled(payload):
             return False
@@ -375,12 +748,11 @@ class EstimatedInternalCostService:
         db: AsyncSession,
         *,
         pd_builder: ProductDefinitionBuilderService | None = None,
-        bom_adapter: AggregateCostBomAdapter | None = None,
+        bom_builder: AggregateCostBomBuilderService | None = None,
     ) -> None:
         self._db = db
         self._pd_builder = pd_builder or ProductDefinitionBuilderService(db)
-        self._bom_adapter = bom_adapter or AggregateCostBomAdapter()
-        self._aggregate_svc = ProductAggregateService(db)
+        self._bom_builder = bom_builder or AggregateCostBomBuilderService(db)
 
     async def _load_pricing_context(
         self,
@@ -459,25 +831,26 @@ class EstimatedInternalCostService:
         pd = await self._pd_builder.build_preview(template_code, workspace_id=workspace_id)
         if pd is None:
             return None
-        aggregate = await self._aggregate_svc.build(template_code)
-        if aggregate is None:
-            return None
 
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
+        payload = _overlay_canonical_quantity_builder(template_code, payload, pd=pd)
         values = _merged_values(pd, payload)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
-        active_modules = _resolve_active_modules(pd, payload)
 
-        material_rates, material_currencies, workcenter_rates, inventory_catalog = await self._load_pricing_context()
-        bom = self._bom_adapter.build(
-            product_definition=pd,
-            aggregate=aggregate,
+        bom = await self._bom_builder.build_preview(
+            template_code,
+            workspace_id=workspace_id,
             quote_input=quote_input or payload or None,
-            material_rates=material_rates,
-            workcenter_rates=workcenter_rates,
-            material_currencies=material_currencies,
-            inventory_catalog=inventory_catalog,
         )
+        if bom is None:
+            return None
+
+        if bom.graph_cost_projection is not None:
+            active_modules = {
+                m.module_code for m in bom.active_modules if m.included_in_cost_bom
+            }
+        else:
+            active_modules = _resolve_active_modules(pd, payload)
 
         rules = RULES_BY_TEMPLATE[template_code]
         material_lines: list[EstimatedInternalCostLine] = []
@@ -488,18 +861,20 @@ class EstimatedInternalCostService:
         owner_decisions: list[InternalOwnerDecision] = []
         warnings: list[str] = list(bom.warnings)
 
+        material_rates, material_currencies, workcenter_rates, inventory_catalog = await self._load_pricing_context()
         if workcenter_rates:
             warnings.append(
                 "Workcenter hourly rates present in registry — excluded from EstimatedInternalCost totals."
             )
 
         for mat in bom.costable_materials:
-            if mat.mini_module_code and mat.mini_module_code not in active_modules:
+            is_logo = _is_linked_logo_bom_material(mat)
+            if not is_logo and mat.mini_module_code and mat.mini_module_code not in active_modules:
                 continue
             resolved = mat.resolved_material_code or mat.material_code
 
             if mat.pricing_availability != "available" or not mat.unit_cost:
-                if mat.mini_module_code in active_modules:
+                if is_logo or (mat.mini_module_code in active_modules):
                     blockers.append(
                         InternalBlocker(
                             code="INTERNAL_MATERIAL_COST_MISSING",
@@ -511,7 +886,7 @@ class EstimatedInternalCostService:
                 continue
 
             quantity, mat_warnings = _estimate_material_quantity(mat, payload, values)
-            if quantity is None and mat.mini_module_code in active_modules:
+            if quantity is None and (is_logo or mat.mini_module_code in active_modules):
                 blockers.append(
                     InternalBlocker(
                         code="INTERNAL_GEOMETRY_MISSING",
@@ -524,9 +899,12 @@ class EstimatedInternalCostService:
 
             unit_cost = mat.unit_cost
             subtotal = round(float(quantity) * float(unit_cost), 4) if quantity is not None else None
+            line_code = f"material_{resolved}"
+            if mat.component_ref:
+                line_code = f"{line_code}_{mat.component_ref}"
             material_lines.append(
                 EstimatedInternalCostLine(
-                    code=f"material_{resolved}",
+                    code=line_code,
                     label=mat.label or resolved,
                     module_code=mat.mini_module_code,
                     component_code=mat.component_ref,
@@ -542,11 +920,45 @@ class EstimatedInternalCostService:
                 )
             )
 
+        logo_operation_count = 0
         for op in bom.costable_operations:
             if op.operation_code in INTERNAL_QC_OPERATION_CODES:
                 continue
             if op.operation_code.lower().startswith("qc_"):
                 continue
+            if not _is_linked_logo_bom_operation(op):
+                continue
+
+            unit_cost, rule_code, source = _resolve_logo_operation_internal_rate(op.operation_code, op=op)
+            quantity, op_warnings = _estimate_logo_operation_quantity(op, payload, values)
+            operation_lines.append(
+                _build_logo_operation_line_from_bom(
+                    op,
+                    quantity=quantity,
+                    unit_cost=unit_cost,
+                    rule_code=rule_code,
+                    source=source,
+                    warnings=op_warnings,
+                )
+            )
+            logo_operation_count += 1
+
+            if quantity is None:
+                blockers.append(
+                    InternalBlocker(
+                        code="INTERNAL_GEOMETRY_MISSING",
+                        message=f"Missing quantity geometry for logo operation {op.operation_code}.",
+                        module_code=op.mini_module_code,
+                    )
+                )
+            if unit_cost is None:
+                blockers.append(
+                    InternalBlocker(
+                        code="INTERNAL_OPERATION_RULE_MISSING",
+                        message=f"Missing internal operation unit cost rule for {op.operation_code}.",
+                        module_code=op.mini_module_code,
+                    )
+                )
 
         for rule in rules["operations"]:
             if not _operation_rule_applies(rule, active_modules, payload):
@@ -636,7 +1048,16 @@ class EstimatedInternalCostService:
             for hint_rule in rules["capacity"]:
                 if hint_rule.module_code and hint_rule.module_code not in active_modules:
                     continue
-                result = resolve_formula(hint_rule.formula_id, hint_rule.formula_params, values)
+                if hint_rule.code.startswith("acm_"):
+                    from services.acm_quote_input_helpers import is_acm_boxed_mounting_payload
+
+                    if not is_acm_boxed_mounting_payload(payload):
+                        continue
+                capacity_values = dict(values)
+                capacity_values.setdefault("quantity", payload.get("quantity") or 1)
+                if hint_rule.code.startswith("acm_"):
+                    capacity_values["letter_count"] = int(payload.get("quantity") or 1)
+                result = resolve_formula(hint_rule.formula_id, hint_rule.formula_params, capacity_values)
                 if result.resolved and result.value is not None:
                     capacity_hints.append(
                         CapacityHint(
@@ -680,12 +1101,22 @@ class EstimatedInternalCostService:
             operation_lines=operation_lines,
             missing_geometry=missing_critical_geometry,
         )
+        if not contamination:
+            if bom.bom_status == "partial" or any(
+                WARNING_LINKED_SEGMENT_FINISH_PARTIAL in w for w in warnings
+            ):
+                status = "partial"
+                ready = False
 
         provenance = [
             InternalProvenanceEntry(
                 key="aggregate_cost_bom",
-                source="aggregate_cost_bom_adapter",
-                detail=f"read_only=true materials={len(material_lines)} operations={len(operation_lines)}",
+                source="aggregate_cost_bom_builder_service",
+                detail=(
+                    f"workspace={bool(workspace_id)} bom_status={bom.bom_status} "
+                    f"materials={len(material_lines)} operations={len(operation_lines)} "
+                    f"logo_operations={logo_operation_count}"
+                ),
             ),
             InternalProvenanceEntry(
                 key="internal_rules",

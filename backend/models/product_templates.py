@@ -20,5 +20,13 @@ class Product_templates(Base):
     base_margin_pct = Column(Float, nullable=True)
     active = Column(Boolean, nullable=True)
     notes = Column(String, nullable=True)
+    # Additive publication lifecycle — NULL = legacy unspecified (not published).
+    # active=true must never be treated as published/offerable/runtime-ready alone.
+    publication_status = Column(String, nullable=True)
+    publication_version = Column(Integer, nullable=True)
+    last_e2e_verdict = Column(String, nullable=True)
+    last_e2e_checked_at = Column(DateTime(timezone=True), nullable=True)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+    published_by = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)
     updated_at = Column(DateTime(timezone=True), default=datetime.now, onupdate=datetime.now)

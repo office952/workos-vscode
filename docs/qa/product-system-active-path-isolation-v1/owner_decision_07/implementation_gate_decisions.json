@@ -1,0 +1,28 @@
+{
+  "task": "OWNER-DECISION-07",
+  "starting_head": "39d24db",
+  "upstream": {
+    "audit": "PROD-FLEX-INT-01 @ 02b5981",
+    "contract": "OWNER-DECISION-06 @ 25e4233",
+    "arch_plan": "PROD-FLEX-ARCH-01 @ 39d24db"
+  },
+  "decisions": [
+    { "id": "G1", "title": "FLEX-01 GO", "proposed": "CONFIRM FLEX-01 ONLY", "owner_status": "CONFIRMED", "notes": "Read models, contracts, adapters — no writes, no DB, no behavior change" },
+    { "id": "G2", "title": "FLEX-01 must use current implementation", "proposed": "CONFIRM reuse registry, eligibility, assignee, sessions", "owner_status": "CONFIRMED", "notes": "No parallel registries" },
+    { "id": "G3", "title": "Participant read model FLEX-01", "proposed": "Option B — principal from assignee + helpers from sessions", "owner_status": "CONFIRMED", "notes": "Read-only projection; not participants_json" },
+    { "id": "G4", "title": "participants_json status", "proposed": "DEFERRED", "owner_status": "CONFIRMED", "notes": "Owner rejects auto-accept as persistence solution" },
+    { "id": "G5", "title": "Participant persistence before FLEX-02", "proposed": "BLOCK FLEX-02 writes until PROD-FLEX-ARCH-02 gate", "owner_status": "CONFIRMED", "notes": "Separate decision required" },
+    { "id": "G6", "title": "Help request persistence", "proposed": "Normalized when FLEX-04 authorized; none in FLEX-01", "owner_status": "CONFIRMED", "notes": "Not JSON blob authority" },
+    { "id": "G7", "title": "Progress persistence", "proposed": "FLEX-01 read-only; quantity blocked until FLEX-06 persistence gate", "owner_status": "CONFIRMED", "notes": "No unguarded JSON increments" },
+    { "id": "G8", "title": "Current sessions as operational truth", "proposed": "CONFIRM for actual work/time; insufficient for invite/help/progress", "owner_status": "CONFIRMED" },
+    { "id": "G9", "title": "assigned_employee_id", "proposed": "Optional principal/coordinator compatibility field", "owner_status": "CONFIRMED" },
+    { "id": "G10", "title": "Implementation wave authority", "proposed": "A — FLEX-01 only", "owner_status": "CONFIRMED", "notes": "FLEX-02 through FLEX-09 blocked" }
+  ],
+  "summary": {
+    "total": 10,
+    "confirmed": 10,
+    "deferred_or_blocked_by_design": ["participants_json", "FLEX-02+"]
+  },
+  "verdict": "OWNER_FLEX_EXECUTION_GATE_CONFIRMED_FLEX_01_ONLY",
+  "next_task": "FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION"
+}

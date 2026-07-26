@@ -4,6 +4,7 @@ import { normalizeFaceVinylRollWidthMm } from "./intakeV4FaceFinishOptions";
 import { applyNearestOracal651ToLetterGroup } from "./intakeV4NearestOracalColor";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE as INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE } from "./intakeV6ReturnFinishOptions";
 import { layerHasLetterPathGeometry } from "./intakeV6ArtworkOnlyGuard";
+import { normalizeIntakeV4BackingMode, type IntakeV4BackingMode } from "./intakeV4BackingMode";
 
 export { ALLOWED_RETURN_DEPTH_MM };
 
@@ -22,6 +23,7 @@ export interface IntakeV4LetterGroupFinish {
   return_oracal_name?: string | null;
   return_depth_mm?: number | null;
   face_vinyl_roll_width_mm?: number | null;
+  backing_mode?: IntakeV4BackingMode | null;
   confirmed: boolean;
 }
 
@@ -98,18 +100,28 @@ export function mergeLetterGroupFinishes(
   const savedByKey = new Map(saved.map((item) => [item.group_key, item]));
   return derived.map((item) => {
     const prior = savedByKey.get(item.group_key);
+    const sameSourceFill =
+      !prior ||
+      prior.source_fill_color == null ||
+      item.source_fill_color == null ||
+      prior.source_fill_color.trim().toLowerCase() === item.source_fill_color.trim().toLowerCase();
+    // Confirmed commercial fields survive fill drift; geometry suggestions still refresh from derived.
+    const keepCommercial = Boolean(prior?.confirmed) || sameSourceFill;
     const merged = prior
       ? {
           ...item,
-          face_finish_type: prior.face_finish_type ?? item.face_finish_type,
-          face_oracal_code: prior.face_oracal_code,
-          face_oracal_name: prior.face_oracal_name,
-          return_finish_type: prior.return_finish_type ?? item.return_finish_type,
-          return_oracal_code: prior.return_oracal_code,
-          return_oracal_name: prior.return_oracal_name,
-          return_depth_mm: prior.return_depth_mm ?? item.return_depth_mm,
-          face_vinyl_roll_width_mm: prior.face_vinyl_roll_width_mm ?? item.face_vinyl_roll_width_mm,
-          confirmed: prior.confirmed,
+          face_finish_type: keepCommercial ? prior.face_finish_type ?? item.face_finish_type : item.face_finish_type,
+          face_oracal_code: keepCommercial ? prior.face_oracal_code : item.face_oracal_code,
+          face_oracal_name: keepCommercial ? prior.face_oracal_name : item.face_oracal_name,
+          return_finish_type: keepCommercial ? prior.return_finish_type ?? item.return_finish_type : item.return_finish_type,
+          return_oracal_code: keepCommercial ? prior.return_oracal_code : item.return_oracal_code,
+          return_oracal_name: keepCommercial ? prior.return_oracal_name : item.return_oracal_name,
+          return_depth_mm: keepCommercial ? prior.return_depth_mm ?? item.return_depth_mm : item.return_depth_mm,
+          face_vinyl_roll_width_mm: keepCommercial
+            ? prior.face_vinyl_roll_width_mm ?? item.face_vinyl_roll_width_mm
+            : item.face_vinyl_roll_width_mm,
+          backing_mode: keepCommercial ? prior.backing_mode ?? item.backing_mode : item.backing_mode,
+          confirmed: keepCommercial ? prior.confirmed : false,
         }
       : item;
     return normalizeLetterGroupFaceRollWidth(applyNearestOracal651ToLetterGroup(merged));
@@ -168,6 +180,10 @@ export function letterGroupFinishesFromPayload(
         return_depth_mm: typeof item.return_depth_mm === "number" ? item.return_depth_mm : null,
         face_vinyl_roll_width_mm:
           typeof item.face_vinyl_roll_width_mm === "number" ? item.face_vinyl_roll_width_mm : null,
+        backing_mode:
+          item.backing_mode != null
+            ? normalizeIntakeV4BackingMode(item.backing_mode)
+            : null,
         confirmed: item.confirmed === true,
       }),
     )

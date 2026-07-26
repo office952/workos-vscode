@@ -1,18 +1,19 @@
 import type { LayerRoleConfirmation, SvgAnalysisCoreReport, SvgAnalysisLayer } from "@/lib/svgAnalyzer";
 import type { LayerAutoRole } from "@/lib/svgAnalyzer/analyzer/layerRoleTypes";
+import { isArtworkOrLogoCandidateLayer } from "@/lib/svgAnalyzer/analyzer/artworkLogoCandidate";
 import { isArtworkLayerName } from "@/lib/intakeSvgContracts";
 
 export const ARTWORK_ONLY_REQUIRES_DECISION_CODE = "artwork_only_requires_decision";
 
 export const ARTWORK_ONLY_STEP1_MESSAGE =
-  "Fișierul pare să conțină doar artwork/policromie, fără litere volumetrice detectabile.";
+  "Fișierul pare să conțină logo/vector constructiv fără straturi de litere volumetrice.";
 
-export const ARTWORK_ONLY_REVIEW_TITLE = "Artwork / policromie necesită decizie";
+export const ARTWORK_ONLY_REVIEW_TITLE = "Logo / vector constructiv necesită confirmare";
 
 export const ARTWORK_ONLY_CONFIRM_MESSAGES = [
   "Nu există straturi de litere volumetrice confirmate.",
-  "Artwork/policromie necesită decizie operator.",
-  "Template-ul curent este Litere volumetrice; fișierul încărcat pare artwork-only.",
+  "Logo/vector constructiv necesită confirmare operator.",
+  "Analyzer-ul va recomanda compoziția de produs înainte de Review.",
 ] as const;
 
 export function layerHasLetterPathGeometry(layer: SvgAnalysisLayer): boolean {
@@ -26,10 +27,13 @@ export function layerHasLetterPathGeometry(layer: SvgAnalysisLayer): boolean {
 }
 
 export function layerIsArtworkCandidate(layer: SvgAnalysisLayer): boolean {
+  if (isArtworkOrLogoCandidateLayer(layer)) return true;
+  if (layer.autoRole === "support_panel" || layer.autoRole === "face") return false;
   if (layer.autoRole === "printed_artwork" || layer.autoRole === "logo") return true;
   if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return true;
 
   const paint = layer.paintEvidence;
+  // Real policromie only (fill+stroke technical contour is "solid" after paint fix).
   if (paint?.paintKind === "policromie" || paint?.hasGradient || paint?.hasPattern || paint?.hasImage) {
     return true;
   }
@@ -101,6 +105,18 @@ export function resolveConfirmAllSuggestedRole(
   layer: LayerRoleConfirmation["layers"][number],
   reportLayer: SvgAnalysisLayer | undefined,
 ): LayerAutoRole | null {
+  // Never bulk-accept Contur suport on artwork/logo candidates (R2 / R4).
+  if (
+    layer.autoRole === "support_panel" &&
+    reportLayer &&
+    isArtworkOrLogoCandidateLayer(reportLayer)
+  ) {
+    return null;
+  }
+  // Do not bulk-accept low-confidence or contradictory support proposals.
+  if (layer.autoRole === "support_panel" && layer.autoConfidence === "low") {
+    return null;
+  }
   if (layer.autoRole !== "unknown") return layer.autoRole;
   if (reportLayer && layerHasLetterPathGeometry(reportLayer)) return "face";
   if (reportLayer && layerIsArtworkCandidate(reportLayer)) return null;
@@ -175,8 +191,8 @@ export function resolveArtworkOnlyFatalBlockers(
 
 export function artworkOnlyLayerDisplayType(layer: SvgAnalysisLayer): string {
   const paint = layer.paintEvidence;
-  if (paint?.paintKind === "policromie" || paint?.hasGradient) return "policromie / gradient";
-  if (layer.autoRole === "printed_artwork") return "artwork / policromie";
-  if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return "artwork / policromie";
-  return "artwork / gradient";
+  if (paint?.paintKind === "policromie" || paint?.hasGradient) return "vector constructiv / finisaj complex";
+  if (layer.autoRole === "printed_artwork") return "logo / vector constructiv";
+  if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return "logo / vector constructiv";
+  return "vector constructiv";
 }

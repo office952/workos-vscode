@@ -1,0 +1,24 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "copy_into_frozen_operational_task": [
+    "operation_code / process_type",
+    "requirement_snapshot_ref",
+    "collaboration_mode",
+    "parallelizable",
+    "progress_unit",
+    "quantity_total",
+    "minimum_people_real_only",
+    "recommended_people_optional"
+  ],
+  "do_not_copy": [
+    "employee_ids",
+    "availability",
+    "concrete_team",
+    "active_participants",
+    "work_sessions",
+    "help_requests",
+    "quantity_completed"
+  ],
+  "mutable_runtime_on_plan": ["assigned_employee_id", "assignment_source", "assignment_updated_at"],
+  "compatibility": "Extend v2 envelope operational_tasks[] fields — backward compatible optional keys"
+}

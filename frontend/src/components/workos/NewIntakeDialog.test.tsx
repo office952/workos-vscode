@@ -72,6 +72,25 @@ const RUNTIME_MODULE_TEMPLATE = {
   status_reason: "runtime_module_only",
 };
 
+const LOGO_OFFERABLE_TEMPLATE = {
+  template_id: 15,
+  template_code: "TPL-VOLUMETRIC-LOGO_v1",
+  family_id: "litere_volumetrice",
+  family_name: "Litere volumetrice",
+  description: "Produs candidat pentru logo volumetric",
+  db_active: true,
+  quote_offerable: false,
+  runtime_module: false,
+  is_parent: true,
+  has_modules: true,
+  parent_codes: [],
+  module_codes: ["TPL-VOLUMETRIC-LOGO-FACE_v1"],
+  status: "experimental",
+  status_reason: "not_owner_valid",
+  product_system_role: "candidate_product",
+  display_group: "candidate_products",
+};
+
 describe("NewIntakeDialog offer method and Product System template wizard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -84,8 +103,8 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     mockIntakesCreate.mockResolvedValue({ id: 10 });
     mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-1", workspace_code: "IV6-TEST" });
     mockAvailabilityList.mockResolvedValue({
-      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE],
-      total: 2,
+      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE, LOGO_OFFERABLE_TEMPLATE],
+      total: 3,
       offerable_count: 1,
       runtime_module_count: 1,
     });
@@ -100,7 +119,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
   async function selectMethodAndContinue() {
     fireEvent.click(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i }));
     fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
-    await screen.findByText(/Template-uri active pentru ofertare/i);
+    await screen.findByText(/Template hint/i);
   }
 
   async function moveToDetailsStep() {
@@ -119,8 +138,29 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
   it("shows SVG Analyzer - Intake V6 as the active method", async () => {
     renderDialog();
 
-    expect(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i })).toBeEnabled();
     expect(screen.getByText("Activ")).toBeInTheDocument();
+  });
+
+  it("shows Image Analyzer - Intake V6 as preview-only and disabled", async () => {
+    renderDialog();
+
+    const imageMethod = await screen.findByRole("button", { name: /Image Analyzer - Intake V6/i });
+    expect(imageMethod).toBeDisabled();
+    expect(imageMethod).toHaveTextContent("Preview only");
+    expect(imageMethod).toHaveTextContent(/nu creeaza oferta, comanda sau executie/i);
+  });
+
+  it("does not create a workspace from the Image Analyzer preview card", async () => {
+    renderDialog();
+
+    const imageMethod = await screen.findByRole("button", { name: /Image Analyzer - Intake V6/i });
+    fireEvent.click(imageMethod);
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+
+    expect(screen.getByRole("button", { name: /Continuă/i })).toBeDisabled();
+    expect(screen.getByText(/Alege modalitatea de ofertare/i)).toBeInTheDocument();
+    expect(mockEnsureIntakeV6Workspace).not.toHaveBeenCalled();
   });
 
   it("does not continue without selecting an offer method", () => {
@@ -134,19 +174,65 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     await selectMethodAndContinue();
 
     expect(mockAvailabilityList).toHaveBeenCalledWith({
-      offerable_only: true,
+      offerable_only: false,
       include_runtime_modules: false,
-      include_archived: false,
+      include_archived: true,
     });
   });
 
-  it("shows only quote_offerable templates and hides runtime modules", async () => {
+  it("shows offerable and candidate templates but hides runtime modules", async () => {
     renderDialog();
     await selectMethodAndContinue();
 
-    const list = screen.getByTestId("offerable-template-list");
+    const list = screen.getByTestId("template-hint-list");
     expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(within(list).getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
+    expect(within(list).getAllByText("Product Template").length).toBeGreaterThanOrEqual(2);
+    expect(within(list).getByText("Activ pentru ofertare")).toBeInTheDocument();
+    expect(within(list).getByText("Candidat compozitie")).toBeInTheDocument();
+    expect(within(list).getByText("Work Intake DA")).toBeInTheDocument();
+    expect(within(list).getByText("Work Intake NU")).toBeInTheDocument();
+    expect(within(list).getByText(/Product Template activ pentru litere volumetrice/i)).toBeInTheDocument();
+    expect(within(list).getByText(/Product Template logo volumetric/i)).toBeInTheDocument();
+  });
+
+  it("renders Logo as product template candidate without component-root wording", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const logoCard = screen.getByRole("button", { name: /TPL-VOLUMETRIC-LOGO_v1/i });
+    expect(logoCard).toHaveTextContent("Product Template");
+    expect(logoCard).toHaveTextContent("Candidat compozitie");
+    expect(logoCard).toHaveTextContent("Work Intake NU");
+    expect(logoCard).toHaveTextContent("Nu porneste oferta directa");
+    expect(logoCard).toHaveTextContent("Root direct: blocat pana la owner GO");
+    expect(logoCard).not.toHaveTextContent("Activ pentru ofertare");
+    expect(logoCard).not.toHaveTextContent(/componenta volumetrica logo/i);
+    expect(logoCard).not.toHaveTextContent(/component root/i);
+    expect(logoCard).not.toHaveTextContent(/component quote/i);
+  });
+
+  it("renders Letters as active Product Template root with Work Intake DA", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const lettersCard = screen.getByRole("button", { name: /TPL-VOLUMETRIC-LETTERS_v2/i });
+    expect(lettersCard).toHaveTextContent("Product Template");
+    expect(lettersCard).toHaveTextContent("Activ pentru ofertare");
+    expect(lettersCard).toHaveTextContent("Work Intake DA");
+    expect(lettersCard).toHaveTextContent("Root direct: permis");
+    expect(lettersCard).toHaveTextContent(/Porneste cerere directa pentru root-ul ofertabil curent/i);
+  });
+
+  it("keeps Analyzer-first recommended", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const analyzerFirstCard = screen.getByTestId("analyzer-first-no-template-hint");
+    expect(analyzerFirstCard).toHaveTextContent("Analyzer-first");
+    expect(analyzerFirstCard).toHaveTextContent("Recomandat");
+    expect(analyzerFirstCard).toHaveTextContent(/SVG-ul decide compoziția/i);
   });
 
   it("does not use blocked archive wording", async () => {
@@ -157,7 +243,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     expect(screen.queryByText(blockedArchiveWord)).not.toBeInTheDocument();
   });
 
-  it("sends offer_method and selected_template_code to Intake V6 ensure", async () => {
+  it("creates analyzer-first intake without a locked selected template", async () => {
     const onCreated = vi.fn();
     renderDialog(onCreated);
     await moveToDetailsStep();
@@ -181,20 +267,68 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     expect(intakeCode).toMatch(/^IR-/);
     expect(intakePayload).toEqual(
       expect.objectContaining({
-        product_family: "litere_volumetrice",
-        confirmed_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+        product_family: "",
+        confirmed_template_code: undefined,
       })
     );
     expect(ensurePayload).toEqual({
       offer_method: "svg_analyzer_intake_v6",
-      selected_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+      analyzer_mode: "analyzer_first",
+      template_hint_code: undefined,
+      source: "work_intake_new_request",
+    });
+    expect(onCreated).toHaveBeenCalledWith(
+      expect.stringMatching(/^IR-/),
+      "",
+      "workspace-1",
+      null
+    );
+  });
+
+  it("creates a logo hinted analyzer-first request through the Intake V6 bridge", async () => {
+    const onCreated = vi.fn();
+    mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-logo", workspace_code: "IV6-LOGO" });
+    renderDialog(onCreated);
+    await selectMethodAndContinue();
+
+    fireEvent.click(screen.getByRole("button", { name: /TPL-VOLUMETRIC-LOGO_v1/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+    await screen.findByText(/Alege un client existent/i);
+
+    fireEvent.click(screen.getByRole("button", { name: "Client Temporar" }));
+    fireEvent.change(screen.getByPlaceholderText(/SC Exemplu SRL sau Ion Popescu/i), {
+      target: { value: "STAGING LOGO CLIENT" },
+    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
+      { target: { value: "Logo volumetric pentru fațadă magazin" } }
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
+
+    await waitFor(() => {
+      expect(mockEnsureIntakeV6Workspace).toHaveBeenCalledTimes(1);
+    });
+
+    const intakePayload = mockIntakesCreate.mock.calls[0][0];
+    const [intakeCode, ensurePayload] = mockEnsureIntakeV6Workspace.mock.calls[0];
+    expect(intakeCode).toMatch(/^IR-/);
+    expect(intakePayload).toEqual(
+      expect.objectContaining({
+        product_family: "litere_volumetrice",
+        confirmed_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      })
+    );
+    expect(ensurePayload).toEqual({
+      offer_method: "svg_analyzer_intake_v6",
+      analyzer_mode: "analyzer_first",
+      template_hint_code: "TPL-VOLUMETRIC-LOGO_v1",
       source: "work_intake_new_request",
     });
     expect(onCreated).toHaveBeenCalledWith(
       expect.stringMatching(/^IR-/),
       "litere_volumetrice",
-      "workspace-1",
-      "TPL-VOLUMETRIC-LETTERS_v2"
+      "workspace-logo",
+      "TPL-VOLUMETRIC-LOGO_v1"
     );
   });
 });

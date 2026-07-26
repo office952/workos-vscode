@@ -1,0 +1,9 @@
+﻿{
+    "ports_target_closed":  true,
+    "recorded_at":  "2026-07-15T13:04:42.3631722+03:00",
+    "backup_id":  "workos_full_backup_20260715_125751_deb5d69",
+    "note":  "All WorkOS writer ports closed before DB backup",
+    "writer_processes_remaining":  [
+
+                                   ]
+}

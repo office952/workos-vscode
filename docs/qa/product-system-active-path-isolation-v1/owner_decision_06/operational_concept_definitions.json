@@ -1,0 +1,18 @@
+{
+  "task": "OWNER-DECISION-06",
+  "concepts": {
+    "ready": "Task dependencies/material/prep gates satisfied; not equivalent to assigned",
+    "eligible": "Employee may execute per registry rules; visibility filter",
+    "assigned": "Manager designated principal/coordinator on plan assignee field",
+    "claimed": "Employee self-assigned via claim or start-from-available",
+    "participating": "Employee has active or historical work session on operation",
+    "principal_operator": "Optional coordinator; may be assignee/claimer; not exclusive owner",
+    "helper": "Participant assisting without becoming assignee",
+    "work_session": "Individual time-bound work interval on an operation",
+    "help_request": "Operational request for additional eligible coworkers",
+    "operation_progress": "Aggregate completion state of the operation (not one person)",
+    "contribution": "Individual participant output/time; separate from operation complete"
+  },
+  "separation_principle": "coordonator/assignee != participanti efectivi != sesiuni != progres operatie",
+  "owner_status": "CONFIRMED"
+}

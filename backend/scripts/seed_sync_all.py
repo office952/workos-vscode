@@ -77,12 +77,21 @@ from seeds.seed_build4_materials import seed_build4_materials  # noqa: E402
 from seeds.seed_build4_workcenters import seed_build4_workcenters  # noqa: E402
 from seeds.seed_build4_templates import seed_build4_templates  # noqa: E402
 from seeds.seed_tpl_volumetric_letters_v2 import seed_tpl_volumetric_letters_v2  # noqa: E402
+from seeds.seed_tpl_volumetric_letters_component_modules_v1 import (  # noqa: E402
+    seed_tpl_volumetric_letters_component_modules_v1,
+)
 from seeds.seed_volumetric_workcenter_rates import (  # noqa: E402
     seed_volumetric_operations_and_rates,
 )
 from seeds.seed_acm_bond_materials import seed_acm_bond_materials  # noqa: E402
 from seeds.seed_acm_owner_confirmed_prices import (  # noqa: E402
     seed_acm_owner_confirmed_prices,
+)
+from seeds.seed_acm_boxed_mounting_owner_rates import (  # noqa: E402
+    seed_acm_boxed_mounting_owner_rates,
+)
+from seeds.seed_tpl_acm_boxed_mounting_support_v1 import (  # noqa: E402
+    seed_tpl_acm_boxed_mounting_support_v1,
 )
 from scripts.seed_acm_template_pack import seed_acm_template_pack  # noqa: E402
 from seeds.seed_cost_engine_template_currency import (  # noqa: E402
@@ -121,7 +130,11 @@ SEED_PIPELINE: List[Tuple[str, Any]] = [
     ("volumetric_workcenter_rates", seed_volumetric_operations_and_rates),
     ("acm_bond_materials", seed_acm_bond_materials),
     ("acm_owner_confirmed_prices", seed_acm_owner_confirmed_prices),
+    ("acm_boxed_mounting_owner_rates", seed_acm_boxed_mounting_owner_rates),
     ("acm_template_pack", seed_acm_template_pack),
+    ("tpl_acm_boxed_mounting_support_v1", seed_tpl_acm_boxed_mounting_support_v1),
+    # After VL root + ACM optional link exist — complete FACE/BACK/LED/FINISH contracts.
+    ("tpl_volumetric_letters_component_modules_v1", seed_tpl_volumetric_letters_component_modules_v1),
     ("volumetric_owner_confirmed_prices", seed_volumetric_owner_confirmed_prices),
     ("cost_engine_template_base_currency", seed_cost_engine_template_base_currency),
     ("active_template_scope", seed_active_template_scope),

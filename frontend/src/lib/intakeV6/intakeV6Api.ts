@@ -23,6 +23,7 @@ import type { IntakeV6ModularFormContractResponse } from "./intakeV6ModularFormC
 import type {
   IntakeV6OfferHandoffRequest,
   IntakeV6OfferHandoffResponse,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6PricedQuoteDryRunResponse,
   IntakeV6PricedQuoteWriteRequest,
   IntakeV6PricedQuoteWriteResponse,
@@ -35,6 +36,8 @@ export type {
   IntakeV6CommercialTotals,
   IntakeV6OfferHandoffRequest,
   IntakeV6OfferHandoffResponse,
+  IntakeV6LogicalListLineTrace,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6PricedQuoteBlocker,
   IntakeV6PricedQuoteDryRunResponse,
   IntakeV6PricedQuoteWriteRequest,
@@ -58,9 +61,82 @@ export type IntakeV6CommercialSpineStateResponse = Omit<
 > & {
   is_v6_quote: boolean;
   snapshot_v2?: Record<string, unknown>;
+  snapshot_authoritative_offer?: Record<string, unknown> | null;
+  pricing_review_read_model?: Record<string, unknown> | null;
   v6_order_conversion: Record<string, unknown>;
   v6_quote_to_order_enabled: boolean;
 };
+
+export interface IntakeV6RuntimeCaptureReadModelField {
+  field_key: string;
+  runtime_source: string;
+  product_truth_path: string;
+  state: string;
+  confirmation_rule: string;
+  blockers: string[];
+  ready_for_product_truth: boolean;
+}
+
+export interface IntakeV6RuntimeCaptureReadModelBlocker {
+  field_key: string;
+  blockers: string[];
+  state: string;
+  /** Additive fail-closed / backbone compatibility fields (optional). */
+  blocker_code?: string | null;
+  message?: string | null;
+  severity?: string | null;
+  blocks?: string[];
+  owning_component?: string | null;
+}
+
+export interface IntakeV6RuntimeCaptureReadModelResponse {
+  read_only: boolean;
+  workspace_id: string;
+  workspace_record_id: string;
+  workspace_code: string;
+  root_template_code: string | null;
+  product_binding_template_code: string | null;
+  read_model_version: string;
+  fields: IntakeV6RuntimeCaptureReadModelField[];
+  blockers: IntakeV6RuntimeCaptureReadModelBlocker[];
+  downstream_write_intent: Record<string, boolean>;
+  notes: string[];
+}
+
+export interface IntakeV6ProductTruthPromotionPlannerEntry {
+  entry_key: string;
+  field_key: string;
+  runtime_source: string;
+  product_truth_path: string;
+  state: string;
+  value_status: string;
+  promotion_allowed: boolean;
+  reason: string;
+  blockers: string[];
+  identity_key?: string;
+}
+
+export interface IntakeV6ProductTruthPromotionPlannerBlocker {
+  field_key: string;
+  identity_key?: string;
+  blockers: string[];
+  state: string;
+}
+
+export interface IntakeV6ProductTruthPromotionPlannerResponse {
+  read_only: boolean;
+  workspace_id: string;
+  workspace_record_id: string;
+  workspace_code: string;
+  root_template_code: string | null;
+  product_binding_template_code: string | null;
+  planner_version: string;
+  eligible_entries: IntakeV6ProductTruthPromotionPlannerEntry[];
+  blocked_entries: IntakeV6ProductTruthPromotionPlannerEntry[];
+  blockers: IntakeV6ProductTruthPromotionPlannerBlocker[];
+  downstream_write_intent: Record<string, boolean>;
+  notes: string[];
+}
 
 function parseIntakeV6ApiErrorMessage(status: number, raw: string): string {
   if (!raw.trim()) return `Request failed (${status})`;
@@ -103,6 +179,11 @@ export async function createIntakeV6Workspace(body: {
   client_name?: string;
   job_title?: string;
   intake_request_code?: string;
+  analyzer_mode?: "analyzer_first" | "template_hint" | "template_locked";
+  template_hint_code?: string;
+  selected_template_code?: string;
+  offer_method?: string;
+  source?: string;
 }): Promise<IntakeV4WorkspaceResponse> {
   return requestIntakeV6Json(`${intakeV6ApiBase()}/workspaces`, {
     method: "POST",
@@ -115,6 +196,8 @@ export async function ensureIntakeV6WorkspaceForIntakeRequest(
   intakeRequestCode: string,
   options: {
     offer_method?: string;
+    analyzer_mode?: "analyzer_first" | "template_hint" | "template_locked";
+    template_hint_code?: string;
     selected_template_code?: string;
     source?: string;
   } = {},
@@ -154,6 +237,44 @@ export async function saveIntakeV6FinishSetup(
   });
 }
 
+export async function saveIntakeV6ProductCompositionConfirmation(
+  workspaceId: string,
+  body: {
+    confirmed: boolean;
+    items?: Array<Record<string, unknown>>;
+    operator_note?: string | null;
+  },
+): Promise<IntakeV4WorkspaceResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/product-composition-confirmation`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+}
+
+export async function saveIntakeV6OfferScope(
+  workspaceId: string,
+  body: {
+    mode: "full_product" | "component_subset";
+    sold_modules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
+    confirmed: boolean;
+    operator_note?: string | null;
+    dependency_confirmation_codes?: string[];
+  },
+): Promise<IntakeV4WorkspaceResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/offer-scope`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+}
+
 export async function getIntakeV6TaskPreview(
   workspaceId: string,
   finishDraft?: Partial<IntakeV4FinishSetup>,
@@ -177,6 +298,14 @@ export async function getIntakeV6MaterialBreakdown(
 ): Promise<import("./intakeV4Api").IntakeV4MaterialBreakdownResponse> {
   return requestIntakeV6Json(
     `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/material-breakdown`,
+  );
+}
+
+export async function getIntakeV6LogicalListReadModel(
+  workspaceId: string,
+): Promise<IntakeV6LogicalListReadModelResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/logical-list-read-model`,
   );
 }
 
@@ -241,6 +370,22 @@ export async function getIntakeV6TemplateFormContract(
 ): Promise<IntakeV4TemplateFormContractResponse> {
   return requestIntakeV6Json(
     `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/template-form-contract`,
+  );
+}
+
+export async function getIntakeV6RuntimeCaptureReadModel(
+  workspaceId: string,
+): Promise<IntakeV6RuntimeCaptureReadModelResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/runtime-capture-read-model`,
+  );
+}
+
+export async function getIntakeV6ProductTruthPromotionPlanner(
+  workspaceId: string,
+): Promise<IntakeV6ProductTruthPromotionPlannerResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/product-truth-promotion-planner`,
   );
 }
 

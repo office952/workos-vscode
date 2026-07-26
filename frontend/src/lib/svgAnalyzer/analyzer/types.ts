@@ -1,4 +1,5 @@
 import type { ArtworkComplexityReport } from './artworkComplexityAssessment'
+import type { ClosedContourDetectionReport } from '../closed-contour/closedContourTypes'
 import type { SvgPartExtractionReport } from '../part-extractor/partTypes'
 import type { NestingReport } from '../nesting/nestingTypes'
 import type {
@@ -125,6 +126,10 @@ export interface LayerAnalysis {
   layerKind?: LayerKind
   layerOrigin?: string | null
   roleReason?: string | null
+  /** Semantic SVG group ids preserved across color clustering. */
+  sourceGroupIds?: string[]
+  /** Drawable element ids owned by this layer. */
+  elementIds?: string[]
   autoRole: LayerAutoRole
   autoConfidence: ConfidenceLevel
   autoRoleCandidates: LayerRoleCandidate[]
@@ -197,6 +202,8 @@ export interface SvgAnalysisLayer {
   layerKind?: LayerKind
   layerOrigin?: string | null
   roleReason?: string | null
+  sourceGroupIds?: string[]
+  elementIds?: string[]
   autoRole: LayerAutoRole
   autoConfidence: ConfidenceLevel
   autoRoleCandidates: LayerRoleCandidate[]
@@ -271,6 +278,8 @@ export interface SvgAnalysisJson {
   sourceFileName: string
   sourceFileSize: number
   artworkComplexity?: ArtworkComplexityReport
+  /** Operator panel candidates — propose only; never auto-confirm product role. */
+  closedContourCandidates?: ClosedContourDetectionReport
   file: SvgAnalysisFile
   document: SvgAnalysisDocument
   geometry: SvgAnalysisGeometry

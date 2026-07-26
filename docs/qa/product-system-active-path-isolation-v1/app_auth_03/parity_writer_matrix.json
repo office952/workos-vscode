@@ -1,0 +1,174 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "inventory_date": "2026-07-15",
+  "total_writers": 14,
+  "observe_only": true,
+  "canonical_assignment_writer": "execution_task_assignment_service.assign_plan_task",
+  "writers": [
+    {
+      "id": "WR-REGISTRY-SKILL-AUTH",
+      "domain": "competente/autorizari registry",
+      "layer": "backend",
+      "files": ["backend/services/operational_registry_service.py", "backend/routers/operational_registry.py"],
+      "writes": ["employee_skill_authorizations", "employee_workcenter_authorizations", "employee_resource_authorizations"],
+      "api": "PUT /api/v1/operational-registry/employees/{id}/authorizations",
+      "authority": "CANONICAL_REGISTRY",
+      "parity_domains": ["P2", "P3"],
+      "future_policy": "ALLOW — canonical target"
+    },
+    {
+      "id": "WR-REGISTRY-OP-EMPLOYEE",
+      "domain": "mapari explicite operation-employee",
+      "layer": "backend",
+      "files": ["backend/services/operational_registry_service.py"],
+      "writes": ["operation_employee_authorizations"],
+      "api": "PUT operational-registry operation employee lists",
+      "authority": "CANONICAL_EXPLICIT_MAPPING",
+      "parity_domains": ["P6"],
+      "future_policy": "ALLOW with human confirmation gate"
+    },
+    {
+      "id": "WR-ENTITIES-EMPLOYEE-SKILLS-JSON",
+      "domain": "legacy JSON competente",
+      "layer": "backend",
+      "files": ["backend/routers/employees.py"],
+      "writes": ["employees.skills JSON column"],
+      "api": "PUT/PATCH /api/v1/entities/employees",
+      "authority": "TRANSITIONAL_LEGACY",
+      "parity_domains": ["P2"],
+      "future_policy": "FREEZE after Gate I7 — report all writes"
+    },
+    {
+      "id": "WR-ASSIGN-CANONICAL",
+      "domain": "alocare canonica",
+      "layer": "backend",
+      "files": ["backend/services/execution_task_assignment_service.py"],
+      "writes": ["execution_plan.tasks_json assigned_employee_id", "execution_reality.tasks_json sync"],
+      "api": "via assign_plan_task",
+      "callers": [
+        "backend/routers/execution.py",
+        "backend/services/employee_mobile_tasks_service.py",
+        "operator manager assign path"
+      ],
+      "authority": "CANONICAL_ASSIGNMENT",
+      "parity_domains": ["P9"],
+      "future_policy": "ALLOW — single writer target"
+    },
+    {
+      "id": "WR-MOBILE-CLAIM-ASSIGN",
+      "domain": "alocare Mobile claim/start",
+      "layer": "backend",
+      "files": ["backend/services/employee_mobile_tasks_service.py"],
+      "writes": ["assigned_employee_id via assign_plan_task"],
+      "authority": "CANONICAL_DELEGATED",
+      "parity_domains": ["P9"],
+      "future_policy": "ALLOW — must route through canonical service"
+    },
+    {
+      "id": "WR-OPERATOR-ASSIGN",
+      "domain": "alocare manager operator",
+      "layer": "backend",
+      "files": ["backend/routers/operator_tasks.py", "backend/routers/execution.py"],
+      "writes": ["assigned_employee_id"],
+      "authority": "CANONICAL_DELEGATED",
+      "parity_domains": ["P9"],
+      "future_policy": "ALLOW — verify canonical delegation"
+    },
+    {
+      "id": "WR-EXECUTION-REALITY-START",
+      "domain": "sesiuni Start",
+      "layer": "backend",
+      "files": ["backend/services/execution_reality_service.py"],
+      "writes": ["execution_reality.tasks_json session state"],
+      "api": "start_task / end_task",
+      "authority": "CANONICAL_EXECUTION_REALITY",
+      "parity_domains": ["P10"],
+      "future_policy": "ALLOW — canonical Start/Complete owner A17"
+    },
+    {
+      "id": "WR-MOBILE-START-COMPLETE",
+      "domain": "Mobile Start/Complete",
+      "layer": "backend",
+      "files": ["backend/services/employee_mobile_tasks_service.py"],
+      "writes": ["delegates to ExecutionRealityService"],
+      "authority": "CANONICAL_DELEGATED",
+      "parity_domains": ["P10"],
+      "future_policy": "ALLOW"
+    },
+    {
+      "id": "WR-OPERATOR-SESSION",
+      "domain": "Operator Start/Pause/Complete",
+      "layer": "backend",
+      "files": ["backend/routers/operator_tasks.py"],
+      "writes": ["ExecutionReality via service"],
+      "authority": "CANONICAL_DELEGATED",
+      "parity_domains": ["P10"],
+      "future_policy": "ALLOW"
+    },
+    {
+      "id": "WR-DIRECT-TASKS-JSON",
+      "domain": "scrieri directe tasks_json",
+      "layer": "backend",
+      "files": ["various services/scripts"],
+      "writes": ["execution_plan.tasks_json", "execution_reality.tasks_json direct mutation"],
+      "authority": "NON_CANONICAL",
+      "parity_domains": ["P9", "P10"],
+      "future_policy": "REPORT — interzis ulterior"
+    },
+    {
+      "id": "WR-SEED-OPERATIONAL",
+      "domain": "seed registry + legacy JSON",
+      "layer": "backend",
+      "files": ["backend/seeds/seed_operational_workforce_registry.py"],
+      "writes": ["registry tables + employees.skills JSON"],
+      "authority": "FIXTURE_ONLY",
+      "parity_domains": ["P2", "P3"],
+      "future_policy": "DEV/TEST only"
+    },
+    {
+      "id": "WR-TABLET-DEMO",
+      "domain": "tablet demo actions",
+      "layer": "frontend",
+      "files": ["frontend/src/pages/TabletView.tsx"],
+      "writes": ["via operator performAction demo path"],
+      "authority": "DEMO_NON_CANONICAL",
+      "parity_domains": ["P8", "P10"],
+      "future_policy": "RETIRE or wrap kiosk canonical"
+    },
+    {
+      "id": "WR-ATTENDANCE-PONTAJ",
+      "domain": "pontaj",
+      "layer": "backend",
+      "files": ["attendance models/routers"],
+      "writes": ["attendance records separate from execution"],
+      "authority": "CANONICAL_ATTENDANCE_SEPARATE",
+      "parity_domains": ["P11"],
+      "future_policy": "ALLOW — separate domain A21"
+    },
+    {
+      "id": "WR-MOCK-DATA-SEED",
+      "domain": "frontend mock seed",
+      "layer": "frontend",
+      "files": ["frontend/src/hooks/useBackendData.ts", "frontend/src/lib/mockData.ts"],
+      "writes": ["DB seed from mockData when VITE_ENABLE_MOCK_DATA"],
+      "authority": "TRANSITIONAL_DEV",
+      "parity_domains": ["P5", "P8"],
+      "future_policy": "DEV only — track LEGACY_FALLBACK_USED"
+    }
+  ],
+  "writer_observation_fields": [
+    "writer_id",
+    "source_path",
+    "actor_employee_id",
+    "actor_user_id",
+    "target_employee_id",
+    "previous_value",
+    "new_value",
+    "timestamp_utc",
+    "operation_code",
+    "order_id",
+    "task_id",
+    "deviation_from_canonical_service"
+  ]
+}

@@ -30,7 +30,7 @@ export default function IntakeV6EdgeCantOperationPreviewSection({
         {candidates.map((candidate) => (
           <li
             key={candidate.candidate_key}
-            className="rounded border border-[#2A3548]/60 px-3 py-2"
+            className="rounded border border-wo-border-strong/60 px-3 py-2"
             data-testid={`${testIdPrefix}-row-${candidate.operation_key}`}
           >
             <p className="font-medium text-slate-200">{candidate.title}</p>

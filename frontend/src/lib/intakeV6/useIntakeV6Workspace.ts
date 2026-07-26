@@ -8,7 +8,7 @@ import {
 } from "./intakeV6ApiAdapter";
 import { IntakeV6ApiError } from "./intakeV6Api";
 import type { IntakeV6FinishSetup } from "./intakeV6Api";
-import { saveIntakeV6FinishSetup } from "./intakeV6Api";
+import { saveIntakeV6FinishSetup, saveIntakeV6OfferScope, saveIntakeV6ProductCompositionConfirmation } from "./intakeV6Api";
 import { isIntakeRequestRouteKey } from "@/lib/volumetricIntakeRoute";
 import { pickIntakeV6SvgFileFromFileList } from "./intakeV6SvgUploadFlow";
 import {
@@ -26,7 +26,13 @@ import {
   layerChipsFromLayerRoleConfirmation,
   confirmAllSuggestedLayerRoles,
   layerRoleConfirmationToV6Setup,
+  type IntakeV6LayerRoleSetup,
 } from "./intakeV6LayerRoleBridge";
+import {
+  buildClientAnalyzerStateFromSvgSourceText,
+  needsClientAnalyzerHydrationFromServerUpload,
+  readSvgSourceMetaFromPayload,
+} from "./intakeV6ServerUploadHydrationBridge";
 import type { IntakeV6LoadErrorCode, IntakeV6StepId } from "./intakeV6Contracts";
 import { buildIntakeV6OperatorPath } from "./intakeV6OperatorRoutes";
 import {
@@ -195,6 +201,84 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     };
   }, [workspaceId]);
 
+  /** Server upload → Page 1: run canonical client analyzer when source text exists without nest2 report. */
+  useEffect(() => {
+    const payload = state.workspace?.payload as Record<string, unknown> | undefined;
+    if (
+      !needsClientAnalyzerHydrationFromServerUpload(payload, Boolean(state.analyzerReport)) ||
+      state.analyzerStatus === "analyzing" ||
+      state.phase === "analyzing_svg" ||
+      state.phase === "loading"
+    ) {
+      return;
+    }
+    const meta = readSvgSourceMetaFromPayload(payload);
+    if (!meta) return;
+
+    const runId = analysisRunRef.current + 1;
+    analysisRunRef.current = runId;
+    let cancelled = false;
+
+    dispatch({
+      type: "ANALYZER_START",
+      runId,
+      fileName: meta.fileName,
+      fileSizeBytes: meta.fileSizeBytes,
+    });
+
+    void (async () => {
+      try {
+        const setupRaw = payload?.layer_role_setup;
+        const layerRoleSetup =
+          setupRaw != null && typeof setupRaw === "object" && !Array.isArray(setupRaw)
+            ? (setupRaw as IntakeV6LayerRoleSetup)
+            : null;
+        const hydrated = buildClientAnalyzerStateFromSvgSourceText({
+          svgText: meta.svgText,
+          fileName: meta.fileName,
+          fileSizeBytes: meta.fileSizeBytes,
+          layerRoleSetup,
+        });
+        if (cancelled || analysisRunRef.current !== runId || !mountedRef.current) return;
+        const localFileHash = await sha256HexFromText(hydrated.svgSource ?? meta.svgText);
+        if (cancelled || analysisRunRef.current !== runId || !mountedRef.current) return;
+        dispatch({
+          type: "ANALYZER_READY",
+          runId,
+          fileName: hydrated.svg.fileName,
+          fileSizeBytes: hydrated.svg.fileSizeBytes,
+          svgSource: hydrated.svgSource ?? meta.svgText,
+          previewSource: hydrated.svg.previewSource,
+          localFileHash,
+          report: hydrated.analyzerReport,
+          layerRoleConfirmation: hydrated.layerRoleConfirmation,
+          layerChips: hydrated.layerChips,
+          parseWarning: null,
+        });
+      } catch (err) {
+        if (cancelled || analysisRunRef.current !== runId || !mountedRef.current) return;
+        dispatch({
+          type: "ANALYZER_ERROR",
+          runId,
+          message:
+            err instanceof Error
+              ? err.message
+              : "Hidratarea analizei client din upload-ul server a eșuat.",
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    state.workspace?.id,
+    state.workspace?.payload,
+    state.analyzerReport,
+    state.analyzerStatus,
+    state.phase,
+  ]);
+
   const setStep = useCallback(
     (step: IntakeV6StepId) => {
       dispatch({ type: "SET_STEP", step });
@@ -298,24 +382,29 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     [state.layerRoleConfirmation],
   );
 
-  const confirmAllLayerRoles = useCallback(() => {
-    if (!state.layerRoleConfirmation) return;
+  const confirmAllLayerRoles = useCallback((): NonNullable<typeof state.layerRoleConfirmation> | null => {
+    if (!state.layerRoleConfirmation) return null;
     const next = confirmAllSuggestedLayerRoles(state.layerRoleConfirmation, state.analyzerReport);
     dispatch({
       type: "LAYER_ROLE_CONFIRMATION_UPDATE",
       layerRoleConfirmation: next,
       layerChips: layerChipsFromLayerRoleConfirmation(next),
     });
+    return next;
   }, [state.analyzerReport, state.layerRoleConfirmation]);
 
   const persistAnalysisBundle = useCallback(
-    async (options?: { advanceToReview?: boolean }) => {
+    async (options?: {
+      advanceToReview?: boolean;
+      layerRoleConfirmation?: NonNullable<typeof state.layerRoleConfirmation>;
+    }) => {
+      const confirmation = options?.layerRoleConfirmation ?? state.layerRoleConfirmation;
       const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
       if (
         !targetWorkspaceId ||
         !state.svgSource ||
         !state.analyzerReport ||
-        !state.layerRoleConfirmation ||
+        !confirmation ||
         !state.svg?.fileName
       ) {
         return false;
@@ -323,7 +412,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
 
       dispatch({ type: "PERSIST_START" });
       try {
-        const layerSetup = layerRoleConfirmationToV6Setup(state.layerRoleConfirmation);
+        const layerSetup = layerRoleConfirmationToV6Setup(confirmation);
         const workspace = await persistIntakeV6AnalysisBundle(targetWorkspaceId, {
           file_name: state.svg.fileName,
           file_size_bytes: state.svg.fileSizeBytes,
@@ -414,23 +503,88 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     async (finishSetup: IntakeV6FinishSetup) => {
       const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
       if (!targetWorkspaceId) {
+        const message = "Workspace V6 indisponibil.";
+        dispatch({ type: "PERSIST_ERROR", message });
+        return { ok: false as const, message };
+      }
+      dispatch({ type: "PERSIST_START" });
+      try {
+        const workspace = await saveIntakeV6FinishSetup(targetWorkspaceId, finishSetup);
+        if (!mountedRef.current) return { ok: false as const, message: "Workspace demontat în timpul salvării." };
+        cacheIntakeV6Workspace(workspace);
+        dispatch({ type: "FINISH_SETUP_PERSIST_SUCCESS", workspace });
+        return { ok: true as const, workspace };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Salvare finisaje esuata.";
+        if (!mountedRef.current) return { ok: false as const, message };
+        dispatch({
+          type: "PERSIST_ERROR",
+          message,
+        });
+        return { ok: false as const, message };
+      }
+    },
+    [state.workspace?.id],
+  );
+
+  const confirmProductComposition = useCallback(
+    async (items?: Array<Record<string, unknown>>) => {
+      const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
+      if (!targetWorkspaceId) {
         dispatch({ type: "PERSIST_ERROR", message: "Workspace V6 indisponibil." });
         return null;
       }
       dispatch({ type: "PERSIST_START" });
       try {
-        const workspace = await saveIntakeV6FinishSetup(targetWorkspaceId, finishSetup);
+        const workspace = await saveIntakeV6ProductCompositionConfirmation(targetWorkspaceId, {
+          confirmed: true,
+          items,
+        });
         if (!mountedRef.current) return null;
         cacheIntakeV6Workspace(workspace);
-        dispatch({ type: "FINISH_SETUP_PERSIST_SUCCESS", workspace });
+        dispatch({ type: "PERSIST_SUCCESS", workspace });
         return workspace;
       } catch (err) {
         if (!mountedRef.current) return null;
         dispatch({
           type: "PERSIST_ERROR",
-          message: err instanceof Error ? err.message : "Salvare finisaje esuata.",
+          message: err instanceof Error ? err.message : "Confirmare compozitie esuata.",
         });
         return null;
+      }
+    },
+    [state.workspace?.id],
+  );
+
+  const saveOfferScope = useCallback(
+    async (input: {
+      mode: "full_product" | "component_subset";
+      soldModules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
+      confirmed: boolean;
+      dependencyConfirmationCodes?: string[];
+    }) => {
+      const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
+      if (!targetWorkspaceId) {
+        dispatch({ type: "PERSIST_ERROR", message: "Workspace V6 indisponibil." });
+        return false;
+      }
+      dispatch({ type: "PERSIST_START" });
+      try {
+        const workspace = await saveIntakeV6OfferScope(targetWorkspaceId, {
+          mode: input.mode,
+          sold_modules: input.soldModules,
+          confirmed: input.confirmed,
+          dependency_confirmation_codes: input.dependencyConfirmationCodes,
+        });
+        cacheIntakeV6Workspace(workspace);
+        dispatch({ type: "PERSIST_SUCCESS", workspace });
+        return true;
+      } catch (err) {
+        dispatch({
+          type: "PERSIST_ERROR",
+          message: err instanceof Error ? err.message : "Salvare scope ofertă eșuată.",
+        });
+        return false;
       }
     },
     [state.workspace?.id],
@@ -467,6 +621,9 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     updateLayerRole,
     confirmAllLayerRoles,
     continueFromAnalyzer,
+    persistAnalysisBundle,
+    confirmProductComposition,
+    saveOfferScope,
     saveFinishSetup,
     canImportSvg,
     canContinueFromAnalyzer,

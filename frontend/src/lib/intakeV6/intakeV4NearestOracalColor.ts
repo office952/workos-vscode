@@ -51,14 +51,9 @@ export function applyNearestOracal651ToLetterGroup<T extends {
   face_oracal_name?: string | null;
 }>(group: T): T {
   if (group.face_oracal_code) return group;
-  if (group.face_finish_type !== "oracal_651" && group.face_finish_type !== "none") return group;
+  if (group.face_finish_type !== "oracal_651") return group;
   const nearest = findNearestOracal651Color(group.source_fill_color);
-  if (!nearest) {
-    return {
-      ...group,
-      face_finish_type: group.face_finish_type === "none" ? "oracal_651" : group.face_finish_type,
-    };
-  }
+  if (!nearest) return group;
   return {
     ...group,
     face_finish_type: "oracal_651",

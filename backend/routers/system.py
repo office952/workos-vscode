@@ -307,6 +307,42 @@ async def get_system_version() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Local frontend compatibility identity (no DB)
+# ---------------------------------------------------------------------------
+
+# Contract consumed by Vite DEV probes. Stale backends that lack this route
+# fail loud instead of silently stripping unknown finish_setup fields.
+LOCAL_COMPAT_CONTRACT = "workos-frontend-local-compat/v1"
+LOCAL_COMPAT_CAPABILITIES: tuple[str, ...] = (
+    "system.version",
+    "system.local_compatibility",
+    "intake_v6.workspaces",
+    "openapi.finish_setup_schema",
+)
+
+
+@router.get("/local-compatibility")
+async def get_local_compatibility() -> dict[str, Any]:
+    """Public read-only backend identity for local DEV compatibility checks.
+
+    No database. No secrets. Not a product-domain contract.
+    """
+    version = resolve_version_payload()
+    return {
+        "service": "workos-backend",
+        "contract": LOCAL_COMPAT_CONTRACT,
+        "api_version": version.get("release_version"),
+        "release_label": version.get("release_label"),
+        "git_commit": version.get("git_commit"),
+        "environment": version.get("environment")
+        or os.getenv("ENVIRONMENT")
+        or os.getenv("APP_ENV"),
+        "capabilities": list(LOCAL_COMPAT_CAPABILITIES),
+        "observed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Sprint #40 — GET /api/v1/system/health
 # ---------------------------------------------------------------------------
 

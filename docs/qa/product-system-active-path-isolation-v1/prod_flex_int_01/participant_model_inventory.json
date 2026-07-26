@@ -1,0 +1,22 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "operation_participant_cardinality": "0..N sessions in execution_reality.tasks_json",
+  "plan_assignee_cardinality": "0..1 assigned_employee_id",
+  "models_found": {
+    "participants_array": false,
+    "task_participants_table": false,
+    "collaborators_helpers": "session fields role + session_type only",
+    "employee_allocations": false
+  },
+  "roles_supported_in_sessions": ["primary", "helper"],
+  "session_types": ["work", "assist"],
+  "dynamic_entry_exit": "BACKEND_YES — multiple start_task calls; no mobile join flow",
+  "participant_history": "IMPLICIT — session list in tasks_json",
+  "overwrite_risk": "MEDIUM — single assignee can disagree with multi-session reality",
+  "secondary_invisible_risk": "LOW for blueprint active_workers; cost/time aggregates sessions",
+  "execution_reality_link": "CANONICAL for active_workers, participants_count, total_logged_minutes",
+  "mobile_start_always_primary": true,
+  "available_pool_blocks_when_other_active": true,
+  "verdict": "PARTIAL — infrastructure exists; productized participation path missing"
+}

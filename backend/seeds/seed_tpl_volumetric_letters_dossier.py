@@ -389,7 +389,7 @@ def _readiness_blocks() -> List[Dict[str, Any]]:
             "audience": "internal",
             "approval_status": "approved",
             "template_text": (
-                "VIZUAL FAȚĂ: plexi/acrilic; opțional Oracal/vinyl. "
+                "VIZUAL FAȚĂ: plexiglas 3mm PMMA - opal; opțional Oracal/vinyl. "
                 "VOLUM ALUMINIU: profil lateral variantă depth. "
                 "CAPAC SPATE: Forex 10 mm. SISTEM LED: module + PSU. "
                 "FINISAJ: vopsea RAL tuburi întregi + consumabile. "
@@ -470,14 +470,14 @@ def _sections() -> Dict[str, Any]:
             "family_id": FAMILY_ID,
             "family_name": "Litere volumetrice luminoase",
             "purpose": (
-                "Template pentru litere volumetrice luminoase cu față plexi/acrilic, "
+                "Template pentru litere volumetrice luminoase cu față plexiglas 3mm PMMA - opal, "
                 "cant aluminiu, spate Forex, LED, finisaj și opțiuni de montaj."
             ),
             "owner_valid_active": True,
             "source_notes": SOURCE_NOTES,
         },
         "components": [
-            {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexi/acrilic, CNC, vinyl opțional"},
+            {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexiglas 3mm PMMA - opal, CNC, vinyl opțional"},
             {"id": "comp_lateral_litere", "label": "VOLUM ALUMINIU", "role": "profil lateral, forming, bonding"},
             {"id": "comp_spate_litere", "label": "CAPAC SPATE", "role": "Forex 10 mm, CNC spate, back bevel opțional"},
             {"id": "comp_led_litere", "label": "SISTEM LED", "role": "module + PSU + cablaj"},

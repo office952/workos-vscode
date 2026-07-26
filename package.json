@@ -4,6 +4,10 @@
   "packageManager": "pnpm@8.10.0",
   "scripts": {
     "dev:stack": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1",
+    "dev:backend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-backend.ps1",
+    "dev:frontend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-frontend.ps1",
+    "diag:local-listeners": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workos-local-listeners.ps1",
+    "test:startup-contract": "node --test scripts/canonical_startup_contract.test.mjs",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint --quiet ./src",
@@ -20,7 +24,10 @@
     "test:e2e:commercial": "playwright test e2e/commercial-chain-live.spec.ts e2e/commercial-chain-warn-ack.spec.ts e2e/commercial-spine-demo.spec.ts --workers=1",
     "test:e2e:workintake-finish": "playwright test e2e/work-intake-v2-to-quote-finish-display.spec.ts",
     "validate:color-registry": "node scripts/validate-color-registry-import.mjs src/lib/colorRegistry/import/color-registry-import.template.csv",
-    "generate:color-registry": "node scripts/generate-color-registry.mjs"
+    "generate:color-registry": "node scripts/generate-color-registry.mjs",
+    "template-lifecycle:validate": "node scripts/template-lifecycle.mjs validate --ci",
+    "template-lifecycle:inspect": "node scripts/template-lifecycle.mjs inspect",
+    "template-lifecycle:validate:json": "node scripts/template-lifecycle.mjs validate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

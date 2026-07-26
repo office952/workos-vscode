@@ -1,0 +1,27 @@
+{
+  "task": "UI-TRUTH-01",
+  "pattern_reference": "useModuleChainData.ts — 30000ms poll, visibility not wired",
+  "recommended": {
+    "initial_check": "on app shell mount via useRuntimeHealth",
+    "polling_interval_ms": 45000,
+    "polling_range": "30000-60000",
+    "manual_refresh": true,
+    "visibility_refresh": true,
+    "timeout_ms": 5000,
+    "retry_backoff": "exponential 2s 4s 8s max 3 attempts on failure",
+    "stale_threshold_seconds": 120,
+    "last_successful_timestamp": "display health.generated_at or client lastOkAt",
+    "cleanup_on_unmount": "clearInterval + AbortController abort",
+    "cancellation": "AbortController per fetch"
+  },
+  "avoid": [
+    "Sub-second polling",
+    "Duplicate polls in banner and ModuleChain without shared hook",
+    "Polling diagnostics for unauthorized users"
+  ],
+  "shared_hook_strategy": "Extract useRuntimeHealth shared by EnvironmentBanner; ModuleChain may adopt later (out of scope for 01A unless trivial re-export)",
+  "manual_refresh": {
+    "ui": "RefreshCw icon button on banner strip",
+    "aria": "Reîmprospătează starea runtime"
+  }
+}

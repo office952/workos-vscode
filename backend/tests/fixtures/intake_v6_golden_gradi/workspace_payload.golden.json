@@ -1,0 +1,890 @@
+{
+  "schema_version": "1.0.0",
+  "product_binding": {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "template_id": 8,
+    "template_label": "Litere volumetrice",
+    "product_family": "litere_volumetrice",
+    "product_family_name": "Litere volumetrice",
+    "bound_at": "2026-07-16T08:55:30.817407Z"
+  },
+  "intake_request_code": null,
+  "offer_method": null,
+  "analyzer_mode": "analyzer_first",
+  "template_hint_code": null,
+  "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "source": "gradi_curat_e2e_diagnostic_v1",
+  "work_intake_context": {
+    "offer_method": null,
+    "analyzer_mode": "analyzer_first",
+    "template_hint_code": null,
+    "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "source": "gradi_curat_e2e_diagnostic_v1",
+    "selected_template_is_initial": true,
+    "product_truth_final_decided_later": true
+  },
+  "svg_source": {
+    "file_name": "gradi-curat.svg",
+    "file_size_bytes": 27173,
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+    "upload_status": "analyzed"
+  },
+  "svg": {
+    "selected_layer_refs": [
+      {
+        "layer_id": "pseudo:maria",
+        "role": "vector_litere",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      },
+      {
+        "layer_id": "pseudo:soare",
+        "role": "vector_litere",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      },
+      {
+        "layer_id": "pseudo:ana",
+        "role": "vector_litere",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      },
+      {
+        "layer_id": "pseudo:gradinita",
+        "role": "vector_litere",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      },
+      {
+        "layer_id": "logo_instance_001",
+        "role": "vector_logo",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      },
+      {
+        "layer_id": "logo_instance_002",
+        "role": "vector_logo",
+        "source": "operator_confirmed_layer_role",
+        "confirmed": true
+      }
+    ]
+  },
+  "quote_geometry": {
+    "letter_perimeter_m": 21.1675,
+    "total_letter_perimeter_ml": 21.1675,
+    "return_material_perimeter_ml": 29.5398,
+    "face_cutting_perimeter_ml": 24.6488,
+    "cutting_perimeter_ml": 24.6488,
+    "hole_perimeter_ml": 3.4812,
+    "face_area_m2": 1.2638,
+    "artwork_area_m2": 0.8005,
+    "artwork_boxes": [
+      {
+        "layer_key": "logo_instance_001",
+        "layer_name": "Logo 1",
+        "width_mm": 667.2126344054284,
+        "height_mm": 599.8535337617757,
+        "area_m2": 0.4002
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "layer_name": "Logo 2",
+        "width_mm": 667.2126344054288,
+        "height_mm": 599.8535337617757,
+        "area_m2": 0.4002
+      }
+    ],
+    "letter_count": 19,
+    "real_letters_count": 19,
+    "inner_holes_count": 8,
+    "cutting_contours_count": 28,
+    "material_piece_count": 19,
+    "part_classification_confidence": "high",
+    "part_classification_warnings": [],
+    "primary_letters_layer_key": "pseudo:maria",
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "geometry_source": "nest2_face_parts_outer",
+    "confirmed": true,
+    "outer_letter_perimeter_ml": 21.1675,
+    "inner_hole_letter_perimeter_ml": 3.4812,
+    "letter_return_perimeter_ml": 24.6488,
+    "artwork_return_perimeter_ml": 4.891,
+    "cnc_cutting_perimeter_ml": 24.6488,
+    "led_perimeter_ml": 21.1675,
+    "led_perimeter_policy": "outer_face_letters_excludes_holes_and_artwork",
+    "artwork_piece_count": 2,
+    "volumetric_piece_count": 21,
+    "artwork_return_layers": [
+      {
+        "layer_key": "logo_instance_001",
+        "layer_name": "Logo 1",
+        "return_finish_type": "white_aluminum",
+        "return_depth_mm": 60.0,
+        "return_perimeter_ml": 2.4455,
+        "execution_type": "print_laminate"
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "layer_name": "Logo 2",
+        "return_finish_type": "white_aluminum",
+        "return_depth_mm": 60.0,
+        "return_perimeter_ml": 2.4455,
+        "execution_type": "print_laminate"
+      }
+    ]
+  },
+  "layer_role_setup": {
+    "confirmation_status": "complete",
+    "layers": [
+      {
+        "layer_key": "pseudo:maria",
+        "layer_id": "pseudo:maria",
+        "layer_name": "pseudo maria (blue)",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "face",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "pseudo:soare",
+        "layer_id": "pseudo:soare",
+        "layer_name": "pseudo soare (red)",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "face",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "pseudo:ana",
+        "layer_id": "pseudo:ana",
+        "layer_name": "pseudo ana (green)",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "face",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "pseudo:gradinita",
+        "layer_id": "pseudo:gradinita",
+        "layer_name": "pseudo gradinita (orange)",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "face",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "logo_instance_001",
+        "layer_id": "logo_instance_001",
+        "layer_name": "Logo 1",
+        "auto_role": "printed_artwork",
+        "auto_confidence": "high",
+        "confirmed_role": "printed_artwork",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "layer_id": "logo_instance_002",
+        "layer_name": "Logo 2",
+        "auto_role": "printed_artwork",
+        "auto_confidence": "high",
+        "confirmed_role": "printed_artwork",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      }
+    ],
+    "layer_bindings": [
+      {
+        "layer_key": "logo_instance_001",
+        "source_layer_name": "Logo 1",
+        "detected_kind": null,
+        "suggested_semantic_role": "printed_artwork",
+        "confirmed_semantic_role": "printed_artwork",
+        "target_template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "binding_status": "confirmed"
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "source_layer_name": "Logo 2",
+        "detected_kind": null,
+        "suggested_semantic_role": "printed_artwork",
+        "confirmed_semantic_role": "printed_artwork",
+        "target_template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "binding_status": "confirmed"
+      }
+    ],
+    "warnings": []
+  },
+  "layer_role_review": {
+    "roles": [
+      {
+        "layer_id": "pseudo:maria",
+        "source_label": "pseudo maria (blue)",
+        "display_label": "pseudo maria (blue)",
+        "original_label": "pseudo maria (blue)",
+        "operator_role": "volumetric_letters",
+        "technical_role": "face",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "pseudo:maria"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      },
+      {
+        "layer_id": "pseudo:soare",
+        "source_label": "pseudo soare (red)",
+        "display_label": "pseudo soare (red)",
+        "original_label": "pseudo soare (red)",
+        "operator_role": "volumetric_letters",
+        "technical_role": "face",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "pseudo:soare"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      },
+      {
+        "layer_id": "pseudo:ana",
+        "source_label": "pseudo ana (green)",
+        "display_label": "pseudo ana (green)",
+        "original_label": "pseudo ana (green)",
+        "operator_role": "volumetric_letters",
+        "technical_role": "face",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "pseudo:ana"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      },
+      {
+        "layer_id": "pseudo:gradinita",
+        "source_label": "pseudo gradinita (orange)",
+        "display_label": "pseudo gradinita (orange)",
+        "original_label": "pseudo gradinita (orange)",
+        "operator_role": "volumetric_letters",
+        "technical_role": "face",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "pseudo:gradinita"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      },
+      {
+        "layer_id": "logo_instance_001",
+        "source_label": "Logo 1",
+        "display_label": "Logo 1",
+        "original_label": "Logo 1",
+        "operator_role": "volumetric_logo",
+        "technical_role": "printed_artwork",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "logo_instance_001"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      },
+      {
+        "layer_id": "logo_instance_002",
+        "source_label": "Logo 2",
+        "display_label": "Logo 2",
+        "original_label": "Logo 2",
+        "operator_role": "volumetric_logo",
+        "technical_role": "printed_artwork",
+        "role_source": "confirmed",
+        "confidence": "high",
+        "geometry_ref": {
+          "layer_key": "logo_instance_002"
+        },
+        "color_refs": [],
+        "status": "confirmed"
+      }
+    ]
+  },
+  "product_composition_recommendation": {
+    "status": "needs_confirmation",
+    "composition_type": "letters_plus_logo",
+    "source": "analyzer_rules_v1",
+    "recommended_templates": [
+      {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "role_in_composition": "letters",
+        "reason": "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+        "source_layer_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "confidence": "high",
+        "status": "suggested"
+      },
+      {
+        "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "role_in_composition": "logo_vector_atipic",
+        "reason": "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+        "source_layer_ids": [
+          "logo_instance_001",
+          "logo_instance_002"
+        ],
+        "confidence": "high",
+        "status": "suggested"
+      }
+    ],
+    "composition_items": [
+      {
+        "composition_item_id": "letters",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "component_role": "volumetric_letters",
+        "source_layer_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "source_group_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      },
+      {
+        "composition_item_id": "logo",
+        "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "component_role": "volumetric_logo",
+        "source_layer_ids": [
+          "logo_instance_001",
+          "logo_instance_002"
+        ],
+        "source_group_ids": [
+          "logo_instance_001",
+          "logo_instance_002"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      }
+    ],
+    "shared_modules_policy": {
+      "dedupe_common_operations": true,
+      "graphic_verification_scope": "assembly",
+      "file_preparation_scope": "assembly",
+      "light_test_scope": "assembly",
+      "packaging_scope": "assembly"
+    },
+    "blockers": [],
+    "warnings": [],
+    "generated_at": "2026-07-16T10:32:48.834422+00:00"
+  },
+  "product_composition_confirmed": {
+    "confirmed": true,
+    "confirmed_at": "2026-07-16T08:59:19.556301+00:00",
+    "confirmed_by": "dev@localhost",
+    "items": [
+      {
+        "composition_item_id": "letters",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "component_role": "volumetric_letters",
+        "source_layer_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "source_group_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      },
+      {
+        "composition_item_id": "logo",
+        "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "component_role": "volumetric_logo",
+        "source_layer_ids": [
+          "logo_instance_001",
+          "logo_instance_002"
+        ],
+        "source_group_ids": [
+          "logo_instance_001",
+          "logo_instance_002"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      }
+    ],
+    "operator_note": "gradi-curat e2e diagnostic confirm letters_plus_logo",
+    "source": "operator_confirmation_v1"
+  },
+  "product_truth": {
+    "components": {
+      "return_cant": {
+        "version": "v1",
+        "instances": {
+          "letter_group:pseudo:maria": {
+            "instance_key": "letter_group:pseudo:maria",
+            "source_kind": "letter_group",
+            "source_ref": {
+              "source_label": "pseudo maria (blue)",
+              "source_role": "Vector Litere",
+              "group_key": "pseudo:maria"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "pseudo:maria"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          },
+          "letter_group:pseudo:soare": {
+            "instance_key": "letter_group:pseudo:soare",
+            "source_kind": "letter_group",
+            "source_ref": {
+              "source_label": "pseudo soare (red)",
+              "source_role": "Vector Litere",
+              "group_key": "pseudo:soare"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "pseudo:soare"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          },
+          "letter_group:pseudo:ana": {
+            "instance_key": "letter_group:pseudo:ana",
+            "source_kind": "letter_group",
+            "source_ref": {
+              "source_label": "pseudo ana (green)",
+              "source_role": "Vector Litere",
+              "group_key": "pseudo:ana"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "pseudo:ana"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          },
+          "letter_group:pseudo:gradinita": {
+            "instance_key": "letter_group:pseudo:gradinita",
+            "source_kind": "letter_group",
+            "source_ref": {
+              "source_label": "pseudo gradinita (orange)",
+              "source_role": "Vector Litere",
+              "group_key": "pseudo:gradinita"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "pseudo:gradinita"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          },
+          "artwork_layer:logo_instance_001": {
+            "instance_key": "artwork_layer:logo_instance_001",
+            "source_kind": "artwork_layer",
+            "source_ref": {
+              "source_label": "Logo 1",
+              "source_role": "Vector Logo",
+              "layer_key": "logo_instance_001"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "logo_instance_001"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          },
+          "artwork_layer:logo_instance_002": {
+            "instance_key": "artwork_layer:logo_instance_002",
+            "source_kind": "artwork_layer",
+            "source_ref": {
+              "source_label": "Logo 2",
+              "source_role": "Vector Logo",
+              "layer_key": "logo_instance_002"
+            },
+            "geometry": {
+              "perimeter_source": "evidence_only",
+              "evidence_perimeter_m": 21.1675
+            },
+            "confirmation_state": "confirmed",
+            "blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "operator_blockers": [],
+            "technical_blockers": [
+              "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+              "RETURN_CANT_PERIMETER_EVIDENCE_ONLY"
+            ],
+            "layer_group_ids": [
+              "logo_instance_002"
+            ],
+            "material_profile": {
+              "width_mm": 60
+            },
+            "finish_variant": {
+              "type": "stock_color",
+              "stock_color_label": "Alb"
+            },
+            "pricing_keys": {
+              "material_profile_width": "MAT-PROFIL-LATERAL-LITERE-60MM"
+            }
+          }
+        }
+      }
+    }
+  },
+  "terminology_mode": "constructive_vector",
+  "finish_setup": {
+    "face_finish_type": "none",
+    "face_vinyl_roll_width_mm": null,
+    "finish_target": "all",
+    "return_finish_type": "white_aluminum",
+    "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "return_oracal_code": null,
+    "return_oracal_name": null,
+    "return_depth_mm": 60.0,
+    "illuminated": true,
+    "lighting_system_type": "led_modules",
+    "light_color": "cool",
+    "led_module_power_w": 0.75,
+    "led_strip_power_w_per_ml": 5.0,
+    "led_module_count": 145,
+    "letter_led_strip_length_m": null,
+    "emblem_led_strip_length_m": null,
+    "total_led_strip_length_m": null,
+    "estimated_led_watts": 108.75,
+    "required_psu_watts": 141.38,
+    "selected_psu_watts": 100,
+    "psu_configuration": [
+      160
+    ],
+    "psu_allocation_status": "ok",
+    "letter_group_finishes": [
+      {
+        "group_key": "pseudo:maria",
+        "layer_name": "pseudo maria (blue)",
+        "source_fill_color": "#00a0e3",
+        "face_area_m2": 0.2810428213145777,
+        "perimeter_m": 5.910236468431474,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:soare",
+        "layer_name": "pseudo soare (red)",
+        "source_fill_color": "#e31e24",
+        "face_area_m2": 0.30711595361734,
+        "perimeter_m": 6.957517973492544,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:ana",
+        "layer_name": "pseudo ana (green)",
+        "source_fill_color": "#009846",
+        "face_area_m2": 0.19636109107249675,
+        "perimeter_m": 3.7726241622195955,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:gradinita",
+        "layer_name": "pseudo gradinita (orange)",
+        "source_fill_color": "#ef7f1a",
+        "face_area_m2": 0.47924238995360924,
+        "perimeter_m": 10.106838616130982,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "artwork_finishes": [
+      {
+        "layer_key": "logo_instance_001",
+        "layer_name": "Logo 1",
+        "display_name": null,
+        "source_layer_name": "Logo 1",
+        "original_detected_label": "Logo 1",
+        "position_hint": null,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "material_code": "ORAFOL_PRINT_LAMINATION",
+        "face_personalization_method": "print_laminate",
+        "face_roll_width_mm": null,
+        "print_roll_width_mm": null,
+        "lamination_roll_width_mm": null,
+        "print_required": true,
+        "lamination_required": true,
+        "roll_side_retraction_mm": null,
+        "roll_total_retraction_mm": null,
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "print_material_code": "ORAFOL_PRINT",
+        "lamination_material_code": "ORAFOL_LAMINATION",
+        "estimated_area_m2": 0.4002298565185999,
+        "element_count": 1,
+        "distinct_fill_count": 1,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "layer_name": "Logo 2",
+        "display_name": null,
+        "source_layer_name": "Logo 2",
+        "original_detected_label": "Logo 2",
+        "position_hint": null,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "material_code": "ORAFOL_PRINT_LAMINATION",
+        "face_personalization_method": "print_laminate",
+        "face_roll_width_mm": null,
+        "print_roll_width_mm": null,
+        "lamination_roll_width_mm": null,
+        "print_required": true,
+        "lamination_required": true,
+        "roll_side_retraction_mm": null,
+        "roll_total_retraction_mm": null,
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "print_material_code": "ORAFOL_PRINT",
+        "lamination_material_code": "ORAFOL_LAMINATION",
+        "estimated_area_m2": 0.4002298565186002,
+        "element_count": 1,
+        "distinct_fill_count": 1,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "artwork_complexity_decisions": [],
+    "backing_mode": "forex_10_no_bevel",
+    "back_bevel_enabled": false,
+    "mounting_template_enabled": true,
+    "mounting_template_area_m2": 3.0523,
+    "mounting_template_material_type": "forex",
+    "mounting_scope": "preparation_and_site_installation",
+    "site_installation_included": true,
+    "mounting_solution": {
+      "kind": "installation_template",
+      "template_code": null,
+      "configuration": {}
+    },
+    "mounting_system": null,
+    "mounting_bar_profile": null,
+    "support_type": null,
+    "emblem_lighting_mode": "area_lit",
+    "letter_led_module_count": 85,
+    "emblem_led_module_count": 60,
+    "total_led_module_count": 145,
+    "commercial_inputs": {
+      "markup_percent": 35.0,
+      "discount_percent": 0.0,
+      "vat_percent": 21.0,
+      "manual_adjustment_ron": 0.0
+    },
+    "confirmed": true,
+    "internal_draft_quote_confirmed": false
+  },
+  "offer_scope": null,
+  "offer_scope_confirmed": null,
+  "offer_scope_dependency_validation": null,
+  "sheet_quote_override": null,
+  "_volum_aluminum_module_truth_v1": {
+    "previous": null,
+    "resolved": "TPL-VOLUM-ALUMINIU_v1",
+    "source": "product_system_unique_link",
+    "applicable": true,
+    "module_link_codes": [
+      "TPL-VOLUM-ALUMINIU_v1"
+    ],
+    "blockers": [],
+    "warnings": []
+  },
+  "_golden_fixture_refs": {
+    "svg_analysis_json": "svg_analysis_json.json",
+    "contract_version": "intake_v6_golden_gradi_v1"
+  }
+}

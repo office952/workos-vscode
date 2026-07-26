@@ -55,6 +55,7 @@ function normalizeLetterGroupForCompare(group: IntakeV4LetterGroupFinish) {
     return_depth_mm: group.return_depth_mm ?? null,
     return_oracal_code: group.return_oracal_code ?? null,
     return_oracal_name: group.return_oracal_name ?? null,
+    backing_mode: group.backing_mode ?? null,
   };
 }
 
@@ -67,6 +68,7 @@ function normalizeArtworkForCompare(row: IntakeV4ArtworkFinish) {
     return_finish_type: String(row.return_finish_type ?? "").trim(),
     return_depth_mm: row.return_depth_mm ?? null,
     return_oracal_code: row.return_oracal_code ?? null,
+    backing_mode: row.backing_mode ?? null,
   };
 }
 
@@ -89,6 +91,17 @@ function normalizeFinishFormForCompare(form: IntakeV4FinishSetup) {
     ),
     return_finish_type: String(form.return_finish_type ?? "").trim(),
     return_depth_mm: form.return_depth_mm ?? null,
+    mounting_scope: form.mounting_scope ?? null,
+    site_installation_included: form.site_installation_included ?? null,
+    mounting_template_enabled: form.mounting_template_enabled ?? null,
+    mounting_template_area_m2: form.mounting_template_area_m2 ?? null,
+    mounting_template_material_type: form.mounting_template_material_type ?? null,
+    mounting_system: form.mounting_system ?? null,
+    mounting_bar_profile: form.mounting_bar_profile ?? null,
+    mains_cable_length_m: form.mains_cable_length_m ?? null,
+    power_supply_service_corner: form.power_supply_service_corner ?? null,
+    service_screw_finish: form.service_screw_finish ?? null,
+    volum_aluminum_module_template_code: form.volum_aluminum_module_template_code ?? null,
     confirmed: form.confirmed === true,
   };
 }
@@ -123,23 +136,34 @@ export function isIntakeV4SelectorStatePendingSave(
   payload: Record<string, unknown> | undefined,
   letterGroups: IntakeV4LetterGroupFinish[] = [],
   artworkFinishes: IntakeV4ArtworkFinish[] = [],
+  options?: {
+    /** Hydrated form baseline (e.g. syncLighting + mounting template) — remount/HMR safe. */
+    expectedForm?: IntakeV4FinishSetup;
+    /** Merged letter baseline matching Review local init (derive+payload). */
+    expectedLetterGroups?: IntakeV4LetterGroupFinish[];
+    /** Merged artwork baseline matching Review local init (derive+payload). */
+    expectedArtworkFinishes?: IntakeV4ArtworkFinish[];
+  },
 ): boolean {
   const setup = readFinishSetupFromPayload(payload);
   if (!setup) return true;
   if (setup.confirmed !== true) return true;
 
-  const savedForm = normalizeFinishFormForCompare(setup);
+  const baselineForm = options?.expectedForm ?? setup;
+  const savedForm = normalizeFinishFormForCompare(baselineForm);
   const currentForm = normalizeFinishFormForCompare(form);
   if (JSON.stringify(savedForm) !== JSON.stringify(currentForm)) {
     return true;
   }
 
-  const savedLetterGroups = letterGroupFinishesFromPayload(payload);
+  const savedLetterGroups =
+    options?.expectedLetterGroups ?? letterGroupFinishesFromPayload(payload);
   if (!layerFinishesEqual(letterGroups, savedLetterGroups, normalizeLetterGroupForCompare)) {
     return true;
   }
 
-  const savedArtworkFinishes = artworkFinishesFromPayload(payload);
+  const savedArtworkFinishes =
+    options?.expectedArtworkFinishes ?? artworkFinishesFromPayload(payload);
   if (!layerFinishesEqual(artworkFinishes, savedArtworkFinishes, normalizeArtworkForCompare)) {
     return true;
   }

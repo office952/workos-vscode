@@ -30,9 +30,9 @@ export const INTAKE_FACE_FINISH_OPTIONS: {
 }[] = [
   { value: "none", label: "Fără autocolant" },
   { value: "oracal_651", label: "Oracal 651" },
-  { value: "oracal_8500", label: "Oracal 8500 translucent" },
+  { value: "oracal_8500", label: "Oracal 8500" },
   { value: "printed_vinyl", label: "Autocolant printat" },
-  { value: "printed_laminated_vinyl", label: "Autocolant printat + laminat" },
+  { value: "printed_laminated_vinyl", label: "Printat / Laminat" },
 ];
 
 export const INTAKE_MOUNTING_SYSTEM_OPTIONS: {
@@ -42,7 +42,7 @@ export const INTAKE_MOUNTING_SYSTEM_OPTIONS: {
   { value: "direct_wall", label: "Montaj direct pe perete" },
   { value: "steel_bars", label: "Bare oțel premontaj" },
   { value: "aluminum_bars", label: "Bare aluminiu premontaj" },
-  { value: "acm_panel", label: "Panou ACM casetat (template separat)" },
+  { value: "acm_panel", label: "Alucobond casetat (template separat)" },
 ];
 
 export const INTAKE_PSU_OPTIONS = [60, 100, 160, 200] as const;

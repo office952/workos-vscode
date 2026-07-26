@@ -1,0 +1,17 @@
+{
+  "commit_scope": "application/config",
+  "files": [
+    { "path": "scripts/_workos-dev-contract.ps1", "change": "added canonical port contract + stale process helpers" },
+    { "path": "scripts/dev-backend.ps1", "change": "default backend port 8001 via contract" },
+    { "path": "scripts/dev-frontend.ps1", "change": "added canonical frontend launcher with BACKEND_PORT=8001" },
+    { "path": "scripts/dev.ps1", "change": "aligned to 8001/3000 contract" },
+    { "path": "scripts/start-dev.ps1", "change": "8001 backend, BACKEND_PORT in frontend job, safer stale handling" },
+    { "path": "scripts/canonical_startup_contract.test.mjs", "change": "added targeted startup contract tests" },
+    { "path": "frontend/vite.config.ts", "change": "proxy default 8001 on 127.0.0.1" },
+    { "path": "package.json", "change": "dev:backend, dev:frontend, test:startup-contract scripts" },
+    { "path": "start_app.sh", "change": "bash default BACKEND_PORT 8001" },
+    { "path": ".env.example", "change": "document BACKEND_PORT=8001 and VITE_PORT=3000" }
+  ],
+  "business_logic_changed": false,
+  "parity_changed": false
+}

@@ -1,0 +1,47 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "recommendation": "HYBRID_SESSION_FIRST_THEN_EXPLICIT_PROJECTION",
+  "options": [
+    {
+      "model": "A — Participant derived only from sessions",
+      "benefit": "No new persistence; uses existing execution_reality.tasks_json",
+      "risk": "No join-without-session; weak leave/audit; role drift",
+      "compatibility": "HIGH short-term",
+      "recommendation": "PHASE_1_ONLY"
+    },
+    {
+      "model": "B — Explicit participant records in reality envelope",
+      "benefit": "Join/leave/help audit; role stable; sessions attach to participant",
+      "risk": "JSON growth; needs careful merge with legacy sessions",
+      "compatibility": "HIGH — extend tasks_json or sibling participants_json",
+      "recommendation": "PHASE_2_TARGET"
+    },
+    {
+      "model": "C — New participant DB table",
+      "benefit": "Queryable; FK integrity; reporting",
+      "risk": "Migration; dual-read period",
+      "compatibility": "MEDIUM — deferred",
+      "recommendation": "OPTIONAL_FLEX-07+ after owner DB gate"
+    },
+    {
+      "model": "D — Reuse field_installation_team_members",
+      "benefit": "Existing multi-employee pattern",
+      "risk": "Wrong domain — field install teams not shop-floor task ops",
+      "compatibility": "LOW",
+      "recommendation": "REJECT"
+    },
+    {
+      "model": "E — Event-only participants",
+      "benefit": "Clean audit trail",
+      "risk": "Projection complexity; rebuild state on read",
+      "compatibility": "MEDIUM",
+      "recommendation": "SUPPLEMENT not primary"
+    }
+  ],
+  "minimal_concept": {
+    "fields": ["task_id", "employee_id", "role", "status", "joined_at", "left_at", "joined_by", "join_reason"],
+    "roles": ["PRINCIPAL", "HELPER"],
+    "statuses": ["active", "left", "completed_contribution"]
+  },
+  "anti_patterns": ["duplicate assignment per helper", "participant without session when working", "active participant after operation complete"]
+}

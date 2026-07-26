@@ -1,0 +1,94 @@
+[
+  {
+    "sev": "INFO",
+    "msg": "SVG ok litere-cu-fundal-acm-segmentat.svg bytes=5136",
+    "at": "2026-07-19T07:17:31.841Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "SVG ok litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg bytes=5136",
+    "at": "2026-07-19T07:17:31.842Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "SVG ok situatie-3.svg bytes=5136",
+    "at": "2026-07-19T07:17:31.842Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Created workspace e1ba14f2-ceca-4239-9e8e-e87c0e21d65f / IV6-030823F5",
+    "at": "2026-07-19T07:17:32.502Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Iluminare Electrică/PSU subsection visible=true",
+    "at": "2026-07-19T07:17:44.550Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Segmented panel visible on Montaj=true",
+    "at": "2026-07-19T07:17:45.900Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Segmented status=\"Propus\" confirmEnabled=true",
+    "at": "2026-07-19T07:17:46.001Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Segmented electrical panel visible=true",
+    "at": "2026-07-19T07:17:48.146Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Electrical confirm enabled=true",
+    "at": "2026-07-19T07:17:50.465Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "Legacy service corner visible=true acpCorner=true",
+    "at": "2026-07-19T07:17:52.064Z"
+  },
+  {
+    "sev": "WARN",
+    "msg": "Could not advance to Confirmare; footer=\"Continuă la Confirmare\" enabled=false",
+    "at": "2026-07-19T07:17:54.705Z"
+  },
+  {
+    "sev": "HIGH",
+    "msg": "API errors during walkthrough: 3",
+    "sample": [
+      {
+        "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/finish-setup",
+        "status": 422,
+        "method": "PUT"
+      },
+      {
+        "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+        "status": 404,
+        "method": "GET"
+      },
+      {
+        "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+        "status": 404,
+        "method": "GET"
+      }
+    ],
+    "at": "2026-07-19T07:17:54.808Z"
+  },
+  {
+    "sev": "MED",
+    "msg": "Unlabeled controls: 2",
+    "at": "2026-07-19T07:17:54.811Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "cross: segmented panel=true status=PROPOSED",
+    "at": "2026-07-19T07:18:05.947Z"
+  },
+  {
+    "sev": "INFO",
+    "msg": "sit3: segmented panel=true status=PROPOSED",
+    "at": "2026-07-19T07:18:19.359Z"
+  }
+]

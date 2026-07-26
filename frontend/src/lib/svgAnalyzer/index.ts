@@ -8,3 +8,20 @@ export {
   updateLayerRoleConfirmationEntry,
 } from "./lib/layerRoleConfirmationState";
 export { LAYER_ROLE_OPTIONS } from "./analyzer/layerRoleTypes";
+export { detectClosedContourCandidates, findCandidateById } from "./closed-contour/closedContourCandidates";
+export type {
+  ClosedContourCandidate,
+  ClosedContourDetectionReport,
+  SvgSupportSelectionState,
+  ContourRoleOption,
+} from "./closed-contour/closedContourTypes";
+export {
+  confirmAlucobondSelection,
+  readSvgSupportSelection,
+  buildAcmMountingSolutionFromSelection,
+  reconcileSelectionAfterReanalysis,
+  casingRequirementsActive,
+  blankPreviewMm,
+  emptySvgSupportSelection,
+  ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+} from "./closed-contour/alucobondCasedPanelSelection";

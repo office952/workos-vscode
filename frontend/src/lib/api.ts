@@ -303,6 +303,41 @@ export interface ProductTemplateEntity {
   updated_at?: string;
 }
 
+export interface ProductSystemReadinessBlocker {
+  code: string;
+  dimension: "technical" | "pricing" | "execution" | "commercial";
+  severity: "blocking" | "warning" | "diagnostic";
+  owner: string;
+  message: string;
+  source_code?: string | null;
+  target_route?: string | null;
+}
+
+export interface ProductSystemReadinessDimension {
+  status: string;
+  blockers?: ProductSystemReadinessBlocker[];
+}
+
+export interface ProductSystemTemplateCapabilities {
+  root_offerable: boolean;
+  linked_child_offerable: boolean;
+  internal_only: boolean;
+}
+
+export interface ProductSystemTemplateReadiness {
+  technical: ProductSystemReadinessDimension;
+  pricing: ProductSystemReadinessDimension;
+  execution: ProductSystemReadinessDimension;
+  commercial: ProductSystemReadinessDimension;
+  rollup:
+    | "READY"
+    | "PARTIALLY_READY"
+    | "BLOCKED"
+    | "INTERNAL"
+    | "DEPRECATED"
+    | string;
+}
+
 export interface ProductTemplateAvailabilityItem {
   template_id: number;
   template_code: string;
@@ -318,6 +353,85 @@ export interface ProductTemplateAvailabilityItem {
   module_codes: string[];
   status: string;
   status_reason: string;
+  product_system_role:
+    | "offerable_product"
+    | "candidate_product"
+    | "internal_module"
+    | "shared_component"
+    | "archived_experimental"
+    | string;
+  display_group:
+    | "active_products"
+    | "candidate_products"
+    | "internal_modules"
+    | "shared_components"
+    | "archived_experimental"
+    | string;
+  importance_rank: number;
+  owner_decision_required: boolean;
+  readiness_reason: string;
+  ui_label: string;
+  ui_description: string;
+  parent_product_codes: string[];
+  child_module_codes: string[];
+  shared_with_product_codes: string[];
+  composition_modules: ProductTemplateCompositionModule[];
+  /** Product System SVG-bindable components (optional; Intake consumes later). */
+  svg_bindable_components?: SvgBindableComponent[];
+  shared_component_contracts: SharedVolumetricComponentSummary[];
+  capabilities?: ProductSystemTemplateCapabilities | null;
+  readiness?: ProductSystemTemplateReadiness | null;
+}
+
+export interface SvgBindableComponent {
+  component_template_code: string;
+  process_component_code?: string | null;
+  owner_label: string;
+  accepted_geometry_roles: string[];
+  /** Optional face treatments hosted on this component (ACP shell). */
+  accepted_face_treatment_codes?: string[];
+  selection_mode: string;
+  cardinality: string;
+  required: boolean;
+  available: boolean;
+  active: boolean;
+  active_by_default: boolean;
+  technical_role?: string | null;
+  guards?: string[];
+  product_definition_targets?: string[];
+  capabilities?: string[];
+  svg_binding?: Record<string, unknown>;
+}
+
+export interface ProductTemplateCompositionModule {
+  role_key: string;
+  role_label: string;
+  module_template_code: string;
+  module_product_system_role?: string | null;
+  relation_type?: string | null;
+  is_required: boolean;
+  sort_order: number;
+  ui_hint?: string | null;
+  status_label?: string | null;
+}
+
+export interface SharedVolumetricComponentSummary {
+  component_key: string;
+  display_name: string;
+  profile_key: "letters" | "logo" | string;
+  module_template_code: string;
+  confidence: "HIGH" | "MEDIUM" | "LOW" | "PARTIAL" | "NOT_CONFIRMED" | string;
+  owner_decision: "APPROVE_AS_DIRECTION" | "KEEP_SEPARATE_NOW" | "NEEDS_MORE_AUDIT" | "FORBIDDEN_NOW" | string;
+  shared_truth_fields: string[];
+  not_confirmed: string[];
+  calculation_strategy_key?: string | null;
+  strategy_source_template_code?: string | null;
+  strategy_status?: string | null;
+  strategy_meaning?: string | null;
+  required_truth?: string[];
+  shared_module_template_code?: string | null;
+  legacy_replaced_by?: string | null;
+  reserved_module_template_code?: string | null;
 }
 
 export interface ProductTemplateAvailabilityResponse {
@@ -956,6 +1070,87 @@ export const productTemplateAvailabilityApi = {
       throw new Error(`Product template availability lookup failed (${response.status}).`);
     }
     return (await response.json()) as ProductTemplateAvailabilityResponse;
+  },
+};
+
+/** Template Lifecycle Control System V1 — read-only derived readiness. */
+export type TemplateLifecycleIssue = {
+  code: string;
+  severity: 'blocking' | 'warning' | 'diagnostic';
+  message: string;
+  evidence?: string[];
+};
+
+export type TemplateLifecycleStageResult = {
+  stage: string;
+  owner_label: string;
+  authority: string;
+  required: boolean;
+  status: string;
+  evidence: string[];
+  warnings: TemplateLifecycleIssue[];
+  blockers: TemplateLifecycleIssue[];
+  owner_gate?: string | null;
+  affected_files?: string[];
+  affected_tests?: string[];
+  runtime_proof?: string[];
+};
+
+export type TemplateLifecycleOwnerGate = {
+  code: string;
+  label: string;
+  status: string;
+  reason: string;
+  stage?: string | null;
+};
+
+export type TemplateLifecycleLegacyConflict = {
+  code: string;
+  classification: string;
+  message: string;
+  evidence?: string[];
+};
+
+export type TemplateLifecycleImpactSummary = {
+  changed: string;
+  affected_product_templates?: string[];
+  affected_intake?: string[];
+  affected_product_definition?: string[];
+  affected_product_aggregate?: string[];
+  cpp?: string[];
+  tasking?: string[];
+  notes?: string[];
+};
+
+export type TemplateLifecycleReadiness = {
+  schema_version: string;
+  template_code: string;
+  version?: string | null;
+  family_id?: string | null;
+  family_name?: string | null;
+  template_status: string;
+  lifecycle_status: string;
+  readiness_score: number;
+  activation_eligible: boolean;
+  stages: TemplateLifecycleStageResult[];
+  owner_gates: TemplateLifecycleOwnerGate[];
+  impact_summary?: TemplateLifecycleImpactSummary | null;
+  legacy_conflicts?: TemplateLifecycleLegacyConflict[];
+  stage_counts?: Record<string, number>;
+  derived_from?: string[];
+};
+
+export const productTemplateLifecycleApi = {
+  readiness: async (templateCode: string): Promise<TemplateLifecycleReadiness> => {
+    const { getAPIBaseURL } = await import('./config');
+    const response = await fetch(
+      `${getAPIBaseURL()}/api/v1/product-system/templates/${encodeURIComponent(templateCode)}/lifecycle-readiness`,
+      { credentials: 'include' },
+    );
+    if (!response.ok) {
+      throw new Error(`Template lifecycle readiness failed (${response.status}).`);
+    }
+    return (await response.json()) as TemplateLifecycleReadiness;
   },
 };
 

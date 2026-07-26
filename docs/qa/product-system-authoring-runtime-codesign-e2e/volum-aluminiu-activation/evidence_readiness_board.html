@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Readiness + System Link Check</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; background: #0f172a; color: #e2e8f0; margin: 24px; }
+    h1 { font-size: 22px; margin: 0 0 8px; }
+    .sub { color: #94a3b8; margin-bottom: 20px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    .k { color: #93c5fd; font-size: 12px; text-transform: uppercase; }
+    .v { font-size: 18px; margin-top: 4px; font-weight: 600; }
+    .ok { color: #86efac; } .warn { color: #fcd34d; } .nt { color: #93c5fd; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    td, th { border-bottom: 1px solid #334155; padding: 6px 4px; text-align: left; }
+    code { color: #fde68a; }
+  </style>
+</head>
+<body>
+  <h1>Fresh Readiness — System Link Check (Catalog→EP)</h1>
+  <p class="sub">Static re-run after activation · inactivity blocker closed · NOT_TESTED preserved</p>
+  <div class="card">
+    <div class="k">Overall</div>
+    <div class="v warn">STATIC_READY_WITH_WARNINGS</div>
+    <table>
+      <tr><th>Axis</th><th>Status</th></tr>
+      <tr><td>Build closure</td><td class="warn">PASS_WITH_WARNINGS</td></tr>
+      <tr><td>Template publication axis</td><td class="ok">PASS</td></tr>
+      <tr><td>e2e_ready</td><td>false</td></tr>
+      <tr><td>required_inactive aluminiu</td><td class="ok">ABSENT (closed)</td></tr>
+      <tr><td>required_active aluminiu</td><td class="ok">PASS</td></tr>
+      <tr><td>NOT_TESTED count</td><td class="nt">6 (preserved)</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="k">System nodes (sample)</div>
+    <table>
+      <tr><th>System</th><th>Status</th></tr>
+      <tr><td>catalog</td><td class="ok">PASS / inspected</td></tr>
+      <tr><td>components</td><td class="warn">PASS_WITH_WARNINGS / active child</td></tr>
+      <tr><td>cpp</td><td class="nt">NOT_TESTED</td></tr>
+      <tr><td>eic</td><td class="nt">NOT_TESTED</td></tr>
+      <tr><td>order_snapshot</td><td class="nt">NOT_TESTED</td></tr>
+      <tr><td>execution_preview</td><td class="nt">NOT_TESTED</td></tr>
+    </table>
+    <p style="color:#94a3b8;font-size:13px;margin-top:10px">
+      Only the inactivity-owned blocker was closed. Do not treat publication axis PASS as parent published.
+    </p>
+  </div>
+</body>
+</html>

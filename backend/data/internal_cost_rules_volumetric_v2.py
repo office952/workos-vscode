@@ -24,6 +24,48 @@ DEV_BRIDGE_SABLON_CNC_RON_M2 = 8.0
 
 Criticality = Literal["critical", "optional"]
 LineKind = Literal["operation", "consumable", "overhead"]
+LogoRateStatus = Literal["active", "inactive"]
+
+
+@dataclass(frozen=True)
+class LogoInternalOperationRate:
+    operation_code: str
+    unit: str
+    internal_unit_cost: float
+    currency: str
+    source: str
+    rule_code: str
+    status: LogoRateStatus = "active"
+
+
+# Owner-approved canonical internal rates for linked-logo artwork operations (EIC only).
+LOGO_ARTWORK_INTERNAL_OPERATION_RATES: tuple[LogoInternalOperationRate, ...] = (
+    LogoInternalOperationRate(
+        operation_code="logo_face_print",
+        unit="m2",
+        internal_unit_cost=35.0,
+        currency="RON",
+        source="internal_cost_rules_volumetric_v2:logo_face_print_m2",
+        rule_code="INT_LOGO_FACE_PRINT_M2",
+    ),
+    LogoInternalOperationRate(
+        operation_code="logo_face_laminate",
+        unit="m2",
+        internal_unit_cost=35.0,
+        currency="RON",
+        source="internal_cost_rules_volumetric_v2:logo_face_laminate_m2",
+        rule_code="INT_LOGO_FACE_LAMINATE_M2",
+    ),
+)
+
+LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE: dict[str, LogoInternalOperationRate] = {
+    rate.operation_code: rate for rate in LOGO_ARTWORK_INTERNAL_OPERATION_RATES
+}
+
+if len(LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE) != len(LOGO_ARTWORK_INTERNAL_OPERATION_RATES):
+    raise ValueError("Duplicate logo internal operation rate operation_code entries are forbidden.")
+if "logo_finish_application" in LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE:
+    raise ValueError("logo_finish_application must not receive a numeric internal rate in this catalog.")
 
 
 @dataclass(frozen=True)
@@ -187,20 +229,20 @@ VOLUMETRIC_V2_OPERATION_RULES: tuple[InternalOperationRule, ...] = (
     InternalOperationRule(
         line_code="sablon_montaj_cnc",
         label="Șablon montaj — CNC intern",
-        module_code="finisaje",
+        module_code="sablon_montaj",
         component_code="comp_finisaj_litere",
         rule_code="INT_VOL_V2_SABLON_M2",
         basis_type="m2",
         quantity_paths=("finish_setup.mounting_template_area_m2", "mounting_template_area_m2"),
         unit="m2",
         source="internal_cost_rules_volumetric_v2:sablon_cnc_m2",
-        module_gate="finisaje",
+        module_gate="sablon_montaj",
         internal_unit_cost=DEV_BRIDGE_SABLON_CNC_RON_M2,
     ),
     InternalOperationRule(
         line_code="sablon_montaj_forex",
         label="Șablon montaj Forex — cost intern material/op",
-        module_code="finisaje",
+        module_code="sablon_montaj",
         component_code="comp_finisaj_litere",
         rule_code="INT_VOL_V2_SABLON_FOREX_PENDING",
         basis_type="m2",
@@ -209,7 +251,7 @@ VOLUMETRIC_V2_OPERATION_RULES: tuple[InternalOperationRule, ...] = (
         source="internal_cost_rules_volumetric_v2:sablon_forex_pending",
         material_gate_path="finish_setup.mounting_template_material_type",
         material_gate_value="forex",
-        module_gate="finisaje",
+        module_gate="sablon_montaj",
         owner_decision_required=True,
         owner_decision_code="INTERNAL_SABLON_FOREX_COST",
         owner_decision_detail="Forex sablon internal operation cost not owner-approved.",
@@ -217,7 +259,7 @@ VOLUMETRIC_V2_OPERATION_RULES: tuple[InternalOperationRule, ...] = (
     InternalOperationRule(
         line_code="ambalare",
         label="Ambalare — cost intern",
-        module_code="finisaje",
+        module_code="ambalare_livrare_montaj",
         component_code="comp_finisaj_litere",
         rule_code="INT_VOL_V2_PACKAGING_PENDING",
         basis_type="fixed",
@@ -228,11 +270,12 @@ VOLUMETRIC_V2_OPERATION_RULES: tuple[InternalOperationRule, ...] = (
         owner_decision_required=True,
         owner_decision_code="INTERNAL_AMBALARE_RULE",
         owner_decision_detail="Packaging internal rule not owner-defined.",
+        module_gate="ambalare_livrare_montaj",
     ),
     InternalOperationRule(
         line_code="montaj",
         label="Montaj șantier — future/optional",
-        module_code="finisaje",
+        module_code="structura_suport",
         component_code=None,
         rule_code="INT_VOL_V2_SITE_MOUNT_FUTURE",
         basis_type="fixed",
@@ -289,6 +332,51 @@ VOLUMETRIC_V2_CAPACITY_HINT_RULES: tuple[CapacityHintRule, ...] = (
         module_code="modelare_cant",
         purpose="sanity_check",
     ),
+    CapacityHintRule(
+        code="acm_cut_panel_capacity",
+        label="Debitare panou ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 15, "min_minutes": 15},
+        source="internal_cost_rules_volumetric_v2:acm_cut_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_v_groove_capacity",
+        label="Frezare V-groove ACM — timp intern (EIC)",
+        formula_id="perimeter_based_time",
+        formula_params={
+            "perimeter_quote_input_key": "fold_length_m",
+            "minutes_per_meter": 2.5,
+            "passes": 1,
+            "min_minutes": 0,
+        },
+        source="internal_cost_rules_volumetric_v2:acm_v_groove_minutes_per_meter",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_fold_capacity",
+        label="Casetare / pliere ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 45, "min_minutes": 45},
+        source="internal_cost_rules_volumetric_v2:acm_fold_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_mount_prep_capacity",
+        label="Pregătire montaj ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 30, "min_minutes": 30},
+        source="internal_cost_rules_volumetric_v2:acm_mount_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+)
+
+ACM_STANDALONE_CAPACITY_HINT_RULES: tuple[CapacityHintRule, ...] = tuple(
+    rule for rule in VOLUMETRIC_V2_CAPACITY_HINT_RULES if rule.code.startswith("acm_")
 )
 
 RULES_BY_TEMPLATE: dict[str, dict[str, tuple]] = {
@@ -297,6 +385,12 @@ RULES_BY_TEMPLATE: dict[str, dict[str, tuple]] = {
         "consumables": VOLUMETRIC_V2_CONSUMABLE_RULES,
         "overhead": VOLUMETRIC_V2_OVERHEAD_RULES,
         "capacity": VOLUMETRIC_V2_CAPACITY_HINT_RULES,
+    },
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": {
+        "operations": (),
+        "consumables": (),
+        "overhead": (),
+        "capacity": ACM_STANDALONE_CAPACITY_HINT_RULES,
     },
 }
 

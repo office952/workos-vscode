@@ -1,0 +1,217 @@
+{
+  "schema_id": "volum_aluminiu_separate_calc_preview_v1",
+  "template_code": "TPL-VOLUM-ALUMINIU_v1",
+  "mini_module_code": "modelare_cant",
+  "persist": false,
+  "activation_required": false,
+  "publication_blocked": true,
+  "separate_calculation": "FAIL",
+  "readiness": {
+    "status": "blocked",
+    "separate_calculation": "FAIL",
+    "reasons": [
+      "RETURN_CANT_INSTANCE_MISSING"
+    ],
+    "instance_count": 0,
+    "confirmed_instance_count": 0,
+    "publication_blocked": true,
+    "activation_allowed": false
+  },
+  "quantity": {
+    "schema": "volum_aluminiu_component_quantity_v1",
+    "template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "mini_module_code": "modelare_cant",
+    "unit": "m",
+    "commercial_basis_synonym": "ml",
+    "quantity_m": null,
+    "quantity_ml": null,
+    "source": null,
+    "evidence_perimeter_m": 18.5,
+    "evidence_drives_calc": false,
+    "parent_unconfirmed_fallback_used": false,
+    "blockers": [
+      "RETURN_CANT_INSTANCE_MISSING"
+    ],
+    "ok": false
+  },
+  "derived_quantities": {},
+  "instances": {},
+  "materials_ops_ownership": {
+    "owner_template": "TPL-VOLUM-ALUMINIU_v1",
+    "bom_component_id": "comp_volum_aluminiu_module",
+    "materials": [
+      "MAT-PROFIL-LATERAL-LITERE-30MM|60MM|80MM|100MM \u2192 return_profile_linear_meter",
+      "MAT-ORACAL-651 \u2192 return_wrap_area (finish-gated)",
+      "MAT-VOPSEA-RAL* \u2192 return_paint_consumption (finish-gated)",
+      "MAT-ADEZIV-CANT-LITERE \u2192 return_profile_adhesive"
+    ],
+    "operations": [
+      "RETURN_PROFILE_MACHINE_FORMING \u2192 return_profile_machine_forming",
+      "RETURN_PROFILE_FACE_BONDING \u2192 return_profile_face_bonding (Aggregate modelare_cant)",
+      "PAINTING \u2192 return_painting_linear_meter (finish-gated)"
+    ],
+    "aggregate_provenance": "linked_module",
+    "commercial_ref": {
+      "line_code": "modelare_cant_aluminiu",
+      "rule_code": "VOL_V2_RETURN_PROFILE_ML",
+      "basis": "ml"
+    },
+    "internal_cost_ref": {
+      "rule_code": "INT_VOL_V2_RETURN_ML",
+      "basis": "ml"
+    },
+    "execution_materialization": false
+  },
+  "commercial": null,
+  "internal_cost": null,
+  "unit_trace": [
+    {
+      "stage": "evidence",
+      "field": "quote_geometry.letter_perimeter_m",
+      "unit": "m",
+      "conversion_owner": "observe_only"
+    },
+    {
+      "stage": "product_truth",
+      "field": "confirmed_perimeter_m",
+      "unit": "m",
+      "conversion_owner": "operator_confirm"
+    },
+    {
+      "stage": "component_qty",
+      "field": "return_profile_linear_meter",
+      "unit": "m",
+      "conversion_owner": "component"
+    },
+    {
+      "stage": "commercial",
+      "field": "VOL_V2_RETURN_PROFILE_ML",
+      "unit": "ml",
+      "conversion_owner": "synonym_1ml_eq_1m"
+    },
+    {
+      "stage": "internal_cost",
+      "field": "INT_VOL_V2_RETURN_ML",
+      "unit": "ml",
+      "conversion_owner": "synonym_1ml_eq_1m"
+    }
+  ],
+  "remaining_parent_deps": [
+    "letter_group / layer mapping for instance keys",
+    "product-total VL CPP may still consume quote_geometry until activation GO"
+  ],
+  "blockers": [
+    "RETURN_CANT_INSTANCE_MISSING"
+  ],
+  "warnings": [
+    "publication_and_activation_remain_blocked",
+    "dual_id_bom_vs_pricing_stub_documented"
+  ],
+  "input_contract": {
+    "template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "parent_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "mini_module_code": "modelare_cant",
+    "instance_schema_id": "letter_group_instances.sidewall",
+    "pt_container": "product_truth.components.return_cant",
+    "shared_contract_key": "volumetric_return_side",
+    "canonical_perimeter_unit": "m",
+    "commercial_basis_synonym": "ml",
+    "unit_note": "1 ml commercial = 1 m confirmed perimeter; no silent conversion",
+    "allowed_depth_mm": [
+      30,
+      60,
+      80,
+      100
+    ],
+    "required_inputs": [
+      {
+        "key": "confirmed_perimeter_m",
+        "path": "product_truth.components.return_cant.instances.*.geometry.confirmed_perimeter_m",
+        "unit": "m",
+        "owner": "operator_confirm \u2192 product_truth",
+        "drives_separate_calc": true
+      },
+      {
+        "key": "return_depth_mm",
+        "path": "product_truth.components.return_cant.instances.*.material_profile.width_mm",
+        "unit": "mm",
+        "owner": "component",
+        "drives_separate_calc": true
+      },
+      {
+        "key": "finish_variant",
+        "path": "product_truth.components.return_cant.instances.*.finish_variant",
+        "unit": null,
+        "owner": "component",
+        "drives_separate_calc": true
+      }
+    ],
+    "evidence_only_inputs": [
+      {
+        "key": "letter_perimeter_m",
+        "path": "quote_geometry.letter_perimeter_m",
+        "unit": "m",
+        "maps_to": "geometry.evidence_perimeter_m",
+        "drives_separate_calc": false
+      }
+    ],
+    "confirmation": {
+      "state_field": "confirmation_state",
+      "allowed_states": [
+        "blocked",
+        "confirmed",
+        "draft",
+        "missing"
+      ],
+      "allowed_sources": [
+        "imported_verified_truth",
+        "operator_component_confirmation",
+        "system_migration_verified"
+      ],
+      "forbidden_as_sole_confirmation": [
+        "step1_layer_confirmation",
+        "finish_setup.confirmed",
+        "row confirmed",
+        "quote_geometry.letter_perimeter_m",
+        "analyzer evidence"
+      ]
+    },
+    "provenance": {
+      "allowed_perimeter_sources": [
+        "evidence_only",
+        "imported_verified_truth",
+        "missing",
+        "operator_confirmed",
+        "system_migration_verified"
+      ],
+      "allowed_confirmed_perimeter_sources": [
+        "imported_verified_truth",
+        "operator_confirmed",
+        "system_migration_verified"
+      ],
+      "geometry_inputs_consume_only": true,
+      "no_file_parse_in_workos": true
+    },
+    "identity": {
+      "bom_component_id": "comp_volum_aluminiu_module",
+      "pricing_component_code": "comp_lateral_litere",
+      "dual_id_policy": "bom_owner_vs_pricing_stub_documented"
+    },
+    "commercial": {
+      "line_code": "modelare_cant_aluminiu",
+      "rule_code": "VOL_V2_RETURN_PROFILE_ML",
+      "basis": "ml",
+      "anti_hourly": true
+    },
+    "internal_cost": {
+      "rule_code": "INT_VOL_V2_RETURN_ML",
+      "basis": "ml",
+      "anti_hourly": true
+    },
+    "publication": {
+      "remains_blocked": true,
+      "activation_forbidden_in_this_build": true,
+      "known_required_inactive_child": "TPL-VOLUM-ALUMINIU_v1"
+    }
+  }
+}

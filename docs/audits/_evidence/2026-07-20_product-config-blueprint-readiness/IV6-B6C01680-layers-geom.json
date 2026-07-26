@@ -1,0 +1,80 @@
+[
+    {
+        "id":  "pseudo:maria",
+        "role":  "face",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "Layer_x0020_1"
+                           ],
+        "elementIds":  [
+                           "el-1"
+                       ],
+        "w":  1191.0418692345704,
+        "h":  235.96384692604587
+    },
+    {
+        "id":  "pseudo:soare",
+        "role":  "face",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "Layer_x0020_1"
+                           ],
+        "elementIds":  [
+                           "el-2"
+                       ],
+        "w":  1301.538170436737,
+        "h":  235.96384692604587
+    },
+    {
+        "id":  "pseudo:ana",
+        "role":  "face",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "Layer_x0020_1"
+                           ],
+        "elementIds":  [
+                           "el-3"
+                       ],
+        "w":  832.1663469828533,
+        "h":  235.96374905622417
+    },
+    {
+        "id":  "pseudo:gradinita",
+        "role":  "face",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "Layer_x0020_1"
+                           ],
+        "elementIds":  [
+                           "el-4"
+                       ],
+        "w":  2030.9966966420711,
+        "h":  235.9641405355115
+    },
+    {
+        "id":  "logo_instance_001",
+        "role":  "printed_artwork",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "logo_instance_001"
+                           ],
+        "elementIds":  [
+                           "el-5"
+                       ],
+        "w":  667.2126344054284,
+        "h":  599.8535337617757
+    },
+    {
+        "id":  "logo_instance_002",
+        "role":  "printed_artwork",
+        "bbox":  null,
+        "sourceGroupIds":  [
+                               "logo_instance_002"
+                           ],
+        "elementIds":  [
+                           "el-6"
+                       ],
+        "w":  667.2126344054288,
+        "h":  599.8535337617757
+    }
+]

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import IntakeV6MaterialBreakdownPanel from "@/components/workos/intake-v6/IntakeV6MaterialBreakdownPanel";
@@ -21,7 +21,7 @@ function breakdownWithMixedOperations(): IntakeV6MaterialBreakdownResponse {
     operation_rows: [
       {
         key: "cnc_face_cutting_plexiglas_3mm",
-        display_name: "Debitare CNC față Plexiglas 3 mm",
+        display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
         operation_type: "cutting",
         quantity: 25.02,
         unit: "ml",
@@ -119,7 +119,7 @@ describe("IntakeV6OperatorUiPolish", () => {
     expect(screen.queryByTestId("intake-v6-letter-group-face-a")).not.toBeInTheDocument();
   });
 
-  it("uses workspace shell header with single status badge", () => {
+  it("uses workspace shell header with consolidated status without duplicate badge", () => {
     render(
       <IntakeV6WorkspaceHeaderStatusProvider>
         <IntakeV6Header
@@ -137,7 +137,10 @@ describe("IntakeV6OperatorUiPolish", () => {
       </IntakeV6WorkspaceHeaderStatusProvider>,
     );
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-workspace-status-badge")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-TEST");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Configurare");
+    expect(screen.getByTestId("intake-v6-progress")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-workspace-status-badge")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-status-bar")).not.toBeInTheDocument();
     expect(screen.queryByText("SVG ready")).not.toBeInTheDocument();
   });
@@ -169,7 +172,7 @@ describe("IntakeV6OperatorUiPolish", () => {
     const main = screen.getByTestId("intake-v6-workspace-main");
     expect(main.className).toContain("max-w-none");
     expect(main.className).not.toContain("max-w-[920px]");
-    expect(main.className).toContain("pb-[var(--intake-v6-footer-safe-area)]");
+    expect(screen.getByTestId("intake-v6-operator-workspace-footer")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-layers-layout")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-layers-operator-panel")).toBeInTheDocument();
   });

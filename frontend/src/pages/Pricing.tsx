@@ -1,7 +1,8 @@
 /**
- * Pricing Registry — template-driven quote calculation pricing hub.
+ * Pricing Registry — registry intern de referință.
  *
- * Pricing = prețuri/rate folosite în calculul de ofertă (materiale + operații).
+ * Pricing = Material / Reguli comerciale / Cost intern / Capacitate / Analytics.
+ * NU este hub unic de ofertare. Oferta oficială = Snapshot V2, nu edit live aici.
  * Inventory = stoc, furnizori, achiziții (nu sursa de adevăr pentru ofertare).
  *
  * Date live din GET /api/v1/pricing/registry — doar rânduri folosite de template-uri.
@@ -293,39 +294,39 @@ function MarkupRulesDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-lg bg-[#0F1629] border-l border-[#1E293B] overflow-y-auto">
+      <div className="relative w-full max-w-lg bg-wo-surface-inset border-l border-border overflow-y-auto">
         {/* Drawer header */}
-        <div className="sticky top-0 z-10 bg-[#0F1629] border-b border-[#1E293B] px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-10 bg-wo-surface-inset border-b border-border px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Settings2 className="w-5 h-5 text-purple-400" />
-            <h2 className="text-[16px] font-bold text-slate-100">Reguli Adaos Comercial</h2>
+            <Settings2 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <h2 className="text-[16px] font-bold text-foreground">Reguli Adaos Comercial</h2>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-[#1E293B] transition-colors">
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-muted transition-colors">
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         <div className="px-6 py-4 space-y-6">
           {/* Summary */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-center">
-              <p className="text-[18px] font-bold text-emerald-400">{grouped.active.length}</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Active</p>
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-center">
+              <p className="text-[18px] font-bold text-emerald-600 dark:text-emerald-400">{grouped.active.length}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Active</p>
             </div>
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-center">
-              <p className="text-[18px] font-bold text-slate-300">{grouped.draft.length}</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Draft</p>
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-center">
+              <p className="text-[18px] font-bold text-muted-foreground">{grouped.draft.length}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Draft</p>
             </div>
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-center">
-              <p className="text-[18px] font-bold text-slate-500">{grouped.archived.length}</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-wide">Arhivate</p>
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-center">
+              <p className="text-[18px] font-bold text-muted-foreground">{grouped.archived.length}</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Arhivate</p>
             </div>
           </div>
 
           {/* Active policies */}
           {grouped.active.length > 0 && (
             <div>
-              <h3 className="text-[12px] font-semibold text-slate-200 uppercase tracking-wide mb-3">Reguli Active</h3>
+              <h3 className="text-[12px] font-semibold text-foreground uppercase tracking-wide mb-3">Reguli Active</h3>
               <div className="space-y-2">
                 {grouped.active.map((p) => (
                   <PolicyRow key={p.id} policy={p} />
@@ -337,7 +338,7 @@ function MarkupRulesDrawer({
           {/* Draft policies */}
           {grouped.draft.length > 0 && (
             <div>
-              <h3 className="text-[12px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Reguli Draft</h3>
+              <h3 className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wide mb-3">Reguli Draft</h3>
               <div className="space-y-2">
                 {grouped.draft.map((p) => (
                   <PolicyRow key={p.id} policy={p} />
@@ -348,8 +349,8 @@ function MarkupRulesDrawer({
 
           {policies.length === 0 && (
             <div className="text-center py-8">
-              <Settings2 className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[12px] text-slate-400">Nu există reguli de adaos configurate.</p>
+              <Settings2 className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+              <p className="text-[12px] text-muted-foreground">Nu există reguli de adaos configurate.</p>
             </div>
           )}
 
@@ -361,9 +362,9 @@ function MarkupRulesDrawer({
           </div>
 
           {/* Notice */}
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              <Info className="w-3 h-3 inline mr-1 text-blue-400" />
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <Info className="w-3 h-3 inline mr-1 text-blue-600 dark:text-blue-400" />
               Regulile de adaos sunt aplicate automat la calculul prețului net estimat.
               Prioritatea determină regula câștigătoare: material &gt; subcategorie &gt; categorie &gt; global.
             </p>
@@ -388,7 +389,7 @@ function PolicyRow({ policy }: { policy: CommercialMarkupPolicy }) {
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+    <div className="bg-card border border-border rounded-lg p-3">
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2">
           <StatusBadge
@@ -397,19 +398,19 @@ function PolicyRow({ policy }: { policy: CommercialMarkupPolicy }) {
             label={markupStatusLabel(policy.status)}
             className="text-[10px]"
           />
-          <span className="text-[10px] text-slate-500 uppercase">{scopeLabel(policy.scope_type)}</span>
+          <span className="text-[10px] text-muted-foreground uppercase">{scopeLabel(policy.scope_type)}</span>
         </div>
-        <span className="text-[13px] font-bold text-slate-100">{valueDisplay}</span>
+        <span className="text-[13px] font-bold text-foreground">{valueDisplay}</span>
       </div>
-      <div className="flex items-center gap-3 text-[11px] text-slate-400">
-        <span>Scop: <span className="text-slate-200">{policy.scope_value || "—"}</span></span>
-        <span>Prioritate: <span className="text-slate-200">{policy.priority}</span></span>
+      <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+        <span>Scop: <span className="text-foreground">{policy.scope_value || "—"}</span></span>
+        <span>Prioritate: <span className="text-foreground">{policy.priority}</span></span>
         {policy.rounding_mode !== "none" && (
-          <span>Rotunjire: <span className="text-slate-200">{policy.rounding_mode}</span></span>
+          <span>Rotunjire: <span className="text-foreground">{policy.rounding_mode}</span></span>
         )}
       </div>
       {policy.notes && (
-        <p className="text-[10px] text-slate-500 mt-1.5 italic">{policy.notes}</p>
+        <p className="text-[10px] text-muted-foreground mt-1.5 italic">{policy.notes}</p>
       )}
     </div>
   );
@@ -442,15 +443,15 @@ function MaterialDetailDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-xl bg-[#0F1629] border-l border-[#1E293B] overflow-y-auto">
+      <div className="relative w-full max-w-xl bg-wo-surface-inset border-l border-border overflow-y-auto">
         {/* Drawer header */}
-        <div className="sticky top-0 z-10 bg-[#0F1629] border-b border-[#1E293B] px-6 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-10 bg-wo-surface-inset border-b border-border px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-[16px] font-bold text-slate-100">{material.name}</h2>
-            <p className="text-[12px] font-mono text-blue-400 mt-0.5">{material.code}</p>
+            <h2 className="text-[16px] font-bold text-foreground">{material.name}</h2>
+            <p className="text-[12px] font-mono text-blue-600 dark:text-blue-400 mt-0.5">{material.code}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-[#1E293B] transition-colors">
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-muted transition-colors">
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
@@ -459,41 +460,41 @@ function MaterialDetailDrawer({
           <div className="flex items-center gap-3">
             <GateBadge gate={gate} />
             {material.category && (
-              <span className="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+              <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded">
                 {material.category}{material.subcategory ? ` / ${material.subcategory}` : ""}
               </span>
             )}
           </div>
 
           {/* Cost section */}
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Cost Cumpărare Net</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Cost Cumpărare Net</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Preț unitar</p>
-                <p className="text-[16px] font-bold text-slate-100">{fmtCost(material.unit_cost, material.currency)}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Preț unitar</p>
+                <p className="text-[16px] font-bold text-foreground">{fmtCost(material.unit_cost, material.currency)}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Unitate</p>
-                <p className="text-[14px] text-slate-200">{material.unit || "Lipsă"}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Unitate</p>
+                <p className="text-[14px] text-foreground">{material.unit || "Lipsă"}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Furnizor</p>
-                <p className="text-[12px] text-slate-300">{material.supplier || "Lipsă"}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Furnizor</p>
+                <p className="text-[12px] text-muted-foreground">{material.supplier || "Lipsă"}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Valid din</p>
-                <p className="text-[12px] text-slate-300">{fmtDate(material.valid_from)}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Valid din</p>
+                <p className="text-[12px] text-muted-foreground">{fmtDate(material.valid_from)}</p>
               </div>
             </div>
           </div>
 
           {/* Source section */}
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Sursă & Verificare</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Sursă & Verificare</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Status verificare</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Status verificare</p>
                 <StatusBadge
                   domain="pricing"
                   status={material.source_review_status || "unknown"}
@@ -503,18 +504,18 @@ function MaterialDetailDrawer({
                 />
               </div>
               <div>
-                <p className="text-[10px] text-slate-500 mb-0.5">Verificat la</p>
-                <p className="text-[12px] text-slate-300">{fmtDate(material.source_checked_at)}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Verificat la</p>
+                <p className="text-[12px] text-muted-foreground">{fmtDate(material.source_checked_at)}</p>
               </div>
               <div className="col-span-2">
-                <p className="text-[10px] text-slate-500 mb-0.5">Sursă</p>
-                <p className="text-[12px] text-slate-300">{material.source_name || "Lipsă"}</p>
+                <p className="text-[10px] text-muted-foreground mb-0.5">Sursă</p>
+                <p className="text-[12px] text-muted-foreground">{material.source_name || "Lipsă"}</p>
                 {material.source_url && (
                   <a
                     href={material.source_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] text-blue-400 hover:underline mt-0.5 inline-block"
+                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline mt-0.5 inline-block"
                   >
                     {material.source_url}
                   </a>
@@ -522,75 +523,75 @@ function MaterialDetailDrawer({
               </div>
               {material.source_notes && (
                 <div className="col-span-2">
-                  <p className="text-[10px] text-slate-500 mb-0.5">Note sursă</p>
-                  <p className="text-[11px] text-slate-400 italic">{material.source_notes}</p>
+                  <p className="text-[10px] text-muted-foreground mb-0.5">Note sursă</p>
+                  <p className="text-[11px] text-muted-foreground italic">{material.source_notes}</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Markup section */}
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Adaos Comercial Aplicat</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Adaos Comercial Aplicat</h3>
             {markup ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-slate-300">Regulă</span>
-                  <span className="text-[13px] font-bold text-slate-100">{markup.displayValue}</span>
+                  <span className="text-[12px] text-muted-foreground">Regulă</span>
+                  <span className="text-[13px] font-bold text-foreground">{markup.displayValue}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-slate-300">Scop</span>
-                  <span className="text-[12px] text-slate-200">{scopeLabel(markup.scope)} — {markup.policy.scope_value || "—"}</span>
+                  <span className="text-[12px] text-muted-foreground">Scop</span>
+                  <span className="text-[12px] text-foreground">{scopeLabel(markup.scope)} — {markup.policy.scope_value || "—"}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-slate-300">Tip</span>
-                  <span className="text-[12px] text-slate-200">{markup.policy.markup_type}</span>
+                  <span className="text-[12px] text-muted-foreground">Tip</span>
+                  <span className="text-[12px] text-foreground">{markup.policy.markup_type}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] text-slate-300">Prioritate</span>
-                  <span className="text-[12px] text-slate-200">{markup.policy.priority}</span>
+                  <span className="text-[12px] text-muted-foreground">Prioritate</span>
+                  <span className="text-[12px] text-foreground">{markup.policy.priority}</span>
                 </div>
               </div>
             ) : (
-              <p className="text-[12px] text-slate-500">Adaos lipsă — nicio regulă aplicabilă.</p>
+              <p className="text-[12px] text-muted-foreground">Adaos lipsă — nicio regulă aplicabilă.</p>
             )}
           </div>
 
           {/* Estimated net price */}
-          <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-blue-500 rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-2">Preț Net Estimat</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-2">Preț Net Estimat</h3>
             {estimated.value !== null ? (
-              <p className="text-[20px] font-bold text-blue-300">
+              <p className="text-[20px] font-bold text-blue-600 dark:text-blue-300">
                 {fmtCost(estimated.value, material.currency)}
-                <span className="text-[11px] text-slate-500 ml-2 font-normal">/ {material.unit || "buc"}</span>
+                <span className="text-[11px] text-muted-foreground ml-2 font-normal">/ {material.unit || "buc"}</span>
               </p>
             ) : (
-              <p className="text-[13px] text-amber-400">Indisponibil — {estimated.reason}</p>
+              <p className="text-[13px] text-amber-600 dark:text-amber-400">Indisponibil — {estimated.reason}</p>
             )}
-            <p className="text-[10px] text-slate-500 mt-1">Calcul orientativ: cost net + adaos. Fără TVA.</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Calcul orientativ: cost net + adaos. Fără TVA.</p>
           </div>
 
           {/* Dry-run result from backend (if available) */}
           {dryRunResult && (
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-              <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Verificare Backend (Dry-Run)</h3>
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+              <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Verificare Backend (Dry-Run)</h3>
               <div className="space-y-2 text-[12px]">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Cost bază</span>
-                  <span className="text-slate-200">{fmtCost(dryRunResult.base_cost_total, dryRunResult.currency)}</span>
+                  <span className="text-muted-foreground">Cost bază</span>
+                  <span className="text-foreground">{fmtCost(dryRunResult.base_cost_total, dryRunResult.currency)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Adaos calculat</span>
-                  <span className="text-slate-200">{fmtCost(dryRunResult.markup_amount, dryRunResult.currency)}</span>
+                  <span className="text-muted-foreground">Adaos calculat</span>
+                  <span className="text-foreground">{fmtCost(dryRunResult.markup_amount, dryRunResult.currency)}</span>
                 </div>
-                <div className="flex justify-between border-t border-[#2A3548] pt-2">
-                  <span className="text-slate-300 font-medium">Preț comercial unitar</span>
-                  <span className="text-blue-300 font-bold">{fmtCost(dryRunResult.commercial_unit_price, dryRunResult.currency)}</span>
+                <div className="flex justify-between border-t border-wo-border-strong pt-2">
+                  <span className="text-muted-foreground font-medium">Preț comercial unitar</span>
+                  <span className="text-blue-600 dark:text-blue-300 font-bold">{fmtCost(dryRunResult.commercial_unit_price, dryRunResult.currency)}</span>
                 </div>
                 {dryRunResult.warnings.length > 0 && (
                   <div className="mt-2 space-y-1">
                     {dryRunResult.warnings.map((w, i) => (
-                      <p key={i} className="text-[11px] text-amber-400 flex items-start gap-1">
+                      <p key={i} className="text-[11px] text-amber-600 dark:text-amber-400 flex items-start gap-1">
                         <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
                         {w.message}
                       </p>
@@ -602,29 +603,29 @@ function MaterialDetailDrawer({
           )}
 
           {/* Price history */}
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Istoric Preț</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Istoric Preț</h3>
             {loadingHistory ? (
               <div className="flex items-center gap-2 py-3">
-                <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
-                <span className="text-[11px] text-slate-400">Se încarcă...</span>
+                <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+                <span className="text-[11px] text-muted-foreground">Se încarcă...</span>
               </div>
             ) : priceHistory.length > 0 ? (
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {priceHistory.slice(0, 10).map((entry, i) => (
-                  <div key={entry.id || i} className="flex items-center justify-between text-[11px] border-b border-[#2A3548] pb-1.5 last:border-0">
+                  <div key={entry.id || i} className="flex items-center justify-between text-[11px] border-b border-wo-border-strong pb-1.5 last:border-0">
                     <div>
-                      <span className="text-slate-300">{fmtCost(entry.new_unit_cost ?? entry.unit_cost, entry.new_currency ?? entry.currency)}</span>
+                      <span className="text-muted-foreground">{fmtCost(entry.new_unit_cost ?? entry.unit_cost, entry.new_currency ?? entry.currency)}</span>
                       {entry.old_unit_cost != null && (
-                        <span className="text-slate-500 ml-2">← {fmtCost(entry.old_unit_cost, entry.old_currency)}</span>
+                        <span className="text-muted-foreground ml-2">← {fmtCost(entry.old_unit_cost, entry.old_currency)}</span>
                       )}
                     </div>
-                    <span className="text-slate-500">{fmtDate(entry.changed_at ?? entry.created_at)}</span>
+                    <span className="text-muted-foreground">{fmtDate(entry.changed_at ?? entry.created_at)}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[11px] text-slate-500">Nu există istoric disponibil.</p>
+              <p className="text-[11px] text-muted-foreground">Nu există istoric disponibil.</p>
             )}
           </div>
         </div>
@@ -702,73 +703,73 @@ function MaterialEditDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-xl bg-[#0F1629] border-l border-[#1E293B] overflow-y-auto">
-        <div className="sticky top-0 z-10 bg-[#0F1629] border-b border-[#1E293B] px-6 py-4 flex items-center justify-between">
+      <div className="relative w-full max-w-xl bg-wo-surface-inset border-l border-border overflow-y-auto">
+        <div className="sticky top-0 z-10 bg-wo-surface-inset border-b border-border px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-[16px] font-bold text-slate-100">Editare preț material</h2>
-            <p className="text-[12px] font-mono text-blue-400 mt-0.5">{material.code}</p>
+            <h2 className="text-[16px] font-bold text-foreground">Editare preț material</h2>
+            <p className="text-[12px] font-mono text-blue-600 dark:text-blue-400 mt-0.5">{material.code}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-[#1E293B] transition-colors">
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-muted transition-colors">
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         <div className="px-6 py-4 space-y-4">
-          <div className="bg-blue-900/20 border border-blue-700/40 rounded-lg p-3 text-[11px] text-blue-200 leading-relaxed">
-            Modificările din Pricing afectează calculele de ofertare. Nu modifică stocul din Inventory.
-            Inventory rămâne zona pentru recepții, furnizori, consum și stoc.
+          <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg p-3 text-[11px] text-amber-200 leading-relaxed">
+            Registry intern de referință — Cost achiziție intern. Nu este tarif client.
+            Oferta oficială = Snapshot V2. Inventory rămâne zona pentru recepții, furnizori, consum și stoc.
           </div>
 
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4 space-y-3">
-            <p className="text-[12px] text-slate-200 font-semibold">{material.name}</p>
-            <p className="text-[10px] text-slate-500">
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4 space-y-3">
+            <p className="text-[12px] text-foreground font-semibold">{material.name}</p>
+            <p className="text-[10px] text-muted-foreground">
               Template-uri: {item.used_by_templates.join(", ") || "—"}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[10px] text-muted-foreground">
               Încredere curentă: {confidenceBadgeLabel(item.confidence)}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Cost unitar *</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Cost achiziție — intern *</span>
               <input
                 value={form.unit_cost}
                 onChange={(e) => setForm((f) => ({ ...f, unit_cost: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Monedă rând (override avansat)</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Monedă rând (override avansat)</span>
               <input
                 value={form.currency}
                 onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">TVA %</span>
+              <span className="text-[10px] text-muted-foreground uppercase">TVA %</span>
               <input
                 value={form.vat_percent}
                 onChange={(e) => setForm((f) => ({ ...f, vat_percent: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Valid din</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Valid din</span>
               <input
                 type="date"
                 value={form.valid_from}
                 onChange={(e) => setForm((f) => ({ ...f, valid_from: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Status</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Status</span>
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[11px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[11px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               >
                 {MATERIAL_STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>{statusBadgeLabel(s)}</option>
@@ -776,11 +777,11 @@ function MaterialEditDrawer({
               </select>
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Verificare sursă</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Verificare sursă</span>
               <select
                 value={form.source_review_status}
                 onChange={(e) => setForm((f) => ({ ...f, source_review_status: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[11px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[11px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               >
                 <option value="">— Neschimbat —</option>
                 {SOURCE_REVIEW_STATUS_OPTIONS.filter(Boolean).map((s) => (
@@ -791,28 +792,28 @@ function MaterialEditDrawer({
           </div>
 
           <label className="block space-y-1">
-            <span className="text-[10px] text-slate-500 uppercase">Note sursă</span>
+            <span className="text-[10px] text-muted-foreground uppercase">Note sursă</span>
             <textarea
               value={form.source_notes}
               onChange={(e) => setForm((f) => ({ ...f, source_notes: e.target.value }))}
               rows={2}
-              className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+              className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
             />
           </label>
 
           <label className="block space-y-1">
-            <span className="text-[10px] text-slate-500 uppercase">Motiv modificare *</span>
+            <span className="text-[10px] text-muted-foreground uppercase">Motiv modificare *</span>
             <textarea
               value={form.change_reason}
               onChange={(e) => setForm((f) => ({ ...f, change_reason: e.target.value }))}
               rows={2}
-              placeholder="Ex: actualizare preț ofertare Q2"
-              className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+              placeholder="Ex: actualizare cost intern Q2"
+              className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
             />
           </label>
 
           {error && (
-            <p className="text-[11px] text-red-400 flex items-center gap-1">
+            <p className="text-[11px] text-red-600 dark:text-red-400 flex items-center gap-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               {error}
             </p>
@@ -829,29 +830,29 @@ function MaterialEditDrawer({
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-[12px] rounded bg-slate-700 text-slate-300 hover:bg-slate-600"
+              className="px-4 py-2 text-[12px] rounded bg-slate-700 text-muted-foreground hover:bg-slate-600"
             >
               Anulează
             </button>
           </div>
 
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <h3 className="text-[11px] text-slate-400 uppercase tracking-wide mb-3">Istoric preț</h3>
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <h3 className="text-[11px] text-muted-foreground uppercase tracking-wide mb-3">Istoric preț</h3>
             {loadingHistory ? (
-              <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+              <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
             ) : history.length > 0 ? (
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {history.map((entry) => (
-                  <div key={entry.id} className="text-[11px] border-b border-[#2A3548] pb-1.5">
-                    <span className="text-slate-300">{fmtCost(entry.new_unit_cost ?? entry.unit_cost, entry.new_currency ?? entry.currency)}</span>
+                  <div key={entry.id} className="text-[11px] border-b border-wo-border-strong pb-1.5">
+                    <span className="text-muted-foreground">{fmtCost(entry.new_unit_cost ?? entry.unit_cost, entry.new_currency ?? entry.currency)}</span>
                     {entry.change_reason && (
-                      <span className="text-slate-500 ml-2">— {entry.change_reason}</span>
+                      <span className="text-muted-foreground ml-2">— {entry.change_reason}</span>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[11px] text-slate-500">Nu există istoric.</p>
+              <p className="text-[11px] text-muted-foreground">Nu există istoric.</p>
             )}
           </div>
         </div>
@@ -921,37 +922,37 @@ function WorkcenterRateEditDrawer({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-xl bg-[#0F1629] border-l border-[#1E293B] overflow-y-auto">
-        <div className="sticky top-0 z-10 bg-[#0F1629] border-b border-[#1E293B] px-6 py-4 flex items-center justify-between">
+      <div className="relative w-full max-w-xl bg-wo-surface-inset border-l border-border overflow-y-auto">
+        <div className="sticky top-0 z-10 bg-wo-surface-inset border-b border-border px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-[16px] font-bold text-slate-100">Editare rată operație</h2>
-            <p className="text-[12px] font-mono text-cyan-300 mt-0.5">{rate.code}</p>
+            <h2 className="text-[16px] font-bold text-foreground">Editare rată operație</h2>
+            <p className="text-[12px] font-mono text-cyan-600 dark:text-cyan-300 mt-0.5">{rate.code}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-[#1E293B] transition-colors">
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-muted transition-colors">
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         <div className="px-6 py-4 space-y-4">
-          <div className="bg-blue-900/20 border border-blue-700/40 rounded-lg p-3 text-[11px] text-blue-200 leading-relaxed">
-            Modificările din Pricing afectează calculele de ofertare. Nu modifică stocul din Inventory.
+          <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg p-3 text-[11px] text-amber-200 leading-relaxed">
+            Registry intern — Efort intern / capacitate. Nu este tarif client. Oferta oficială = Snapshot V2.
           </div>
 
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
-            <p className="text-[12px] text-slate-200 font-semibold">{rate.label}</p>
-            <p className="text-[10px] text-slate-500 mt-1">
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
+            <p className="text-[12px] text-foreground font-semibold">{rate.label}</p>
+            <p className="text-[10px] text-muted-foreground mt-1">
               Template-uri: {item.used_by_templates.join(", ") || "—"}
             </p>
-            <p className="text-[10px] text-slate-500">Bază rată: {rate.rate_basis}</p>
+            <p className="text-[10px] text-muted-foreground">Bază rată: {rate.rate_basis}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Bază rată</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Bază rată</span>
               <select
                 value={form.rate_basis}
                 onChange={(e) => setForm((f) => ({ ...f, rate_basis: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[11px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[11px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               >
                 {RATE_BASIS_OPTIONS.map((b) => (
                   <option key={b} value={b}>{b}</option>
@@ -959,36 +960,36 @@ function WorkcenterRateEditDrawer({
               </select>
             </label>
             <div className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Monedă</span>
-              <p className="px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-400">
+              <span className="text-[10px] text-muted-foreground uppercase">Monedă</span>
+              <p className="px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-muted-foreground">
                 {form.currency} (read-only)
               </p>
             </div>
             {form.rate_basis === "per_hour" ? (
               <label className="space-y-1 col-span-2">
-                <span className="text-[10px] text-slate-500 uppercase">Rată / oră</span>
+                <span className="text-[10px] text-muted-foreground uppercase">Efort intern / oră (capacitate)</span>
                 <input
                   value={form.rate_per_hour}
                   onChange={(e) => setForm((f) => ({ ...f, rate_per_hour: e.target.value }))}
-                  className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                  className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
                 />
               </label>
             ) : (
               <label className="space-y-1 col-span-2">
-                <span className="text-[10px] text-slate-500 uppercase">Rată / metru liniar</span>
+                <span className="text-[10px] text-muted-foreground uppercase">Rată / metru liniar</span>
                 <input
                   value={form.rate_per_linear_meter}
                   onChange={(e) => setForm((f) => ({ ...f, rate_per_linear_meter: e.target.value }))}
-                  className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                  className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
                 />
               </label>
             )}
             <label className="space-y-1">
-              <span className="text-[10px] text-slate-500 uppercase">Status</span>
+              <span className="text-[10px] text-muted-foreground uppercase">Status</span>
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className="w-full px-2.5 py-1.5 text-[11px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+                className="w-full px-2.5 py-1.5 text-[11px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
               >
                 {WORKCENTER_STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>{statusBadgeLabel(s)}</option>
@@ -998,21 +999,21 @@ function WorkcenterRateEditDrawer({
           </div>
 
           {rate.notes && (
-            <p className="text-[10px] text-slate-500 italic">Note existente: {rate.notes}</p>
+            <p className="text-[10px] text-muted-foreground italic">Note existente: {rate.notes}</p>
           )}
 
           <label className="block space-y-1">
-            <span className="text-[10px] text-slate-500 uppercase">Motiv modificare *</span>
+            <span className="text-[10px] text-muted-foreground uppercase">Motiv modificare *</span>
             <textarea
               value={form.change_reason}
               onChange={(e) => setForm((f) => ({ ...f, change_reason: e.target.value }))}
               rows={2}
-              className="w-full px-2.5 py-1.5 text-[12px] bg-[#1A2236] border border-[#2A3548] rounded text-slate-200"
+              className="w-full px-2.5 py-1.5 text-[12px] bg-wo-surface-raised border border-wo-border-strong rounded text-foreground"
             />
           </label>
 
           {error && (
-            <p className="text-[11px] text-red-400 flex items-center gap-1">
+            <p className="text-[11px] text-red-600 dark:text-red-400 flex items-center gap-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               {error}
             </p>
@@ -1029,7 +1030,7 @@ function WorkcenterRateEditDrawer({
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 text-[12px] rounded bg-slate-700 text-slate-300 hover:bg-slate-600"
+              className="px-4 py-2 text-[12px] rounded bg-slate-700 text-muted-foreground hover:bg-slate-600"
             >
               Anulează
             </button>
@@ -1077,7 +1078,9 @@ export default function Pricing() {
     }
   });
   const [selectedItem, setSelectedItem] = useState<PricingRegistryItem | null>(null);
-  const [stackSearch, setStackSearch] = useState("");
+  const [stackSearch, setStackSearch] = useState(() =>
+    String(searchParams.get("code") || searchParams.get("q") || "").trim(),
+  );
   const [detailHistory, setDetailHistory] = useState<PriceHistoryEntryDTO[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
@@ -1230,7 +1233,7 @@ export default function Pricing() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-2" />
-          <p className="text-[12px] text-slate-500">Încărcare date prețuri...</p>
+          <p className="text-[12px] text-muted-foreground">Încărcare date prețuri...</p>
         </div>
       </div>
     );
@@ -1239,7 +1242,7 @@ export default function Pricing() {
   if (!registry) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-[12px] text-slate-500">Nu s-au putut încărca datele registry.</p>
+        <p className="text-[12px] text-muted-foreground">Nu s-au putut încărca datele registry.</p>
       </div>
     );
   }

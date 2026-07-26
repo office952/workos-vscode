@@ -3,9 +3,13 @@
  */
 
 export const TPL_ACM_CASSETTED_PANEL = "TPL-ACM-CASSETTED-PANEL";
+export const TPL_ACM_BOXED_MOUNTING_SUPPORT = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 export const TPL_CUT_ACM_LETTERS = "TPL-CUT-ACM-LETTERS";
 
 export const ACM_THICKNESS_OPTIONS = [3, 4] as const;
+/** Boxed mounting intake — 4 mm deferred until owner price. */
+export const ACM_BOXED_MOUNTING_THICKNESS_OPTIONS = [3] as const;
+export const ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM = ACM_BOXED_MOUNTING_THICKNESS_OPTIONS;
 export const ACM_FOLD_SIDES_OPTIONS = [
   { value: "all", label: "Toate laturile" },
   { value: "top_bottom", label: "Sus + jos" },
@@ -90,6 +94,17 @@ export const ACM_CASSETTED_QUOTE_INPUT_FIELDS: AcmCasettedFieldSpec[] = [
   },
 ];
 
+export const ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS: AcmCasettedFieldSpec[] =
+  ACM_CASSETTED_QUOTE_INPUT_FIELDS.map((field) =>
+    field.key === "acm_thickness_mm"
+      ? {
+          ...field,
+          numberOptions: ACM_BOXED_MOUNTING_THICKNESS_OPTIONS,
+          helper: "3 mm owner-confirmed; 4 mm deferred until owner price.",
+        }
+      : field,
+  );
+
 export const CUT_ACM_QUOTE_INPUT_FIELDS: AcmCasettedFieldSpec[] = [
   {
     key: "cut_area_m2",
@@ -127,6 +142,31 @@ function foldLengthMm(
   if (sides === "top_bottom") return 2 * widthMm;
   if (sides === "left_right") return 2 * heightMm;
   return null;
+}
+
+export function deriveAcmCasettedQuoteInput(raw: Record<string, unknown>): {
+  payload: Record<string, unknown>;
+  warnings: string[];
+  blockers: string[];
+} {
+  const stringValues: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (value != null && value !== "") {
+      stringValues[key] = String(value);
+    }
+  }
+  const payload = buildAcmCasettedQuoteInputPayload(stringValues) as Record<string, unknown>;
+  const warnings: string[] = [];
+  const blockers: string[] = [];
+  const w = Number(raw.panel_width_mm);
+  const h = Number(raw.panel_height_mm);
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    blockers.push("missing_panel_dimensions");
+  }
+  const rearLip = Number(raw.rear_lip_mm ?? 0);
+  const lipWarning = rearLipWarning(rearLip);
+  if (lipWarning) warnings.push(lipWarning);
+  return { payload, warnings, blockers };
 }
 
 export function rearLipWarning(rearLipMm: number): string | null {
@@ -204,6 +244,8 @@ export function buildCutAcmQuoteInputPayload(
 
 export function isAcmTemplateCode(code: string | null | undefined): boolean {
   return (
-    code === TPL_ACM_CASSETTED_PANEL || code === TPL_CUT_ACM_LETTERS
+    code === TPL_ACM_CASSETTED_PANEL ||
+    code === TPL_ACM_BOXED_MOUNTING_SUPPORT ||
+    code === TPL_CUT_ACM_LETTERS
   );
 }

@@ -1,0 +1,37 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "concepts_searched": [
+    "available task",
+    "claim",
+    "take task",
+    "self-assign",
+    "start-from-available",
+    "assigned to me",
+    "available for me"
+  ],
+  "backend_endpoints": [
+    "GET /api/v1/employee-mobile/tasks/available",
+    "POST /api/v1/employee-mobile/tasks/{task_id}/claim",
+    "POST /api/v1/employee-mobile/tasks/{task_id}/start-from-available"
+  ],
+  "classification": {
+    "claim_real": "IMPLEMENTED",
+    "self_assignment": "IMPLEMENTED",
+    "employee_can_take_ready_unassigned": "IMPLEMENTED via claim or start-from-available",
+    "start_unassigned_without_claim": "PARTIAL — start-from-available assigns atomically; assigned start requires prior assignee",
+    "double_claim_risk": "MITIGATED — asyncio lock + SELECT FOR UPDATE (MOBILE-T06)",
+    "locking_concurrency": "IMPLEMENTED",
+    "primary_operator_concept": "IMPLICIT — assigned_employee_id + session role=primary default",
+    "claim_permanent": "PARTIAL — reassignment allowed for manager; no employee unclaim API",
+    "manager_cancel_claim": "PARTIAL — reassign to another employee only",
+    "claim_blocks_extra_participants": "YES_FOR_AVAILABLE_POOL — _has_active_session_by_other hides task from available list"
+  },
+  "ui": {
+    "employee_mobile_v2": "IMPLEMENTED — Preiau sarcina secondary + start-from-available primary",
+    "employee_mobile_v1": "LEGACY_SEPARATE",
+    "shop_floor": "UI_ONLY_MOCK_RISK"
+  },
+  "upstream_policy": "MOBILE-T06 @ docs/worklog/realignment/2026-07-15_mobile_t06_claim_assignment_policy_v1.md",
+  "verdict": "CLAIM_IMPLEMENTED_INDIVIDUAL_SCOPE_NOT_COLLABORATION_GATE"
+}

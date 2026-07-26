@@ -1,0 +1,95 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "routes": [
+    {
+      "route": "/employees",
+      "url": "http://localhost:3000/employees",
+      "page": "Angajați — registry operațional",
+      "truth": "LIVE_API operational registry panel",
+      "actions": ["edit skills", "workcenters", "resources", "operation mappings"],
+      "missing": ["unified post_principal label", "availability/workload"],
+      "demo_mock": "LOW",
+      "risk": "LOW"
+    },
+    {
+      "route": "/employees-records",
+      "url": "http://localhost:3000/employees-records",
+      "page": "Evidență internă HR",
+      "truth": "MIXED — demo module for records",
+      "actions": ["view alerts", "documents"],
+      "missing": ["operational eligibility edit"],
+      "demo_mock": "MEDIUM",
+      "risk": "MEDIUM"
+    },
+    {
+      "route": "/execution/:order_id",
+      "url": "http://localhost:3000/execution/{order_id}",
+      "page": "Execution Detail",
+      "truth": "LIVE operator task truth + blueprint",
+      "actions": ["manager assign", "view readiness", "view active_workers"],
+      "missing": ["help requests", "quantity progress", "participant join"],
+      "demo_mock": "LOW",
+      "risk": "LOW"
+    },
+    {
+      "route": "/operator",
+      "url": "http://localhost:3000/operator",
+      "page": "Operator View",
+      "truth": "LIVE backend truth when stack up",
+      "actions": ["view tasks", "assign", "production blueprint"],
+      "missing": ["collaboration controls"],
+      "demo_mock": "LOW",
+      "risk": "LOW"
+    },
+    {
+      "route": "/shop-floor",
+      "url": "http://localhost:3000/shop-floor",
+      "page": "Shop Floor",
+      "truth": "MOCK_FALLBACK_RISK",
+      "actions": ["display only"],
+      "missing": ["claim", "available pool", "real readiness"],
+      "demo_mock": "HIGH",
+      "risk": "HIGH"
+    },
+    {
+      "route": "/employee-mobile-v2",
+      "url": "http://localhost:3000/employee-mobile-v2",
+      "page": "Employee Mobile V2",
+      "truth": "LIVE — task truth API",
+      "actions": ["claim", "start-from-available", "start", "complete", "pause", "clarification"],
+      "missing": ["help request", "join as helper", "quantity update", "stop-without-complete"],
+      "demo_mock": "LOW",
+      "risk": "LOW for primary flow"
+    },
+    {
+      "route": "/tablet/:stationId",
+      "url": "http://localhost:3000/tablet/{station}",
+      "page": "Tablet station queue",
+      "truth": "PARTIAL live",
+      "actions": ["station queue view"],
+      "missing": ["multi-participant", "claim parity with mobile"],
+      "demo_mock": "MEDIUM",
+      "risk": "MEDIUM"
+    },
+    {
+      "route": "/product-system",
+      "url": "http://localhost:3000/product-system",
+      "page": "Product System",
+      "truth": "LIVE + mock templates fallback in places",
+      "actions": ["template config — no people"],
+      "missing": ["collaboration_mode", "progress_unit fields"],
+      "demo_mock": "PARTIAL",
+      "risk": "LOW for staffing"
+    }
+  ],
+  "operator_visibility_checklist": {
+    "taskurile_mele": "YES — mobile assigned list",
+    "disponibile_pentru_mine": "YES — available section + can_claim",
+    "cer_ajutor": "NO",
+    "zona_mea": "PARTIAL — eligibility filter only",
+    "participanti_activi": "PARTIAL — blueprint active_workers",
+    "progres_operatie": "PARTIAL — task percent not quantity"
+  },
+  "verdict": "MOBILE_V2_AND_EXECUTION_LIVE — SHOP_FLOOR_NOT_TRUSTED"
+}

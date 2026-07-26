@@ -1,0 +1,40 @@
+{
+  "contract_version": "intake_v6_golden_aggregate_v1",
+  "fixture_db_baseline": {
+    "note": "volumetric_v2_db seed is intentionally thinner than live dossier; Build 1 freezes seed-visible anchors only.",
+    "required_material_codes": [
+      "MAT-PROFIL-LATERAL-LITERE-60MM",
+      "MAT-SABLON-HARTIE",
+      "MAT-SABLON-MONTAJ"
+    ],
+    "required_operation_codes_any_of": [
+      ["RETURN_PROFILE_MACHINE_FORMING"],
+      ["svg_geometry_analysis"]
+    ]
+  },
+  "live_runtime_baseline": {
+    "note": "Read-only capture from historical golden workspace on live backend — authoritative BOM richness.",
+    "required_material_codes": [
+      "MAT-ADEZIV-CANT-LITERE",
+      "MAT-PROFIL-LATERAL-LITERE",
+      "MAT-LED-MODULE",
+      "MAT-LED-PSU-12V",
+      "MAT-ACP-FATA-LITERE",
+      "MAT-SPATE-PVC-LITERE"
+    ],
+    "required_operation_codes_any_of": [
+      ["RETURN_PROFILE_FACE_BONDING", "return_face_bonding"],
+      ["face_cnc_cut"],
+      ["side_forming"]
+    ]
+  },
+  "interface_face_cant": {
+    "material_code": "MAT-ADEZIV-CANT-LITERE",
+    "operation_codes": ["RETURN_PROFILE_FACE_BONDING", "return_face_bonding"],
+    "current_owner": "modelare_cant",
+    "target_owner": "interface:FACE+CANT",
+    "full_product_must_emit_on_live": true,
+    "fixture_db_emits_adhesive": false,
+    "cant_only_isolation": "build3"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "task": "MOBILE-T05B",
+  "generated_at": "2026-07-15T03:38:58.174818+00:00",
+  "backend_url": "http://127.0.0.1:8001",
+  "classification": "CONCURRENT_COMPLETE_IDEMPOTENT",
+  "checks": {
+    "before": {
+      "closed_sessions": 0,
+      "active_sessions": 1,
+      "completion_events": 0,
+      "task_status": "in_progress",
+      "plan_tasks_json_hash": -576265761918522531,
+      "plan_snapshot_version": 1
+    },
+    "after": {
+      "closed_sessions": 1,
+      "active_sessions": 0,
+      "completion_events": 1,
+      "task_status": "done",
+      "plan_tasks_json_hash": -576265761918522531,
+      "plan_snapshot_version": 1
+    }
+  },
+  "employee_link": {
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "prior_user_id": "dev-admin-user-00000000",
+    "linked_user_id": "dev-admin-user-00000000"
+  },
+  "fixture": {
+    "order_id": 92350,
+    "task_id": "T-M05B-CONC-COMPLETE",
+    "employee_id": 4
+  },
+  "concurrent": {
+    "overlap_seconds": 0.0036093000016990118,
+    "responses": [
+      {
+        "status_code": 200,
+        "body": {
+          "status": "ok",
+          "action": "complete",
+          "task_id": "T-M05B-CONC-COMPLETE",
+          "timestamp": "2026-07-15T03:38:58.464902+00:00"
+        },
+        "started_at": "2026-07-15T03:38:58.487171+00:00"
+      },
+      {
+        "status_code": 200,
+        "body": {
+          "status": "ok",
+          "action": "complete",
+          "task_id": "T-M05B-CONC-COMPLETE",
+          "timestamp": "2026-07-15T03:38:58.463839+00:00"
+        },
+        "started_at": "2026-07-15T03:38:58.472994+00:00"
+      }
+    ]
+  },
+  "truth_status": 200,
+  "list_status": 200,
+  "pass": true,
+  "failures": []
+}

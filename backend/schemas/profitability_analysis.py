@@ -28,6 +28,14 @@ class ProfitabilityVariance(BaseModel):
     minutes_delta: float | None = None
 
 
+CostCoverageStatus = Literal[
+    "COMPLETE",
+    "PARTIAL",
+    "INCOMPLETE",
+    "NOT_AVAILABLE",
+]
+
+
 class ProfitabilityAnalysisResponse(BaseModel):
     """Read-only profitability analysis for a single order."""
 
@@ -52,3 +60,13 @@ class ProfitabilityAnalysisResponse(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     retroactive_change_allowed: bool = False
     write_back_performed: bool = False
+    # V1 coverage honesty (post-job actuals) — never imply final profit when incomplete
+    known_actual_cost: float | None = None
+    known_actual_margin: float | None = None
+    known_actual_margin_percent: float | None = None
+    cost_coverage_status: CostCoverageStatus = "NOT_AVAILABLE"
+    included_cost_components: list[str] = Field(default_factory=list)
+    excluded_cost_components: list[str] = Field(default_factory=list)
+    missing_actual_components: list[str] = Field(default_factory=list)
+    material_valuation_method: str | None = None
+    profitability_wording: list[str] = Field(default_factory=list)

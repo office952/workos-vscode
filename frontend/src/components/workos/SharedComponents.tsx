@@ -222,7 +222,14 @@ export function ModuleNodeCard({
   };
   isLast: boolean;
 }) {
-  const statusDot = node.status === "processing" ? "bg-blue-500 animate-pulse" : node.status === "error" ? "bg-red-500" : "bg-emerald-500";
+  const statusDot =
+    node.status === "processing"
+      ? "bg-blue-500 animate-pulse"
+      : node.status === "error"
+        ? "bg-red-500"
+        : node.status === "active"
+          ? "bg-emerald-500"
+          : "bg-slate-500";
 
   return (
     <div className="flex items-center">
@@ -247,7 +254,15 @@ export function ModuleNodeCard({
             <span className="text-slate-400">{node.statusCounts.error}</span>
           </span>
         </div>
-        <p className="text-[10px] text-slate-500 mt-1">{node.activeCount} active</p>
+        <p className="text-[10px] text-slate-500 mt-1">
+          {node.status === "idle"
+            ? "Neverificat"
+            : node.status === "error"
+              ? "Eroare verificare"
+              : node.status === "processing"
+                ? "Parțial / atenție"
+                : `${node.activeCount} verificări`}
+        </p>
       </div>
       {!isLast && (
         <div className="flex items-center px-1">

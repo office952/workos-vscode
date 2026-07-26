@@ -1,18 +1,72 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import { useEffect } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { IntakeV6WorkspaceHeaderStatusProvider, useIntakeV6WorkspaceHeaderStatus } from "./IntakeV6WorkspaceHeaderStatusContext";
+import type { IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
 
-function OverlaySeed() {
+const EMPTY_WARNINGS: readonly string[] = [];
+
+function baseWorkspaceState(overrides: Partial<IntakeV6WorkspaceState> = {}): IntakeV6WorkspaceState {
+  return {
+    workspaceId: "ws-1",
+    phase: "svg_ready",
+    error: null,
+    loadErrorCode: null,
+    currentStep: "layers",
+    workspace: {
+      id: "ws-1",
+      workspace_code: "IV6-TEST",
+      title: "Test",
+      template_code: "TPL-VOLUMETRIC-LETTERS",
+      status: "draft",
+      readiness_status: "layer_roles_incomplete",
+      updated_at: "2026-07-19T12:00:00Z",
+      payload: {
+        svg_source: { file_hash: "hash-a", upload_status: "analyzed" },
+        svg_analysis_json: { layers: [] },
+        layer_role_setup: { confirmation_status: "incomplete", layers: [] },
+      },
+    },
+    svg: { fileName: "logo.svg", fileSizeBytes: 1200, previewSource: null },
+    layerChips: [
+      { layerKey: "a", displayName: "A", status: "pending" },
+      { layerKey: "b", displayName: "B", status: "pending" },
+    ],
+    analysisRunId: 1,
+    analyzerStatus: "ready",
+    analyzerError: null,
+    svgSource: null,
+    analyzerReport: null,
+    layerRoleConfirmation: null,
+    localFileHash: "hash-a",
+    unsavedAnalysis: false,
+    ...overrides,
+  } as IntakeV6WorkspaceState;
+}
+
+function OverlaySeed({
+  reviewWarnings = EMPTY_WARNINGS,
+  secondaryWarnings = EMPTY_WARNINGS,
+  layersTotal = 2,
+  layersConfirmed = 0,
+}: {
+  reviewWarnings?: readonly string[];
+  secondaryWarnings?: readonly string[];
+  layersTotal?: number;
+  layersConfirmed?: number;
+}) {
   const { setOverlay } = useIntakeV6WorkspaceHeaderStatus();
   useEffect(() => {
-    setOverlay({ layersTotal: 6, layersConfirmed: 0 });
-  }, [setOverlay]);
+    setOverlay({ layersTotal, layersConfirmed, reviewWarnings, secondaryWarnings });
+  }, [layersConfirmed, layersTotal, reviewWarnings, secondaryWarnings, setOverlay]);
   return null;
 }
 
-function renderFooter(overrides: Partial<Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0]> = {}) {
+function renderFooter(
+  overrides: Partial<Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0]> = {},
+  overlay: { reviewWarnings?: string[]; secondaryWarnings?: string[]; layersTotal?: number; layersConfirmed?: number } = {},
+) {
   const props: Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0] = {
     currentStep: "layers",
     stepIndex: 0,
@@ -24,61 +78,111 @@ function renderFooter(overrides: Partial<Parameters<typeof IntakeV6OperatorWorks
     onBack: vi.fn(),
     onNext: vi.fn(),
     persisting: false,
+    workspaceState: baseWorkspaceState(),
     ...overrides,
   };
 
   return render(
     <IntakeV6WorkspaceHeaderStatusProvider>
-      <OverlaySeed />
+      <OverlaySeed {...overlay} />
       <IntakeV6OperatorWorkspaceFooter {...props} />
     </IntakeV6WorkspaceHeaderStatusProvider>,
   );
 }
 
 describe("IntakeV6OperatorWorkspaceFooter", () => {
-  it("shows Product Truth blocker summary next to disabled Continue to Review CTA", () => {
-    renderFooter();
-
-    expect(screen.getByTestId("intake-v6-footer-next")).toBeDisabled();
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("BLOCKED");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("NEEDS_CONFIRMATION");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-title")).toHaveTextContent(
-      "Product Truth incomplet",
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-message")).toHaveTextContent(
-      /Rolurile layerelor\/grupurilor trebuie confirmate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-submessage")).toHaveTextContent(
-      /Pricing Registry este pregătit/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-submessage")).toHaveTextContent(
-      /6 grupuri\/straturi detectate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-next-action")).toHaveTextContent(
-      /Confirmă rolurile pentru toate grupurile detectate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).not.toHaveTextContent(/pricing not ready/i);
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).not.toHaveTextContent(/ora|minut/i);
+  afterEach(() => {
+    cleanup();
   });
 
-  it("keeps real pricing coverage distinct from Product Truth blocker", () => {
-    renderFooter({
-      currentStep: "confirm",
-      footerBlocker: "Calculul live conține linii fără tarif configurat.",
-      nextDisabled: true,
-    });
+  it("shows guidance spine with next action outside the collapsed drawer", () => {
+    const view = renderFooter();
+    const footer = within(view.container);
 
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent(
-      "Pricing coverage de verificat",
+    expect(footer.getByTestId("intake-v6-guidance-spine")).toBeInTheDocument();
+    expect(footer.getByTestId("intake-v6-guidance-next-action")).toHaveTextContent(
+      /Confirmă rolul pentru toate straturile/i,
     );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("WARNING");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("NEEDS_FORM_INPUT");
+    expect(footer.getByTestId("intake-v6-footer-issues-toggle")).toHaveAttribute("aria-expanded", "false");
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).toHaveTextContent(/blocant/i);
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).not.toHaveTextContent(
+      /Probleme și avertizări —/i,
+    );
   });
 
-  it("does not show disabled summary when CTA is enabled", () => {
-    renderFooter({ nextDisabled: false, footerBlocker: "Confirmă rolul pentru toate straturile." });
+  it("keeps grouped issues collapsed until expanded", () => {
+    const view = renderFooter(
+      { nextDisabled: false, footerBlocker: null },
+      { reviewWarnings: ["Verifică lățimea cantului."], layersTotal: 0, layersConfirmed: 0 },
+    );
+    const footer = within(view.container);
 
-    expect(screen.getByTestId("intake-v6-footer-next")).toBeEnabled();
-    expect(screen.queryByTestId("intake-v6-disabled-cta-summary")).not.toBeInTheDocument();
+    expect(footer.queryByText("Verifică lățimea cantului.")).not.toBeInTheDocument();
+    fireEvent.click(footer.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(footer.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent("Verifică lățimea cantului.");
+  });
+
+  it("includes secondary analysis warnings in the collapsed footer groups", () => {
+    const view = renderFooter(
+      { nextDisabled: false, footerBlocker: null },
+      {
+        secondaryWarnings: ["2 straturi propuse ca Vector Litere — confirmă rolurile."],
+        layersTotal: 0,
+        layersConfirmed: 0,
+      },
+    );
+    const footer = within(view.container);
+
+    fireEvent.click(footer.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(footer.getByTestId("intake-v6-footer-group-warnings")).toHaveTextContent(/Vector Litere/i);
+  });
+
+  it("aligns drawer toggle with sticky attention inventory counts", () => {
+    function AttentionSeed() {
+      const { setOverlay } = useIntakeV6WorkspaceHeaderStatus();
+      useEffect(() => {
+        setOverlay({
+          attentionIssues: [
+            {
+              id: "b1",
+              severity: "blocker",
+              message: "Compoziția produsului nu este confirmată.",
+            },
+            {
+              id: "w1",
+              severity: "warning",
+              message: "Există o propunere de fundal din mai multe panouri.",
+            },
+          ],
+        });
+      }, [setOverlay]);
+      return null;
+    }
+
+    const view = render(
+      <IntakeV6WorkspaceHeaderStatusProvider>
+        <AttentionSeed />
+        <IntakeV6OperatorWorkspaceFooter
+          currentStep="review"
+          stepIndex={1}
+          stepOrderLength={3}
+          footerBlocker="Confirmă compoziția produsului."
+          nextDisabled
+          nextLabel="Continuă la Confirmare"
+          nextButtonClassName="test-next"
+          onBack={vi.fn()}
+          onNext={vi.fn()}
+          persisting={false}
+          workspaceState={baseWorkspaceState({ currentStep: "review" })}
+        />
+      </IntakeV6WorkspaceHeaderStatusProvider>,
+    );
+    const footer = within(view.container);
+    expect(footer.getByTestId("intake-v6-guidance-counts")).toHaveTextContent(
+      "1 blocant · 1 avertizare",
+    );
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).toHaveTextContent(
+      "1 blocant · 1 avertizare",
+    );
   });
 });

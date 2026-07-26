@@ -2,6 +2,10 @@ import type { IntakeV4ArtworkFinish } from "@/lib/intakeV6/intakeV4ArtworkFinish
 import type { IntakeV4FinishSetup } from "@/lib/intakeV6/intakeV4Api";
 import { normalizeFaceVinylRollWidthMm } from "@/lib/intakeV6/intakeV4FaceFinishOptions";
 import type { IntakeV4LetterGroupFinish } from "@/lib/intakeV6/intakeV4LetterGroups";
+import {
+  layerFinishesHaveExplicitBacking,
+  normalizeIntakeV4BackingMode,
+} from "@/lib/intakeV6/intakeV4BackingMode";
 
 function dominantToken(values: Array<string | null | undefined>, fallback: string | undefined): string | undefined {
   const cleaned = values.map((v) => (v ?? "").trim()).filter(Boolean);
@@ -88,6 +92,20 @@ export function syncIntakeV4FinishPayloadFromLayerFinishes(
     if (depths.length > 0) next.return_depth_mm = Math.max(...depths);
   }
 
+  if (layerFinishesHaveExplicitBacking(letterGroups, artworkFinishes)) {
+    const globalMode = normalizeIntakeV4BackingMode(form.backing_mode);
+    next.letter_group_finishes = letterGroups.map((group) => ({
+      ...group,
+      backing_mode: group.backing_mode ?? globalMode,
+    }));
+    next.artwork_finishes = artworkFinishes.map((row) => ({
+      ...row,
+      backing_mode: row.backing_mode ?? globalMode,
+    }));
+    delete next.backing_mode;
+    delete next.back_bevel_enabled;
+  }
+
   return next;
 }
 
@@ -123,6 +141,13 @@ export function finishSetupIdentityKey(args: {
       mounting_template_material_type: args.form.mounting_template_material_type,
       mounting_system: args.form.mounting_system,
       mounting_bar_profile: args.form.mounting_bar_profile,
+      mounting_solution: args.form.mounting_solution ?? null,
+      mounting_scope: args.form.mounting_scope,
+      site_installation_included: args.form.site_installation_included,
+      mains_cable_length_m: args.form.mains_cable_length_m ?? null,
+      power_supply_service_corner: args.form.power_supply_service_corner ?? null,
+      service_screw_finish: args.form.service_screw_finish ?? null,
+      volum_aluminum_module_template_code: args.form.volum_aluminum_module_template_code,
       confirmed: args.form.confirmed,
     },
     letterGroups: args.letterGroups,

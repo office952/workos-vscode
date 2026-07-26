@@ -9,6 +9,8 @@ export interface StatusTransition {
   trigger: string;
 }
 
+export type StatusFlowTruthClass = "CURRENT" | "TARGET" | "LEGACY" | "BLOCKED" | "SUPPORTING";
+
 export interface ModuleStatusFlow {
   id: string;
   name: string;
@@ -17,6 +19,9 @@ export interface ModuleStatusFlow {
   statuses: string[];
   transitions: StatusTransition[];
   color: string;
+  /** Honesty class — keep CURRENT / TARGET / LEGACY / BLOCKED visually separate. */
+  truthClass: StatusFlowTruthClass;
+  honestyNoteRo: string;
 }
 
 export const moduleStatusFlows: ModuleStatusFlow[] = [
@@ -32,10 +37,12 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "active", to: "deprecated", trigger: "manual admin" },
     ],
     color: "text-cyan-400",
+    truthClass: "LEGACY",
+    honestyNoteRo: "Referință istorică OC — nu spine-ul activ Intake V6 → CPP 7G.",
   },
   {
     id: "wi",
-    name: "Work Intake",
+    name: "Work Intake (legacy path)",
     shortName: "WI",
     owner: "operator / sales",
     statuses: ["new", "in_review", "needs_info", "ready_for_quote", "blocked", "cancelled"],
@@ -47,6 +54,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "abandon / invalid" },
     ],
     color: "text-orange-400",
+    truthClass: "LEGACY",
+    honestyNoteRo: "Calea legacy Work Intake. Intake curent operator: /intake-v6.",
   },
   {
     id: "product_system",
@@ -61,12 +70,14 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "invalid_configuration", to: "resolving", trigger: "corectie" },
     ],
     color: "text-pink-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Catalog / contract produs — adevăr curent pe /product-system.",
   },
   {
     id: "cost_engine",
-    name: "CostEngine",
+    name: "CostEngine (LEGACY)",
     shortName: "CE",
-    owner: "sistem",
+    owner: "sistem (protected legacy)",
     statuses: ["pending", "calculating", "calculated", "failed"],
     transitions: [
       { from: "pending", to: "calculating", trigger: "request calcul" },
@@ -74,7 +85,10 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "calculating", to: "failed", trigger: "eroare" },
       { from: "failed", to: "calculating", trigger: "retry" },
     ],
-    color: "text-cyan-400",
+    color: "text-slate-400",
+    truthClass: "LEGACY",
+    honestyNoteRo:
+      "LEGACY / costing protejat. Nu este autoritate bani. Autoritate comercială: CPP 7G + /inventory/pricing.",
   },
   {
     id: "quotes",
@@ -93,6 +107,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "sent/priced", to: "expired", trigger: "depasire termen" },
     ],
     color: "text-amber-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Quote Snapshot pe spine. QuoteWizard UI = LEGACY (nu acest flux).",
   },
   {
     id: "orders",
@@ -108,10 +124,12 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "anulare controlata" },
     ],
     color: "text-blue-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Order Snapshot pe spine — passthrough sold scope.",
   },
   {
     id: "workos",
-    name: "WorkOS",
+    name: "WorkOS / Execution",
     shortName: "WO",
     owner: "productie",
     statuses: ["pending", "scheduled", "in_progress", "blocked", "partial_done", "done"],
@@ -125,6 +143,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "in_progress", to: "done", trigger: "finalizare" },
     ],
     color: "text-emerald-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Execution preview pe frozen sold scope (Letters Slice 1). Nu materializare task live aici.",
   },
   {
     id: "tasks",
@@ -141,13 +161,19 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "anulare" },
     ],
     color: "text-purple-400",
+    truthClass: "TARGET",
+    honestyNoteRo: "Țintă materializare — nu declara current fără GO dedicat.",
   },
 ];
 
 export const systemEvents = [
   { event: "WI_READY_FOR_QUOTE", source: "WI", description: "Cerere pregatita pentru ofertare" },
   { event: "PRODUCT_RESOLVED", source: "ProductSystem", description: "Configuratie produs rezolvata" },
-  { event: "COST_CALCULATED", source: "CostEngine", description: "Cost calculat cu succes" },
+  {
+    event: "COST_CALCULATED",
+    source: "CostEngine (LEGACY)",
+    description: "Cost legacy — nu autoritate bani; CPP 7G rămâne autoritatea comercială",
+  },
   { event: "QUOTE_ACCEPTED", source: "Quotes", description: "Oferta acceptata de client" },
   { event: "ORDER_LOCKED", source: "Orders", description: "Snapshot order inghetat" },
   { event: "WORK_STARTED", source: "WorkOS", description: "Executie pornita" },
@@ -513,34 +539,14 @@ export interface GateLevel {
   color: string;
 }
 
+/** Historical Blueprint isCalculable model — not used in primary Governance Gates tab. */
 export const gateLevels: GateLevel[] = [
   {
-    level: "1",
-    name: "Build Variant",
-    verdicts: ["Ready", "Warning", "Blocked"],
-    rule: "Varianta este calculabilă doar dacă are contract complet: costProfile, costPerUnit > 0, costUnit, consumptionProfile, quantityType, quantitySource recunoscut, wastePercent, materialRef (dacă e cerut).",
-    color: "border-pink-500",
-  },
-  {
-    level: "2",
-    name: "Component",
-    verdicts: ["Ready", "Warning", "Blocked"],
-    rule: "Verdictul reflectă varianta relevantă activă. Nu se caută automat altă variantă. Nu se folosește best available variant. Nu se face fallback.",
-    color: "border-purple-500",
-  },
-  {
-    level: "3",
-    name: "Template",
-    verdicts: ["Ready for Quotes", "Not Ready for Quotes"],
-    rule: "Un Template este Ready for Quotes doar dacă TOATE componentele required au isCalculable = true. Nu se acceptă procent minim, majoritate, sau aproape gata.",
-    color: "border-blue-500",
-  },
-  {
-    level: "4",
-    name: "Gate Final",
-    verdicts: ["Handoff permis", "Handoff refuzat"],
-    rule: "Handoff-ul din Blueprint Studio către Quotes este permis doar dacă gate-ul este trecut. Dacă verdictul este Not Ready, handoff-ul trebuie refuzat.",
-    color: "border-emerald-500",
+    level: "H",
+    name: "Model istoric Blueprint (neaplicat ca gate prezent)",
+    verdicts: ["Referință arhitecturală"],
+    rule: "Modelul isCalculable / Ready for Quotes din Blueprint Studio nu este gate-ul prezent al Control Center. Vezi PRESENT_GATES (owner gates).",
+    color: "border-slate-500",
   },
 ];
 
@@ -554,7 +560,14 @@ export interface Guardrail {
 }
 
 export const guardrails: Guardrail[] = [
-  { id: "G01", category: "Boundary", title: "Nu amesteca rolurile modulelor", description: "Templates pregătește, Quotes calculează, Orders îngheață, WorkOS execută, OC păzește adevărul operațional.", severity: "critical" },
+  {
+    id: "G01",
+    category: "Boundary",
+    title: "Nu amesteca rolurile sistemelor",
+    description:
+      "Intake preia cererea; Product System deține șabloanele; ProductDefinition compilează; ProductAggregate structurează; Pricing calculează comercial; Quote/Order îngheață; ExecutionPlan planifică; Execution Reality înregistrează actuals; Post-Job reconciliază read-only. Quotes nu calculează — îngheață.",
+    severity: "critical",
+  },
   { id: "G02", category: "Fallback", title: "Nu accepta fallback-uri ascunse", description: "Nu alege altă variantă 'mai bună' fără regulă canonică. Nu completa tacit quantitySource lipsă.", severity: "critical" },
   { id: "G03", category: "Workaround", title: "Nu accepta workaround-uri arhitecturale", description: "Nu muta logica de business în UI. Nu muta reparații structurale în Quotes. Nu scrie adevăr operațional din WorkOS în locul OC.", severity: "critical" },
   { id: "G04", category: "Clarificare", title: "Cere clarificare obligatorie", description: "Dacă specificația este ambiguă, incompletă sau contradictorie, implementarea trebuie să se oprească și să ceară clarificare.", severity: "warning" },
@@ -566,6 +579,14 @@ export const guardrails: Guardrail[] = [
   { id: "G10", category: "Costing", title: "Costing nu este doar pricing", description: "Costing păzește adevărul economic: consum corect, cost corect, formule corecte, relație corectă produs-resurse.", severity: "info" },
   { id: "G11", category: "QA", title: "QA Alignment verifică coerența", description: "Verifică dacă .md, Figma, cod, SQL și runtime spun același lucru. Semnalează mismatch-uri imediat.", severity: "warning" },
   { id: "G12", category: "Escaladare", title: "Escaladare obligatorie la Nucleu", description: "Conflict între reguli, între agenți, între UI și business, între cod și documentație — toate se escaladează la Nucleu.", severity: "info" },
+  {
+    id: "G13",
+    category: "Integritate text",
+    title: "UTF-8 end-to-end pentru text operator",
+    description:
+      "Textul uman vizibil și persistat folosește UTF-8 pe tot lanțul (sursă → DB → API → UI). Niciun sistem nu convertește tacit Unicode prin Latin-1/Windows-1252. Importurile declară sau validează encoding-ul. Frontend-ul redă, nu repară. Sursa semantică rămâne la sistemul owner.",
+    severity: "critical",
+  },
 ];
 
 // --- UI TRUTH RULES ---

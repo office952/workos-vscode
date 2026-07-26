@@ -54,12 +54,62 @@ export interface IntakeV6OfferModel {
 
 type QuoteInputPayload = Record<string, unknown>;
 
+/** Default Adaos 0 — 7G commercial lines are already sell prices; operator uplift is explicit. */
 const DEFAULT_COMMERCIAL_INPUTS: IntakeV6OfferCommercialInputs = {
-  markupPercent: 35,
+  markupPercent: 0,
   discountPercent: 0,
   vatPercent: 19,
   manualAdjustmentRon: 0,
 };
+
+export type IntakeV6CommercialAdjustmentTotals = {
+  commercialBaseSubtotal: number;
+  markupValue: number;
+  discountValue: number;
+  subtotalNet: number;
+  vatValue: number;
+  totalGross: number;
+  markupPercent: number;
+  discountPercent: number;
+  manualAdjustmentRon: number;
+  vatPercent: number;
+};
+
+/** Apply Adaos / Discount / Ajustare on a commercial base (7G subtotal), matching backend dry-run. */
+export function applyIntakeV6CommercialAdjustments(
+  baseSubtotal: number,
+  commercialInputs: IntakeV6OfferCommercialInputs,
+): IntakeV6CommercialAdjustmentTotals {
+  const base = roundOfferMoney(baseSubtotal);
+  const markupPercent = Number.isFinite(commercialInputs.markupPercent)
+    ? commercialInputs.markupPercent
+    : 0;
+  const discountPercent = Number.isFinite(commercialInputs.discountPercent)
+    ? commercialInputs.discountPercent
+    : 0;
+  const vatPercent = Number.isFinite(commercialInputs.vatPercent) ? commercialInputs.vatPercent : 0;
+  const manualAdjustmentRon = Number.isFinite(commercialInputs.manualAdjustmentRon)
+    ? commercialInputs.manualAdjustmentRon
+    : 0;
+  const markupValue = roundOfferMoney(base * markupPercent / 100);
+  const subtotalBeforeDiscount = roundOfferMoney(base + markupValue + manualAdjustmentRon);
+  const discountValue = roundOfferMoney(subtotalBeforeDiscount * discountPercent / 100);
+  const subtotalNet = roundOfferMoney(subtotalBeforeDiscount - discountValue);
+  const vatValue = roundOfferMoney(subtotalNet * vatPercent / 100);
+  const totalGross = roundOfferMoney(subtotalNet + vatValue);
+  return {
+    commercialBaseSubtotal: base,
+    markupValue,
+    discountValue,
+    subtotalNet,
+    vatValue,
+    totalGross,
+    markupPercent,
+    discountPercent,
+    manualAdjustmentRon,
+    vatPercent,
+  };
+}
 
 const ELECTRICAL_TOKENS = /led|psu|power|electric|electr|cablu|cable|wire|driver|traf|aliment/i;
 const BOARD_TOKENS = /plex|plexi|acryl|forex|dibond|acm|backing|plac|sheet|panel/i;

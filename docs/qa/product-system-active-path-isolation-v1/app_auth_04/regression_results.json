@@ -1,0 +1,13 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "verdict": "PASS",
+  "command": "pytest focused + regression subset",
+  "suites": [
+    {"suite": "parity_focused", "passed": 52, "failed": 0, "skipped": 0, "collection_errors": 0},
+    {"suite": "regression_subset", "passed": 116, "failed": 0, "skipped": 0, "collection_errors": 0}
+  ],
+  "total_passed": 168,
+  "total_failed": 0,
+  "unrelated_failures_repaired": 0
+}

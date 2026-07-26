@@ -1,0 +1,322 @@
+{
+  "composed_graph_version": "1.0.0",
+  "composition_mode": "single_child",
+  "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "selected_solution_id": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "solution_status": "confirmed",
+  "solution_reason_codes": [
+    "primary_child:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+  ],
+  "compatibility_status": "compatible",
+  "blockers": [],
+  "warnings": [],
+  "alternatives": [],
+  "provenance": [
+    {
+      "key": "frozen_mounting_resolution",
+      "source": "mounting_solution_service",
+      "detail": "prep_active=False scope=none"
+    },
+    {
+      "key": "mounting_solution",
+      "source": "canonical_mounting_solution",
+      "detail": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+    }
+  ],
+  "active_module_codes": [
+    "structura_suport",
+    "volum_aluminum"
+  ],
+  "nodes": [
+    {
+      "node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "module_code": "root",
+      "module_role": "root_product",
+      "node_role": "root_product",
+      "parent_node_id": null,
+      "activation_source": "template_registry",
+      "included_in_graph": true,
+      "inherited_inputs": {},
+      "locally_owned_inputs": {
+        "width_mm": 2000.18,
+        "height_mm": 350.17600000000004,
+        "letter_count": 11,
+        "letter_perimeter_m": 6.6456
+      },
+      "unresolved_inputs": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "provenance": [
+        {
+          "key": "activation_source",
+          "source": "product_definition_composition_contract",
+          "detail": "template_registry"
+        }
+      ]
+    },
+    {
+      "node_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1",
+      "template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "module_code": "volum_aluminum",
+      "module_role": "volum_aluminum",
+      "node_role": "volum_aluminum",
+      "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+      "activation_source": "template_registry",
+      "included_in_graph": true,
+      "inherited_inputs": {
+        "width_mm": 2000.18,
+        "height_mm": 350.17600000000004
+      },
+      "locally_owned_inputs": {
+        "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1"
+      },
+      "unresolved_inputs": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "provenance": [
+        {
+          "key": "activation_source",
+          "source": "product_definition_composition_contract",
+          "detail": "template_registry"
+        }
+      ]
+    },
+    {
+      "node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "module_code": "structura_suport",
+      "module_role": "mounting_support",
+      "node_role": "mounting_panel",
+      "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+      "activation_source": "canonical_mounting_solution",
+      "included_in_graph": true,
+      "inherited_inputs": {},
+      "locally_owned_inputs": {
+        "panel_width_mm": 1000,
+        "panel_height_mm": 350,
+        "acm_thickness_mm": 3,
+        "return_depth_mm": 60,
+        "rear_lip_mm": 25,
+        "fold_sides": "all",
+        "v_groove_angle_deg": 135,
+        "frame_clearance_mm": 0,
+        "fold_count": 2,
+        "finished_depth_mm": 60,
+        "svg_support_element_id": "el-1",
+        "geometry_hash": "7af1352f",
+        "contour_id": "cc_7af1352f",
+        "panel_area_mm2": 350000.137,
+        "panel_perimeter_mm": 2700.001,
+        "internal_frame_enabled": false,
+        "internal_frame": {
+          "enabled": false,
+          "material_code": null,
+          "profile_code": null,
+          "panel_outer_width_mm": null,
+          "panel_outer_height_mm": null,
+          "panel_material_thickness_mm": null,
+          "total_fit_allowance_mm": 2,
+          "frame_outer_width_mm": null,
+          "frame_outer_height_mm": null,
+          "crossbar_rule_code": "MATERIAL_SPACING_V1",
+          "max_crossbar_spacing_mm": null,
+          "crossbar_orientation": null,
+          "suggested_crossbar_count": null,
+          "confirmed_crossbar_count": null,
+          "override_reason": null,
+          "structural_review_required": false,
+          "confirmation_status": "NOT_APPLICABLE",
+          "quantity_status": "NOT_APPLICABLE",
+          "blockers": [],
+          "provenance": {
+            "resource_registry_version": "structural_resource_options/v1"
+          }
+        },
+        "panel_area_m2": 0.35,
+        "panel_perimeter_m": 2.7,
+        "fold_length_m": 2.7,
+        "return_strip_area_m2": 0.162,
+        "unit_ambiguity": false,
+        "dimension_source": "svg_support_selection",
+        "svg_source_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+      },
+      "unresolved_inputs": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "provenance": [
+        {
+          "key": "activation_source",
+          "source": "product_definition_composition_contract",
+          "detail": "canonical_mounting_solution"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "edge:TPL-VOLUMETRIC-LETTERS_v2->TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:visual_mounting_support",
+      "parent_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+      "child_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "child_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "module_code": "structura_suport",
+      "module_role": "mounting_support",
+      "child_role": "mounting_panel",
+      "relation_type": "visual_mounting_support",
+      "dependency_role": null,
+      "included_in_graph": true,
+      "activation_source": "canonical_mounting_solution",
+      "inherited_inputs": {},
+      "locally_owned_inputs": {
+        "panel_width_mm": 1000,
+        "panel_height_mm": 350,
+        "acm_thickness_mm": 3,
+        "return_depth_mm": 60,
+        "rear_lip_mm": 25,
+        "fold_sides": "all",
+        "v_groove_angle_deg": 135,
+        "frame_clearance_mm": 0,
+        "fold_count": 2,
+        "finished_depth_mm": 60,
+        "svg_support_element_id": "el-1",
+        "geometry_hash": "7af1352f",
+        "contour_id": "cc_7af1352f",
+        "panel_area_mm2": 350000.137,
+        "panel_perimeter_mm": 2700.001,
+        "internal_frame_enabled": false,
+        "internal_frame": {
+          "enabled": false,
+          "material_code": null,
+          "profile_code": null,
+          "panel_outer_width_mm": null,
+          "panel_outer_height_mm": null,
+          "panel_material_thickness_mm": null,
+          "total_fit_allowance_mm": 2,
+          "frame_outer_width_mm": null,
+          "frame_outer_height_mm": null,
+          "crossbar_rule_code": "MATERIAL_SPACING_V1",
+          "max_crossbar_spacing_mm": null,
+          "crossbar_orientation": null,
+          "suggested_crossbar_count": null,
+          "confirmed_crossbar_count": null,
+          "override_reason": null,
+          "structural_review_required": false,
+          "confirmation_status": "NOT_APPLICABLE",
+          "quantity_status": "NOT_APPLICABLE",
+          "blockers": [],
+          "provenance": {
+            "resource_registry_version": "structural_resource_options/v1"
+          }
+        },
+        "panel_area_m2": 0.35,
+        "panel_perimeter_m": 2.7,
+        "fold_length_m": 2.7,
+        "return_strip_area_m2": 0.162,
+        "unit_ambiguity": false,
+        "dimension_source": "svg_support_selection",
+        "svg_source_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+      },
+      "unresolved_inputs": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "provenance": [
+        {
+          "key": "relation_type",
+          "source": "product_definition_composition_contract",
+          "detail": "visual_mounting_support"
+        }
+      ]
+    },
+    {
+      "edge_id": "edge:TPL-VOLUMETRIC-LETTERS_v2->TPL-VOLUM-ALUMINIU_v1:required_module",
+      "parent_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+      "child_template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "child_node_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1",
+      "module_code": "volum_aluminum",
+      "module_role": "volum_aluminum",
+      "child_role": "volum_aluminum",
+      "relation_type": "required_module",
+      "dependency_role": null,
+      "included_in_graph": true,
+      "activation_source": "template_registry",
+      "inherited_inputs": {
+        "width_mm": 2000.18,
+        "height_mm": 350.17600000000004
+      },
+      "locally_owned_inputs": {
+        "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1"
+      },
+      "unresolved_inputs": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "provenance": [
+        {
+          "key": "relation_type",
+          "source": "product_definition_composition_contract",
+          "detail": "required_module"
+        }
+      ]
+    }
+  ],
+  "frozen_mounting_solution": {
+    "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "configuration": {
+      "panel_width_mm": 1000,
+      "panel_height_mm": 350,
+      "acm_thickness_mm": 3,
+      "return_depth_mm": 60,
+      "rear_lip_mm": 25,
+      "fold_sides": "all",
+      "v_groove_angle_deg": 135,
+      "frame_clearance_mm": 0,
+      "fold_count": 2,
+      "finished_depth_mm": 60,
+      "svg_support_element_id": "el-1",
+      "geometry_hash": "7af1352f",
+      "contour_id": "cc_7af1352f",
+      "panel_area_mm2": 350000.137,
+      "panel_perimeter_mm": 2700.001,
+      "internal_frame_enabled": false,
+      "internal_frame": {
+        "enabled": false,
+        "material_code": null,
+        "profile_code": null,
+        "panel_outer_width_mm": null,
+        "panel_outer_height_mm": null,
+        "panel_material_thickness_mm": null,
+        "total_fit_allowance_mm": 2,
+        "frame_outer_width_mm": null,
+        "frame_outer_height_mm": null,
+        "crossbar_rule_code": "MATERIAL_SPACING_V1",
+        "max_crossbar_spacing_mm": null,
+        "crossbar_orientation": null,
+        "suggested_crossbar_count": null,
+        "confirmed_crossbar_count": null,
+        "override_reason": null,
+        "structural_review_required": false,
+        "confirmation_status": "NOT_APPLICABLE",
+        "quantity_status": "NOT_APPLICABLE",
+        "blockers": [],
+        "provenance": {
+          "resource_registry_version": "structural_resource_options/v1"
+        }
+      },
+      "panel_area_m2": 0.35,
+      "panel_perimeter_m": 2.7,
+      "fold_length_m": 2.7,
+      "return_strip_area_m2": 0.162,
+      "unit_ambiguity": false,
+      "dimension_source": "svg_support_selection",
+      "svg_source_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+    },
+    "activation_source": "canonical_mounting_solution",
+    "legacy_fallback_used": false
+  }
+}

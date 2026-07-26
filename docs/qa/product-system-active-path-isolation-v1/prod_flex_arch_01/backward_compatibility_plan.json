@@ -1,0 +1,28 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "backward_compatibility": "PASS_WITH_ADAPTERS",
+  "no_break_guarantees": [
+    "MOBILE-T06 claim and start-from-available continue working",
+    "assigned_employee_id field preserved",
+    "Existing sessions readable",
+    "Operator PATCH assign unchanged until opt-in",
+    "Readiness/eligibility semantics preserved",
+    "Frozen snapshot identity untouched"
+  ],
+  "transitional_adapters": [
+    "Derive participants from legacy sessions until participants_json populated",
+    "Map complete_my_task to session end until operation complete split",
+    "Principal pool keeps _has_active_session_by_other until helper pool ships"
+  ],
+  "deprecated_semantics": [
+    "assignee == exclusive owner (soft deprecate in docs/projections only)"
+  ],
+  "rollout_flags": [
+    "FLEX_HELPER_POOL_ENABLED",
+    "FLEX_OPERATION_PROGRESS_ENABLED",
+    "FLEX_OPERATION_COMPLETE_SPLIT"
+  ],
+  "fallback": "Flags off → current individual-only behavior",
+  "rollback": "Disable flags; no snapshot migration required",
+  "no_mock_fallback": true
+}

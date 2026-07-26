@@ -1,0 +1,19 @@
+{
+  "task": "OWNER-DECISION-06",
+  "model_ro": {
+    "post_principal": "Employees role/functie — document as post principal",
+    "competente": "EmployeeSkillAuthorization.skill_code (registry canonical)",
+    "utilaje_permise": "EmployeeResourceAuthorization + machines registry",
+    "posturi_de_lucru_permise": "EmployeeWorkcenterAuthorization.workcenter_code"
+  },
+  "legacy_coexistence": "Employees.skills JSON transitional per OWNER-DECISION-05",
+  "not_in_scope_now": [
+    "diplome",
+    "licente",
+    "complex scoring",
+    "ranking",
+    "commercial hourly costs",
+    "predictive availability"
+  ],
+  "owner_status": "CONFIRMED"
+}

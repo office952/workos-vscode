@@ -10,13 +10,18 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from schemas.active_scope_snapshot import QuoteSnapshotActiveScope
 from schemas.commercial_price_proposal import CommercialPriceProposalPreview
 from schemas.estimated_internal_cost import EstimatedInternalCostPreview
+from schemas.offer_scope import OFFER_SCOPE_CONTRACT_VERSION, OfferScopeMode
 from schemas.product_aggregate import ProductAggregate
 from schemas.product_definition import ProductDefinitionPreview
 
 QUOTE_SNAPSHOT_V2_VERSION = "1.0.0"
 QUOTE_SNAPSHOT_V2_SOURCE = "quote_snapshot_v2"
+COMPONENT_SCOPE_VERSION = "quote_component_scope/v1"
+
+ComponentScopeClassification = Literal["sold", "calc_only", "linked_neutral", "unspecified"]
 
 QuoteSnapshotReadiness = Literal[
     "ready_for_owner_review",
@@ -53,6 +58,44 @@ class QuoteSnapshotProvenanceEntry(BaseModel):
     detail: str
 
 
+class QuoteSnapshotOfferScope(BaseModel):
+    contract_version: str = OFFER_SCOPE_CONTRACT_VERSION
+    mode: OfferScopeMode = "full_product"
+    sold_modules: list[str] = Field(default_factory=list)
+    resolved_runtime_sold_modules: list[str] = Field(default_factory=list)
+    use_legacy: bool = True
+    resolver_contract_version: str = OFFER_SCOPE_CONTRACT_VERSION
+    validation_errors: list[str] = Field(default_factory=list)
+    dependency_confirmations: list[str] = Field(default_factory=list)
+
+
+class QuoteSnapshotComponentInstance(BaseModel):
+    instance_id: str
+    canonical_component_code: str | None = None
+    runtime_module_code: str | None = None
+    source_template_code: str
+    segment_key: str | None = None
+    classification: ComponentScopeClassification = "unspecified"
+
+
+class QuoteSnapshotGeometryInput(BaseModel):
+    quote_geometry: dict[str, Any] = Field(default_factory=dict)
+    svg_source: dict[str, Any] = Field(default_factory=dict)
+    analysis_ready: bool | None = None
+    workspace_payload_hash: str | None = None
+
+
+class FrozenComponentScope(BaseModel):
+    """Reusable frozen component-scope payload for both snapshot paths."""
+
+    product_aggregate: ProductAggregate | None = None
+    offer_scope_snapshot: QuoteSnapshotOfferScope
+    active_scope_snapshot: QuoteSnapshotActiveScope | None = None
+    component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
+    geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
+    scope_warnings: list[str] = Field(default_factory=list)
+
+
 class QuoteSnapshotV2(BaseModel):
     """Dual quote snapshot — commercial and internal sides kept separate."""
 
@@ -62,6 +105,11 @@ class QuoteSnapshotV2(BaseModel):
     quote_id: str | None = None
     workspace_id: str | None = None
     template_code: str
+    component_scope_version: str | None = None
+    offer_scope_snapshot: QuoteSnapshotOfferScope | None = None
+    active_scope_snapshot: QuoteSnapshotActiveScope | None = None
+    component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
+    geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
     product_definition_snapshot: ProductDefinitionPreview | None = None
     product_aggregate_snapshot: ProductAggregate | None = None
     commercial_price_proposal_snapshot: CommercialPriceProposalPreview

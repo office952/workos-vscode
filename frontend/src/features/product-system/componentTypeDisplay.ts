@@ -1,9 +1,19 @@
 /**
  * Display-only labels for ProductSystem component types.
- * Internal `type` enums and template JSON are unchanged — volumetric letters only.
+ * Internal `type` enums and template JSON are unchanged.
  */
 
 import type { ProductComponentType, ProductTemplateComponent } from "@/lib/api";
+import {
+  ACM_BOXED_CORP_STRUCTURE_TYPE_LABEL,
+  ACM_BOXED_FRAME_STRUCTURE_TYPE_LABEL,
+} from "./acmBoxedStructureDocumentation";
+import {
+  isAcmBoxedAssemblyStructureComponent,
+  isAcmBoxedCasetareStructureComponent,
+  isAcmBoxedFaceStructureComponent,
+  isAcmBoxedMountingTemplate,
+} from "./acmBoxedTemplateIdentity";
 
 export const VOLUMETRIC_LETTERS_TEMPLATE_CODES = new Set([
   "TPL-VOLUMETRIC-LETTERS",
@@ -11,11 +21,9 @@ export const VOLUMETRIC_LETTERS_TEMPLATE_CODES = new Set([
 ]);
 
 export function isVolumetricLettersTemplate(
-  templateCode: string | null | undefined
+  templateCode: string | null | undefined,
 ): boolean {
-  return VOLUMETRIC_LETTERS_TEMPLATE_CODES.has(
-    (templateCode ?? "").trim().toUpperCase()
-  );
+  return VOLUMETRIC_LETTERS_TEMPLATE_CODES.has((templateCode ?? "").trim().toUpperCase());
 }
 
 function normalizeForMatch(value: string): string {
@@ -29,7 +37,7 @@ function normalizeForMatch(value: string): string {
  * Volumetric-letter display category (null → use COMPONENT_TYPE_CONFIG.label).
  */
 export function getVolumetricLettersComponentTypeDisplayLabel(
-  component: Pick<ProductTemplateComponent, "type" | "component_id" | "name">
+  component: Pick<ProductTemplateComponent, "type" | "component_id" | "name">,
 ): string | null {
   const id = normalizeForMatch(component.component_id);
   const name = normalizeForMatch(component.name);
@@ -73,24 +81,47 @@ export function getVolumetricLettersComponentTypeDisplayLabel(
   return null;
 }
 
+/**
+ * Seed BOM comps under ACM all belong to Corp casetat teaching card —
+ * never label face as "Structură metalică" (that name is reserved for the frame).
+ */
+export function getAcmBoxedComponentTypeDisplayLabel(
+  component: Pick<ProductTemplateComponent, "type" | "component_id" | "name">,
+): string | null {
+  if (
+    isAcmBoxedFaceStructureComponent(component) ||
+    isAcmBoxedCasetareStructureComponent(component) ||
+    isAcmBoxedAssemblyStructureComponent(component)
+  ) {
+    return ACM_BOXED_CORP_STRUCTURE_TYPE_LABEL;
+  }
+  const id = normalizeForMatch(component.component_id);
+  const name = normalizeForMatch(component.name);
+  if (id.includes("frame") || id.includes("cadru") || name.includes("cadru") || name.includes("frame")) {
+    return ACM_BOXED_FRAME_STRUCTURE_TYPE_LABEL;
+  }
+  return null;
+}
+
 export function getComponentTypeDisplayLabel(
   component: Pick<ProductTemplateComponent, "type" | "component_id" | "name">,
   templateCode: string | null | undefined,
-  defaultLabel: string
+  defaultLabel: string,
 ): string {
+  if (isAcmBoxedMountingTemplate(templateCode)) {
+    return getAcmBoxedComponentTypeDisplayLabel(component) ?? defaultLabel;
+  }
   if (!isVolumetricLettersTemplate(templateCode)) {
     return defaultLabel;
   }
-  return (
-    getVolumetricLettersComponentTypeDisplayLabel(component) ?? defaultLabel
-  );
+  return getVolumetricLettersComponentTypeDisplayLabel(component) ?? defaultLabel;
 }
 
 /** Short label for type select options on volumetric templates (enum value unchanged). */
 export function getComponentTypeSelectOptionLabel(
   type: ProductComponentType,
   templateCode: string | null | undefined,
-  defaultLabel: string
+  defaultLabel: string,
 ): string {
   if (!isVolumetricLettersTemplate(templateCode)) {
     return defaultLabel;

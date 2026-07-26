@@ -1,0 +1,25 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "not_reused": "TaskClarificationRequest — plan preparer clarification only",
+  "minimal_fields": {
+    "task_id": "required",
+    "order_id": "required",
+    "requested_by_employee_id": "required",
+    "status": "OPEN | ACCEPTED | CANCELLED | CLOSED",
+    "requested_helpers": "optional int",
+    "requested_competence": "optional skill code",
+    "reason": "optional string",
+    "created_at": "required",
+    "closed_at": "optional"
+  },
+  "rules": {
+    "multiple_open_per_task": "ALLOW_ONE_OPEN_RECOMMENDED — second open returns 409 or supersedes per policy",
+    "visibility": ["principal", "eligible helpers", "manager/operator read"],
+    "acceptance": "Eligible helper accept → PARTICIPANT_JOINED as HELPER; no assignee change",
+    "manager_designate": "Manager may accept on behalf or invite — same join path",
+    "idempotency": "Duplicate accept by same employee → 200 already_joined",
+    "close_on_complete": "Auto-close OPEN on OPERATION_COMPLETED",
+    "close_on_cancel": "Principal or manager may CANCELLED"
+  },
+  "persistence_recommendation": "FLEX-04 — reality help_requests_json or minimal table (see db_change_decision)"
+}

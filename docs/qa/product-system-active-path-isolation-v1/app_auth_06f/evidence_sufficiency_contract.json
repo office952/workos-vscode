@@ -1,0 +1,19 @@
+{
+  "task": "APP-AUTH-06F",
+  "decision_tree": [
+    {"step": 1, "question": "Is operation requirement known in runtime?", "no": "MORE_EVIDENCE_REQUIRED", "yes": "step 2"},
+    {"step": 2, "question": "Does registry competence match requirement?", "yes": "step 4", "no": "step 3"},
+    {"step": 3, "question": "Is there strong operational/training evidence?", "yes": "TRAINED_BUT_UNDOCUMENTED", "no": "step 5"},
+    {"step": 4, "question": "Is controlled-resource authorization required and present?", "yes": "CONFIRMED_COMPETENT candidate", "no": "AUTHORIZATION_REQUIRED"},
+    {"step": 5, "question": "Is supervised temporary exception policy acceptable?", "yes": "TEMPORARY_EXCEPTION_REQUIRED", "no": "MORE_EVIDENCE_REQUIRED"},
+    {"step": 6, "question": "After owner review with sufficient negative evidence?", "yes": "NOT_COMPETENT", "no": "MORE_EVIDENCE_REQUIRED"}
+  ],
+  "criteria": {
+    "CONFIRMED_COMPETENT": ["requirement known", "registry competence or owner-approved proof", "level decision", "authorization when required", "no contradiction"],
+    "TRAINED_BUT_UNDOCUMENTED": ["credible work/training evidence", "registry absent", "authorization ok or N/A"],
+    "TEMPORARY_EXCEPTION_REQUIRED": ["incomplete competence", "supervised work plausible", "S9 contract fields ready"],
+    "NOT_COMPETENT": ["owner review + sufficient negative evidence only"],
+    "AUTHORIZATION_REQUIRED": ["competence may exist", "controlled resource auth missing"],
+    "MORE_EVIDENCE_REQUIRED": ["default when gaps remain"]
+  }
+}

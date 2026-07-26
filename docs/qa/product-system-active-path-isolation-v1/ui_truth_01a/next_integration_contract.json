@@ -1,0 +1,13 @@
+{
+  "task": "UI-TRUTH-01B",
+  "hook_import": "import { useRuntimeHealth } from '@/hooks/useRuntimeHealth'",
+  "types_import": "import type { RuntimeTruthSnapshot } from '@/types/runtimeStatus'",
+  "session_segment": "useAuth().authState — separate, not merged into hook",
+  "expected_usage": "EnvironmentBanner + RuntimeStatusSummary consume snapshot segments",
+  "no_hook_rewrite_required": true,
+  "documented_constants": {
+    "RUNTIME_HEALTH_URL": "/api/v1/system/health",
+    "DEFAULT_POLL_INTERVAL_MS": 45000,
+    "DEFAULT_STALE_THRESHOLD_MS": 120000
+  }
+}

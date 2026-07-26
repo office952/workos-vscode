@@ -1,0 +1,137 @@
+{
+  "task": "OWNER-DECISION-02",
+  "starting_head": "b6081c0",
+  "accepted_inputs": {
+    "APP-INT-01": "bfe20c6",
+    "APP-AUTH-01": "357838e",
+    "APP-AUTH-02": "b6081c0"
+  },
+  "severity_corrected": {
+    "CRITICAL": 1,
+    "HIGH": 14,
+    "MEDIUM": 4,
+    "LOW": 0,
+    "INFORMATIONAL": 1,
+    "TOTAL": 20
+  },
+  "severity_clarification": {
+    "seven_aligned_employees_not_seven_low_rows": true,
+    "aligned_employees_informational_matrix_only": true,
+    "low_zero_reason": "Niciun rand din inventarul DISC-* nu a primit severitate LOW; cei 7 angajati aliniati apar in matrice cu risc LOW dar fara rand DISC dedicat.",
+    "inventory_row_ids": [
+      "DISC-COMP-001",
+      "DISC-AUTO-002",
+      "DISC-ELIG-003",
+      "DISC-ELIG-004",
+      "DISC-ELIG-005",
+      "DISC-ELIG-006",
+      "DISC-ELIG-007",
+      "DISC-ELIG-008",
+      "DISC-ELIG-009",
+      "DISC-TAXO-010",
+      "DISC-EXEC-011",
+      "DISC-DEMO-012",
+      "DISC-EMP-013",
+      "DISC-EMP-014",
+      "DISC-EXEC-015",
+      "DISC-EXEC-016",
+      "DISC-MCH-017",
+      "DISC-DEMO-018",
+      "DISC-DEMO-019",
+      "DISC-ATT-020"
+    ]
+  },
+  "available_projection_test": {
+    "file": "backend/tests/test_employee_mobile_task_truth.py",
+    "function": "test_available_projection_filters_canonically",
+    "module_under_test": "services.employee_mobile_tasks_service.list_available_tasks",
+    "isolated_result": "PASS",
+    "suite_result": "FAIL (cu test_operational_authorization_foundation + test_operational_resource_registry + test_operator_task_truth + test_employee_attendance_events)",
+    "error": "HTTPException 422 ORDER_SNAPSHOT_V2_CORRUPT — snapshot_v2_json invalid pe order_id 24009",
+    "expectation": "len(scoped)==1, task print disponibil pentru claim, is_available_for_claim True",
+    "actual_in_suite": "Exceptie la _attach_readiness_to_tasks / build_procurement_enriched_context pentru comanda contaminata",
+    "fixtures": ["_seed_employee", "_seed_print_eligibility", "_seed_v2_order", "_delete_order_execution_fixture"],
+    "eligibility_sources": ["OperationalRegistryService.check_employee_operation_eligibility", "_seed_print_eligibility"],
+    "sandu_involved": false,
+    "explicit_exceptions_involved": false,
+    "order_dependency": true,
+    "classification_primary": "FIXTURE_STATE_BLEED",
+    "classification_secondary": "AVAILABLE_PROJECTION_DEFECT",
+    "runtime_risk": "Proiectia available scaneaza toate comenzile enrichite; o comanda cu snapshot_v2_json corupt poate bloca intreg pool-ul available daca ajunge in lista de readiness."
+  },
+  "decisions": [
+    {
+      "id": "O1",
+      "title": "Identitate operationala",
+      "recommendation": "Varianta A",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O2",
+      "title": "Adevar competente",
+      "recommendation": "Varianta A — registry tinta, fara migrare acum",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O3",
+      "title": "Caz Sandu",
+      "recommendation": "Varianta A — confirmare umana completa",
+      "confirmed": false,
+      "status": "NECESITA_CONFIRMARE_ANGAJAT"
+    },
+    {
+      "id": "O4",
+      "title": "Exceptii de eligibilitate",
+      "recommendation": "Listă explicită = restricție; adăugare = excepție temporară auditată",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O5",
+      "title": "Autorizari",
+      "recommendation": "Separare competenta / autorizare / centru / utilaj; fail-closed fara exceptie simpla",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O6",
+      "title": "Suprafete executie si demo",
+      "recommendation": "Mobile canonic individual; Operator desktop; Tablet wrapper tranzitoriu; Shop-floor fail-closed",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O7",
+      "title": "CNC 4020",
+      "recommendation": "Identitate confirmata; gap metadata machine_type",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O8",
+      "title": "Angajati fara utilizator",
+      "recommendation": "Operational da; Mobile personal nu",
+      "confirmed": false,
+      "status": "AMANAT"
+    },
+    {
+      "id": "O9",
+      "title": "Pontaj",
+      "recommendation": "Separat de ExecutionReality",
+      "confirmed": false,
+      "status": "AMANAT"
+    }
+  ],
+  "counts": {
+    "decisions_total": 9,
+    "decisions_confirmed": 0,
+    "decisions_deferred": 9,
+    "employee_confirmation_required": true,
+    "technical_validation_required": true,
+    "runtime_repair_required": false
+  },
+  "verdict": "OWNER_DATA_RECONCILIATION_PARTIAL_REMAIN_BLOCKED",
+  "next_task": "APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE"
+}

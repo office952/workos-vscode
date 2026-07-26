@@ -1,0 +1,130 @@
+{
+  "publication": {
+    "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+    "template_id": 15,
+    "db_active": true,
+    "publication_status": null,
+    "effective_status": "LEGACY_UNSPECIFIED",
+    "legacy_unspecified": true,
+    "publication_version": null,
+    "last_e2e_verdict": "BLOCKED",
+    "last_e2e_checked_at": "2026-07-22T00:08:45.991116+00:00",
+    "published_at": null,
+    "published_by": null,
+    "offerability_gate": "legacy_unspecified_keeps_prior_policy",
+    "publish_allowed": false,
+    "publish_blockers": [
+      "last_e2e_verdict_not_publishable:BLOCKED"
+    ],
+    "publish_warnings": [],
+    "allowed_actions": [
+      "enter_draft",
+      "mark_e2e_checked",
+      "publish"
+    ],
+    "active_is_not_published": true,
+    "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "uses_ai_defaults": true,
+    "ai_decision_ids": [
+      "AI_PACK_PRODUCT_BAND",
+      "AI_ELEC_MIN_PRODUCT",
+      "AI_ELEC_PER_PSU",
+      "AI_LED_PER_MODULE"
+    ],
+    "publication_eligible": false,
+    "activation_eligible": true,
+    "optional_capability_blockers": [],
+    "recommended_target": "ACTIVE_UNPUBLISHED",
+    "eligibility": {
+      "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+      "current_lifecycle": "LEGACY_UNSPECIFIED",
+      "active": true,
+      "published": false,
+      "technical_readiness": false,
+      "commercial_readiness": true,
+      "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+      "ai_defaults": {
+        "uses_ai_defaults": true,
+        "ai_decision_ids": [
+          "AI_PACK_PRODUCT_BAND",
+          "AI_ELEC_MIN_PRODUCT",
+          "AI_ELEC_PER_PSU",
+          "AI_LED_PER_MODULE"
+        ],
+        "precedence": [
+          "MEASURED_REALITY",
+          "OWNER_CONFIRMED",
+          "CATALOG",
+          "AI_DECISION",
+          "LEGACY"
+        ]
+      },
+      "warnings": [],
+      "structural_blockers": [],
+      "optional_capability_blockers": [],
+      "e2e_verdict": "BLOCKED",
+      "e2e_ready": false,
+      "acm_treatment_commercial_lines_allowed": null,
+      "publication_eligible": false,
+      "activation_eligible": true,
+      "target_state": "ACTIVE_UNPUBLISHED",
+      "confidence": "medium",
+      "contract_version": "template_activation_eligibility_v1"
+    },
+    "contract_version": "product_template_publication_v1_1"
+  },
+  "pricing_readiness": {
+    "technical_ready": true,
+    "commercial_ready": true,
+    "activation_status": "ACTIVE_WITH_AI_DEFAULTS",
+    "ai_defaults_active": true,
+    "demoted_blockers": [],
+    "real_blockers_retained": [],
+    "technical_notes_ro": [
+      "7 linii rețetă vizibile (catalog + reguli).",
+      "Manoperă: 3/3 rețete tehnic pregătite (formula/qty pe template)."
+    ],
+    "commercial_notes_ro": [],
+    "inventory_notes_ro": [
+      "Stocul neurmărit nu blochează prețuirea comercială.",
+      "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+      "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului."
+    ]
+  },
+  "ai_decisions": [
+    "AI_PACK_PRODUCT_BAND",
+    "AI_ELEC_MIN_PRODUCT",
+    "AI_ELEC_PER_PSU",
+    "AI_LED_PER_MODULE"
+  ],
+  "e2e": {
+    "verdict": "BLOCKED",
+    "template_publication_status": "BLOCKED",
+    "build_closure_status": "FAIL"
+  },
+  "acm": {
+    "applies": false,
+    "shell_registry_confirmed": null,
+    "shell_registry_missing": null,
+    "treatment_commercial_lines_allowed": null,
+    "blockers": [],
+    "policy_ro": null
+  },
+  "cpp": {
+    "status": "structural_catalog",
+    "lines": [
+      "logo_application",
+      "logo_back_cnc",
+      "logo_face_cnc",
+      "logo_laminate",
+      "logo_led_modules",
+      "logo_print",
+      "logo_return_cant"
+    ],
+    "blocked": []
+  },
+  "eic": {
+    "status": "no_eic_rules",
+    "rules": []
+  }
+}

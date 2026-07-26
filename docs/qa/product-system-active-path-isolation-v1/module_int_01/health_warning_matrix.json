@@ -1,0 +1,55 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "live_health_classification": "PARTIAL",
+  "warning_classification": "EXPLAINED",
+  "global_critical_relation": "UNRELATED",
+  "health_endpoint": {
+    "public": "GET /api/v1/system/health",
+    "diagnostics": "GET /api/v1/system/diagnostics",
+    "consumer": "frontend/src/hooks/useModuleChainData.ts",
+    "polling_ms": 30000,
+    "auth_public": false,
+    "auth_diagnostics": "require_permission(system.diagnostics.read) — page uses public only"
+  },
+  "public_health_runtime": {
+    "status": "warning",
+    "checks_exposed": {},
+    "note": "Public endpoint intentionally redacts checks; frontend cannot map per-module health truth"
+  },
+  "diagnostics_runtime": {
+    "status": "warning",
+    "checks": {
+      "database": "ok",
+      "version": "ok",
+      "seed_pipeline": "ok",
+      "observation_thresholds": "ok",
+      "execution_anchor_order_14": "warning — anchor_order_missing order_id 14"
+    }
+  },
+  "module_warning_source": {
+    "badge": "WARNING on Module Chain header",
+    "source": "health.status from public /system/health",
+    "root_cause": "execution_anchor_order_14 warning in diagnostics; order 14 absent in DB",
+    "module_cards_green": true,
+    "reason_cards_green": "buildModulesFromHealth receives empty checks; unmapped modules default active with ok=1"
+  },
+  "global_critical_badge": {
+    "location": "App.tsx top bar",
+    "source": "productionAlerts from mockData.ts (DEMO_DATA_ENABLED)",
+    "count": 2,
+    "codes": ["ALRT_MATERIAL_MISSING", "ALRT_MACHINE_DOWN"],
+    "relates_to_module_chain": false,
+    "verdict": "UNRELATED mock shop-floor alerts"
+  },
+  "per_module_matrix": [
+    {"module": "OC", "health_source": "mapped checks database/version/seed when checks present", "indicator_ui": "green 1/0/0", "runtime_actual": "PARTIAL", "aligned": false},
+    {"module": "WI", "health_source": "none mapped", "indicator_ui": "green default", "runtime_actual": "NONE", "aligned": false},
+    {"module": "PS", "health_source": "none mapped", "indicator_ui": "green default", "runtime_actual": "NONE", "aligned": false},
+    {"module": "CE", "health_source": "none mapped", "indicator_ui": "green default", "runtime_actual": "NONE", "aligned": false},
+    {"module": "QT", "health_source": "none mapped", "indicator_ui": "green default", "runtime_actual": "NONE", "aligned": false},
+    {"module": "OR", "health_source": "execution_anchor_order_14 when checks exposed", "indicator_ui": "green default on public health", "runtime_actual": "warning in diagnostics", "aligned": false},
+    {"module": "WO", "health_source": "execution_anchor_order_14 + observation_thresholds when exposed", "indicator_ui": "green default", "runtime_actual": "PARTIAL", "aligned": false},
+    {"module": "TK", "health_source": "observation_thresholds when exposed", "indicator_ui": "green default", "runtime_actual": "PARTIAL", "aligned": false}
+  ]
+}

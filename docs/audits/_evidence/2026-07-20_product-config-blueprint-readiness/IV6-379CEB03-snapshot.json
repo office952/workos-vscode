@@ -1,0 +1,29 @@
+﻿{
+    "code":  "IV6-379CEB03",
+    "id":  "646b746d-94c8-41e1-be27-baaeabd26457",
+    "template":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "readiness":  "product_composition_not_confirmed",
+    "layerRoles":  [
+                       "pseudo:fill-c5c6c6=support_panel",
+                       "pseudo:fill-e31e24=face"
+                   ],
+    "bindings":  [
+                     "LETTER_VECTOR_SET-\u003eTPL-VOLUMETRIC-FACE_v1"
+                 ],
+    "segStatus":  "PROPOSED",
+    "segPanels":  [
+                      "panel_1 1000x350",
+                      "panel_2 1000x350"
+                  ],
+    "segBindings":  [
+
+                    ],
+    "artworkCount":  0,
+    "compositionRec":  "{\"status\":\"needs_confirmation\",\"composition_type\":\"letters_plus_support\",\"source\":\"analyzer_rules_v1\",\"recommended_templates\":[{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"role_in_composition\":\"letters\",\"reason\":\"Confirmed volumetric letter/vector roles exist in SVG analysis.\",\"source_layer_ids\":[\"pseudo:fill-e31e24\"],\"confidence\":\"high\",\"status\":\"suggested\"},{\"template_code\":\"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1\",\"role_in_composition\":\"support_panel\",\"reason\":\"Support/background contour detected; maps to live optional component TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 (legacy alias TPL-BOND-CASETAT is not authority).\",\"source_layer_ids\":[\"pseudo:fill-c5c6c6\"],\"confidence\":\"medium\",\"status\":\"available_optional\"}],\"composition_items\":[{\"composition_item_id\":\"letters\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"component_role\":\"volumetric_letters\",\"source_layer_ids\":[\"pseudo:fill-e31e24\"],\"source_group_ids\":[\"pseudo:fill-e31e24\"],\"shared_module_policy\":\"dedupe_common_operations\",\"status\":\"suggested\"},{\"composition_item_id\":\"support\",\"template_code\":\"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1\",\"component_role\":\"support_panel\",\"source_layer_ids\":[\"pseudo:fill-c5c6c6\"],\"source_group_ids\":[\"pseudo:fill-c5c6c6\"],\"shared_module_policy\":\"dedupe_common_operations\",\"status\":\"available_optional\"}],\"shared_modules_policy\":{\"dedupe_common_operations\":true,\"graphic_verification_scope\":\"assembly\",\"file_preparation_scope\":\"assembly\",\"light_test_scope\":\"assembly\",\"packaging_scope\":\"assembly\"},\"blockers\":[],\"warnings\":[{\"code\":\"SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM\",\"message\":\"Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETAT este legacy/deprecated.\"}],\"generated_at\":\"2026-07-20T00:47:09.800729+00:00\"}",
+    "compositionConf":  "null",
+    "analysisLayers":  [
+                           "pseudo:fill-c5c6c6 role=support_panel src=gravare-cnc-135gr els=2",
+                           "pseudo:fill-e31e24 role=face src=decupare-cnc-outside els=1"
+                       ],
+    "dims":  "2000.18x350.17600000000004"
+}

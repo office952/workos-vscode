@@ -52,7 +52,7 @@ export default function IntakeV6ArtworkComplexityCard({
           return (
             <div
               key={assessment.artwork_id}
-              className="rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3"
+              className="rounded border border-wo-border-strong bg-wo-surface-inset/60 p-3"
               data-testid={`intake-v6-artwork-complexity-row-${assessment.artwork_id}`}
             >
               <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -128,7 +128,7 @@ export default function IntakeV6ArtworkComplexityCard({
                 </button>
                 <button
                   type="button"
-                  className="rounded border border-[#334155] bg-[#0A0F1A] px-3 py-1.5 text-[11px] text-slate-300"
+                  className="rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-1.5 text-[11px] text-slate-300"
                   data-testid="intake-v6-override-vinyl-cut"
                   onClick={() =>
                     patchDecision(assessment.artwork_id, {

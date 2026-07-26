@@ -1,0 +1,28 @@
+[
+    {
+        "id":  "pseudo:fill-c5c6c6",
+        "role":  "support_panel",
+        "bbox":  null,
+        "metricsBbox":  null,
+        "x":  null,
+        "y":  null,
+        "left":  null,
+        "top":  null,
+        "widthMm":  1000.0002611142216,
+        "heightMm":  350.0000460944898,
+        "area":  0.3500001374844794
+    },
+    {
+        "id":  "pseudo:fill-e31e24",
+        "role":  "face",
+        "bbox":  null,
+        "metricsBbox":  null,
+        "x":  null,
+        "y":  null,
+        "left":  null,
+        "top":  null,
+        "widthMm":  1439.6532132677405,
+        "heightMm":  239.43919581920733,
+        "area":  0.34470940764336555
+    }
+]

@@ -1,0 +1,14 @@
+{
+  "expected_backend_port": 8021,
+  "proxy_path": "/api",
+  "proxy_config_source": "frontend/vite.config.ts BACKEND_PORT env",
+  "verified_request": {
+    "url": "http://127.0.0.1:3021/api/v1/operational-registry/employees",
+    "method": "GET",
+    "result": "200",
+    "employee_total": 8,
+    "proves_proxy_to_restored_backend": true
+  },
+  "backend_8001_used": false,
+  "classification": "PASS"
+}

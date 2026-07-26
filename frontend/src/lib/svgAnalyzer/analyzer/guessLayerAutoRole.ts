@@ -13,18 +13,32 @@ function isLetterLayerIdFromKey(layerKey: string, layerName: string): boolean {
 }
 
 const ROLE_SYNONYMS: Record<LayerAutoRole, readonly string[]> = {
-  face: ['face', 'fata', 'față', 'plexi', 'plexiglas', 'letters', 'letter', 'litere', 'litera'],
-  backing: ['backing', 'spate', 'forex', 'back', 'pvc', 'bond'],
+  face: ['face', 'fata', 'față', 'letters', 'letter', 'litere', 'litera'],
+  // Note: do not use bare "bond" — it falsely matches "alucobond" (support_panel).
+  backing: ['backing', 'spate', 'forex', 'back', 'pvc'],
   return: ['return', 'cant', 'profil', 'lateral'],
   bevel: ['bevel', 'sanfren', 'chamfer'],
-  inner_hole: ['inner_hole', 'inner-hole', 'inner hole', 'decupat', 'decupate', 'decupaj', 'goluri', 'iluminat', 'iluminare'],
-  support_panel: ['dibond', 'acm', 'alucobond', 'support', 'panel'],
+  inner_hole: ['inner_hole', 'inner-hole', 'inner hole', 'goluri'],
+  support_panel: [
+    'dibond',
+    'acm',
+    'alucobond',
+    'casetat',
+    'caseta',
+    'support',
+    'panel',
+    'panou',
+    'fundal',
+  ],
   frame: ['cadru', 'frame', 'rama'],
   vinyl: ['vinyl', 'colant', 'oracal', 'folie', 'autocolant'],
   printed_artwork: ['policrom', 'policromie', 'artwork', 'print', 'uv', 'gradient'],
   logo: ['logo', 'emblem', 'emblema'],
   drill: ['drill', 'montaj', 'gaur'],
   reference: ['guide', 'ghidaj', 'referin', 'alignment', 'cadru_ref'],
+  cutout_text: ['cutout_text', 'text decupat', 'decupaj text', 'routed text'],
+  cutout_logo: ['cutout_logo', 'logo decupat', 'decupaj logo', 'routed logo'],
+  acrylic_insert: ['acrylic_insert', 'insert plexiglas', 'insert plexi', 'plexi insert'],
   ignore: ['ignore', 'ignora', 'skip', 'hidden'],
   unknown: [],
 }
@@ -49,12 +63,18 @@ function normalizeToken(layerName: string): string {
 
 function roleFromName(layerName: string): LayerAutoRole | null {
   const token = normalizeToken(layerName)
+  // Prefer longer / more specific synonyms first (alucobond before panel, etc.).
+  const ranked: Array<{ role: LayerAutoRole; synonym: string }> = []
   for (const [role, synonyms] of Object.entries(ROLE_SYNONYMS) as Array<[LayerAutoRole, readonly string[]]>) {
     if (role === 'unknown') continue
     for (const synonym of synonyms) {
-      if (token.includes(synonym) || token === synonym) {
-        return role
-      }
+      ranked.push({ role, synonym })
+    }
+  }
+  ranked.sort((a, b) => b.synonym.length - a.synonym.length)
+  for (const { role, synonym } of ranked) {
+    if (token.includes(synonym) || token === synonym) {
+      return role
     }
   }
   return null
@@ -91,13 +111,21 @@ export function guessLayerAutoRole(
   }
 
   if (isPseudoLayerId(layerKey) || token.startsWith('pseudo ')) {
-    pushCandidate(candidates, 'face', 'high', 'Pseudo-layer from solid vector fill — volumetric letter geometry candidate.')
-    return {
-      autoRole: 'face',
-      autoConfidence: 'high',
-      autoRoleCandidates: candidates,
-      productionHint: 'cnc_cut',
-    }
+    // Unsafe historical short-circuit forced every pseudo fill to `face`.
+    // Keep soft candidates; metrics below + geometry refinement decide proposal.
+    pushCandidate(
+      candidates,
+      'face',
+      'medium',
+      'Pseudo solid fill may be letter geometry — pending shape evidence.',
+    )
+    pushCandidate(
+      candidates,
+      'support_panel',
+      'low',
+      'Pseudo solid fill may be outer support envelope — pending geometry evidence.',
+    )
+    // Fall through to paint/metrics heuristics (multi-shape → face; otherwise unknown).
   }
 
   if (isLogoArtworkLayerName(layerName) || isLogoLayerId(layerKey)) {

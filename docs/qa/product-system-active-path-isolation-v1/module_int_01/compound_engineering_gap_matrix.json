@@ -1,0 +1,28 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "control_plane_readiness": "NOT_PROVEN",
+  "criteria": [
+    {"criterion": "canonical module registry", "status": "PARTIAL", "evidence": "mini_module_registry for PS only; page uses static MODULE_DEFINITIONS"},
+    {"criterion": "versioned contracts", "status": "PARTIAL", "evidence": "quote/order snapshot v2 off-page; handoffs on page unversioned"},
+    {"criterion": "schema input/output", "status": "PARTIAL", "evidence": "service-level schemas exist; not surfaced on /modules"},
+    {"criterion": "explicit ownership", "status": "PARTIAL", "evidence": "governanceData + agent registry; duplicate with page cards"},
+    {"criterion": "forbidden fields enforced", "status": "PARTIAL", "evidence": "boundary tests scattered; page badges UI_ONLY"},
+    {"criterion": "real events", "status": "DEMO", "evidence": "REFERENCE_EVENTS static"},
+    {"criterion": "real snapshots", "status": "PARTIAL", "evidence": "DB snapshots exist; page shows labels only"},
+    {"criterion": "real health", "status": "PARTIAL", "evidence": "aggregate warning real; per-module green misleading"},
+    {"criterion": "explainable warnings", "status": "PARTIAL", "evidence": "WARNING badge without drill-down; root cause only via diagnostics API"},
+    {"criterion": "dependency graph", "status": "DEMO", "evidence": "static OC→TK string"},
+    {"criterion": "observability", "status": "PARTIAL", "evidence": "execution observability service exists off-page"},
+    {"criterion": "audit trail", "status": "LIPSA", "evidence": "no event store"},
+    {"criterion": "contract violations", "status": "LIPSA", "evidence": "no central violation feed"},
+    {"criterion": "compatibility versions", "status": "PARTIAL", "evidence": "snapshot v2 versions only"},
+    {"criterion": "runtime consumers", "status": "LIPSA", "evidence": "no consumer map on page"},
+    {"criterion": "links to real entities", "status": "LIPSA", "evidence": "no drill-down"},
+    {"criterion": "drill-down", "status": "LIPSA"},
+    {"criterion": "lineage", "status": "LIPSA"},
+    {"criterion": "replay/debug", "status": "LIPSA"},
+    {"criterion": "fail-closed", "status": "NOT_PROVEN", "evidence": "misleading green module health when aggregate warning"}
+  ],
+  "counts": {"existent": 0, "partial": 11, "lipsa": 7, "demo": 2, "not_proven": 1}
+}

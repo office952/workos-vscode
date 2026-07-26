@@ -11,6 +11,7 @@ import {
   EmployeeMobileErrorState,
   EmployeeMobileLoadingState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
+import EmployeeMobileV2ActiveSessionPanel from "@/components/workos/employee-mobile-v2/EmployeeMobileV2ActiveSessionPanel";
 import EmployeeMobileV2AvailablePreviewActionBar from "@/components/workos/employee-mobile-v2/EmployeeMobileV2AvailablePreviewActionBar";
 import EmployeeMobileV2PageHeader from "@/components/workos/employee-mobile-v2/EmployeeMobileV2PageHeader";
 import EmployeeMobileV2StatusIndicator from "@/components/workos/employee-mobile-v2/EmployeeMobileV2StatusIndicator";
@@ -23,7 +24,6 @@ import {
 import { v2Effects } from "@/lib/employeeMobileV2Effects";
 import { useEmployeeMobileV2TaskDetail } from "@/hooks/useEmployeeMobileV2TaskDetail";
 import {
-  collectBeforeYouStartLines,
   formatInstructionsAsLines,
 } from "@/lib/employeeMobileShopFloorPresentation";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
@@ -36,10 +36,8 @@ import {
   normalizeTaskDocuments,
   taskInstructionsText,
 } from "@/lib/employeeMobileTaskDocuments";
-import {
-  formatEmployeeMobileV2MachineLabel,
-  formatEmployeeMobileV2ProcessLabel,
-} from "@/lib/employeeMobileV2Labels";
+import EmployeeMobileV2TaskTruthPanels from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskTruthPanels";
+import { resolveTaskDisplayTitle } from "@/lib/employeeMobileV2TaskTruth";
 import { cn } from "@/lib/utils";
 
 function participantHint(task: { active_helper_count?: number }): string {
@@ -89,6 +87,11 @@ export default function EmployeeMobileV2TaskDetailPage() {
 
   const refresh = useCallback(async () => {
     await reload();
+    await loadBlueprint();
+  }, [reload, loadBlueprint]);
+
+  const refreshAfterAction = useCallback(async () => {
+    await reload({ background: true });
     await loadBlueprint();
   }, [reload, loadBlueprint]);
 
@@ -142,19 +145,14 @@ export default function EmployeeMobileV2TaskDetailPage() {
   const instructions = taskInstructionsText(task);
   const instructionLines = instructions ? formatInstructionsAsLines(instructions) : [];
   const documents = normalizeTaskDocuments(task.documents);
-  const beforeYouStart = collectBeforeYouStartLines({ task, blueprintTask });
   const materialHints = blueprintTask?.material_hints ?? [];
   const statusPresentation = resolveEmployeeMobileV2StatusPresentation(task, blueprintTask);
-  const processLabel = formatEmployeeMobileV2ProcessLabel(task.process_type);
-  const machineLabel = formatEmployeeMobileV2MachineLabel(task.machine_type);
   const orderLabel = task.order_code || `Comandă #${task.order_id}`;
-  const previewInstructionLines = isPreview ? instructionLines : instructionLines.slice(0, 3);
-  const operationalLines = [...beforeYouStart, ...previewInstructionLines].filter(Boolean);
+  const detailTitle = resolveTaskDisplayTitle(task);
   const hasSecondaryDetails =
     (!isPreview && instructionLines.length > 3) ||
     materialHints.length > 0 ||
-    documents.length > 0 ||
-    Boolean(processLabel || machineLabel);
+    documents.length > 0;
 
   return (
     <div
@@ -166,7 +164,7 @@ export default function EmployeeMobileV2TaskDetailPage() {
         <EmployeeMobileV2PageHeader
           backTo="/employee-app-v2/tasks"
           backLabel="Înapoi la taskuri"
-          title={task.title || task.task_id}
+          title={detailTitle}
           testId="employee-mobile-v2-work-room-header"
         />
 
@@ -196,39 +194,9 @@ export default function EmployeeMobileV2TaskDetailPage() {
           ) : null}
         </div>
 
-        <section
-          className={cn(emV2Surface.panel, "mt-4 p-4")}
-          data-testid="employee-mobile-v2-work-room-now"
-        >
-          <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
-            Ce fac acum
-          </p>
-          {(processLabel || machineLabel) && !isPreview ? (
-            <dl className="space-y-1.5 text-sm mb-3">
-              {processLabel ? (
-                <div className="flex justify-between gap-3">
-                  <dt className="text-slate-500">Proces</dt>
-                  <dd className="font-medium text-slate-200">{processLabel}</dd>
-                </div>
-              ) : null}
-              {machineLabel ? (
-                <div className="flex justify-between gap-3">
-                  <dt className="text-slate-500">Post</dt>
-                  <dd className="font-medium text-slate-200">{machineLabel}</dd>
-                </div>
-              ) : null}
-            </dl>
-          ) : null}
-          {operationalLines.length > 0 ? (
-            <ul className="space-y-1.5 text-sm text-slate-300 leading-relaxed">
-              {operationalLines.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-slate-500">Fără instrucțiuni suplimentare.</p>
-          )}
-        </section>
+        <EmployeeMobileV2TaskTruthPanels task={task} />
+
+        <EmployeeMobileV2ActiveSessionPanel task={task} />
 
         {isPreview && instructionLines.length > 0 ? (
           <section
@@ -343,7 +311,7 @@ export default function EmployeeMobileV2TaskDetailPage() {
               variant="footer"
               visualVariant="v2"
             />
-            <EmployeeMobileV2WorkRoomActionBar task={task} onActionComplete={refresh} />
+            <EmployeeMobileV2WorkRoomActionBar task={task} onActionComplete={refreshAfterAction} />
           </>
         )}
       </div>

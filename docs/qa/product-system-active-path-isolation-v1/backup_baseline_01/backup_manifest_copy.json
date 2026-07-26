@@ -1,0 +1,18 @@
+{
+  "backup_id": "workos_full_backup_20260715_125751_deb5d69",
+  "timestamp": "2026-07-15T12:57:51+03:00",
+  "timezone": "Europe/Bucharest",
+  "source_worktree": "C:\\w\\psiso",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "head": "deb5d6942865448114bcad634a738eefc3bda19e",
+  "dirty": true,
+  "database_engine": "sqlite",
+  "database_artifact": "database/dev.db.backup",
+  "repository_artifact": "repository/psiso",
+  "total_size_bytes": 784851520,
+  "file_count": 5717,
+  "checksum_algorithm": "SHA-256",
+  "restore_test_status": "PARTIAL_FRONTEND_DEFERRED",
+  "verdict": "BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL",
+  "next_task": "BACKUP-BASELINE-01B-RESTORE-CLOSURE"
+}

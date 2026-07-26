@@ -14,6 +14,16 @@ import { INTAKE_DELIVERY_OPTIONS } from "@/lib/intakeDeliverySemantics";
 import { formatApiErrorFromUnknown, canCreateIntakeRequest } from "@/lib/apiError";
 import { useAuth } from "@/contexts/AuthContext";
 import { ensureIntakeV6WorkspaceForIntakeRequest } from "@/lib/intakeV6/intakeV6Api";
+import {
+  getAnalyzerFirstScopePresentation,
+  getProductTemplateScopePresentation,
+} from "@/lib/productTemplateScopePresentation";
+import {
+  INTAKE_V6_ANALYSIS_SOURCES,
+  canCreateIntakeV6WorkspaceFromSource,
+  getIntakeV6AnalysisSourceStatusLabel,
+  type IntakeV6AnalysisSourceMethodId,
+} from "@/lib/intakeV6/intakeV6AnalysisSourceTypes";
 
 interface NewIntakeDialogProps {
   open: boolean;
@@ -24,24 +34,47 @@ interface NewIntakeDialogProps {
 type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
+const ANALYZER_MODE = "analyzer_first";
 
-type OfferMethodId = "svg_analyzer_intake_v6";
+type TemplateHintPresentation = {
+  categoryLabel: string;
+  familyLabel: string;
+  badgeLabel: string;
+  badgeClassName: string;
+  description: string;
+  workIntakeLabel: string;
+  directRootLabel: string;
+};
+
+function getTemplateHintPresentation(template: ProductTemplateAvailabilityItem): TemplateHintPresentation {
+  const scope = getProductTemplateScopePresentation(template);
+
+  return {
+    categoryLabel: "Product Template",
+    familyLabel: scope.familyLabel,
+    badgeLabel: scope.statusLabel,
+    badgeClassName: scope.isDirectRootAllowed
+      ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"
+      : "text-amber-300 bg-amber-500/10 border-amber-500/30",
+    description: scope.shortDescription,
+    workIntakeLabel: scope.workIntakeLabel,
+    directRootLabel: scope.rootDirectLabel,
+  };
+}
 
 const OFFER_METHODS: Array<{
-  id: OfferMethodId;
+  id: IntakeV6AnalysisSourceMethodId;
   label: string;
   description: string;
   statusLabel: string;
   enabled: boolean;
-}> = [
-  {
-    id: "svg_analyzer_intake_v6",
-    label: "SVG Analyzer - Intake V6",
-    description: "Analizează fișiere SVG, pregătește Product Truth și pornește formularul modular Intake V6.",
-    statusLabel: "Activ",
-    enabled: true,
-  },
-];
+}> = INTAKE_V6_ANALYSIS_SOURCES.map((source) => ({
+  id: source.methodId,
+  label: source.label,
+  description: source.description,
+  statusLabel: getIntakeV6AnalysisSourceStatusLabel(source.status),
+  enabled: canCreateIntakeV6WorkspaceFromSource(source),
+}));
 
 const WORK_INTAKE_NEW_REQUEST_SOURCE = "work_intake_new_request";
 
@@ -67,6 +100,7 @@ type IntakeCreateForm = {
 };
 
 export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeDialogProps) {
+  const analyzerFirstPresentation = getAnalyzerFirstScopePresentation();
   const { user } = useAuth();
   const canCreateIntake = canCreateIntakeRequest(
     typeof user?.role === "string" ? user.role : undefined
@@ -80,10 +114,10 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
   const [clientSearch, setClientSearch] = useState("");
   const [selectedClient, setSelectedClient] = useState<ClientEntity | null>(null);
   const [loadingClients, setLoadingClients] = useState(false);
-  const [offerableTemplates, setOfferableTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
+  const [visibleTemplates, setVisibleTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [templateLoadError, setTemplateLoadError] = useState<string | null>(null);
-  const [selectedOfferMethod, setSelectedOfferMethod] = useState<OfferMethodId | null>(null);
+  const [selectedOfferMethod, setSelectedOfferMethod] = useState<IntakeV6AnalysisSourceMethodId | null>(null);
   const [selectedTemplateCode, setSelectedTemplateCode] = useState<string | null>(null);
 
   const [newClient, setNewClient] = useState({
@@ -121,17 +155,22 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
     setLoadingTemplates(true);
     setTemplateLoadError(null);
     productTemplateAvailabilityApi
-      .list({ offerable_only: true, include_runtime_modules: false, include_archived: false })
+      .list({ offerable_only: false, include_runtime_modules: false, include_archived: true })
       .then((response) => {
-        const offerable = response.items.filter((template) => template.quote_offerable);
-        setOfferableTemplates(offerable);
-        setSelectedTemplateCode((current) => current ?? offerable[0]?.template_code ?? null);
+        const visible = response.items.filter(
+          (template) =>
+            template.quote_offerable ||
+            template.product_system_role === "candidate_product" ||
+            template.display_group === "candidate_products"
+        );
+        setVisibleTemplates(visible);
+        setSelectedTemplateCode((current) => current ?? null);
       })
       .catch((err) => {
         console.warn("[NewIntakeDialog] failed to load offerable templates", err);
-        setOfferableTemplates([]);
+        setVisibleTemplates([]);
         setTemplateLoadError(
-          "Template-urile active pentru ofertare nu au putut fi încărcate din Product System."
+          "Template-urile candidate din Product System nu au putut fi încărcate."
         );
       })
       .finally(() => setLoadingTemplates(false));
@@ -187,9 +226,9 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
     return false;
   };
 
-  const selectedTemplate = offerableTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
+  const selectedTemplate = visibleTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
   const canProceedFromMethod = () => !!selectedOfferMethod;
-  const canProceedFromTemplate = () => !!selectedTemplate && !loadingTemplates && !templateLoadError;
+  const canProceedFromTemplate = () => !loadingTemplates && !templateLoadError;
   const canSubmit = () => canProceedFromClient() && canProceedFromTemplate() && intake.description.trim().length > 0;
 
   const resolvedFamilyId = selectedTemplate?.family_id ?? "";
@@ -205,8 +244,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
       );
       return;
     }
-    if (!selectedOfferMethod || !selectedTemplate) {
-      setError("Selectează modalitatea de ofertare și template-ul Product System înainte de a crea cererea.");
+    if (!selectedOfferMethod) {
+      setError("Selectează modalitatea de ofertare înainte de a crea cererea.");
       return;
     }
     setSubmitting(true);
@@ -248,17 +287,18 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
         notes: "",
         priority: intake.priority,
         delivery_type: intake.delivery_type,
-        confirmed_template_code: selectedTemplate.template_code,
-        confirmed_template_name: selectedTemplate.description ?? selectedTemplate.template_code,
+        confirmed_template_code: selectedTemplate?.template_code,
+        confirmed_template_name: selectedTemplate?.description ?? selectedTemplate?.template_code,
       });
 
       const workspace = await ensureIntakeV6WorkspaceForIntakeRequest(code, {
         offer_method: selectedOfferMethod,
-        selected_template_code: selectedTemplate.template_code,
+        analyzer_mode: ANALYZER_MODE,
+        template_hint_code: selectedTemplate?.template_code,
         source: WORK_INTAKE_NEW_REQUEST_SOURCE,
       });
 
-      onCreated(code, resolvedFamilyId, workspace.id, selectedTemplate.template_code);
+      onCreated(code, resolvedFamilyId, workspace.id, selectedTemplate?.template_code ?? null);
       onClose();
     } catch (err: unknown) {
       console.error("[NewIntakeDialog] submit failed", err);
@@ -332,53 +372,92 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           {step === "template" && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-[14px] font-bold text-slate-100">Alege template-ul Product System</h3>
+                <h3 className="text-[14px] font-bold text-slate-100">Hint Product System opțional</h3>
                 <p className="text-[12px] text-slate-400 mt-1">
-                  Selectează un template activ pentru ofertare. Modulele interne rămân gestionate de Product System și nu se aleg direct aici.
+                  Analyzer-ul pornește primul. Alege un hint doar dacă operatorul știe deja familia probabilă.
                 </p>
               </div>
               <section className="space-y-2">
                 <div className="flex items-center gap-1.5">
                   <Boxes className="w-3.5 h-3.5 text-blue-400" />
-                  <h4 className="text-[12px] font-bold text-slate-200">Template-uri active pentru ofertare</h4>
+                  <h4 className="text-[12px] font-bold text-slate-200">Template hint</h4>
                 </div>
-                <div className="space-y-2" data-testid="offerable-template-list">
+                <div className="space-y-2" data-testid="template-hint-list">
                   {loadingTemplates ? (
-                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile ofertabile...</p>
-                  ) : offerableTemplates.length === 0 ? (
+                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile candidate...</p>
+                  ) : visibleTemplates.length === 0 ? (
                     <p className="text-[11px] text-slate-500 p-4 text-center border border-[#2A3548] rounded-lg bg-[#1A2236]">
-                      Nu există template-uri active pentru ofertare disponibile.
+                      Nu există template-uri candidate disponibile.
                     </p>
                   ) : (
-                    offerableTemplates.map((template) => (
-                      <button
-                        key={template.template_code}
-                        type="button"
-                        onClick={() => setSelectedTemplateCode(template.template_code)}
-                        className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
-                          selectedTemplateCode === template.template_code
-                            ? "bg-blue-600/15 border-blue-500/50"
-                            : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
-                            <p className="text-[11px] text-slate-400 mt-1">{template.family_name ?? "Product System"}</p>
-                            {template.description && (
-                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{template.description}</p>
-                            )}
-                            {template.has_modules && (
-                              <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
-                            )}
-                          </div>
-                          <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
-                            Activ pentru ofertare
-                          </span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTemplateCode(null)}
+                      className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                        selectedTemplateCode === null
+                          ? "bg-blue-600/15 border-blue-500/50"
+                          : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                      }`}
+                      data-testid="analyzer-first-no-template-hint"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[13px] font-bold text-slate-100">Analyzer-first</p>
+                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                            {analyzerFirstPresentation.shortDescription}
+                          </p>
                         </div>
-                      </button>
-                    ))
+                        <span className="shrink-0 text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded px-2 py-0.5">
+                          {analyzerFirstPresentation.statusLabel}
+                        </span>
+                      </div>
+                    </button>
                   )}
+                  {!loadingTemplates && visibleTemplates.length > 0 ? (
+                    visibleTemplates.map((template) => {
+                      const presentation = getTemplateHintPresentation(template);
+
+                      return (
+                        <button
+                          key={template.template_code}
+                          type="button"
+                          onClick={() => setSelectedTemplateCode(template.template_code)}
+                          className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                            selectedTemplateCode === template.template_code
+                              ? "bg-blue-600/15 border-blue-500/50"
+                              : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
+                              <p className="text-[10px] uppercase tracking-wide text-slate-500 mt-1">
+                                {presentation.categoryLabel}
+                              </p>
+                              <p className="text-[11px] text-slate-400 mt-1">{presentation.familyLabel}</p>
+                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{presentation.description}</p>
+                              <div className="mt-2 flex flex-wrap gap-2 text-[10px]">
+                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-300">
+                                  {presentation.workIntakeLabel}
+                                </span>
+                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-400">
+                                  {presentation.directRootLabel}
+                                </span>
+                              </div>
+                              {template.has_modules ? (
+                                <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
+                              ) : null}
+                            </div>
+                            <span
+                              className={`shrink-0 rounded border px-2 py-0.5 text-[10px] font-semibold ${presentation.badgeClassName}`}
+                            >
+                              {presentation.badgeLabel}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })
+                  ) : null}
                 </div>
               </section>
             </div>
@@ -554,15 +633,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
               <div className="flex items-center justify-between gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5">
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide">Template Product System</p>
-                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "—"}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Template activ pentru ofertare"}</p>
+                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "Analyzer-first"}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Fără template final înainte de SVG"}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep("template")}
                   className="shrink-0 text-[11px] font-semibold text-blue-400 hover:text-blue-300"
                 >
-                  Schimbă template
+                  Schimbă hint
                 </button>
               </div>
 

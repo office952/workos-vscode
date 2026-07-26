@@ -35,6 +35,13 @@ vi.mock("@/features/operational-registry/OperationPoolPreviewPanel", () => ({
   OperationPoolPreviewPanel: () => null,
 }));
 
+vi.mock("@/contexts/AuthContext", () => ({
+  useAuth: () => ({
+    user: { id: "test-user", role: "admin", name: "Test Admin" },
+    loading: false,
+  }),
+}));
+
 function baseTask(overrides: Partial<OperatorTask> = {}): OperatorTask {
   return {
     id: "task-1",

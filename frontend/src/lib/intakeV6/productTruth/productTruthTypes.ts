@@ -194,7 +194,15 @@ export interface ProductTruthComponents {
     supportQuoteRelevant: ProductTruthField<boolean | null>;
   };
   mounting: {
-    mountingScope: ProductTruthField<"no_mounting" | "mounting_included" | "mounting_external" | "to_be_decided">;
+    mountingScope: ProductTruthField<
+      | "none"
+      | "preparation_only"
+      | "preparation_and_site_installation"
+      | "no_mounting"
+      | "mounting_included"
+      | "mounting_external"
+      | "to_be_decided"
+    >;
     mountingSystem: ProductTruthField<string | null>;
     mountingTemplateRequired: ProductTruthField<boolean | null>;
     mountingTemplateAreaM2: ProductTruthField<number | null>;
@@ -285,7 +293,16 @@ export interface ProductTruthFinishSetupInput {
   mounting_template_area_m2?: number | null;
   mounting_template_material_type?: "forex" | "paper" | null;
   mounting_system?: "direct_wall" | "steel_bars" | "aluminum_bars" | "acm_panel" | string | null;
-  mounting_scope?: "no_mounting" | "mounting_included" | "mounting_external" | "to_be_decided" | null;
+  mounting_scope?:
+    | "none"
+    | "preparation_only"
+    | "preparation_and_site_installation"
+    | "no_mounting"
+    | "mounting_included"
+    | "mounting_external"
+    | "to_be_decided"
+    | null;
+  site_installation_included?: boolean | null;
   mounting_bar_profile?: string | null;
   support_required?: "yes" | "no" | "suggested" | "unknown" | null;
   support_type?: string | null;

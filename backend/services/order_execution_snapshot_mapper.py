@@ -59,6 +59,10 @@ _OPERATION_CODE_TO_CANONICAL: Dict[str, str] = {
     "assembly_letters": "volumetric_letter_assembly",
     "qc_letters": "quality_control",
     "packaging_letters": "packaging",
+    "cut_acm_panel": "cnc_routing",
+    "v_groove_router": "cnc_routing",
+    "fold_cassette": "casette_assembly",
+    "mount_acm_panel": "installation_prep",
 }
 
 # Legacy ProductSystem _build_layers heuristics → canonical task_type.

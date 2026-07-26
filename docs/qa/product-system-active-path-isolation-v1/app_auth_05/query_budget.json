@@ -1,0 +1,28 @@
+{
+  "task": "APP-AUTH-05",
+  "consumer": "employee_mobile_available",
+  "n_plus_one_accepted": false,
+  "cases": [
+    {
+      "case": "flags_false",
+      "baseline_queries": "operational_only",
+      "parity_off_delta": 0,
+      "parity_on_delta": "not_applicable_when_off",
+      "notes": "early return before OperationalRegistryService parity reads"
+    },
+    {
+      "case": "flags_true_three_rows_two_unique_operations",
+      "baseline_queries": "operational_only",
+      "parity_off": 0,
+      "parity_on_extra_registry_calls": {
+        "resolve_operation_mapping": 2,
+        "get_operation_employee_ids": 2,
+        "get_employee_authorizations": 1,
+        "employee_row_select": 1
+      },
+      "delta_vs_per_row_operations": "2 not 3",
+      "verdict": "PASS"
+    }
+  ],
+  "test_reference": "test_mobile_available_query_budget_no_per_operation_n_plus_one"
+}

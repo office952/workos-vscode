@@ -157,6 +157,31 @@ def _resolve_commercial_total_amount(
     return float(total), currency
 
 
+def _component_scope_fields_from_quote(parsed: QuoteSnapshotV2) -> dict[str, Any]:
+    """Copy frozen component scope verbatim — no resolver or aggregate rebuild."""
+    return {
+        "component_scope_version": parsed.component_scope_version,
+        "offer_scope_snapshot": parsed.offer_scope_snapshot,
+        "active_scope_snapshot": parsed.active_scope_snapshot,
+        "component_instances": list(parsed.component_instances),
+        "geometry_input_snapshot": parsed.geometry_input_snapshot,
+        "product_aggregate_snapshot": parsed.product_aggregate_snapshot,
+    }
+
+
+def _enrich_order_provenance_with_product_truth(
+    parsed: QuoteSnapshotV2,
+    linkage: dict[str, Any],
+) -> dict[str, Any]:
+    """Pass through quote provenance + Product Truth revision from V6 freeze envelope."""
+    base = dict(parsed.provenance or {}) if isinstance(parsed.provenance, dict) else {}
+    base["product_truth_revision"] = linkage.get("product_truth_revision")
+    base["product_truth_content_hash"] = linkage.get("product_truth_content_hash")
+    base["freeze_from_pinned_product_truth"] = linkage.get("freeze_from_pinned_product_truth")
+    base["no_live_workspace_reread"] = True
+    return base
+
+
 def _build_order_snapshot_v2(
     *,
     quote: Quotes,
@@ -184,7 +209,7 @@ def _build_order_snapshot_v2(
         quote_id=quote.id,
         quote_snapshot_v2_id=record.id,
         product_definition_snapshot=parsed.product_definition_snapshot,
-        product_aggregate_snapshot=parsed.product_aggregate_snapshot,
+        **_component_scope_fields_from_quote(parsed),
         commercial_price_proposal_snapshot=parsed.commercial_price_proposal_snapshot,
         estimated_internal_cost_snapshot=parsed.estimated_internal_cost_snapshot,
         accepted_commercial_total=commercial_total,
@@ -193,7 +218,7 @@ def _build_order_snapshot_v2(
         owner_decisions_snapshot=parsed.owner_decisions_snapshot,
         warnings_snapshot=parsed.warnings_snapshot,
         blockers_snapshot=parsed.blockers_snapshot,
-        provenance=parsed.provenance,
+        provenance=_enrich_order_provenance_with_product_truth(parsed, linkage),
         accepted_at=accept_record.get("accepted_at"),
         accepted_by=accept_record.get("accepted_by_display_name") or accept_record.get("accepted_by_user_id"),
         converted_at=converted_at,

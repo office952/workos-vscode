@@ -1,0 +1,78 @@
+{
+  "workspace_code": "IV6-DB2F86B7",
+  "id": "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+  "supportBindingCount": 1,
+  "supportBindingStatus": "DRAFT",
+  "selectionStatus": "proposed",
+  "associationStatus": "proposed",
+  "technicalStatus": "proposed",
+  "compositionStatusInstance": "unconfirmed",
+  "compositionConfirmed": false,
+  "compositionType": "letters_plus_support",
+  "compositionItems": [
+    "TPL-VOLUMETRIC-LETTERS_v2",
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+  ],
+  "hasMounting": true,
+  "mountingTemplate": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "segStatus": "PROPOSED",
+  "segPanels": 2,
+  "instanceId": "acm_cc_7af1352f_ff5c35da170d",
+  "domainAction": "preserve",
+  "relations": [
+    {
+      "relation_id": "rel_belongs_panel_1_0",
+      "from_component_ref": "panel_1",
+      "to_component_ref": "acm_cc_7af1352f_ff5c35da170d",
+      "relation_type": "belongs_to_assembly",
+      "status": "proposed",
+      "provenance": "segmented_panels_proposal"
+    },
+    {
+      "relation_id": "rel_belongs_panel_2_1",
+      "from_component_ref": "panel_2",
+      "to_component_ref": "acm_cc_7af1352f_ff5c35da170d",
+      "relation_type": "belongs_to_assembly",
+      "status": "proposed",
+      "provenance": "segmented_panels_proposal"
+    },
+    {
+      "relation_id": "rel_place_pseudo:fill-e31e24",
+      "from_component_ref": "pseudo:fill-e31e24",
+      "to_component_ref": "acm_cc_7af1352f_ff5c35da170d",
+      "relation_type": "positioned_on",
+      "status": "unknown",
+      "provenance": "geometry_insufficient_for_panel_assignment"
+    }
+  ],
+  "fieldAuthority": {
+    "panel_geometry": "detected",
+    "fold_count": "catalog_default",
+    "l1_mm": "catalog_default",
+    "l2_mm": "catalog_default",
+    "finished_depth_mm": "catalog_default",
+    "acm_thickness_mm": "catalog_default",
+    "internal_frame": "catalog_default",
+    "service_corner": "catalog_default"
+  },
+  "artworkCount": 0,
+  "capabilities": {
+    "active": [
+      "boxed_returns",
+      "rear_lip",
+      "segmented_panels"
+    ],
+    "inactive": [
+      "internal_frame",
+      "graphic_cutouts",
+      "illuminated_cutouts",
+      "plexiglass_inserts",
+      "led_system",
+      "rear_closure",
+      "totem_face",
+      "direct_letter_mounting",
+      "wall_mounting",
+      "structure_mounting"
+    ]
+  }
+}

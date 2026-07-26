@@ -1074,7 +1074,7 @@ export default function VectorIntakeFastAskPanel({
               data-testid="vector-fast-ask-face-colantare-type"
             >
               <option value="oracal_colored">Autocolant colorat Oracal</option>
-              <option value="print_laminated">Print + laminare</option>
+              <option value="print_laminated">Printat / Laminat</option>
               <option value="unknown">Nu știu încă</option>
             </select>
           </div>

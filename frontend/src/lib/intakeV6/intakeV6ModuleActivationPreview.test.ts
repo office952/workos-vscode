@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildModuleActivationPreview } from "./intakeV6ModuleActivationPreview";
+import {
+  buildModuleActivationPreview,
+  resolveModuleActivationAttentionWarnings,
+} from "./intakeV6ModuleActivationPreview";
 import type { IntakeV6ModularFormContractResponse } from "./intakeV6ModularFormContractTypes";
 
 const SAMPLE_CONTRACT: IntakeV6ModularFormContractResponse = {
@@ -38,9 +41,22 @@ const SAMPLE_CONTRACT: IntakeV6ModularFormContractResponse = {
     },
     {
       module_code: "finisaje",
-      module_name: "Finisaj, sablon montaj, ambalare",
+      module_name: "Finisaj suprafață (vinyl / print / vopsire)",
+      operational_status: "ACTIVE_OPERATIONAL",
+      activation_kind: "always_on",
+    },
+    {
+      module_code: "sablon_montaj",
+      module_name: "Șablon montaj (installation template)",
       operational_status: "ACTIVE_OPERATIONAL",
       activation_kind: "conditional_gate",
+      intake_trigger_fields: ["mounting_template_enabled"],
+    },
+    {
+      module_code: "ambalare_livrare_montaj",
+      module_name: "Ambalare / logistică (composition)",
+      operational_status: "ACTIVE_OPERATIONAL",
+      activation_kind: "always_on",
     },
     {
       module_code: "structura_suport",
@@ -103,7 +119,18 @@ describe("buildModuleActivationPreview", () => {
     expect(labels).toContain("Laterale / cant");
     expect(labels).toContain("Spate litere");
     expect(labels).toContain("Iluminare LED");
-    expect(labels).toContain("Finisaje");
+    expect(labels).toContain("Finisaje suprafață");
+  });
+
+  it("returns only operator attention messages for pending product checks", () => {
+    const preview = buildModuleActivationPreview(SAMPLE_CONTRACT, {
+      ...READY_INPUT,
+      finishSetup: { mounting_system: "direct_wall", illuminated: false },
+    });
+
+    expect(resolveModuleActivationAttentionWarnings(preview)).toEqual([
+      "Verifica daca finisajul fetelor este corect.",
+    ]);
   });
 
   it("excludes structura_suport from product and mounting when direct_wall", () => {
@@ -162,7 +189,7 @@ describe("buildModuleActivationPreview", () => {
     expect(face?.state).toBe("always_on");
   });
 
-  it("shows sablon hint on finisaje when mounting template enabled", () => {
+  it("shows sablon under mounting when mounting template enabled — not under finisaje", () => {
     const preview = buildModuleActivationPreview(SAMPLE_CONTRACT, {
       ...READY_INPUT,
       finishSetup: {
@@ -172,6 +199,9 @@ describe("buildModuleActivationPreview", () => {
       },
     });
     const finisaje = preview!.operatorView.productReady.find((l) => l.key === "finisaje");
-    expect(finisaje?.hint).toContain("Șablon montaj activ");
+    expect(finisaje?.hint).toMatch(/suprafață/i);
+    expect(finisaje?.hint).not.toContain("Șablon montaj activ");
+    const sablon = preview!.operatorView.mounting.find((l) => l.key === "sablon_montaj");
+    expect(sablon?.hint).toContain("Șablon montaj activ");
   });
 });

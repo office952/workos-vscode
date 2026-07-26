@@ -1,0 +1,74 @@
+﻿{
+    "routes":  [
+                   {
+                       "route":  "/",
+                       "shell":  200,
+                       "api":  null,
+                       "api_status":  "N/A",
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/intake",
+                       "shell":  200,
+                       "api":  "/api/v1/entities/intake_requests?limit=3",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/quotes",
+                       "shell":  200,
+                       "api":  "/api/v1/entities/quotes?limit=3",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/orders",
+                       "shell":  200,
+                       "api":  "/api/v1/entities/orders?limit=3",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/execution",
+                       "shell":  200,
+                       "api":  "/api/v1/execution/dashboard",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/product-system",
+                       "shell":  200,
+                       "api":  "/api/v1/entities/product-families?limit=3",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/employees",
+                       "shell":  200,
+                       "api":  "/api/v1/operational-registry/employees",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/utilaje",
+                       "shell":  200,
+                       "api":  "/api/v1/machines?limit=3",
+                       "api_status":  200,
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/modules",
+                       "shell":  200,
+                       "api":  null,
+                       "api_status":  "N/A",
+                       "classification":  "HEALTHY"
+                   },
+                   {
+                       "route":  "/governance",
+                       "shell":  200,
+                       "api":  null,
+                       "api_status":  "N/A",
+                       "classification":  "HEALTHY"
+                   }
+               ]
+}

@@ -1,0 +1,230 @@
+{
+  "contract_version": "intake_v6_golden_ownership_v1",
+  "note": "Target owners are contractual metadata only in Build 1 — runtime ownership is not moved if output would change.",
+  "elements": [
+    {
+      "element": "svg_file_identity",
+      "current_owner": "intake_v6.payload.svg_source",
+      "target_owner": "svg_analyzer+intake_persistence",
+      "runtime_source": "analysis-bundle PUT",
+      "downstream_consumers": ["Review", "ProductDefinition.geometry_inputs", "provenance"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "layer_ids",
+      "current_owner": "svgAnalyzer.layers[].id",
+      "target_owner": "svg_facts",
+      "runtime_source": "svg_analysis_json",
+      "downstream_consumers": ["layer_role_setup", "selected_layer_refs", "letter_group_finishes"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "colors",
+      "current_owner": "svgAnalyzer.colors.unique",
+      "target_owner": "svg_facts",
+      "runtime_source": "svg_analysis_json",
+      "downstream_consumers": ["UI Culori", "letter_group_finishes.source_fill_color"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "width_height_mm",
+      "current_owner": "svgAnalyzer.document + quote_geometry",
+      "target_owner": "svg_facts → quote_geometry",
+      "runtime_source": "build_quote_geometry_from_analysis",
+      "downstream_consumers": ["ProductDefinition.geometry_inputs", "Review", "sablon area"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "face_area_m2",
+      "current_owner": "quote_geometry.face_area_m2",
+      "target_owner": "component:FACE",
+      "runtime_source": "intake_v4_quote_geometry_service",
+      "downstream_consumers": ["CPP debitare_spate / finish area", "Aggregate measurements"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "perimeter_m",
+      "current_owner": "quote_geometry.letter_perimeter_m",
+      "target_owner": "component:CANT (+ FACE cutting)",
+      "runtime_source": "intake_v4_quote_geometry_service + parts classification",
+      "downstream_consumers": ["CPP debitare_fata", "modelare_cant", "LED count", "adhesive qty"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "letter_count",
+      "current_owner": "quote_geometry.letter_count",
+      "target_owner": "component:FACE",
+      "runtime_source": "letter part classification from analysis parts",
+      "downstream_consumers": ["UI", "ProductDefinition", "packaging heuristics"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "face_material",
+      "current_owner": "finish_setup / mini_module debitare_fata",
+      "target_owner": "component:FACE",
+      "runtime_source": "mini_module_registry_volumetric_v2 + Aggregate",
+      "downstream_consumers": ["ProductAggregate.materials", "CPP"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "face_finish",
+      "current_owner": "finish_setup.face_finish_type",
+      "target_owner": "component:FINISH (settings; sold deferred)",
+      "runtime_source": "Intake Configurare",
+      "downstream_consumers": ["PD canonical_values", "CPP finisaje"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "cant_material",
+      "current_owner": "modelare_cant / volum aluminum module",
+      "target_owner": "component:CANT",
+      "runtime_source": "finish_setup.return_* + mini_module",
+      "downstream_consumers": ["Aggregate", "CPP modelare_cant_aluminiu"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "cant_height",
+      "current_owner": "finish_setup.return_depth_mm",
+      "target_owner": "component:CANT",
+      "runtime_source": "operator / product default",
+      "downstream_consumers": ["PD", "Aggregate profile selection"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "cant_finish",
+      "current_owner": "finish_setup.return_finish_type",
+      "target_owner": "component:CANT",
+      "runtime_source": "operator",
+      "downstream_consumers": ["PD", "Aggregate"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "back_material",
+      "current_owner": "debitare_spate / backing_mode",
+      "target_owner": "component:BACK",
+      "runtime_source": "finish_setup.backing_mode",
+      "downstream_consumers": ["Aggregate MAT-SPATE-*", "CPP debitare_spate"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "illumination",
+      "current_owner": "finish_setup.illuminated (soft default true in UI)",
+      "target_owner": "component:LIGHTING",
+      "runtime_source": "Intake Review soft default + finish_setup",
+      "downstream_consumers": ["PD sistem_led", "CPP LED/PSU"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "led_count",
+      "current_owner": "intake_v4_led_lighting_service",
+      "target_owner": "component:LIGHTING",
+      "runtime_source": "perimeter pitch / finish_setup.led_module_count",
+      "downstream_consumers": ["CPP sistem_led_module"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "psu",
+      "current_owner": "intake_v4_led_lighting_service + finish_setup.selected_psu_watts",
+      "target_owner": "component:ELECTRICAL",
+      "runtime_source": "LED watts + PSU packing",
+      "downstream_consumers": ["CPP sursa_led (1 piece)"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "installation_template",
+      "current_owner": "finish_setup.mounting_template_*",
+      "target_owner": "component:INSTALLATION_TEMPLATE (settings)",
+      "runtime_source": "soft default mounting_template_enabled",
+      "downstream_consumers": ["CPP sablon_montaj_forex", "Aggregate MAT-SABLON-*"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "structure_support",
+      "current_owner": "optional module structura_suport",
+      "target_owner": "component:STRUCTURE",
+      "runtime_source": "PD inactive optional",
+      "downstream_consumers": ["none when inactive"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "mounting",
+      "current_owner": "finish_setup.mounting_system / commercial montaj G5",
+      "target_owner": "component:MOUNTING (sold deferred)",
+      "runtime_source": "installation_template sentinel coupling (owner gate)",
+      "downstream_consumers": ["CPP montaj line eligibility"],
+      "parity_status": "LEGACY"
+    },
+    {
+      "element": "packaging",
+      "current_owner": "product_definition always_on packaging",
+      "target_owner": "component:PACKAGING (sold deferred)",
+      "runtime_source": "product_definition_builder_service",
+      "downstream_consumers": ["Aggregate packaging ops", "CPP ambalare"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "adhesive",
+      "current_owner": "modelare_cant / MAT-ADEZIV-CANT-LITERE",
+      "target_owner": "interface:FACE+CANT",
+      "runtime_source": "shared_edge_cant_rules + consumables wiring",
+      "downstream_consumers": ["Aggregate materials (not CPP line)"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "bonding_operation",
+      "current_owner": "COMPOSITION_ONLY_EXECUTION_OPS / modelare_cant sold map",
+      "target_owner": "interface:FACE+CANT",
+      "runtime_source": "active_scope_resolver_service",
+      "downstream_consumers": ["Aggregate operations"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "cpp_line_inputs",
+      "current_owner": "commercial_rules_volumetric_v2 + Aggregate commercial_measurements",
+      "target_owner": "CPP (money authority)",
+      "runtime_source": "CommercialPriceProposalService",
+      "downstream_consumers": ["priced-quote-dry-run", "Review commercial preview"],
+      "parity_status": "IMPLEMENTED_AND_USED"
+    },
+    {
+      "element": "readiness_blockers",
+      "current_owner": "intake_v6 readiness + PD validation + CPP blockers",
+      "target_owner": "ProductDefinition readiness spine",
+      "runtime_source": "multiple services",
+      "downstream_consumers": ["Review", "dry-run can_write flags"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "candidate_LETTER",
+      "current_owner": "svgAnalyzer autoRole=face + operator confirm",
+      "target_owner": "svg_classifier_proposal → operator → FACE",
+      "runtime_source": "layer_role_setup",
+      "downstream_consumers": ["composition recommendation", "selected_layer_refs vector_litere"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "candidate_LOGO",
+      "current_owner": "svgAnalyzer autoRole=printed_artwork + operator confirm",
+      "target_owner": "svg_classifier_proposal → operator → LOGO segment",
+      "runtime_source": "layer_role_setup",
+      "downstream_consumers": ["linked logo composition", "artwork_finishes"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    },
+    {
+      "element": "candidate_ACM",
+      "current_owner": "not proven on gradi-curat",
+      "target_owner": "future ACM component (owner GO)",
+      "runtime_source": "none on golden SVG",
+      "downstream_consumers": [],
+      "parity_status": "UNSUPPORTED_ASSUMPTION"
+    },
+    {
+      "element": "atypical_vector",
+      "current_owner": "unknown / needs operator confirmation",
+      "target_owner": "operator review gate",
+      "runtime_source": "layerRoleConfirmation pending/ignored",
+      "downstream_consumers": ["readiness blockers when unconfirmed"],
+      "parity_status": "IMPLEMENTED_PARTIAL"
+    }
+  ]
+}

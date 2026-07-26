@@ -1,21 +1,21 @@
-﻿"""BUILD 4 â€” Seed 6 real advertising production templates.
+"""BUILD 4 — Seed 6 real advertising production templates.
 
 Templates:
-  1. TPL-BANNER-STANDARD      â€” Banner publicitar
-  2. TPL-PLEXI-PLATE          â€” Placa plexiglass
-  3. TPL-VINYL-STICKER        â€” Autocolant / sticker
-  4. TPL-LIGHTBOX-STANDARD    â€” Caseta luminoasa
-  5. TPL-VOLUMETRIC-LETTERS   â€” Litere volumetrice
-  6. TPL-MESH-EXTERNALIZED    â€” Mesh externalizat
+  1. TPL-BANNER-STANDARD      — Banner publicitar
+  2. TPL-PLEXI-PLATE          — Placa plexiglass
+  3. TPL-VINYL-STICKER        — Autocolant / sticker
+  4. TPL-LIGHTBOX-STANDARD    — Caseta luminoasa
+  5. TPL-VOLUMETRIC-LETTERS   — Litere volumetrice
+  6. TPL-MESH-EXTERNALIZED    — Mesh externalizat
 
 Canonical rules:
-  - Idempotent on template_code â€” re-running is safe.
-  - Additive-only â€” no existing template is touched.
+  - Idempotent on template_code — re-running is safe.
+  - Additive-only — no existing template is touched.
   - Components use the BUILD 4 extended component types.
   - Operations and materials are hierarchical (Sprint #15 shape).
   - Formula-based lines where quantity depends on user input.
   - Mesh is ALWAYS externalized (ready_for_internal_production=false).
-  - No commercial prices invented â€” cost comes from CostEngine at runtime.
+  - No commercial prices invented — cost comes from CostEngine at runtime.
 """
 
 from __future__ import annotations
@@ -28,11 +28,27 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import select
 
 from core.database import db_manager
+from core.utf8_text_integrity import assert_no_mojibake
 import models  # noqa: F401
 from models.product_templates import Product_templates
 from models.product_families import Product_families
 
 logger = logging.getLogger(__name__)
+
+
+def _assert_utf8_clean_tree(node: Any, *, context: str) -> None:
+    """Fail fast if template seed text contains confirmed mojibake markers."""
+    if isinstance(node, str):
+        assert_no_mojibake(node, context=context)
+        return
+    if isinstance(node, list):
+        for i, item in enumerate(node):
+            _assert_utf8_clean_tree(item, context=f"{context}[{i}]")
+        return
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key in {"label", "name", "description", "notes", "source_notes"} or isinstance(value, (dict, list, str)):
+                _assert_utf8_clean_tree(value, context=f"{context}.{key}")
 
 
 # ---------------------------------------------------------------------------
@@ -154,9 +170,9 @@ def _banner_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_print_substrate",
             "PRINT_SUBSTRATE",
-            "Substrat banner â€” imprimare",
+            "Substrat banner — imprimare",
             operations=[
-                _op_static("prepress", "PREPRESS", 1, 30, "PregÄƒtire fiÈ™ier print"),
+                _op_static("prepress", "PREPRESS", 1, 30, "Pregătire fișier print"),
                 _op_formula(
                     "print_large_format", "LARGE_FORMAT_PRINT", 2,
                     "area_based_time",
@@ -173,26 +189,26 @@ def _banner_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-INK-ECOSOLVENT", "set", "ink_consumption",
                     {"ml_per_sqm": 12},
-                    "CernealÄƒ ecosolvent",
+                    "Cerneală ecosolvent",
                 ),
             ],
         ),
         _comp(
             "comp_finisaj_banner",
             "FINISAJ",
-            "Finisare banner â€” tiv, capse, tÄƒiere",
+            "Finisare banner — tiv, capse, tăiere",
             operations=[
                 _op_formula(
                     "cutting_banner", "PANEL_CUTTING", 3,
                     "perimeter_based_time",
                     {"speed_m_per_min": 2},
-                    "TÄƒiere la dimensiune",
+                    "Tăiere la dimensiune",
                 ),
                 _op_formula(
                     "tiv_welding", "WELDING_BANNER", 4,
                     "perimeter_based_time",
                     {"speed_m_per_min": 1.5, "conditional": "tiv_enabled"},
-                    "SudurÄƒ tiv",
+                    "Sudură tiv",
                 ),
                 _op_formula(
                     "capsare", "CAPSARE", 5,
@@ -207,7 +223,7 @@ def _banner_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-TIV-BANDA", "ml", "perimeter_material",
                     {"conditional": "tiv_enabled"},
-                    "BandÄƒ tiv",
+                    "Bandă tiv",
                 ),
                 _mat_formula(
                     "MAT-CAPSE-METAL", "buc", "caps_count",
@@ -227,21 +243,21 @@ def _plexi_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_plexi_panel",
             "PLEXI_PANEL",
-            "PlacÄƒ plexiglas â€” tÄƒiere È™i prelucrare",
+            "Placă plexiglas — tăiere și prelucrare",
             operations=[
-                _op_static("prepress_plexi", "PREPRESS", 1, 20, "PregÄƒtire fiÈ™ier vector"),
+                _op_static("prepress_plexi", "PREPRESS", 1, 20, "Pregătire fișier vector"),
                 _op_formula(
                     "cnc_laser_cut", "LASER_CUTTING", 2,
                     "perimeter_based_time",
                     {"speed_m_per_min": 0.8},
-                    "TÄƒiere laser/CNC",
+                    "Tăiere laser/CNC",
                 ),
                 _op_static("edge_finish", "FINISHING", 3, 20, "Finisare muchii"),
                 _op_formula(
                     "drilling", "CNC_ROUTER", 4,
                     "count_based_time",
                     {"minutes_per_hole": 2, "conditional": "holes_enabled"},
-                    "GÄƒurire montaj",
+                    "Găurire montaj",
                 ),
             ],
             materials=[
@@ -250,7 +266,7 @@ def _plexi_components() -> List[Dict[str, Any]]:
                     {"waste_pct": 0.10, "thickness_options_mm": [3, 5, 10]},
                     "Plexiglas (implicit transp. 3mm)",
                 ),
-                _mat_static("MAT-FOLIE-PROTECTIE", "mp", 0, "Folie protecÈ›ie"),
+                _mat_static("MAT-FOLIE-PROTECTIE", "mp", 0, "Folie protecție"),
             ],
         ),
         _comp(
@@ -276,13 +292,13 @@ def _plexi_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_montaj_plexi",
             "FINISAJ",
-            "Montaj final â€” distanÈ›iere, ambalare",
+            "Montaj final — distanțiere, ambalare",
             operations=[
                 _op_formula(
                     "spacer_assembly", "ASSEMBLY", 6,
                     "count_based_time",
                     {"minutes_per_spacer": 3, "conditional": "spacers_enabled"},
-                    "Montaj distanÈ›iere",
+                    "Montaj distanțiere",
                 ),
                 _op_static("qc_plexi", "QC_INSPECTION", 7, 10, "Control calitate"),
                 _op_static("packaging_plexi", "PACKAGING", 8, 15, "Ambalare"),
@@ -291,9 +307,9 @@ def _plexi_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-DISTANTIERE-INOX", "set", "spacer_count",
                     {"conditional": "spacers_enabled"},
-                    "DistanÈ›iere inox",
+                    "Distanțiere inox",
                 ),
-                _mat_static("MAT-SURUBURI-GEN", "set", 1, "È˜uruburi montaj"),
+                _mat_static("MAT-SURUBURI-GEN", "set", 1, "Șuruburi montaj"),
             ],
         ),
     ]
@@ -309,7 +325,7 @@ def _vinyl_sticker_components() -> List[Dict[str, Any]]:
             "VINYL_APPLICATION",
             "Print pe vinyl autoadeziv",
             operations=[
-                _op_static("prepress_vinyl", "PREPRESS", 1, 20, "PregÄƒtire fiÈ™ier"),
+                _op_static("prepress_vinyl", "PREPRESS", 1, 20, "Pregătire fișier"),
                 _op_formula(
                     "print_vinyl", "LARGE_FORMAT_PRINT", 2,
                     "area_based_time",
@@ -326,14 +342,14 @@ def _vinyl_sticker_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-INK-ECOSOLVENT", "set", "ink_consumption",
                     {"ml_per_sqm": 14},
-                    "CernealÄƒ ecosolvent",
+                    "Cerneală ecosolvent",
                 ),
             ],
         ),
         _comp(
             "comp_laminare",
             "LAMINARE",
-            "Laminare protecÈ›ie UV",
+            "Laminare protecție UV",
             operations=[
                 _op_formula(
                     "lamination", "LAMINATION", 3,
@@ -353,34 +369,34 @@ def _vinyl_sticker_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_taiere_contur",
             "TAIERE_CNC_LASER",
-            "TÄƒiere contur È™i pregÄƒtire",
+            "Tăiere contur și pregătire",
             operations=[
                 _op_formula(
                     "contour_cut", "CONTOUR_CUTTING", 4,
                     "perimeter_based_time",
                     {"speed_m_per_min": 0.5, "conditional": "contour_cut_enabled"},
-                    "TÄƒiere contur",
+                    "Tăiere contur",
                 ),
-                _op_static("weeding", "FINISHING", 5, 30, "Weeding (Ã®ndepÄƒrtare surplus)"),
+                _op_static("weeding", "FINISHING", 5, 30, "Weeding (îndepărtare surplus)"),
                 _op_formula(
                     "transfer_tape", "FINISHING", 6,
                     "area_based_time",
                     {"speed_sqm_per_hour": 15, "conditional": "transfer_tape_enabled"},
-                    "Aplicare bandÄƒ transfer",
+                    "Aplicare bandă transfer",
                 ),
             ],
             materials=[
                 _mat_formula(
                     "MAT-TRANSFER-TAPE", "mp", "area_with_waste",
                     {"waste_pct": 0.05, "conditional": "transfer_tape_enabled"},
-                    "BandÄƒ transfer",
+                    "Bandă transfer",
                 ),
             ],
         ),
         _comp(
             "comp_finisaj_vinyl",
             "FINISAJ",
-            "Control calitate È™i ambalare",
+            "Control calitate și ambalare",
             operations=[
                 _op_static("qc_vinyl", "QC_INSPECTION", 7, 10, "Control calitate"),
                 _op_static("packaging_vinyl", "PACKAGING", 8, 10, "Ambalare"),
@@ -398,7 +414,7 @@ def _lightbox_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_frame_lightbox",
             "FRAME_PROFILE",
-            "Cadru aluminiu casetÄƒ",
+            "Cadru aluminiu casetă",
             operations=[
                 _op_formula(
                     "frame_cutting", "PANEL_CUTTING", 1,
@@ -412,28 +428,28 @@ def _lightbox_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-PROFIL-ALU-BOX", "ml", "perimeter_material",
                     {"extra_pct": 0.10},
-                    "Profil aluminiu casetÄƒ",
+                    "Profil aluminiu casetă",
                 ),
-                _mat_static("MAT-SURUBURI-GEN", "set", 1, "È˜uruburi asamblare"),
+                _mat_static("MAT-SURUBURI-GEN", "set", 1, "Șuruburi asamblare"),
             ],
         ),
         _comp(
             "comp_face_lightbox",
             "PLEXI_PANEL",
-            "FaÈ›Äƒ casetÄƒ â€” plexiglas/policarbonat",
+            "Față casetă — plexiglas/policarbonat",
             operations=[
-                _op_static("prepress_lightbox", "PREPRESS", 3, 30, "PregÄƒtire graficÄƒ"),
+                _op_static("prepress_lightbox", "PREPRESS", 3, 30, "Pregătire grafică"),
                 _op_formula(
                     "face_cutting", "LASER_CUTTING", 4,
                     "area_based_time",
                     {"speed_sqm_per_hour": 3},
-                    "TÄƒiere faÈ›Äƒ",
+                    "Tăiere față",
                 ),
                 _op_formula(
                     "face_print", "LARGE_FORMAT_PRINT", 5,
                     "area_based_time",
                     {"speed_sqm_per_hour": 6},
-                    "Print pe faÈ›Äƒ",
+                    "Print pe față",
                 ),
             ],
             materials=[
@@ -445,20 +461,20 @@ def _lightbox_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-VINYL-TRANSPARENT", "mp", "area_with_waste",
                     {"waste_pct": 0.05},
-                    "Vinyl print faÈ›Äƒ",
+                    "Vinyl print față",
                 ),
             ],
         ),
         _comp(
             "comp_back_lightbox",
             "STRUCTURA",
-            "Panou spate casetÄƒ",
+            "Panou spate casetă",
             operations=[
                 _op_formula(
                     "back_cutting", "PANEL_CUTTING", 6,
                     "area_based_time",
                     {"speed_sqm_per_hour": 5},
-                    "TÄƒiere panou spate",
+                    "Tăiere panou spate",
                 ),
             ],
             materials=[
@@ -500,9 +516,9 @@ def _lightbox_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_finisaj_lightbox",
             "FINISAJ",
-            "Asamblare finalÄƒ È™i QC",
+            "Asamblare finală și QC",
             operations=[
-                _op_static("final_assembly", "ASSEMBLY", 10, 45, "Asamblare finalÄƒ"),
+                _op_static("final_assembly", "ASSEMBLY", 10, 45, "Asamblare finală"),
                 _op_static("qc_lightbox", "QC_INSPECTION", 11, 15, "Control calitate"),
                 _op_static("packaging_lightbox", "PACKAGING", 12, 20, "Ambalare"),
             ],
@@ -521,13 +537,13 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_face_litere",
             "LITERE_3D",
-            "FaÈ›Äƒ litere â€” plexi/acrilic (CNC/laser)",
+            "Față litere — plexiglas 3mm PMMA - opal (CNC/laser)",
             operations=[
                 _op_formula(
                     "vector_prep", "PREPRESS", 1,
                     "letter_count_material",
                     {},
-                    "PregÄƒtire vector / font",
+                    "Pregătire vector / font",
                     requires_quote_input=["letter_count"],
                 ),
                 _op_formula(
@@ -541,7 +557,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                         "material": "plexiglas face 3mm",
                         "notes": "1 cut pass + 1 bevel/sanfren pass on CNC cutting perimeter (outer + holes)",
                     },
-                    "TÄƒiere CNC faÈ›Äƒ litere",
+                    "Tăiere CNC față litere",
                     requires_quote_input=["cnc_cutting_perimeter_ml"],
                 ),
                 _op_formula(
@@ -550,7 +566,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                     {
                         "gate": {"face_finish_type_not": "none"},
                     },
-                    "ManoperÄƒ aplicare folie feÈ›e litere",
+                    "Manoperă aplicare folie fețe litere",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
             ],
@@ -558,7 +574,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-ACP-FATA-LITERE", "mp", "letter_face_area",
                     {"waste_pct": 0.15},
-                    "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+                    "Față plexiglas 3mm PMMA - opal; opțional vinyl/oracal/print",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
                 _mat_formula(
@@ -566,7 +582,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                     {
                         "gate": {"face_finish_type": "oracal_651"},
                     },
-                    "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+                    "Oracal 651 — autocolant față litere",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
                 _mat_formula(
@@ -574,7 +590,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                     {
                         "gate": {"face_finish_type": "printed_vinyl"},
                     },
-                    "Autocolant print faÈ›Äƒ litere",
+                    "Autocolant print față litere",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
                 _mat_formula(
@@ -582,7 +598,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                     {
                         "gate": {"face_finish_type": "printed_laminated_vinyl"},
                     },
-                    "Autocolant print + laminare faÈ›Äƒ litere",
+                    "Autocolant print + laminare față litere",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
             ],
@@ -590,20 +606,20 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_lateral_litere",
             "LITERE_3D",
-            "Laterale litere â€” profil aluminiu (bordurÄƒ)",
+            "Laterale litere — profil aluminiu (bordură)",
             operations=[
                 _op_formula(
                     "side_forming", "RETURN_PROFILE_MACHINE_FORMING", 3,
                     "letter_perimeter",
                     {"extra_pct": 0},
-                    "Modelare cant profil â€” utilaj (EUR/ml serviciu)",
+                    "Modelare cant profil — utilaj (EUR/ml serviciu)",
                     requires_quote_input=["letter_perimeter_m"],
                 ),
                 _op_formula(
                     "return_face_bonding", "RETURN_PROFILE_FACE_BONDING", 4,
                     "letter_perimeter",
                     {"extra_pct": 0, "perimeter_quote_input_key": "return_material_perimeter_ml"},
-                    "Lipire cant pe faÈ›Äƒ (EUR/ml serviciu)",
+                    "Lipire cant pe față (EUR/ml serviciu)",
                     requires_quote_input=["return_material_perimeter_ml"],
                 ),
             ],
@@ -619,7 +635,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_spate_litere",
             "STRUCTURA",
-            "Spate litere â€” Forex 10 mm",
+            "Spate litere — Forex 10 mm",
             operations=[
                 _op_formula(
                     "back_cut", "CNC_ROUTER", 5,
@@ -639,7 +655,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                             "skipped when backing_present is false"
                         ),
                     },
-                    "TÄƒiere CNC spate Forex 10 mm",
+                    "Tăiere CNC spate Forex 10 mm",
                     requires_quote_input=["cnc_cutting_perimeter_ml"],
                 ),
             ],
@@ -655,7 +671,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_led_litere",
             "ELECTRIC_LED",
-            "Iluminare LED â€” montaj pe spate Forex",
+            "Iluminare LED — montaj pe spate Forex",
             operations=[
                 _op_formula(
                     "led_install_letters", "LED_ASSEMBLY", 6,
@@ -694,7 +710,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_finisaj_litere",
             "FINISAJ",
-            "Finisare â€” vopsire, asamblare, QC",
+            "Finisare — vopsire, asamblare, QC",
             operations=[
                 _op_formula(
                     "mounting_template_cnc_cut", "CNC_ROUTER", 6,
@@ -706,7 +722,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                         "notes": "Single pass CNC cut for mounting template",
                         "gate": {"mounting_template_material_type": "forex"},
                     },
-                    "CNC debitare È™ablon montaj Forex 3 mm (serviciu separat)",
+                    "CNC debitare șablon montaj Forex 3 mm (serviciu separat)",
                     requires_quote_input=["letter_perimeter_m"],
                 ),
                 _op_formula(
@@ -745,7 +761,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                     "packaging_letters", "PACKAGING", 10,
                     "letter_face_area",
                     {"waste_pct": 0},
-                    "Ambalare + È™ablon",
+                    "Ambalare + șablon",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
             ],
@@ -758,7 +774,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                         "quote_input_key": "paint_tube_count",
                         "fallback_quote_input_key": "estimated_paint_tubes",
                     },
-                    "Vopsea RAL spray â€” tub (consumabil)",
+                    "Vopsea RAL spray — tub (consumabil)",
                     requires_quote_input=[],
                 ),
                 _mat_formula(
@@ -768,7 +784,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                         "area_quote_input_key": "mounting_template_area_m2",
                         "gate": {"mounting_template_material_type": "paper"},
                     },
-                    "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+                    "Șablon hârtie (material mp; fără CNC Forex)",
                     requires_quote_input=["mounting_template_area_m2"],
                 ),
                 _mat_formula(
@@ -778,7 +794,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                         "area_quote_input_key": "mounting_template_area_m2",
                         "gate": {"mounting_template_material_type": "forex"},
                     },
-                    "È˜ablon montaj Forex 3 mm (material mp; CNC separat)",
+                    "Șablon montaj Forex 3 mm (material mp; CNC separat)",
                     requires_quote_input=["mounting_template_area_m2"],
                 ),
                 _mat_static("MAT-CONSUMABILE-MONTAJ", "set", 1, "Consumabile"),
@@ -787,7 +803,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_premount_bars",
             "STRUCTURA",
-            "Bare premontaj oÈ›el / aluminiu",
+            "Bare premontaj oțel / aluminiu",
             operations=[],
             materials=[
                 _mat_formula(
@@ -799,7 +815,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                             "mounting_bar_profile_in": ["30x30x1.5"],
                         },
                     },
-                    "Bare premontaj oÈ›el â€” profil selectabil (30Ã—30Ã—1.5 preÈ› confirmat)",
+                    "Bare premontaj oțel — profil selectabil (30Ã—30Ã—1.5 preț confirmat)",
                     requires_quote_input=[],
                 ),
                 _mat_formula(
@@ -811,7 +827,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                             "mounting_bar_profile_in": ["30x30x1.5"],
                         },
                     },
-                    "Bare premontaj aluminiu â€” profil selectabil (30Ã—30Ã—1.5 preÈ› confirmat)",
+                    "Bare premontaj aluminiu — profil selectabil (30Ã—30Ã—1.5 preț confirmat)",
                     requires_quote_input=[],
                 ),
             ],
@@ -827,22 +843,22 @@ def _mesh_externalized_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_prepress_mesh",
             "PRINT_SUBSTRATE",
-            "PregÄƒtire fiÈ™ier mesh",
+            "Pregătire fișier mesh",
             operations=[
-                _op_static("prepress_mesh", "PREPRESS", 1, 30, "PregÄƒtire fiÈ™ier print"),
+                _op_static("prepress_mesh", "PREPRESS", 1, 30, "Pregătire fișier print"),
             ],
             materials=[],
         ),
         _comp(
             "comp_externalizare_mesh",
             "EXTERNALIZARE",
-            "ProducÈ›ie externalizatÄƒ mesh",
+            "Producție externalizată mesh",
             operations=[
                 _op_formula(
                     "external_production", "EXTERNAL_SUBCONTRACT", 2,
                     "external_quote_based",
                     {"requires_supplier_quote": True},
-                    "Subcontractare producÈ›ie mesh",
+                    "Subcontractare producție mesh",
                 ),
             ],
             materials=[
@@ -856,9 +872,9 @@ def _mesh_externalized_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_finisaj_mesh",
             "FINISAJ",
-            "RecepÈ›ie, QC, tiv/capse, ambalare",
+            "Recepție, QC, tiv/capse, ambalare",
             operations=[
-                _op_static("incoming_qc", "QC_INSPECTION", 3, 15, "QC recepÈ›ie"),
+                _op_static("incoming_qc", "QC_INSPECTION", 3, 15, "QC recepție"),
                 _op_formula(
                     "tiv_mesh", "WELDING_BANNER", 4,
                     "perimeter_based_time",
@@ -877,7 +893,7 @@ def _mesh_externalized_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-TIV-BANDA", "ml", "perimeter_material",
                     {"conditional": "tiv_enabled"},
-                    "BandÄƒ tiv mesh",
+                    "Bandă tiv mesh",
                 ),
                 _mat_formula(
                     "MAT-CAPSE-METAL", "buc", "caps_count",
@@ -898,9 +914,9 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "print_large_format",
         "family_name": "Print format mare",
         "description": (
-            "Banner publicitar PVC â€” imprimare ecosolvent/UV format mare, "
-            "cu opÈ›iuni tiv, capse, sudurÄƒ. Role: 1100/1350/1600mm. "
-            "Mesh nu se produce intern â€” se externalizeazÄƒ."
+            "Banner publicitar PVC — imprimare ecosolvent/UV format mare, "
+            "cu opțiuni tiv, capse, sudură. Role: 1100/1350/1600mm. "
+            "Mesh nu se produce intern — se externalizează."
         ),
         "components_fn": _banner_components,
         "estimated_hours": 2.5,
@@ -918,8 +934,8 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "plexi_cnc",
         "family_name": "Plexiglass / Debitare CNC",
         "description": (
-            "PlacÄƒ plexiglas â€” tÄƒiere laser/CNC, finisare muchii, "
-            "opÈ›ional print/vinyl, distanÈ›iere, gÄƒurire. "
+            "Placă plexiglas — tăiere laser/CNC, finisare muchii, "
+            "opțional print/vinyl, distanțiere, găurire. "
             "Tipuri: transparent, alb, opal, colorat. Grosimi: 3/5/10mm."
         ),
         "components_fn": _plexi_components,
@@ -937,8 +953,8 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "vinyl_stickers",
         "family_name": "Autocolant / Sticker",
         "description": (
-            "Autocolant / sticker â€” print pe vinyl autoadeziv, "
-            "laminare UV opÈ›ionalÄƒ, tÄƒiere contur, bandÄƒ transfer. "
+            "Autocolant / sticker — print pe vinyl autoadeziv, "
+            "laminare UV opțională, tăiere contur, bandă transfer. "
             "Tipuri vinyl: calandrat, turnat, transparent."
         ),
         "components_fn": _vinyl_sticker_components,
@@ -957,9 +973,9 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "casete_luminoase",
         "family_name": "Casete luminoase",
         "description": (
-            "CasetÄƒ luminoasÄƒ cu LED â€” cadru aluminiu, faÈ›Äƒ plexiglas/"
+            "Casetă luminoasă cu LED — cadru aluminiu, față plexiglas/"
             "policarbonat, panou spate, module LED, surse alimentare. "
-            "OpÈ›iuni: single/double sided, interior/exterior."
+            "Opțiuni: single/double sided, interior/exterior."
         ),
         "components_fn": _lightbox_components,
         "estimated_hours": 8.0,
@@ -977,9 +993,9 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "litere_volumetrice",
         "family_name": "Litere volumetrice",
         "description": (
-            "Litere volumetrice 3D â€” faÈ›Äƒ plexi/acrilic (opÈ›ional vinyl/oracal), "
-            "bordurÄƒ profil aluminiu, spate Forex 10 mm. LED pe spate. "
-            "Premontaj opÈ›ional: perete / structurÄƒ metalicÄƒ / panou ACM casetat "
+            "Litere volumetrice 3D — față plexiglas 3mm PMMA - opal (opțional vinyl/oracal), "
+            "bordură profil aluminiu, spate Forex 10 mm. LED pe spate. "
+            "Premontaj opțional: perete / structură metalică / panou ACM casetat "
             "(suport separat de spatele literei)."
         ),
         "components_fn": _volumetric_letters_components,
@@ -991,12 +1007,12 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
             "quantity, face_material, side_material, back_material, "
             "illumination(none/frontlit/backlit/halo), mounting_type, "
             "paint_finish, indoor_outdoor. "
-            "Straturi producÈ›ie (ref. docs/production/volumetric-letters-production-layers.md): "
-            "faÈ›Äƒ plexi/acrilic tÄƒiat; opÈ›ional vinyl/print/oracal; È™anfren faÈ›Äƒ opÈ›ional/configurabil. "
-            "BordurÄƒ: profil aluminiu, adÃ¢ncime configurabilÄƒ. "
-            "Spate litere: Forex 10 mm (nu PVC/aluminiu generic); È™anfren spate opÈ›ional/configurabil. "
-            "LED: module montate pe spate Forex; cablaj + sursÄƒ Ã®n strat electric. "
-            "Premontaj opÈ›ional: structurÄƒ metalicÄƒ sau panou Alucobond/ACM casetat â€” "
+            "Straturi producție (ref. docs/production/volumetric-letters-production-layers.md): "
+            "față plexiglas 3mm PMMA - opal tăiat; opțional vinyl/print/oracal; șanfren față opțional/configurabil. "
+            "Bordură: profil aluminiu, adâncime configurabilă. "
+            "Spate litere: Forex 10 mm (nu PVC/aluminiu generic); șanfren spate opțional/configurabil. "
+            "LED: module montate pe spate Forex; cablaj + sursă în strat electric. "
+            "Premontaj opțional: structură metalică sau panou Alucobond/ACM casetat — "
             "panoul ACM este suport de montaj, nu spatele literei."
         ),
     },
@@ -1005,16 +1021,16 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "externalized_print",
         "family_name": "Print externalizat",
         "description": (
-            "Mesh publicitar externalizat â€” NU se produce intern. "
-            "ProducÈ›ia este subcontractatÄƒ la furnizor extern. "
-            "Intern: pregÄƒtire fiÈ™ier, recepÈ›ie QC, tiv/capse opÈ›ional, ambalare."
+            "Mesh publicitar externalizat — NU se produce intern. "
+            "Producția este subcontractată la furnizor extern. "
+            "Intern: pregătire fișier, recepție QC, tiv/capse opțional, ambalare."
         ),
         "components_fn": _mesh_externalized_components,
         "estimated_hours": 1.5,
         "base_labor_rate": 80.0,
         "base_margin_pct": 20.0,
         "notes": (
-            "REGULA CANONICÄ‚: Mesh nu se produce intern. "
+            "REGULA CANONICĂ: Mesh nu se produce intern. "
             "Input params: width_mm, height_mm, quantity, mesh_type, "
             "print_quality, tiv_enabled, caps_enabled, "
             "caps_spacing_cm(15/30/50/75/100), supplier_required, "
@@ -1072,6 +1088,10 @@ async def seed_build4_templates() -> Dict[str, int]:
             components = tpl_def["components_fn"]()
             ops = _flatten_operations(components)
             mats = _flatten_materials(components)
+            _assert_utf8_clean_tree(components, context=tpl_def["template_code"])
+            _assert_utf8_clean_tree(tpl_def.get("family_name", ""), context=f"{tpl_def['template_code']}.family_name")
+            _assert_utf8_clean_tree(tpl_def.get("description", ""), context=f"{tpl_def['template_code']}.description")
+            _assert_utf8_clean_tree(tpl_def.get("notes", "") or "", context=f"{tpl_def['template_code']}.notes")
 
             # Strip operations/materials from components for components_json
             clean_components = []
@@ -1084,15 +1104,22 @@ async def seed_build4_templates() -> Dict[str, int]:
                     "materials": c.get("materials", []),
                 })
 
+            components_json = json.dumps(clean_components, ensure_ascii=False)
+            operations_json = json.dumps(ops, ensure_ascii=False)
+            materials_json = json.dumps(mats, ensure_ascii=False)
+            _assert_utf8_clean_tree(components_json, context=f"{tpl_def['template_code']}.components_json")
+            _assert_utf8_clean_tree(operations_json, context=f"{tpl_def['template_code']}.operations_json")
+            _assert_utf8_clean_tree(materials_json, context=f"{tpl_def['template_code']}.required_materials_json")
+
             session.add(
                 Product_templates(
                     template_code=tpl_def["template_code"],
                     family_id=tpl_def["family_id"],
                     family_name=tpl_def["family_name"],
                     description=tpl_def["description"],
-                    components_json=json.dumps(clean_components, ensure_ascii=False),
-                    operations_json=json.dumps(ops, ensure_ascii=False),
-                    required_materials_json=json.dumps(mats, ensure_ascii=False),
+                    components_json=components_json,
+                    operations_json=operations_json,
+                    required_materials_json=materials_json,
                     estimated_hours=tpl_def["estimated_hours"],
                     base_labor_rate=tpl_def["base_labor_rate"],
                     base_margin_pct=tpl_def["base_margin_pct"],

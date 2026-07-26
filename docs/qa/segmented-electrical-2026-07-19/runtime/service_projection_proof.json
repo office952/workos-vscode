@@ -1,0 +1,496 @@
+{
+  "A": {
+    "elec_status": "CONFIRMED",
+    "pd_confirmed": true,
+    "pd_draft": false,
+    "agg": true,
+    "pd": {
+      "schema": "acm_segmented_electrical_connection_v1",
+      "contract_version": "acm_segmented_electrical_connection/v1",
+      "status": "CONFIRMED",
+      "operator_confirmed": true,
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_RIGHT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": "spre dreapta sus",
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": true,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": true,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": true,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        },
+        {
+          "panel_id": "panel_2",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_LEFT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": "spre stanga sus",
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        }
+      ],
+      "inter_panel_connections": [],
+      "validation": {
+        "blockers": [],
+        "warnings": [],
+        "infos": [
+          {
+            "code": "ELEC_ROUTE_CABLES",
+            "level": "info",
+            "message": "Pregateste cablurile panoului spre pozitia de alimentare declarata."
+          },
+          {
+            "code": "ELEC_RESERVE",
+            "level": "info",
+            "message": "Lasa rezerva de cablu pentru legatura finala dintre panouri."
+          },
+          {
+            "code": "ELEC_CONFIRMED",
+            "level": "info",
+            "message": "Configuratia electrica a ansamblului a fost confirmata."
+          }
+        ]
+      },
+      "confirmation": {
+        "message_code": "ELEC_CONFIRMED",
+        "message": "Configuratia electrica a ansamblului a fost confirmata.",
+        "authority": "OPERATOR"
+      },
+      "meta": {
+        "schema": "acm_segmented_electrical_connection_v1",
+        "contract_version": "acm_segmented_electrical_connection/v1",
+        "ownership": "ACM_ACP_SHELL_ASSEMBLY",
+        "letters_electrical": "EXTERNAL — letter-local LED/wiring unchanged",
+        "no_psu_sizing": true,
+        "no_pricing": true,
+        "no_task_materialization": true,
+        "future_task_intent_authority": "INFORMATIONAL_ONLY"
+      },
+      "task_materialization": false,
+      "pricing": false,
+      "psu_sizing": false
+    },
+    "agg_body": {
+      "kind": "acm_segmented_electrical_connection",
+      "contract_version": "acm_segmented_electrical_connection/v1",
+      "status": "CONFIRMED",
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_RIGHT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": "spre dreapta sus",
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": true,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": true,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": true,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        },
+        {
+          "panel_id": "panel_2",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_LEFT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": "spre stanga sus",
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        }
+      ],
+      "inter_panel_connections": [],
+      "workshop_install_split": true,
+      "future_task_intent": [
+        "route_cables_to_declared_service_point"
+      ],
+      "future_task_intent_authority": "INFORMATIONAL_ONLY",
+      "task_contract_authority": "task_contract.task_rules — not this projection",
+      "materials": [],
+      "processes": [],
+      "task_rules": [],
+      "execution_effects": [],
+      "psu_sizing": false,
+      "pricing": false,
+      "notes": [
+        "Confirmed electrical context only — no PSU sizing, pricing, or Execution tasks.",
+        "Letter-local LED/wiring remains on volumetric-letter ownership."
+      ]
+    }
+  },
+  "B": {
+    "elec_status": "CONFIRMED",
+    "pd_confirmed": true,
+    "pd_draft": false,
+    "agg": true,
+    "pd": {
+      "schema": "acm_segmented_electrical_connection_v1",
+      "contract_version": "acm_segmented_electrical_connection/v1",
+      "status": "CONFIRMED",
+      "operator_confirmed": true,
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_RIGHT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        },
+        {
+          "panel_id": "panel_2",
+          "supply_mode": "SHARED_FROM_PANEL",
+          "shared_from_panel_id": "panel_1",
+          "service_point_position": "NONE",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": true,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        }
+      ],
+      "inter_panel_connections": [
+        {
+          "connection_id": "ec_panel_1_panel_2",
+          "source_panel_id": "panel_1",
+          "destination_panel_id": "panel_2",
+          "connection_type": "LV_FEED",
+          "routing_direction_note_ro": null,
+          "alignment_dependent": true,
+          "prepared_in_workshop": true,
+          "completed_on_site": true,
+          "reserve_required": true,
+          "estimated_length_m": 0.8,
+          "length_is_estimate": true,
+          "sketch_ref": null,
+          "notes_ro": null
+        }
+      ],
+      "validation": {
+        "blockers": [],
+        "warnings": [],
+        "infos": [
+          {
+            "code": "ELEC_ROUTE_CABLES",
+            "level": "info",
+            "message": "Pregateste cablurile panoului spre pozitia de alimentare declarata."
+          },
+          {
+            "code": "ELEC_SHARED_FROM_PANEL",
+            "level": "info",
+            "message": "Acest panou primeste alimentarea dintr-un alt panou al ansamblului."
+          },
+          {
+            "code": "ELEC_AFTER_ALIGNMENT",
+            "level": "info",
+            "message": "Aceasta legatura se finalizeaza dupa alinierea panourilor."
+          },
+          {
+            "code": "ELEC_RESERVE",
+            "level": "info",
+            "message": "Lasa rezerva de cablu pentru legatura finala dintre panouri."
+          },
+          {
+            "code": "ELEC_CONFIRMED",
+            "level": "info",
+            "message": "Configuratia electrica a ansamblului a fost confirmata."
+          }
+        ]
+      },
+      "confirmation": {
+        "message_code": "ELEC_CONFIRMED",
+        "message": "Configuratia electrica a ansamblului a fost confirmata.",
+        "authority": "OPERATOR"
+      },
+      "meta": {
+        "schema": "acm_segmented_electrical_connection_v1",
+        "contract_version": "acm_segmented_electrical_connection/v1",
+        "ownership": "ACM_ACP_SHELL_ASSEMBLY",
+        "letters_electrical": "EXTERNAL — letter-local LED/wiring unchanged",
+        "no_psu_sizing": true,
+        "no_pricing": true,
+        "no_task_materialization": true,
+        "future_task_intent_authority": "INFORMATIONAL_ONLY"
+      },
+      "task_materialization": false,
+      "pricing": false,
+      "psu_sizing": false
+    },
+    "agg_body": {
+      "kind": "acm_segmented_electrical_connection",
+      "contract_version": "acm_segmented_electrical_connection/v1",
+      "status": "CONFIRMED",
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "supply_mode": "DIRECT_220V",
+          "shared_from_panel_id": null,
+          "service_point_position": "TOP_RIGHT",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        },
+        {
+          "panel_id": "panel_2",
+          "supply_mode": "SHARED_FROM_PANEL",
+          "shared_from_panel_id": "panel_1",
+          "service_point_position": "NONE",
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": true,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        }
+      ],
+      "inter_panel_connections": [
+        {
+          "connection_id": "ec_panel_1_panel_2",
+          "source_panel_id": "panel_1",
+          "destination_panel_id": "panel_2",
+          "connection_type": "LV_FEED",
+          "routing_direction_note_ro": null,
+          "alignment_dependent": true,
+          "prepared_in_workshop": true,
+          "completed_on_site": true,
+          "reserve_required": true,
+          "estimated_length_m": 0.8,
+          "length_is_estimate": true,
+          "sketch_ref": null,
+          "notes_ro": null
+        }
+      ],
+      "workshop_install_split": true,
+      "future_task_intent": [
+        "route_cables_to_declared_service_point",
+        "inter_panel_lv_feed",
+        "finalize_connection_after_panel_alignment"
+      ],
+      "future_task_intent_authority": "INFORMATIONAL_ONLY",
+      "task_contract_authority": "task_contract.task_rules — not this projection",
+      "materials": [],
+      "processes": [],
+      "task_rules": [],
+      "execution_effects": [],
+      "psu_sizing": false,
+      "pricing": false,
+      "notes": [
+        "Confirmed electrical context only — no PSU sizing, pricing, or Execution tasks.",
+        "Letter-local LED/wiring remains on volumetric-letter ownership."
+      ]
+    }
+  },
+  "C": {
+    "elec_status": "DRAFT",
+    "pd_confirmed": false,
+    "pd_draft": true,
+    "agg": false,
+    "pd": {
+      "schema": "acm_segmented_electrical_connection_v1",
+      "status": "DRAFT",
+      "operator_confirmed": false,
+      "authoritative": false,
+      "downstream_effects": false,
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "supply_mode": "UNCONFIRMED",
+          "shared_from_panel_id": null,
+          "service_point_position": null,
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        },
+        {
+          "panel_id": "panel_2",
+          "supply_mode": "UNCONFIRMED",
+          "shared_from_panel_id": null,
+          "service_point_position": null,
+          "custom_position_note": null,
+          "sketch_ref": null,
+          "cable_exit_position": null,
+          "routing_direction_note_ro": null,
+          "power_supply_group_id": null,
+          "letter_group_ref": null,
+          "workshop_prep": {
+            "cables_routed_toward_service": false,
+            "passages_prepared": false,
+            "labeled": false,
+            "reserve_required": false,
+            "reserve_note_ro": null
+          },
+          "installation": {
+            "connect_to_client_220v": false,
+            "finalize_after_alignment": false,
+            "notes_ro": null
+          },
+          "notes_ro": null
+        }
+      ],
+      "inter_panel_connections": [],
+      "validation": {
+        "blockers": [],
+        "warnings": [
+          {
+            "code": "ELEC_UNCONFIRMED",
+            "level": "warning",
+            "message": "Pozitia alimentarii nu este confirmata."
+          }
+        ],
+        "infos": [
+          {
+            "code": "ELEC_INDICATE_220V",
+            "level": "info",
+            "message": "Indica unde este alimentarea de 220V pentru acest panou."
+          }
+        ]
+      }
+    },
+    "agg_body": null
+  },
+  "invalid": {
+    "error": "segmented_electrical_confirmation_blocked",
+    "blockers": [
+      {
+        "code": "ELEC_INVALID_SHARED",
+        "level": "blocker",
+        "message": "Panoul sursa pentru alimentare partajata nu exista in ansamblu."
+      }
+    ]
+  }
+}

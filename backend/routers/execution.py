@@ -510,6 +510,8 @@ async def assign_plan_task_to_employee(
         order_id=order_id,
         task_id=task_id,
         assigned_employee_id=body.assigned_employee_id,
+        allow_reassign=True,
+        assignment_source="manager_assign",
     )
 
 

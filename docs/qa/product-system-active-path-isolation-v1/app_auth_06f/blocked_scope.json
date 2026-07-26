@@ -1,0 +1,10 @@
+{
+  "task": "APP-AUTH-06F",
+  "blocked": [
+    "code changes", "DB writes", "Sandu mutations", "competence creation", "level assignment", "legacy skill changes",
+    "mapping changes", "authorization creation", "eligibility changes", "mobile/operator/execution result changes",
+    "parity flags enablement", "persistence", "enforcement", "migration", "source switch", "third consumer",
+    "APP-AUTH-07", "PROD-ARCH-01", "MOBILE-INT-02", "UI-TRUTH-01B–01E", "automatic reconciliation", "bulk legacy sync"
+  ],
+  "parity_mode": "OBSERVE_ONLY_TWO_CONSUMERS"
+}

@@ -177,4 +177,66 @@ describe("IntakeV6LayersOperatorPanel", () => {
     expect(screen.queryByTestId("intake-v6-layers-status-badge")).not.toBeInTheDocument();
     expect(screen.getByText("Rezumat straturi")).toBeInTheDocument();
   });
+
+  it("aligns analysis warnings with the owner layer role taxonomy", () => {
+    const report = buildReport();
+    report.layers = [
+      {
+        ...report.layers[0],
+        warnings: ["Pseudo-layer generated from solid vector fill color cluster."],
+      },
+      {
+        ...report.layers[0],
+        id: "logo-stanga",
+        name: "logo-stanga",
+        layerKind: "pseudo",
+        layerOrigin: "stroke_vector_outline",
+        autoRole: "printed_artwork",
+        roleGuess: "printed_artwork",
+        roleReason: "Stroke-only vector isolated as logo/artwork candidate.",
+        warnings: ["Stroke-only vector isolated as logo/artwork candidate."],
+      },
+    ];
+    const confirmation = buildConfirmation();
+    confirmation.layers = [
+      {
+        ...confirmation.layers[0],
+        layerKey: "pseudo:maria",
+        layerId: "pseudo:maria",
+        layerName: "pseudo maria (blue)",
+        autoRole: "face",
+        confirmedRole: "face",
+      },
+      {
+        ...confirmation.layers[0],
+        layerKey: "logo-stanga",
+        layerId: "logo-stanga",
+        layerName: "logo-stanga",
+        autoRole: "printed_artwork",
+        confirmedRole: "printed_artwork",
+      },
+    ];
+
+    render(
+      <IntakeV6LayersOperatorPanel
+        analyzing={false}
+        canImportSvg
+        workspaceReady
+        report={report}
+        confirmation={confirmation}
+        layerStats={{ total: 2, confirmed: 2, pending: 0 }}
+        parseWarning={null}
+        scopeWarnings={[]}
+        onImportFile={vi.fn()}
+        onConfirmAllRoles={vi.fn()}
+      />,
+    );
+
+    const panel = screen.getByTestId("intake-v6-layers-warnings");
+    expect(panel).toHaveTextContent(/observa/i);
+    expect(screen.getByTestId("intake-v6-layers-warnings-open-footer")).toBeInTheDocument();
+    expect(panel).not.toHaveTextContent("Atenție analiză");
+    expect(panel).not.toHaveTextContent("stroke-only");
+    expect(panel).not.toHaveTextContent("artwork candidate");
+  });
 });

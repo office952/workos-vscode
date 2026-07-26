@@ -1,31 +1,29 @@
-import { useCallback, useEffect, useState } from "react";
-import {
-  listEmployeeMobileTasks,
-  type EmployeeMobileTaskDTO,
-} from "@/api/employeeMobileTasks";
+import { useEmployeeMobileV2TaskTruthContext } from "@/contexts/EmployeeMobileV2TaskTruthContext";
+import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 
 export function useEmployeeMobileV2Tasks() {
-  const [tasks, setTasks] = useState<EmployeeMobileTaskDTO[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { view, loading, error, reload } = useEmployeeMobileV2TaskTruthContext();
+  return {
+    tasks: view?.assignedTasks ?? [],
+    loading,
+    error,
+    reload,
+  };
+}
 
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const rows = await listEmployeeMobileTasks();
-      setTasks(rows);
-    } catch (err) {
-      setTasks([]);
-      setError(err instanceof Error ? err.message : "Nu am putut încărca taskurile.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  return { tasks, loading, error, reload };
+export function useEmployeeMobileV2AssignedTasks(): {
+  tasks: EmployeeMobileTaskDTO[];
+  inProgressTasks: EmployeeMobileTaskDTO[];
+  loading: boolean;
+  error: string | null;
+  reload: () => Promise<void>;
+} {
+  const { view, loading, error, reload } = useEmployeeMobileV2TaskTruthContext();
+  return {
+    tasks: view?.assignedTasks ?? [],
+    inProgressTasks: view?.inProgressTasks ?? [],
+    loading,
+    error,
+    reload,
+  };
 }

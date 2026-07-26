@@ -1,0 +1,25 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    {
+      "name": "01_reference_complete_status.png",
+      "note": "Reference complete PASS panel",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-complete\\screenshots\\01_reference_complete_status.png"
+    },
+    {
+      "name": "02_accepted_limitations.png",
+      "note": "Accepted limitations",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-complete\\screenshots\\02_accepted_limitations.png"
+    },
+    {
+      "name": "03_eic_cpp_distinction.png",
+      "note": "EIC vs CPP production-cost view",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-complete\\screenshots\\03_eic_cpp_distinction.png"
+    },
+    {
+      "name": "04_psu_selector_and_zero_critical.png",
+      "note": "PSU selector + critical cleared",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-complete\\screenshots\\04_psu_selector_and_zero_critical.png"
+    }
+  ]
+}

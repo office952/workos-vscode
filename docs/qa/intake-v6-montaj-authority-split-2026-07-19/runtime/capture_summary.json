@@ -1,0 +1,114 @@
+{
+  "ui": "http://127.0.0.1:3000",
+  "api": "http://127.0.0.1:8013/api/v1",
+  "workspace": "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+  "shots": [
+    "01_acm_no_commercial_mounting.png",
+    "02_acm_segmented_status.png",
+    "03_acm_segmented_confirmed_ui.png",
+    "05_segmented_electrical_cluster.png",
+    "06_template_hidden_under_none.png",
+    "08_pricing_accessories_with_none.png",
+    "06b_commercial_expanded_legacy_template.png",
+    "09_confirmare_valid_no_service.png",
+    "11_pd_aggregate_evidence_summary.png",
+    "12_save_reload_montaj.png",
+    "04_single_panel_service_corner_note.png",
+    "07_template_active_under_preparation_note.png",
+    "10_confirmare_blocked_missing_truth_note.png"
+  ],
+  "api_truth": {
+    "finish": {
+      "mounting_scope": "none",
+      "mounting_solution": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "mounting_template_enabled": true,
+      "power_supply_service_corner": null,
+      "segmented_status": "CONFIRMED",
+      "ecm_status": "DRAFT"
+    },
+    "pd": {
+      "status": "confirmed",
+      "blockers": [],
+      "nodes": [
+        {
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "included_in_graph": true
+        },
+        {
+          "template_code": "TPL-VOLUM-ALUMINIU_v1",
+          "included_in_graph": true
+        },
+        {
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "included_in_graph": true
+        }
+      ]
+    },
+    "aggregate": {
+      "conflicts": []
+    }
+  },
+  "probes": {
+    "montaj": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "montajPanel": true,
+      "fundal": true,
+      "commercial": true,
+      "electrical": true,
+      "templateInactiveLegacy": false,
+      "templateEnabledControl": false,
+      "hasConsumabile": true,
+      "hasFundalText": true,
+      "hasCommercialText": true,
+      "hasElectricalText": true,
+      "snippet": [
+        "Confirmat",
+        "Scope · Produs complet · Față, Cant, Spate, Iluminare, Electrică",
+        "Toate componentele produsului sunt în scope.",
+        "Fundal · carcasă · site",
+        "Fundal și carcasă primul · montaj comercial doar dacă e în ofertă",
+        "Montaj comercial",
+        "Fără serviciu comercial — șablonul nu e activ",
+        "Fundal și carcasă",
+        "Confirmat",
+        "Componentă de produs — independentă de scope-ul comercial de montaj.",
+        "Fără soluție suplimentară (șablon montaj)",
+        "Dimensiuni panou: 1000.0 × 350.0 mm · sursă: SVG confirmat",
+        "Detaliu tehnic · ID șablon: TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "Posibil fundal format din mai multe panouri",
+        "Ansamblul din mai multe panouri a fost confirmat.",
+        "Confirmat",
+        "Ansamblul din mai multe panouri a fost confirmat.",
+        "Alimentare și service",
+        "Pe ansamblu multi-panou: alimentarea se decide pe panouri. Colțul service unic nu este autoritar.",
+        "Alimentare 220V pe panouri",
+        "Indica unde este alimentarea de 220V pentru acest panou.",
+        "Neconfirmat",
+        "Alimentare din alt panou",
+        "Pozitia alimentarii nu este confirmata.",
+        "Neconfirmat",
+        "Alimentare din alt panou",
+        "Pozitia alimentarii nu este confirmata.",
+        "Pozitia alimentarii nu este confirmata.",
+        "Ansamblu multi-panou confirmat — alimentarea 220V pe panouri este autoritară. Colțul service unic nu se mai configurează aici.",
+        "Tarife lipsă — Consumabile producție — accesorii / conectori"
+      ]
+    },
+    "confirmare": {
+      "url": "http://127.0.0.1:3000/dashboard",
+      "hasMountingScopeInactive": false,
+      "hasServiceCornerRequired": false,
+      "snippet": [
+        "Product System",
+        "Blocate",
+        "Blocate: 0"
+      ]
+    },
+    "after_reload": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "fundal": true,
+      "electrical": true,
+      "segmentedStatus": "Confirmat"
+    }
+  }
+}

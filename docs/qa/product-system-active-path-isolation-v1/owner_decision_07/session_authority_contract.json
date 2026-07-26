@@ -1,0 +1,19 @@
+{
+  "task": "OWNER-DECISION-07",
+  "sessions_authoritative_for": [
+    "who actually started work",
+    "active workers",
+    "individual time logged",
+    "session start/stop timestamps",
+    "per-employee runtime status derivation"
+  ],
+  "sessions_not_sufficient_for": [
+    "helper invited but not yet started",
+    "pending participation before session",
+    "help request lifecycle",
+    "quantity progress aggregate",
+    "explicit join/leave before session"
+  ],
+  "canonical_store": "execution_reality.tasks_json session observations",
+  "owner_status": "CONFIRMED"
+}

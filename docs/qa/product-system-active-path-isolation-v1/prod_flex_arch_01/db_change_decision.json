@@ -1,0 +1,19 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "recommendation": "MINIMUM_JSON_EXTENSION_FIRST_TABLES_LATER",
+  "capabilities": [
+    { "capability": "principal/helper sessions", "db_change_required": false, "can_defer": false, "risk": "LOW — exists", "approach": "tasks_json sessions" },
+    { "capability": "participant projection", "db_change_required": false, "can_defer": false, "risk": "LOW", "approach": "participants_json on execution_reality" },
+    { "capability": "help requests", "db_change_required": "OPTIONAL", "can_defer": true, "risk": "MEDIUM", "approach": "help_requests_json wave 1; table if query/report needs" },
+    { "capability": "operation progress aggregate", "db_change_required": false, "can_defer": true, "risk": "MEDIUM", "approach": "operation_progress_json" },
+    { "capability": "operational events", "db_change_required": false, "can_defer": false, "risk": "LOW", "approach": "events_json append" },
+    { "capability": "dedicated participant table", "db_change_required": true, "can_defer": true, "risk": "MEDIUM", "approach": "OWNER gate before FLEX-07+" },
+    { "capability": "dedicated help table", "db_change_required": true, "can_defer": true, "risk": "LOW-MEDIUM", "approach": "defer until reporting" }
+  ],
+  "summary": {
+    "db_changes_required_for_mvp": 0,
+    "db_changes_deferred": 2,
+    "safe_start": "Extend execution_reality JSON envelope without Alembic"
+  },
+  "owner_gate_needed": "Confirm JSON extension vs normalized tables before FLEX-04/FLEX-07"
+}

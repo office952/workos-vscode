@@ -1,0 +1,30 @@
+{
+  "task": "OWNER-DECISION-05",
+  "current_phase": "OBSERVE_ONLY_TRANSITION",
+  "confirmed_policy": {
+    "S5_choice": "D",
+    "immediate": "Observe-only — no eligibility enforcement change",
+    "future_target": "A_fail_closed_plus_C_audited_exceptions"
+  },
+  "rules": {
+    "registry_competence_absent": {
+      "current_behavior": "Hybrid projection may still show eligible via explicit mapping",
+      "canonical_comparator": "Reports ineligible on registry path",
+      "owner_confirmed": "D — observe discrepancy; do not enforce yet"
+    },
+    "legacy_fallback": {
+      "allowed": false,
+      "reason": "S2:A — legacy is evidence not silent authority"
+    },
+    "explicit_mapping_alone": {
+      "grants_eligibility": false,
+      "reason": "S3:B — routing preference only"
+    },
+    "temporary_exception": {
+      "grants_eligibility": "only_with_S9_contract",
+      "implemented": false
+    }
+  },
+  "enforcement": "NOT_AUTHORIZED",
+  "parity_mode": "OBSERVE_ONLY_TWO_CONSUMERS"
+}

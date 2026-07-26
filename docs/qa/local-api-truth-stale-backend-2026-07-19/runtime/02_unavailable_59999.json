@@ -1,0 +1,9 @@
+{
+  "label": "02_unavailable_59999",
+  "url": "http://127.0.0.1:3000/",
+  "banner": 1,
+  "title": "Backend local indisponibil",
+  "apiBase": "http://127.0.0.1:59999",
+  "writeErr": "Scriere blocata: backend local indisponibil. API=http://127.0.0.1:59999",
+  "shotPath": "C:\\w\\psiso\\docs\\qa\\local-api-truth-stale-backend-2026-07-19\\screenshots\\02_unavailable_59999.png"
+}

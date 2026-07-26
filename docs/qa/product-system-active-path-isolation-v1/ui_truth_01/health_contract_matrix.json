@@ -1,0 +1,111 @@
+{
+  "task": "UI-TRUTH-01",
+  "endpoints": {
+    "/api/v1/system/health": {
+      "auth": "public — no Depends on get_current_user",
+      "implementation": "backend/routers/system.py get_system_health → SystemHealthService.run_public_health",
+      "observed_live_2026_07_15": {
+        "status": "warning",
+        "service": "workos",
+        "generated_at": "2026-07-15T11:20:06.100682+00:00",
+        "checks": {}
+      },
+      "schema_keys": ["status", "service", "generated_at", "checks"],
+      "status_values": ["ok", "warning", "fail", "degraded"],
+      "checks_behavior": "Always empty object in public response — internals redacted",
+      "db_signal": "NONE on public contract",
+      "warning_behavior": "Aggregate status reflects internal checks but details not exposed",
+      "exception_fallback": "status degraded, checks {}",
+      "limitations": [
+        "Cannot prove DB connectivity from public health",
+        "Cannot show per-check breakdown",
+        "Token 'database' forbidden in public response body per security tests"
+      ],
+      "safe_for_banner_aggregate": true,
+      "safe_for_banner_db_segment": false
+    },
+    "/api/v1/system/diagnostics": {
+      "auth": "require_permission(system.diagnostics.read) — admin role",
+      "implementation": "SystemHealthService.run_diagnostics",
+      "observed_live_dev_2026_07_15": {
+        "note": "Dev stack returns 200 without browser cookies — dev auth injects admin",
+        "status": "warning",
+        "checks_present": ["database", "version", "seed_pipeline", "observation_thresholds", "execution_anchor_order_14"],
+        "database_status": "ok"
+      },
+      "production_expectation": "401/403 without permission per test_security_release_audit_fix_10",
+      "sensitive_fields": [
+        "checks.database.details",
+        "checks.version.details.environment",
+        "exception_type in failure details",
+        "release_scope paths"
+      ],
+      "safe_for_banner": false,
+      "safe_for_tooltip_drill_down": "PARTIAL — only when user authorized; never inline secrets",
+      "suitability": "drill-down only"
+    },
+    "/api/v1/system/version": {
+      "auth": "public",
+      "observed_live": {
+        "environment": "staging",
+        "release_version": "BUILD_25",
+        "app_name": "WorkOS"
+      },
+      "safe_for_banner_environment_segment": true
+    },
+    "/health": {
+      "auth": "public",
+      "body": { "status": "healthy" },
+      "meaning": "Process liveness only — no DB, no aggregate checks",
+      "safe_for_banner": false,
+      "use": "optional secondary liveness probe only — not primary operator truth"
+    }
+  },
+  "field_matrix": [
+    {
+      "field": "status",
+      "health_source": "/api/v1/system/health.status",
+      "meaning": "Aggregate ok|warning|fail|degraded",
+      "safe_for_banner": true,
+      "safe_for_tooltip": true
+    },
+    {
+      "field": "service",
+      "health_source": "/api/v1/system/health.service",
+      "meaning": "Constant workos",
+      "safe_for_banner": false,
+      "safe_for_tooltip": true
+    },
+    {
+      "field": "generated_at",
+      "health_source": "/api/v1/system/health.generated_at",
+      "meaning": "Last health evaluation timestamp UTC ISO",
+      "safe_for_banner": true,
+      "safe_for_tooltip": true
+    },
+    {
+      "field": "checks",
+      "health_source": "/api/v1/system/health.checks",
+      "meaning": "Always {} publicly",
+      "safe_for_banner": false,
+      "safe_for_tooltip": false
+    },
+    {
+      "field": "checks.database.status",
+      "health_source": "/api/v1/system/diagnostics only",
+      "meaning": "SELECT 1 ping result",
+      "safe_for_banner": "only when authorized fetch succeeds",
+      "safe_for_tooltip": "authorized only — no connection strings"
+    },
+    {
+      "field": "environment",
+      "health_source": "/api/v1/system/version.environment",
+      "meaning": "Release environment label",
+      "safe_for_banner": true,
+      "safe_for_tooltip": true
+    }
+  ],
+  "health_endpoint_sufficient": "PARTIAL",
+  "diagnostics_required_for_banner": "PARTIAL",
+  "db_proof_requires_diagnostics_or_future_contract": true
+}

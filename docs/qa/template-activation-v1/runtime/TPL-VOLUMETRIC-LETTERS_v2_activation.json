@@ -1,0 +1,158 @@
+{
+  "publication": {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "template_id": 8,
+    "db_active": true,
+    "publication_status": "PUBLISHED",
+    "effective_status": "PUBLISHED",
+    "legacy_unspecified": false,
+    "publication_version": 1,
+    "last_e2e_verdict": "STATIC_READY_WITH_WARNINGS",
+    "last_e2e_checked_at": "2026-07-22T00:08:45.684002+00:00",
+    "published_at": "2026-07-22T00:08:45.715785+00:00",
+    "published_by": "template_activation_v1",
+    "offerability_gate": "published_requires_active_and_policy",
+    "publish_allowed": false,
+    "publish_blockers": [],
+    "publish_warnings": [],
+    "allowed_actions": [
+      "deprecate"
+    ],
+    "active_is_not_published": true,
+    "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "uses_ai_defaults": true,
+    "ai_decision_ids": [
+      "AI_PACK_PRODUCT_BAND",
+      "AI_ELEC_MIN_PRODUCT",
+      "AI_ELEC_PER_PSU",
+      "AI_LED_PER_MODULE"
+    ],
+    "publication_eligible": true,
+    "activation_eligible": true,
+    "optional_capability_blockers": [],
+    "recommended_target": "PUBLISHED",
+    "eligibility": {
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "current_lifecycle": "PUBLISHED",
+      "active": true,
+      "published": true,
+      "technical_readiness": true,
+      "commercial_readiness": true,
+      "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+      "ai_defaults": {
+        "uses_ai_defaults": true,
+        "ai_decision_ids": [
+          "AI_PACK_PRODUCT_BAND",
+          "AI_ELEC_MIN_PRODUCT",
+          "AI_ELEC_PER_PSU",
+          "AI_LED_PER_MODULE"
+        ],
+        "precedence": [
+          "MEASURED_REALITY",
+          "OWNER_CONFIRMED",
+          "CATALOG",
+          "AI_DECISION",
+          "LEGACY"
+        ]
+      },
+      "warnings": [],
+      "structural_blockers": [],
+      "optional_capability_blockers": [],
+      "e2e_verdict": "STATIC_READY_WITH_WARNINGS",
+      "e2e_ready": false,
+      "acm_treatment_commercial_lines_allowed": null,
+      "publication_eligible": true,
+      "activation_eligible": true,
+      "target_state": "PUBLISHED",
+      "confidence": "high",
+      "contract_version": "template_activation_eligibility_v1"
+    },
+    "contract_version": "product_template_publication_v1_1"
+  },
+  "pricing_readiness": {
+    "technical_ready": true,
+    "commercial_ready": true,
+    "activation_status": "ACTIVE_WITH_AI_DEFAULTS",
+    "ai_defaults_active": true,
+    "demoted_blockers": [
+      "AMBALARE_COMMERCIAL_RULE",
+      "MISSING_OWNER_FORMULA",
+      "OPERATION_ONLY"
+    ],
+    "real_blockers_retained": [],
+    "technical_notes_ro": [
+      "59 linii rețetă vizibile (catalog + reguli).",
+      "Manoperă: 11/12 rețete tehnic pregătite (formula/qty pe template)."
+    ],
+    "commercial_notes_ro": [
+      "4 linii cu tarif lipsă în catalog.",
+      "Blocker-e artificiale demovate de AI: AMBALARE_COMMERCIAL_RULE, MISSING_OWNER_FORMULA, OPERATION_ONLY"
+    ],
+    "inventory_notes_ro": [
+      "Stocul neurmărit nu blochează prețuirea comercială.",
+      "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+      "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului."
+    ]
+  },
+  "ai_decisions": [
+    "AI_PACK_PRODUCT_BAND",
+    "AI_ELEC_MIN_PRODUCT",
+    "AI_ELEC_PER_PSU",
+    "AI_LED_PER_MODULE"
+  ],
+  "e2e": {
+    "verdict": "STATIC_READY_WITH_WARNINGS",
+    "template_publication_status": "PASS",
+    "build_closure_status": "PASS_WITH_WARNINGS"
+  },
+  "acm": {
+    "applies": false,
+    "shell_registry_confirmed": null,
+    "shell_registry_missing": null,
+    "treatment_commercial_lines_allowed": null,
+    "blockers": [],
+    "policy_ro": null
+  },
+  "cpp": {
+    "status": "structural_catalog",
+    "lines": [
+      "acm_boxed_assembly",
+      "acm_fasteners",
+      "acm_panel_cut",
+      "acm_panel_face_material",
+      "acm_return_strip_material",
+      "acm_v_groove",
+      "ambalare",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje_colantare_vopsire",
+      "modelare_cant_aluminiu",
+      "montaj",
+      "sablon_montaj",
+      "sablon_montaj_forex",
+      "sablon_montaj_hartie",
+      "sistem_led_module",
+      "sursa_led"
+    ],
+    "blocked": [
+      "montaj"
+    ]
+  },
+  "eic": {
+    "status": "structural_catalog",
+    "rules": [
+      "ambalare",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje_consumables",
+      "finisaje_ops",
+      "internal_overhead",
+      "modelare_cant",
+      "montaj",
+      "sablon_montaj_cnc",
+      "sablon_montaj_forex",
+      "sistem_led_install",
+      "sursa_led"
+    ]
+  }
+}

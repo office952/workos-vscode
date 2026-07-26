@@ -79,7 +79,7 @@ describe("intakeV6ArtworkOnlyGuard", () => {
   });
 
   it("exposes Step 1 operator message constant", () => {
-    expect(ARTWORK_ONLY_STEP1_MESSAGE).toMatch(/artwork\/policromie/i);
+    expect(ARTWORK_ONLY_STEP1_MESSAGE).toMatch(/logo\/vector constructiv/i);
   });
 
   it("preserves semantic letter fixture confirm-all behavior", () => {

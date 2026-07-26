@@ -34,7 +34,6 @@ from services.intake_v4_quote_to_order_service import (
     INTERMEDIATE_PRICED_STATUS,
     TERMINAL_QUOTE_STATUSES,
     _collect_accept_critical_blockers,
-    _extract_commercial_totals_from_quote,
     _final_price_present,
     _reject_client_supplied_totals,
     _validate_quote_priced_totals,
@@ -58,7 +57,14 @@ from services.intake_v6_commercial_quote_service import (
 )
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
 from services.intake_v6_production_handoff_preview_service import build_intake_v6_production_handoff_preview
-from services.intake_v6_task_generation_dry_run_service import build_intake_v6_task_generation_dry_run
+from services.intake_v6_snapshot_authoritative_offer_service import (
+    INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY,
+    V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+)
+from services.intake_v6_snapshot_authoritative_pricing_review_service import (
+    extract_v6_pricing_review_totals_authoritative,
+    build_v6_pricing_review_spine_projection,
+)
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 from services.order_currency_conversion_service import convert_quote_totals_to_order_base
@@ -304,70 +310,13 @@ def _snapshot_state(record: QuoteSnapshotV2Record | None) -> dict[str, Any]:
     }
 
 
-def _extract_commercial_totals_from_snapshot_v2_record(
-    record: QuoteSnapshotV2Record,
-) -> dict[str, Any]:
-    """Read canonical commercial total from persisted snapshot JSON — no live pricing."""
-    try:
-        parsed = QuoteSnapshotV2.model_validate_json(record.snapshot_json)
-    except Exception as exc:
-        _raise_blocked(
-            "SNAPSHOT_V2_INVALID",
-            f"Quote Snapshot V2 JSON invalid: {exc}",
-            ["snapshot_v2_invalid"],
-        )
-    cpp = parsed.commercial_price_proposal_snapshot
-    if cpp is None:
-        _raise_blocked(
-            "SNAPSHOT_COMMERCIAL_MISSING",
-            "Quote Snapshot V2 commercial proposal missing.",
-            ["commercial_snapshot_missing"],
-        )
-    commercial_total = cpp.commercial_total
-    if commercial_total is None or float(commercial_total) <= 0:
-        _raise_blocked(
-            "QUOTE_NOT_PRICED",
-            "Quote Snapshot V2 has no commercial total for pricing review.",
-            ["QUOTE_NOT_PRICED"],
-        )
-    currency = (cpp.currency or "RON").strip().upper()
-    if currency not in ALLOWED_CURRENCIES:
-        currency = "RON"
-    total = float(commercial_total)
-    return {
-        "subtotal": total,
-        "discount_amount": 0.0,
-        "vat_percent": 0.0,
-        "vat_amount": 0.0,
-        "total": total,
-        "net_before_vat": total,
-        "currency": currency,
-        "pricing_totals_source": "quote_snapshot_v2",
-        "pricing_totals_captured": True,
-        "snapshot_v2_id": record.id,
-        "snapshot_code": record.snapshot_code,
-    }
-
-
 async def _extract_v6_pricing_review_totals(
     db: AsyncSession,
     quote: Quotes,
     linkage: dict[str, Any],
 ) -> dict[str, Any]:
-    """Quote columns first; IV6 handoff may use frozen Quote Snapshot V2 commercial total."""
-    if float(quote.grand_total or 0) > 0:
-        return _extract_commercial_totals_from_quote(quote)
-    snapshot_record = await _resolve_snapshot_for_v6_pricing_review(db, quote, linkage)
-    if snapshot_record is None:
-        _raise_blocked(
-            "QUOTE_NOT_PRICED",
-            (
-                "Quote has no commercial totals — write the official V6 backend totals on the quote "
-                "or freeze a Quote Snapshot V2 with commercial total before completing pricing review."
-            ),
-            ["QUOTE_NOT_PRICED"],
-        )
-    return _extract_commercial_totals_from_snapshot_v2_record(snapshot_record)
+    """Frozen QuoteSnapshotV2 is canonical when present; quote columns are validation only."""
+    return await extract_v6_pricing_review_totals_authoritative(db, quote, linkage)
 
 
 def _build_v6_pricing_review_record(
@@ -479,6 +428,7 @@ async def complete_v6_pricing_review(
         "requires_pricing_review": False,
         "pricing_review": pricing_record,
         "pricing_totals_source": quote_totals.get("pricing_totals_source"),
+        "pricing_review_authority": quote_totals.get("pricing_totals_source"),
         "creates_execution_tasks": False,
         "writes_execution_plan": False,
         "stock_consumption": False,
@@ -1048,6 +998,45 @@ async def get_v6_commercial_spine_state(
     pricing_completed = is_pricing_review_completed(linkage) if linkage else False
     snapshot_record = await _resolve_snapshot_for_v6_pricing_review(db, quote, linkage) if is_v6 and linkage else None
     snapshot_info = _snapshot_state(snapshot_record)
+    offer_stamp = None
+    pricing_totals_source = "quote_columns"
+    pricing_review_read_model: dict[str, Any] | None = None
+    if isinstance(linkage, dict):
+        raw_stamp = linkage.get(INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY)
+        if isinstance(raw_stamp, dict):
+            offer_stamp = raw_stamp
+            pricing_totals_source = V6_SNAPSHOT_OFFER_PRICING_SOURCE
+
+    quote_totals = quote_commercial_totals_summary(quote)
+    if is_v6 and linkage is not None and snapshot_record is not None:
+        try:
+            pricing_review_read_model = await build_v6_pricing_review_spine_projection(db, quote, linkage)
+            commercial = pricing_review_read_model.get("commercial_totals")
+            if isinstance(commercial, dict) and commercial.get("total_gross") is not None:
+                quote_totals = {
+                    "available": True,
+                    "grand_total": float(commercial["total_gross"]),
+                    "subtotal_net": commercial.get("subtotal_net"),
+                    "vat_amount": commercial.get("vat_amount"),
+                    "vat_rate": commercial.get("vat_rate"),
+                    "currency": commercial.get("currency"),
+                    "blocker": (
+                        "SNAPSHOT_QUOTE_TOTAL_DRIFT"
+                        if pricing_review_read_model.get("column_drift_blocked")
+                        else None
+                    ),
+                    "pricing_totals_source": commercial.get("pricing_totals_source")
+                    or V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+                    "column_drift": pricing_review_read_model.get("column_drift") or [],
+                }
+                pricing_totals_source = str(quote_totals.get("pricing_totals_source") or pricing_totals_source)
+        except HTTPException:
+            pricing_review_read_model = None
+    elif pricing_totals_source == V6_SNAPSHOT_OFFER_PRICING_SOURCE:
+        quote_totals = {
+            **quote_totals,
+            "pricing_totals_source": V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+        }
 
     convert_blockers: list[str] = []
     if not snapshot_info["exists"]:
@@ -1083,8 +1072,10 @@ async def get_v6_commercial_spine_state(
             "approved_by_user_id": (linkage.get(OWNER_APPROVAL_JSON_KEY) or {}).get("approved_by_user_id") if linkage else None,
         },
         "snapshot_v2": snapshot_info,
+        "snapshot_authoritative_offer": offer_stamp,
+        "pricing_review_read_model": pricing_review_read_model,
         "quote_accepted": is_v4_accept_completed(linkage, quote.status),
-        "quote_commercial_totals": quote_commercial_totals_summary(quote),
+        "quote_commercial_totals": quote_totals,
         "v6_order_conversion": {
             "available": is_v6 and len(convert_blockers) == 0,
             "converted": existing_order is not None or is_v4_convert_completed(linkage),

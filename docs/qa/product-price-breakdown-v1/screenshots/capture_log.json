@@ -1,0 +1,60 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    {
+      "name": "01_vl_overview.png",
+      "note": "VL Desfășurător pret overview",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\01_vl_overview.png"
+    },
+    {
+      "name": "02_vl_totals.png",
+      "note": "VL totals + reconcile",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\02_vl_totals.png"
+    },
+    {
+      "name": "03_vl_materials.png",
+      "note": "VL materials filter",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\03_vl_materials.png"
+    },
+    {
+      "name": "04_vl_machine.png",
+      "note": "VL machine ops",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\04_vl_machine.png"
+    },
+    {
+      "name": "05_vl_labor.png",
+      "note": "VL labor",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\05_vl_labor.png"
+    },
+    {
+      "name": "06_vl_ai.png",
+      "note": "VL AI decisions",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\06_vl_ai.png"
+    },
+    {
+      "name": "07_vl_full_page.png",
+      "note": "VL full page reconcile",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\07_vl_full_page.png"
+    },
+    {
+      "name": "08_acm_shell.png",
+      "note": "ACM shell breakdown",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\08_acm_shell.png"
+    },
+    {
+      "name": "09_acm_treatments_blocked.png",
+      "note": "ACM treatments blocked chip",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\09_acm_treatments_blocked.png"
+    },
+    {
+      "name": "10_logo_preview.png",
+      "note": "Logo preview + publication honesty",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\10_logo_preview.png"
+    },
+    {
+      "name": "11_volum_aluminiu_child.png",
+      "note": "Volum Aluminiu child breakdown",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-price-breakdown-v1\\screenshots\\11_volum_aluminiu_child.png"
+    }
+  ]
+}

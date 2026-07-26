@@ -1,0 +1,656 @@
+{
+  "workspace_readiness": "runtime_capture_blocked",
+  "finish_slim": {
+    "confirmed": true,
+    "illuminated": true,
+    "light_color": "cool",
+    "lighting_system_type": "led_modules",
+    "face_finish_type": "none",
+    "return_finish_type": "white_aluminum",
+    "return_depth_mm": 60.0,
+    "backing_mode": "forex_10_no_bevel",
+    "mounting_scope": "preparation_and_site_installation",
+    "site_installation_included": true,
+    "mounting_template_enabled": true,
+    "mounting_template_material_type": "forex",
+    "mounting_solution": null,
+    "mounting_system": "direct_wall",
+    "emblem_lighting_mode": "area_lit",
+    "finish_target": "all",
+    "letter_group_finishes": [
+      {
+        "group_key": "pseudo:maria",
+        "layer_name": "pseudo maria (blue)",
+        "source_fill_color": "#00a0e3",
+        "face_area_m2": 0.2810428213145777,
+        "perimeter_m": 5.910236468431474,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:soare",
+        "layer_name": "pseudo soare (red)",
+        "source_fill_color": "#e31e24",
+        "face_area_m2": 0.30711595361734,
+        "perimeter_m": 6.957517973492544,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:ana",
+        "layer_name": "pseudo ana (green)",
+        "source_fill_color": "#009846",
+        "face_area_m2": 0.19636109107249675,
+        "perimeter_m": 3.7726241622195955,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "group_key": "pseudo:gradinita",
+        "layer_name": "pseudo gradinita (orange)",
+        "source_fill_color": "#ef7f1a",
+        "face_area_m2": 0.47924238995360924,
+        "perimeter_m": 10.106838616130982,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "artwork_finishes": [
+      {
+        "layer_key": "logo_instance_001",
+        "layer_name": "Logo 1",
+        "display_name": null,
+        "source_layer_name": "Logo 1",
+        "original_detected_label": "Logo 1",
+        "position_hint": null,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "material_code": "ORAFOL_PRINT_LAMINATION",
+        "face_personalization_method": "print_laminate",
+        "face_roll_width_mm": null,
+        "print_roll_width_mm": null,
+        "lamination_roll_width_mm": null,
+        "print_required": true,
+        "lamination_required": true,
+        "roll_side_retraction_mm": null,
+        "roll_total_retraction_mm": null,
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "print_material_code": "ORAFOL_PRINT",
+        "lamination_material_code": "ORAFOL_LAMINATION",
+        "estimated_area_m2": 0.4002298565185999,
+        "element_count": 1,
+        "distinct_fill_count": 1,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "backing_mode": null,
+        "confirmed": false
+      },
+      {
+        "layer_key": "logo_instance_002",
+        "layer_name": "Logo 2",
+        "display_name": null,
+        "source_layer_name": "Logo 2",
+        "original_detected_label": "Logo 2",
+        "position_hint": null,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "material_code": "ORAFOL_PRINT_LAMINATION",
+        "face_personalization_method": "print_laminate",
+        "face_roll_width_mm": null,
+        "print_roll_width_mm": null,
+        "lamination_roll_width_mm": null,
+        "print_required": true,
+        "lamination_required": true,
+        "roll_side_retraction_mm": null,
+        "roll_total_retraction_mm": null,
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "print_material_code": "ORAFOL_PRINT",
+        "lamination_material_code": "ORAFOL_LAMINATION",
+        "estimated_area_m2": 0.4002298565186002,
+        "element_count": 1,
+        "distinct_fill_count": 1,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60.0,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "pricing_preview": {
+    "is_ready_for_quote": false,
+    "adapter_status": "blocked",
+    "adapter_blockers": [
+      "runtime_capture:MOUNTING_SOLUTION_MISSING"
+    ],
+    "readiness_status": "ready_for_quote",
+    "canonical_fatal": [
+      "runtime_capture:MOUNTING_SOLUTION_MISSING"
+    ]
+  },
+  "pd": {
+    "source_context": {
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+      "quote_id": null,
+      "source_payload_type": "workspace_payload"
+    },
+    "selected_modules": [
+      {
+        "module_code": "modelare_cant",
+        "module_name": "Volum aluminiu \u2014 cant/lateral",
+        "activation_kind": "required_module",
+        "state": "always_on",
+        "activation_reason": null,
+        "missing_fields": []
+      },
+      {
+        "module_code": "debitare_fata",
+        "module_name": "Debitare fa\u021b\u0103 litere",
+        "activation_kind": "always_on",
+        "state": "always_on",
+        "activation_reason": "Parent BOM does not include face ops \u2014 dossier mapping is audit contract until Step 7.",
+        "missing_fields": []
+      },
+      {
+        "module_code": "debitare_spate",
+        "module_name": "Debitare spate litere",
+        "activation_kind": "always_on",
+        "state": "always_on",
+        "activation_reason": null,
+        "missing_fields": []
+      },
+      {
+        "module_code": "sistem_led",
+        "module_name": "Sistem LED litere",
+        "activation_kind": "conditional_gate",
+        "state": "conditional_active",
+        "activation_reason": null,
+        "missing_fields": []
+      },
+      {
+        "module_code": "finisaje",
+        "module_name": "Finisaj, sablon montaj, ambalare",
+        "activation_kind": "conditional_gate",
+        "state": "conditional_active",
+        "activation_reason": "Parent holds sablon materials; dossier holds finish/QC documentation.",
+        "missing_fields": []
+      },
+      {
+        "module_code": "geometry_svg",
+        "module_name": "Analiz\u0103 SVG \u0219i geometrie",
+        "activation_kind": "always_on",
+        "state": "always_on",
+        "activation_reason": "Non-priced gate operation \u2014 does not generate priced task until Step 9 wiring.",
+        "missing_fields": []
+      }
+    ],
+    "optional_modules": [
+      {
+        "module_code": "structura_suport",
+        "state": "inactive",
+        "missing_fields": [],
+        "activation_kind": "optional_addon"
+      }
+    ],
+    "inactive_modules": [
+      {
+        "module_code": "structura_suport",
+        "state": "inactive",
+        "missing_fields": []
+      },
+      {
+        "module_code": "electrica_logo",
+        "state": "future_reserved",
+        "missing_fields": []
+      }
+    ],
+    "composition": {
+      "composed_graph_version": "1.0.0",
+      "composition_mode": "single_child",
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "selected_solution_id": null,
+      "solution_status": "confirmed",
+      "solution_reason_codes": [],
+      "compatibility_status": "compatible",
+      "blockers": [],
+      "warnings": [],
+      "alternatives": [],
+      "provenance": [
+        {
+          "key": "frozen_mounting_resolution",
+          "source": "mounting_solution_service",
+          "detail": "prep_active=True scope=preparation_and_site_installation"
+        },
+        {
+          "key": "mounting_solution",
+          "source": "none",
+          "detail": "none"
+        }
+      ],
+      "active_module_codes": [
+        "volum_aluminum"
+      ],
+      "nodes": [
+        {
+          "node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "module_code": "root",
+          "module_role": "root_product",
+          "node_role": "root_product",
+          "parent_node_id": null,
+          "activation_source": "template_registry",
+          "included_in_graph": true,
+          "inherited_inputs": {},
+          "locally_owned_inputs": {
+            "width_mm": 5086.99,
+            "height_mm": 600.03,
+            "letter_count": 19,
+            "letter_perimeter_m": 21.1675
+          },
+          "unresolved_inputs": [],
+          "compatibility_status": "compatible",
+          "blockers": [],
+          "warnings": [],
+          "provenance": [
+            {
+              "key": "activation_source",
+              "source": "product_definition_composition_contract",
+              "detail": "template_registry"
+            }
+          ]
+        },
+        {
+          "node_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1",
+          "template_code": "TPL-VOLUM-ALUMINIU_v1",
+          "module_code": "volum_aluminum",
+          "module_role": "volum_aluminum",
+          "node_role": "volum_aluminum",
+          "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "activation_source": "template_registry",
+          "included_in_graph": true,
+          "inherited_inputs": {
+            "width_mm": 5086.99,
+            "height_mm": 600.03
+          },
+          "locally_owned_inputs": {
+            "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1"
+          },
+          "unresolved_inputs": [],
+          "compatibility_status": "compatible",
+          "blockers": [],
+          "warnings": [],
+          "provenance": [
+            {
+              "key": "activation_source",
+              "source": "product_definition_composition_contract",
+              "detail": "template_registry"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edge_id": "edge:TPL-VOLUMETRIC-LETTERS_v2->TPL-VOLUM-ALUMINIU_v1:required_module",
+          "parent_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "parent_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "child_template_code": "TPL-VOLUM-ALUMINIU_v1",
+          "child_node_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1",
+          "module_code": "volum_aluminum",
+          "module_role": "volum_aluminum",
+          "child_role": "volum_aluminum",
+          "relation_type": "required_module",
+          "dependency_role": null,
+          "included_in_graph": true,
+          "activation_source": "template_registry",
+          "inherited_inputs": {
+            "width_mm": 5086.99,
+            "height_mm": 600.03
+          },
+          "locally_owned_inputs": {
+            "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1"
+          },
+          "unresolved_inputs": [],
+          "compatibility_status": "compatible",
+          "blockers": [],
+          "warnings": [],
+          "provenance": [
+            {
+              "key": "relation_type",
+              "source": "product_definition_composition_contract",
+              "detail": "required_module"
+            }
+          ]
+        }
+      ],
+      "frozen_mounting_solution": null
+    },
+    "validation": {
+      "readiness_status": "partial",
+      "missing_required_fields": [],
+      "invalid_combinations": [],
+      "unresolved_warnings": [
+        "TRIGGER_FIELD_MISMATCH: structura_suport link=metal_support_required intake=finish_setup.mounting_system",
+        "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+        "DOSSIER_METADATA_ONLY: Blueprint dossier available for inspection only; runtime behavior uses canonical template contracts.",
+        "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+        "TEMPLATE_IDENTITY: Template identity resolution trace."
+      ]
+    },
+    "warnings": [
+      "TRIGGER_FIELD_MISMATCH for structura_suport is documented \u2014 canonical intake trigger is mounting_system.",
+      "TRIGGER_FIELD_MISMATCH for structura_suport \u2014 canonical intake is finish_setup.mounting_system",
+      "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+      "DOSSIER_METADATA_ONLY: Blueprint dossier available for inspection only; runtime behavior uses canonical template contracts.",
+      "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+      "TEMPLATE_IDENTITY: Template identity resolution trace.",
+      "ORPHAN_FIELD: finish_setup.illuminated \u2014 UI gate only; maps to lighting_system_type indirectly",
+      "ORPHAN_FIELD: finish_setup.commercial_inputs \u2014 quote commercial layer, not product module (READONLY_EXPLANATORY)",
+      "ORPHAN_FIELD: finish_setup.artwork_complexity_decisions \u2014 artwork path, FUTURE_RESERVED_STEP_6 for emblem modules",
+      "ORPHAN_FIELD: finish_setup.emblem_lighting_mode \u2014 FUTURE electrica_logo OPEN QUESTION"
+    ],
+    "blocker_like": [
+      {
+        "selected_modules[0].missing_fields": []
+      },
+      {
+        "selected_modules[1].missing_fields": []
+      },
+      {
+        "selected_modules[2].missing_fields": []
+      },
+      {
+        "selected_modules[3].missing_fields": []
+      },
+      {
+        "selected_modules[4].missing_fields": []
+      },
+      {
+        "selected_modules[5].missing_fields": []
+      },
+      {
+        "optional_modules[0].missing_fields": []
+      },
+      {
+        "inactive_modules[0].missing_fields": []
+      },
+      {
+        "inactive_modules[1].missing_fields": []
+      },
+      {
+        "linked_template_runtime_segments.segments[0].binding_status": "confirmed"
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.status": "blocked"
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.is_ready": false
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.ready_for_pricing": false
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.ready_for_quote": false
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.ready_for_order": false
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.ready_for_execution": false
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.binding_status": "confirmed"
+      },
+      {
+        "linked_template_runtime_segments.segments[0].product_truth_readiness.blockers": [
+          {
+            "code": "LINKED_SEGMENT_FINISH_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment artwork finish is missing or not confirmed."
+          }
+        ]
+      },
+      {
+        "linked_template_runtime_segments.segments[1].binding_status": "confirmed"
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.status": "blocked"
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.is_ready": false
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.ready_for_pricing": false
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.ready_for_quote": false
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.ready_for_order": false
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.ready_for_execution": false
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.binding_status": "confirmed"
+      },
+      {
+        "linked_template_runtime_segments.segments[1].product_truth_readiness.blockers": [
+          {
+            "code": "LINKED_SEGMENT_FINISH_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment artwork finish is missing or not confirmed."
+          }
+        ]
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.status": "blocked"
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.ready_segments_count": 0
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.blocked_segments_count": 2
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.pricing_ready": false
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.quote_ready": false
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.order_ready": false
+      },
+      {
+        "linked_template_runtime_segments.product_truth_readiness_summary.execution_ready": false
+      },
+      {
+        "linked_template_runtime_segments.summary.status": "ok"
+      },
+      {
+        "linked_template_runtime_segments.summary.missing_finish_count": 2
+      },
+      {
+        "linked_template_runtime_segments.summary.missing_binding_count": 0
+      },
+      {
+        "linked_template_runtime_segments.summary.product_truth_readiness_status": "partial_runtime_mapping"
+      },
+      {
+        "validation.readiness_status": "partial"
+      },
+      {
+        "validation.missing_required_fields": []
+      }
+    ]
+  },
+  "owner_vs_ui": {
+    "G1_FRONT_LIT": {
+      "wanted": "FRONT_LIT",
+      "actual_illuminated": true,
+      "match": true
+    },
+    "G2_face_no_vinyl": {
+      "wanted": "plexiglas opal no vinyl",
+      "actual_face": "none",
+      "letter_faces": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "match_closest": "none means no vinyl; opal/alb mat material not separately selectable"
+    },
+    "G3_return": {
+      "wanted": "Al 0.6 white 60mm",
+      "actual_return": "white_aluminum",
+      "depth": 60.0,
+      "letter_returns": [
+        [
+          "white_aluminum",
+          60.0
+        ],
+        [
+          "white_aluminum",
+          60.0
+        ],
+        [
+          "white_aluminum",
+          60.0
+        ],
+        [
+          "white_aluminum",
+          60.0
+        ]
+      ]
+    },
+    "G4_logo": {
+      "wanted": "PRINTED_AND_LAMINATED matte",
+      "artwork": [
+        {
+          "layer_key": "logo_instance_001",
+          "layer_name": "Logo 1",
+          "display_name": null,
+          "source_layer_name": "Logo 1",
+          "original_detected_label": "Logo 1",
+          "position_hint": null,
+          "execution_type": "print_laminate",
+          "color_mode": "polychrome",
+          "print_transparency": "translucent",
+          "material_code": "ORAFOL_PRINT_LAMINATION",
+          "face_personalization_method": "print_laminate",
+          "face_roll_width_mm": null,
+          "print_roll_width_mm": null,
+          "lamination_roll_width_mm": null,
+          "print_required": true,
+          "lamination_required": true,
+          "roll_side_retraction_mm": null,
+          "roll_total_retraction_mm": null,
+          "face_oracal_code": null,
+          "face_oracal_name": null,
+          "print_material_code": "ORAFOL_PRINT",
+          "lamination_material_code": "ORAFOL_LAMINATION",
+          "estimated_area_m2": 0.4002298565185999,
+          "element_count": 1,
+          "distinct_fill_count": 1,
+          "return_finish_type": "white_aluminum",
+          "return_oracal_code": null,
+          "return_oracal_name": null,
+          "return_depth_mm": 60.0,
+          "backing_mode": null,
+          "confirmed": false
+        },
+        {
+          "layer_key": "logo_instance_002",
+          "layer_name": "Logo 2",
+          "display_name": null,
+          "source_layer_name": "Logo 2",
+          "original_detected_label": "Logo 2",
+          "position_hint": null,
+          "execution_type": "print_laminate",
+          "color_mode": "polychrome",
+          "print_transparency": "translucent",
+          "material_code": "ORAFOL_PRINT_LAMINATION",
+          "face_personalization_method": "print_laminate",
+          "face_roll_width_mm": null,
+          "print_roll_width_mm": null,
+          "lamination_roll_width_mm": null,
+          "print_required": true,
+          "lamination_required": true,
+          "roll_side_retraction_mm": null,
+          "roll_total_retraction_mm": null,
+          "face_oracal_code": null,
+          "face_oracal_name": null,
+          "print_material_code": "ORAFOL_PRINT",
+          "lamination_material_code": "ORAFOL_LAMINATION",
+          "estimated_area_m2": 0.4002298565186002,
+          "element_count": 1,
+          "distinct_fill_count": 1,
+          "return_finish_type": "white_aluminum",
+          "return_oracal_code": null,
+          "return_oracal_name": null,
+          "return_depth_mm": 60.0,
+          "backing_mode": null,
+          "confirmed": false
+        }
+      ]
+    },
+    "G5_backing_mount": {
+      "wanted": "INSTALLATION_TEMPLATE no continuous Forex/ACM",
+      "backing_mode": "forex_10_no_bevel",
+      "mounting_scope": "preparation_and_site_installation",
+      "site_install": true,
+      "acm_solution": null,
+      "BLOCKER": "backing_mode forced forex_10_no_bevel; UI has no none option"
+    },
+    "G6_cool": {
+      "wanted": "COOL_WHITE",
+      "actual": "cool",
+      "match": true
+    }
+  }
+}

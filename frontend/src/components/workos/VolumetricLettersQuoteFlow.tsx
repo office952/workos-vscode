@@ -31,6 +31,8 @@ import {
   type QuotePricingInput,
   type QuotePriceResponse,
 } from "@/api/quotes";
+import { LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO } from "@/lib/legacyQuotePriceRetirement";
+import { LegacyQuotePriceRetiredBanner } from "@/components/workos/LegacyQuotePriceRetiredBanner";
 import {
   costSimulationApi,
   type CostSimulationResponse,
@@ -361,51 +363,8 @@ export default function VolumetricLettersQuoteFlow({
   }
 
   async function handleCommercialQuote() {
-    if (!selectedTemplate || !simulationResult || !canCreateCommercialQuote) return;
-    setCommercialSubmitting(true);
-    setCommercialError(null);
-    setBlockedReasons([]);
-
-    const pricing: QuotePricingInput = {
-      margin_pct: marginPct,
-      vat_pct: vatPct,
-      discount_pct: discountPct,
-    };
-    const quote_input = buildSimulateQuoteInputPayload(flowState, initialProductSpec);
-
-    try {
-      const resp = await priceQuote({
-        product_template: selectedTemplate,
-        user_config: {
-          quantity: 1,
-          dimensions: {
-            width_mm: flowState.widthMm,
-            height_mm: flowState.heightMm,
-            depth_mm: flowState.depthMm,
-          },
-        },
-        pricing,
-        client_name: clientName.trim(),
-        intake_id: intakeDbId,
-        quote_input,
-      });
-      setCommercialResult(resp);
-      onCreated?.({
-        quoteId: resp.quote_id,
-        quoteCode: resp.quote_code,
-      });
-    } catch (err) {
-      if (err instanceof QuotePricingError) {
-        setCommercialError(err.message);
-        setBlockedReasons(err.blockedReasons);
-      } else {
-        setCommercialError(
-          err instanceof Error ? err.message : "Eroare la crearea ofertei comerciale."
-        );
-      }
-    } finally {
-      setCommercialSubmitting(false);
-    }
+    setCommercialError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
+    setBlockedReasons(["legacy_quote_price_retired"]);
   }
 
   const requestExcerpt =
@@ -442,14 +401,16 @@ export default function VolumetricLettersQuoteFlow({
         </div>
       )}
 
+      <LegacyQuotePriceRetiredBanner testId="volumetric-legacy-quote-price-retired" />
+
       {commercialHandoffMode && (
         <div
           className="flex items-start gap-2 px-3 py-2.5 bg-emerald-900/15 border border-emerald-800/35 rounded-lg text-[11px] text-emerald-200/95"
           data-testid="volumetric-handoff-commercial-banner"
         >
           <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
-          Date tehnice preluate din WorkIntake V2. QuoteWizard este în modul ofertare
-          comercială. Modificările tehnice se fac doar prin Advanced override.
+          Date tehnice preluate din WorkIntake V2. Oferta comercială se calculează în
+          Intake V6 (nu prin acest flux legacy).
         </div>
       )}
 
@@ -986,19 +947,13 @@ export default function VolumetricLettersQuoteFlow({
           <button
             type="button"
             onClick={handleCommercialQuote}
-            disabled={
-              !canCreateCommercialQuote ||
-              commercialSubmitting ||
-              !simulationResult
-            }
-            className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded border border-emerald-700/50 text-emerald-300 text-[12px] font-semibold hover:bg-emerald-950/30 disabled:opacity-40"
+            disabled
+            title={LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO}
+            data-testid="action-create-commercial-quote-retired"
+            className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded border border-slate-700 text-slate-500 text-[12px] font-semibold cursor-not-allowed opacity-50"
           >
-            {commercialSubmitting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <FileText className="w-4 h-4" />
-            )}
-            Creează ofertă comercială
+            <FileText className="w-4 h-4" />
+            Ofertă comercială retrasă — folosește Intake V6
           </button>
 
           {quoteGate && (
@@ -1446,7 +1401,7 @@ function CommercialPricingPreviewBreakdown({
         emphasized
       />
       <p className="text-[9px] text-slate-500 pt-1">
-        Estimare internă; oferta finală este calculată la creare.
+        Estimare internă (nu este preț client). Oferta comercială se calculează în Intake V6.
       </p>
     </div>
   );

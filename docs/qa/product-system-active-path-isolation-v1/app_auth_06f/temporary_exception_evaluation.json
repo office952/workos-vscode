@@ -1,0 +1,14 @@
+{
+  "task": "APP-AUTH-06F",
+  "evaluations": [
+    {"operation": "volumetric_letter_assembly", "policy": "ALLOWED_BY_POLICY_WITH_SUPERVISION", "s9_contract_required_if_used": true},
+    {"operation": "vinyl_cutting", "policy": "POSSIBLE_WITH_SUPERVISION", "s9_contract_required_if_used": true},
+    {"operation": "led_assembly", "policy": "NOT_ALLOWED_SAFETY_WITHOUT_CONTRACT", "s9_contract_required_if_used": true},
+    {"operation": "led_wiring", "policy": "NOT_ALLOWED_SAFETY_WITHOUT_CONTRACT", "s9_contract_required_if_used": true},
+    {"operation": "installation_prep", "policy": "POSSIBLE_WITH_SUPERVISION", "s9_contract_required_if_used": true},
+    {"operation": "packaging", "policy": "POSSIBLE_WITH_SUPERVISION", "s9_contract_required_if_used": true},
+    {"operation": "quality_control", "policy": "POSSIBLE_WITH_SUPERVISION", "s9_contract_required_if_used": true}
+  ],
+  "minimum_exception_fields": ["employee", "operation", "reason", "evidence", "approver", "valid_from", "expiry", "supervision", "allowed_resource", "restrictions", "revocation", "audit_trail"],
+  "exceptions_created": 0
+}

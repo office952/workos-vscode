@@ -1,0 +1,7 @@
+{
+  "port": 3021,
+  "classification": "NOT_EXECUTED_SAFE_DEFERRED",
+  "reason": "Owner-directed stop: no node_modules install/copy/link in isolated restore; deferred to BACKUP-BASELINE-01B",
+  "runtime_startup_attempted": false,
+  "next_task": "BACKUP-BASELINE-01B-RESTORE-CLOSURE"
+}

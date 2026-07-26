@@ -1,0 +1,17 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "fields": {
+    "operation_code": "IMPLEMENT_LATER — exists today as process_type",
+    "primary_competence": "DERIVED_RUNTIME from registry mapping",
+    "required_workcenter_or_machine": "EXISTS — machine_type on plan task",
+    "parallelizable": "IMPLEMENT_FIRST as optional PS/compiler field",
+    "collaboration_mode": "IMPLEMENT_FIRST — INDIVIDUAL | INDIVIDUAL_OR_TEAM | TEAM_PREFERRED",
+    "supporting_competences": "IMPLEMENT_LATER",
+    "progress_unit": "IMPLEMENT_FIRST for volumetric/letter ops",
+    "minimum_people": "CONFIG_ONLY rare safety",
+    "recommended_people": "CONFIG_ONLY advisory",
+    "maximum_useful_people": "DERIVED_RUNTIME from workcenter capacity later",
+    "staffing_rule_inputs": "REJECT for now"
+  },
+  "rule": "PS declares possibility and requirement — never concrete people"
+}

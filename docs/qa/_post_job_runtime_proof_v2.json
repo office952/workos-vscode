@@ -1,0 +1,31 @@
+{
+  "before": {
+    "commercial": 1500.0,
+    "known_cost": null
+  },
+  "after": {
+    "known_cost": 8.5,
+    "known_margin": 1491.5,
+    "coverage": "PARTIAL",
+    "actual_total_cost": null,
+    "truth_cost": {
+      "value": 8.5,
+      "presence": "present",
+      "unit": null,
+      "source": "inventory_materials.unit_cost_at_read",
+      "note": null
+    },
+    "labor_minutes": {
+      "value": 1605.0,
+      "presence": "present",
+      "unit": "min",
+      "source": "execution_reality.sessions",
+      "note": null
+    }
+  },
+  "final": {
+    "known_cost": null,
+    "coverage": "INCOMPLETE",
+    "commercial": 1500.0
+  }
+}

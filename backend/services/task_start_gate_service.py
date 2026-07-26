@@ -12,7 +12,9 @@ from services.execution_plan_operational_readiness_service import (
     assert_operational_mutation_allowed,
 )
 from services.execution_plan_task_parser import operational_tasks_only
-from services.task_preparation_readiness_service import extract_quote_input_from_snapshot
+from services.order_snapshot_v2_planning_readiness_adapter_service import (
+    load_order_planning_readiness_input,
+)
 from services.task_readiness_service import (
     READINESS_WAITING_FILE,
     READINESS_WAITING_MATERIAL,
@@ -117,15 +119,8 @@ def build_readiness_override_metadata(
 
 
 async def load_order_quote_input(db: AsyncSession, order_id: int) -> dict[str, Any]:
-    row = (
-        await db.execute(
-            text("SELECT snapshot_line_items FROM orders WHERE id = :oid LIMIT 1"),
-            {"oid": order_id},
-        )
-    ).mappings().first()
-    if not row:
-        return {}
-    return extract_quote_input_from_snapshot(_parse_json_object(row.get("snapshot_line_items")))
+    """Planning/readiness preparation input — V2 adapter or isolated legacy path."""
+    return await load_order_planning_readiness_input(db, order_id)
 
 
 async def evaluate_task_start_readiness(
@@ -191,6 +186,13 @@ async def assert_task_startable(
     override_user_role: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Raise HTTP 409 when task cannot start; return readiness + optional override metadata."""
+    from services.execution_owner_decision_production_release_service import (
+        assert_production_release_allowed,
+    )
+
+    # Production-release guard runs before readiness; override cannot bypass owner decisions.
+    await assert_production_release_allowed(db, order_id)
+
     _plan_task, readiness, _quote_input = await evaluate_task_start_readiness(
         db,
         order_id=order_id,

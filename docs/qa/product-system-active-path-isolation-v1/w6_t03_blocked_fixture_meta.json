@@ -1,0 +1,11 @@
+{
+  "order_id": 23150,
+  "order_code": "ORD-W6T03-BLOCK-GATE",
+  "owner_codes": [
+    "INTERNAL_SABLON_FOREX_COST",
+    "INTERNAL_MONTAJ_RULE",
+    "INTERNAL_CONSUMABLES_RULE",
+    "INTERNAL_AMBALARE_RULE"
+  ],
+  "canonical_order_23099_touched": false
+}

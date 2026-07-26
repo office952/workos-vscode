@@ -1,0 +1,90 @@
+{
+  "ui": "http://127.0.0.1:3000",
+  "acm": "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+  "shots": [
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\01_montaj_acm_first_paint_1440.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\02_montaj_acm_commercial_region.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\03_montaj_acm_pricing_viewport.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\04_confirmare_acm.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\05_diagnostic_closed.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\06_diagnostic_open.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\07_montaj_acm_after_reload.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\08_montaj_acm_1920.png",
+    "C:\\w\\psiso\\docs\\qa\\intake-v6-e2e-montaj-critical-audit-2026-07-19\\screenshots\\09_montaj_acm_1100.png"
+  ],
+  "probes": {
+    "acm_montaj": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "hasFundal": true,
+      "hasScope": true,
+      "hasTemplate": true,
+      "hasCable": false,
+      "hasCorner": false,
+      "hasSegmented": true,
+      "hasElectrical": false,
+      "hasProductSystem": true,
+      "hasTarifeLipsa": true,
+      "hasAccesorii": true,
+      "attention": "! 2 probleme",
+      "formLeads": true
+    },
+    "acm_commercial": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "hasFundal": true,
+      "hasScope": true,
+      "hasTemplate": true,
+      "hasCable": false,
+      "hasCorner": false,
+      "hasSegmented": true,
+      "hasElectrical": false,
+      "hasProductSystem": true,
+      "hasTarifeLipsa": true,
+      "hasAccesorii": true,
+      "attention": "! 2 probleme",
+      "formLeads": true
+    },
+    "confirmare": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "hasFundal": false,
+      "hasScope": true,
+      "hasTemplate": false,
+      "hasCable": false,
+      "hasCorner": false,
+      "hasSegmented": false,
+      "hasElectrical": false,
+      "hasProductSystem": true,
+      "hasTarifeLipsa": false,
+      "hasAccesorii": false,
+      "attention": null,
+      "formLeads": false
+    },
+    "after_reload": {
+      "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+      "hasFundal": true,
+      "hasScope": true,
+      "hasTemplate": true,
+      "hasCable": false,
+      "hasCorner": false,
+      "hasSegmented": true,
+      "hasElectrical": false,
+      "hasProductSystem": true,
+      "hasTarifeLipsa": true,
+      "hasAccesorii": true,
+      "attention": "! 2 probleme",
+      "formLeads": true
+    }
+  },
+  "api": {
+    "mounting_scope": "none",
+    "mounting_template_enabled": true,
+    "mounting_solution": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "segmented": "PROPOSED",
+    "cable": null,
+    "corner": null,
+    "confirmed": true
+  },
+  "notes": [
+    "Acceptance UI is :3000 (not :3001).",
+    "ACM workspace already has product_system ACM mounting_solution with commercial mounting_scope=none and template_enabled=true — contradiction candidate."
+  ]
+}

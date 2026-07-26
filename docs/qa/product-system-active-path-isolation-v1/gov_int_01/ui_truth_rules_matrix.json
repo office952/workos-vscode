@@ -1,0 +1,37 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "DOCUMENTED_ONLY",
+  "rules_count": 5,
+  "implementation_standard": true,
+  "runtime_governance": false,
+  "rows": [
+    {
+      "ui_rule": "UI01 canonical statuses from system",
+      "routes": "Intake, Quotes, Product System",
+      "frontend_enforcement": "PARTIAL",
+      "backend_truth": "readiness services",
+      "test": "volumetric_quote_ready_policy",
+      "drift": "Some UI badges decorative per MODULE-INT"
+    },
+    {
+      "ui_rule": "UI02 gates not decorative",
+      "routes": "Intake V6, Blueprint",
+      "frontend_enforcement": "PARTIAL",
+      "backend_truth": "readiness gate",
+      "test": "intake readiness pytest",
+      "drift": "Governance page itself displays gates as static cards"
+    },
+    {
+      "ui_rule": "Module Chain / Governance",
+      "routes": "/modules, /governance",
+      "frontend_enforcement": "NONE",
+      "backend_truth": "N/A",
+      "test": "NONE",
+      "drift": "Both pages can mislead (static + false health)"
+    }
+  ]
+}

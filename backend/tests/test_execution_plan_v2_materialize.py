@@ -290,12 +290,13 @@ async def test_mobile_required_legacy_fields_present(db_session):
 
 
 @pytest.mark.asyncio
-async def test_null_estimated_minutes_yields_zero_with_warning(db_session):
+async def test_null_estimated_minutes_stays_null_with_warning(db_session):
+    """TE2E-028A: missing planning source must not be coerced to 0.0."""
     order, _plan = await _seed_persisted_v2_plan(db_session, order_id=_MATERIALIZE_OID(17))
     result = await materialize_execution_plan_v2_operational_tasks(db_session, order.id)
     assert PLANNING_MINUTES_WARNING in result.warnings
     envelope = await _load_envelope(db_session, order.id)
-    assert envelope["operational_tasks"][0]["estimated_time_minutes"] == 0.0
+    assert envelope["operational_tasks"][0]["estimated_time_minutes"] is None
 
 
 @pytest.mark.asyncio

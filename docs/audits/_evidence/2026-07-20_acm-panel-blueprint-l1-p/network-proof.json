@@ -1,0 +1,29 @@
+{
+  "workspace": "IV6-DB2F86B7",
+  "workspaceId": "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+  "viewport": "1440x900",
+  "readiness": "L1-P",
+  "readinessAfterRefresh": "L1-P",
+  "collapsedSummary": "2000 × 350 mm · 2 panouri",
+  "collapsedSummaryAfterRefresh": "2000 × 350 mm · 2 panouri",
+  "expandedInitially": "false",
+  "assemblyWidth": "2000",
+  "assemblyHeight": "350",
+  "assemblyWidthAfterRefresh": "2000",
+  "overallLabel": "2000 × 350 mm",
+  "jointX": "1000",
+  "disclaimer": "Schematic Nivel 1 provizoriu — nu este desen de execuție.",
+  "letterUnknown": true,
+  "compositionBanner": true,
+  "construction": true,
+  "putCountDuringBlueprintInteract": 0,
+  "putCountPhases": 0,
+  "puts": [],
+  "apiAssembly": {
+    "panels": 2,
+    "width": 2000,
+    "height": 350,
+    "envelope": 1000
+  },
+  "pass": true
+}

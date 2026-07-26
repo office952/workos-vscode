@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM,
   buildAcmCasettedQuoteInputPayload,
   buildCutAcmQuoteInputPayload,
+  isAcmTemplateCode,
   rearLipWarning,
+  TPL_ACM_BOXED_MOUNTING_SUPPORT,
 } from "./acmQuoteInput";
 
 describe("acmQuoteInput", () => {
@@ -35,5 +38,22 @@ describe("acmQuoteInput", () => {
     });
     expect(qi.cut_area_m2).toBe(0.1);
     expect(qi.cut_perimeter_m).toBe(12);
+  });
+
+  it("recognizes boxed mounting standalone root template code", () => {
+    expect(isAcmTemplateCode(TPL_ACM_BOXED_MOUNTING_SUPPORT)).toBe(true);
+    expect(ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM).toEqual([3]);
+  });
+
+  it("boxed mounting standalone payload uses 3mm-only thickness options", () => {
+    const qi = buildAcmCasettedQuoteInputPayload({
+      panel_width_mm: "1200",
+      panel_height_mm: "800",
+      acm_thickness_mm: "3",
+      return_depth_mm: "60",
+      fold_sides: "all",
+    });
+    expect(qi.acm_thickness_mm).toBe(3);
+    expect(qi.panel_area_m2).toBeCloseTo(0.96, 2);
   });
 });

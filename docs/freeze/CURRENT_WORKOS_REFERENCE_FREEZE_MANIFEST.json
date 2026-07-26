@@ -1,0 +1,99 @@
+{
+  "freeze_name": "CURRENT_WORKOS_FROZEN_AS_REFERENCE",
+  "freeze_status": "FROZEN_AS_REFERENCE",
+  "freeze_kind": "repository_laboratory_reference",
+  "not": "workflow_adv_operational_FREEZE_ON",
+  "date": "2026-07-22",
+  "repository": "C:\\w\\psiso",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "accepted_commits": {
+    "product_system_owner_accept": "9769bbe8",
+    "product_system_docs_tip_pre_handoff": "fd2532e1",
+    "documentation_handoff_owner_accept": "1f2b5a43",
+    "documentation_handoff_docs_tip": "e3a9dc09",
+    "kickoff_head": "e3a9dc09",
+    "freeze_tip_owner_accept": "ec755414"
+  },
+  "canonical_docs_root": "docs/workflow-adv/",
+  "smart_code_path": "docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md",
+  "cursor_rule_path": ".cursor/rules/workflow-adv-smart-code.mdc",
+  "evidence_paths": [
+    "docs/qa/product-system-reference-complete/",
+    "docs/qa/documentation-handoff-complete/",
+    "docs/qa/active-template-critical-material-fill-v1/",
+    "docs/qa/product-system-reference-finish-line-v1/",
+    "docs/qa/material-market-price-registry-v1/",
+    "docs/qa/product-price-breakdown-v1/",
+    "docs/qa/current-workos-frozen-as-reference/"
+  ],
+  "runtime": {
+    "proof_backend": "127.0.0.1:8020",
+    "endpoint": "GET /api/v1/product-system/reference-complete",
+    "overall_verdict": "PASS",
+    "freeze_readiness_at_verify": "READY_FOR_DOCUMENTATION_HANDOFF",
+    "vl_eic": 923.2,
+    "vl_cpp": 1061.0,
+    "critical_missing": [],
+    "psu_material_role": "variant_selector"
+  },
+  "tests": {
+    "reference_complete_chain": "13 passed (prior accepted)",
+    "note": "Targeted re-run optional; freeze is documentation declaration"
+  },
+  "completion_status": {
+    "product_system_reference_complete": "PASS",
+    "documentation_handoff_complete": "PASS",
+    "smart_code_enforcement_audit": "ACCEPTED",
+    "current_workos_frozen_as_reference": "PASS"
+  },
+  "smart_code_audit": {
+    "standard": "ACTIONABLE_BUT_WEAKLY_ENFORCED",
+    "cursor": "LIKELY_AUTOMATIC_NOT_PROVEN",
+    "automatic_checks": "ABSENT",
+    "compliance_reporting": "SELF_ATTESTED_ONLY",
+    "promotion_protection": "DOCUMENTED_ONLY",
+    "adv_pre_code_readiness": "READY_AFTER_SMALL_ENFORCEMENT_BOOTSTRAP"
+  },
+  "known_limitations": [
+    "form_builder_absent",
+    "add_child_ui_absent",
+    "logo_incomplete",
+    "acm_treatments_deferred",
+    "optional_consumables_unpriced",
+    "lab_ui_not_platform_ui",
+    "smart_code_enforcement_weak",
+    "workflow_adv_repo_empty",
+    "git_ci_enforcement_absent",
+    "freeze_runtime_subsystem_absent",
+    "analyzer_desktop_not_built",
+    "supplier_import_deferred"
+  ],
+  "do_not_transfer": [
+    "lab_badge_heavy_ui_as_platform",
+    "vl_specialized_ui_as_universal_form_generator",
+    "generic_psu_selector_priced_as_sku",
+    "hardcoded_template_page_copies",
+    "analyzer_to_product_truth_without_confirmation",
+    "cpp_as_offer_authority",
+    "invented_material_prices_or_supplier_import_stubs",
+    "offer_order_execution_mobile_as_finish_line",
+    "in_place_mutation_of_frozen_operational_versions",
+    "in_repo_svg_dxf_dwg_parsers",
+    "duplicated_calculators"
+  ],
+  "post_freeze_allowed_classes": [
+    "reference_correction",
+    "evidence_preservation",
+    "security_repair",
+    "emergency_runtime_repair",
+    "owner_approved_unfreeze_CURRENT_WORKOS_REFERENCE_FREEZE_OFF"
+  ],
+  "workflow_adv_status": "BLOCKED_PENDING_ENFORCEMENT_BOOTSTRAP",
+  "next_required_build": "WORKFLOW_ADV_SMART_CODE_ENFORCEMENT_BOOTSTRAP",
+  "do_not_auto_execute_next": true,
+  "silent_git_delivery": "deferred_to_enforcement_bootstrap",
+  "no_push": true,
+  "no_pr": true,
+  "no_tag_created": true,
+  "recommended_future_tag": "workos-reference-freeze-2026-07-22"
+}

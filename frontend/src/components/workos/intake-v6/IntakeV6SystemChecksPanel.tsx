@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
+import { operatorStatusSemanticRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 export type IntakeV6SystemChecksSeverity = "ok" | "warning" | "critical";
 
@@ -19,15 +20,21 @@ export function resolveIntakeV6SystemChecksSummary(args: {
   const severity: IntakeV6SystemChecksSeverity =
     criticalCount > 0 ? "critical" : mentionCount > 0 ? "warning" : "ok";
 
+  const badgeLabel =
+    severity === "ok"
+      ? operatorStatusSemanticRo("ready")
+      : severity === "critical"
+        ? operatorStatusSemanticRo("blocker")
+        : operatorStatusSemanticRo("warning");
+
   return {
     mentionCount,
     severity,
     label:
       mentionCount === 0
-        ? "Verificari sistem: OK"
-        : `Verificari sistem: ${mentionCount} mentiuni de rezolvat`,
-    badgeLabel:
-      severity === "ok" ? "OK" : severity === "critical" ? "Critical" : "Warning",
+        ? `Verificări sistem: ${operatorStatusSemanticRo("ready")}`
+        : `Verificări sistem: ${mentionCount} mențiuni de rezolvat`,
+    badgeLabel,
   };
 }
 
@@ -62,7 +69,7 @@ export default function IntakeV6SystemChecksPanel({
 
   return (
     <div
-      className={`rounded border border-[#2A3548] bg-[#0A0F1A]/40 ${className}`.trim()}
+      className={`rounded border border-wo-border-strong bg-wo-surface-inset/40 ${className}`.trim()}
       data-testid={testId}
       data-system-checks-severity={summary.severity}
       data-system-checks-mentions={summary.mentionCount}
@@ -90,7 +97,7 @@ export default function IntakeV6SystemChecksPanel({
         </div>
       </button>
       {open ? (
-        <div className="border-t border-[#2A3548] px-4 py-3" data-testid={`${testId}-content`}>
+        <div className="border-t border-wo-border-strong px-4 py-3" data-testid={`${testId}-content`}>
           {children}
         </div>
       ) : null}

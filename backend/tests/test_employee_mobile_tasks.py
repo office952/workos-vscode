@@ -106,6 +106,18 @@ async def _seed_active_order(db_session, *, order_id: int) -> None:
     await db_session.commit()
 
 
+async def _delete_order_execution_fixture(db_session, *, order_id: int) -> None:
+    """Remove order/plan rows seeded by an isolated mobile test."""
+    from sqlalchemy import delete
+
+    await db_session.execute(delete(ExecutionPlan).where(ExecutionPlan.order_id == order_id))
+    await db_session.execute(delete(Orders).where(Orders.id == order_id))
+    await db_session.execute(
+        delete(Quotes).where(Quotes.code == f"QT-{order_id:04d}")
+    )
+    await db_session.commit()
+
+
 async def _seed_print_eligibility(db_session, employee_id: int) -> None:
     svc = OperationalRegistryService(db_session)
     await svc.set_employee_authorizations(
@@ -277,6 +289,8 @@ def test_start_assigned_task(db_fixture, db_session):
 
     async def _setup():
         emp = await _seed_employee(db_session, user_id=user_id, name="Starter")
+        await _seed_active_order(db_session, order_id=201)
+        await _seed_print_eligibility(db_session, emp.id)
         await _seed_plan_with_assigned_task(
             db_session,
             order_id=201,
@@ -696,10 +710,15 @@ def test_available_tasks_visible_for_eligible_unassigned(db_fixture, db_session)
         response = client.get("/api/v1/employee-mobile/tasks/available")
         assert response.status_code == 200, response.text
         rows = response.json()
-        assert len(rows) == 1
-        assert rows[0]["task_id"] == "T-AVAIL"
-        assert rows[0].get("claimable") is True
-        assert rows[0].get("is_startable") is True
+        scoped = [row for row in rows if row["order_id"] == order_id]
+        assert len(scoped) == 1, (
+            f"expected exactly one available task on order {order_id}, "
+            f"got scoped={scoped!r}, all_rows={rows!r}"
+        )
+        assert scoped[0]["task_id"] == "T-AVAIL"
+        assert scoped[0].get("claimable") is True
+        assert scoped[0].get("is_startable") is True
+        assert any(row["task_id"] == "T-AVAIL" for row in rows)
     finally:
         _cleanup_overrides()
 

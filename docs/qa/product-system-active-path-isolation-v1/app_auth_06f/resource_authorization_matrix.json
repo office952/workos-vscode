@@ -1,0 +1,18 @@
+{
+  "task": "APP-AUTH-06F",
+  "matrix": [
+    {"operation": "volumetric_letter_assembly", "resource": "WA-ASSEMBLY-01/02", "controlled": true, "authorization_required": true, "authorization_found": false, "registry_resources": ["MCH-EPSON-60800"], "legacy_resources": ["WA-ASSEMBLY-01", "WA-ASSEMBLY-02"], "manual_without_resource": true, "status": "AUTHORIZATION_MISSING"},
+    {"operation": "vinyl_cutting", "resource": "MCH-RIGID-FILM-LAMINATOR / WA-ASSEMBLY", "controlled": true, "authorization_required": true, "authorization_found": false, "legacy_resources": ["WA-ASSEMBLY-01"], "manual_without_resource": true, "status": "AUTHORIZATION_MISSING"},
+    {"operation": "led_assembly", "resource": "WA-ASSEMBLY-01/02", "controlled": true, "authorization_required": true, "authorization_required_reason": "electrical_safety_sensitive", "authorization_found": false, "status": "AUTHORIZATION_MISSING"},
+    {"operation": "led_wiring", "resource": "WA-ASSEMBLY-01/02", "controlled": true, "authorization_required": true, "authorization_found": false, "status": "AUTHORIZATION_MISSING"},
+    {"operation": "installation_prep", "resource": "field_team_manual", "controlled": false, "authorization_required": false, "authorization_found": true, "notes": "APP-AUTH-02 authorization_match true for field_installation mapping", "status": "AUTHORIZATION_NOT_REQUIRED"},
+    {"operation": "packaging", "resource": "WA-ASSEMBLY-01/02", "controlled": true, "authorization_required": true, "authorization_found": false, "manual_without_resource": true, "status": "AUTHORIZATION_MISSING"},
+    {"operation": "quality_control", "resource": "WA-ASSEMBLY-01/02", "controlled": true, "authorization_required": true, "authorization_found": false, "manual_without_resource": true, "status": "AUTHORIZATION_MISSING"}
+  ],
+  "summary": {
+    "authorization_missing": 5,
+    "authorization_not_required": 1,
+    "authorization_confirmed": 0,
+    "policy_not_defined": 0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "task": "RUNTIME-RECOVERY-02",
+  "captured_at_utc": "2026-07-15T11:05:00+00:00",
+  "ports_scanned": [3000, 8000, 8011, 8021, 8001],
+  "pre_recovery_observations": {
+    "port_3000": "DOWN or stale process with BACKEND_PORT leak from restore test",
+    "port_8001": "UP with duplicate STALE system-python uvicorn + GHOST netstat PIDs",
+    "port_8000": "DOWN (Vite proxy default target — caused Network Error)",
+    "port_8021": "DOWN after restore test teardown",
+    "port_8011": "DOWN (parity pilot port not active)"
+  },
+  "post_recovery_processes": [
+    {
+      "port": 3000,
+      "pid": 36492,
+      "process": "node.exe",
+      "working_directory": "C:\\w\\psiso\\frontend",
+      "command_line": "node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3000 --strictPort (BACKEND_PORT=8001 at start)",
+      "classification": "CANONICAL"
+    },
+    {
+      "port": 8001,
+      "pid": 29372,
+      "process": "python.exe",
+      "working_directory": "C:\\w\\psiso\\backend",
+      "command_line": "C:\\w\\psiso\\backend\\.venv\\Scripts\\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8001 --reload",
+      "classification": "CANONICAL"
+    },
+    {
+      "port": 8001,
+      "pid": 4984,
+      "process": null,
+      "working_directory": null,
+      "command_line": null,
+      "classification": "GHOST",
+      "notes": "Windows netstat orphan OwningProcess; health still OK via reloader child"
+    }
+  ],
+  "ports_without_listeners": [8000, 8011, 8021]
+}

@@ -4,12 +4,14 @@ import { getBenchmarkOptionsForFile } from './benchmarkConfig'
 import { analyzeGeometry } from './analyzeGeometry'
 import { analyzeLayers } from './analyzeLayers'
 import { buildAnalysisReport } from './buildAnalysisReport'
+import { refineLayerRoleProposalsWithGeometry } from './refineLayerRoleProposalsWithGeometry'
 import { buildOfficialAnalysisJson } from './buildOfficialAnalysisJson'
 import { detectWarnings } from './detectWarnings'
 import { parseSvg } from './parseSvg'
 import { expandSemanticAndPseudoLayers } from './semanticAndPseudoLayerExpansion'
 import { extractParts } from '../part-extractor'
 import { buildNestingReport } from '../nesting'
+import { detectClosedContourCandidates } from '../closed-contour/closedContourCandidates'
 import type { ParsedSvgDocument, SvgAnalysisReport } from './types'
 
 export interface AnalyzeOptions {
@@ -29,7 +31,9 @@ export function analyzeSvgString(source: string, fileName: string, fileSizeBytes
   const geometry = analyzeGeometry(parsed)
   const { doc: layerExpandedDoc, layerMeta } = expandSemanticAndPseudoLayers(parsed, geometry)
   const colors = analyzeColors(layerExpandedDoc)
-  const layers = analyzeLayers(layerExpandedDoc, geometry, colors, layerMeta)
+  const layersRaw = analyzeLayers(layerExpandedDoc, geometry, colors, layerMeta)
+  const closedContourCandidates = detectClosedContourCandidates(layerExpandedDoc, geometry)
+  const layers = refineLayerRoleProposalsWithGeometry(layersRaw, closedContourCandidates)
   const warnings = detectWarnings(layerExpandedDoc, geometry, layers, colors)
   const coreReport = buildAnalysisReport(layerExpandedDoc, geometry, layers, colors, warnings, mergedOptions)
 
@@ -56,6 +60,16 @@ export function analyzeSvgString(source: string, fileName: string, fileSizeBytes
   const artworkComplexity = buildArtworkComplexityReport(layerExpandedDoc, geometry, layers)
 
   const report = buildOfficialAnalysisJson(coreReport, partsReport, nestingReport, artworkComplexity)
+  report.closedContourCandidates = closedContourCandidates
+  if (closedContourCandidates.unit_ambiguity) {
+    report.warnings.push({
+      code: 'SVG_UNIT_AMBIGUITY_PANEL_SCALE',
+      severity: 'warning',
+      message:
+        'Unitățile fizice SVG sunt ambigue pentru panou; candidatul folosește corecție viewBox-as-mm (guard).',
+      scope: 'document',
+    })
+  }
 
   return {
     parsed: layerExpandedDoc,

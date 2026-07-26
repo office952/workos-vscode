@@ -1,0 +1,43 @@
+{
+  "task": "APP-AUTH-06C",
+  "proposed_tasks": [
+    {
+      "task_id": "OWNER-DECISION-05",
+      "name": "PARITY_SIGNAL_AUTHORITY_AND_SANDU_RECONCILIATION",
+      "objective": "Owner answers Q1-Q8; confirms competence authority, hybrid mapping policy, and whether discrepancies remain transitional",
+      "exact_scope": "Decision/docs gate only; decision package from app_auth_06c owner_decision_questions",
+      "prerequisites": ["APP-AUTH-06C PASS"],
+      "forbidden_scope": ["code", "DB", "parity wiring", "migration execution", "automatic Sandu cleanup"],
+      "expected_evidence": "owner_decision_05 package JSON + worklog",
+      "commit_boundary": "docs only isolated commit",
+      "recommended": true
+    },
+    {
+      "task_id": "APP-AUTH-06D",
+      "name": "AMBIGUOUS_FINGERPRINT_TECHNICAL_AUDIT",
+      "objective": "Investigate only fingerprints reclassified TECHNICAL_INVESTIGATION with new evidence",
+      "exact_scope": "Comparator/fixture/query audit; read-only runtime proofs",
+      "prerequisites": ["New ambiguity identified; not required for current 16 fingerprints"],
+      "forbidden_scope": ["data mutation", "enforcement", "third consumer"],
+      "expected_evidence": "app_auth_06d technical audit JSON",
+      "commit_boundary": "docs/tests only if scenarios added",
+      "recommended": false
+    },
+    {
+      "task_id": "APP-AUTH-06E",
+      "name": "SAME_TWO_CONSUMERS_STABILITY_FOLLOWUP",
+      "objective": "Additional observe-only sampling if owner defers OWNER-DECISION-05",
+      "exact_scope": "Repeat pilot batch; fingerprint stability check",
+      "prerequisites": ["Owner explicit deferral"],
+      "forbidden_scope": ["new consumers", "persistence", "response changes"],
+      "expected_evidence": "app_auth_06e followup summary",
+      "commit_boundary": "docs/evidence only",
+      "recommended": false
+    }
+  ],
+  "not_proposed": [
+    {"task_id": "APP-AUTH-07", "reason": "Interpretation does not prove enforcement readiness"},
+    {"task_id": "APP-AUTH-06B", "reason": "Not in scope; 06C is interpretation plan"}
+  ],
+  "recommended_next_task": "OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION"
+}

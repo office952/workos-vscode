@@ -1,0 +1,15 @@
+{
+  "task": "APP-AUTH-06F",
+  "aliases_reconciled": 7,
+  "matrix": [
+    {"canonical_operation": "assembly", "alias": "volumetric_letter_assembly", "source": "seed product_system_aliases + operational_catalog", "active": true, "conflict": false},
+    {"canonical_operation": "colantare", "alias": "vinyl_cutting", "source": "seed + operational_catalog", "active": true, "conflict": false},
+    {"canonical_operation": "montaj_led", "alias": "led_assembly", "source": "seed + operational_catalog", "active": true, "conflict": false},
+    {"canonical_operation": "montaj_led", "alias": "led_wiring", "source": "seed + operational_catalog", "active": true, "conflict": "SHARED_REGISTRY_OP_TWO_TASK_ALIASES"},
+    {"canonical_operation": "field_installation", "alias": "installation_prep", "source": "seed product_system_aliases", "active": true, "conflict": false},
+    {"canonical_operation": "packaging", "alias": "packaging_letters", "source": "seed product_system_aliases", "active": true, "conflict": false},
+    {"canonical_operation": "quality_control", "alias": "qc_letters", "source": "seed product_system_aliases", "active": true, "conflict": false}
+  ],
+  "parity_comparator_codes": "Uses registry operation_code after alias resolution in OperationalRegistryService",
+  "employee_mapping_codes": "operation_employee_authorizations.operation_code = registry code"
+}

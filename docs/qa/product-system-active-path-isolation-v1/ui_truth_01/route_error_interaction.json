@@ -1,0 +1,49 @@
+{
+  "task": "UI-TRUTH-01",
+  "route_error_interaction": {
+    "rule": "Global banner = aggregate platform state; route error = local route state; neither overrides the other",
+    "recommended_mechanism": "no_direct_interaction",
+    "evaluated_options": [
+      {
+        "option": "no_interaction",
+        "chosen": true,
+        "rationale": "Simplest honest model; banner from health poll, routes keep ErrorBoundary/network messages"
+      },
+      {
+        "option": "temporary_warning",
+        "chosen": false,
+        "rationale": "Requires centralized API tracker — scope creep"
+      },
+      {
+        "option": "last_request_failure_signal",
+        "chosen": false,
+        "rationale": "Conflates single route failure with platform health"
+      },
+      {
+        "option": "centralized_api_availability_tracker",
+        "chosen": false,
+        "rationale": "Deferred — document as future enhancement"
+      }
+    ],
+    "scenarios": [
+      {
+        "case": "global_health_ok_route_network_error",
+        "banner": "Backend disponibil (health ok)",
+        "route": "shows own Network Error",
+        "allowed": true,
+        "note": "Possible when route uses different path or transient failure; banner must not claim 'toate rutele ok'"
+      },
+      {
+        "case": "global_health_warning",
+        "banner": "Backend cu avertisment",
+        "route": "may still load or show partial errors"
+      },
+      {
+        "case": "diagnostics_inaccessible",
+        "banner": "DB necunoscută — no sensitive leak",
+        "route": "unaffected"
+      }
+    ],
+    "banner_copy_constraint": "Never say 'toate serviciile operaționale' — use aggregate backend language only"
+  }
+}

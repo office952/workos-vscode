@@ -1,0 +1,23 @@
+{
+  "task": "APP-AUTH-06F",
+  "snapshot_at": "2026-07-15",
+  "source": "read_only dev.db + app_auth_02 reconciliation",
+  "employee_id": 4,
+  "employee_ref": "E4_SANDU",
+  "display_name": "Putaru Sandu",
+  "role_label": "Lăcătuș / Montator",
+  "registry_competences": [
+    {"skill_code": "SK_PRINT_OPERATOR", "level": null, "evidence": null, "valid_from": null, "reviewer": null}
+  ],
+  "legacy_skills_json": ["SK_LOCKSMITH", "SK_ASSEMBLY", "SK_VINYL_APPLICATOR", "SK_ELECTRICIAN", "SK_FIELD_INSTALLER"],
+  "legacy_machines_json": ["MCH-WELD-STEEL", "MCH-WELD-ALU", "WA-WELD-TABLE", "WA-ASSEMBLY-01", "WA-ASSEMBLY-02"],
+  "registry_workcenters": ["WC_PRINT"],
+  "registry_resource_authorizations": ["MCH-EPSON-60800"],
+  "explicit_operation_mappings": [
+    "colantare", "assembly", "welding", "montaj_led", "quality_control", "packaging", "field_installation"
+  ],
+  "mapping_authorization_type": "explicit",
+  "competence_level_fields_populated": false,
+  "evidence_metadata_populated": false,
+  "note": "Registry shows print-only competence; legacy JSON and seed intent show production skills. Welding mapping exists in DB but is outside 7-op review gate."
+}

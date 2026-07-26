@@ -1,0 +1,154 @@
+{
+  "task": "UI-TRUTH-01",
+  "mappings": [
+    {
+      "current_text": "LIVE / DB",
+      "target_text": "Local · Backend disponibil · DB neverificată",
+      "condition": "auth authenticated, health ok, public checks empty, mock off, env local"
+    },
+    {
+      "current_text": "LIVE / DB",
+      "target_text": "Local · Backend cu avertisment · DB neverificată",
+      "condition": "auth authenticated, health warning, checks empty"
+    },
+    {
+      "current_text": "LIVE / DB",
+      "target_text": "Local · Backend indisponibil · DB necunoscută",
+      "condition": "health fetch failed or timeout"
+    },
+    {
+      "current_text": "LIVE / DB",
+      "target_text": "Local · Backend critic · DB necunoscută",
+      "condition": "health status fail"
+    },
+    {
+      "current_text": "Sursa de date: backend live",
+      "target_text": "Ultima verificare: {time} — stare agregată backend",
+      "condition": "replaces misleading datasource claim"
+    },
+    {
+      "current_text": "DEV / MOCK",
+      "target_text": "Mod demo · Date demonstrative",
+      "condition": "VITE_ENABLE_MOCK_DATA true"
+    },
+    {
+      "current_text": "DEV MOCK DATA — aceste date nu vin din API real",
+      "target_text": "Date demonstrative — nu reprezintă producție",
+      "condition": "mock mode detail line"
+    },
+    {
+      "current_text": "DEV / NO AUTH",
+      "target_text": "Sesiune neautentificată",
+      "condition": "unauthenticated without dev_auth_enabled"
+    },
+    {
+      "current_text": "Lipsă sesiune / autentificare necesară pentru API real",
+      "target_text": "Autentificare necesară pentru API protejat",
+      "condition": "session segment detail"
+    },
+    {
+      "current_text": "Auth demo",
+      "target_text": "Sesiune dev",
+      "condition": "dev_auth_enabled segment badge"
+    },
+    {
+      "current_text": "NECUNOSCUT",
+      "target_text": "Mediu necunoscut",
+      "condition": "environment resolution failed"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Sesiune expirată",
+      "condition": "auth refresh returns 401 after prior authenticated"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date confirmată",
+      "condition": "authorized diagnostics database status ok"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date necunoscută",
+      "condition": "public health only or diagnostics unauthorized"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Detalii disponibile doar utilizatorilor autorizați",
+      "condition": "diagnostics drill-down when 403"
+    },
+    {
+      "current_text": "MOD PRODUCȚIE — Sursa de date: backend live",
+      "target_text": "Staging · Backend disponibil · DB neverificată",
+      "condition": "version.environment staging — remove false producție claim in dev"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Se verifică",
+      "condition": "initial loading / backend checking — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Backend — stare necunoscută",
+      "condition": "backend state unknown — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Backend — stare învechită",
+      "condition": "stale health snapshot — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Detalii tehnice",
+      "condition": "secondary technical strip label — UI-TRUTH-01B G3=STRIP"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date cu avertisment",
+      "condition": "diagnostics/health database check warning — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date indisponibilă",
+      "condition": "diagnostics/health database check fail — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Reverifică starea",
+      "condition": "manual refresh action — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Stare învechită",
+      "condition": "stale snapshot badge — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Reîncearcă",
+      "condition": "retry after health failure — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Detalii stare sistem",
+      "condition": "runtime details drill-down — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "Detalii disponibile doar utilizatorilor autorizați",
+      "target_text": "Nu ai permisiune pentru diagnostice detaliate. Starea publică a backend-ului rămâne valabilă.",
+      "condition": "diagnostics 403 explanation — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "Live",
+      "target_text": "Date disponibile",
+      "condition": "Dashboard stats source db — not runtime health — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "N critical",
+      "target_text": "(hidden unless VITE_ENABLE_MOCK_DATA)",
+      "condition": "shell mock critical badge — UI-TRUTH-01C"
+    }
+  ],
+  "compact_format": "Mediu · Backend · DB — e.g. Local · Backend disponibil · DB neverificată",
+  "forbidden_labels": ["LIVE", "LIVE / DB", "DB connected", "backend live without health proof", "green-only meaning"],
+  "ui_truth_01b_note": "01B CORE uses these targets via RuntimeStatusSummary; public health empty checks → DB neverificată (not confirmed).",
+  "ui_truth_01c_note": "01C adds refresh/stale/retry/details + diagnostics 403 + Dashboard Live rename + hide mock critical."
+}

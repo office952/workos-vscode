@@ -1,0 +1,26 @@
+{
+  "task": "OWNER-DECISION-06",
+  "owns": [
+    "operation definitions",
+    "operation_code / process_type",
+    "skill requirements (not people)",
+    "machine/workcenter requirements",
+    "dependencies",
+    "parallelizable capability declaration (target)",
+    "progress_unit declaration (target)",
+    "collaboration_mode declaration (target)",
+    "optional minimum/recommended/max useful people when real"
+  ],
+  "forbidden": [
+    "employee_id",
+    "user_id",
+    "employee names",
+    "nominal teams",
+    "implicit assignee",
+    "concrete participant lists",
+    "availability",
+    "workload"
+  ],
+  "audit_confirmed": { "employee_ids": 0, "fixed_headcount": 0, "nominal_teams": 0 },
+  "owner_status": "CONFIRMED"
+}

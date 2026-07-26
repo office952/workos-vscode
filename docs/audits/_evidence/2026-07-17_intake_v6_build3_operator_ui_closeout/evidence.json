@@ -1,0 +1,352 @@
+{
+  "started_at": "2026-07-17T11:42:23.547Z",
+  "build": "BUILD3_OPERATOR_UI_CLOSEOUT",
+  "svg": {
+    "path": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
+    "size": 27173,
+    "hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+    "upload_method_required": "UI file input data-testid=intake-v6-svg-input"
+  },
+  "system_status": {
+    "landing": {
+      "presentation": "compact",
+      "in_topbar": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\01_runtime_status\\landing_compact.png",
+      "chip_text": "Stare sistem: necesită verificare",
+      "severity": "warning"
+    },
+    "details_accessible": true,
+    "control_center_link": true,
+    "control_center_text": "Deschide Control Center"
+  },
+  "scenarios": {
+    "full_product": {
+      "id": "full_product",
+      "folder": "02_full_product",
+      "errors": [],
+      "workspace_id": "b4502ac6-ce5e-4f96-b67f-5a3cb55388db",
+      "url": "http://127.0.0.1:3000/intake-v6/b4502ac6-ce5e-4f96-b67f-5a3cb55388db/operator",
+      "system_status": {
+        "presentation": "compact",
+        "severity": "warning",
+        "chip_text": "Stare sistem: necesită verificare",
+        "in_topbar": true,
+        "full_width_strip_absent": true
+      },
+      "review_scope_summary": "Scope ofertă\n\nMod: Produs complet\n\nComponente active: Față, Cant, Spate, Iluminare, Electrică\n\nToate componentele produsului sunt în scope.",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
+      "probes": {
+        "upload_method": "UI file input",
+        "file_name": "gradi-curat.svg",
+        "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+        "layers_count": 6,
+        "colors_count": null,
+        "contours": null,
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "offer_scope": null,
+        "consumable_keys": [
+          "adhesive_return_to_face",
+          "adhesive_led_modules",
+          "wire_letters_myyup_2x075",
+          "wire_supply_myyup_2x15",
+          "led_modules",
+          "led_total_watts",
+          "led_psu_160w",
+          "mounting_accessories_percent"
+        ],
+        "aggregate_materials": [
+          "MAT-ACP-FATA-LITERE",
+          "MAT-ORACAL-651",
+          "MAT-VINYL-PRINT",
+          "MAT-VINYL-PRINT-LAMINATED",
+          "MAT-PROFIL-LATERAL-LITERE",
+          "MAT-SPATE-PVC-LITERE",
+          "MAT-LED-MODULE",
+          "MAT-LED-PSU-12V",
+          "MAT-VOPSEA-RAL",
+          "MAT-SABLON-HARTIE",
+          "MAT-SABLON-MONTAJ",
+          "MAT-CONSUMABILE-MONTAJ",
+          "MAT-PROFIL-LATERAL-LITERE-30MM",
+          "MAT-PROFIL-LATERAL-LITERE-60MM",
+          "MAT-PROFIL-LATERAL-LITERE-80MM",
+          "MAT-PROFIL-LATERAL-LITERE-100MM",
+          "MAT-ORACAL-651",
+          "MAT-VOPSEA-RAL",
+          "MAT-ADEZIV-CANT-LITERE"
+        ],
+        "cpp_codes": [
+          "debitare_fata",
+          "modelare_cant_aluminiu",
+          "debitare_spate",
+          "sistem_led_module",
+          "sursa_led",
+          "finisaje_colantare_vopsire",
+          "sablon_montaj_forex",
+          "ambalare",
+          "logo_face_cnc::logo_instance_001",
+          "logo_return_cant::logo_instance_001",
+          "logo_back_cnc::logo_instance_001",
+          "logo_print::logo_instance_001",
+          "logo_laminate::logo_instance_001",
+          "logo_application::logo_instance_001",
+          "logo_led_modules::logo_instance_001",
+          "logo_face_cnc::logo_instance_002",
+          "logo_return_cant::logo_instance_002",
+          "logo_back_cnc::logo_instance_002",
+          "logo_print::logo_instance_002",
+          "logo_laminate::logo_instance_002",
+          "logo_application::logo_instance_002",
+          "logo_led_modules::logo_instance_002"
+        ],
+        "pd_ok": true,
+        "debitare_fata_qty": 20.9727
+      },
+      "isolation": {
+        "pass": true,
+        "hasAdhesiveMat": true,
+        "hasAdhesiveCons": true,
+        "hasFaceCpp": true,
+        "hasCantCpp": true
+      },
+      "upload_ok": true,
+      "verdict": "PASS"
+    },
+    "face_only": {
+      "id": "face_only",
+      "folder": "03_face_only",
+      "errors": [],
+      "workspace_id": "9e3743be-ee44-41c5-9d93-0cb5803c5ff3",
+      "url": "http://127.0.0.1:3000/intake-v6/9e3743be-ee44-41c5-9d93-0cb5803c5ff3/operator",
+      "system_status": {
+        "presentation": "compact",
+        "severity": "warning",
+        "chip_text": "Stare sistem: necesită verificare",
+        "in_topbar": true,
+        "full_width_strip_absent": true
+      },
+      "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față\n\nNu sunt incluse: Cant, Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
+      "probes": {
+        "upload_method": "UI file input",
+        "file_name": "gradi-curat.svg",
+        "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+        "layers_count": 6,
+        "colors_count": null,
+        "contours": null,
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "FACE"
+          ]
+        },
+        "consumable_keys": [],
+        "aggregate_materials": [
+          "MAT-ACP-FATA-LITERE",
+          "MAT-ORACAL-651",
+          "MAT-VINYL-PRINT",
+          "MAT-VINYL-PRINT-LAMINATED"
+        ],
+        "cpp_codes": [
+          "debitare_fata"
+        ],
+        "pd_ok": true,
+        "debitare_fata_qty": 20.9727
+      },
+      "isolation": {
+        "pass": true,
+        "hasAdhesiveMat": false,
+        "hasAdhesiveCons": false,
+        "hasFaceCpp": true,
+        "hasCantCpp": false
+      },
+      "upload_ok": true,
+      "verdict": "PASS"
+    },
+    "cant_only": {
+      "id": "cant_only",
+      "folder": "04_cant_only",
+      "errors": [],
+      "workspace_id": "ada11273-2f45-426b-822f-7e691c7e0bb3",
+      "url": "http://127.0.0.1:3000/intake-v6/ada11273-2f45-426b-822f-7e691c7e0bb3/operator",
+      "system_status": {
+        "presentation": "compact",
+        "severity": "warning",
+        "chip_text": "Stare sistem: necesită verificare",
+        "in_topbar": true,
+        "full_width_strip_absent": true
+      },
+      "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Cant\n\nNu sunt incluse: Față, Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
+      "probes": {
+        "upload_method": "UI file input",
+        "file_name": "gradi-curat.svg",
+        "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+        "layers_count": 6,
+        "colors_count": null,
+        "contours": null,
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "RETURN-CANT"
+          ]
+        },
+        "consumable_keys": [],
+        "aggregate_materials": [
+          "MAT-PROFIL-LATERAL-LITERE",
+          "MAT-PROFIL-LATERAL-LITERE-30MM",
+          "MAT-PROFIL-LATERAL-LITERE-60MM",
+          "MAT-PROFIL-LATERAL-LITERE-80MM",
+          "MAT-PROFIL-LATERAL-LITERE-100MM",
+          "MAT-ORACAL-651",
+          "MAT-VOPSEA-RAL"
+        ],
+        "cpp_codes": [
+          "modelare_cant_aluminiu"
+        ],
+        "pd_ok": true
+      },
+      "isolation": {
+        "pass": true,
+        "hasAdhesiveMat": false,
+        "hasAdhesiveCons": false,
+        "hasFaceCpp": false,
+        "hasCantCpp": true
+      },
+      "upload_ok": true,
+      "verdict": "PASS"
+    },
+    "face_cant": {
+      "id": "face_cant",
+      "folder": "05_face_cant",
+      "errors": [],
+      "workspace_id": "101b0cb3-96e2-48bb-9fd2-9fa13e1bc20d",
+      "url": "http://127.0.0.1:3000/intake-v6/101b0cb3-96e2-48bb-9fd2-9fa13e1bc20d/operator",
+      "system_status": {
+        "presentation": "compact",
+        "severity": "warning",
+        "chip_text": "Stare sistem: necesită verificare",
+        "in_topbar": true,
+        "full_width_strip_absent": true
+      },
+      "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față, Cant\n\nNu sunt incluse: Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
+      "probes": {
+        "upload_method": "UI file input",
+        "file_name": "gradi-curat.svg",
+        "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+        "layers_count": 6,
+        "colors_count": null,
+        "contours": null,
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "FACE",
+            "RETURN-CANT"
+          ]
+        },
+        "consumable_keys": [
+          "adhesive_return_to_face"
+        ],
+        "aggregate_materials": [
+          "MAT-ACP-FATA-LITERE",
+          "MAT-ORACAL-651",
+          "MAT-VINYL-PRINT",
+          "MAT-VINYL-PRINT-LAMINATED",
+          "MAT-PROFIL-LATERAL-LITERE",
+          "MAT-PROFIL-LATERAL-LITERE-30MM",
+          "MAT-PROFIL-LATERAL-LITERE-60MM",
+          "MAT-PROFIL-LATERAL-LITERE-80MM",
+          "MAT-PROFIL-LATERAL-LITERE-100MM",
+          "MAT-ORACAL-651",
+          "MAT-VOPSEA-RAL",
+          "MAT-ADEZIV-CANT-LITERE"
+        ],
+        "cpp_codes": [
+          "debitare_fata",
+          "modelare_cant_aluminiu"
+        ],
+        "pd_ok": true,
+        "debitare_fata_qty": 20.9727
+      },
+      "isolation": {
+        "pass": true,
+        "hasAdhesiveMat": true,
+        "hasAdhesiveCons": true,
+        "adhesiveCount": 1,
+        "adhesiveConsCount": 1,
+        "hasFaceCpp": true,
+        "hasCantCpp": true
+      },
+      "upload_ok": true,
+      "verdict": "PASS"
+    }
+  },
+  "responsive": [
+    {
+      "name": "desktop",
+      "w": 1440,
+      "h": 900,
+      "noHScroll": true,
+      "bannerInTopbar": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\desktop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "laptop",
+      "w": 1280,
+      "h": 800,
+      "noHScroll": true,
+      "bannerInTopbar": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\laptop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "small_laptop",
+      "w": 1024,
+      "h": 768,
+      "noHScroll": true,
+      "bannerInTopbar": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\small_laptop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "tablet",
+      "w": 768,
+      "h": 1024,
+      "noHScroll": true,
+      "bannerInTopbar": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\tablet.png",
+      "verdict": "PASS"
+    }
+  ],
+  "errors": [],
+  "verdict": "BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS",
+  "finished_at": "2026-07-17T11:45:11.366Z"
+}

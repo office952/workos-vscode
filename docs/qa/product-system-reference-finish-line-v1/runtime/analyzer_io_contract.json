@@ -1,0 +1,480 @@
+{
+  "contract_version": "workflow_adv_analyzer_io_contract_v1",
+  "boundary_ro": "Analyzer observ\u0103 \u0219i propune. Operatorul confirm\u0103. Workflow-ADV de\u021bine Product Definition \u0219i Product Truth. F\u0103r\u0103 calcul de pre\u021b \u00een Analyzer. F\u0103r\u0103 autoritate Product Truth \u00een Analyzer. WorkOS nu parseaz\u0103 SVG/DWG/DXF.",
+  "related_artwork_contract": "artwork_analysis_contract_v1",
+  "fields": [
+    {
+      "field_id": "document_id",
+      "cardinality": "mandatory",
+      "unit": null,
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": false,
+      "destination": [
+        "provenance"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "empty_document_id"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "file_id",
+      "cardinality": "mandatory",
+      "unit": null,
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": false,
+      "destination": [
+        "provenance"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "empty_file_id"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "file_type",
+      "cardinality": "mandatory",
+      "unit": null,
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": false,
+      "destination": [
+        "provenance"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "unit",
+      "cardinality": "mandatory",
+      "unit": "enum",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "quantity_compiler"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "unit_not_mm_without_conversion"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "width_mm",
+      "cardinality": "mandatory",
+      "unit": "mm",
+      "source": "observed",
+      "confidence_required": true,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [
+        "width_mm"
+      ],
+      "rejection_rules": [
+        "width_mm <= 0"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "height_mm",
+      "cardinality": "mandatory",
+      "unit": "mm",
+      "source": "observed",
+      "confidence_required": true,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [
+        "height_mm"
+      ],
+      "rejection_rules": [
+        "height_mm <= 0"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "bounding_box",
+      "cardinality": "optional",
+      "unit": "mm",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "filled_area_m2",
+      "cardinality": "mandatory",
+      "unit": "m2",
+      "source": "observed",
+      "confidence_required": true,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [
+        "letter_face_area_m2"
+      ],
+      "rejection_rules": [
+        "filled_area_m2 <= 0"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "total_perimeter_m",
+      "cardinality": "mandatory",
+      "unit": "m",
+      "source": "observed",
+      "confidence_required": true,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "product_truth",
+        "child_template_input",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2",
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "quantity_formula_usage": [
+        "letter_perimeter_m",
+        "return_profile_ml"
+      ],
+      "rejection_rules": [
+        "total_perimeter_m <= 0"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "cut_path_length_m",
+      "cardinality": "optional",
+      "unit": "m",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [
+        "cut_path_length_m"
+      ],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "element_count",
+      "cardinality": "mandatory",
+      "unit": "count",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [
+        "letter_count"
+      ],
+      "rejection_rules": [
+        "element_count < 1"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "closed_contour_count",
+      "cardinality": "optional",
+      "unit": "count",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "internal_hole_count",
+      "cardinality": "optional",
+      "unit": "count",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "quantity_compiler"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "group_count",
+      "cardinality": "optional",
+      "unit": "count",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "minimum_feature_mm",
+      "cardinality": "optional",
+      "unit": "mm",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "readiness"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "minimum_feature_mm below manufacturable threshold \u2192 warn"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "complexity_class",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "proposed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": "Propunere \u2014 nu scrie Product Truth."
+    },
+    {
+      "field_id": "suggested_groups",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "proposed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "auto_mix_by_layer_and_color_forbidden"
+      ],
+      "notes_ro": "Operator declar\u0103 by_layer sau by_color; Analyzer nu amestec\u0103 metode."
+    },
+    {
+      "field_id": "suggested_roles",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "proposed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition",
+        "child_template_input"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "suggested_material_mappings",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "proposed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "quantity_formula_usage": [],
+      "rejection_rules": [
+        "mapping_must_not_set_inventory_unit_cost"
+      ],
+      "notes_ro": null
+    },
+    {
+      "field_id": "confidence",
+      "cardinality": "optional",
+      "unit": "0..1",
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": false,
+      "destination": [
+        "provenance"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": null
+    },
+    {
+      "field_id": "observed_fields",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "observed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": "Bag\u0103 extensibil\u0103 \u2014 chei mapate la Form System field_id."
+    },
+    {
+      "field_id": "proposed_fields",
+      "cardinality": "optional",
+      "unit": null,
+      "source": "proposed",
+      "confidence_required": false,
+      "confirmation_required": true,
+      "destination": [
+        "product_definition"
+      ],
+      "consumer_templates": [],
+      "quantity_formula_usage": [],
+      "rejection_rules": [],
+      "notes_ro": "Propuneri \u2014 necesit\u0103 confirmare operator \u00eenainte de Product Truth."
+    }
+  ],
+  "example_payload": {
+    "contract_version": "workflow_adv_analyzer_io_contract_v1",
+    "document_id": "doc-demo-vl-001",
+    "file_id": "file-demo-svg-001",
+    "file_type": "svg",
+    "unit": "mm",
+    "width_mm": 1200.0,
+    "height_mm": 400.0,
+    "bounding_box": {
+      "x0": 0,
+      "y0": 0,
+      "x1": 1200,
+      "y1": 400
+    },
+    "filled_area_m2": 0.28,
+    "total_perimeter_m": 6.4,
+    "cut_path_length_m": 7.1,
+    "element_count": 5,
+    "closed_contour_count": 5,
+    "internal_hole_count": 2,
+    "group_count": 2,
+    "minimum_feature_mm": 2.5,
+    "complexity_class": "moderate",
+    "suggested_groups": [
+      {
+        "group_id": "g1",
+        "method": "by_layer",
+        "status": "proposed"
+      }
+    ],
+    "suggested_roles": [
+      {
+        "role": "FACE",
+        "entity_ids": [
+          "e1"
+        ],
+        "status": "proposed"
+      }
+    ],
+    "suggested_material_mappings": [],
+    "confidence": 0.86,
+    "observed_fields": {
+      "width_mm": 1200.0,
+      "height_mm": 400.0,
+      "letter_count": 5,
+      "letter_perimeter_m": 6.4,
+      "letter_face_area_m2": 0.28
+    },
+    "proposed_fields": {
+      "complexity_class": "moderate"
+    }
+  },
+  "do_not": [
+    "parse_svg_in_workos",
+    "write_product_truth_from_analyzer",
+    "calculate_price_in_analyzer",
+    "auto_confirm_proposals"
+  ]
+}

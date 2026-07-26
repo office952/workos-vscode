@@ -1,0 +1,617 @@
+{
+  "registry": [
+    {
+      "code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+      "label": "Componentă volumetrică aplicată",
+      "version": 1,
+      "status": "active",
+      "applicable_component_capabilities": [
+        "letter_vector_geometry",
+        "logo_vector_geometry"
+      ],
+      "allowed_geometry_roles": [
+        "LETTER_VECTOR_SET",
+        "LOGO_VECTOR_SET"
+      ],
+      "allowed_component_template_codes": [
+        "TPL-VOLUMETRIC-FACE_v1",
+        "TPL-VOLUMETRIC-LOGO_v1"
+      ],
+      "requires_local_module": false,
+      "allows_multiple_instances": true,
+      "ownership_mode": "external_component",
+      "local_configuration_status_default": "NOT_REQUIRED",
+      "provenance": {
+        "source": "OWNER_CONFIRMED_AUDIT_2026-07-18",
+        "registry_version": "acp_face_treatment/v1",
+        "notes": "Applied letters/logo remain separate component instances."
+      }
+    },
+    {
+      "code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+      "label": "Decupaj iluminat (plexiglas pe spate)",
+      "version": 1,
+      "status": "active",
+      "applicable_component_capabilities": [
+        "boxed_acp_shell",
+        "local_face_treatments"
+      ],
+      "allowed_geometry_roles": [
+        "CUTOUT_TEXT",
+        "CUTOUT_LOGO"
+      ],
+      "allowed_component_template_codes": [
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "requires_local_module": true,
+      "allows_multiple_instances": true,
+      "ownership_mode": "acp_shell_local",
+      "local_configuration_status_default": "NOT_CONFIGURED",
+      "provenance": {
+        "source": "OWNER_CONFIRMED_AUDIT_2026-07-18",
+        "registry_version": "acp_face_treatment/v1",
+        "notes": "Identity only in V1 — plexiglas/LED modules deferred."
+      }
+    },
+    {
+      "code": "FACE-TREATMENT-ACRYLIC-INSERT",
+      "label": "Insert plexiglas",
+      "version": 1,
+      "status": "active",
+      "applicable_component_capabilities": [
+        "boxed_acp_shell",
+        "local_face_treatments"
+      ],
+      "allowed_geometry_roles": [
+        "ACRYLIC_INSERT"
+      ],
+      "allowed_component_template_codes": [
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "requires_local_module": true,
+      "allows_multiple_instances": true,
+      "ownership_mode": "acp_shell_local",
+      "local_configuration_status_default": "NOT_CONFIGURED",
+      "provenance": {
+        "source": "OWNER_CONFIRMED_AUDIT_2026-07-18",
+        "registry_version": "acp_face_treatment/v1",
+        "notes": "Identity only in V1 — fit/retention/illumination deferred."
+      }
+    },
+    {
+      "code": "FACE-TREATMENT-PLAIN-DECORATIVE",
+      "label": "Zonă plină / decorativă",
+      "version": 1,
+      "status": "active",
+      "applicable_component_capabilities": [
+        "boxed_acp_shell",
+        "local_face_treatments"
+      ],
+      "allowed_geometry_roles": [
+        "DECORATIVE_VECTOR"
+      ],
+      "allowed_component_template_codes": [
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "requires_local_module": false,
+      "allows_multiple_instances": true,
+      "ownership_mode": "acp_shell_local",
+      "local_configuration_status_default": "NOT_REQUIRED",
+      "provenance": {
+        "source": "OWNER_CONFIRMED_AUDIT_2026-07-18",
+        "registry_version": "acp_face_treatment/v1"
+      }
+    }
+  ],
+  "geometry_roles": [
+    {
+      "code": "LETTER_VECTOR_SET",
+      "owner_label": "Vector litere"
+    },
+    {
+      "code": "LOGO_VECTOR_SET",
+      "owner_label": "Vector logo"
+    },
+    {
+      "code": "SUPPORT_CONTOUR",
+      "owner_label": "Contur suport"
+    },
+    {
+      "code": "DECORATIVE_VECTOR",
+      "owner_label": "Element decorativ"
+    },
+    {
+      "code": "IGNORE",
+      "owner_label": "Ignoră"
+    },
+    {
+      "code": "CUTOUT_TEXT",
+      "owner_label": "Text decupat"
+    },
+    {
+      "code": "CUTOUT_LOGO",
+      "owner_label": "Logo decupat"
+    },
+    {
+      "code": "ACRYLIC_INSERT",
+      "owner_label": "Insert plexiglas"
+    }
+  ],
+  "shell_authority": {
+    "live_shell_template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "capabilities": [
+      "boxed_acp_shell",
+      "local_face_treatments",
+      "panel_geometry",
+      "casing_configuration",
+      "service_corner",
+      "internal_frame"
+    ],
+    "accepted_geometry_roles": [
+      "SUPPORT_CONTOUR",
+      "CUTOUT_TEXT",
+      "CUTOUT_LOGO",
+      "ACRYLIC_INSERT",
+      "DECORATIVE_VECTOR"
+    ],
+    "accepted_face_treatment_codes": [
+      "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+      "FACE-TREATMENT-ACRYLIC-INSERT",
+      "FACE-TREATMENT-PLAIN-DECORATIVE"
+    ],
+    "support_contour_cardinality": "MAX_ONE",
+    "face_treatment_cardinality": "MULTI",
+    "global_face_mode": null,
+    "authority": "product_system_svg_component_binding_contract_v1"
+  },
+  "legacy_light_routed": {
+    "template_code": "TPL-ACP-LIGHT-ROUTED",
+    "status": "PARALLEL_LEGACY_COST_PATH",
+    "intake_v6_composition_authority": false,
+    "svg_bindable_authority": false,
+    "face_treatment_authority": false,
+    "live_shell_authority": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "consumers": [
+      "CostEngine / QuoteWizard hierarchical quote_input",
+      "seed_tpl_acp_light_routed / seed_sync_all",
+      "svg_layer_template_mapping label map",
+      "productsystem gate / registry linkage tests"
+    ],
+    "policy": "Keep seeded for parallel CostEngine path. Do not use as Intake V6 SVG binding or face-treatment authority. Do not auto-migrate into face modules without owner GO.",
+    "registry_version": "acp_face_treatment/v1"
+  },
+  "put_payload_sanitized": {
+    "svg_component_bindings": [
+      {
+        "binding_id": "bind_support_cc_shell",
+        "geometry_role": "SUPPORT_CONTOUR",
+        "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "selection_mode": "CLOSED_CONTOUR",
+        "selected_geometry": {
+          "layer_ids": [],
+          "group_ids": [],
+          "element_ids": [
+            "cc_shell"
+          ],
+          "geometry_hashes": [
+            "h_shell"
+          ],
+          "source_svg_hash": "svg_review_hash"
+        },
+        "configuration": {
+          "fold_count": 2,
+          "l1_mm": 60,
+          "l2_mm": 25
+        },
+        "status": "CONFIRMED"
+      },
+      {
+        "binding_id": "bind_letters_L1",
+        "geometry_role": "LETTER_VECTOR_SET",
+        "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+        "selection_mode": "LAYER_OR_GROUP",
+        "selected_geometry": {
+          "layer_ids": [
+            "layer_letters"
+          ],
+          "group_ids": [],
+          "element_ids": [],
+          "geometry_hashes": [],
+          "source_svg_hash": "svg_review_hash"
+        },
+        "configuration": {},
+        "status": "CONFIRMED",
+        "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT"
+      },
+      {
+        "binding_id": "bind_cutout_text_z1",
+        "geometry_role": "CUTOUT_TEXT",
+        "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "selection_mode": "LAYER_OR_GROUP",
+        "selected_geometry": {
+          "layer_ids": [
+            "layer_cutout"
+          ],
+          "group_ids": [],
+          "element_ids": [
+            "el_cutout"
+          ],
+          "geometry_hashes": [
+            "h_cut"
+          ],
+          "source_svg_hash": "svg_review_hash"
+        },
+        "configuration": {},
+        "status": "CONFIRMED",
+        "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+        "confirmation_status": "CONFIRMED"
+      },
+      {
+        "binding_id": "bind_insert_z2",
+        "geometry_role": "ACRYLIC_INSERT",
+        "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "selection_mode": "LAYER_OR_GROUP",
+        "selected_geometry": {
+          "layer_ids": [
+            "layer_insert"
+          ],
+          "group_ids": [],
+          "element_ids": [
+            "el_insert"
+          ],
+          "geometry_hashes": [
+            "h_ins"
+          ],
+          "source_svg_hash": "svg_review_hash"
+        },
+        "configuration": {},
+        "status": "CONFIRMED",
+        "face_treatment_code": "FACE-TREATMENT-ACRYLIC-INSERT",
+        "confirmation_status": "CONFIRMED"
+      }
+    ]
+  },
+  "normalized_bindings": [
+    {
+      "binding_id": "bind_support_cc_shell",
+      "geometry_role": "SUPPORT_CONTOUR",
+      "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "selection_mode": "CLOSED_CONTOUR",
+      "selected_geometry": {
+        "layer_ids": [],
+        "group_ids": [],
+        "element_ids": [
+          "cc_shell"
+        ],
+        "geometry_hashes": [
+          "h_shell"
+        ],
+        "source_svg_hash": "svg_review_hash"
+      },
+      "configuration": {
+        "fold_count": 2,
+        "l1_mm": 60,
+        "l2_mm": 25
+      },
+      "status": "CONFIRMED",
+      "schema": "svg_component_bindings_v1",
+      "local_zone_id": "zone_support_contour_0041f3772c50",
+      "provenance": {
+        "source": "operator",
+        "geometry_hash": "h_shell",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "face_treatment_code": "NOT_APPLICABLE",
+      "confirmation_status": "CONFIRMED",
+      "local_configuration_status": "NOT_APPLICABLE",
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    },
+    {
+      "binding_id": "bind_letters_L1",
+      "geometry_role": "LETTER_VECTOR_SET",
+      "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+      "selection_mode": "LAYER_OR_GROUP",
+      "selected_geometry": {
+        "layer_ids": [
+          "layer_letters"
+        ],
+        "group_ids": [],
+        "element_ids": [],
+        "geometry_hashes": [],
+        "source_svg_hash": "svg_review_hash"
+      },
+      "configuration": {},
+      "status": "CONFIRMED",
+      "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+      "schema": "svg_component_bindings_v1",
+      "local_zone_id": "zone_letter_vector_set_de5875dbff51",
+      "provenance": {
+        "source": "operator",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "confirmation_status": "CONFIRMED",
+      "local_configuration_status": "NOT_REQUIRED",
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    },
+    {
+      "binding_id": "bind_cutout_text_z1",
+      "geometry_role": "CUTOUT_TEXT",
+      "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "selection_mode": "LAYER_OR_GROUP",
+      "selected_geometry": {
+        "layer_ids": [
+          "layer_cutout"
+        ],
+        "group_ids": [],
+        "element_ids": [
+          "el_cutout"
+        ],
+        "geometry_hashes": [
+          "h_cut"
+        ],
+        "source_svg_hash": "svg_review_hash"
+      },
+      "configuration": {},
+      "status": "CONFIRMED",
+      "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+      "confirmation_status": "CONFIRMED",
+      "schema": "svg_component_bindings_v1",
+      "local_zone_id": "zone_cutout_text_7109116fbd21",
+      "provenance": {
+        "source": "operator",
+        "geometry_hash": "h_cut",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "local_configuration_status": "NOT_CONFIGURED",
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    },
+    {
+      "binding_id": "bind_insert_z2",
+      "geometry_role": "ACRYLIC_INSERT",
+      "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "selection_mode": "LAYER_OR_GROUP",
+      "selected_geometry": {
+        "layer_ids": [
+          "layer_insert"
+        ],
+        "group_ids": [],
+        "element_ids": [
+          "el_insert"
+        ],
+        "geometry_hashes": [
+          "h_ins"
+        ],
+        "source_svg_hash": "svg_review_hash"
+      },
+      "configuration": {},
+      "status": "CONFIRMED",
+      "face_treatment_code": "FACE-TREATMENT-ACRYLIC-INSERT",
+      "confirmation_status": "CONFIRMED",
+      "schema": "svg_component_bindings_v1",
+      "local_zone_id": "zone_acrylic_insert_2d52d328b601",
+      "provenance": {
+        "source": "operator",
+        "geometry_hash": "h_ins",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "local_configuration_status": "NOT_CONFIGURED",
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    }
+  ],
+  "stable_zones_order_a": {
+    "bind_support_cc_shell": "zone_support_contour_0041f3772c50",
+    "bind_letters_L1": "zone_letter_vector_set_de5875dbff51",
+    "bind_cutout_text_z1": "zone_cutout_text_7109116fbd21",
+    "bind_insert_z2": "zone_acrylic_insert_2d52d328b601"
+  },
+  "stable_zones_order_b": {
+    "bind_insert_z2": "zone_acrylic_insert_2d52d328b601",
+    "bind_cutout_text_z1": "zone_cutout_text_7109116fbd21",
+    "bind_letters_L1": "zone_letter_vector_set_de5875dbff51",
+    "bind_support_cc_shell": "zone_support_contour_0041f3772c50"
+  },
+  "zones_stable_across_order": true,
+  "svg_component_instances": [
+    {
+      "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "geometry_role": "SUPPORT_CONTOUR",
+      "selection_mode": "CLOSED_CONTOUR",
+      "selected_geometry_ids": [
+        "cc_shell"
+      ],
+      "geometry_hashes": [
+        "h_shell"
+      ],
+      "source_svg_hash": "svg_review_hash",
+      "configuration": {
+        "fold_count": 2,
+        "l1_mm": 60,
+        "l2_mm": 25
+      },
+      "status": "CONFIRMED",
+      "binding_id": "bind_support_cc_shell",
+      "local_zone_id": "zone_support_contour_0041f3772c50",
+      "face_treatment_code": "NOT_APPLICABLE",
+      "face_treatment_readiness": "NOT_APPLICABLE",
+      "confirmation_status": "CONFIRMED",
+      "provenance": {
+        "source": "operator",
+        "geometry_hash": "h_shell",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "face_treatment_instances": [
+        {
+          "instance_id": "bind_cutout_text_z1",
+          "zone_id": "zone_cutout_text_7109116fbd21",
+          "geometry_role": "CUTOUT_TEXT",
+          "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+          "source_geometry_ids": [
+            "el_cutout",
+            "layer_cutout"
+          ],
+          "confirmation_status": "CONFIRMED",
+          "local_configuration_status": "NOT_CONFIGURED",
+          "readiness": "LOCAL_CONFIGURATION_REQUIRED",
+          "provenance": {
+            "source": "operator",
+            "geometry_hash": "h_cut",
+            "svg_hash": "svg_review_hash",
+            "face_treatment_registry_version": "acp_face_treatment/v1"
+          },
+          "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+        },
+        {
+          "instance_id": "bind_insert_z2",
+          "zone_id": "zone_acrylic_insert_2d52d328b601",
+          "geometry_role": "ACRYLIC_INSERT",
+          "face_treatment_code": "FACE-TREATMENT-ACRYLIC-INSERT",
+          "source_geometry_ids": [
+            "el_insert",
+            "layer_insert"
+          ],
+          "confirmation_status": "CONFIRMED",
+          "local_configuration_status": "NOT_CONFIGURED",
+          "readiness": "LOCAL_CONFIGURATION_REQUIRED",
+          "provenance": {
+            "source": "operator",
+            "geometry_hash": "h_ins",
+            "svg_hash": "svg_review_hash",
+            "face_treatment_registry_version": "acp_face_treatment/v1"
+          },
+          "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+        }
+      ]
+    },
+    {
+      "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+      "geometry_role": "LETTER_VECTOR_SET",
+      "selection_mode": "LAYER_OR_GROUP",
+      "selected_geometry_ids": [
+        "layer_letters"
+      ],
+      "geometry_hashes": [],
+      "source_svg_hash": "svg_review_hash",
+      "configuration": {},
+      "status": "CONFIRMED",
+      "binding_id": "bind_letters_L1",
+      "local_zone_id": "zone_letter_vector_set_de5875dbff51",
+      "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+      "face_treatment_readiness": "READY_FOR_AGGREGATION",
+      "confirmation_status": "CONFIRMED",
+      "provenance": {
+        "source": "operator",
+        "svg_hash": "svg_review_hash",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "legacy_layer_role": "face",
+      "face_treatment_instances": [
+        {
+          "instance_id": "bind_letters_L1",
+          "zone_id": "zone_letter_vector_set_de5875dbff51",
+          "geometry_role": "LETTER_VECTOR_SET",
+          "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+          "source_geometry_ids": [
+            "layer_letters"
+          ],
+          "confirmation_status": "CONFIRMED",
+          "local_configuration_status": "NOT_REQUIRED",
+          "readiness": "READY_FOR_AGGREGATION",
+          "provenance": {
+            "source": "operator",
+            "svg_hash": "svg_review_hash",
+            "face_treatment_registry_version": "acp_face_treatment/v1"
+          },
+          "component_template_code": "TPL-VOLUMETRIC-FACE_v1"
+        }
+      ]
+    }
+  ],
+  "face_treatment_readiness": {
+    "schema": "face_treatment_readiness_v1",
+    "registry_version": "acp_face_treatment/v1",
+    "items": [
+      {
+        "binding_id": "bind_letters_L1",
+        "local_zone_id": "zone_letter_vector_set_de5875dbff51",
+        "geometry_role": "LETTER_VECTOR_SET",
+        "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+        "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+        "readiness": "READY_FOR_AGGREGATION",
+        "local_configuration_status": "NOT_REQUIRED"
+      },
+      {
+        "binding_id": "bind_cutout_text_z1",
+        "local_zone_id": "zone_cutout_text_7109116fbd21",
+        "geometry_role": "CUTOUT_TEXT",
+        "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+        "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "readiness": "LOCAL_CONFIGURATION_REQUIRED",
+        "local_configuration_status": "NOT_CONFIGURED"
+      },
+      {
+        "binding_id": "bind_insert_z2",
+        "local_zone_id": "zone_acrylic_insert_2d52d328b601",
+        "geometry_role": "ACRYLIC_INSERT",
+        "face_treatment_code": "FACE-TREATMENT-ACRYLIC-INSERT",
+        "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "readiness": "LOCAL_CONFIGURATION_REQUIRED",
+        "local_configuration_status": "NOT_CONFIGURED"
+      }
+    ],
+    "warnings": [
+      {
+        "code": "FACE_TREATMENT_LOCAL_MODULE_REQUIRED",
+        "message": "Treatment FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT confirmed; technical local module not configured yet (V1 foundation).",
+        "binding_id": "bind_cutout_text_z1",
+        "local_zone_id": "zone_cutout_text_7109116fbd21"
+      },
+      {
+        "code": "FACE_TREATMENT_LOCAL_MODULE_REQUIRED",
+        "message": "Treatment FACE-TREATMENT-ACRYLIC-INSERT confirmed; technical local module not configured yet (V1 foundation).",
+        "binding_id": "bind_insert_z2",
+        "local_zone_id": "zone_acrylic_insert_2d52d328b601"
+      }
+    ],
+    "legacy_light_routed": {
+      "template_code": "TPL-ACP-LIGHT-ROUTED",
+      "status": "PARALLEL_LEGACY_COST_PATH",
+      "intake_v6_composition_authority": false,
+      "svg_bindable_authority": false,
+      "face_treatment_authority": false,
+      "live_shell_authority": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "consumers": [
+        "CostEngine / QuoteWizard hierarchical quote_input",
+        "seed_tpl_acp_light_routed / seed_sync_all",
+        "svg_layer_template_mapping label map",
+        "productsystem gate / registry linkage tests"
+      ],
+      "policy": "Keep seeded for parallel CostEngine path. Do not use as Intake V6 SVG binding or face-treatment authority. Do not auto-migrate into face modules without owner GO.",
+      "registry_version": "acp_face_treatment/v1"
+    },
+    "shell_template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+  },
+  "inactive_isolation": {
+    "warnings": [],
+    "items": [
+      {
+        "binding_id": "bind_cutout_text_z1",
+        "local_zone_id": "zone_cutout_text_7109116fbd21",
+        "geometry_role": "CUTOUT_TEXT",
+        "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+        "readiness": "INACTIVE"
+      }
+    ]
+  },
+  "legacy_without_treatment": {
+    "face_treatment_code": "NOT_APPLICABLE",
+    "readiness": "NOT_APPLICABLE"
+  },
+  "unknown_treatment_blockers": [
+    "Unknown face_treatment_code: FACE-TREATMENT-FAKE"
+  ]
+}

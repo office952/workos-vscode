@@ -1,0 +1,24 @@
+{
+  "task": "OWNER-DECISION-06",
+  "recommended_next": "PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN",
+  "rationale": "Contract confirmed; next step is architecture plan not code",
+  "alternatives": {
+    "PROD-FLEX-INT-02_RUNTIME_PROBE": "not required — audit sufficient",
+    "APP-AUTH-06G_SANDU": "paused until arch plan + explicit GO",
+    "OWNER_DECISION_REQUIRED": "not needed — all material decisions confirmed"
+  },
+  "arch_plan_must_cover": [
+    "boundary layers",
+    "minimal models",
+    "endpoints",
+    "assigned_employee_id compatibility",
+    "principal/helper roles",
+    "help request lifecycle",
+    "session semantics",
+    "progress semantics",
+    "mobile/operator sequences",
+    "phased rollout",
+    "D6 debt remediation path"
+  ],
+  "owner_status": "CONFIRMED"
+}

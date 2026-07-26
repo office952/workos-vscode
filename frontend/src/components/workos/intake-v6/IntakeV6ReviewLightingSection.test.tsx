@@ -1,14 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import IntakeV6ReviewLightingSection from "./IntakeV6ReviewLightingSection";
 
 const option = (value: string, label = value) => ({ value, label });
 
-function renderLightingSection() {
+function renderLightingSection(overrides: Partial<Parameters<typeof IntakeV6ReviewLightingSection>[0]> = {}) {
+  const onIlluminatedChange = vi.fn();
   render(
     <IntakeV6ReviewLightingSection
       illuminated
-      onIlluminatedChange={vi.fn()}
+      onIlluminatedChange={onIlluminatedChange}
       lightingSystemType="led_modules"
       onLightingSystemTypeChange={vi.fn()}
       lightColor="neutral"
@@ -35,27 +36,94 @@ function renderLightingSection() {
       psuLabel="100W"
       psuAllocationStatus="ok"
       psuReservePercent={20}
+      selectedPsuWatts={100}
+      onSelectedPsuChange={vi.fn()}
+      allowedPsuWatts={[60, 100, 160]}
+      showLightingFields
+      showElectricalFields
       allowedLightingSystems={[option("led_modules", "Module LED")]}
       allowedLightColors={[option("neutral", "Neutral white")]}
       allowedLedModulePowerW={[option("0.75", "0.75 W / modul")]}
       allowedEmblemLightingModes={[option("area_lit", "Emblema luminoasa")]}
+      {...overrides}
     />,
   );
+  return { onIlluminatedChange };
 }
 
-describe("IntakeV6ReviewLightingSection component question labels", () => {
-  it("renders electrical ownership and owner-approved cable defaults as display labels", () => {
+describe("IntakeV6ReviewLightingSection", () => {
+  it("renders PSU selector in Electrica subsection", () => {
     renderLightingSection();
+    expect(screen.getByTestId("intake-v6-electrical-subsection")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-selected-psu-watts")).toBeInTheDocument();
+  });
 
-    const badges = screen.getByTestId("intake-v6-electrical-component-badges");
-    expect(badges).toHaveTextContent("Component: Electrical");
-    expect(badges).toHaveTextContent("Product Truth candidate");
-    expect(badges).toHaveTextContent("Included defaults: 1 m 2x0.75 + 5 m 2x1.5");
-    expect(badges).toHaveTextContent("Commercial default: 1 m cable 2x0.75 for letters");
-    expect(badges).toHaveTextContent("Commercial default: 5 m cable 2x1.5 final feed");
-    expect(badges).toHaveTextContent("Extra cables/site details: order/execution");
-    expect(badges).toHaveTextContent("Quote blocker conditional for special electrical/site scope");
-    expect(badges).toHaveTextContent("Missing UI gap: cable routing and PSU placement");
-    expect(badges).not.toHaveTextContent(/hour|minute|ora|oră|minut/i);
+  it("keeps LED master editable when LIGHTING is sold", () => {
+    renderLightingSection({ showLightingFields: true, showElectricalFields: false });
+    const master = screen.getByTestId("intake-v6-illuminated");
+    expect(master).toBeInTheDocument();
+    expect(master).not.toBeDisabled();
+  });
+
+  it("hides editable LED master when only ELECTRICAL scope is sold", () => {
+    renderLightingSection({ showLightingFields: false, showElectricalFields: true, illuminated: true });
+    expect(screen.queryByTestId("intake-v6-illuminated")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-led-master-readonly")).toBeInTheDocument();
+  });
+
+  it("shows electrical controls for ELECTRICAL-only even when illuminated is false", () => {
+    renderLightingSection({ showLightingFields: false, showElectricalFields: true, illuminated: false });
+    expect(screen.getByTestId("intake-v6-electrical-subsection")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-lighting-subsection")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-led-calc-readout")).not.toBeInTheDocument();
+  });
+
+  it("does not invoke onIlluminatedChange when master is hidden", () => {
+    const { onIlluminatedChange } = renderLightingSection({
+      showLightingFields: false,
+      showElectricalFields: true,
+    });
+    expect(screen.queryByTestId("intake-v6-illuminated")).not.toBeInTheDocument();
+    expect(onIlluminatedChange).not.toHaveBeenCalled();
+  });
+
+  it("allows LED master changes when LIGHTING is sold", () => {
+    const { onIlluminatedChange } = renderLightingSection({
+      showLightingFields: true,
+      showElectricalFields: true,
+      illuminated: true,
+    });
+    fireEvent.click(screen.getByTestId("intake-v6-illuminated"));
+    expect(onIlluminatedChange).toHaveBeenCalled();
+  });
+
+  it("hides lighting fields when only electrical scope is sold", () => {
+    renderLightingSection({ showLightingFields: false, showElectricalFields: true });
+    expect(screen.queryByTestId("intake-v6-lighting-subsection")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-selected-psu-watts")).toBeInTheDocument();
+  });
+
+  it("hides electrical fields when only lighting scope is sold", () => {
+    renderLightingSection({ showLightingFields: true, showElectricalFields: false });
+    expect(screen.getByTestId("intake-v6-lighting-subsection")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-electrical-subsection")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-selected-psu-watts")).not.toBeInTheDocument();
+  });
+
+  it("shows both subsections for SYSTEM_LED-style combined scope when illuminated", () => {
+    renderLightingSection({ showLightingFields: true, showElectricalFields: true, illuminated: true });
+    expect(screen.getByTestId("intake-v6-lighting-subsection")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-electrical-subsection")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-illuminated")).toBeInTheDocument();
+  });
+
+  it("preserves read-only context without forcing illuminated off for ELECTRICAL-only", () => {
+    renderLightingSection({
+      showLightingFields: false,
+      showElectricalFields: true,
+      illuminated: true,
+    });
+    expect(screen.getByTestId("intake-v6-led-master-readonly")).toHaveTextContent(/neinclusă/i);
+    expect(screen.queryByTestId("intake-v6-illuminated")).not.toBeInTheDocument();
   });
 });

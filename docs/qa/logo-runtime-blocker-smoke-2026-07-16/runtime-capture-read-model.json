@@ -1,0 +1,45 @@
+﻿{
+    "read_only":  true,
+    "workspace_id":  "logo-runtime-blocker-smoke-2026-07-16",
+    "workspace_record_id":  "logo-runtime-blocker-smoke-2026-07-16",
+    "workspace_code":  "IV6-LOGO-RT-BLOCKER-SMOKE",
+    "root_template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+    "product_binding_template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+    "read_model_version":  "v1",
+    "fields":  [
+
+               ],
+    "blockers":  [
+                     {
+                         "field_key":  "root",
+                         "blockers":  [
+                                          "LOGO_NOT_OFFERABLE"
+                                      ],
+                         "state":  "blocked",
+                         "blocker_code":  "LOGO_NOT_OFFERABLE",
+                         "message":  "TPL-VOLUMETRIC-LOGO_v1 remains candidate-only and is not Work Intake offerable.",
+                         "severity":  "blocked",
+                         "blocks":  [
+                                        "quote_preview",
+                                        "priced_quote",
+                                        "order_snapshot",
+                                        "product_definition"
+                                    ]
+                     }
+                 ],
+    "downstream_write_intent":  {
+                                    "pricing_write":  false,
+                                    "quote_write":  false,
+                                    "order_write":  false,
+                                    "product_definition_write":  false,
+                                    "product_aggregate_write":  false,
+                                    "task_graph_write":  false,
+                                    "execution_runtime_write":  false,
+                                    "inventory_movement":  false,
+                                    "db_write":  false
+                                },
+    "notes":  [
+                  "Fail-closed runtime capture read model response.",
+                  "No Product Truth, Pricing, Quote, Order, Execution, ProductAggregate, TaskGraph, or DB write behavior is invoked."
+              ]
+}

@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.product_blueprint_dossier import ProductBlueprintDossier
@@ -29,16 +29,22 @@ from schemas.product_aggregate import (
     ProductAggregateTaskContract,
     ProductAggregateTaskRule,
 )
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
 from services.mini_module_registry_service import get_mini_module_registry_service
+from services.template_architecture_scope import normalize_template_code, resolve_template_identity
 
 logger = logging.getLogger(__name__)
 
 TEMPLATE_NOT_FOUND = "template_not_found"
 
 # Dossier component_id → mini-module code (volumetric letters v2)
+# pricing stub + canonical BOM id both map to modelare_cant (explicit alias; no double count)
 DOSSIER_COMPONENT_MINI_MODULE: dict[str, str] = {
     "comp_face_litere": "debitare_fata",
     "comp_lateral_litere": "modelare_cant",
+    "comp_volum_aluminiu_module": "modelare_cant",
     "comp_spate_litere": "debitare_spate",
     "comp_led_litere": "sistem_led",
     "comp_finisaj_litere": "finisaje",
@@ -46,8 +52,15 @@ DOSSIER_COMPONENT_MINI_MODULE: dict[str, str] = {
 
 # Child template → mini-module code
 CHILD_TEMPLATE_MINI_MODULE: dict[str, str] = {
+    "TPL-VOLUMETRIC-FACE_v1": "debitare_fata",
+    "TPL-VOLUMETRIC-BACK_v1": "debitare_spate",
     "TPL-VOLUM-ALUMINIU_v1": "modelare_cant",
+    "TPL-VOLUMETRIC-LED_v1": "sistem_led",
+    "TPL-VOLUMETRIC-FINISH_v1": "finisaje",
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": "structura_suport",
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "structura_suport",
+    # ACM boxed composition Decision A — logo pack under ACM root (candidate-blocked).
+    "TPL-VOLUMETRIC-LOGO_v1": "applied_logo_pack",
 }
 
 # Known trigger field mismatches (documented OPEN QUESTION in contract)
@@ -75,11 +88,21 @@ def _operation_code(row: dict[str, Any]) -> str | None:
     return str(code) if code else None
 
 
+def _optional_float(raw: Any) -> float | None:
+    if raw is None or raw == "":
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
 def _dedupe_materials(items: list[ProductAggregateMaterial]) -> list[ProductAggregateMaterial]:
     seen: set[str] = set()
     out: list[ProductAggregateMaterial] = []
     for item in items:
-        key = f"{item.material_code}|{item.source_template_code}|{item.provenance}"
+        component_ref = str(item.component_ref or "").strip()
+        key = f"{item.material_code}|{item.source_template_code}|{component_ref}|{item.provenance}"
         if key in seen:
             continue
         seen.add(key)
@@ -91,7 +114,8 @@ def _dedupe_operations(items: list[ProductAggregateOperation]) -> list[ProductAg
     seen: set[str] = set()
     out: list[ProductAggregateOperation] = []
     for item in items:
-        key = f"{item.operation_code}|{item.source_template_code}|{item.provenance}"
+        component_ref = str(item.component_ref or "").strip()
+        key = f"{item.operation_code}|{item.source_template_code}|{component_ref}|{item.provenance}"
         if key in seen:
             continue
         seen.add(key)
@@ -105,12 +129,20 @@ class ProductAggregateService:
     def __init__(self, db: AsyncSession) -> None:
         self._db = db
 
-    async def build(self, template_code: str) -> ProductAggregate | None:
+    async def build(
+        self,
+        template_code: str,
+        *,
+        process_bridge_payload: dict[str, Any] | None = None,
+    ) -> ProductAggregate | None:
+        """Compile ProductAggregate. Volumetric v2 overlays modular process resolver (task_contract)."""
+        identity = resolve_template_identity(template_code)
         template = await self._load_template(template_code)
         if template is None:
             return None
 
         dossier = await self._load_dossier(template.id)
+        canonical = get_canonical_template_contract_service()
         links = await self._load_module_links(template.id)
         child_templates = await self._load_child_templates(links)
 
@@ -121,31 +153,22 @@ class ProductAggregateService:
         conflicts: list[ProductAggregateConflict] = []
         warnings: list[ProductAggregateConflict] = []
 
-        dossier_sections = {}
-        dossier_mapping: dict[str, Any] = {}
-        dossier_task_rules: list[dict[str, Any]] = []
-        if dossier:
-            dossier_sections = _json_loads(dossier.sections_json, {})
-            dossier_mapping = _json_loads(dossier.costengine_mapping_json, {})
-            task_payload = _json_loads(dossier.task_rules_json, {})
-            dossier_task_rules = task_payload.get("rules") or task_payload.get("tasks") or []
-
-        components = self._build_dossier_components(
-            dossier_sections,
+        components = self._build_template_components(
+            parent_components,
             template.template_code,
         )
         parent_direct_count = len(parent_components) if isinstance(parent_components, list) else 0
 
-        if parent_direct_count == 0 and components:
+        if parent_direct_count == 0:
             warnings.append(
                 ProductAggregateConflict(
                     code="PARENT_COMPONENTS_EMPTY",
                     severity="warning",
                     message=(
                         "Parent template has no direct components (components_json=[]); "
-                        "aggregate uses dossier and linked modules as authoritative structure."
+                        "aggregate uses linked modules only — dossier is not a behavior source."
                     ),
-                    details={"parent_components_count": 0, "dossier_components_count": len(components)},
+                    details={"parent_components_count": 0},
                 )
             )
 
@@ -169,28 +192,18 @@ class ProductAggregateService:
             )
         )
 
-        for mat_code in dossier_mapping.get("material_keys") or []:
-            materials.append(
-                ProductAggregateMaterial(
-                    material_code=str(mat_code),
-                    provenance="dossier",
-                    source_template_code=template.template_code,
-                    status="mapping_only",
-                )
-            )
-
-        for op_code in dossier_mapping.get("operation_keys") or []:
-            operations.append(
-                ProductAggregateOperation(
-                    operation_code=str(op_code),
-                    provenance="dossier",
-                    source_template_code=template.template_code,
-                    priced=True,
-                    status="mapping_only",
-                )
-            )
+        # ACM Decision A: applied_content XOR children are composition intent only.
+        # Do not fold letter/logo BOM into the panel aggregate (avoids double-count).
+        # Modules list still exposes the optional edges for authoring/readiness.
+        applied_content_child_codes = {
+            link.module_template_code
+            for link in links
+            if (link.trigger_field or "").strip() == "applied_content"
+        }
 
         for child_code, child_row in child_templates.items():
+            if child_code in applied_content_child_codes:
+                continue
             mini = CHILD_TEMPLATE_MINI_MODULE.get(child_code)
             child_mats = _json_loads(child_row.required_materials_json, [])
             child_ops = _json_loads(child_row.operations_json, [])
@@ -214,12 +227,16 @@ class ProductAggregateService:
         materials = _dedupe_materials(materials)
         operations = _dedupe_operations(operations)
 
-        form_contract = self._build_form_contract(dossier_mapping)
-        cost_contract = self._build_cost_contract(dossier_mapping, materials, operations)
+        if canonical.has_canonical_contract(template.template_code):
+            required_keys, optional_keys = canonical.get_form_contract_keys(template.template_code)
+            form_contract = self._build_form_contract_from_canonical(required_keys, optional_keys)
+        else:
+            form_contract = self._build_form_contract({})
+        cost_contract = self._build_cost_contract({}, materials, operations)
+        dossier_task_rules = self._extract_dossier_task_rules(dossier)
         task_contract = self._build_task_contract(dossier_task_rules)
 
-        identity = dossier_sections.get("template_identity") or {}
-        business_name = identity.get("family_name") or template.family_name
+        business_name = template.family_name
 
         provenance_summary = ProductAggregateProvenanceSummary(
             parent={
@@ -228,9 +245,9 @@ class ProductAggregateService:
                 "materials": len(parent_materials) if isinstance(parent_materials, list) else 0,
             },
             dossier={
-                "components": len(components),
-                "material_keys": len(dossier_mapping.get("material_keys") or []),
-                "operation_keys": len(dossier_mapping.get("operation_keys") or []),
+                "components": 0,
+                "material_keys": 0,
+                "operation_keys": 0,
                 "task_rules": len(dossier_task_rules),
             },
             linked_modules={
@@ -254,11 +271,57 @@ class ProductAggregateService:
                     details={"template_id": template.id},
                 )
             )
+        else:
+            warnings.append(
+                ProductAggregateConflict(
+                    code="DOSSIER_METADATA_ONLY",
+                    severity="info",
+                    message=(
+                        "Blueprint dossier is metadata for BOM/ops; "
+                        "task_rules_json is consumed into task_contract for ExecutionPlan V2."
+                    ),
+                    details={
+                        "template_id": template.id,
+                        "dossier_id": dossier.id,
+                        "dossier_status": dossier.status,
+                        "task_rules_count": len(dossier_task_rules),
+                        "authority": "canonical_template_contract"
+                        if canonical.has_canonical_contract(template.template_code)
+                        else "parent_template",
+                    },
+                )
+            )
+        if canonical.has_canonical_contract(template.template_code):
+            warnings.append(
+                ProductAggregateConflict(
+                    code="CANONICAL_CONTRACT_AUTHORITY",
+                    severity="info",
+                    message="ProductAggregate compiled from canonical template/component contracts.",
+                    details={"template_code": template.template_code},
+                )
+            )
+
+        # Bounded traceability: requested → canonical identity (no payloads).
+        if identity.requested_template_code and identity.canonical_template_code:
+            warnings.append(
+                ProductAggregateConflict(
+                    code="TEMPLATE_IDENTITY",
+                    severity="info",
+                    message="Template identity resolution trace.",
+                    details={
+                        "requested_template_code": identity.requested_template_code,
+                        "canonical_template_code": identity.canonical_template_code,
+                        "resolution_type": identity.resolution_type,
+                        "legacy_alias_used": identity.legacy_alias_used,
+                        "resolution_source": identity.resolution_source,
+                    },
+                )
+            )
 
         registry_service = get_mini_module_registry_service()
         registry_refs = registry_service.get_refs_for_template(template.template_code)
 
-        return ProductAggregate(
+        aggregate = ProductAggregate(
             aggregate_version=AGGREGATE_VERSION,
             template_code=template.template_code,
             template_id=template.id,
@@ -283,11 +346,35 @@ class ProductAggregateService:
                 ],
             ),
         )
+        # Live bridge: modular process resolver replaces dossier task_rules for pilot template only.
+        from services.product_process_aggregate_bridge import apply_modular_process_graph_to_aggregate
+
+        pd_canonical: dict[str, Any] | None = None
+        if isinstance(process_bridge_payload, dict):
+            raw_pd = process_bridge_payload.get("product_definition_canonical_values")
+            if isinstance(raw_pd, dict):
+                pd_canonical = raw_pd
+
+        return apply_modular_process_graph_to_aggregate(
+            aggregate,
+            workspace_payload=process_bridge_payload,
+            product_definition_canonical_values=pd_canonical,
+        )
+
+    async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:
+        from services.product_aggregate_workspace_composition_service import build_workspace_composed_aggregate
+
+        return await build_workspace_composed_aggregate(
+            self._db,
+            template_code=template_code,
+            workspace_id=workspace_id,
+        )
 
     async def _load_template(self, template_code: str) -> Product_templates | None:
+        normalized = normalize_template_code(template_code)
         result = await self._db.execute(
             select(Product_templates)
-            .where(Product_templates.template_code == template_code)
+            .where(func.upper(Product_templates.template_code) == normalized)
             .order_by(Product_templates.id.asc())
             .limit(1)
         )
@@ -322,33 +409,49 @@ class ProductAggregateService:
         rows = list(result.scalars().all())
         return {row.template_code: row for row in rows}
 
-    def _build_dossier_components(
+    def _build_template_components(
         self,
-        sections: dict[str, Any],
+        parent_components: Any,
         source_template_code: str,
     ) -> list[ProductAggregateComponent]:
-        raw = sections.get("components") or []
-        if not isinstance(raw, list):
-            return []
-        out: list[ProductAggregateComponent] = []
-        for entry in raw:
-            if not isinstance(entry, dict):
-                continue
-            comp_id = str(entry.get("id") or entry.get("component_id") or "")
-            if not comp_id:
-                continue
-            out.append(
-                ProductAggregateComponent(
-                    component_id=comp_id,
-                    label_ro=entry.get("label"),
-                    role=entry.get("role"),
-                    mini_module_code=DOSSIER_COMPONENT_MINI_MODULE.get(comp_id),
-                    provenance="dossier",
-                    source_template_code=source_template_code,
-                    status="present",
-                )
+        canonical = get_canonical_template_contract_service()
+        rows = canonical.build_components_from_template_rows(
+            parent_components,
+            source_template_code=source_template_code,
+        )
+        return [
+            ProductAggregateComponent(
+                component_id=row["component_id"],
+                label_ro=row.get("label_ro"),
+                role=row.get("role"),
+                mini_module_code=row.get("mini_module_code"),
+                provenance="parent",
+                source_template_code=source_template_code,
+                status="present",
             )
-        return out
+            for row in rows
+        ]
+
+    def _build_form_contract_from_canonical(
+        self,
+        required: list[str],
+        optional: list[str],
+    ) -> ProductAggregateFormContract:
+        geometry_keys = {"width_mm", "height_mm", "depth_mm", "letter_count", "vector_file"}
+        form_fields = [
+            ProductAggregateFormField(
+                canonical_key=key,
+                workspace_path=f"finish_setup.{key}" if key not in geometry_keys else None,
+                required=True,
+                provenance="parent",
+            )
+            for key in required
+        ]
+        return ProductAggregateFormContract(
+            required_quote_input_keys=required,
+            optional_quote_input_keys=optional,
+            form_fields=form_fields,
+        )
 
     def _build_modules(
         self,
@@ -458,6 +561,12 @@ class ProductAggregateService:
                 continue
             formula_params = row.get("formula_params") or {}
             non_priced = bool(formula_params.get("non_priced"))
+            estimated_minutes = _optional_float(
+                row.get("estimated_minutes", row.get("estimatedMinutes"))
+            )
+            calculation_type = row.get("calculation_type") or row.get("calculationType")
+            if calculation_type is not None:
+                calculation_type = str(calculation_type).strip() or None
             out.append(
                 ProductAggregateOperation(
                     operation_code=code,
@@ -466,6 +575,8 @@ class ProductAggregateService:
                     component_ref=row.get("component_ref"),
                     formula_id=row.get("formula_id"),
                     priced=not non_priced,
+                    estimated_minutes=estimated_minutes,
+                    calculation_type=calculation_type,
                     provenance=provenance,  # type: ignore[arg-type]
                     source_template_code=source_template_code,
                     mini_module_code=mini_module_code,
@@ -483,7 +594,7 @@ class ProductAggregateService:
                 canonical_key=key,
                 workspace_path=f"finish_setup.{key}" if key not in {"width_mm", "height_mm", "depth_mm", "letter_count", "vector_file"} else None,
                 required=True,
-                provenance="dossier",
+                provenance="parent",
             )
             for key in required
         ]
@@ -524,6 +635,30 @@ class ProductAggregateService:
             notes=notes,
         )
 
+    def _extract_dossier_task_rules(
+        self, dossier: ProductBlueprintDossier | None
+    ) -> list[dict[str, Any]]:
+        """Load dossier task_rules_json for ExecutionPlan V2 (bounded dossier consume)."""
+        if dossier is None:
+            return []
+        raw = getattr(dossier, "task_rules_json", None)
+        if raw is None or raw == "":
+            return []
+        if isinstance(raw, (list, dict)):
+            data = raw
+        elif isinstance(raw, str):
+            data = _json_loads(raw, None)
+        else:
+            return []
+        if isinstance(data, list):
+            return [item for item in data if isinstance(item, dict)]
+        if isinstance(data, dict):
+            for key in ("rules", "items"):
+                items = data.get(key)
+                if isinstance(items, list):
+                    return [item for item in items if isinstance(item, dict)]
+        return []
+
     def _build_task_contract(self, rules: list[dict[str, Any]]) -> ProductAggregateTaskContract:
         task_rules: list[ProductAggregateTaskRule] = []
         for rule in rules:
@@ -531,13 +666,18 @@ class ProductAggregateService:
                 continue
             priced_op = rule.get("priced_operation")
             task_name = rule.get("task_name") or rule.get("task_code") or ""
-            mini = None
-            if priced_op:
+            # Prefer explicit dossier mini_module_code (Build 4A.1 FACE+CANT interface).
+            mini = rule.get("mini_module_code")
+            if mini is not None:
+                mini = str(mini).strip() or None
+            if not mini and priced_op:
                 mini = {
                     "face_cnc_cut": "debitare_fata",
                     "back_cut": "debitare_spate",
                     "side_forming": "modelare_cant",
-                    "return_face_bonding": "asamblare",
+                    # Interface bonding owns under modelare_cant (FACE+CANT), not asamblare.
+                    "return_face_bonding": "modelare_cant",
+                    "RETURN_PROFILE_FACE_BONDING": "modelare_cant",
                     "painting": "finisaje",
                     "vinyl_application": "colantare_fata",
                     "led_install_letters": "sistem_led",
@@ -545,6 +685,9 @@ class ProductAggregateService:
                     "mounting_template_cnc_cut": "sablon_montaj",
                     "packaging_letters": "ambalare_livrare_montaj",
                 }.get(str(priced_op))
+            dep_ids = rule.get("depends_on_process_ids") or rule.get("depends_on") or []
+            if not isinstance(dep_ids, list):
+                dep_ids = []
             task_rules.append(
                 ProductAggregateTaskRule(
                     task_name=str(task_name),
@@ -554,11 +697,23 @@ class ProductAggregateService:
                     trigger_condition=rule.get("trigger_condition"),
                     provenance="dossier",
                     mini_module_code=mini,
+                    depends_on_process_ids=[str(d) for d in dep_ids if str(d).strip()],
+                    process_code=str(rule.get("process_code") or "") or None,
                 )
             )
+        notes = (
+            [
+                "task_contract.task_rules compiled from product_blueprint_dossier.task_rules_json for ExecutionPlan V2.",
+                "process_graph_source=dossier_legacy",
+            ]
+            if task_rules
+            else [
+                "No dossier task_rules_json available; ExecutionPlan V2 will block on empty task_contract.",
+                "process_graph_source=dossier_legacy",
+            ]
+        )
         return ProductAggregateTaskContract(
             task_rules=task_rules,
-            notes=[
-                "Task preview currently uses V3 catalog — not this contract (Step 9).",
-            ],
+            notes=notes,
+            process_graph_source="dossier_legacy",
         )

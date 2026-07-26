@@ -47,9 +47,6 @@ def effective_artwork_application(
     operator = operator_map.get(artwork_id)
     if operator in {"vinyl_cut", "print_on_vinyl_laminated", "manual_review"}:
         return operator
-    recommended = str(assessment.get("recommended_application") or "manual_review")
-    if recommended in {"vinyl_cut", "print_on_vinyl_laminated", "manual_review"}:
-        return recommended
     return "manual_review"
 
 

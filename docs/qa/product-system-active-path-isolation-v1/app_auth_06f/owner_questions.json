@@ -1,0 +1,47 @@
+{
+  "task": "APP-AUTH-06F",
+  "grouped_questions": [
+    {
+      "id": "GQ-01",
+      "scope": ["volumetric_letter_assembly", "packaging", "quality_control"],
+      "question_ro": "Sandu execută singur lucrări de ansamblare/QC/ambalare sau doar asistă sub supraveghere?",
+      "blocks": ["CONFIRMED_COMPETENT", "competence level"]
+    },
+    {
+      "id": "GQ-02",
+      "scope": ["vinyl_cutting"],
+      "question_ro": "A fost instruit formal pentru colantare/vinyl? Cine poate confirma?",
+      "blocks": ["TRAINED_BUT_UNDOCUMENTED"]
+    },
+    {
+      "id": "GQ-03",
+      "scope": ["led_assembly", "led_wiring"],
+      "question_ro": "Lucrează independent la montaj electric sau doar sub electrician autorizat? Utilaje WA-ASSEMBLY sunt autorizate?",
+      "blocks": ["AUTHORIZATION_REQUIRED", "TEMPORARY_EXCEPTION_REQUIRED"]
+    },
+    {
+      "id": "GQ-04",
+      "scope": ["installation_prep"],
+      "question_ro": "Participă la pregătire montaj teren ca membru echipă sau independent? Ce dovezi există pentru SK_FIELD_INSTALLER?",
+      "blocks": ["competence confirmation"]
+    },
+    {
+      "id": "GQ-05",
+      "scope": "all_seven",
+      "question_ro": "Mappingurile explicite au fost create ca preferință routing (S3:B) sau ca exceptie nedeclarată?",
+      "blocks": ["mapping policy", "exception contract"]
+    },
+    {
+      "id": "GQ-06",
+      "scope": "all_seven",
+      "question_ro": "Pentru fiecare operatie confirmată: ce nivel competență (INCEPATOR/OPERATIONAL/AVANSAT/SPECIALIST) și ce dovadă se acceptă?",
+      "blocks": ["S8 competence levels"]
+    }
+  ],
+  "evidence_collection_needed": [
+    "supervisor practical confirmation",
+    "training attendance if any",
+    "machine authorization intent for WA-ASSEMBLY and electrical bench",
+    "clarification of registry SK_PRINT_OPERATOR vs role Lăcătuș/Montator"
+  ]
+}

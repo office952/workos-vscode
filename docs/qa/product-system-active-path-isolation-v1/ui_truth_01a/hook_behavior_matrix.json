@@ -1,0 +1,24 @@
+{
+  "task": "UI-TRUTH-01A",
+  "hook": "useRuntimeHealth",
+  "behaviors": {
+    "initial_check_on_mount": true,
+    "poll_interval_ms": 45000,
+    "manual_refresh": true,
+    "timeout_ms": 6000,
+    "visibility_refresh": true,
+    "stale_threshold_ms": 120000,
+    "abort_on_unmount": true,
+    "no_overlapping_requests": true,
+    "no_healthy_fallback_on_failure": true,
+    "no_mock_healthy_fallback": true,
+    "request_generation_guard": true
+  },
+  "return_shape": {
+    "snapshot": "RuntimeTruthSnapshot",
+    "isLoading": "boolean",
+    "isRefreshing": "boolean",
+    "refresh": "() => Promise<void>",
+    "lastError": "RuntimeHealthErrorKind | null"
+  }
+}

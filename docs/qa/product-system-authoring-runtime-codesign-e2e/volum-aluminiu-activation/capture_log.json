@@ -1,0 +1,49 @@
+[
+  {
+    "name": "01_products_shell.png",
+    "url": "http://127.0.0.1:3000/product-system/products",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "02_vl_parent_detail.png",
+    "url": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "03_aluminiu_child_detail.png",
+    "url": "http://127.0.0.1:3000/product-system/products/TPL-VOLUM-ALUMINIU_v1",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "04_components_section.png",
+    "url": "http://127.0.0.1:3000/product-system/components",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "05_validation_section.png",
+    "url": "http://127.0.0.1:3000/product-system/validation",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "06_dependencies_section.png",
+    "url": "http://127.0.0.1:3000/product-system/dependencies",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "07_advanced_section.png",
+    "url": "http://127.0.0.1:3000/product-system/advanced",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "name": "live_readiness_vl_static.json",
+    "status": 404,
+    "ok": false
+  }
+]

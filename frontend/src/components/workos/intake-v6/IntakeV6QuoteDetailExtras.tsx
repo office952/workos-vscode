@@ -11,12 +11,12 @@ export default function IntakeV6QuoteDetailExtras({ children, defaultOpen = fals
 
   return (
     <div
-      className="rounded-lg border border-[#1E293B] bg-[#111827] overflow-hidden"
+      className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised overflow-hidden"
       data-testid="intake-v6-quote-detail-extras"
     >
       <button
         type="button"
-        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[#151d2e] transition-colors"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-wo-surface-raised transition-colors"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
@@ -30,7 +30,7 @@ export default function IntakeV6QuoteDetailExtras({ children, defaultOpen = fals
           <ChevronDown className="h-4 w-4 text-slate-500" />
         )}
       </button>
-      {open ? <div className="space-y-4 border-t border-[#1E293B] p-4">{children}</div> : null}
+      {open ? <div className="space-y-4 border-t border-wo-border-subtle p-4">{children}</div> : null}
     </div>
   );
 }

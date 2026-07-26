@@ -1,0 +1,18 @@
+{
+  "task": "OWNER-DECISION-07",
+  "semantics": "OPTIONAL_PRINCIPAL_COORDINATOR_COMPATIBILITY",
+  "is": [
+    "optional principal/coordinator hint on execution plan operational task",
+    "compatibility field for MOBILE-T06 and operator assign",
+    "nullable"
+  ],
+  "is_not": [
+    "the only participant",
+    "employee list",
+    "frozen Product System truth",
+    "proof that work has started",
+    "exclusive operation owner"
+  ],
+  "writers_unchanged": ["manager assign", "employee claim", "start-from-available assign"],
+  "owner_status": "CONFIRMED"
+}

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections import Counter
+
 import math
 from typing import Any
 
@@ -29,9 +31,12 @@ from services.intake_v4_artwork_complexity_service import (
 )
 from services.intake_v4_backing_mode_service import (
     BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK,
+    resolve_backing_mode_from_finish,
     resolve_backing_material_area_m2,
+    resolve_layer_backing_mode,
     resolve_volumetric_backing_state,
 )
+from seeds.material_canonical_naming import LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME
 from services.volumetric_material_rate_resolver import PROFILE_DEPTH_MM_TO_VARIANT_CODE
 from dataclasses import asdict
 
@@ -47,6 +52,7 @@ from services.intake_v4_nesting_material_precision import (
     SHEET_EXCLUDED_ROLES,
     _layer_role_for_name as _sheet_layer_role_for_name,
     apply_sheet_material_quantity_floor,
+    backing_layer_confirmed,
     compute_eligible_sheet_face_area_sum_sqm,
     compute_roll_nesting_vinyl_area_by_layer,
     compute_roll_nesting_vinyl_estimate,
@@ -99,6 +105,7 @@ from services.intake_v4_consumables_adhesive_wiring_service import (
 from services.intake_v4_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 from services.shared_cnc_operation_model import (
     build_volumetric_letters_cnc_operation_rows,
+    build_volumetric_letters_cnc_operation_rows_with_layer_backing,
     rows_to_schema_dicts,
 )
 from services.shared_edge_cant_rules import EdgeCantRuleInput, evaluate_edge_cant_rules, EDGE_CANT_LINEAR_UNIT
@@ -144,6 +151,10 @@ SHEET_CONFIG_AREA_SQM: dict[str, float] = {
 BASIS_ROLL_NESTING = "roll_nesting_quote_estimate"
 BASIS_SHEET_NESTING = "sheet_nesting_quote_estimate"  # legacy alias in tests/docs
 BASIS_AREA_FALLBACK = "area_with_waste_fallback"
+BASIS_ARTWORK_BOX_FOOTPRINT = "artwork_box_bounding_footprint_quote_estimate"
+BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT = "backing_area_fallback_from_artwork_box_footprint"
+BASIS_LINKED_LOGO_FACE_FOOTPRINT = "linked_logo_face_bounding_footprint_quote_estimate"
+BASIS_LINKED_LOGO_BACKING_FOOTPRINT = "linked_logo_backing_bounding_footprint_quote_estimate"
 BASIS_PERIMETER = "perimeter_with_waste"
 CONFIDENCE_NESTING = "estimate_from_nesting_high"
 CONFIDENCE_NESTING_PARTIAL = "estimate_from_nesting_medium"
@@ -248,6 +259,86 @@ def _layer_metrics_from_analysis(
             perimeter_ml = perimeter_mm / 1000 if perimeter_mm else None
         return area, perimeter_ml
     return None, None
+
+
+def _artwork_box_footprint_area_sqm(*geom_sources: Any) -> float | None:
+    for source in geom_sources:
+        if not isinstance(source, dict):
+            continue
+        boxes = source.get("artwork_boxes")
+        if not isinstance(boxes, list):
+            continue
+        total = 0.0
+        found = False
+        for box in boxes:
+            if not isinstance(box, dict):
+                continue
+            width_mm = _positive(box.get("width_mm"))
+            height_mm = _positive(box.get("height_mm"))
+            if width_mm is None or height_mm is None:
+                continue
+            total += (width_mm * height_mm) / 1_000_000.0
+            found = True
+        if found and total > 0:
+            return round(total, 4)
+    return None
+
+
+def _artwork_box_area_for_layer(
+    layer_key: str,
+    layer_name: str,
+    *geom_sources: Any,
+) -> float | None:
+    for source in geom_sources:
+        if not isinstance(source, dict):
+            continue
+        boxes = source.get("artwork_boxes")
+        if not isinstance(boxes, list):
+            continue
+        for box in boxes:
+            if not isinstance(box, dict):
+                continue
+            box_key = str(box.get("layer_key") or "")
+            box_name = str(box.get("layer_name") or box_key)
+            if layer_key not in {box_key, box_name} and layer_name not in {box_key, box_name}:
+                continue
+            width_mm = _positive(box.get("width_mm"))
+            height_mm = _positive(box.get("height_mm"))
+            if width_mm is not None and height_mm is not None:
+                return round((width_mm * height_mm) / 1_000_000.0, 4)
+            area = _positive(box.get("area_m2"))
+            if area is not None:
+                return round(area, 4)
+    return None
+
+
+def _has_confirmed_letter_face_content(
+    *,
+    layer_role_setup: dict[str, Any] | None,
+    letter_groups: list[Any],
+) -> bool:
+    if letter_groups:
+        for group in letter_groups:
+            if not isinstance(group, dict):
+                continue
+            layer_key = str(group.get("group_key") or group.get("layer_key") or "")
+            layer_name = str(group.get("layer_name") or layer_key)
+            role = _sheet_layer_role_for_name(layer_role_setup, layer_key, layer_name)
+            if role == "face":
+                return True
+            if role is None and (_positive(group.get("face_area_m2")) or _positive(group.get("perimeter_m"))):
+                return True
+    layers = (layer_role_setup or {}).get("layers") if isinstance(layer_role_setup, dict) else None
+    if isinstance(layers, list):
+        for layer in layers:
+            if not isinstance(layer, dict):
+                continue
+            if str(layer.get("confirmation_state") or "").strip().lower() == "ignored":
+                continue
+            role = str(layer.get("confirmed_role") or layer.get("auto_role") or "").strip().lower()
+            if role == "face":
+                return True
+    return False
 
 
 def _append_artwork_volumetric_rows(
@@ -369,6 +460,8 @@ def _quote_cost_row(
     unit_price: float | None = None,
     price_source: str = "missing",
     currency: str = "EUR",
+    source_part_ids: list[str] | None = None,
+    trace_markers: list[str] | None = None,
 ) -> IntakeV4MaterialQuantityRow:
     base, priced, waste_pct = _with_waste(qty, apply_buffer=apply_quote_waste)
     material_cost = round(priced * unit_price, 4) if unit_price is not None and priced > 0 else None
@@ -395,6 +488,8 @@ def _quote_cost_row(
         estimated_cost=material_cost,
         price_source=price_source,
         currency=currency,
+        source_part_ids=list(source_part_ids or []),
+        trace_markers=list(trace_markers or []),
     )
 
 
@@ -414,6 +509,8 @@ def _cost_row(
     confidence: str = "estimate_for_quote",
     price_source: str = "missing",
     currency: str = "EUR",
+    source_part_ids: list[str] | None = None,
+    trace_markers: list[str] | None = None,
 ) -> IntakeV4MaterialQuantityRow:
     basis = quantity_basis or quantity_source
     return _quote_cost_row(
@@ -431,7 +528,129 @@ def _cost_row(
         unit_price=unit_price,
         price_source=price_source,
         currency=currency,
+        source_part_ids=source_part_ids,
+        trace_markers=trace_markers,
     )
+
+
+def _logo_only_artwork_source_part_ids(
+    analysis: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
+) -> list[str]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return []
+    try:
+        from services.intake_v4_letter_part_classification_service import classify_letter_parts_from_analysis
+
+        classified = classify_letter_parts_from_analysis(analysis, layer_role_setup or {})
+        hole_ids = {
+            str(row.get("part_id") or "")
+            for row in (classified.get("parts") or [])
+            if isinstance(row, dict) and row.get("is_inner_hole")
+        }
+    except Exception:
+        hole_ids = set()
+
+    result: list[str] = []
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id or part_id in hole_ids:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role in {"printed_artwork", "logo", "policromie"}:
+            result.append(part_id)
+    return result
+
+
+def _linked_volumetric_logo_boxes(payload_raw: dict[str, Any]) -> list[dict[str, Any]]:
+    recommendation = payload_raw.get("product_composition_recommendation")
+    quote_geometry = payload_raw.get("quote_geometry")
+    if not isinstance(quote_geometry, dict):
+        return []
+    boxes = quote_geometry.get("artwork_boxes")
+    if not isinstance(boxes, list):
+        return []
+    if isinstance(recommendation, dict):
+        if recommendation.get("composition_type") in {"letters_plus_logo", "letters_plus_logo_plus_support"}:
+            items = recommendation.get("composition_items")
+            if isinstance(items, list) and any(isinstance(item, dict) and item.get("component_role") == "volumetric_logo" for item in items):
+                return [box for box in boxes if isinstance(box, dict) and _positive(box.get("area_m2"))]
+
+    finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
+    artwork_finishes = finish_setup.get("artwork_finishes") if isinstance(finish_setup.get("artwork_finishes"), list) else []
+    if not artwork_finishes:
+        return []
+    layer_role_setup = payload_raw.get("layer_role_setup") if isinstance(payload_raw.get("layer_role_setup"), dict) else None
+    has_letter_face = False
+    has_logo_artwork = False
+    for layer in (layer_role_setup or {}).get("layers") or []:
+        if not isinstance(layer, dict):
+            continue
+        role = str(layer.get("confirmed_role") or layer.get("auto_role") or "").strip().lower()
+        state = str(layer.get("confirmation_state") or "").strip().lower()
+        if state == "ignored":
+            continue
+        if role == "face":
+            has_letter_face = True
+        if role in {"printed_artwork", "logo", "policromie"}:
+            has_logo_artwork = True
+    if not (has_letter_face and has_logo_artwork):
+        return []
+    return [box for box in boxes if isinstance(box, dict) and _positive(box.get("area_m2"))]
+
+
+def _linked_logo_source_part_ids_by_layer(analysis: dict[str, Any], layer_role_setup: dict[str, Any] | None) -> dict[str, list[str]]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return {}
+    result: dict[str, list[str]] = {}
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role not in {"printed_artwork", "logo", "policromie"}:
+            continue
+        for key in {layer_id, layer_name}:
+            if not key:
+                continue
+            result.setdefault(key, []).append(part_id)
+    return result
+
+
+def _artwork_source_part_ids_by_layer(analysis: dict[str, Any], layer_role_setup: dict[str, Any] | None) -> dict[str, list[str]]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return {}
+
+    result: dict[str, list[str]] = {}
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role not in {"printed_artwork", "logo", "policromie"}:
+            continue
+        for key in {layer_id, layer_name}:
+            if key:
+                result.setdefault(key, []).append(part_id)
+    return result
 
 
 def _return_registry_code(return_depth_mm: Any) -> str | None:
@@ -445,15 +664,28 @@ def _return_registry_code(return_depth_mm: Any) -> str | None:
 
 
 def _psu_registry_code(psu_configuration: list[Any] | None) -> str | None:
-    if not isinstance(psu_configuration, list) or not psu_configuration:
+    grouped_psu = _group_psu_configuration(psu_configuration)
+    if not grouped_psu:
         return None
-    watts_values = [int(w) for w in psu_configuration if isinstance(w, (int, float)) and w > 0]
-    if not watts_values:
-        return "MAT-LED-PSU-12V"
-    max_watts = max(watts_values)
+    return grouped_psu[0][1]
+
+
+def _group_psu_configuration(psu_configuration: list[Any] | None) -> list[tuple[int, str | None, int]]:
+    if not isinstance(psu_configuration, list) or not psu_configuration:
+        return []
+    watts_counter = Counter(
+        int(watts)
+        for watts in psu_configuration
+        if isinstance(watts, (int, float)) and watts > 0
+    )
+    if not watts_counter:
+        return []
     from services.volumetric_material_rate_resolver import PSU_WATTS_TO_VARIANT_CODE
 
-    return PSU_WATTS_TO_VARIANT_CODE.get(max_watts, "MAT-LED-PSU-12V")
+    grouped: list[tuple[int, str | None, int]] = []
+    for watts in sorted(watts_counter):
+        grouped.append((watts, PSU_WATTS_TO_VARIANT_CODE.get(watts), watts_counter[watts]))
+    return grouped
 
 
 def _is_price_missing_for_quantity(row: IntakeV4MaterialQuantityRow) -> bool:
@@ -516,8 +748,9 @@ def _build_mounting_accessories_percent_row(
     accessory_cost = round(manufacturing_subtotal * MOUNTING_ACCESSORIES_RATE, 4)
     return IntakeV4MaterialQuantityRow(
         material_key="mounting_accessories_percent",
-        display_name="Accesorii montaj / conectori (5% cost confectie)",
-        material_name="Accesorii montaj / conectori",
+        # D4: manufacturing consumable — not commercial mounting scope.
+        display_name="Consumabile producție — accesorii / conectori (5% cost confecție)",
+        material_name="Consumabile producție — accesorii / conectori",
         category="consumable",
         quantity=1.0,
         base_quantity=1.0,
@@ -1212,9 +1445,12 @@ def _append_artwork_print_rows(
     *,
     artwork_finishes: list[Any],
     analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
     material_rows: list[IntakeV4MaterialQuantityRow],
     operation_rows: list[IntakeV4CncOperationRow] | None = None,
 ) -> None:
+    source_part_ids_by_layer = _artwork_source_part_ids_by_layer(analysis, layer_role_setup)
     for row in artwork_finishes:
         if not isinstance(row, dict):
             continue
@@ -1225,7 +1461,11 @@ def _append_artwork_print_rows(
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
-        area = _positive(row.get("estimated_area_m2"))
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        quantity_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
+            quantity_source = "artwork_finishes|svg_analysis_json.layers"
         if area is None:
             area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
         if not area:
@@ -1235,10 +1475,78 @@ def _append_artwork_print_rows(
             area_m2=area,
             material_rows=material_rows,
             operation_rows=operation_rows,
-            quantity_source="artwork_finishes|svg_analysis_json.layers",
+            quantity_source=quantity_source,
             key_prefix=f"artwork_{layer_key}",
             display_suffix=layer_name,
             include_lamination=include_lamination,
+        )
+        source_part_ids = source_part_ids_by_layer.get(layer_key) or source_part_ids_by_layer.get(layer_name) or []
+        for item in material_rows:
+            if item.material_key in {f"artwork_{layer_key}_print_vinyl", f"artwork_{layer_key}_laminated_vinyl"}:
+                item.source_part_ids = list(source_part_ids)
+
+
+def _artwork_oracal_series(row: dict[str, Any]) -> str | None:
+    material_code = str(row.get("material_code") or "").strip().upper()
+    execution = str(row.get("execution_type") or "needs_decision").strip().lower()
+    if material_code == "ORACAL_641":
+        return "641"
+    if material_code == "ORACAL_8500" or execution == "translucent_vinyl":
+        return "8500"
+    if material_code == "ORACAL_651" or execution == "cut_vinyl":
+        return "651"
+    return None
+
+
+def _append_artwork_face_vinyl_rows(
+    *,
+    artwork_finishes: list[Any],
+    analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
+    material_rows: list[IntakeV4MaterialQuantityRow],
+) -> None:
+    source_part_ids_by_layer = _artwork_source_part_ids_by_layer(analysis, layer_role_setup)
+    for row in artwork_finishes:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("face_personalization_method") or "").strip().lower() != "oracal":
+            continue
+        series = _artwork_oracal_series(row)
+        if not series:
+            continue
+        layer_key = str(row.get("layer_key") or "")
+        layer_name = str(row.get("layer_name") or layer_key)
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        quantity_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
+            quantity_source = "artwork_finishes|svg_analysis_json.layers"
+        if area is None:
+            area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
+        if not area:
+            continue
+        owner_price = resolve_intake_v4_owner_oracal_face_price(series)
+        if not owner_price:
+            continue
+        unit_price, currency, price_source = owner_price
+        material_rows.append(
+            _cost_row(
+                f"artwork_{layer_key}_face_vinyl_{series}",
+                f"Vinil față Oracal {series} — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_AREA_FALLBACK,
+                quantity_source=quantity_source,
+                quantity_quality="calculated",
+                registry_code=f"MAT-ORACAL-{series}",
+                confidence=CONFIDENCE_AREA_FALLBACK,
+                unit_price=unit_price,
+                price_source=price_source,
+                currency=currency,
+                source_part_ids=source_part_ids_by_layer.get(layer_key) or source_part_ids_by_layer.get(layer_name) or [],
+            )
         )
 
 
@@ -1300,6 +1608,7 @@ def _append_artwork_vinyl_application_rows(
     *,
     artwork_finishes: list[Any],
     analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
     operation_rows: list[IntakeV4CncOperationRow] | None,
 ) -> None:
     if operation_rows is None:
@@ -1308,11 +1617,13 @@ def _append_artwork_vinyl_application_rows(
         if not isinstance(row, dict):
             continue
         execution = str(row.get("execution_type") or "needs_decision").strip().lower()
-        if execution != "vinyl_only":
+        if execution not in {"vinyl_only", "cut_vinyl", "translucent_vinyl"}:
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
-        area = _positive(row.get("estimated_area_m2"))
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
         if area is None:
             area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
         if not area:
@@ -1500,6 +1811,7 @@ def build_intake_v4_material_breakdown(
     warnings: list[IntakeV4MaterialBreakdownWarning] = []
     artwork_complexity_operation_rows: list[IntakeV4CncOperationRow] = []
     path_geom = payload.path_geometry_summary if isinstance(payload.path_geometry_summary, dict) else {}
+    raw_quote_geom = payload_raw.get("quote_geometry") if isinstance(payload_raw.get("quote_geometry"), dict) else {}
     resolved_quote = resolve_v4_quote_geometry(payload)
     path_geom = merge_quote_geometry_into_path_summary(path_geom, resolved_quote)
     quote_geom = resolved_quote
@@ -1507,6 +1819,7 @@ def build_intake_v4_material_breakdown(
     geometry_block = analysis.get("geometry") if isinstance(analysis.get("geometry"), dict) else {}
     nesting = analysis.get("nesting") if isinstance(analysis.get("nesting"), dict) else {}
     finish = payload.finish_setup.model_dump(mode="json") if payload.finish_setup else {}
+    raw_finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
 
     if not analysis:
         warnings.append(_warn("missing_svg_analysis", "Lipsește analiza SVG persistată.", source="svg_analysis_json"))
@@ -1545,6 +1858,10 @@ def build_intake_v4_material_breakdown(
         if groups_present
         else _face_finish_is_print_laminate(face_finish)
     )
+    artwork_only_face_finish = bool(artwork_finishes) and not groups_present
+    if artwork_only_face_finish:
+        face_vinyl_required_effective = False
+        print_laminate_effective = False
 
     geom_sources = [path_geom, quote_geom, geometry_block]
     face_area = _float_metric(geom_sources, "face_area_m2", "letter_face_area_m2")
@@ -1573,11 +1890,13 @@ def build_intake_v4_material_breakdown(
     layer_role_setup_raw = payload_raw.get("layer_role_setup")
     layer_role_setup = layer_role_setup_raw if isinstance(layer_role_setup_raw, dict) else None
     quote_geom_dict = quote_geom if isinstance(quote_geom, dict) else {}
-    backing_mode, backing_confirmed, back_bevel_enabled = resolve_volumetric_backing_state(
+    backing_mode, backing_present, back_bevel_enabled = resolve_volumetric_backing_state(
         finish,
         layer_role_setup,
         quote_geometry=quote_geom_dict,
     )
+    backing_mode_explicit = raw_finish.get("backing_mode") is not None
+    backing_confirmed = backing_layer_confirmed(layer_role_setup) or backing_mode_explicit
 
     nesting_rows = _nesting_rows_from_analysis(nesting)
     roll_vinyl = compute_roll_nesting_vinyl_estimate(nesting, layer_role_setup=layer_role_setup)
@@ -1602,6 +1921,10 @@ def build_intake_v4_material_breakdown(
         letter_groups=letter_groups,
         artwork_finishes=artwork_finishes,
     )
+    has_confirmed_letter_face_content = _has_confirmed_letter_face_content(
+        layer_role_setup=layer_role_setup,
+        letter_groups=letter_groups,
+    )
     sheet_split, sheet_quantity_floor_applied = (
         (sheet_split, False)
         if sheet_split.mode == "prorated_fallback"
@@ -1613,6 +1936,27 @@ def build_intake_v4_material_breakdown(
     sheet_quote_override = sheet_quote_override_from_payload(payload_raw)
     sheet_face_qty = sheet_split.face_area_sqm
     sheet_backing_qty = sheet_split.backing_area_sqm
+    suppressed_logo_only_sheet_face_fallback = False
+    if (
+        sheet_split.mode == "prorated_fallback"
+        and not has_confirmed_letter_face_content
+        and bool(artwork_finishes)
+    ):
+        sheet_face_qty = None
+        sheet_backing_qty = None
+        suppressed_logo_only_sheet_face_fallback = True
+    logo_only_artwork_box_footprint = (
+        _artwork_box_footprint_area_sqm(raw_quote_geom, path_geom, quote_geom, geometry_block)
+        if not has_confirmed_letter_face_content
+        else None
+    )
+    logo_only_artwork_part_ids = (
+        _logo_only_artwork_source_part_ids(analysis, layer_role_setup)
+        if logo_only_artwork_box_footprint is not None
+        else []
+    )
+    linked_logo_boxes = _linked_volumetric_logo_boxes(payload_raw) if has_confirmed_letter_face_content else []
+    linked_logo_part_ids_by_layer = _linked_logo_source_part_ids_by_layer(analysis, layer_role_setup) if linked_logo_boxes else {}
     sheet_quote_candidates = compute_sheet_quote_material_candidates(
         nesting,
         analysis,
@@ -1655,12 +1999,12 @@ def build_intake_v4_material_breakdown(
     material_rows: list[IntakeV4MaterialQuantityRow] = []
     consumable_rows: list[IntakeV4MaterialQuantityRow] = []
 
-    if face_area or sheet_face_qty:
+    if face_area or sheet_face_qty or logo_only_artwork_box_footprint:
         if sheet_face_qty:
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm / față litere",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
                     "material",
                     sheet_face_qty,
                     "m2",
@@ -1672,11 +2016,29 @@ def build_intake_v4_material_breakdown(
                     confidence=sheet_confidence if sheet_nesting_valid else CONFIDENCE_NESTING_MEDIUM,
                 )
             )
+        elif logo_only_artwork_box_footprint:
+            material_rows.append(
+                _cost_row(
+                    "plexiglas_face",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
+                    "material",
+                    logo_only_artwork_box_footprint,
+                    "m2",
+                    quantity_basis=BASIS_ARTWORK_BOX_FOOTPRINT,
+                    quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                    quantity_quality="calculated",
+                    registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
+                    apply_quote_waste=False,
+                    confidence=CONFIDENCE_NESTING_MEDIUM,
+                    source_part_ids=logo_only_artwork_part_ids,
+                    trace_markers=([] if logo_only_artwork_part_ids else ["SOURCE_PART_IDS_MISSING_FOR_LOGO_ONLY_FOOTPRINT"]),
+                )
+            )
         elif face_area:
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm / față litere",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
                     "material",
                     face_area,
                     "m2",
@@ -1696,9 +2058,18 @@ def build_intake_v4_material_breakdown(
             backing_area_m2=backing_area,
             sheet_backing_area_sqm=sheet_backing_qty,
             sheet_face_quoteable_area_sqm=sheet_face_qty,
-            face_area_gross_m2=face_area,
+            face_area_gross_m2=logo_only_artwork_box_footprint or face_area,
         )
     )
+    if (
+        logo_only_artwork_box_footprint is not None
+        and backing_material_basis is not None
+        and backing_material_area is not None
+        and abs(backing_material_area - logo_only_artwork_box_footprint) < 1e-6
+        and backing_material_basis != BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK
+    ):
+        backing_material_basis = BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT
+        backing_material_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
     if backing_area_quoteable_fallback:
         warnings.append(
             _warn(
@@ -1708,13 +2079,25 @@ def build_intake_v4_material_breakdown(
                 severity="info",
             )
         )
+    elif (
+        backing_material_basis == BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT
+        and backing_material_area is not None
+    ):
+        warnings.append(
+            _warn(
+                "backing_artwork_box_footprint_used",
+                "Arie spate Forex — fallback explicit din bounding footprint artwork/logo deoarece backing dedicat lipsește.",
+                source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                severity="info",
+            )
+        )
 
     if backing_confirmed and backing_material_area:
         if sheet_backing_qty and backing_material_area == sheet_backing_qty:
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     sheet_backing_qty,
                     "m2",
@@ -1730,7 +2113,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_material_area,
                     "m2",
@@ -1746,7 +2129,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_area,
                     "m2",
@@ -1761,7 +2144,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_material_area,
                     "m2",
@@ -1770,14 +2153,66 @@ def build_intake_v4_material_breakdown(
                     quantity_quality="estimated",
                     registry_code=MATERIAL_REGISTRY_CODES["forex_backing"],
                     confidence=CONFIDENCE_AREA_FALLBACK,
+                    source_part_ids=logo_only_artwork_part_ids if backing_material_basis == BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT else None,
+                    trace_markers=([] if logo_only_artwork_part_ids or backing_material_basis != BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT else ["SOURCE_PART_IDS_MISSING_FOR_LOGO_ONLY_FOOTPRINT"]),
                 )
             )
-    elif (backing_area or sheet_backing_qty) and not backing_confirmed:
+    elif (backing_area or sheet_backing_qty or logo_only_artwork_box_footprint or backing_present) and not backing_confirmed:
         warnings.append(
             _warn(
                 "backing_not_confirmed",
                 "Backing neconfirmat — Forex/backing exclus din material estimate.",
                 source="layer_role_setup",
+                severity="info",
+            )
+        )
+
+    for box in linked_logo_boxes:
+        layer_key = str(box.get("layer_key") or "")
+        layer_name = str(box.get("layer_name") or layer_key or "Linked logo")
+        area = _positive(box.get("area_m2"))
+        if area is None:
+            continue
+        source_part_ids = linked_logo_part_ids_by_layer.get(layer_key) or linked_logo_part_ids_by_layer.get(layer_name) or []
+        trace_markers = [] if source_part_ids else ["SOURCE_PART_IDS_MISSING_FOR_LINKED_LOGO_FOOTPRINT"]
+        material_rows.append(
+            _cost_row(
+                f"artwork_plexiglas_{layer_key}",
+                f"Plexiglas față emblemă — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_LINKED_LOGO_FACE_FOOTPRINT,
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
+                quantity_quality="calculated",
+                registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
+                apply_quote_waste=False,
+                confidence=CONFIDENCE_NESTING_MEDIUM,
+                source_part_ids=source_part_ids,
+                trace_markers=trace_markers,
+            )
+        )
+        material_rows.append(
+            _cost_row(
+                f"artwork_forex_backing_{layer_key}",
+                f"Forex backing emblemă — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_LINKED_LOGO_BACKING_FOOTPRINT,
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
+                quantity_quality="calculated",
+                registry_code=MATERIAL_REGISTRY_CODES["forex_backing"],
+                confidence=CONFIDENCE_NESTING_MEDIUM,
+                source_part_ids=source_part_ids,
+                trace_markers=trace_markers,
+            )
+        )
+        warnings.append(
+            _warn(
+                "linked_logo_backing_fallback_used",
+                f"Linked volumetric logo backing for {layer_name} folosește același bounding footprint ca fața logo, până la geometrie dedicată de backing.",
+                source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
                 severity="info",
             )
         )
@@ -1974,18 +2409,39 @@ def build_intake_v4_material_breakdown(
             )
         )
         if residual_ml is not None and residual_ml > RAW_VECTOR_TOTAL_MIN_DELTA_M:
-            warnings.append(
-                _warn(
-                    "unclassified_vector_artwork_requires_decision",
-                    (
-                        f"Vector neclasificat detectat in SVG (~{residual_ml:.2f} m). "
-                        "Operatorul trebuie sa confirme ce reprezinta, metoda de productie "
-                        "si fisierul/grafica pentru handoff productie."
-                    ),
-                    source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
-                    severity="warning",
-                )
+            # Align with handoff residual policy: classified Vector Logo rows with
+            # decided execution already explain perimeter — do not reopen a false
+            # "neclasificat / confirm artwork" readiness warning.
+            from services.intake_v4_internal_draft_quote_policy_service import (
+                has_unclassified_vector_artwork,
             )
+
+            if has_unclassified_vector_artwork(payload):
+                warnings.append(
+                    _warn(
+                        "unclassified_vector_artwork_requires_decision",
+                        (
+                            f"Perimetru vector rezidual (~{residual_ml:.2f} m) fără Vector Logo "
+                            "eligibil. Verifică clasificarea pe fiecare layer Vector Logo "
+                            "și execuția (print/laminare) în Review."
+                        ),
+                        source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
+                        severity="warning",
+                    )
+                )
+            else:
+                warnings.append(
+                    _warn(
+                        "vector_logo_perimeter_reconciled",
+                        (
+                            f"Perimetru SVG reconciliat cu Vector Logo clasificate "
+                            f"(~{residual_ml:.2f} m în diagnostic tehnic). "
+                            "Nu blochează Confirmarea."
+                        ),
+                        source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
+                        severity="info",
+                    )
+                )
 
     _append_return_material_rows(
         letter_return_ml=cant_letter_ml,
@@ -2043,15 +2499,26 @@ def build_intake_v4_material_breakdown(
         material_rows=material_rows,
         warnings=warnings,
     )
+    _append_artwork_face_vinyl_rows(
+        artwork_finishes=artwork_finishes,
+        analysis=analysis,
+        quote_geometry=quote_geom_dict,
+        layer_role_setup=layer_role_setup,
+        material_rows=material_rows,
+    )
+
     _append_artwork_print_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,
+        quote_geometry=quote_geom_dict,
+        layer_role_setup=layer_role_setup,
         material_rows=material_rows,
         operation_rows=artwork_complexity_operation_rows,
     )
     _append_artwork_vinyl_application_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,
+        quote_geometry=quote_geom_dict,
         operation_rows=artwork_complexity_operation_rows,
     )
     ral_paint_geometry = dict(path_geom)
@@ -2097,7 +2564,7 @@ def build_intake_v4_material_breakdown(
                     severity="info",
                 )
             )
-    if sheet_split.used_sheet_area_sqm:
+    if sheet_split.used_sheet_area_sqm and not suppressed_logo_only_sheet_face_fallback:
         warnings.append(
             _warn(
                 "nesting_used_for_quote_not_stock",
@@ -2106,12 +2573,21 @@ def build_intake_v4_material_breakdown(
                 severity="info",
             )
         )
-    if sheet_split.mode == "prorated_fallback":
+    if sheet_split.mode == "prorated_fallback" and not suppressed_logo_only_sheet_face_fallback:
         warnings.append(
             _warn(
                 "sheet_nesting_prorated_fallback",
                 "Nesting placă — lipsesc metadata placements/role; suprafața plăcii este repartizată proporțional față/spate.",
                 source="svg_analysis_json.nesting",
+            )
+        )
+    elif suppressed_logo_only_sheet_face_fallback:
+        warnings.append(
+            _warn(
+                "sheet_nesting_prorated_fallback_blocked_for_logo_only",
+                "Nesting placă fallback pentru fața de litere a fost blocat: nu există Vector Litere confirmat, doar artwork/logo.",
+                source="svg_analysis_json.nesting",
+                severity="info",
             )
         )
     elif sheet_split.mode == "partial_role_split":
@@ -2165,6 +2641,11 @@ def build_intake_v4_material_breakdown(
             if led_count:
                 led_count_int = int(led_count)
 
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+
+    mount_decision = resolve_lighting_mount_consumers(payload_raw, payload_raw)
+    include_led_adhesive = mount_decision.include_led_adhesive if mount_decision else True
+
     append_volumetric_adhesive_and_wiring_consumables(
         geom_sources=geom_sources,
         letter_return_ml=(cant_total_ml if raw_vector_total_applied else cant_letter_ml),
@@ -2174,6 +2655,8 @@ def build_intake_v4_material_breakdown(
         led_module_count=led_count_int,
         consumable_rows=consumable_rows,
         warnings=warnings,
+        include_led_adhesive=include_led_adhesive,
+        finish_setup=finish if isinstance(finish, dict) else None,
     )
 
     if illuminated:
@@ -2263,14 +2746,17 @@ def build_intake_v4_material_breakdown(
             warnings.append(_warn("missing_led_count", "Iluminare activă — număr module LED indisponibil.", source="geometry.perimeter"))
 
         psu_config = finish.get("psu_configuration")
-        psu_count = len(psu_config) if isinstance(psu_config, list) and psu_config else None
-        if psu_count:
-            psu_code = _psu_registry_code(psu_config if isinstance(psu_config, list) else None)
-            watts = finish.get("required_psu_watts")
-            label = f"Sursă LED 12V ({watts} W necesari)" if watts else "Sursă LED 12V"
-            consumable_rows.append(
-                _cost_row(
-                    "led_psu",
+        grouped_psu = _group_psu_configuration(psu_config if isinstance(psu_config, list) else None)
+        if grouped_psu:
+            watts_required = finish.get("required_psu_watts")
+            for watts_value, psu_code, psu_count in grouped_psu:
+                label = (
+                    f"Sursă LED 12V {watts_value}W ({watts_required} W necesari)"
+                    if watts_required
+                    else f"Sursă LED 12V {watts_value}W"
+                )
+                row = _cost_row(
+                    f"led_psu_{watts_value}w",
                     label,
                     "consumable",
                     float(psu_count),
@@ -2278,10 +2764,17 @@ def build_intake_v4_material_breakdown(
                     quantity_basis="psu_configuration_quote_estimate",
                     quantity_source="finish_setup.psu_configuration",
                     quantity_quality="calculated",
-                    registry_code=psu_code,
+                    registry_code=psu_code or "MAT-LED-PSU-12V",
                     confidence=CONFIDENCE_FORMULA,
                 )
-            )
+                row.trace_markers = list(row.trace_markers or []) + [f"psu_wattage:{watts_value}"]
+                if psu_code is None:
+                    row.warnings = list(row.warnings or []) + [
+                        f"PSU material missing for {watts_value}W"
+                    ]
+                    row.price_source = "missing"
+                    row.registry_code = "MAT-LED-PSU-12V"
+                consumable_rows.append(row)
         elif finish.get("required_psu_watts"):
             warnings.append(_warn("missing_psu_config", "Consum LED estimat — configurează sursele PSU.", source="finish_setup.psu_configuration"))
 
@@ -2329,11 +2822,51 @@ def build_intake_v4_material_breakdown(
     )
 
     back_bevel_enabled = back_bevel_enabled
-    cnc_preview_rows = build_volumetric_letters_cnc_operation_rows(
-        path_geom,
-        backing_mode=backing_mode,
-        configured_rate_eur_per_ml_pass=None,
-    )
+    layer_backing_specs: list[tuple[float, str]] = []
+    for group in letter_groups:
+        if not isinstance(group, dict):
+            continue
+        perimeter = _positive(group.get("perimeter_m"))
+        if perimeter is None:
+            continue
+        layer_backing_specs.append(
+            (perimeter, resolve_layer_backing_mode(group, finish if isinstance(finish, dict) else None))
+        )
+    if not layer_backing_specs and artwork_finishes:
+        back_ml = _positive(
+            path_geom.get("backing_cnc_cutting_perimeter_ml")
+            if isinstance(path_geom, dict)
+            else None
+        ) or _positive(
+            path_geom.get("back_cutting_perimeter_ml") if isinstance(path_geom, dict) else None
+        ) or _positive(
+            path_geom.get("face_cutting_perimeter_ml") if isinstance(path_geom, dict) else None
+        )
+        if back_ml is not None:
+            for artwork in artwork_finishes:
+                if not isinstance(artwork, dict):
+                    continue
+                layer_backing_specs.append(
+                    (
+                        back_ml,
+                        resolve_layer_backing_mode(
+                            artwork,
+                            finish if isinstance(finish, dict) else None,
+                        ),
+                    )
+                )
+    if layer_backing_specs:
+        cnc_preview_rows = build_volumetric_letters_cnc_operation_rows_with_layer_backing(
+            path_geom,
+            layer_backing_specs=layer_backing_specs,
+            configured_rate_eur_per_ml_pass=None,
+        )
+    else:
+        cnc_preview_rows = build_volumetric_letters_cnc_operation_rows(
+            path_geom,
+            backing_mode=backing_mode,
+            configured_rate_eur_per_ml_pass=None,
+        )
     operation_rows = [
         IntakeV4CncOperationRow.model_validate(row_dict)
         for row_dict in rows_to_schema_dicts(cnc_preview_rows)

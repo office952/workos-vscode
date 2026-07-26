@@ -15,7 +15,9 @@ from services.intake_v6_workspace_service import ensure_intake_v6_workspace_for_
 
 
 LETTERS = "TPL-VOLUMETRIC-LETTERS_v2"
+LOGO = "TPL-VOLUMETRIC-LOGO_v1"
 VOLUM_ALUMINUM = "TPL-VOLUM-ALUMINIU_v1"
+LOGO_FACE = "TPL-VOLUMETRIC-LOGO-FACE_v1"
 
 
 def _user() -> UserResponse:
@@ -53,7 +55,27 @@ async def _seed_fixture(session) -> None:
         required_materials_json="[]",
         active=True,
     )
-    session.add_all([parent, child])
+    logo_parent = Product_templates(
+        template_code=LOGO,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        description="Logo offerable fixture",
+        components_json="[]",
+        operations_json="[]",
+        required_materials_json="[]",
+        active=True,
+    )
+    logo_child = Product_templates(
+        template_code=LOGO_FACE,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        description="Logo face module fixture",
+        components_json="[]",
+        operations_json="[]",
+        required_materials_json="[]",
+        active=True,
+    )
+    session.add_all([parent, child, logo_parent, logo_child])
     await session.flush()
     session.add(
         ProductTemplateModuleLink(
@@ -72,6 +94,22 @@ async def _seed_fixture(session) -> None:
         )
     )
     session.add(
+        ProductTemplateModuleLink(
+            parent_template_id=logo_parent.id,
+            parent_template_code=LOGO,
+            module_template_id=logo_child.id,
+            module_template_code=LOGO_FACE,
+            relation_type="required_module",
+            trigger_field="logo_face_module_template_code",
+            trigger_value_json=json.dumps([LOGO_FACE]),
+            input_mapping_json="{}",
+            default_values_json="{}",
+            pricing_mode="separate_quote_line",
+            execution_mode="linked_child_work",
+            active=True,
+        )
+    )
+    session.add_all([
         Intake_requests(
             code="IR-AVAILABILITY-1",
             client_id=1,
@@ -88,8 +126,25 @@ async def _seed_fixture(session) -> None:
             priority="normal",
             delivery_type="delivery_standard",
             confirmed_template_code=LETTERS,
-        )
-    )
+        ),
+        Intake_requests(
+            code="IR-LOGO-ROUTING-1",
+            client_id=2,
+            client_name="Logo Client Test",
+            contact_person="Operator",
+            channel="email",
+            product_family="litere_volumetrice",
+            description="Logo volumetric test",
+            dimensions="—",
+            quantity=1,
+            status="new",
+            assigned_to="—",
+            notes="",
+            priority="normal",
+            delivery_type="delivery_standard",
+            confirmed_template_code=LOGO,
+        ),
+    ])
     await session.commit()
 
 
@@ -123,6 +178,29 @@ async def test_ensure_workspace_persists_offer_method_selected_template_and_sour
     assert await _table_count(db_session, "quotes") == before_quotes
     assert await _table_count(db_session, "orders") == before_orders
     assert await _table_count(db_session, "execution_plan") == before_execution
+
+
+@pytest.mark.asyncio
+async def test_ensure_workspace_rejects_logo_template_as_non_offerable_root_selection(db_session):
+    await _seed_fixture(db_session)
+
+    with pytest.raises(HTTPException) as exc_info:
+        await ensure_intake_v6_workspace_for_intake_request(
+            db_session,
+            "IR-LOGO-ROUTING-1",
+            _user(),
+            offer_method="svg_analyzer_intake_v6",
+            selected_template_code=LOGO,
+            source="work_intake_new_request",
+        )
+
+    assert exc_info.value.status_code == 422
+    assert exc_info.value.detail["error"] == "selected_template_not_quote_offerable"
+    assert exc_info.value.detail["selected_template_code"] == LOGO
+    workspace_count = (
+        await db_session.execute(select(func.count()).select_from(IntakeV6WorkspaceRecord))
+    ).scalar_one()
+    assert workspace_count == 0
 
 
 @pytest.mark.asyncio

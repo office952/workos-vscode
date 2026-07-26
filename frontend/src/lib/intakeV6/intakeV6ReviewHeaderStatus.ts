@@ -1,4 +1,9 @@
 import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
+import {
+  operatorStatusSemanticRo,
+  workspaceDetailReadyValueRo,
+  workspaceReadyAggregateLabelRo,
+} from "./intakeV6OperatorVocabulary";
 
 export type ReviewHeaderStatusTone = "success" | "warning" | "danger" | "neutral";
 
@@ -32,12 +37,13 @@ export interface BuildReviewHeaderStatusInput {
   layersConfirmed: number;
   layersTotal: number;
   artworkTotal: number;
-  artworkConfirmed: number;
+  artworkConfigured: number;
   operatorConfirmationMissing?: boolean;
   reviewWarnings?: readonly string[];
   surfacing: ReviewHandoffSurfacing;
   pendingSave?: boolean;
   pendingConfirmationCount?: number;
+  currentStep?: "layers" | "review" | "confirm";
   widthMm?: number | null;
   heightMm?: number | null;
   perimeterM?: number | null;
@@ -69,14 +75,17 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     };
   }
 
-  const artworkAllConfirmed =
-    input.artworkTotal === 0 || input.artworkConfirmed >= input.artworkTotal;
+  const artworkAllConfigured =
+    input.artworkTotal === 0 || input.artworkConfigured >= input.artworkTotal;
   const layersAllConfirmed =
     input.layersTotal === 0 || input.layersConfirmed >= input.layersTotal;
 
+  const showFinalConfirmationPending =
+    input.currentStep === "confirm" && input.operatorConfirmationMissing === true;
+
   let actionCount = input.pendingConfirmationCount ?? 0;
   if (input.pendingSave) actionCount += 1;
-  if (input.operatorConfirmationMissing) actionCount += 1;
+  if (showFinalConfirmationPending) actionCount += 1;
 
   const hasReviewWarnings = (input.reviewWarnings?.length ?? 0) > 0;
   const surfacingReasonsExcludingOperator = input.surfacing.reasons.filter(
@@ -95,13 +104,13 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     {
       id: "svg",
       label: "SVG",
-      value: input.svgReady ? "OK" : "Necesită upload",
+      value: input.svgReady ? workspaceDetailReadyValueRo() : "Necesită upload",
       tone: input.svgReady ? "ok" : input.analysisReady ? "warn" : "bad",
     },
     {
       id: "pricing",
       label: "Pricing",
-      value: input.containsMissingPrices ? "Lipsesc tarife" : "OK",
+      value: input.containsMissingPrices ? "Lipsesc tarife" : workspaceDetailReadyValueRo(),
       tone: input.containsMissingPrices ? "bad" : "ok",
     },
     {
@@ -115,21 +124,25 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     },
     {
       id: "artwork",
-      label: "Artwork",
+      label: "Vector Logo",
       value:
         input.artworkTotal === 0
           ? "—"
-          : artworkAllConfirmed
-            ? "Confirmat"
+          : artworkAllConfigured
+            ? "Configurat"
             : "Necesită decizie",
       tone:
-        input.artworkTotal === 0 ? "muted" : artworkAllConfirmed ? "ok" : "warn",
+        input.artworkTotal === 0 ? "muted" : artworkAllConfigured ? "ok" : "warn",
     },
     {
       id: "operator",
-      label: "Operator confirmation",
-      value: input.operatorConfirmationMissing ? "Lipsește" : "Complet",
-      tone: input.operatorConfirmationMissing ? "warn" : "ok",
+      label: "Confirmare finală",
+      value: showFinalConfirmationPending
+        ? operatorStatusSemanticRo("missing_data")
+        : input.currentStep === "confirm"
+          ? operatorStatusSemanticRo("confirmed")
+          : "Pas 3",
+      tone: showFinalConfirmationPending ? "warn" : "muted",
     },
     {
       id: "dimensions",
@@ -146,11 +159,11 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
   ];
 
   const actions: ReviewHeaderStatusAction[] = [];
-  if (input.operatorConfirmationMissing) {
-    actions.push({ id: "confirm-step", label: "Confirmă în pasul Confirmare" });
+  if (showFinalConfirmationPending) {
+    actions.push({ id: "confirm-step", label: "Confirmă rezumatul final" });
   }
-  if (!artworkAllConfirmed && input.artworkTotal > 0) {
-    actions.push({ id: "jump-artwork", label: "Mergi la Artwork" });
+  if (!artworkAllConfigured && input.artworkTotal > 0) {
+    actions.push({ id: "jump-artwork", label: "Mergi la Vector Logo" });
   }
   if (input.containsMissingPrices) {
     actions.push({ id: "jump-live-calc", label: "Vezi Calcul Live" });
@@ -183,7 +196,7 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
   }
 
   return {
-    label: "Totul OK",
+    label: workspaceReadyAggregateLabelRo(),
     tone: "success",
     actionCount: 0,
     details,

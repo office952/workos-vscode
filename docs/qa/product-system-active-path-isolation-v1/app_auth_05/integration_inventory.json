@@ -1,0 +1,55 @@
+{
+  "task": "APP-AUTH-05",
+  "mode": "OBSERVE_ONLY",
+  "environments": {
+    "test": "fixture/settings override permitted",
+    "development": "documented PARITY_* env vars permitted",
+    "production": "all parity flags forced false at runtime"
+  },
+  "adapter_package": "backend/services/parity_observe/",
+  "foundation_package": "backend/parity/",
+  "wired_consumers": [
+    {
+      "id": "employee_mobile_available",
+      "service": "backend/services/employee_mobile_tasks_service.py",
+      "hook": "list_available_tasks() post-compute",
+      "adapter": "observe_mobile_available_tasks"
+    },
+    {
+      "id": "operational_registry_eligible_employees",
+      "router": "backend/routers/operational_registry.py",
+      "endpoint": "/api/v1/operational-registry/operation-mappings/{operation_code}/eligible-employees",
+      "adapter": "observe_eligible_employees_endpoint"
+    }
+  ],
+  "observe_only_helpers": [
+    {
+      "id": "sandu_observe_report",
+      "module": "backend/services/parity_observe/sandu.py",
+      "employee_id": 4,
+      "persistence": false,
+      "mutations": false
+    }
+  ],
+  "explicitly_unwired": [
+    "operator_task_truth_service",
+    "execution_task_assignment_service",
+    "execution_reality_service",
+    "employee_attendance_service",
+    "tablet",
+    "shop_floor",
+    "assignment_writer",
+    "attendance"
+  ],
+  "forbidden_scope": [
+    "source_switch",
+    "db_persistence",
+    "migrations",
+    "new_admin_endpoints",
+    "ui",
+    "eligibility_enforcement",
+    "PROD-ARCH-01",
+    "MOBILE-INT-02",
+    "MODULE-RUNTIME-01"
+  ]
+}

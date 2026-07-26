@@ -1,0 +1,97 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "PARTIAL",
+  "hierarchy_tab_claim": "Nucleu > .md canonice > contracte > cod > runtime > Figma > Atoms > externe",
+  "page_contradiction": "Page itself is hardcoded TS — violates level-2 .md claim",
+  "rows": [
+    {
+      "truth": "product definition",
+      "claimed_owner": "Product System / PD builder",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "DEFERRED_OWNER_DECISION"
+    },
+    {
+      "truth": "product",
+      "claimed_owner": "Product aggregate + templates",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "ALIGNED"
+    },
+    {
+      "truth": "cost",
+      "claimed_owner": "CostEngine",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "DUPLICATE",
+      "owner_decision": "ALIGNED"
+    },
+    {
+      "truth": "commercial price",
+      "claimed_owner": "Quote orchestration / markup",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "DEFERRED_OWNER_DECISION"
+    },
+    {
+      "truth": "offer/quote snapshot",
+      "claimed_owner": "quote_snapshot_v2 / output snapshots",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "ALIGNED"
+    },
+    {
+      "truth": "order snapshot",
+      "claimed_owner": "order_output_snapshot_references",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "ENFORCED elsewhere"
+    },
+    {
+      "truth": "execution plan",
+      "claimed_owner": "ExecutionPlanV2 services",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "STALE",
+      "owner_decision": "NOT_PROVEN on page"
+    },
+    {
+      "truth": "operation/task",
+      "claimed_owner": "Employee mobile + shop floor",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "ALIGNED"
+    },
+    {
+      "truth": "employee competence",
+      "claimed_owner": "competence registry + legacy JSON",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "CONTRADICTED",
+      "owner_decision": "APP-INT finding"
+    },
+    {
+      "truth": "authorization",
+      "claimed_owner": "assignment + auth services",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "NOT_PROVEN",
+      "owner_decision": "DEFERRED_OWNER_DECISION"
+    },
+    {
+      "truth": "machine",
+      "claimed_owner": "machines registry",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "NOT_PROVEN",
+      "owner_decision": "NOT_PROVEN"
+    },
+    {
+      "truth": "inventory",
+      "claimed_owner": "OC/inventory routers",
+      "real_sources": "backend services + DB (see APP-INT/AUTH)",
+      "classification": "PARTIAL",
+      "owner_decision": "ALIGNED"
+    }
+  ],
+  "does_not_confirm": "A1–A22 owner decisions — display only"
+}

@@ -1,0 +1,28 @@
+{
+  "task": "INTAKE_V6_STEP2_GLOBAL_FINISH_MIRROR_TRIM_V1",
+  "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "persisted_global_mirror_absent_from_save_response": true,
+  "reload_preserved": true,
+  "back_only_live_calc_has_forex_rows": false,
+  "verdict": "PASS",
+  "per_layer_backing_authoritative": true,
+  "global_mirror_write_removed": true,
+  "legacy_fallback_preserved": true,
+  "mixed_payload_safe": true,
+  "dual_write": false,
+  "active_global_consumer_found": false,
+  "layer_keys": [
+    "pseudo:maria",
+    "pseudo:soare"
+  ],
+  "layer_backing_after_save": {
+    "pseudo:maria": "forex_10_no_bevel",
+    "pseudo:soare": "forex_10_with_bevel"
+  },
+  "screenshots": [
+    "01_mixed_per_layer_backing.png",
+    "02_reload_preserves_layers.png",
+    "03_back_only_live_calc_unchanged.png"
+  ]
+}

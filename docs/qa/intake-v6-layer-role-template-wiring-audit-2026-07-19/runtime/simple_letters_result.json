@@ -1,0 +1,68 @@
+{
+  "fixture": {
+    "id": "simple_letters",
+    "file": "litere-vol-1-layer.svg"
+  },
+  "workspace_id": "c6e2eb60-e3b7-45b0-8c38-663c5237d184",
+  "url": "http://127.0.0.1:3000/intake-v6/c6e2eb60-e3b7-45b0-8c38-663c5237d184/operator",
+  "head_expected": "f39c260",
+  "summary": {
+    "id": "c6e2eb60-e3b7-45b0-8c38-663c5237d184",
+    "workspace_code": "IV6-0230D7CC",
+    "title": "wiring-audit-simple_letters-1784456091862",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "readiness_status": "layer_roles_incomplete",
+    "layer_count": 1,
+    "layers": [
+      {
+        "key": "Layer_x0020_1"
+      }
+    ],
+    "role_setup_status": "partial",
+    "role_layers": [
+      {
+        "key": "Layer_x0020_1",
+        "auto": "unknown",
+        "state": "pending",
+        "label": null
+      }
+    ],
+    "composition_items": [],
+    "composition_confirmed": false,
+    "bindings": [],
+    "support_selection": null,
+    "segmented": null,
+    "product_truth_components": []
+  },
+  "page1Probe": {
+    "hasVectorLitere": false,
+    "hasVectorLogo": false,
+    "hasSupport": false,
+    "hasLitereVolumetrice": true,
+    "stepCurrent": "intake-v6-progress-step-layers",
+    "roleSelects": [],
+    "url": "http://127.0.0.1:3000/intake-v6/c6e2eb60-e3b7-45b0-8c38-663c5237d184/operator"
+  },
+  "navProbe": {
+    "skipped": true
+  },
+  "page2Probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/c6e2eb60-e3b7-45b0-8c38-663c5237d184/operator",
+    "hasLetterCluster": false,
+    "hasArtwork": false,
+    "hasLighting": false,
+    "hasSegmented": false,
+    "hasOracal": false,
+    "hasFold": false,
+    "hasVectorLitere": true,
+    "montajVisible": false
+  },
+  "pd_status": {
+    "pd_letters": 200,
+    "pd_preview": 404,
+    "pre_order_preview": 404
+  },
+  "templates_in_bindings": [],
+  "face_present": false,
+  "acm_present": false
+}

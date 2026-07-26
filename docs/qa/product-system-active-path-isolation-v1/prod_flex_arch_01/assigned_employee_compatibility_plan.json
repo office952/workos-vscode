@@ -1,0 +1,26 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "recommendation": "OPTION_A",
+  "option_a": {
+    "label": "Keep assigned_employee_id as optional principal coordinator",
+    "semantics": "Legacy-compatible principal hint; not exclusive owner; not participant ceiling",
+    "nullable": true,
+    "writers": ["manager assign", "employee claim", "start-from-available"],
+    "readers": ["mobile my tasks filter", "operator assign panel", "readiness per-employee view"]
+  },
+  "option_b_rejected": "Immediate deprecation breaks MOBILE-T06 and operator assign",
+  "option_c_rejected": "Multi-assignment in plan field violates single-coordinator contract and snapshot simplicity",
+  "interaction_rules": {
+    "claim": "Sets assignee if null; idempotent if same employee; 409 if other principal claimed",
+    "assign": "Manager may set/reassign before operation complete; does not auto-start session",
+    "participants": "Helpers do not modify assignee",
+    "reassignment": "Allowed with audit; active principal session policy in concurrency matrix",
+    "rename_later": "May alias as principal_employee_id in API projection — not in this wave"
+  },
+  "compatibility": {
+    "mobile_t06": "PRESERVE claim and start-from-available paths",
+    "operator": "PRESERVE PATCH assign",
+    "frozen_snapshot": "UNCHANGED — assignee not in frozen identity"
+  },
+  "do_not": ["convert to array", "embed in product system", "write into order snapshot"]
+}

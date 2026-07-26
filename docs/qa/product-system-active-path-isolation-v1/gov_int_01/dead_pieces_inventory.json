@@ -1,0 +1,70 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "count": 12,
+  "pieces": [
+    {
+      "piece": "docs/canonical/ directory",
+      "classification": "DEAD",
+      "note": "Empty — referenced but missing"
+    },
+    {
+      "piece": "25 canonical docs badge",
+      "classification": "ACTIVE_DUPLICATE",
+      "note": "Misleading hardcoded claim"
+    },
+    {
+      "piece": "governanceData.ts .md extraction comment",
+      "classification": "STALE",
+      "note": "Comment false — data is inline"
+    },
+    {
+      "piece": "invalidPatterns array",
+      "classification": "DEAD",
+      "note": "Not in search index"
+    },
+    {
+      "piece": "productCatalog 50 products",
+      "classification": "LEGACY",
+      "note": "Not wired to Product System"
+    },
+    {
+      "piece": "Boundary Map Templates layer",
+      "classification": "STALE",
+      "note": "Superseded by module chain mental model"
+    },
+    {
+      "piece": "Quotes calculează in formula",
+      "classification": "CONTRADICTED",
+      "note": "vs modules Golden Rule"
+    },
+    {
+      "piece": "OC after WorkOS in flow",
+      "classification": "CONTRADICTED",
+      "note": "vs modules OC first"
+    },
+    {
+      "piece": "EnvironmentBanner on governance",
+      "classification": "ACTIVE_DUPLICATE",
+      "note": "False live signal"
+    },
+    {
+      "piece": "truthHierarchy level-2 .md",
+      "classification": "NOT_PROVEN",
+      "note": "No .md loaded"
+    },
+    {
+      "piece": "shared events between pages",
+      "classification": "ACTIVE_DUPLICATE",
+      "note": "Two copies diverge risk"
+    },
+    {
+      "piece": "Governance page enforcement",
+      "classification": "DEMO",
+      "note": "Read-only poster"
+    }
+  ]
+}

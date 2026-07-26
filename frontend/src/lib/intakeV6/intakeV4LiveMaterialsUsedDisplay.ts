@@ -16,6 +16,7 @@ export interface IntakeV4LiveMaterialUsedRow {
   quantityText: string;
   costText: string;
   muted?: boolean;
+  technicalDetails?: string[];
 }
 
 function positive(value: unknown): number | null {
@@ -61,6 +62,70 @@ function formatQuantity(
     materialKey: row.material_key,
     displayName: row.display_name,
   });
+}
+
+function dedupeStrings(values: Array<string | null | undefined>): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const trimmed = value?.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    result.push(trimmed);
+  }
+  return result;
+}
+
+function buildTechnicalDetailsFromMaterialRows(rows: IntakeV4MaterialQuantityRow[]): string[] {
+  const details = dedupeStrings(
+    rows.flatMap((row) => {
+      const parts: Array<string | null> = [];
+      const sourceLabel = sanitizeOperatorDisplayText(row.display_name);
+      if (sourceLabel) parts.push(`Sursă: ${sourceLabel}`);
+      if (row.registry_code ?? row.material_code) parts.push(`Cod: ${row.registry_code ?? row.material_code}`);
+      if (row.quantity_basis) parts.push(`Bază: ${row.quantity_basis}`);
+      return parts;
+    }),
+  );
+  return details;
+}
+
+function buildTechnicalDetailsFromOperationRows(rows: IntakeV4CncOperationRow[]): string[] {
+  const details = dedupeStrings(
+    rows.flatMap((row) => {
+      const parts: Array<string | null> = [];
+      const sourceLabel = sanitizeOperatorDisplayText(row.display_name);
+      if (sourceLabel) parts.push(`Sursă: ${sourceLabel}`);
+      if (row.pricing_rate_key) parts.push(`Tarif: ${row.pricing_rate_key}`);
+      return parts;
+    }),
+  );
+  return details;
+}
+
+function splitRowsByIdentity(rows: IntakeV4MaterialQuantityRow[]): IntakeV4MaterialQuantityRow[][] {
+  const groups = new Map<string, IntakeV4MaterialQuantityRow[]>();
+  for (const row of rows) {
+    const fallbackIdentityCode =
+      row.material_key === "return_material" || row.material_key.startsWith("artwork_return_")
+        ? "RETURN_PROFILE_SHARED"
+        : row.material_key;
+    const identityKey = [
+      row.registry_code ?? row.material_code ?? fallbackIdentityCode,
+      row.unit,
+      row.price_source,
+      row.unit_price != null ? String(row.unit_price) : "missing",
+    ].join("|");
+    const existing = groups.get(identityKey) ?? [];
+    existing.push(row);
+    groups.set(identityKey, existing);
+  }
+  return Array.from(groups.values());
+}
+
+function isPlexiglasFaceRow(row: IntakeV4MaterialQuantityRow): boolean {
+  const code = row.registry_code ?? row.material_code ?? "";
+  return row.material_key === "plexiglas_face" || code === "MAT-ACP-FATA-LITERE";
 }
 
 function sumCost(rows: IntakeV4MaterialQuantityRow[]): number | null {
@@ -112,6 +177,7 @@ function addMaterialGroup(
     unit?: string;
     pricedQuantity?: boolean;
     suffix?: string;
+    technicalDetails?: string[];
   },
 ): void {
   const first = args.rows[0];
@@ -125,6 +191,7 @@ function addMaterialGroup(
     quantityText: `${formatQuantity(quantity, unit, first)}${args.suffix ?? ""}`,
     costText: formatMoney(cost, args.currency),
     muted: cost == null || args.rows.some((row) => row.price_source === "missing"),
+    technicalDetails: args.technicalDetails ?? buildTechnicalDetailsFromMaterialRows(args.rows),
   });
 }
 
@@ -151,55 +218,8 @@ function addOperationGroup(
     }) : "cantitate lipsă",
     costText: cost != null ? formatMoney(cost, args.currency) : "tarif lipsă",
     muted: cost == null || args.rows.some((row) => row.pricing_status === "missing_rate"),
+    technicalDetails: buildTechnicalDetailsFromOperationRows(args.rows),
   });
-}
-
-function splitPlexiglasRows(args: {
-  result: IntakeV4LiveMaterialUsedRow[];
-  rows: IntakeV4MaterialQuantityRow[];
-  letterGroups?: IntakeV4LetterGroupFinish[];
-  artworkFinishes?: IntakeV4ArtworkFinish[];
-  currency: string;
-}): boolean {
-  const plexi = args.rows.find((row) => row.material_key === "plexiglas_face");
-  if (!plexi) return false;
-
-  const artworkArea = (args.artworkFinishes ?? []).reduce(
-    (sum, row) => sum + (positive(row.estimated_area_m2) ?? 0),
-    0,
-  );
-  const letterArea = (args.letterGroups ?? []).reduce(
-    (sum, row) => sum + (positive(row.face_area_m2) ?? 0),
-    0,
-  );
-  const totalReferenceArea = letterArea + artworkArea;
-  const totalQuantity = readRowPricedQuantity(plexi);
-  const totalCost = resolveMaterialRowCost(plexi);
-
-  if (!totalQuantity || !totalReferenceArea || artworkArea <= 0 || letterArea <= 0) {
-    addMaterialGroup(args.result, {
-      groupKey: "plexi",
-      label: sanitizeOperatorDisplayText(plexi.display_name),
-      rows: [plexi],
-      currency: args.currency,
-    });
-    return true;
-  }
-
-  const pushSplit = (groupKey: string, label: string, referenceArea: number) => {
-    const share = referenceArea / totalReferenceArea;
-    args.result.push({
-      groupKey,
-      label,
-      quantityText: formatQuantity(totalQuantity * share, plexi.unit, plexi),
-      costText: formatMoney(totalCost != null ? totalCost * share : null, args.currency),
-      muted: totalCost == null || plexi.price_source === "missing",
-    });
-  };
-
-  pushSplit("plexi_letters", "Plexiglas 3 mm / față litere", letterArea);
-  pushSplit("plexi_emblems", "Plexiglas 3 mm / embleme/logo", artworkArea);
-  return true;
 }
 
 function groupRowsByPredicate(
@@ -224,17 +244,18 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   const consumableRows = breakdown.consumable_rows.filter((row) => row.price_source !== "informational_only");
   const result: IntakeV4LiveMaterialUsedRow[] = [];
 
-  splitPlexiglasRows({
-    result,
-    rows: materialRows,
-    letterGroups: args.letterGroups,
-    artworkFinishes: args.artworkFinishes,
-    currency,
-  });
+  for (const [index, rows] of splitRowsByIdentity(groupRowsByPredicate(materialRows, isPlexiglasFaceRow)).entries()) {
+    addMaterialGroup(result, {
+      groupKey: index === 0 ? "plexi" : `plexi_${index + 1}`,
+      label: "plexiglas 3mm PMMA - opal",
+      rows,
+      currency,
+    });
+  }
 
   addMaterialGroup(result, {
     groupKey: "forex",
-    label: "Forex 10 mm / spate litere",
+    label: "Forex 10 mm",
     rows: groupRowsByPredicate(materialRows, (row) => row.material_key === "forex_backing"),
     currency,
   });
@@ -242,7 +263,7 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   for (const series of ["641", "651", "8500"]) {
     addMaterialGroup(result, {
       groupKey: `oracal_${series}`,
-      label: `Vinil față Oracal ${series}`,
+      label: `Oracal ${series}`,
       rows: groupRowsByPredicate(materialRows, (row) => row.material_key === `face_vinyl_${series}`),
       currency,
     });
@@ -280,25 +301,18 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
     suffix: " acoperire",
   });
 
-  addMaterialGroup(result, {
-    groupKey: "cant_letters",
-    label: sanitizeOperatorDisplayText(
-      groupRowsByPredicate(materialRows, (row) => row.material_key === "return_material")[0]?.display_name ?? "Cant / volum litere",
-    ),
-    rows: groupRowsByPredicate(materialRows, (row) => row.material_key === "return_material"),
-    currency,
-    pricedQuantity: false,
-  });
-
-  addMaterialGroup(result, {
-    groupKey: "cant_emblems",
-    label: sanitizeOperatorDisplayText(
-      groupRowsByPredicate(materialRows, (row) => row.material_key.startsWith("artwork_return_"))[0]?.display_name ?? "Cant / volum embleme/logo",
-    ),
-    rows: groupRowsByPredicate(materialRows, (row) => row.material_key.startsWith("artwork_return_")),
-    currency,
-    pricedQuantity: false,
-  });
+  for (const [index, rows] of splitRowsByIdentity(groupRowsByPredicate(
+    materialRows,
+    (row) => row.material_key === "return_material" || row.material_key.startsWith("artwork_return_"),
+  )).entries()) {
+    addMaterialGroup(result, {
+      groupKey: index === 0 ? "cant_profile" : `cant_profile_${index + 1}`,
+      label: "Cant / volum",
+      rows,
+      currency,
+      pricedQuantity: false,
+    });
+  }
 
   addMaterialGroup(result, {
     groupKey: "led_modules",
@@ -339,13 +353,13 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   const operationRows = breakdown.operation_rows ?? [];
   addOperationGroup(result, {
     groupKey: "cnc_face",
-    label: "Debitare CNC față Plexiglas",
+    label: "Debitare CNC față plexiglas 3mm PMMA - opal",
     rows: operationRows.filter((row) => row.key === "cnc_face_cutting_plexiglas_3mm"),
     currency,
   });
   addOperationGroup(result, {
     groupKey: "cnc_face_bevel",
-    label: "Șanfren CNC față Plexiglas",
+    label: "Șanfren CNC față plexiglas 3mm PMMA - opal",
     rows: operationRows.filter((row) => row.key === "cnc_face_bevel_plexiglas_3mm"),
     currency,
   });
@@ -391,7 +405,7 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   });
   addOperationGroup(result, {
     groupKey: "edge_bond",
-    label: "Lipire cant / volum pe față litere",
+    label: "Lipire cant / volum",
     rows: edgeOperationRows.filter((row) => row.key === "edge_cant_bond_to_face"),
     currency,
   });

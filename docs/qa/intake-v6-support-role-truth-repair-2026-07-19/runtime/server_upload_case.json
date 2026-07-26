@@ -1,0 +1,33 @@
+{
+  "id": "server_upload",
+  "workspace_id": "8b076431-4e4d-4c55-b917-50f8ef9c8e6d",
+  "uploadStatus": 200,
+  "hasSourceText": true,
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/8b076431-4e4d-4c55-b917-50f8ef9c8e6d/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-c5c6c6",
+        "value": "support_panel",
+        "label": "Contur suport"
+      },
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-e31e24",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "empty": false,
+    "supportError": null,
+    "text": {
+      "vectorLitere": true,
+      "conturSuport": true
+    },
+    "confirmDisabled": true,
+    "confirmAria": null
+  },
+  "pass": {
+    "sourceTextStored": true,
+    "page1NotEmpty": true
+  }
+}

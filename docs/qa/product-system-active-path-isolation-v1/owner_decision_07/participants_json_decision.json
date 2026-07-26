@@ -1,0 +1,16 @@
+{
+  "task": "OWNER-DECISION-07",
+  "field": "participants_json",
+  "arch_plan_proposal": "existing sessions → participants_json → optional tables later",
+  "owner_decision": "DEFERRED",
+  "not_confirmed_as": ["CANONICAL_MVP", "TEMPORARY_NON_CANONICAL write authority"],
+  "owner_rationale": [
+    "JSON-first risks concurrent lost updates on join/leave",
+    "weak referential validation",
+    "difficult queries and audit",
+    "help and progress may contaminate same blob",
+    "sessions vs participants contradiction risk"
+  ],
+  "flex_01": "Must not add participants_json column or write path",
+  "flex_02_plus": "Requires separate PROD-FLEX-ARCH-02 participant persistence boundary decision before any write representation"
+}

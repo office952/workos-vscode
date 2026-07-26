@@ -2,6 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { getAPIBaseURL } from "@/lib/config";
 import { isMockEnabled } from "@/lib/mockGuard";
 import {
+  parseStructuredActionError,
+  type StructuredActionError,
+} from "@/lib/operatorProductionBlockerPresentation";
+import {
   operatorTasks as mockOperatorTasks,
   type OperatorTask,
   type TaskStatus,
@@ -14,6 +18,7 @@ interface OperatorDataState {
   loading: boolean;
   error: string | null;
   source: OperatorSource;
+  lastActionError: StructuredActionError | null;
   refresh: () => Promise<void>;
   performAction: (
     orderId: number,
@@ -23,7 +28,7 @@ interface OperatorDataState {
     employeeId?: number | null,
     operatorName?: string | null,
     completionNotes?: string | null
-  ) => Promise<boolean>;
+  ) => Promise<{ success: boolean; actionError: StructuredActionError | null }>;
 }
 
 /** Task from /api/v1/operator/tasks */
@@ -112,6 +117,7 @@ export function useOperatorData(): OperatorDataState {
   const [tasks, setTasks] = useState<OperatorTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastActionError, setLastActionError] = useState<StructuredActionError | null>(null);
   const [source, setSource] = useState<OperatorSource>("loading");
 
   const fetchData = useCallback(async () => {
@@ -159,7 +165,8 @@ export function useOperatorData(): OperatorDataState {
       employeeId?: number | null,
       operatorName?: string | null,
       completionNotes?: string | null
-    ): Promise<boolean> => {
+    ): Promise<{ success: boolean; actionError: StructuredActionError | null }> => {
+      setLastActionError(null);
       try {
         const base = getAPIBaseURL();
         const payload: Record<string, unknown> = {
@@ -185,15 +192,17 @@ export function useOperatorData(): OperatorDataState {
         });
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
+          const parsed = parseStructuredActionError(res.status, errData);
+          setLastActionError(parsed);
           console.error("[performAction] Failed:", errData);
-          return false;
+          return { success: false, actionError: parsed };
         }
         // Refresh tasks after action
         await fetchData();
-        return true;
+        return { success: true, actionError: null };
       } catch (err) {
         console.error("[performAction] Error:", err);
-        return false;
+        return { success: false, actionError: null };
       }
     },
     [fetchData]
@@ -203,5 +212,5 @@ export function useOperatorData(): OperatorDataState {
     fetchData();
   }, [fetchData]);
 
-  return { tasks, loading, error, source, refresh: fetchData, performAction };
+  return { tasks, loading, error, source, lastActionError, refresh: fetchData, performAction };
 }

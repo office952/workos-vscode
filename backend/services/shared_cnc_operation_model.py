@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Literal, Mapping, Sequence
 
+from seeds.material_canonical_naming import LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME
 from services.intake_v4_cnc_router_pass_policy_service import resolve_cnc_cutting_perimeter_ml
 
 DEFAULT_DEPTH_PER_PASS_MM = 3.5
@@ -22,8 +23,9 @@ DEFAULT_FACE_PLEXI_THICKNESS_MM = 3.0
 DEFAULT_FOREX_BACKING_THICKNESS_MM = 10.0
 DEFAULT_CNC_PRICING_RATE_KEY = "workcenter_rates:CNC_ROUTER:per_linear_meter"
 
-# Owner decision: Forex 10 mm debitare uses 5 passes (not strict ceil(10/3.5)=3).
-FOREX_10MM_CUTTING_PASSES_OWNER = 5
+# Owner decision: Forex 10 mm debitare uses 3 passes; bevel adds 2 more, for 5 total.
+FOREX_10MM_CUTTING_PASSES_OWNER = 3
+FOREX_10MM_BEVEL_PASSES_OWNER = 2
 
 
 class CncOperationType(str, Enum):
@@ -372,10 +374,10 @@ CUTTING_SERVICE_CNC_BINDING = CncProductionResourceBinding(
 
 VOLUMETRIC_FACE_CUTTING_RULE = CncOperationRule(
     operation_key="cnc_face_cutting_plexiglas_3mm",
-    display_name="Debitare CNC față Plexiglas 3 mm",
+    display_name=f"Debitare CNC față {LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}",
     operation_type=CncOperationType.CUTTING,
     material_family="plexiglas",
-    material_name="Plexiglas 3 mm",
+    material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
     thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="face_cnc_cutting_perimeter",
@@ -388,10 +390,10 @@ VOLUMETRIC_FACE_CUTTING_RULE = CncOperationRule(
 
 VOLUMETRIC_FACE_BEVEL_RULE = CncOperationRule(
     operation_key="cnc_face_bevel_plexiglas_3mm",
-    display_name="Șanfren CNC față Plexiglas 3 mm",
+    display_name=f"Șanfren CNC față {LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}",
     operation_type=CncOperationType.BEVEL,
     material_family="plexiglas",
-    material_name="Plexiglas 3 mm",
+    material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
     thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="face_cnc_cutting_perimeter",
@@ -430,7 +432,9 @@ VOLUMETRIC_BACKING_BEVEL_RULE = CncOperationRule(
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="backing_cnc_cutting_perimeter",
     basis_label="Perimetru CNC spate",
-    passes=1,
+    passes=FOREX_10MM_BEVEL_PASSES_OWNER,
+    depth_per_pass_mm=DEFAULT_DEPTH_PER_PASS_MM,
+    owner_pass_override=True,
     material_pricing_rate_key=None,
     material_key="forex_10mm",
     production_binding=VOLUMETRIC_BACKING_BEVEL_BINDING,
@@ -443,6 +447,89 @@ VOLUMETRIC_REQUIRED_CNC_OPERATION_KEYS: tuple[str, ...] = (
     "cnc_backing_cutting_forex_10mm",
     "cnc_backing_bevel_forex_10mm",
 )
+
+
+def merge_cnc_operation_preview_rows(
+    rows: Sequence[CncOperationPreviewRow],
+) -> list[CncOperationPreviewRow]:
+    merged: dict[str, CncOperationPreviewRow] = {}
+    for row in rows:
+        existing = merged.get(row.key)
+        if existing is None:
+            merged[row.key] = row
+            continue
+        existing.quantity = round(existing.quantity + row.quantity, 4)
+        if (
+            existing.operation_equivalent_quantity is not None
+            and row.operation_equivalent_quantity is not None
+        ):
+            existing.operation_equivalent_quantity = round(
+                existing.operation_equivalent_quantity + row.operation_equivalent_quantity,
+                4,
+            )
+        elif row.operation_equivalent_quantity is not None:
+            existing.operation_equivalent_quantity = row.operation_equivalent_quantity
+        if existing.estimated_cost is not None and row.estimated_cost is not None:
+            existing.estimated_cost = round(existing.estimated_cost + row.estimated_cost, 4)
+        elif row.estimated_cost is not None:
+            existing.estimated_cost = row.estimated_cost
+    return list(merged.values())
+
+
+def _volumetric_backing_cnc_rows(
+    back_ml: float,
+    backing_mode: VolumetricBackingMode,
+    *,
+    configured_rate_eur_per_ml_pass: float | None = None,
+) -> list[CncOperationPreviewRow]:
+    if backing_mode == "none" or back_ml <= 0:
+        return []
+    geometry = {"backing_cnc_cutting_perimeter_ml": back_ml}
+    rows = build_volumetric_letters_cnc_operation_rows(
+        geometry,
+        backing_mode=backing_mode,
+        configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+    )
+    return [row for row in rows if row.key.startswith("cnc_backing_")]
+
+
+def build_volumetric_letters_cnc_operation_rows_with_layer_backing(
+    geometry: Mapping[str, Any],
+    *,
+    layer_backing_specs: Sequence[tuple[float | None, VolumetricBackingMode]] | None = None,
+    backing_mode: VolumetricBackingMode = "none",
+    configured_rate_eur_per_ml_pass: float | None = None,
+) -> list[CncOperationPreviewRow]:
+    """Face CNC once; backing CNC aggregated per layer when specs are provided."""
+    base_rows = build_volumetric_letters_cnc_operation_rows(
+        geometry,
+        backing_mode="none",
+        configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+    )
+    face_rows = [row for row in base_rows if row.key.startswith("cnc_face_")]
+
+    back_rows: list[CncOperationPreviewRow] = []
+    if layer_backing_specs:
+        for perimeter_ml, mode in layer_backing_specs:
+            if perimeter_ml is None or perimeter_ml <= 0:
+                continue
+            back_rows.extend(
+                _volumetric_backing_cnc_rows(
+                    float(perimeter_ml),
+                    mode,
+                    configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+                )
+            )
+        back_rows = merge_cnc_operation_preview_rows(back_rows)
+    elif backing_mode != "none":
+        global_rows = build_volumetric_letters_cnc_operation_rows(
+            geometry,
+            backing_mode=backing_mode,
+            configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+        )
+        back_rows = [row for row in global_rows if row.key.startswith("cnc_backing_")]
+
+    return face_rows + back_rows
 
 
 def build_volumetric_letters_cnc_operation_rows(
@@ -476,7 +563,7 @@ def build_volumetric_letters_cnc_operation_rows(
             display_name=VOLUMETRIC_FACE_CUTTING_RULE.display_name,
             operation_type=CncOperationType.CUTTING.value,
             material_family="plexiglas",
-            material_name="Plexiglas 3 mm",
+            material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
             thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
             basis_key="face_cnc_cutting_perimeter",
             basis_label="Perimetru CNC față",

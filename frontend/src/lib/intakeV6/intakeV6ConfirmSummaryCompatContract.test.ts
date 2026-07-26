@@ -286,7 +286,7 @@ describe("buildIntakeV6ConfirmSummary compat contract", () => {
           ...materialBreakdown.material_rows,
           {
             material_key: "print_laminate_artwork",
-            display_name: "Print + laminare",
+            display_name: "Printat / Laminat",
             category: "material",
             quantity: 0.4,
             unit: "m2",
@@ -316,7 +316,7 @@ describe("buildIntakeV6ConfirmSummary compat contract", () => {
           ...materialBreakdown.material_rows,
           {
             material_key: "print_laminate_artwork",
-            display_name: "Print + laminare",
+            display_name: "Printat / Laminat",
             category: "material",
             quantity: 0.4,
             unit: "m2",

@@ -83,6 +83,9 @@ function buildHook(
     importSvgFile: vi.fn(),
     updateLayerRole: vi.fn(),
     confirmAllLayerRoles: vi.fn(),
+    confirmProductComposition: vi.fn(),
+    saveOfferScope: vi.fn(),
+    saveFinishSetup: vi.fn().mockResolvedValue(undefined),
     canImportSvg: true,
   };
 }
@@ -109,7 +112,11 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
 
   it("shows semantic layers mode for multi pseudo-layer SVG", () => {
     const report = analyzeSemanticFixture();
-    render(<IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />);
+    render(
+      <IntakeV6WorkspaceHeaderStatusProvider>
+        <IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />
+      </IntakeV6WorkspaceHeaderStatusProvider>,
+    );
 
     expect(screen.getByTestId("intake-v6-layers-layout")).toHaveAttribute(
       "data-intake-v6-layers-layout-mode",
@@ -118,9 +125,12 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     expect(screen.getByTestId("intake-v6-layer-table")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-layer-card-grid")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-layers-color-breakdown")).not.toBeInTheDocument();
-    expect(screen.getAllByText(/pseudo maria/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByTestId("intake-v6-layers-warnings")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-pseudo-layer-warning-group")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-layers-warnings-count")).toHaveTextContent(/observa/i);
+    expect(screen.getByTestId("intake-v6-layers-warnings-open-footer")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-pseudo-layer-warning-group")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-pseudo-layer-warning-summary")).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBeGreaterThan(0);
   });
 
   it("shows single-layer color breakdown when one structural layer is detected", () => {
@@ -205,8 +215,8 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
   it("highlights left and right logo layers independently", () => {
     const svg = readFileSync(join(fixtureDir, SEMANTIC_FIXTURE), "utf8");
     const report = analyzeSemanticFixture();
-    const leftLayer = report.layers.find((layer) => layer.name.toLowerCase().includes("logo stanga"));
-    const rightLayer = report.layers.find((layer) => layer.name.toLowerCase().includes("logo dreapta"));
+    const leftLayer = report.layers.find((layer) => layer.name === "Logo 1");
+    const rightLayer = report.layers.find((layer) => layer.name === "Logo 2");
     expect(leftLayer).toBeTruthy();
     expect(rightLayer).toBeTruthy();
 
@@ -215,11 +225,11 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
 
     const resolveKey = (layerName: string) =>
       report.layerRoleConfirmation.layers.find((entry) =>
-        entry.layerName?.toLowerCase().includes(layerName),
+        entry.layerName === layerName,
       )?.layerKey ?? layerName;
 
-    const leftKey = resolveKey("logo stanga");
-    const rightKey = resolveKey("logo dreapta");
+    const leftKey = resolveKey("Logo 1");
+    const rightKey = resolveKey("Logo 2");
     const canvas = () => screen.getByTestId("intake-v6-preview-inspect-canvas-canvas");
     const activeCount = () => canvas().querySelectorAll(".intake-v6-svg-layer-active").length;
 
@@ -235,7 +245,7 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     expect(activeCount()).toBeGreaterThan(0);
   });
 
-  it("keeps compact workspace header with single status badge", () => {
+  it("keeps compact workspace header without duplicate status badge", () => {
     const report = analyzeSemanticFixture();
     render(
       <IntakeV6WorkspaceHeaderStatusProvider>
@@ -256,24 +266,22 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     );
 
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-workspace-status-badge")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-TEST");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Straturi");
+    expect(screen.getByTestId("intake-v6-progress")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-workspace-status-badge")).not.toBeInTheDocument();
     expect(screen.queryByText("SVG ready")).not.toBeInTheDocument();
   });
 
-  it("paginates layer cards when more than four layers are detected", () => {
+  it("shows all semantic fixture layers without card pagination", () => {
     const report = analyzeSemanticFixture();
     expect(report.layers.length).toBeGreaterThan(4);
+    expect(report.layers.length).toBeLessThanOrEqual(6);
 
     render(<IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />);
 
-    expect(screen.getByTestId("intake-v6-layer-card-pagination")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-layer-card-pagination-page")).toHaveTextContent("1/2");
-    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(4);
-
-    fireEvent.click(screen.getByTestId("intake-v6-layer-card-pagination-next"));
-
-    expect(screen.getByTestId("intake-v6-layer-card-pagination-page")).toHaveTextContent("2/2");
-    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(2);
+    expect(screen.queryByTestId("intake-v6-layer-card-pagination")).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(report.layers.length);
   });
 
   it("exposes confirm-all and layer role controls without changing upload API", () => {

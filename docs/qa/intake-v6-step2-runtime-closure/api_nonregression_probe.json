@@ -1,0 +1,55 @@
+﻿{
+    "head":  "463707b",
+    "material_cost_total_eur":  725.16,
+    "estimated_cost_total_eur":  725.16,
+    "currency":  "EUR",
+    "contains_missing_prices":  true,
+    "material_keys":  [
+                          "plexiglas_face",
+                          "forex_backing",
+                          "artwork_plexiglas_logo_instance_001",
+                          "artwork_forex_backing_logo_instance_001",
+                          "artwork_plexiglas_logo_instance_002",
+                          "artwork_forex_backing_logo_instance_002",
+                          "return_material",
+                          "artwork_logo_instance_001_print_vinyl",
+                          "artwork_logo_instance_001_laminated_vinyl",
+                          "artwork_logo_instance_002_print_vinyl",
+                          "artwork_logo_instance_002_laminated_vinyl"
+                      ],
+    "operation_keys":  [
+                           "cnc_face_cutting_plexiglas_3mm",
+                           "cnc_face_bevel_plexiglas_3mm",
+                           "cnc_backing_cutting_forex_10mm",
+                           "artwork_logo_instance_001_print_service",
+                           "artwork_logo_instance_001_lamination_service",
+                           "artwork_logo_instance_001_application_service",
+                           "artwork_logo_instance_002_print_service",
+                           "artwork_logo_instance_002_lamination_service",
+                           "artwork_logo_instance_002_application_service"
+                       ],
+    "mounting_solution":  {
+                              "kind":  "installation_template",
+                              "template_code":  null,
+                              "configuration":  {
+
+                                                }
+                          },
+    "backing_mode":  "forex_10_no_bevel",
+    "illuminated":  true,
+    "lighting_system_type":  "led_modules",
+    "led_module_count":  145,
+    "has_forex_backing_material":  true,
+    "has_cnc_backing_op":  true,
+    "has_acm_material":  false,
+    "logo_material_keys":  [
+                               "artwork_plexiglas_logo_instance_001",
+                               "artwork_forex_backing_logo_instance_001",
+                               "artwork_plexiglas_logo_instance_002",
+                               "artwork_forex_backing_logo_instance_002",
+                               "artwork_logo_instance_001_print_vinyl",
+                               "artwork_logo_instance_001_laminated_vinyl",
+                               "artwork_logo_instance_002_print_vinyl",
+                               "artwork_logo_instance_002_laminated_vinyl"
+                           ]
+}

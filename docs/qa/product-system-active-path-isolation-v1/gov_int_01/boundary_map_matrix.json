@@ -1,0 +1,52 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "governance_flow": "Templates → Quotes → Orders → WorkOS → OC",
+  "governance_formula": "Templates pregătește → Quotes calculează → Orders îngheață → WorkOS execută → OC păzește adevărul",
+  "modules_flow": "OC → WI → PS → CE → QT → OR → WO → TK",
+  "canonical_intake_flow": "Cerere/Intake → Definiție produs → Product System → Cost → Ofertă → Comandă → Plan execuție → Realitate execuție",
+  "classification": "CONTRADICTED",
+  "mismatches": [
+    {
+      "governance_node": "Templates",
+      "modules_equivalent": "PS (partial) + missing WI",
+      "real_code": "Product System templates (TPL-*), Intake V2/V6",
+      "omits": [
+        "Intake/Cerere",
+        "Product Definition explicit layer",
+        "CostEngine"
+      ],
+      "conflict": "Templates boundary layer collapses Intake+PS; not same as module chain"
+    },
+    {
+      "governance_node": "Quotes",
+      "governance_claim": "Calculează cost și preț",
+      "modules_claim": "Quotes = ofertă comercială; CE calculează",
+      "real_code": "CostEngine services + quote orchestration",
+      "conflict": "CONTRADICTED — MODULE-INT Golden Rule: Quotes nu calculează cost"
+    },
+    {
+      "governance_node": "Orders",
+      "alignment": "PARTIAL — snapshot freeze aligned with OR module"
+    },
+    {
+      "governance_node": "WorkOS",
+      "alignment": "PARTIAL — execution orchestration",
+      "conflict": "Governance treats WorkOS as monolith; runtime splits ExecutionPlan/Tasks/ShopFloor"
+    },
+    {
+      "governance_node": "OC",
+      "governance_position": "After WorkOS — guards truth",
+      "modules_position": "First in chain — operational core",
+      "conflict": "CONTRADICTED placement and role emphasis"
+    },
+    {
+      "missing_in_boundary": "CostEngine",
+      "present_in_status_flows_tab": true,
+      "conflict": "Internal inconsistency within /governance"
+    }
+  ]
+}

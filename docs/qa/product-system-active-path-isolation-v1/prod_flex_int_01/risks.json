@@ -1,0 +1,125 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "rigid_assignment",
+      "severity": "HIGH",
+      "evidence": "single assigned_employee_id",
+      "if_wrong_fix": "conflate ownership with participation"
+    },
+    {
+      "id": "R2",
+      "risk": "ownership_vs_participation_confusion",
+      "severity": "HIGH",
+      "evidence": "task_belongs_to_employee uses assignee only",
+      "if_wrong_fix": "helpers invisible in mobile lists"
+    },
+    {
+      "id": "R3",
+      "risk": "auto_dispatch_gresit",
+      "severity": "LOW",
+      "evidence": "not implemented",
+      "if_wrong_fix": "N/A today"
+    },
+    {
+      "id": "R4",
+      "risk": "dublu_claim",
+      "severity": "LOW",
+      "evidence": "MOBILE-T06 locks",
+      "if_wrong_fix": "regression if lock removed"
+    },
+    {
+      "id": "R5",
+      "risk": "participanti_invizibili",
+      "severity": "MEDIUM",
+      "evidence": "no join UI; available pool gate",
+      "if_wrong_fix": "under-reported labor"
+    },
+    {
+      "id": "R6",
+      "risk": "progres_pierdut_la_reassignment",
+      "severity": "MEDIUM",
+      "evidence": "sessions persist but assignee changes",
+      "if_wrong_fix": "reporting mismatch"
+    },
+    {
+      "id": "R7",
+      "risk": "sesiune_inchisa_eq_operatie_inchisa",
+      "severity": "MEDIUM",
+      "evidence": "mobile complete == session complete; global done when all ended",
+      "if_wrong_fix": "premature task close when solo"
+    },
+    {
+      "id": "R8",
+      "risk": "dublu_pontaj",
+      "severity": "MEDIUM",
+      "evidence": "attendance separate from sessions",
+      "if_wrong_fix": "payroll errors"
+    },
+    {
+      "id": "R9",
+      "risk": "claim_blocant_participanti",
+      "severity": "HIGH",
+      "evidence": "_has_active_session_by_other",
+      "if_wrong_fix": "blocks target collaboration"
+    },
+    {
+      "id": "R10",
+      "risk": "product_system_employee_ids",
+      "severity": "LOW",
+      "evidence": "count 0",
+      "if_wrong_fix": "N/A"
+    },
+    {
+      "id": "R11",
+      "risk": "numar_fix_oameni",
+      "severity": "LOW",
+      "evidence": "not found",
+      "if_wrong_fix": "N/A"
+    },
+    {
+      "id": "R12",
+      "risk": "ajutor_ca_reassignment",
+      "severity": "LOW",
+      "evidence": "help not implemented",
+      "if_wrong_fix": "future design risk"
+    },
+    {
+      "id": "R13",
+      "risk": "execution_plan_mutat_de_runtime",
+      "severity": "LOW",
+      "evidence": "only assignee fields mutable — intentional",
+      "if_wrong_fix": "frozen graph corruption if expanded"
+    },
+    {
+      "id": "R14",
+      "risk": "mobile_operator_divergence",
+      "severity": "MEDIUM",
+      "evidence": "readiness unassigned vs eligible",
+      "if_wrong_fix": "operator confusion"
+    },
+    {
+      "id": "R15",
+      "risk": "mock_fallback",
+      "severity": "HIGH",
+      "evidence": "useShopFloorData",
+      "if_wrong_fix": "false operational picture"
+    },
+    {
+      "id": "R16",
+      "risk": "ready_neoccupied",
+      "severity": "MEDIUM",
+      "evidence": "no dispatch; depends on employee pull",
+      "if_wrong_fix": "floor idle while tasks eligible"
+    },
+    {
+      "id": "R17",
+      "risk": "prea_multi_oameni_aceeasi_operatie",
+      "severity": "LOW",
+      "evidence": "no max_useful_people enforcement",
+      "if_wrong_fix": "future congestion"
+    }
+  ]
+}

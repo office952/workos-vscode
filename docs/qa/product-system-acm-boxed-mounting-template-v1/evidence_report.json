@@ -1,0 +1,306 @@
+{
+  "task": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_TEMPLATE_V1",
+  "captured_at": "2026-07-13T14:33:16.278Z",
+  "head": "564ce48",
+  "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "operator_route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "playwright_attempts": [
+    {
+      "attempt": 1,
+      "result": "fail",
+      "reason": "Flow A query param + Flow B bare workspace route"
+    },
+    {
+      "attempt": 2,
+      "result": "fail",
+      "reason": "Candidate bucket missing (ACM in legacy modules); networkidle hang"
+    }
+  ],
+  "evidence_capture_script": "docs/qa/product-system-acm-boxed-mounting-template-v1/capture-evidence.mjs",
+  "schema_freshness": {
+    "openapi_ok": true,
+    "mounting_solution": true,
+    "acm_template_reference": false
+  },
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s IntakeV6OperatorWorkspaceApp IntakeV6ReviewStep IntakeV6ReviewStep \n    at IntakeV6ReviewStep (http://127.0.0.1:3000/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx?t=1783951730049:278:46)\n    at main\n    at div\n    at IntakeV6WorkspaceHeaderStatusProvider (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6WorkspaceHeaderStatusContext.tsx:30:57)\n    at IntakeV6OperatorWorkspace (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspace.tsx?t=1783951730049:34:53)\n    at div\n    at IntakeV6OperatorWorkspaceFileDrop (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspaceFileDrop.tsx:24:61)\n    at div\n    at IntakeV6OperatorWorkspaceApp (http://127.0.0.1:3000/src/pages/IntakeV6OperatorWorkspaceApp.tsx?t=1783951730049:29:29)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:354:22)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Outlet (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:1410:34)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:1656:36)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthProvider (http://127.0.0.1:3000/src/contexts/AuthContext.tsx:96:32)\n    at Router (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4544:15)\n    at BrowserRouter (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:5290:5)\n    at Provider (http://127.0.0.1:3000/node_modules/.vite/deps/chunk-JZTXFAN2.js?v=0304d1ab:56:15)\n    at TooltipProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0304d1ab:52:5)\n    at QueryClientProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=0304d1ab:3168:3)\n    at App"
+  ],
+  "scenarios": [
+    {
+      "name": "product_system_loaded",
+      "screenshot": "01_product_system_catalog_loaded.png",
+      "flow": "A",
+      "detail": "Unified catalog shell"
+    },
+    {
+      "name": "candidate_filter",
+      "screenshot": "02_candidate_products_filter.png",
+      "flow": "A",
+      "detail": "Candidate filter (may be empty)"
+    },
+    {
+      "name": "legacy_bucket_expanded",
+      "screenshot": "03_legacy_modules_bucket_acm_home.png",
+      "flow": "A",
+      "detail": "ACM listed as internal module"
+    },
+    {
+      "name": "acm_detail_panel",
+      "screenshot": "04_acm_template_detail_panel.png",
+      "flow": "A",
+      "detail": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+    },
+    {
+      "name": "montaj_preparation",
+      "screenshot": "05_intake_montaj_preparation_scope.png",
+      "flow": "B",
+      "detail": "Mounting prep active"
+    },
+    {
+      "name": "acm_selected",
+      "screenshot": "06_intake_acm_mounting_solution_selected.png",
+      "flow": "B",
+      "detail": "ACM linked child fields"
+    },
+    {
+      "name": "metal_regression",
+      "screenshot": "07_metal_premount_regression.png",
+      "flow": "B",
+      "detail": "TPL-METAL-PREMOUNT-STRUCTURE_v1"
+    }
+  ],
+  "missing_owner_rates": [
+    {
+      "code": "PANEL_CUTTING",
+      "basis": "workcenter",
+      "notes": "CUT_ACM_PANEL"
+    },
+    {
+      "code": "ASSEMBLY",
+      "basis": "workcenter",
+      "notes": "FOLD_CASSETTE, MOUNT_ACM_PANEL"
+    },
+    {
+      "code": "MAT-SURUBURI-GEN",
+      "basis": "material",
+      "notes": "comp_mounting_fasteners"
+    },
+    {
+      "code": "MAT-ACM-BOND-4MM",
+      "basis": "material",
+      "notes": "needs_review — 3MM confirmed 15 EUR/mp"
+    },
+    {
+      "code": "V_GROOVE_ROUTER",
+      "basis": "workcenter",
+      "notes": "basis mismatch vs perimeter formula"
+    }
+  ],
+  "verdict": "PASS",
+  "official_playwright_spec": {
+    "spec_path": "frontend/e2e/product-system-acm-boxed-mounting-template-v1.spec.ts",
+    "captured_at": "2026-07-13T14:40:36.412Z",
+    "head": "5d7bbc5",
+    "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+    "operator_route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+    "product_system_route": "http://127.0.0.1:3000/product-system",
+    "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "wait_until": {
+      "product_system": "domcontentloaded",
+      "intake": "domcontentloaded"
+    },
+    "schema_freshness": {
+      "openapi_ok": true,
+      "mounting_solution": true,
+      "acm_template_reference": false
+    },
+    "finish_put_events": [
+      {
+        "status": 200,
+        "request_mounting_solution": {
+          "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+          "configuration": {
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum"
+          }
+        },
+        "response_mounting_solution": {
+          "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+          "configuration": {
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum"
+          }
+        }
+      },
+      {
+        "status": 200,
+        "request_mounting_solution": {
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "configuration": {
+            "panel_width_mm": 1000,
+            "panel_height_mm": 600,
+            "acm_thickness_mm": 3,
+            "return_depth_mm": 60,
+            "rear_lip_mm": 25,
+            "fold_sides": "all",
+            "v_groove_angle_deg": 135,
+            "frame_clearance_mm": 0,
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum",
+            "panel_area_m2": 0.6,
+            "panel_perimeter_m": 3.2,
+            "fold_length_m": 3.2,
+            "return_strip_area_m2": 0.192
+          }
+        },
+        "response_mounting_solution": {
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "configuration": {
+            "panel_width_mm": 1000,
+            "panel_height_mm": 600,
+            "acm_thickness_mm": 3,
+            "return_depth_mm": 60,
+            "rear_lip_mm": 25,
+            "fold_sides": "all",
+            "v_groove_angle_deg": 135,
+            "frame_clearance_mm": 0,
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum",
+            "panel_area_m2": 0.6,
+            "panel_perimeter_m": 3.2,
+            "fold_length_m": 3.2,
+            "return_strip_area_m2": 0.192
+          }
+        }
+      },
+      {
+        "status": 200,
+        "request_mounting_solution": {
+          "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+          "configuration": {
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum",
+            "panel_width_mm": 1000,
+            "panel_height_mm": 600,
+            "acm_thickness_mm": 3,
+            "return_depth_mm": 60,
+            "rear_lip_mm": 25,
+            "fold_sides": "all",
+            "v_groove_angle_deg": 135,
+            "frame_clearance_mm": 0,
+            "panel_area_m2": 0.6,
+            "panel_perimeter_m": 3.2,
+            "fold_length_m": 3.2,
+            "return_strip_area_m2": 0.192
+          }
+        },
+        "response_mounting_solution": {
+          "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+          "configuration": {
+            "bar_count": 3,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "aluminum",
+            "panel_width_mm": 1000,
+            "panel_height_mm": 600,
+            "acm_thickness_mm": 3,
+            "return_depth_mm": 60,
+            "rear_lip_mm": 25,
+            "fold_sides": "all",
+            "v_groove_angle_deg": 135,
+            "frame_clearance_mm": 0,
+            "panel_area_m2": 0.6,
+            "panel_perimeter_m": 3.2,
+            "fold_length_m": 3.2,
+            "return_strip_area_m2": 0.192
+          }
+        }
+      }
+    ],
+    "finish_put_count": 3,
+    "finish_put_200_count": 3,
+    "last_put_status": 200,
+    "last_response_mounting_solution": {
+      "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "configuration": {
+        "bar_count": 3,
+        "mounting_bar_profile": "30x30x1.5",
+        "bar_material": "aluminum",
+        "panel_width_mm": 1000,
+        "panel_height_mm": 600,
+        "acm_thickness_mm": 3,
+        "return_depth_mm": 60,
+        "rear_lip_mm": 25,
+        "fold_sides": "all",
+        "v_groove_angle_deg": 135,
+        "frame_clearance_mm": 0,
+        "panel_area_m2": 0.6,
+        "panel_perimeter_m": 3.2,
+        "fold_length_m": 3.2,
+        "return_strip_area_m2": 0.192
+      }
+    },
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s IntakeV6OperatorWorkspaceApp IntakeV6ReviewStep IntakeV6ReviewStep \n    at IntakeV6ReviewStep (http://127.0.0.1:3000/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx?t=1783951730049:278:46)\n    at main\n    at div\n    at IntakeV6WorkspaceHeaderStatusProvider (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6WorkspaceHeaderStatusContext.tsx:30:57)\n    at IntakeV6OperatorWorkspace (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspace.tsx?t=1783951730049:34:53)\n    at div\n    at IntakeV6OperatorWorkspaceFileDrop (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspaceFileDrop.tsx:24:61)\n    at div\n    at IntakeV6OperatorWorkspaceApp (http://127.0.0.1:3000/src/pages/IntakeV6OperatorWorkspaceApp.tsx?t=1783951730049:29:29)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:354:22)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Outlet (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:1410:34)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3000/src/App.tsx?t=1783951730049:1656:36)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthProvider (http://127.0.0.1:3000/src/contexts/AuthContext.tsx:96:32)\n    at Router (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4544:15)\n    at BrowserRouter (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:5290:5)\n    at Provider (http://127.0.0.1:3000/node_modules/.vite/deps/chunk-JZTXFAN2.js?v=0304d1ab:56:15)\n    at TooltipProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0304d1ab:52:5)\n    at QueryClientProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=0304d1ab:3168:3)\n    at App"
+    ],
+    "network_errors": [
+      "404 GET http://127.0.0.1:8000/api/v1/intake-v6/workspaces/b00a3a0c-5a3d-4d0b-a95e-582bb542dde1/volumetric-face-back-prep/cost-draft?shanfren_forex=false"
+    ],
+    "scenarios": [
+      {
+        "name": "product_system_loaded",
+        "screenshot": "01_product_system_catalog_loaded.png",
+        "flow": "A",
+        "detail": "Unified catalog shell"
+      },
+      {
+        "name": "candidate_filter",
+        "screenshot": "02_candidate_products_filter.png",
+        "flow": "A",
+        "detail": "Candidate filter (may be empty)"
+      },
+      {
+        "name": "legacy_bucket_expanded",
+        "screenshot": "03_legacy_modules_bucket_acm_home.png",
+        "flow": "A",
+        "detail": "ACM listed as internal module"
+      },
+      {
+        "name": "acm_detail_panel",
+        "screenshot": "04_acm_template_detail_panel.png",
+        "flow": "A",
+        "detail": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      },
+      {
+        "name": "montaj_preparation",
+        "screenshot": "05_intake_montaj_preparation_scope.png",
+        "flow": "B",
+        "detail": "Mounting prep active"
+      },
+      {
+        "name": "acm_selected",
+        "screenshot": "06_intake_acm_mounting_solution_selected.png",
+        "flow": "B",
+        "detail": "ACM linked child fields"
+      },
+      {
+        "name": "metal_regression",
+        "screenshot": "07_metal_premount_regression.png",
+        "flow": "B",
+        "detail": "TPL-METAL-PREMOUNT-STRUCTURE_v1"
+      }
+    ],
+    "verdict": "PASS"
+  }
+}

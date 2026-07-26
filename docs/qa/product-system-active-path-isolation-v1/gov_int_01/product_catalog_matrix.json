@@ -1,0 +1,30 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "STATIC",
+  "title": "Nomenclator Produse — RC Publimedia",
+  "entries_count": 50,
+  "categories_count": 12,
+  "source": "productCatalog hardcoded in governanceData.ts",
+  "runtime_object": "NOT linked to Product System template registry",
+  "template_link": false,
+  "duplicate_of": "Marketing nomenclator — not TPL-VOLUMETRIC-LETTERS etc.",
+  "consumers_on_page": "Search index only",
+  "sample_entries": [
+    {
+      "code": "LV-FRONTAL-LED",
+      "source": "static",
+      "runtime_object": "NOT_PROVEN",
+      "conflict": "Not Product System template code"
+    },
+    {
+      "code": "CL-SIMPLU-STD",
+      "source": "static",
+      "runtime_object": "NOT_PROVEN",
+      "conflict": "Duplicate marketing catalog"
+    }
+  ]
+}

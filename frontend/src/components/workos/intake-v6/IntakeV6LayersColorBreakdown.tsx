@@ -45,7 +45,7 @@ export default function IntakeV6LayersColorBreakdown({
 
   return (
     <div
-      className="rounded-md border border-[#2A3548]/70 bg-[#0A0F1A]/35 px-3 py-3"
+      className="rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/35 px-3 py-3"
       data-testid="intake-v6-layers-color-breakdown"
     >
       <h3 className={`mb-2 ${v6.sectionTitle}`}>Culori detectate</h3>
@@ -57,7 +57,7 @@ export default function IntakeV6LayersColorBreakdown({
           {uniqueFills.map((color, index) => (
             <li key={`fill-${color}-${index}`} className="flex items-center gap-2 text-[11px]">
               <span
-                className="inline-block h-3.5 w-3.5 shrink-0 rounded border border-[#2A3548]"
+                className="inline-block h-3.5 w-3.5 shrink-0 rounded border border-wo-border-strong"
                 style={colorSwatchStyle(color)}
                 aria-hidden
               />
@@ -69,13 +69,13 @@ export default function IntakeV6LayersColorBreakdown({
       ) : null}
       {uniqueStrokes.length > 0 ? (
         <ul
-          className={`space-y-2 ${uniqueFills.length > 0 ? "mt-3 border-t border-[#2A3548]/60 pt-3" : ""}`}
+          className={`space-y-2 ${uniqueFills.length > 0 ? "mt-3 border-t border-wo-border-strong/60 pt-3" : ""}`}
           data-testid="intake-v6-layers-color-stroke-list"
         >
           {uniqueStrokes.map((color, index) => (
             <li key={`stroke-${color}-${index}`} className="flex items-center gap-2 text-[11px]">
               <span
-                className="inline-block h-3.5 w-3.5 shrink-0 rounded border border-[#2A3548]"
+                className="inline-block h-3.5 w-3.5 shrink-0 rounded border border-wo-border-strong"
                 style={colorSwatchStyle(color)}
                 aria-hidden
               />

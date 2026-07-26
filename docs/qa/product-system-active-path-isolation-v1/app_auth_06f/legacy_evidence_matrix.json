@@ -1,0 +1,20 @@
+{
+  "task": "APP-AUTH-06F",
+  "employee_ref": "E4_SANDU",
+  "operations": [
+    {"operation": "volumetric_letter_assembly", "legacy_skill": "SK_ASSEMBLY", "role_text": "Lăcătuș / Montator", "seed_intent_skills": ["SK_ASSEMBLY", "SK_LOCKSMITH", "SK_VINYL_APPLICATOR", "SK_ELECTRICIAN", "SK_FIELD_INSTALLER"], "classification": "SUPPORTING_EVIDENCE", "notes": "Legacy and seed agree on assembly capability; registry contradicts"},
+    {"operation": "vinyl_cutting", "legacy_skill": "SK_VINYL_APPLICATOR", "classification": "SUPPORTING_EVIDENCE", "notes": "Legacy vinyl skill present; no formal training record"},
+    {"operation": "led_assembly", "legacy_skill": "SK_ELECTRICIAN", "classification": "SUPPORTING_EVIDENCE", "notes": "Electrical skill in legacy; safety-sensitive"},
+    {"operation": "led_wiring", "legacy_skill": "SK_ELECTRICIAN", "classification": "SUPPORTING_EVIDENCE", "notes": "Shares legacy evidence with led_assembly"},
+    {"operation": "installation_prep", "legacy_skill": "SK_FIELD_INSTALLER", "classification": "SUPPORTING_EVIDENCE", "notes": "Field installer in legacy; seed lists Sandu in _E_FIELD team names indirectly via field_installation authorized list"},
+    {"operation": "packaging", "legacy_skill": "SK_ASSEMBLY", "classification": "SUPPORTING_EVIDENCE", "notes": "No pilot or completion history"},
+    {"operation": "quality_control", "legacy_skill": "SK_ASSEMBLY", "classification": "SUPPORTING_EVIDENCE", "notes": "No pilot or completion history"}
+  ],
+  "cross_cutting": {
+    "registry_vs_legacy": "CONTRADICTORY",
+    "registry_authority_target": "S1:A registry canonical — legacy transitional only",
+    "assigned_tasks_sample_app_auth_02": [],
+    "supervisor_knowledge": "ABSENT_IN_ARTIFACTS",
+    "training_records": "ABSENT"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "task": "APP-AUTH-06F",
+  "operations_expected": 7,
+  "operations_identified": 7,
+  "reconciliation_verdict": "OPERATION_INVENTORY_EXACT_MATCH",
+  "inventory": [
+    {
+      "row": 1,
+      "review_operation_code": "volumetric_letter_assembly",
+      "registry_operation_code": "assembly",
+      "display_name": "Asamblare litere volumetrice",
+      "mapping_exists": true,
+      "pilot_observed": true,
+      "evidence_sources": ["seed_operational_workforce_registry.py", "operational_catalog SUGGESTED_OPERATION_ALIASES", "app_auth_06c/sandu_operation_interpretation.json", "owner_decision_05", "dev.db operation_employee_authorizations"]
+    },
+    {
+      "row": 2,
+      "review_operation_code": "vinyl_cutting",
+      "registry_operation_code": "colantare",
+      "display_name": "Colantare / vinyl cutting",
+      "mapping_exists": true,
+      "pilot_observed": true,
+      "evidence_sources": ["seed product_system_aliases vinyl_cutting", "app_auth_06 pilot", "dev.db explicit mapping colantare"]
+    },
+    {
+      "row": 3,
+      "review_operation_code": "led_assembly",
+      "registry_operation_code": "montaj_led",
+      "display_name": "Montaj LED (assembly)",
+      "mapping_exists": true,
+      "pilot_observed": true,
+      "evidence_sources": ["seed product_system_aliases led_assembly", "app_auth_06 pilot", "dev.db explicit mapping montaj_led"]
+    },
+    {
+      "row": 4,
+      "review_operation_code": "led_wiring",
+      "registry_operation_code": "montaj_led",
+      "display_name": "Montaj LED (wiring)",
+      "mapping_exists": true,
+      "pilot_observed": true,
+      "evidence_sources": ["seed product_system_aliases led_wiring", "app_auth_06 pilot", "shared registry op with led_assembly"]
+    },
+    {
+      "row": 5,
+      "review_operation_code": "installation_prep",
+      "registry_operation_code": "field_installation",
+      "display_name": "Pregătire montaj teren",
+      "mapping_exists": true,
+      "pilot_observed": true,
+      "evidence_sources": ["seed product_system_aliases installation_prep", "app_auth_06 pilot", "dev.db field_installation mapping"]
+    },
+    {
+      "row": 6,
+      "review_operation_code": "packaging",
+      "registry_operation_code": "packaging",
+      "display_name": "Ambalare",
+      "mapping_exists": true,
+      "pilot_observed": false,
+      "evidence_sources": ["app_auth_02 owner_decision_package", "dev.db explicit mapping packaging", "employee_reconciliation_matrix override list"]
+    },
+    {
+      "row": 7,
+      "review_operation_code": "quality_control",
+      "registry_operation_code": "quality_control",
+      "display_name": "Control calitate",
+      "mapping_exists": true,
+      "pilot_observed": false,
+      "evidence_sources": ["app_auth_02 owner_decision_package", "dev.db explicit mapping quality_control"]
+    }
+  ],
+  "excluded_eighth_mapping": {
+    "operation_code": "welding",
+    "reason": "APP-AUTH-02 eighth override; outside OWNER-DECISION-05 mandatory seven-row gate; documented for completeness only"
+  },
+  "aligned_operations_out_of_scope": ["print", "print_roll"]
+}

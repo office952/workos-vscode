@@ -1,4 +1,4 @@
-﻿"""TPL-VOLUMETRIC-LETTERS â€” illumination gating for LED/electrical cost and plan."""
+"""TPL-VOLUMETRIC-LETTERS — illumination gating for LED/electrical cost and plan."""
 
 from __future__ import annotations
 

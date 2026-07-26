@@ -1,0 +1,54 @@
+{
+  "aci_mapping": {
+    "version": "acm_aci_semantic_mapping_v1",
+    "source": "owner_golden_dxf_2026-07-20:un-pliu.dxf+2-pliuri-100x30.dxf",
+    "aci_to_semantic": {
+      "1": "V_GROOVE_L1",
+      "242": "V_GROOVE_L2",
+      "250": "CUT",
+      "256": "CUT"
+    },
+    "layer_name_dependency": false,
+    "notes": "Golden owner DXFs place all entities on 'Layer 1'. Semantic class is ACI color only for mapping version v1."
+  },
+  "golden_single": {
+    "cut": 5.4,
+    "v_total": 5.4,
+    "status": "measured"
+  },
+  "golden_double": {
+    "cut": 5.499412,
+    "v_l2": 4.600004,
+    "v_total": 10.000004,
+    "status": "measured"
+  },
+  "corrupted_zip_rejected": "archive_not_allowed",
+  "qa_bound_double": {
+    "status": "measured",
+    "v_total": 10.000004,
+    "cut": 5.499412
+  },
+  "qa_stale_after_l1": {
+    "status": "unavailable",
+    "cut": null,
+    "warnings": [
+      "double_fold_proxy_forbidden",
+      "l2_active_proxy_forbidden",
+      "proxy_rectangular_not_eligible",
+      "quantity_unavailable",
+      "quantity_unavailable",
+      "attachment_not_consumable",
+      "production_geometry_stale"
+    ]
+  },
+  "iv6_db2f86b7_uncontaminated": {
+    "face": 0.7,
+    "path_status": "unavailable",
+    "cut": null,
+    "final": false,
+    "offer": false,
+    "exec": false,
+    "note": "No golden 2000x300 DXF bound to IV6 2000x350"
+  },
+  "ok": true
+}

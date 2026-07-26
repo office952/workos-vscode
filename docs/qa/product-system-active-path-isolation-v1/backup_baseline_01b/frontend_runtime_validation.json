@@ -1,0 +1,21 @@
+{
+  "port": 3021,
+  "working_directory": "C:\\w\\wrt\\b01\\repository\\frontend",
+  "process": "node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3021 --strictPort",
+  "checks": {
+    "root": {
+      "url": "http://127.0.0.1:3021/",
+      "status": 200
+    },
+    "modules": {
+      "url": "http://127.0.0.1:3021/modules",
+      "status": 200
+    },
+    "governance": {
+      "url": "http://127.0.0.1:3021/governance",
+      "status": 200
+    }
+  },
+  "representative_route": "/modules",
+  "classification": "PASS"
+}

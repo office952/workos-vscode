@@ -17,6 +17,7 @@ export const initialIntakeV6WorkspaceState: IntakeV6WorkspaceState = {
   error: null,
   loadErrorCode: null,
   currentStep: "layers",
+  operatorStepIntent: null,
   workspace: null,
   svg: null,
   layerChips: [],
@@ -48,7 +49,10 @@ function applyHydratedWorkspace(
       state.svgSource != null &&
       state.svg?.previewSource != null);
   const hydratedStep = resolveIntakeV6StepFromReadiness(workspace.readiness_status, payload);
-  const currentStep = hydratedStep === "confirm" ? "review" : hydratedStep;
+  const readinessStep = hydratedStep === "confirm" ? "review" : hydratedStep;
+  // P7: honor explicit operator Straturi reopen across LOAD_SUCCESS / refresh.
+  const currentStep =
+    state.operatorStepIntent === "layers" ? "layers" : readinessStep;
 
   if (preserveLocalAnalyzerState) {
     return {
@@ -57,6 +61,7 @@ function applyHydratedWorkspace(
       error: null,
       loadErrorCode: null,
       phase: "svg_ready",
+      currentStep,
     };
   }
 
@@ -118,9 +123,11 @@ function applyFinishSetupPersistedWorkspace(
 ): IntakeV6WorkspaceState {
   const derivedStep = resolveIntakeV6StepFromReadiness(workspace.readiness_status, workspace.payload);
   const currentStep =
-    state.currentStep === "review" || state.currentStep === "confirm"
-      ? state.currentStep
-      : derivedStep;
+    state.operatorStepIntent === "layers"
+      ? "layers"
+      : state.currentStep === "review" || state.currentStep === "confirm"
+        ? state.currentStep
+        : derivedStep;
 
   return {
     ...state,
@@ -159,7 +166,11 @@ export function intakeV6WorkspaceReducer(
     case "LOAD_ERROR":
       return { ...state, phase: "error", error: action.message, loadErrorCode: action.code };
     case "SET_STEP":
-      return { ...state, currentStep: action.step };
+      return {
+        ...state,
+        currentStep: action.step,
+        operatorStepIntent: action.step,
+      };
     case "ANALYZER_START":
       return {
         ...state,
@@ -170,6 +181,7 @@ export function intakeV6WorkspaceReducer(
         loadErrorCode: null,
         analysisRunId: action.runId,
         currentStep: "layers",
+        operatorStepIntent: "layers",
         svg: { fileName: action.fileName, fileSizeBytes: action.fileSizeBytes, previewSource: null },
         layerChips: [],
         svgSource: null,
@@ -199,6 +211,7 @@ export function intakeV6WorkspaceReducer(
         layerRoleConfirmation: action.layerRoleConfirmation,
         layerChips: action.layerChips,
         currentStep: "layers",
+        operatorStepIntent: "layers",
       };
     case "ANALYZER_ERROR":
       if (action.runId !== state.analysisRunId) return state;
@@ -219,6 +232,7 @@ export function intakeV6WorkspaceReducer(
       return { ...state, phase: "persisting", error: null };
     case "PERSIST_SUCCESS": {
       const persistedHash = getPersistedFileHash(action.workspace.payload);
+      const preservedStep = state.currentStep;
       const next = applyHydratedWorkspace(
         {
           ...state,
@@ -231,10 +245,7 @@ export function intakeV6WorkspaceReducer(
         action.workspace,
         { preserveLocalAnalyzer: false },
       );
-      if (state.currentStep === "review" || state.currentStep === "confirm") {
-        return { ...next, currentStep: state.currentStep, unsavedAnalysis: false };
-      }
-      return { ...next, unsavedAnalysis: false };
+      return { ...next, currentStep: preservedStep, unsavedAnalysis: false };
     }
     case "FINISH_SETUP_PERSIST_SUCCESS":
       return applyFinishSetupPersistedWorkspace(

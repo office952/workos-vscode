@@ -3,6 +3,15 @@
  */
 
 import type { PricingRegistryItem } from "@/api/pricingRegistry";
+import {
+  hasRateBasisMismatch,
+  machineFamilyLabelRo,
+  RATE_BASIS_MISMATCH_MESSAGE_RO,
+  resolveMachineFamily,
+  resolveTypedCatalog,
+  typedCatalogLabelRo,
+} from "@/lib/pricing/pricingTypedCatalog";
+import { normalizePricingDisplayName } from "@/lib/pricing/pricingDisplayNaming";
 
 export const PRICING_REGISTRY_CATEGORIES = [
   "Plăci",
@@ -382,7 +391,8 @@ export interface StackSection {
 const TEMPLATE_HUMAN_LABELS: Record<string, string> = {
   "TPL-VOLUMETRIC-LETTERS": "Litere volumetrice (Product 001)",
   "TPL-VOLUMETRIC-LETTERS_v2": "Litere volumetrice (Product 001)",
-  "TPL-ACM-CASSETTED-PANEL": "Panou ACM casetat",
+  "TPL-ACM-CASSETTED-PANEL": "Alucobond casetat",
+  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "Alucobond casetat",
   "TPL-CUT-ACM-LETTERS": "Litere ACM tăiate",
 };
 
@@ -603,6 +613,9 @@ export interface DetailPanelModel {
   costEngineRate: number | null;
   costEngineRateMatch: boolean | null;
   currencyMismatchWarning: string | null;
+  costLabelRo: string;
+  dataQualityWarningRo: string | null;
+  machineFamilyLabel: string | null;
 }
 
 export function buildDetailPanelModel(
@@ -611,14 +624,14 @@ export function buildDetailPanelModel(
 ): DetailPanelModel | null {
   if (!item?.pricing_code) return null;
 
-  const isMaterial = item.pricing_kind === "material";
+  const typed = resolveTypedCatalog(item);
+  const isMaterial = typed === "material" || item.pricing_kind === "material";
   const isRate = ["operation_rate", "workcenter_rate", "service"].includes(
     item.pricing_kind ?? ""
   );
   const isMarkup = item.pricing_kind === "markup_rule";
 
-  let typeLabel = "Material";
-  if (isRate) typeLabel = "Rată operație / workcenter";
+  let typeLabel = typedCatalogLabelRo(typed);
   if (isMarkup) typeLabel = "Regulă adaos comercial";
 
   const value =
@@ -626,8 +639,15 @@ export function buildDetailPanelModel(
       ? String(item.base_cost)
       : "Lipsă";
 
+  const costLabelRo =
+    item.cost_label_ro ||
+    (isMaterial ? "Cost achiziție" : isMarkup ? "Adaos comercial" : "Rată calcul");
+
   return {
-    name: item.display_name || item.pricing_code,
+    name: normalizePricingDisplayName(
+      item.pricing_code,
+      item.display_name || item.pricing_code
+    ),
     code: item.pricing_code,
     typeLabel,
     category: item.registry_category || "—",
@@ -650,7 +670,30 @@ export function buildDetailPanelModel(
     )
       ? CURRENCY_MISMATCH_WARNING
       : null,
+    costLabelRo,
+    dataQualityWarningRo: hasRateBasisMismatch(item)
+      ? item.data_quality_message_ro || RATE_BASIS_MISMATCH_MESSAGE_RO
+      : null,
+    machineFamilyLabel: machineFamilyLabelRo(resolveMachineFamily(item)),
   };
+}
+
+function buildRateSubgroups(rates: PricingRegistryItem[]): StackSubgroup[] {
+  const buckets = new Map<string, PricingRegistryItem[]>();
+  for (const rate of rates) {
+    const family = resolveMachineFamily(rate);
+    const familyLabel = machineFamilyLabelRo(family);
+    const label = familyLabel ?? subgroupForRate(rate.pricing_code);
+    const bucket = buckets.get(label) ?? [];
+    bucket.push(rate);
+    buckets.set(label, bucket);
+  }
+  return Array.from(buckets.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([label, bucketItems]) => ({
+      label,
+      items: bucketItems.sort((a, b) => a.pricing_code.localeCompare(b.pricing_code)),
+    }));
 }
 
 export function groupItemsForCoverageStack(
@@ -658,10 +701,12 @@ export function groupItemsForCoverageStack(
   markupPolicies: PricingRegistryItem[],
   opts?: { includeVerification?: boolean }
 ): StackSection[] {
-  const materials = items.filter((i) => i.pricing_kind === "material");
-  const rates = items.filter((i) =>
-    ["operation_rate", "workcenter_rate", "service"].includes(i.pricing_kind)
-  );
+  const materials = items.filter((i) => resolveTypedCatalog(i) === "material");
+  const machineOps = items.filter((i) => resolveTypedCatalog(i) === "machine_operation");
+  const laborServices = items.filter((i) => {
+    const t = resolveTypedCatalog(i);
+    return t === "labor" || t === "service" || t === "unknown";
+  });
 
   const materialSubgroups: StackSubgroup[] = [];
   for (const cat of MATERIAL_SUBGROUP_ORDER) {
@@ -683,14 +728,20 @@ export function groupItemsForCoverageStack(
     });
   }
 
-  const serviceBuckets = new Map<string, PricingRegistryItem[]>();
-  for (const rate of rates) {
-    const label = subgroupForRate(rate.pricing_code);
-    const bucket = serviceBuckets.get(label) ?? [];
+  const laborBuckets = new Map<string, PricingRegistryItem[]>();
+  for (const rate of laborServices) {
+    const typed = resolveTypedCatalog(rate);
+    const label =
+      typed === "labor"
+        ? "Manoperă"
+        : typed === "service"
+          ? "Servicii"
+          : "Necesită clasificare";
+    const bucket = laborBuckets.get(label) ?? [];
     bucket.push(rate);
-    serviceBuckets.set(label, bucket);
+    laborBuckets.set(label, bucket);
   }
-  const serviceSubgroups: StackSubgroup[] = Array.from(serviceBuckets.entries())
+  const laborSubgroups: StackSubgroup[] = Array.from(laborBuckets.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([label, bucketItems]) => ({
       label,
@@ -699,10 +750,25 @@ export function groupItemsForCoverageStack(
 
   const sections: StackSection[] = [];
   if (materialSubgroups.length > 0) {
-    sections.push({ key: "materials", title: "Materiale", subgroups: materialSubgroups });
+    sections.push({
+      key: "materials",
+      title: "Preturi materiale (cost achiziție)",
+      subgroups: materialSubgroups,
+    });
   }
-  if (serviceSubgroups.length > 0) {
-    sections.push({ key: "services", title: "Servicii / operații", subgroups: serviceSubgroups });
+  if (machineOps.length > 0) {
+    sections.push({
+      key: "machine_operations",
+      title: "Operații utilaje",
+      subgroups: buildRateSubgroups(machineOps),
+    });
+  }
+  if (laborSubgroups.length > 0) {
+    sections.push({
+      key: "labor_services",
+      title: "Manoperă și servicii",
+      subgroups: laborSubgroups,
+    });
   }
   if (markupPolicies.length > 0) {
     sections.push({

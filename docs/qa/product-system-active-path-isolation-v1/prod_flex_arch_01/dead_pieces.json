@@ -1,0 +1,15 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "items": [
+    { "piece": "role primary/helper on sessions", "status": "PARTIALLY_USED", "note": "Backend tests use; mobile always primary" },
+    { "piece": "SESSION_TYPE_ASSIST", "status": "UNUSED_IN_MOBILE", "note": "Defined in task_work_session_service" },
+    { "piece": "aggregate_task_work_metrics participants_count", "status": "ACTIVE", "note": "Blueprint only" },
+    { "piece": "TaskClarificationRequest", "status": "ACTIVE_WRONG_SEMANTIC", "note": "Do not repurpose for help" },
+    { "piece": "field_installation_teams", "status": "PARALLEL_DOMAIN", "note": "Not shop-floor task participation" },
+    { "piece": "dev_employee_mobile_sandu_fixture", "status": "TEST_ONLY", "note": "Not production authority" },
+    { "piece": "useShopFloorData mock fallback", "status": "LEGACY_DEBT", "note": "Out of flex scope" },
+    { "piece": "blueprint progress_percent task-count", "status": "ACTIVE_MISLEADING", "note": "Not quantity progress" },
+    { "piece": "clear_plan_task_assignment rollback", "status": "ACTIVE", "note": "Keep for failed start-from-available" }
+  ],
+  "action": "DOCUMENT_ONLY — no deletion"
+}

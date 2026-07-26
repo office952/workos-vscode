@@ -225,6 +225,27 @@ def run_startup_safety_checks() -> EnvironmentReadinessReport:
             )
         )
 
+    # --- Check 3b: Parity observe flags forced off in deployed environments ---
+    try:
+        from services.parity_observe.config import check_parity_production_guard
+
+        parity_status, parity_message = check_parity_production_guard()
+        report.add(
+            SafetyCheckResult(
+                name="PARITY_RUNTIME_FLAGS_GUARD",
+                status="BLOCKED" if parity_status == "BLOCKED" else ("WARNING" if parity_status == "WARNING" else "PASS"),
+                message=parity_message,
+            )
+        )
+    except Exception as exc:
+        report.add(
+            SafetyCheckResult(
+                name="PARITY_RUNTIME_FLAGS_GUARD",
+                status="WARNING" if not is_strict else "BLOCKED",
+                message=f"Parity runtime guard check failed: {exc}",
+            )
+        )
+
     # --- Check 4: DATABASE_URL presence ---
     db_url = os.environ.get("DATABASE_URL", "").strip()
     if is_strict and not db_url:

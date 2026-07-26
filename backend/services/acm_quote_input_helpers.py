@@ -4,6 +4,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
+ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS: tuple[str, ...] = (
+    "panel_width_mm",
+    "panel_height_mm",
+    "acm_thickness_mm",
+    "return_depth_mm",
+    "fold_sides",
+)
+
 
 def _fold_length_mm(
     width_mm: float, height_mm: float, fold_sides: str
@@ -90,3 +98,125 @@ def derive_cut_acm_quote_input(
             out[key] = val
 
     return out, warnings, blockers
+
+
+def is_acm_boxed_mounting_standalone_root_template(template_code: str | None) -> bool:
+    from services.mounting_solution_service import ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    from services.template_architecture_scope import normalize_template_code
+
+    return normalize_template_code(template_code) == normalize_template_code(
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    )
+
+
+def _standalone_root_configuration(payload: Mapping[str, Any]) -> Dict[str, Any] | None:
+    from services.mounting_solution_service import (
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        normalize_acm_mounting_configuration,
+    )
+
+    if not is_acm_boxed_mounting_standalone_root_template(
+        payload.get("template_code") or payload.get("product_id")
+    ):
+        if payload.get("panel_width_mm") is None or payload.get("panel_height_mm") is None:
+            return None
+        if payload.get("finish_setup") or payload.get("mounting_solution"):
+            return None
+        return normalize_acm_mounting_configuration(payload)
+
+    config = normalize_acm_mounting_configuration(payload)
+    client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
+    if config.get("panel_width_mm") in (None, 0) and client.get("width_mm") is not None:
+        config["panel_width_mm"] = client["width_mm"]
+    if config.get("panel_height_mm") in (None, 0) and client.get("height_mm") is not None:
+        config["panel_height_mm"] = client["height_mm"]
+    if config.get("panel_width_mm") in (None, 0) or config.get("panel_height_mm") in (None, 0):
+        return None
+    out = dict(config)
+    out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
+    return out
+
+
+def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[str, Any]:
+    """Merge derived ACM boxed mounting geometry into a quote/CPP/EIC payload.
+
+    Injects assembly_* and applies commercial geometry adapter (Slice C):
+    face area from assembly; cut/fold from sum of panel perimeters.
+    Never remaps panel_width_mm/panel_height_mm to assembly dims.
+    Preserves applied_content XOR + metal_frame_enabled operator markers.
+    """
+    from services.acm_boxed_support_composition_v1 import (
+        read_applied_content,
+        read_metal_frame_optional,
+    )
+    from services.acm_face_treatment_commercial_path_v1 import (
+        BAG_KEY as FACE_TREATMENT_BAG_KEY,
+        read_face_treatments,
+    )
+    from services.acm_commercial_geometry import apply_acm_commercial_geometry
+    from services.mounting_solution_service import (
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        normalize_acm_mounting_configuration,
+        read_mounting_solution,
+    )
+
+    out: Dict[str, Any] = dict(payload)
+    applied = read_applied_content(payload)
+    if applied is not None:
+        out["applied_content"] = applied
+    frame = read_metal_frame_optional(payload)
+    out["metal_frame_enabled"] = bool(frame.get("enabled"))
+    out["metal_frame_domain"] = frame.get("kind")
+    # Axis B face treatments — orthogonal to XOR; preserve markers (no panel sheet fold-in).
+    face_treatments = read_face_treatments(payload)
+    out[FACE_TREATMENT_BAG_KEY] = face_treatments
+    out["face_treatment_coexistence"] = face_treatments.get("coexistence")
+
+    standalone_config = _standalone_root_configuration(payload)
+    if standalone_config is not None:
+        derived, _warnings, _blockers = derive_acm_casetted_quote_input(standalone_config)
+        out.update(derived)
+        out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
+        # Re-assert composition markers after geometry merge (no double-count into panel keys).
+        if applied is not None:
+            out["applied_content"] = applied
+        out["metal_frame_enabled"] = bool(frame.get("enabled"))
+        out[FACE_TREATMENT_BAG_KEY] = face_treatments
+        out["face_treatment_coexistence"] = face_treatments.get("coexistence")
+        apply_acm_commercial_geometry(out)
+        return out
+
+    finish = out.get("finish_setup") if isinstance(out.get("finish_setup"), dict) else {}
+    solution = read_mounting_solution(finish) or read_mounting_solution(out)
+    if not solution or solution.get("template_code") != ACM_BOXED_MOUNTING_TEMPLATE_CODE:
+        apply_acm_commercial_geometry(out)
+        return out
+
+    config = normalize_acm_mounting_configuration(solution.get("configuration"))
+    client = out.get("client") if isinstance(out.get("client"), dict) else {}
+    if config.get("panel_width_mm") in (None, 0) and client.get("width_mm") is not None:
+        config["panel_width_mm"] = client["width_mm"]
+    if config.get("panel_height_mm") in (None, 0) and client.get("height_mm") is not None:
+        config["panel_height_mm"] = client["height_mm"]
+    derived, _warnings, _blockers = derive_acm_casetted_quote_input(config)
+    out.update(derived)
+    # Preserve envelope/primary contour dims — do not overwrite with assembly.
+    apply_acm_commercial_geometry(out)
+    return out
+
+
+def is_acm_boxed_mounting_payload(payload: Mapping[str, Any] | None) -> bool:
+    from services.mounting_solution_service import (
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        read_mounting_solution,
+    )
+
+    if not isinstance(payload, Mapping):
+        return False
+    if _standalone_root_configuration(payload) is not None:
+        return True
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    solution = read_mounting_solution(finish) or read_mounting_solution(payload)
+    return bool(
+        solution and str(solution.get("template_code") or "").strip() == ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    )

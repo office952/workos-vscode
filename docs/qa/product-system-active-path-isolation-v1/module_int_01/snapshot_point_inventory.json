@@ -1,0 +1,65 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "classification": "LABELS_ONLY",
+  "snapshot_points_displayed": 5,
+  "real_snapshots_linked_on_page": 0,
+  "matrix": [
+    {
+      "snapshot_point": "ProductSystem — Produs definit tehnic",
+      "real_object": "ProductAggregate / product definition dossier",
+      "persistence": "ACTIVE — product aggregate services",
+      "immutable": "PARTIAL",
+      "versioned": "PARTIAL — dossier/registry versions exist off-page",
+      "consumers": "cost BOM, intake review",
+      "page_classification": "LABEL_ONLY"
+    },
+    {
+      "snapshot_point": "CostEngine — Cost calculat",
+      "real_object": "internal cost preview / calculation output",
+      "persistence": "TRANSIENT/PARTIAL — not named snapshot on page",
+      "immutable": false,
+      "versioned": false,
+      "consumers": "CPP, quote dry-run",
+      "page_classification": "LABEL_ONLY"
+    },
+    {
+      "snapshot_point": "Quotes — Ofertă comercială",
+      "real_object": "quote_snapshot_v2",
+      "persistence": "ACTIVE — QuoteSnapshotV2Record",
+      "immutable": "PARTIAL — accept gate",
+      "versioned": true,
+      "consumers": "order convert",
+      "page_classification": "LABEL_ONLY"
+    },
+    {
+      "snapshot_point": "Orders — Snapshot aprobat",
+      "real_object": "order snapshot_v2_json",
+      "persistence": "ACTIVE — Orders model",
+      "immutable": "CONFIRMED for locked orders",
+      "versioned": true,
+      "consumers": "execution plan v2",
+      "page_classification": "LABEL_ONLY"
+    },
+    {
+      "snapshot_point": "WorkOS — Pachet operațional",
+      "real_object": "ExecutionPlan.tasks_json",
+      "persistence": "ACTIVE",
+      "immutable": "PARTIAL — plan mutable until materialization gates",
+      "versioned": "snapshot_version field",
+      "consumers": "execution reality, operator/employee mobile",
+      "page_classification": "LABEL_ONLY"
+    }
+  ],
+  "missing_on_page": [
+    "snapshot IDs",
+    "timestamps",
+    "hashes",
+    "schema versions",
+    "drill-down links",
+    "lineage to source request"
+  ],
+  "real_snapshots_verified_e2e": [
+    {"entity": "ORD-W5T01-GATE", "order_id": 29991, "status": "locked", "execution_plan": true}
+  ]
+}

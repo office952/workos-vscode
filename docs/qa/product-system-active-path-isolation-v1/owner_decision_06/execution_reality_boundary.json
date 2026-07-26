@@ -1,0 +1,18 @@
+{
+  "task": "OWNER-DECISION-06",
+  "owns": [
+    "work sessions per task (0..N)",
+    "session role primary/helper",
+    "session_type work/assist",
+    "active_workers derived view",
+    "participants_count derived",
+    "total_logged_minutes",
+    "operation-level progress aggregate (target)",
+    "help request records (target)",
+    "participant entry/exit history (target)"
+  ],
+  "canonical_storage_today": "execution_reality.tasks_json session observations",
+  "truth_authority": "Execution Reality is runtime execution truth",
+  "does_not_mutate": ["execution_plan frozen identity", "order snapshot", "product definition"],
+  "owner_status": "CONFIRMED"
+}

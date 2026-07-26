@@ -1,0 +1,53 @@
+{
+  "probe": {
+    "montajSelected": true,
+    "hasFundal": true,
+    "hasProductSystem": true,
+    "hasTarife": true,
+    "hasAccesorii": true,
+    "hasScope": false,
+    "hasSegmented": true,
+    "snippet": [
+      "Product System",
+      "Litere volumetrice + Panou Alucobond casetat",
+      "Litere volumetrice · Panou Alucobond casetat",
+      "Montaj",
+      "Fundal · carcasă · site",
+      "Fundal și carcasă primul · montaj comercial doar dacă e în ofertă",
+      "Montaj comercial",
+      "Fundal și carcasă",
+      "Ansamblu panouri, îmbinări și alimentare 220V pe panouri — o singură decizie operator.",
+      "Configurație Panou ACP casetat",
+      "Componentă de produs — independentă de scope-ul comercial de montaj.",
+      "Panou ACP casetat",
+      "Fără soluție suplimentară (șablon montaj)",
+      "Structură metalică pentru premontaj",
+      "Panou ACP casetat · dimensiuni din Pasul 1",
+      "Dimensiuni panou: 1000.0 × 350.0 mm · sursă: SVG confirmat",
+      "Lățime panou (mm)",
+      "Înălțime panou (mm)",
+      "Detaliu tehnic · ID șablon: TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "Module pe panoul ACP. Carcasa, cadrul și prinderea rămân separate. Fără cantități inventate, fără preț, fără taskuri.",
+      "Metodă de montaj: Decizie administrator",
+      "Posibil fundal format din mai multe panouri",
+      "Ansamblul din mai multe panouri a fost confirmat.",
+      "Panouri",
+      "Nicio legatura element–panou in propunere.",
+      "Ansamblul din mai multe panouri a fost confirmat.",
+      "Alimentare 220V pe panouri",
+      "Indica unde este alimentarea de 220V pentru acest panou.",
+      "panel_1 · panou fizic",
+      "220V direct pe panou",
+      "Alimentare din alt panou",
+      "panel_2 · panou fizic",
+      "220V direct pe panou",
+      "Alimentare din alt panou",
+      "Ansamblu multi-panou confirmat — alimentarea 220V pe panouri este autoritară. Colțul service unic nu se mai configurează aici.",
+      "Tarife lipsă — Accesorii montaj / conectori"
+    ]
+  },
+  "conf": {
+    "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+    "title": "erpWork OS"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "task": "UI-TRUTH-01A",
+  "matrix": [
+    {
+      "concern": "Health polling",
+      "existing": "frontend/src/hooks/useModuleChainData.ts — fetch /api/v1/system/health, 30s interval",
+      "reuse": "Pattern only (same-origin URL)",
+      "new_code": "useRuntimeHealth — dedicated truth hook, 45s default, stale/timeout/concurrency"
+    },
+    {
+      "concern": "Types",
+      "existing": "frontend/src/types/gate.types.ts, preview.types.ts",
+      "reuse": "Convention mirrored",
+      "new_code": "frontend/src/types/runtimeStatus.ts"
+    },
+    {
+      "concern": "API client",
+      "existing": "frontend/src/api/system.ts (not used for banner path)",
+      "reuse": "No — avoids getAPIBaseURL direct :8001",
+      "new_code": "frontend/src/lib/runtimeHealth.ts same-origin fetch helpers"
+    },
+    {
+      "concern": "Abort/timeout",
+      "existing": "frontend/src/lib/config.ts, execution.ts — AbortController + timeout",
+      "reuse": "Pattern",
+      "new_code": "fetchJsonWithTimeout in runtimeHealth.ts"
+    },
+    {
+      "concern": "Tests",
+      "existing": "Vitest + @testing-library/react renderHook (useTabletStationData.test.ts)",
+      "reuse": "Yes",
+      "new_code": "runtimeHealth.test.ts, useRuntimeHealth.test.ts"
+    },
+    {
+      "concern": "Mock guard",
+      "existing": "frontend/src/lib/mockGuard.ts isMockEnabled()",
+      "reuse": "Yes — environment.demo segment only",
+      "new_code": "normalizeVersionEnvironment mock branch"
+    },
+    {
+      "concern": "Query/cache library",
+      "existing": "None for health",
+      "reuse": "N/A",
+      "new_code": "Local hook state only"
+    }
+  ],
+  "duplicate_polling_justification": "ModuleChain polling remains unchanged; banner will consume useRuntimeHealth in 01B. Shared extraction deferred to avoid scope creep."
+}

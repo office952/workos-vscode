@@ -16,6 +16,9 @@ from schemas.mini_module_registry import (
 )
 
 
+from services.template_architecture_scope import normalize_template_code
+
+
 class MiniModuleRegistryService:
     """Deterministic in-code registry — testable without seed or DB."""
 
@@ -27,8 +30,16 @@ class MiniModuleRegistryService:
 
     def get_by_template(self, template_code: str) -> MiniModuleRegistryResponse:
         codes = TEMPLATE_MODULE_INDEX.get(template_code, [])
+        resolved_code = template_code
+        if not codes:
+            normalized = normalize_template_code(template_code)
+            for key, module_codes in TEMPLATE_MODULE_INDEX.items():
+                if normalize_template_code(key) == normalized:
+                    codes = module_codes
+                    resolved_code = key
+                    break
         modules = [REGISTRY_BY_CODE[c] for c in codes if c in REGISTRY_BY_CODE]
-        return self._build_response(modules, template_code=template_code)
+        return self._build_response(modules, template_code=resolved_code)
 
     def get_refs_for_template(self, template_code: str) -> list[MiniModuleRegistryRef]:
         response = self.get_by_template(template_code)

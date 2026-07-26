@@ -1,0 +1,43 @@
+{
+  "task": "APP-AUTH-06C",
+  "explicitly_blocked": [
+    "Application code changes",
+    "Parity code changes",
+    "DB changes",
+    "Employee/competency/authorization/mapping/eligibility/assignment mutations",
+    "Third consumer connection",
+    "Parity persistence",
+    "Manager projection UI",
+    "Production/staging parity flags enablement",
+    "Enforcement",
+    "Source switch",
+    "Migration",
+    "APP-AUTH-07",
+    "Automatic remediation"
+  ],
+  "enforcement_by_classification": {
+    "CONFIRMATION_REQUIRED": "FORBIDDEN",
+    "TECHNICAL_INVESTIGATION": "FORBIDDEN",
+    "EXPECTED_TRANSITION": "NOT_APPLICABLE",
+    "POLICY_DECISION": "PREMATURE",
+    "DEFECT_PROVEN": "PREMATURE",
+    "INSUFFICIENT_DATA": "NOT_APPLICABLE"
+  },
+  "manager_projection": {
+    "status": "NOT_READY",
+    "requirements_before_any_projection": [
+      "stable classification owner-approved",
+      "owner-approved terminology",
+      "confidentiality review",
+      "deduplication policy",
+      "severity model",
+      "lifecycle rules",
+      "persistence decision",
+      "false-positive handling"
+    ]
+  },
+  "persistence": {
+    "authorized": false,
+    "why_ephemeral_sufficient": "Pilot evidence + JSON artifacts capture 16 fingerprints; owner decisions precede retention; P7 forbids persistence"
+  }
+}

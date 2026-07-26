@@ -16,7 +16,9 @@ export const INTAKE_V4_QUANTITY_BASIS_LABELS: Record<string, string> = {
   adhesive_return_to_face_ml_per_ml_cant: "Adeziv — 2 ml / ml cant (litere)",
   adhesive_led_modules_ml_per_module: "Adeziv LED — 0.2 ml / modul",
   wire_letters_myyup_2x075_per_segment: "Cablu MYYUP 2×0.75 — 1 ml / literă",
-  wire_supply_myyup_2x15_per_job: "Cablu MYYUP 2×1.5 — alimentare set",
+  wire_supply_myyup_2x15_per_job: "Cablu MYYUP 2×1.5 — alimentare set (default legacy)",
+  wire_supply_myyup_2x15_typed_mains_cable_length_m:
+    "Cablu MYYUP 2×1.5 — lungime selectată (mains_cable_length_m)",
 };
 
 export const INTAKE_V4_CONFIDENCE_LABELS: Record<string, string> = {

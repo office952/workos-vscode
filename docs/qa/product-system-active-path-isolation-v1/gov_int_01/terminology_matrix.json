@@ -1,0 +1,57 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "rows": [
+    {
+      "term": "Templates",
+      "governance_meaning": "Boundary layer / Blueprint",
+      "modules_meaning": "Not a module short name",
+      "real_meaning": "Product System templates",
+      "proposed_canonical_term": "Product System template",
+      "rename_authorized": false
+    },
+    {
+      "term": "Quotes",
+      "governance_meaning": "Calculator role in formula",
+      "modules_meaning": "QT commercial offer",
+      "real_meaning": "Quote + CostEngine split",
+      "proposed_canonical_term": "Ofertă (QT)",
+      "rename_authorized": false
+    },
+    {
+      "term": "Ready for Quotes",
+      "governance_meaning": "Template gate verdict",
+      "modules_meaning": "WI_READY_FOR_QUOTE event",
+      "real_meaning": "is_ready_for_quote / ready_for_quote",
+      "proposed_canonical_term": "Ready for Offer",
+      "rename_authorized": false
+    },
+    {
+      "term": "OC",
+      "governance_meaning": "Post-execution truth guard",
+      "modules_meaning": "Chain start Operational Core",
+      "real_meaning": "Inventory + operational services",
+      "proposed_canonical_term": "Operational Core (OC)",
+      "rename_authorized": false
+    },
+    {
+      "term": "WorkOS",
+      "governance_meaning": "Single execution monolith",
+      "modules_meaning": "WO orchestration module",
+      "real_meaning": "Execution + Shop Floor + Mobile",
+      "proposed_canonical_term": "Execuție (WO)",
+      "rename_authorized": false
+    },
+    {
+      "term": "Agent",
+      "governance_meaning": "Compound role persona",
+      "modules_meaning": "N/A",
+      "real_meaning": "Not Cursor AI agent",
+      "proposed_canonical_term": "Rol arhitectură (documentat)",
+      "rename_authorized": false
+    }
+  ]
+}

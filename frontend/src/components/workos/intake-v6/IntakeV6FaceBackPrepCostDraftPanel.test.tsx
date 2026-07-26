@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+﻿import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IntakeV6FaceBackPrepCostDraftResponse } from "@/lib/intakeV6/useIntakeV6FaceBackPrepCostDraft";
@@ -26,7 +26,7 @@ function sampleDraft(
       {
         component: "FACE_PLEXI",
         material_key: "plexiglas_3mm",
-        material_label: "Plexiglas 3 mm — față litere",
+        material_label: "plexiglas 3mm PMMA - opal",
         registry_code: "MAT-ACP-FATA-LITERE",
         thickness_mm: 3,
         quantity: 1.5,
@@ -55,7 +55,7 @@ function sampleDraft(
     operations: [
       {
         operation_key: "cnc_cut_face_plexi",
-        label: "Debitare CNC față plexiglas 3 mm",
+        label: "Debitare CNC față plexiglas 3mm PMMA - opal",
         component: "FACE_PLEXI",
         task_key: "CUT_FACE_PLEXI",
         quantity: 10,
@@ -119,7 +119,7 @@ function sampleDraft(
       },
       {
         task_key: "CUT_FACE_PLEXI",
-        label: "Debitare față plexiglas 3 mm",
+        label: "Debitare față plexiglas 3mm PMMA - opal",
         station: "cnc",
         component: "FACE_PLEXI",
         order_index: 2,

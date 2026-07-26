@@ -1,0 +1,28 @@
+{
+  "sources": [
+    {
+      "classification": "REGENERABLE",
+      "path": "backend/storage/intake_svg_uploads",
+      "copied": false,
+      "reason": "Directory absent in source",
+      "present": false
+    },
+    {
+      "classification": "REGENERABLE",
+      "path": "backend/storage/intake_work_files",
+      "copied": false,
+      "reason": "Directory absent in source",
+      "present": false
+    },
+    {
+      "destination": "database/dev.db.backup",
+      "present": true,
+      "path": "backend/dev.db",
+      "copied": true,
+      "classification": "REQUIRED_FOR_RESTORE",
+      "reason": "Active SQLite runtime DB backed up separately"
+    }
+  ],
+  "note": "No user uploads or generated storage files present at backup time",
+  "runtime_files_copied_count": 0
+}

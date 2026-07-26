@@ -8,6 +8,60 @@ const PRINT_OPERATION_TYPES = new Set(["print_vinyl", "lamination", "vinyl_appli
 
 const ADHESIVE_MATERIAL_KEY_HINTS = ["adhesive", "adeziv"];
 
+import {
+  isLogoLayerIdentity,
+  isPositionalLogoIdentity,
+} from "@/lib/intakeV6/layerInstanceIdentity";
+
+type OperatorLayerIdentity = {
+  id?: string | null;
+  name?: string | null;
+  layerKey?: string | null;
+  layerName?: string | null;
+};
+
+function normalizeOperatorLayerToken(value: string | null | undefined): string {
+  return String(value ?? "").trim().toLowerCase().replace(/[_-]+/g, " ");
+}
+
+function setLogoLabelToken(
+  target: Map<string, string>,
+  value: string | null | undefined,
+  label: string,
+): void {
+  const normalized = normalizeOperatorLayerToken(value);
+  if (!normalized) return;
+  target.set(normalized, label);
+}
+
+export function isPositionalLogoLayer(
+  layerId: string | null | undefined,
+  layerName?: string | null,
+): boolean {
+  return isPositionalLogoIdentity(layerId, layerName);
+}
+
+export function buildOperatorLogoLabelMap(
+  layers: OperatorLayerIdentity[],
+): Map<string, string> {
+  const labelMap = new Map<string, string>();
+  let logoIndex = 0;
+
+  for (const layer of layers) {
+    if (!isLogoLayerIdentity(layer.id ?? layer.layerKey, layer.name ?? layer.layerName)) {
+      continue;
+    }
+    logoIndex += 1;
+    const label = `Logo ${logoIndex}`;
+    setLogoLabelToken(labelMap, layer.id, label);
+    setLogoLabelToken(labelMap, layer.name, label);
+    setLogoLabelToken(labelMap, layer.layerKey, label);
+    setLogoLabelToken(labelMap, layer.layerName, label);
+  }
+
+  return labelMap;
+}
+
 export function isInternalCorelLayerId(value: string | null | undefined): boolean {
   const token = String(value ?? "").trim();
   return /^_\d+$/.test(token) || /^_220\d+/.test(token);
@@ -16,20 +70,46 @@ export function isInternalCorelLayerId(value: string | null | undefined): boolea
 export function getOperatorLayerLabel(
   layerId: string,
   layerName?: string | null,
+  options?: { logoLabelMap?: ReadonlyMap<string, string> },
 ): string {
   const id = layerId.trim().toLowerCase();
   const name = String(layerName ?? "").trim().toLowerCase();
+  const explicitLogoLabel =
+    options?.logoLabelMap?.get(normalizeOperatorLayerToken(layerId)) ??
+    options?.logoLabelMap?.get(normalizeOperatorLayerToken(layerName));
 
-  if (/logo.?stanga|logo-stanga|logo stanga/.test(name) || id === "logo-stanga") {
-    return "logo stânga";
+  if (explicitLogoLabel) {
+    return explicitLogoLabel;
   }
-  if (/logo.?dreapta|logo-dreapta|logo dreapta/.test(name) || id === "logo-dreapta") {
-    return "logo dreapta";
+
+  if (isPositionalLogoLayer(layerId, layerName)) {
+    return "Logo";
+  }
+  // Never surface analyzer fill/pseudo tokens as primary operator titles.
+  if (
+    /^pseudo[:\s-]*fill[-_]?[0-9a-f]{3,8}$/i.test(id) ||
+    /^pseudo[:\s-]*fill[-_]?[0-9a-f]{3,8}$/i.test(name) ||
+    /^fill[-_]?[0-9a-f]{3,8}$/i.test(name) ||
+    /^pseudo:fill-/i.test(id)
+  ) {
+    return "Formă grafică detectată";
+  }
+  if (name.startsWith("pseudo ") || name.startsWith("pseudo:")) {
+    const stripped = name.replace(/^pseudo[:\s-]+/i, "").replace(/\s*\(([^)]+)\)\s*$/, "").trim();
+    if (stripped && !/^fill[-_]?[0-9a-f]/i.test(stripped)) {
+      return stripped;
+    }
+    return "Formă grafică detectată";
   }
   if (name && !isInternalCorelLayerId(name)) {
     return layerName!.trim();
   }
   if (!isInternalCorelLayerId(layerId) && layerId.trim()) {
+    if (id.startsWith("pseudo:")) {
+      const stripped = id.replace(/^pseudo:/i, "");
+      if (/^fill[-_]?[0-9a-f]/i.test(stripped)) return "Formă grafică detectată";
+      return stripped || "Formă grafică detectată";
+    }
     return layerId.trim();
   }
   if (/logo|emblem|artwork|policromie/.test(name)) {
@@ -39,7 +119,12 @@ export function getOperatorLayerLabel(
 }
 
 export function sanitizeOperatorDisplayText(text: string): string {
-  return text.replace(/_\d{10,}/g, (match) => getOperatorLayerLabel(match, match));
+  const withoutIds = text.replace(/_\d{10,}/g, (match) => getOperatorLayerLabel(match, match));
+  // D4: manufacturing consumable — not commercial Montaj scope language.
+  return withoutIds.replace(
+    /Accesorii montaj\s*\/\s*conectori/gi,
+    "Consumabile producție — accesorii / conectori",
+  );
 }
 
 export function formatOperatorOperationDisplayName(displayName: string): string {
@@ -226,6 +311,9 @@ export function formatWorkspaceReadinessLabel(status: string | null | undefined)
   }
   if (status === "finish_setup_incomplete") {
     return "Finisaje incomplete";
+  }
+  if (status === "logo_only_candidate_not_offerable") {
+    return "Logo candidate read-only — neofertabil comercial";
   }
   return status?.replace(/_/g, " ") ?? "—";
 }

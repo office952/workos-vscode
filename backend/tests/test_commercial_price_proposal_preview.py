@@ -250,7 +250,7 @@ def test_forbidden_hourly_usage_produces_blocked():
             quantity=1,
             unit="set",
             pricing_rule_code="BAD",
-            source="workcenter_rate_fallback",
+            source="legacy workcenter_rate fallback",
             owner_decision_required=False,
         )
     ]

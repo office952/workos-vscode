@@ -63,3 +63,15 @@ function Install-WorkOsBackendRequirements {
         }
     }
 }
+
+function Set-WorkOsJwtEnv {
+    if (-not $env:JWT_SECRET_KEY) {
+        $env:JWT_SECRET_KEY = "local-dev-secret-not-for-production"
+    }
+    if (-not $env:JWT_ALGORITHM) {
+        $env:JWT_ALGORITHM = "HS256"
+    }
+    if (-not $env:JWT_EXPIRE_MINUTES) {
+        $env:JWT_EXPIRE_MINUTES = "60"
+    }
+}

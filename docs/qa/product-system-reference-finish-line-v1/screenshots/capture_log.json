@@ -1,0 +1,50 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    {
+      "name": "01_product_system_index.png",
+      "note": "Product System overview",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\01_product_system_index.png"
+    },
+    {
+      "name": "02_vl_overview_finish_line.png",
+      "note": "VL overview + finish-line panel",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\02_vl_overview_finish_line.png"
+    },
+    {
+      "name": "03_vl_composition_option2.png",
+      "note": "Composition authoring Option 2 banner",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\03_vl_composition_option2.png"
+    },
+    {
+      "name": "04_vl_production_cost_labels.png",
+      "note": "EIC Cost productie vs CPP",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\04_vl_production_cost_labels.png"
+    },
+    {
+      "name": "05_vl_eic_cpp_totals.png",
+      "note": "Totals Cost productie / Pret comercial",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\05_vl_eic_cpp_totals.png"
+    },
+    {
+      "name": "06_volum_aluminiu_child.png",
+      "note": "Volum Aluminiu child detail",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\06_volum_aluminiu_child.png"
+    },
+    {
+      "name": "07_acm_shell.png",
+      "note": "ACM optional capability shell",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\07_acm_shell.png"
+    },
+    {
+      "name": "08_logo_incomplete.png",
+      "note": "Logo incomplete path",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\08_logo_incomplete.png"
+    },
+    {
+      "name": "09_material_pricing.png",
+      "note": "Preturi materiale / critical context",
+      "file": "C:\\w\\psiso\\docs\\qa\\product-system-reference-finish-line-v1\\screenshots\\09_material_pricing.png"
+    }
+  ]
+}

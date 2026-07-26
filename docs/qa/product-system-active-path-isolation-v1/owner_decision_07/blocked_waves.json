@@ -1,0 +1,16 @@
+{
+  "task": "OWNER-DECISION-07",
+  "authorized": ["FLEX-01"],
+  "blocked": [
+    { "wave": "FLEX-02", "reason": "participant persistence gate — PROD-FLEX-ARCH-02 required" },
+    { "wave": "FLEX-03", "reason": "depends on FLEX-02 write foundation" },
+    { "wave": "FLEX-04", "reason": "help persistence not decided for implementation" },
+    { "wave": "FLEX-05", "reason": "mobile helper flow blocked" },
+    { "wave": "FLEX-06", "reason": "quantity progress persistence gate" },
+    { "wave": "FLEX-07", "reason": "complete authority implementation blocked" },
+    { "wave": "FLEX-08", "reason": "operator/execution detail blocked" },
+    { "wave": "FLEX-09", "reason": "PS metadata blocked" }
+  ],
+  "db_migration": "NOT_AUTHORIZED",
+  "ui_changes": "NOT_AUTHORIZED for FLEX-01 default"
+}

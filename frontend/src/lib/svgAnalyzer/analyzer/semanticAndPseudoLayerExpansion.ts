@@ -5,9 +5,17 @@ import {
   letterSemanticForSolidFill,
 } from './anaMariaLetterSemantics'
 import {
+  deriveVisualPositionHint,
+  isNeutralLogoInstanceId,
+  nextNeutralLogoInstanceId,
+} from '@/lib/intakeV6/layerInstanceIdentity'
+import {
   isCorelInternalGroupId,
   isGenericLayerName,
+  isLogoArtworkLayerName,
+  isPseudoLayerId,
   isSemanticProductionOrArtworkLayerName,
+  isSupportPanelLayerName,
   normalizeLayerDisplayName,
 } from './layerNameSemantics'
 import { shouldPreserveExistingLayerStructure } from './pseudoLayerExpansionGuard'
@@ -18,6 +26,11 @@ export interface LayerExpansionMeta {
   layerKind: ExpandedLayerKind
   layerOrigin: string
   roleReason: string
+  positionHint?: 'left' | 'right' | 'center' | 'top' | 'bottom' | null
+  /** Semantic SVG group ids before color-cluster rewrite (provenance). */
+  sourceGroupIds?: string[]
+  /** Drawable element ids owned by this layer after expansion. */
+  elementIds?: string[]
 }
 
 export interface SemanticPseudoLayerExpansionResult {
@@ -58,7 +71,7 @@ function drawableIdsForLayer(
 }
 
 function isLogoStrokeOutlinePath(element: ParsedSvgDocument['elements'][number]): boolean {
-  if (element.type !== 'path') return false
+  if (!['path', 'polygon', 'polyline', 'rect', 'circle', 'ellipse', 'line'].includes(element.type)) return false
   const fill = element.fillSolid ?? element.fill
   const stroke = element.strokeSolid ?? element.stroke
   const fillNone = fill == null || fill === 'none' || fill === 'transparent'
@@ -96,6 +109,15 @@ function bboxOverlap(
   )
 }
 
+function resolveSequentialLogoName(groups: ParsedSvgDocument['groups'], groupId: string): string {
+  const existingIndex = groups.findIndex((entry) => entry.id === groupId)
+  const logoGroupCount = groups.filter(
+    (entry) => isNeutralLogoInstanceId(entry.id) || isLogoLayerId(entry.id) || entry.id.startsWith('logo-'),
+  ).length
+  const index = existingIndex >= 0 ? existingIndex + 1 : logoGroupCount + 1
+  return `Logo ${index}`
+}
+
 function assignRasterLogoLayers(
   doc: ParsedSvgDocument,
   geometry: GeometrySummary,
@@ -111,16 +133,26 @@ function assignRasterLogoLayers(
   for (const image of images) {
     const geo = geoById.get(image.elementId)
     const bbox = geo?.bbox
+    const outlineMargin = bbox ? Math.max(bbox.width, bbox.height) * 0.08 : 0
     const imageCenterX = bbox ? bbox.x + bbox.width / 2 : 0
-    const side = centerX != null && imageCenterX >= centerX ? 'right' : 'left'
-    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+    const positionHint = deriveVisualPositionHint(imageCenterX, centerX)
 
     const imageElement = elements.find((entry) => entry.elementId === image.elementId)
     const parentLayerId = imageElement?.layerId ?? null
 
-    let group = newGroups.find((entry) => entry.id === id)
+    let group = newGroups.find((entry) => entry.elementIds.includes(image.elementId))
+    if (!group && bbox) {
+      group = newGroups.find((entry) => {
+        if (!isNeutralLogoInstanceId(entry.id) && !isLogoLayerId(entry.id)) return false
+        const memberGeo = entry.elementIds
+          .map((elementId) => geoById.get(elementId)?.bbox)
+          .find(Boolean)
+        return memberGeo ? bboxOverlap(bbox, memberGeo, outlineMargin) : false
+      })
+    }
     if (!group) {
+      const id = nextNeutralLogoInstanceId(newGroups.map((entry) => entry.id))
+      const name = resolveSequentialLogoName(newGroups, id)
       group = { id, name, elementIds: [] }
       newGroups.push(group)
       layerMeta.set(id, {
@@ -130,12 +162,13 @@ function assignRasterLogoLayers(
           layerKind === 'real'
             ? 'Named Corel logo layer preserved as printed artwork.'
             : 'Raster image isolated as printed artwork pseudo-layer.',
+        positionHint,
       })
     }
 
+    const { id, name } = group
     assignLogoGroupElement(elements, group, image.elementId, id, name)
 
-    const outlineMargin = bbox ? Math.max(bbox.width, bbox.height) * 0.08 : 0
     for (const candidate of elements) {
       if (candidate.elementId === image.elementId) continue
       if (!isLogoStrokeOutlinePath(candidate)) continue
@@ -162,6 +195,36 @@ function assignedElementIds(groups: ParsedSvgDocument['groups']): Set<string> {
   return new Set(groups.flatMap((group) => group.elementIds))
 }
 
+function shouldUseAnaMariaFillSemantics(fileName: string): boolean {
+  const token = fileName.trim().toLowerCase()
+  return token.includes('gradi-curat') || token.includes('ana-maria-gradinita')
+}
+
+function nameSuggestsSupportPanelContour(name: string | null | undefined): boolean {
+  if (!name) return false
+  return isSupportPanelLayerName(name)
+}
+
+function strokeElementBelongsToSupportNamedLayer(
+  doc: ParsedSvgDocument,
+  element: ParsedSvgDocument['elements'][number],
+): boolean {
+  if (nameSuggestsSupportPanelContour(element.layerName) || nameSuggestsSupportPanelContour(element.layerId)) {
+    return true
+  }
+  for (const group of doc.groups) {
+    const owns =
+      group.elementIds.includes(element.elementId) ||
+      group.id === element.layerId ||
+      normalizeLayerDisplayName(group.name ?? '') === normalizeLayerDisplayName(element.layerName ?? '')
+    if (!owns) continue
+    if (nameSuggestsSupportPanelContour(group.name) || nameSuggestsSupportPanelContour(group.id)) {
+      return true
+    }
+  }
+  return false
+}
+
 function assignStrokeOnlyLogoLayers(
   doc: ParsedSvgDocument,
   geometry: GeometrySummary,
@@ -176,32 +239,36 @@ function assignStrokeOnlyLogoLayers(
   const candidates = elements
     .filter((element) => isLogoStrokeOutlinePath(element) && !alreadyAssigned.has(element.elementId))
     .sort((a, b) => {
-      const aBox = geoById.get(a.elementId)?.bbox
-      const bBox = geoById.get(b.elementId)?.bbox
-      return (aBox?.x ?? a.index) - (bBox?.x ?? b.index)
+      return a.index - b.index
     })
 
   for (const candidate of candidates) {
+    // Panel-alone / named ACM support stroke must stay Contur suport — not Logo N.
+    if (strokeElementBelongsToSupportNamedLayer(doc, candidate)) {
+      continue
+    }
+
     const bbox = geoById.get(candidate.elementId)?.bbox
     const candidateCenterX = bbox ? bbox.x + bbox.width / 2 : null
-    const side = centerX != null && candidateCenterX != null && candidateCenterX >= centerX ? 'right' : 'left'
-    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+    const positionHint = deriveVisualPositionHint(candidateCenterX, centerX)
 
-    let group = newGroups.find((entry) => entry.id === id)
+    let group = newGroups.find((entry) => entry.elementIds.includes(candidate.elementId))
     if (!group) {
+      const id = nextNeutralLogoInstanceId(newGroups.map((entry) => entry.id))
+      const name = resolveSequentialLogoName(newGroups, id)
       group = { id, name, elementIds: [] }
       newGroups.push(group)
-    }
-    if (!layerMeta.has(id)) {
-      layerMeta.set(id, {
-        layerKind: layerKind === 'real' ? 'real' : 'pseudo',
-        layerOrigin: layerKind === 'real' ? 'corel_logo_stroke_outline' : 'stroke_vector_outline',
-        roleReason: 'Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.',
-      })
+      if (!layerMeta.has(id)) {
+        layerMeta.set(id, {
+          layerKind: layerKind === 'real' ? 'real' : 'pseudo',
+          layerOrigin: layerKind === 'real' ? 'corel_logo_stroke_outline' : 'stroke_vector_outline',
+          roleReason: 'Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.',
+          positionHint,
+        })
+      }
     }
 
-    assignLogoGroupElement(elements, group, candidate.elementId, id, name)
+    assignLogoGroupElement(elements, group, candidate.elementId, group.id, group.name)
   }
 }
 
@@ -304,6 +371,7 @@ export function expandSemanticAndPseudoLayers(
 
   const layerMeta = new Map<string, LayerExpansionMeta>()
   const newGroups: ParsedSvgDocument['groups'] = []
+  const useAnaMariaFillSemantics = shouldUseAnaMariaFillSemantics(doc.fileName)
 
   const drawable = elements.filter((element) => isDrawableElement(element.type))
   const images = drawable.filter((element) => element.type === 'image')
@@ -316,8 +384,23 @@ export function expandSemanticAndPseudoLayers(
 
   assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
 
+  // Capture semantic group provenance before color-cluster rewrite.
+  const priorGroupByElement = new Map<string, string>()
+  for (const element of elements) {
+    if (element.layerId && element.type !== 'group' && element.type !== 'unknown') {
+      priorGroupByElement.set(element.elementId, element.layerId)
+    }
+  }
+  for (const group of doc.groups) {
+    for (const elementId of group.elementIds) {
+      if (!priorGroupByElement.has(elementId)) {
+        priorGroupByElement.set(elementId, group.id)
+      }
+    }
+  }
+
   for (const fill of uniqueFills) {
-    const semantic = letterSemanticForSolidFill(fill)
+    const semantic = useAnaMariaFillSemantics ? letterSemanticForSolidFill(fill) : null
     const letterId = semantic?.letterId ?? `fill-${fill.replace('#', '')}`
     const id = `pseudo:${letterId}`
     const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
@@ -327,26 +410,38 @@ export function expandSemanticAndPseudoLayers(
         layerKind: 'pseudo',
         layerOrigin: 'solid_fill_cluster',
         roleReason: 'Pseudo-layer generated from solid vector fill color cluster.',
+        sourceGroupIds: [],
+        elementIds: [],
       })
     }
   }
 
   for (const vector of vectorsWithFill) {
-    const semantic = letterSemanticForSolidFill(vector.fillSolid!)
+    const semantic = useAnaMariaFillSemantics ? letterSemanticForSolidFill(vector.fillSolid!) : null
     const letterId = semantic?.letterId ?? `fill-${vector.fillSolid!.replace('#', '')}`
     const id = `pseudo:${letterId}`
     const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
     const element = elements.find((entry) => entry.elementId === vector.elementId)
     if (!element) continue
+    const priorGroupId = priorGroupByElement.get(vector.elementId)
     element.layerId = id
     element.layerName = name
     const group = newGroups.find((entry) => entry.id === id)
     if (group) {
       group.elementIds.push(vector.elementId)
     }
+    const meta = layerMeta.get(id)
+    if (meta) {
+      meta.elementIds = [...(meta.elementIds ?? []), vector.elementId]
+      if (priorGroupId && !isPseudoLayerId(priorGroupId) && !(meta.sourceGroupIds ?? []).includes(priorGroupId)) {
+        meta.sourceGroupIds = [...(meta.sourceGroupIds ?? []), priorGroupId]
+      }
+    }
   }
 
+  const logoOnlyFile = isLogoArtworkLayerName(doc.fileName)
   const semanticGroups = doc.groups.filter((group) => {
+    if (logoOnlyFile) return false
     const name = group.name ?? group.id
     return isSemanticProductionOrArtworkLayerName(name) && !isCorelInternalGroupId(group.id)
   })

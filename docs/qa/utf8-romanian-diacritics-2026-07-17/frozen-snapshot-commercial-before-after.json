@@ -1,0 +1,76 @@
+{
+  "build1": [
+    {
+      "table": "quote_snapshots_v2",
+      "pk": 2,
+      "fingerprint_match": true,
+      "commercial_before": {
+        "commercial_total": 3549.1286,
+        "input_commercial_total": 3549.1286,
+        "internal_total": 1560.3836,
+        "snapshot_version": "1.0.0",
+        "snapshot_code": null,
+        "quote_id": "3",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "status_meta": null
+      },
+      "commercial_after": {
+        "commercial_total": 3549.1286,
+        "input_commercial_total": 3549.1286,
+        "internal_total": 1560.3836,
+        "snapshot_version": "1.0.0",
+        "snapshot_code": null,
+        "quote_id": "3",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "status_meta": null
+      },
+      "commercial_unchanged": true,
+      "mojibake_before": true,
+      "mojibake_after": false,
+      "sample_text_before": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+      "sample_text_after": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print"
+    },
+    {
+      "table": "orders",
+      "pk": 92402,
+      "fingerprint_match": true,
+      "commercial_before": {
+        "commercial_total": 3549.1286,
+        "input_commercial_total": 3549.1286,
+        "internal_total": 1560.3836,
+        "snapshot_version": "1.0.0",
+        "snapshot_code": "QSN2-2026-0002",
+        "quote_id": 3,
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "status_meta": null
+      },
+      "commercial_after": {
+        "commercial_total": 3549.1286,
+        "input_commercial_total": 3549.1286,
+        "internal_total": 1560.3836,
+        "snapshot_version": "1.0.0",
+        "snapshot_code": "QSN2-2026-0002",
+        "quote_id": 3,
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "status_meta": null
+      },
+      "commercial_unchanged": true,
+      "mojibake_before": true,
+      "mojibake_after": false,
+      "sample_text_before": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+      "sample_text_after": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print"
+    }
+  ],
+  "order_row": {
+    "before": [
+      3549.1286,
+      "locked",
+      2
+    ],
+    "after": [
+      3549.1286,
+      "locked",
+      2
+    ]
+  }
+}

@@ -1,0 +1,255 @@
+﻿{
+    "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "items":  [
+                  {
+                      "operation_code":  "graphic_vector_preflight",
+                      "label":  "Verificare graficÄ / vectorizare",
+                      "workcenter":  "graphics_workstation",
+                      "sequence":  1,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+
+                                     ],
+                      "required_skill":  [
+                                             "graphic_design",
+                                             "vector_preflight"
+                                         ],
+                      "active_reason":  "vector_asset_or_analysis_present",
+                      "operator_instruction":  "VerificÄ SVG, straturi Èi pregÄtire pentru model producÈie."
+                  },
+                  {
+                      "operation_code":  "confirmed_production_model",
+                      "label":  "Confirmare model producÈie din vector",
+                      "workcenter":  "graphics_workstation",
+                      "sequence":  2,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "graphic_vector_preflight"
+                                     ],
+                      "required_skill":  [
+                                             "graphic_design",
+                                             "vector_preflight"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "ConfirmÄ litere, contururi Èi goluri interioare."
+                  },
+                  {
+                      "operation_code":  "cnc_file_preparation",
+                      "label":  "PregÄtire fiÈiere CNC pentru debitare faÈÄ/spate",
+                      "workcenter":  "cnc_preparation_station",
+                      "sequence":  3,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "confirmed_production_model"
+                                     ],
+                      "required_skill":  [
+                                             "cnc_file_preparation"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "PregÄteÈte fiÈiere debitare faÈÄ plexiglas Èi spate Forex."
+                  },
+                  {
+                      "operation_code":  "return_forming_file_preparation",
+                      "label":  "PregÄtire fiÈier / traseu pentru modelare cant",
+                      "workcenter":  "cnc_preparation_station",
+                      "sequence":  4,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "confirmed_production_model"
+                                     ],
+                      "required_skill":  [
+                                             "return_forming_file_preparation"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "PregÄteÈte traseul pentru modelarea cantului."
+                  },
+                  {
+                      "operation_code":  "return_vinyl_application_workbench",
+                      "label":  "Aplicare Oracal 651 pe cant / volum la banc de lucru",
+                      "workcenter":  "workbench",
+                      "sequence":  5,
+                      "component_ref":  null,
+                      "active":  false,
+                      "inactive_reason":  "inactive_by_finish_or_context",
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "return_forming_file_preparation"
+                                     ],
+                      "required_skill":  [
+                                             "vinyl_application_workbench"
+                                         ],
+                      "active_reason":  "inactive_by_finish_or_context",
+                      "operator_instruction":  "ColanteazÄ cantul pe bandÄ platÄ Ã®nainte de modelare."
+                  },
+                  {
+                      "operation_code":  "face_and_backing_cnc_cut",
+                      "label":  "Debitare faÈÄ plexiglas Èi spate Forex la CNC",
+                      "workcenter":  "cnc_router",
+                      "sequence":  6,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "cnc_file_preparation"
+                                     ],
+                      "required_skill":  [
+                                             "cnc_router_operation"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "DebiteazÄ feÈele Èi spatele Forex la CNC."
+                  },
+                  {
+                      "operation_code":  "return_side_forming",
+                      "label":  "Modelare canturi aluminiu",
+                      "workcenter":  "return_forming_machine",
+                      "sequence":  7,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "return_forming_file_preparation"
+                                     ],
+                      "required_skill":  [
+                                             "return_forming_machine_operation"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "ModeleazÄ canturile din aluminiu."
+                  },
+                  {
+                      "operation_code":  "return_face_bonding",
+                      "label":  "Lipire canturi pe feÈele din plexiglas",
+                      "workcenter":  "assembly_bench",
+                      "sequence":  8,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "face_and_backing_cnc_cut",
+                                         "return_side_forming"
+                                     ],
+                      "required_skill":  [
+                                             "letter_assembly"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "LipeÈte canturile modelate pe feÈele din plexiglas."
+                  },
+                  {
+                      "operation_code":  "led_installation_wiring_and_light_test",
+                      "label":  "Montaj LED, cablare LED Èi test aprindere fiecare literÄ",
+                      "workcenter":  "electrical_bench",
+                      "sequence":  9,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "face_and_backing_cnc_cut"
+                                     ],
+                      "required_skill":  [
+                                             "led_installation",
+                                             "electrical_wiring_basic"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "MonteazÄ LED, cablare Èi test aprindere per literÄ."
+                  },
+                  {
+                      "operation_code":  "letter_assembly_no_shared_support",
+                      "label":  "Asamblare litere pe spate Forex",
+                      "workcenter":  "assembly_bench",
+                      "sequence":  10,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "return_face_bonding",
+                                         "led_installation_wiring_and_light_test"
+                                     ],
+                      "required_skill":  [
+                                             "letter_assembly"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "AsambleazÄ corp faÈÄ+cant pe Forex cu autoforante."
+                  },
+                  {
+                      "operation_code":  "return_painting_after_assembly",
+                      "label":  "Protejare faÈÄ, vopsire cant litere Èi Ã®ndepÄrtare protecÈie dupÄ uscare",
+                      "workcenter":  "workbench",
+                      "sequence":  11,
+                      "component_ref":  null,
+                      "active":  false,
+                      "inactive_reason":  "inactive_by_finish_or_context",
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "letter_assembly_no_shared_support"
+                                     ],
+                      "required_skill":  [
+                                             "vinyl_application_workbench"
+                                         ],
+                      "active_reason":  "inactive_by_finish_or_context",
+                      "operator_instruction":  "ProtejeazÄ faÈa, vopseÈte cantul, usucÄ, Ã®ndepÄrteazÄ protecÈia."
+                  },
+                  {
+                      "operation_code":  "face_vinyl_application_final",
+                      "label":  "Aplicare autocolant pe feÈele literelor",
+                      "workcenter":  "workbench",
+                      "sequence":  12,
+                      "component_ref":  null,
+                      "active":  false,
+                      "inactive_reason":  "inactive_by_finish_or_context",
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "letter_assembly_no_shared_support"
+                                     ],
+                      "required_skill":  [
+                                             "face_vinyl_application"
+                                         ],
+                      "active_reason":  "inactive_by_finish_or_context",
+                      "operator_instruction":  "ColanteazÄ feÈele litere dupÄ asamblare."
+                  },
+                  {
+                      "operation_code":  "stretch_wrap_and_delivery_mounting_package",
+                      "label":  "Infoliere cu folie stretch Èi pregÄtire colet pentru livrare / montaj",
+                      "workcenter":  "packing_area",
+                      "sequence":  13,
+                      "component_ref":  null,
+                      "active":  true,
+                      "inactive_reason":  null,
+                      "source":  "operation_catalog",
+                      "depends_on":  [
+                                         "letter_assembly_no_shared_support"
+                                     ],
+                      "required_skill":  [
+                                             "packing_preparation"
+                                         ],
+                      "active_reason":  "always_active_for_volumetric_pilot",
+                      "operator_instruction":  "Infoliere stretch, surse Ã®n colet, accesorii Èi note montaj."
+                  }
+              ],
+    "preview_only":  true,
+    "operation_flags":  {
+                            "return_vinyl_application_required":  false,
+                            "return_painting_after_assembly_required":  false,
+                            "face_vinyl_application_required":  false,
+                            "face_vinyl_after_return_painting":  false,
+                            "psu_packed_at_packaging":  true,
+                            "electrical_source_mounting_allowed":  false
+                        },
+    "preview_engine":  "v3_operation_catalog"
+}

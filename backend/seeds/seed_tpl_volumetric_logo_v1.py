@@ -72,28 +72,6 @@ CHILD_SPECS = [
                 "requires_quote_input": ["svg_area_m2"],
                 "label": "Debitare față logo volumetric",
             },
-            {
-                "code": "logo_face_print",
-                "workcenter": "LARGE_FORMAT_PRINT",
-                "sequence": 2,
-                "estimatedMinutes": 0,
-                "estimated_minutes": 0,
-                "calculation_type": "formula_based",
-                "formula_id": "logo_area",
-                "requires_quote_input": ["svg_area_m2"],
-                "label": "Print față logo",
-            },
-            {
-                "code": "logo_face_laminate",
-                "workcenter": "LAMINATION",
-                "sequence": 3,
-                "estimatedMinutes": 0,
-                "estimated_minutes": 0,
-                "calculation_type": "formula_based",
-                "formula_id": "logo_area",
-                "requires_quote_input": ["svg_area_m2"],
-                "label": "Laminare față logo",
-            },
         ],
         "materials": [
             {
@@ -105,26 +83,6 @@ CHILD_SPECS = [
                 "formula_id": "logo_area",
                 "requires_quote_input": ["svg_area_m2"],
                 "label": "Material față logo",
-            },
-            {
-                "materialCode": "print_media",
-                "material_code": "print_media",
-                "unit": "mp",
-                "quantity": 0,
-                "calculation_type": "formula_based",
-                "formula_id": "logo_area",
-                "requires_quote_input": ["svg_area_m2"],
-                "label": "Media print logo",
-            },
-            {
-                "materialCode": "laminate_media",
-                "material_code": "laminate_media",
-                "unit": "mp",
-                "quantity": 0,
-                "calculation_type": "formula_based",
-                "formula_id": "logo_area",
-                "requires_quote_input": ["svg_area_m2"],
-                "label": "Media laminare logo",
             },
         ],
     },
@@ -290,9 +248,31 @@ CHILD_SPECS = [
         },
         "operations": [
             {
+                "code": "logo_face_print",
+                "workcenter": "LARGE_FORMAT_PRINT",
+                "sequence": 1,
+                "estimatedMinutes": 0,
+                "estimated_minutes": 0,
+                "calculation_type": "formula_based",
+                "formula_id": "logo_area",
+                "requires_quote_input": ["svg_area_m2"],
+                "label": "Print față logo",
+            },
+            {
+                "code": "logo_face_laminate",
+                "workcenter": "LAMINATION",
+                "sequence": 2,
+                "estimatedMinutes": 0,
+                "estimated_minutes": 0,
+                "calculation_type": "formula_based",
+                "formula_id": "logo_area",
+                "requires_quote_input": ["svg_area_m2"],
+                "label": "Laminare față logo",
+            },
+            {
                 "code": "logo_finish_application",
                 "workcenter": "FACE_VINYL_APPLICATION_LABOR",
-                "sequence": 1,
+                "sequence": 3,
                 "estimatedMinutes": 0,
                 "estimated_minutes": 0,
                 "calculation_type": "formula_based",
@@ -429,19 +409,40 @@ def _child_template_payload(spec: dict[str, Any], family_id: str, family_name: s
 
 
 def _parent_template_payload(family_id: str, family_name: str) -> dict[str, Any]:
+    # Linked-child ProductAggregate expansion namespaces these parent component rows
+    # per logo segment (comp_logo_face::logo_instance_001, …). Keep empty arrays for
+    # parent materials/ops — child module rows remain the BOM/ops source.
+    parent_components = [
+        {
+            "id": component_id,
+            "component_id": component_id,
+            "code": component_id,
+            "label": label,
+            "label_ro": label,
+            "name": label,
+            "role": role,
+            "type": "LITERE_3D" if "FACE" in label or "RETURN" in label or "FINISH" in label else "STRUCTURA",
+            "materials": [],
+            "operations": [],
+        }
+        for component_id, label, role in PARENT_COMPONENT_SPECS
+    ]
     return {
         "template_code": PARENT_TEMPLATE_CODE,
         "family_id": family_id,
         "family_name": family_name,
         "description": "Logo volumetric luminos / componentă volumetrică logo.",
-        "components_json": _json_dumps([]),
+        "components_json": _json_dumps(parent_components),
         "operations_json": _json_dumps([]),
         "required_materials_json": _json_dumps([]),
         "estimated_hours": 2.0,
         "base_labor_rate": 80.0,
         "base_margin_pct": 40.0,
         "active": True,
-        "notes": "Parent template minim live pentru logo volumetric, folosit de ProductAggregate și ProductDefinition read-only.",
+        "notes": (
+            "Linked-child-only parent for volumetric logo. Not root-offerable. "
+            "Used by ProductAggregate/ProductDefinition composition under letters."
+        ),
     }
 
 

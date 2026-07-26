@@ -122,9 +122,15 @@ async function parseErrorBody(res: Response): Promise<string> {
   return `HTTP ${res.status}`;
 }
 
-export async function getProductAggregate(templateCode: string): Promise<ProductAggregate> {
+export async function getProductAggregate(
+  templateCode: string,
+  options?: { workspaceId?: string | null },
+): Promise<ProductAggregate> {
   const encoded = encodeURIComponent(templateCode);
-  const res = await fetch(`${getAPIBaseURL()}/api/v1/product-system/aggregate/${encoded}`, {
+  const qs = options?.workspaceId
+    ? `?workspace_id=${encodeURIComponent(options.workspaceId)}`
+    : "";
+  const res = await fetch(`${getAPIBaseURL()}/api/v1/product-system/aggregate/${encoded}${qs}`, {
     credentials: "include",
     headers: { "Content-Type": "application/json" },
   });

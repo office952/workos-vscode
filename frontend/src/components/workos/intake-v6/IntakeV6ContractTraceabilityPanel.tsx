@@ -184,7 +184,7 @@ export default function IntakeV6ContractTraceabilityPanel({
             return (
               <div
                 key={`${binding.workspace_path}-${binding.canonical_key}`}
-                className="rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2"
+                className="rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2"
                 data-testid={`intake-v6-contract-traceability-row-${binding.canonical_key}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">

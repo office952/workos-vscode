@@ -1,0 +1,72 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "handoff_count_displayed": 7,
+  "handoff_count_runtime_confirmed": 0,
+  "handoff_count_hardcoded": 7,
+  "matrix": [
+    {
+      "handoff": "OC → WI",
+      "payload_ui": "customer_ref, intake_channel, product_family, capabilities",
+      "schema_real": "NOT_PROVEN — no versioned OC→WI contract registry",
+      "event_real": "WI_CREATED — NOT_FOUND in backend emitters",
+      "contract_versioned": false,
+      "validation": "NONE on module chain",
+      "alignment": "DOCUMENTATION_ONLY"
+    },
+    {
+      "handoff": "WI → PS",
+      "payload_ui": "product_family, dimensions, quantity, constraints",
+      "schema_real": "PARTIAL — intake_v6 workspace / product definition builder inputs",
+      "event_real": "WI_READY_FOR_QUOTE — governance static only",
+      "contract_versioned": false,
+      "validation": "PARTIAL — readiness gates in intake services",
+      "alignment": "PARTIAL"
+    },
+    {
+      "handoff": "PS → CE",
+      "payload_ui": "product_definition, components, materials, processing_requirements",
+      "schema_real": "PARTIAL — aggregate cost BOM adapter, mini_module_registry",
+      "event_real": "PRODUCT_RESOLVED — static UI only",
+      "contract_versioned": "mini_module_registry REGISTRY_VERSION only",
+      "validation": "PARTIAL — product system identity boundary tests",
+      "alignment": "PARTIAL"
+    },
+    {
+      "handoff": "CE → QT",
+      "payload_ui": "cost_total, cost_breakdown, time_estimate, risk_flags",
+      "schema_real": "PARTIAL — estimated_internal_cost / CPP preview boundaries",
+      "event_real": "COST_CALCULATED — static UI only",
+      "contract_versioned": false,
+      "validation": "PARTIAL — forbidden hourly usage scans in CPP tests",
+      "alignment": "PARTIAL"
+    },
+    {
+      "handoff": "QT → OR",
+      "payload_ui": "quote_snapshot, product_snapshot, commercial_terms, final_price",
+      "schema_real": "CONFIRMED — quote_snapshot_v2 → order_snapshot_v2 convert",
+      "event_real": "QUOTE_ACCEPTED — static UI only",
+      "contract_versioned": "quote_snapshot_v2 / order_snapshot_v2 schemas",
+      "validation": "CONFIRMED — convert gate tests",
+      "alignment": "RUNTIME_OFF_PAGE"
+    },
+    {
+      "handoff": "OR → WO",
+      "payload_ui": "execution_order, product_snapshot, execution_context, deadline",
+      "schema_real": "CONFIRMED — execution plan from order snapshot",
+      "event_real": "ORDER_LOCKED — static UI; locked status on real orders",
+      "contract_versioned": "order_snapshot_v2",
+      "validation": "CONFIRMED — w5_int_02 frozen order tests",
+      "alignment": "RUNTIME_OFF_PAGE"
+    },
+    {
+      "handoff": "WO → TK",
+      "payload_ui": "task_batch, operations, dependencies, resources, roles",
+      "schema_real": "CONFIRMED — execution plan tasks_json materialization",
+      "event_real": "WORK_SCHEDULED — static UI only",
+      "contract_versioned": false,
+      "validation": "PARTIAL — execution plan operational readiness tests",
+      "alignment": "RUNTIME_OFF_PAGE"
+    }
+  ]
+}

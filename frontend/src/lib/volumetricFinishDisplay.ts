@@ -141,7 +141,7 @@ export function formatVolumetricFinishSummary(
 
     if (series === "8500") {
       faceVinylTranslucent = true;
-      faceVinylLabel = "Oracal 8500 translucent";
+      faceVinylLabel = "Oracal 8500";
       faceVinylDetail = code
         ? `${series}-${code}${name ? ` — ${name}` : ""}`
         : "Cod nespecificat";

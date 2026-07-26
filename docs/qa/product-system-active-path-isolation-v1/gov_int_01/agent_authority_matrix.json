@@ -1,0 +1,36 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "STATIC",
+  "agent_meaning": "Compound-engineering role personas (Nucleu, Contracte, Costing/OC, UI/UX, Implementare, QA, External) — NOT AI agents, NOT RBAC roles",
+  "actors": [
+    {
+      "actor": "Nucleu",
+      "claimed_authority": "Final system truth arbitration",
+      "real_writer": "None automated",
+      "enforcement": "DOCUMENTED_ONLY",
+      "conflict": "Not mapped to application permissions"
+    },
+    {
+      "actor": "Costing/OC agent",
+      "claimed_authority": "Economic and inventory truth",
+      "real_writer": "CostEngine, inventory services, OC routers",
+      "enforcement": "PARTIAL in backend",
+      "conflict": "Page does not reflect APP-AUTH A1–A22 deferred decisions"
+    },
+    {
+      "actor": "UI/UX agent",
+      "claimed_authority": "Translate truth without changing it",
+      "real_writer": "Frontend components",
+      "enforcement": "PARTIAL — UI truth rules not linted"
+    }
+  ],
+  "rbac_conflict": "NOT_PROVEN alignment with operator/manager/employee permissions",
+  "owner_decisions_deferred": "A1–A22 (OWNER-DECISION-03) — 0 CONFIRMATE",
+  "employee_mobile": "Not represented in agent cards",
+  "cost_engine": "Merged into Costing/OC agent — not separate",
+  "snapshot_modification": "Governance agents silent; real governance via quote_output_snapshot services"
+}

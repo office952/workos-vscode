@@ -47,10 +47,13 @@ function stateBadgeLabel(
   }
 }
 
-function ProductLineRow({ line }: { line: OperatorDisplayLine }) {
+function ProductLineRow({ line, compact = false }: { line: OperatorDisplayLine; compact?: boolean }) {
+  const pending = line.state === "pending";
+  const statusLabel = stateBadgeLabel(line.state, line.key);
+
   return (
     <li
-      className="flex items-start justify-between gap-3 border-t border-[#2A3548] py-2 first:border-t-0 first:pt-0"
+      className="flex items-start justify-between gap-3 border-t border-wo-border-strong py-2 first:border-t-0 first:pt-0"
       data-testid={`intake-v6-modular-product-${line.key}`}
       data-module-state={line.state}
     >
@@ -58,9 +61,18 @@ function ProductLineRow({ line }: { line: OperatorDisplayLine }) {
         <p className="text-[12px] font-semibold text-slate-200">{line.label}</p>
         <p className={v6.metricLabel}>{line.hint}</p>
       </div>
-      <AtomsBadge tone={stateBadgeTone(line.state, line.key)}>
-        {stateBadgeLabel(line.state, line.key)}
-      </AtomsBadge>
+      {compact ? (
+        <span
+          className={`shrink-0 text-[10px] ${
+            pending ? "text-amber-200/90" : "text-slate-500"
+          }`}
+          data-testid={`intake-v6-modular-product-status-${line.key}`}
+        >
+          {statusLabel}
+        </span>
+      ) : (
+        <AtomsBadge tone={stateBadgeTone(line.state, line.key)}>{statusLabel}</AtomsBadge>
+      )}
     </li>
   );
 }
@@ -69,10 +81,12 @@ function ProductSection({
   title,
   lines,
   testId,
+  compact = false,
 }: {
   title: string;
   lines: OperatorDisplayLine[];
   testId: string;
+  compact?: boolean;
 }) {
   if (lines.length === 0) return null;
   return (
@@ -80,7 +94,7 @@ function ProductSection({
       <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{title}</p>
       <ul className="space-y-0">
         {lines.map((line) => (
-          <ProductLineRow key={line.key} line={line} />
+          <ProductLineRow key={line.key} line={line} compact={compact} />
         ))}
       </ul>
     </div>
@@ -159,6 +173,7 @@ export default function IntakeV6ModularFormAwarenessPanel({
             title="Produs pregătit"
             lines={view.productReady}
             testId="intake-v6-modular-product-ready"
+            compact={compact}
           />
 
           {view.mounting.length > 0 ? (
@@ -166,6 +181,7 @@ export default function IntakeV6ModularFormAwarenessPanel({
               title="Montaj și structură"
               lines={view.mounting}
               testId="intake-v6-modular-mounting-section"
+              compact={compact}
             />
           ) : view.mountingNotApplicableNote ? (
             <p

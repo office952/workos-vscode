@@ -1,0 +1,25 @@
+{
+  "task": "OWNER-DECISION-05",
+  "status": "CONFIRMED_NOT_IMPLEMENTED",
+  "owner_confirmed": true,
+  "implementation_authorized": false,
+  "minimum_fields": [
+    "employee_id",
+    "operation_code",
+    "reason",
+    "approving_owner_or_manager",
+    "start_date",
+    "expiry_date",
+    "required_supervision",
+    "allowed_resource",
+    "audit_trail_reference",
+    "revocation_procedure"
+  ],
+  "usage_rules": [
+    "S3:C applies only when all minimum fields are present",
+    "Exception does not imply competence promotion to registry",
+    "Exception must be revocable without data migration",
+    "Parity may observe exception presence but must not enforce"
+  ],
+  "s9_confirmation": "CONFIRM"
+}

@@ -118,6 +118,7 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.clarification_list": ["admin", "manager", "operator"],
     "execution.clarification_resolve": ["admin", "manager", "operator"],
     "execution.production_blueprint": ["admin", "manager", "operator"],
+    "execution.owner_decision_resolve": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],
 
     # ExecutionReality
@@ -183,6 +184,9 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
 
     # System diagnostics
     "system.diagnostics.read": ["admin"],
+
+    # Documentation index (W0-B2 read-only; not a filesystem browser)
+    "system.documentation_read": ["admin"],
 
     # Integrations
     "integrations.smartbill.view": ["admin"],

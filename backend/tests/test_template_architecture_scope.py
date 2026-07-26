@@ -20,7 +20,8 @@ def test_quote_scope_accepts_svg_analyzer_alias_but_not_structure_template() -> 
         "TPL-VOLUMETRIC-LETTERS",
         OWNER_VALID_QUOTE_RUNTIME_TEMPLATE_CODES,
     )
-    assert not template_matches_runtime_scope(
+    # Premount is now owner-approved offerable and may also be a linked child.
+    assert template_matches_runtime_scope(
         STRUCTURE_PREMOUNT_TEMPLATE_CODE,
         OWNER_VALID_QUOTE_RUNTIME_TEMPLATE_CODES,
     )

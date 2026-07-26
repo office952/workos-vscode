@@ -5,6 +5,11 @@ import {
   isAnalysisReadyForReview,
   isLayerRoleSetupComplete,
 } from "./intakeV6AnalysisIdentity";
+import {
+  firstDependencyBlockerMessage,
+  isOfferScopeDependencyReady,
+  readPersistedDependencyValidation,
+} from "./intakeV6OfferScopeDependency";
 
 export function isFinishSetupConfirmed(payload: Record<string, unknown> | undefined): boolean {
   const finish = payload?.finish_setup;
@@ -16,11 +21,62 @@ export function hasPersistedAnalysis(payload: Record<string, unknown> | undefine
   return isAnalysisPersisted(payload);
 }
 
+export function isProductCompositionConfirmed(payload: Record<string, unknown> | undefined): boolean {
+  const confirmation = payload?.product_composition_confirmed;
+  if (confirmation == null || typeof confirmation !== "object" || Array.isArray(confirmation)) return false;
+  return (confirmation as Record<string, unknown>).confirmed === true;
+}
+
+export function isOfferScopeConfirmed(payload: Record<string, unknown> | undefined): boolean {
+  const scope = payload?.offer_scope;
+  const confirmation = payload?.offer_scope_confirmed;
+  if (scope == null && confirmation == null) return true;
+  if (confirmation == null || typeof confirmation !== "object" || Array.isArray(confirmation)) return false;
+  if ((confirmation as Record<string, unknown>).confirmed !== true) return false;
+  return isOfferScopeValid(payload) && isOfferScopeDependencyReady(payload);
+}
+
+export function isOfferScopeValid(payload: Record<string, unknown> | undefined): boolean {
+  const scope = payload?.offer_scope;
+  if (scope == null || typeof scope !== "object" || Array.isArray(scope)) {
+    return confirmationOnlyOfferScope(payload);
+  }
+  const mode = (scope as Record<string, unknown>).mode;
+  const soldModules = (scope as Record<string, unknown>).sold_modules;
+  if (mode === "full_product") return true;
+  if (mode !== "component_subset") return false;
+  if (!Array.isArray(soldModules) || soldModules.length === 0) return false;
+  return soldModules.every(
+    (code) =>
+      code === "FACE" ||
+      code === "RETURN-CANT" ||
+      code === "BACK" ||
+      code === "LIGHTING" ||
+      code === "ELECTRICAL",
+  );
+}
+
+function confirmationOnlyOfferScope(payload: Record<string, unknown> | undefined): boolean {
+  const confirmation = payload?.offer_scope_confirmed;
+  if (confirmation == null) return true;
+  return typeof confirmation === "object" && !Array.isArray(confirmation) && confirmation.confirmed === true;
+}
+
 export function canAccessIntakeV6Step(state: IntakeV6WorkspaceState, step: IntakeV6StepId): boolean {
   if (step === "layers") return true;
 
-  if (step === "review" || step === "confirm") {
+  // Review stays open so the operator can finish roles/composition/finish.
+  if (step === "review") {
     return isAnalysisReadyForReview(state);
+  }
+
+  // Confirmare only after role confirmation + product composition are satisfied.
+  // Final canSubmit / quote-ready domain logic is unchanged.
+  if (step === "confirm") {
+    return (
+      isAnalysisReadyForReview(state) &&
+      isProductCompositionConfirmed(state.workspace?.payload)
+    );
   }
 
   return false;
@@ -50,8 +106,27 @@ export function getIntakeV6FirstBlocker(state: IntakeV6WorkspaceState): string |
     return "Confirmă rolul pentru toate straturile.";
   }
 
+  if (readiness === "product_composition_not_confirmed" && !isProductCompositionConfirmed(payload)) {
+    return "Confirmă compoziția produsului.";
+  }
+
+  if (readiness === "offer_scope_not_confirmed" || !isOfferScopeConfirmed(payload)) {
+    if (!isOfferScopeValid(payload)) {
+      return "Selectează cel puțin o componentă pentru scope parțial.";
+    }
+    const dependencyMessage = firstDependencyBlockerMessage(readPersistedDependencyValidation(payload));
+    if (dependencyMessage) {
+      return dependencyMessage;
+    }
+    return "Confirmă ce producem (produs complet sau componente selectate).";
+  }
+
   if (state.currentStep === "confirm" && !isFinishSetupConfirmed(payload)) {
     return "Confirmă finisajele în pasul Review.";
+  }
+
+  if (state.currentStep === "confirm" && !isProductCompositionConfirmed(payload)) {
+    return "Confirmă compoziția produsului în pasul Review.";
   }
 
   if (readiness && readiness !== "ready_for_quote_preview" && state.currentStep === "confirm") {
@@ -65,10 +140,17 @@ export function isIntakeV6ReadyForQuotePreview(state: IntakeV6WorkspaceState): b
   return (
     isAnalysisReadyForReview(state) &&
     state.workspace?.readiness_status === "ready_for_quote_preview" &&
+    isProductCompositionConfirmed(state.workspace?.payload) &&
+    isOfferScopeConfirmed(state.workspace?.payload) &&
     isFinishSetupConfirmed(state.workspace?.payload)
   );
 }
 
 export function canContinueFromReviewStep(state: IntakeV6WorkspaceState): boolean {
-  return isAnalysisReadyForReview(state) && isFinishSetupConfirmed(state.workspace?.payload);
+  return (
+    isAnalysisReadyForReview(state) &&
+    isProductCompositionConfirmed(state.workspace?.payload) &&
+    isOfferScopeConfirmed(state.workspace?.payload) &&
+    isFinishSetupConfirmed(state.workspace?.payload)
+  );
 }

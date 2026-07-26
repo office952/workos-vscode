@@ -1,0 +1,965 @@
+{
+  "contract_version": "product_system_reference_finish_line_v1",
+  "finish_line_name": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+  "production_cost_equation": "materials + machine_operations + labor + services + consumables + packaging = internal_production_cost (EIC)",
+  "production_cost_boundary": {
+    "completion_authority": "EIC_production_cost",
+    "cpp_role": "reconciliation_visible_not_lab_stop",
+    "excluded": [
+      "markup",
+      "profit",
+      "offer",
+      "discount",
+      "negotiation",
+      "order",
+      "invoicing",
+      "execution_materialization",
+      "shopfloor",
+      "employee_mobile",
+      "svg_dxf_dwg_parsing",
+      "supplier_import"
+    ],
+    "label_production_ro": "Cost produc\u021bie (EIC)",
+    "label_commercial_ro": "Pre\u021b comercial (CPP)",
+    "ownership_note_ro": "Linia de referin\u021b\u0103 a laboratorului se opre\u0219te la costul de produc\u021bie intern (EIC). CPP r\u0103m\u00e2ne vizibil pentru reconciliere, nu ca cerin\u021b\u0103 de ofert\u0103. F\u0103r\u0103 adaos, ofert\u0103, comand\u0103 sau execu\u021bie \u00een finish line."
+  },
+  "modularity": {
+    "root": "Product Template root \u2192 composes roles",
+    "child": "Child/component Product Template \u2192 owns its own technical truth",
+    "role": "Role \u2192 placement/function",
+    "usage_mode": "root | child | dual-role",
+    "resources": "Inventory / Pricing references (not ownership of Inventory truth)",
+    "formula_ownership": "template that owns the truth",
+    "no_parallel_entity": "ComponentTemplate parallel entity not required",
+    "authoring_decision": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+    "authoring_note_ro": "Create/edit/publish exist\u0103. Add-child UI lipse\u0219te \u2014 leg\u0103turile se creeaz\u0103 via API/seed. Composition panel este update-only. Nu construim Template Factory \u00een acest build.",
+    "verdict_target": "MODULAR_WITH_GAPS"
+  },
+  "modularity_verdict": "MODULAR_WITH_GAPS",
+  "form_system_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+  "scalability_verdict": "SCALABLE_WITH_KNOWN_LIMITS",
+  "authoring_decision": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+  "checklist": [
+    {
+      "axis": "modularity",
+      "entity": "root_child_roles_usage_mode",
+      "requirement": "canonical_model_proven",
+      "status": "gap",
+      "proof": null,
+      "notes_ro": "Documented in finish-line package; runtime UI proof in CP7 evidence."
+    },
+    {
+      "axis": "modularity",
+      "entity": "authoring_option_2",
+      "requirement": "lab_limitation_documented",
+      "status": "ready",
+      "proof": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+      "notes_ro": "Create/edit/publish exist\u0103. Add-child UI lipse\u0219te \u2014 leg\u0103turile se creeaz\u0103 via API/seed. Composition panel este update-only. Nu construim Template Factory \u00een acest build."
+    },
+    {
+      "axis": "form",
+      "entity": "field_schema_contract",
+      "requirement": "source_destination_affects_version",
+      "status": "ready",
+      "proof": null,
+      "notes_ro": null
+    },
+    {
+      "axis": "form",
+      "entity": "vl_ownership_map",
+      "requirement": "complete_for_VOLUMETRIC_FIELD_BINDINGS",
+      "status": "ready",
+      "proof": "26 fields",
+      "notes_ro": null
+    },
+    {
+      "axis": "pd_pt",
+      "entity": "product_definition_vs_truth",
+      "requirement": "boundary_explicit",
+      "status": "gap",
+      "proof": null,
+      "notes_ro": "Documented in finish-line package; runtime UI proof in CP7 evidence."
+    },
+    {
+      "axis": "quantity",
+      "entity": "formula_ownership",
+      "requirement": "owner_template_declared",
+      "status": "gap",
+      "proof": null,
+      "notes_ro": "Documented in finish-line package; runtime UI proof in CP7 evidence."
+    },
+    {
+      "axis": "analyzer",
+      "entity": "workflow_adv_analyzer_io_v1",
+      "requirement": "frozen_no_parser",
+      "status": "ready",
+      "proof": "workflow_adv_analyzer_io_contract_v1",
+      "notes_ro": null
+    },
+    {
+      "axis": "cost",
+      "entity": "eic_production_cost",
+      "requirement": "lab_stop_authority",
+      "status": "ready",
+      "proof": "production_cost_boundary.completion_authority",
+      "notes_ro": null
+    },
+    {
+      "axis": "cost",
+      "entity": "cpp_reconciliation",
+      "requirement": "visible_not_required_for_offer",
+      "status": "ready",
+      "proof": null,
+      "notes_ro": "CPP visible for reconcile; not lab-stop for offer."
+    },
+    {
+      "axis": "materials",
+      "entity": "critical_classification_policy",
+      "requirement": "frozen",
+      "status": "ready",
+      "proof": "MAT-LED-PSU-12V",
+      "notes_ro": null
+    },
+    {
+      "axis": "scalability",
+      "entity": "extension_points",
+      "requirement": "enumerated_with_limits",
+      "status": "ready",
+      "proof": null,
+      "notes_ro": null
+    },
+    {
+      "axis": "docs",
+      "entity": "handoff_input_package",
+      "requirement": "structured_facts_for_24doc_build",
+      "status": "gap",
+      "proof": null,
+      "notes_ro": "Documented in finish-line package; runtime UI proof in CP7 evidence."
+    }
+  ],
+  "page_scope": {
+    "in_reference_scope": [
+      "Product System index",
+      "template list",
+      "template detail",
+      "authoring",
+      "composition",
+      "Intake V6",
+      "Product Definition preview",
+      "Product Truth display",
+      "Inventory",
+      "Pricing Materiale",
+      "Pricing Operatii",
+      "Pricing Manopera/Servicii",
+      "Preturi template",
+      "Desfasurator pret",
+      "lifecycle/readiness"
+    ],
+    "excluded_from_completion": [
+      "Quotes",
+      "Offers",
+      "Orders",
+      "Execution",
+      "Shopfloor",
+      "Employee Mobile",
+      "markup/commercial policy"
+    ]
+  },
+  "extension_points": [
+    {
+      "extension": "new_root_product_template",
+      "path": "Product Template authoring + publish + fixture + form schema registration",
+      "requires_page_copy": false,
+      "current_limit": "Form schema still VL-pilot wired; new root needs schema entry + readiness."
+    },
+    {
+      "extension": "new_child_product_template",
+      "path": "Create template + module_link (API/seed) + usage_mode + own formulas",
+      "requires_page_copy": false,
+      "current_limit": "No add-child UI (Option 2)."
+    },
+    {
+      "extension": "new_form_field",
+      "path": "Declare in template field schema with source/destination/affects",
+      "requires_page_copy": false,
+      "current_limit": "VL specialized UI fields still need adapter if not generic renderer."
+    },
+    {
+      "extension": "new_analyzer_field",
+      "path": "Add to Analyzer I/O contract + map to Form field_id + confirmation",
+      "requires_page_copy": false,
+      "current_limit": "No parser coupling allowed."
+    },
+    {
+      "extension": "new_price_breakdown_line",
+      "path": "Emit from recipe/EIC/CPP provenance \u2014 breakdown adapter only",
+      "requires_page_copy": false,
+      "current_limit": "No frontend calculator."
+    }
+  ],
+  "template_code_branch_inventory": [
+    {
+      "location": "backend/services/form_system_contract_backbone_service.py",
+      "pattern": "VOLUMETRIC_* / LOGO template code sets",
+      "classification": "valid_product_specific_adapter",
+      "handoff": "ready",
+      "note": "Scope allowlists for owner-valid roots \u2014 transfer as template registry, not page."
+    },
+    {
+      "location": "backend/services/intake_v6_modular_form_contract_service.py",
+      "pattern": "PILOT_TEMPLATE = TPL-VOLUMETRIC-LETTERS_v2",
+      "classification": "technical_debt",
+      "handoff": "gap",
+      "note": "VL pilot binding \u2014 Form System contract must generalize via schema, not code branch."
+    },
+    {
+      "location": "frontend Intake V6 routes / specialized renderers",
+      "pattern": "dedicated VL Intake V6 UI",
+      "classification": "valid_product_specific_adapter",
+      "handoff": "gap",
+      "note": "Reference path only \u2014 not universal Form Generator."
+    },
+    {
+      "location": "ACM boxed mounting offer/process adapters",
+      "pattern": "ACM template code branches",
+      "classification": "technical_debt",
+      "handoff": "do_not_transfer_as_universal",
+      "note": "Secondary shell reference; keep as optional capability adapter."
+    }
+  ],
+  "field_hardcoding_inventory": [
+    {
+      "location": "VOLUMETRIC_FIELD_BINDINGS",
+      "pattern": "fixed field list for VL",
+      "classification": "vl_specific_schema",
+      "handoff": "ready_as_template_schema"
+    },
+    {
+      "location": "specialized_letter_groups / specialized_montaj renderers",
+      "pattern": "UI tied to VL fields",
+      "classification": "vl_specific_ui",
+      "handoff": "gap"
+    },
+    {
+      "location": "CostEngine Step 7 field name consumers",
+      "pattern": "undeclared field names in formulas",
+      "classification": "technical_debt",
+      "handoff": "gap",
+      "note": "Finish line requires declared destination/affects; do not broaden CostEngine here."
+    }
+  ],
+  "formula_duplication_inventory": [
+    {
+      "topic": "CPP vs EIC totals",
+      "classification": "intentional_dual_readmodel",
+      "handoff": "ready",
+      "note": "Breakdown reconciles both; EIC is lab stop authority."
+    },
+    {
+      "topic": "Frontend finish display vs backend quantities",
+      "classification": "display_only_ok",
+      "handoff": "ready",
+      "note": "Display must not become second calculator."
+    },
+    {
+      "topic": "Parent duplicating child return-profile truth",
+      "classification": "watch",
+      "handoff": "gap",
+      "note": "Volum Aluminiu must own cant truth; parent maps inputs only."
+    }
+  ],
+  "coupling_inventory": [
+    {
+      "topic": "Product System \u2192 Inventory",
+      "classification": "reference_only",
+      "handoff": "ready",
+      "note": "Must not write Inventory purchase truth from Product System."
+    },
+    {
+      "topic": "Pricing \u2192 template truth",
+      "classification": "readmodel_ok",
+      "handoff": "ready",
+      "note": "Pricing rates consumed; template owns composition truth."
+    },
+    {
+      "topic": "Intake owning formulas",
+      "classification": "blocker_if_expanded",
+      "handoff": "gap",
+      "note": "Intake captures inputs; formulas stay on owning template/CostEngine path."
+    },
+    {
+      "topic": "Analyzer assumptions inside WorkOS",
+      "classification": "boundary_frozen",
+      "handoff": "ready",
+      "note": "Consume-only artwork + Analyzer I/O contracts; no parser."
+    }
+  ],
+  "compound_engineering_map": [
+    {
+      "axis": "modularity",
+      "entity": "ProductTemplate root/child/roles",
+      "owner": "Product System",
+      "current_state": "root composes roles; child owns technical truth; add-child UI missing",
+      "reference_requirement": "MODULAR_WITH_GAPS proven + authoring Option 2 documented",
+      "reusable_contract": true,
+      "template_specific": false,
+      "hardcoded": false,
+      "extension_point": "product_template_module_links + usage_mode",
+      "input_schema": "template identity/version/roles/links",
+      "output_contract": "composition graph + formula ownership",
+      "PD_consumer": "composition selected children",
+      "PT_consumer": "confirmed child mappings",
+      "quantity_consumer": "owning template formulas",
+      "cost_consumer": "recipe / EIC lines",
+      "analyzer_relevance": "suggested_roles only",
+      "handoff_status": "gap",
+      "required_change": "document Option 2; no Template Factory",
+      "proof": "MODULARITY_MODEL + composition API",
+      "risk": "medium",
+      "confidence": "high"
+    },
+    {
+      "axis": "form",
+      "entity": "Intake/Form System field contract",
+      "owner": "Form System contract + VL schema",
+      "current_state": "26 VL bindings mapped; specialized UI remains",
+      "reference_requirement": "schema-driven contract frozen; VL is reference path",
+      "reusable_contract": true,
+      "template_specific": true,
+      "hardcoded": true,
+      "extension_point": "field schema metadata source/destination/affects",
+      "input_schema": "intake_v6_vl_form_field_ownership_map_v1",
+      "output_contract": "PD \u2192 PT \u2192 quantity/cost",
+      "PD_consumer": "product_definition_keys",
+      "PT_consumer": "operator confirmation",
+      "quantity_consumer": "quantity_keys",
+      "cost_consumer": "cost_lines",
+      "analyzer_relevance": "analyzer_candidate fields",
+      "handoff_status": "gap",
+      "required_change": "generalize beyond PILOT_TEMPLATE wiring",
+      "proof": "GET .../form-field-ownership-map",
+      "risk": "high",
+      "confidence": "high"
+    },
+    {
+      "axis": "pd_pt",
+      "entity": "Product Definition vs Product Truth",
+      "owner": "Workflow-ADV / operator confirmation",
+      "current_state": "PARTIAL \u2014 PD draft vs PT confirmed must stay explicit",
+      "reference_requirement": "PD intent; PT confirmed immutable snapshot",
+      "reusable_contract": true,
+      "template_specific": false,
+      "hardcoded": false,
+      "extension_point": "confirmation + revision/hash",
+      "input_schema": "Form destinations",
+      "output_contract": "PT revision feeds formulas",
+      "PD_consumer": "intake workspace",
+      "PT_consumer": "quantity/cost",
+      "quantity_consumer": "confirmed quantities",
+      "cost_consumer": "confirmed recipe inputs",
+      "analyzer_relevance": "proposals never auto-PT",
+      "handoff_status": "gap",
+      "required_change": "keep boundary labels in handoff docs",
+      "proof": "finish-line checklist pd_pt",
+      "risk": "medium",
+      "confidence": "medium"
+    },
+    {
+      "axis": "analyzer",
+      "entity": "workflow_adv_analyzer_io_contract_v1",
+      "owner": "Workflow-ADV Analyzer (external)",
+      "current_state": "I/O frozen; no parser in WorkOS",
+      "reference_requirement": "observe/propose + operator confirm",
+      "reusable_contract": true,
+      "template_specific": false,
+      "hardcoded": false,
+      "extension_point": "observed_fields / proposed_fields bags",
+      "input_schema": "AnalyzerIoHandoffPayloadV1",
+      "output_contract": "PD candidates only",
+      "PD_consumer": "mapped field_ids",
+      "PT_consumer": "none until operator confirm",
+      "quantity_consumer": "after PT",
+      "cost_consumer": "none in Analyzer",
+      "analyzer_relevance": "primary",
+      "handoff_status": "ready",
+      "required_change": "none for freeze",
+      "proof": "GET .../analyzer-io-contract",
+      "risk": "low",
+      "confidence": "high"
+    },
+    {
+      "axis": "cost",
+      "entity": "EIC production cost finish line",
+      "owner": "CostEngine / Price Breakdown adapter",
+      "current_state": "VL breakdown reconciles EIC+CPP; lab stop = EIC",
+      "reference_requirement": "production cost authority; CPP reconciliation only",
+      "reusable_contract": true,
+      "template_specific": false,
+      "hardcoded": false,
+      "extension_point": "price-breakdown lines from recipe",
+      "input_schema": "recipe + inventory unit_cost",
+      "output_contract": "internal_production_cost",
+      "PD_consumer": "n/a",
+      "PT_consumer": "confirmed inputs",
+      "quantity_consumer": "formula outputs",
+      "cost_consumer": "Desfasurator",
+      "analyzer_relevance": "none",
+      "handoff_status": "ready",
+      "required_change": "label Cost productie vs Pret comercial",
+      "proof": "PriceBreakdownSection labels + ownership_note",
+      "risk": "low",
+      "confidence": "high"
+    },
+    {
+      "axis": "materials",
+      "entity": "critical material classification",
+      "owner": "Inventory purchase truth + finish-line policy",
+      "current_state": "critical=['MAT-LED-PSU-12V']; manual_fill=['MAT-LED-PSU-12V', 'MAT-ADEZIV-CANT-LITERE', 'MAT-CABLU-MYYUP-2X075', 'MAT-CABLU-MYYUP-2X15', 'SVC-LAMINATION-SERVICE']",
+      "reference_requirement": "policy frozen; no invented prices; no supplier import",
+      "reusable_contract": true,
+      "template_specific": true,
+      "hardcoded": false,
+      "extension_point": "MATERIAL_CLASSIFICATION_POLICY",
+      "input_schema": "inventory_materials.unit_cost",
+      "output_contract": "manual-fill checklist",
+      "PD_consumer": "n/a",
+      "PT_consumer": "n/a",
+      "quantity_consumer": "n/a",
+      "cost_consumer": "material lines",
+      "analyzer_relevance": "none",
+      "handoff_status": "gap",
+      "required_change": "ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 (follow-up)",
+      "proof": "GET .../critical-materials",
+      "risk": "medium",
+      "confidence": "high"
+    },
+    {
+      "axis": "scalability",
+      "entity": "extension points without page copies",
+      "owner": "Product System + Form System contracts",
+      "current_state": "SCALABLE_WITH_KNOWN_LIMITS",
+      "reference_requirement": "add template/child/field/analyzer field via contracts",
+      "reusable_contract": true,
+      "template_specific": false,
+      "hardcoded": true,
+      "extension_point": "EXTENSION_POINTS list",
+      "input_schema": "per-extension",
+      "output_contract": "no duplicate calculators",
+      "PD_consumer": "schema fields",
+      "PT_consumer": "confirmation",
+      "quantity_consumer": "declared keys",
+      "cost_consumer": "recipe lines",
+      "analyzer_relevance": "new analyzer fields via I/O contract",
+      "handoff_status": "gap",
+      "required_change": "close VL pilot hardwiring in Workflow-ADV",
+      "proof": "extension_points + hardcoding inventories",
+      "risk": "high",
+      "confidence": "medium"
+    }
+  ],
+  "analyzer_contract": {
+    "contract_version": "workflow_adv_analyzer_io_contract_v1",
+    "boundary_ro": "Analyzer observ\u0103 \u0219i propune. Operatorul confirm\u0103. Workflow-ADV de\u021bine Product Definition \u0219i Product Truth. F\u0103r\u0103 calcul de pre\u021b \u00een Analyzer. F\u0103r\u0103 autoritate Product Truth \u00een Analyzer. WorkOS nu parseaz\u0103 SVG/DWG/DXF.",
+    "related_artwork_contract": "artwork_analysis_contract_v1",
+    "fields": [
+      {
+        "field_id": "document_id",
+        "cardinality": "mandatory",
+        "unit": null,
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": false,
+        "destination": [
+          "provenance"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "empty_document_id"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "file_id",
+        "cardinality": "mandatory",
+        "unit": null,
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": false,
+        "destination": [
+          "provenance"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "empty_file_id"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "file_type",
+        "cardinality": "mandatory",
+        "unit": null,
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": false,
+        "destination": [
+          "provenance"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "unit",
+        "cardinality": "mandatory",
+        "unit": "enum",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "quantity_compiler"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "unit_not_mm_without_conversion"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "width_mm",
+        "cardinality": "mandatory",
+        "unit": "mm",
+        "source": "observed",
+        "confidence_required": true,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "product_truth",
+          "quantity_compiler"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [
+          "width_mm"
+        ],
+        "rejection_rules": [
+          "width_mm <= 0"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "height_mm",
+        "cardinality": "mandatory",
+        "unit": "mm",
+        "source": "observed",
+        "confidence_required": true,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "product_truth",
+          "quantity_compiler"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [
+          "height_mm"
+        ],
+        "rejection_rules": [
+          "height_mm <= 0"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "bounding_box",
+        "cardinality": "optional",
+        "unit": "mm",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "filled_area_m2",
+        "cardinality": "mandatory",
+        "unit": "m2",
+        "source": "observed",
+        "confidence_required": true,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "product_truth",
+          "quantity_compiler",
+          "cost_recipe"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [
+          "letter_face_area_m2"
+        ],
+        "rejection_rules": [
+          "filled_area_m2 <= 0"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "total_perimeter_m",
+        "cardinality": "mandatory",
+        "unit": "m",
+        "source": "observed",
+        "confidence_required": true,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "product_truth",
+          "child_template_input",
+          "quantity_compiler",
+          "cost_recipe"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2",
+          "TPL-VOLUM-ALUMINIU_v1"
+        ],
+        "quantity_formula_usage": [
+          "letter_perimeter_m",
+          "return_profile_ml"
+        ],
+        "rejection_rules": [
+          "total_perimeter_m <= 0"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "cut_path_length_m",
+        "cardinality": "optional",
+        "unit": "m",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "quantity_compiler",
+          "cost_recipe"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [
+          "cut_path_length_m"
+        ],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "element_count",
+        "cardinality": "mandatory",
+        "unit": "count",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "product_truth",
+          "quantity_compiler"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [
+          "letter_count"
+        ],
+        "rejection_rules": [
+          "element_count < 1"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "closed_contour_count",
+        "cardinality": "optional",
+        "unit": "count",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "internal_hole_count",
+        "cardinality": "optional",
+        "unit": "count",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "quantity_compiler"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "group_count",
+        "cardinality": "optional",
+        "unit": "count",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "minimum_feature_mm",
+        "cardinality": "optional",
+        "unit": "mm",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "readiness"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "minimum_feature_mm below manufacturable threshold \u2192 warn"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "complexity_class",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "proposed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": "Propunere \u2014 nu scrie Product Truth."
+      },
+      {
+        "field_id": "suggested_groups",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "proposed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "auto_mix_by_layer_and_color_forbidden"
+        ],
+        "notes_ro": "Operator declar\u0103 by_layer sau by_color; Analyzer nu amestec\u0103 metode."
+      },
+      {
+        "field_id": "suggested_roles",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "proposed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition",
+          "child_template_input"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "suggested_material_mappings",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "proposed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [
+          "TPL-VOLUMETRIC-LETTERS_v2"
+        ],
+        "quantity_formula_usage": [],
+        "rejection_rules": [
+          "mapping_must_not_set_inventory_unit_cost"
+        ],
+        "notes_ro": null
+      },
+      {
+        "field_id": "confidence",
+        "cardinality": "optional",
+        "unit": "0..1",
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": false,
+        "destination": [
+          "provenance"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": null
+      },
+      {
+        "field_id": "observed_fields",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "observed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": "Bag\u0103 extensibil\u0103 \u2014 chei mapate la Form System field_id."
+      },
+      {
+        "field_id": "proposed_fields",
+        "cardinality": "optional",
+        "unit": null,
+        "source": "proposed",
+        "confidence_required": false,
+        "confirmation_required": true,
+        "destination": [
+          "product_definition"
+        ],
+        "consumer_templates": [],
+        "quantity_formula_usage": [],
+        "rejection_rules": [],
+        "notes_ro": "Propuneri \u2014 necesit\u0103 confirmare operator \u00eenainte de Product Truth."
+      }
+    ],
+    "example_payload": {
+      "contract_version": "workflow_adv_analyzer_io_contract_v1",
+      "document_id": "doc-demo-vl-001",
+      "file_id": "file-demo-svg-001",
+      "file_type": "svg",
+      "unit": "mm",
+      "width_mm": 1200.0,
+      "height_mm": 400.0,
+      "bounding_box": {
+        "x0": 0,
+        "y0": 0,
+        "x1": 1200,
+        "y1": 400
+      },
+      "filled_area_m2": 0.28,
+      "total_perimeter_m": 6.4,
+      "cut_path_length_m": 7.1,
+      "element_count": 5,
+      "closed_contour_count": 5,
+      "internal_hole_count": 2,
+      "group_count": 2,
+      "minimum_feature_mm": 2.5,
+      "complexity_class": "moderate",
+      "suggested_groups": [
+        {
+          "group_id": "g1",
+          "method": "by_layer",
+          "status": "proposed"
+        }
+      ],
+      "suggested_roles": [
+        {
+          "role": "FACE",
+          "entity_ids": [
+            "e1"
+          ],
+          "status": "proposed"
+        }
+      ],
+      "suggested_material_mappings": [],
+      "confidence": 0.86,
+      "observed_fields": {
+        "width_mm": 1200.0,
+        "height_mm": 400.0,
+        "letter_count": 5,
+        "letter_perimeter_m": 6.4,
+        "letter_face_area_m2": 0.28
+      },
+      "proposed_fields": {
+        "complexity_class": "moderate"
+      }
+    },
+    "do_not": [
+      "parse_svg_in_workos",
+      "write_product_truth_from_analyzer",
+      "calculate_price_in_analyzer",
+      "auto_confirm_proposals"
+    ]
+  },
+  "form_field_map_summary": {
+    "field_count": 26,
+    "reusable_count": 14,
+    "hardcoded_ui_count": 5,
+    "analyzer_candidate_count": 8
+  },
+  "critical_materials_summary": {
+    "active_template_critical": [
+      "MAT-LED-PSU-12V"
+    ],
+    "manual_fill_required": [
+      "MAT-LED-PSU-12V",
+      "MAT-ADEZIV-CANT-LITERE",
+      "MAT-CABLU-MYYUP-2X075",
+      "MAT-CABLU-MYYUP-2X15",
+      "SVC-LAMINATION-SERVICE"
+    ]
+  },
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "warnings": [
+    "Authoring Option 2: add-child UI deferred (API/seed only).",
+    "Form System remains VL-pilot wired (USABLE_WITH_TEMPLATE_GAPS).",
+    "Generic Form Builder deferred to Workflow-ADV.",
+    "Critical materials missing price: MAT-LED-PSU-12V"
+  ]
+}

@@ -21,7 +21,10 @@ def test_form_contract_exists_for_volumetric_v2(form_service: IntakeV6ModularFor
     contract = form_service.get_for_template(TEMPLATE)
     assert contract is not None
     assert contract.summary.template_code == TEMPLATE
-    assert contract.summary.active_module_count == 7
+    assert contract.summary.active_module_count == 9
+    assert contract.form_system_backbone is not None
+    assert contract.form_system_backbone["root"]["canonical_code"] == TEMPLATE
+    assert contract.form_system_backbone["linked_template_composition"]["linked_templates"][0]["composition_role"] == "linked_logo_segment"
 
 
 def test_all_active_modules_have_form_sections(form_service: IntakeV6ModularFormContractService):
@@ -82,6 +85,77 @@ def test_unknown_template_returns_none(form_service: IntakeV6ModularFormContract
     assert form_service.get_for_template("TPL-UNKNOWN") is None
 
 
+def test_letters_canonical_form_contract_version_runtime_authority_and_field_keys(
+    form_service: IntakeV6ModularFormContractService,
+):
+    contract = form_service.get_for_template(TEMPLATE)
+    assert contract is not None
+    assert contract.summary.contract_version == "1.4.0-subset-activation"
+    assert contract.summary.runtime_authority is False
+    assert contract.summary.composition_authority is True
+    assert contract.summary.runtime_authority_scope == (
+        "selected_sections:finisaje_fields,iluminare,montaj_template"
+    )
+    assert any("selected_sections" in note.lower() for note in contract.notes)
+    section_keys = {section.section_key for section in contract.render_sections}
+    assert {
+        "finisaje_fields",
+        "iluminare",
+        "montaj_template",
+        "montaj_system",
+        "geometry_svg",
+        "packaging_logistics",
+        "interface_face_cant",
+    }.issubset(section_keys)
+    assert "finish_setup.lighting_system_type" in contract.writable_workspace_paths
+    lighting = next(f for f in contract.field_bindings if f.canonical_key == "lighting_system_type")
+    assert lighting.field_type == "select"
+    assert lighting.options
+    assert all(opt.label_ro for opt in lighting.options)
+
+    keys = {binding.canonical_key for binding in contract.field_bindings}
+    for expected_key in (
+        "face_finish_type",
+        "return_depth_mm",
+        "return_finish_type",
+        "backing_mode",
+        "lighting_system_type",
+        "mounting_system",
+    ):
+        assert expected_key in keys
+
+    face_binding = next(f for f in contract.field_bindings if f.canonical_key == "face_finish_type")
+    assert face_binding.field_type == "select"
+    assert face_binding.option_values
+    assert face_binding.options
+    assert "debitare_fata" in face_binding.consumers
+
+    depth_binding = next(f for f in contract.field_bindings if f.canonical_key == "return_depth_mm")
+    assert depth_binding.field_type == "select"
+    assert depth_binding.unit == "mm"
+
+
+def test_legacy_letters_alias_returns_canonical_modular_contract(form_service: IntakeV6ModularFormContractService):
+    contract = form_service.get_for_template("TPL-VOLUMETRIC-LETTERS")
+    assert contract is not None
+    assert contract.summary.template_code == TEMPLATE
+    assert contract.form_system_backbone is not None
+    assert contract.form_system_backbone["root"]["requested_code"] == "TPL-VOLUMETRIC-LETTERS"
+    assert contract.form_system_backbone["root"]["canonical_code"] == TEMPLATE
+    assert contract.form_system_backbone["root"]["canonical_alias_resolution"] is True
+
+
+def test_modular_form_contract_blocks_logo_and_component_roots(form_service: IntakeV6ModularFormContractService):
+    assert form_service.get_for_template("TPL-VOLUMETRIC-LOGO_v1") is None
+    assert form_service.get_for_template("TPL-VOLUMETRIC-FACE_v1") is None
+
+    logo_backbone = form_service.get_backbone_section_for_template("TPL-VOLUMETRIC-LOGO_v1")
+    assert logo_backbone is not None
+    assert logo_backbone["root"]["allowed"] is False
+    assert logo_backbone["root"]["blocker_code"] == "LOGO_NOT_OFFERABLE"
+    assert "linked_template_composition" not in logo_backbone
+
+
 @pytest.fixture
 def form_auth_client(db_fixture):
     from main import app
@@ -117,8 +191,20 @@ def test_form_contract_endpoint_200(form_auth_client):
     response = form_auth_client.get(f"/api/v1/intake-v6/form-contract/{TEMPLATE}")
     assert response.status_code == 200
     body = response.json()
-    assert body["summary"]["active_module_count"] == 7
+    assert body["summary"]["active_module_count"] == 9
+    assert body["summary"]["contract_version"] == "1.4.0-subset-activation"
+    assert body["summary"]["runtime_authority"] is False
+    assert body["summary"]["composition_authority"] is True
+    assert body["summary"]["runtime_authority_scope"] == (
+        "selected_sections:finisaje_fields,iluminare,montaj_template"
+    )
     assert len(body["field_bindings"]) >= 20
+    assert len(body["render_sections"]) >= 7
+    assert body["full_product_composition"]["subset_activation_enabled"] is True
+    assert body["full_product_composition"]["ui_tab_ids"] == ["finisaje", "iluminare", "montaj"]
+    assert "finish_setup.mounting_template_enabled" in body["writable_workspace_paths"]
+    assert body["form_system_backbone"]["read_only"] is True
+    assert body["form_system_backbone"]["root"]["canonical_code"] == TEMPLATE
 
 
 def test_form_contract_endpoint_404(form_auth_client):

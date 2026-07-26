@@ -1,0 +1,75 @@
+{
+  "task": "UI-TRUTH-01",
+  "scenarios": [
+    {
+      "trigger": "health_fetch_fails",
+      "backend_segment": "Backend indisponibil",
+      "db_segment": "DB necunoscută",
+      "banner_color": "red/critical strip or backend segment red",
+      "fallback_to_green": false,
+      "session_segment": "unchanged — independent"
+    },
+    {
+      "trigger": "health_timeout",
+      "backend_segment": "Backend indisponibil",
+      "db_segment": "DB necunoscută",
+      "retry": "manual refresh button + next poll",
+      "fallback_to_green": false
+    },
+    {
+      "trigger": "health_status_warning",
+      "backend_segment": "Backend cu avertisment",
+      "db_segment": "DB neverificată unless diagnostics authorized and database ok",
+      "banner_color": "amber on backend segment"
+    },
+    {
+      "trigger": "health_status_ok_checks_empty",
+      "backend_segment": "Backend disponibil",
+      "db_segment": "DB neverificată",
+      "note": "Never CONFIRMATA from empty checks"
+    },
+    {
+      "trigger": "health_status_fail",
+      "backend_segment": "Backend critic",
+      "db_segment": "DB necunoscută",
+      "banner_color": "red"
+    },
+    {
+      "trigger": "diagnostics_unauthorized",
+      "db_segment": "DB necunoscută",
+      "drill_down": "Detalii disponibile doar utilizatorilor autorizați",
+      "expose_checks": false
+    },
+    {
+      "trigger": "diagnostics_authorized_db_ok",
+      "db_segment": "Baza de date confirmată",
+      "tooltip_may_include": "ping ok — no connection string"
+    },
+    {
+      "trigger": "diagnostics_authorized_db_fail",
+      "db_segment": "Baza de date indisponibilă",
+      "tooltip": "verificare eșuată — fără detalii sensibile"
+    },
+    {
+      "trigger": "auth_expired",
+      "session_segment": "Sesiune expirată",
+      "backend_segment": "from health only — do not mark indisponibil solely on auth expiry"
+    },
+    {
+      "trigger": "stale_health_response",
+      "threshold_seconds": 120,
+      "behavior": "show last check time; optional stale warning on backend segment after threshold"
+    },
+    {
+      "trigger": "service_exception_degraded",
+      "backend_segment": "Backend cu avertisment",
+      "db_segment": "DB necunoscută"
+    }
+  ],
+  "failure_state_count": 11,
+  "never_do": [
+    "Fallback to green LIVE/DB on fetch failure",
+    "Infer DB from auth",
+    "Hide route errors by turning banner green"
+  ]
+}

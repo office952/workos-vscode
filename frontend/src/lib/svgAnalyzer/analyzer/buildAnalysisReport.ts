@@ -209,6 +209,8 @@ export function buildAnalysisReport(
       layerKind: layer.layerKind,
       layerOrigin: layer.layerOrigin,
       roleReason: layer.roleReason,
+      sourceGroupIds: layer.sourceGroupIds ?? [],
+      elementIds: layer.elementIds ?? [],
       autoRole: layer.autoRole,
       autoConfidence: layer.autoConfidence,
       autoRoleCandidates: layer.autoRoleCandidates,

@@ -1,0 +1,8 @@
+﻿{
+  "fe_root_cmd": "set BACKEND_PORT=8003&& set VITE_ENABLE_DEV_AUTH=1&& npx ... vite --port 3000",
+  "fe_pd_status": "confirmed",
+  "fe_pd_blockers": [],
+  "be_pd_status": "confirmed",
+  "be_pd_blockers": [],
+  "match": true
+}

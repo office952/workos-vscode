@@ -1,0 +1,85 @@
+{
+  "schema": "acm_face_treatment_commercial_path_proof_v1",
+  "kickoff_head": "290a4540481b68826d684dd79798c1e751335383",
+  "runtime_head": "290a4540481b68826d684dd79798c1e751335383",
+  "domain": "acm_face_treatments_v1",
+  "identities": {
+    "routed_treatment": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+    "insert_treatment": "FACE-TREATMENT-ACRYLIC-INSERT",
+    "routed_module": "ACP-LOCAL-MODULE-ROUTED-BACKLIT",
+    "insert_module": "ACP-LOCAL-MODULE-ACRYLIC-INSERT",
+    "insert_thickness_default_mm": 10.0,
+    "ui_badge_relief": "RELIEF_PLEXI_10MM",
+    "legacy_light_routed": "PARALLEL_LEGACY_COST_PATH"
+  },
+  "coexistence_scenarios": [
+    {
+      "name": "panel_only",
+      "coexistence": "none",
+      "double_sheet_guard_ok": true,
+      "treatment_cpp_allowed": false,
+      "cpp_blockers": [],
+      "owns_panel_sheet": false
+    },
+    {
+      "name": "routed_only",
+      "coexistence": "routed_only",
+      "double_sheet_guard_ok": true,
+      "treatment_cpp_allowed": false,
+      "cpp_blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "owns_panel_sheet": false
+    },
+    {
+      "name": "insert_only",
+      "coexistence": "insert_only",
+      "double_sheet_guard_ok": true,
+      "treatment_cpp_allowed": false,
+      "cpp_blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "owns_panel_sheet": false
+    },
+    {
+      "name": "both",
+      "coexistence": "both",
+      "double_sheet_guard_ok": true,
+      "treatment_cpp_allowed": false,
+      "cpp_blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "owns_panel_sheet": false
+    }
+  ],
+  "readiness_panel_only": {
+    "check_id": "components.acm_face_treatment_commercial_path",
+    "status": "PASS",
+    "message": "ACM face-treatment commercial path present; no treatments selected (panel-only allowed).",
+    "blocking": false,
+    "evidence": {
+      "schema": "acm_face_treatments_v1",
+      "coexistence": "none",
+      "routed_codes": [
+        "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT"
+      ],
+      "insert_codes": [
+        "FACE-TREATMENT-ACRYLIC-INSERT"
+      ],
+      "module_routed": "ACP-LOCAL-MODULE-ROUTED-BACKLIT",
+      "module_insert": "ACP-LOCAL-MODULE-ACRYLIC-INSERT",
+      "ui_badge_relief": "RELIEF_PLEXI_10MM",
+      "orthogonal_to_xor": true,
+      "optional_absent_ok": true,
+      "optical_blockers": [],
+      "panel_only_blocked_by_absent_treatments": false,
+      "publication": "KEEP_DRAFT"
+    }
+  },
+  "xor_unchanged": true,
+  "applied_content_links_created": false,
+  "publication": "KEEP_DRAFT"
+}

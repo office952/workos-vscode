@@ -1,0 +1,44 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "route": {
+    "react_path": "/modules",
+    "component": "frontend/src/pages/ModuleChain.tsx",
+    "hook": "frontend/src/hooks/useModuleChainData.ts",
+    "nav_label": "Module Chain",
+    "nav_section": "Sistem",
+    "functional_name": "Module Chain architecture observability"
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/system/health",
+      "auth": "public",
+      "schema": "{ status, service, generated_at, checks:{} }",
+      "source_service": "SystemHealthService.run_public_health",
+      "db": "read-only checks inside service",
+      "cache": "none",
+      "fallback": "frontend marks offline; modules default idle/green",
+      "live": true,
+      "mock": false,
+      "authority": "system liveness aggregate only",
+      "consumer": "useModuleChainData"
+    }
+  ],
+  "endpoints_not_consumed_by_page": [
+    "/api/v1/system/diagnostics",
+    "/api/v1/product-system/mini-modules",
+    "/api/v1/execution/plan/{order_id}",
+    "/api/v1/execution/reality/{order_id}",
+    "/api/v1/entities/quotes",
+    "/api/v1/entities/orders"
+  ],
+  "aggregator_count": 1,
+  "static_sources": [
+    "CONTRACT_HANDOFFS in useModuleChainData.ts",
+    "MODULE_DEFINITIONS in useModuleChainData.ts",
+    "REFERENCE_EVENTS in ModuleChain.tsx",
+    "Snapshot cards inline array in ModuleChain.tsx",
+    "Regula de Aur inline copy in ModuleChain.tsx"
+  ]
+}

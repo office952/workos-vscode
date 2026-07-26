@@ -6,7 +6,19 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-FORM_CONTRACT_VERSION = "1.0.0"
+FORM_CONTRACT_VERSION = "1.4.0-subset-activation"
+
+SupportedFieldType = Literal[
+    "text",
+    "number",
+    "integer",
+    "boolean",
+    "select",
+    "multiselect",
+    "readonly",
+]
+
+VisibilityKind = Literal["always", "equals", "not_equals", "in_set", "truthy", "falsy"]
 
 OperationalStatus = Literal[
     "ACTIVE_OPERATIONAL",
@@ -30,6 +42,22 @@ FieldRole = Literal[
 ActivationKind = Literal["always_on", "required_module", "optional_addon", "conditional_gate"]
 
 
+class IntakeFormOption(BaseModel):
+    """One selectable value for generic select/multiselect rendering."""
+
+    value: str
+    label_ro: str
+
+
+class IntakeVisibilityRule(BaseModel):
+    """Bounded visibility rule — no arbitrary expressions."""
+
+    kind: VisibilityKind = "always"
+    workspace_path: str | None = None
+    value: Any = None
+    values: list[Any] | None = None
+
+
 class IntakeFormFieldBinding(BaseModel):
     """One Intake V6 field with operational destination."""
 
@@ -37,6 +65,18 @@ class IntakeFormFieldBinding(BaseModel):
     workspace_path: str
     label_ro: str | None = None
     required: bool = False
+    field_type: str | None = None
+    unit: str | None = None
+    option_values: list[str] | None = None
+    options: list[IntakeFormOption] | None = None
+    visibility_rule: str | None = None
+    visibility: IntakeVisibilityRule | None = None
+    min_value: float | None = None
+    max_value: float | None = None
+    read_only: bool = False
+    display_mode: str | None = None
+    decision: str | None = None
+    consumers: list[str] = Field(default_factory=list)
     field_role: FieldRole = "module_configuration"
     module_codes: list[str] = Field(default_factory=list)
     operational_status: OperationalStatus = "ACTIVE_OPERATIONAL"
@@ -45,6 +85,49 @@ class IntakeFormFieldBinding(BaseModel):
     cost_engine_step: str | None = None
     derived_from: str | None = None
     derivation_rule: str | None = None
+    notes: list[str] = Field(default_factory=list)
+
+
+RenderAdapterId = Literal[
+    "specialized_letter_groups",
+    "generic_fields",
+    "specialized_montaj",
+    "specialized_lighting",
+    "metadata_only",
+]
+
+UiTabId = Literal["finisaje", "iluminare", "montaj"]
+
+
+class IntakeRenderSection(BaseModel):
+    """Ordered UI section for Intake contract composition (Build 2 full-product)."""
+
+    section_key: str
+    title_ro: str
+    order: int
+    description_ro: str | None = None
+    module_codes: list[str] = Field(default_factory=list)
+    field_keys: list[str] = Field(default_factory=list)
+    visibility: IntakeVisibilityRule | None = None
+    pilot_role: str | None = None
+    # Build 2 additive composition metadata — does not change golden field writes.
+    ui_tab_id: UiTabId | None = None
+    renderer: RenderAdapterId | None = None
+    component_owners: list[str] = Field(default_factory=list)
+    tab_label_ro: str | None = None
+    tab_hint_ro: str | None = None
+    drives_review_tab: bool = False
+
+
+class FullProductCompositionSpec(BaseModel):
+    """Full-product composition authority for Letters — Build 3 enables subset activation."""
+
+    mode: Literal["full_product_only", "subset_activation"] = "full_product_only"
+    composition_authority: bool = True
+    subset_activation_enabled: bool = False
+    ui_tab_ids: list[str] = Field(default_factory=list)
+    component_owners: list[str] = Field(default_factory=list)
+    interface_candidates: list[dict[str, Any]] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
 
 
@@ -85,6 +168,12 @@ class IntakeV6ModularFormContractSummary(BaseModel):
     registry_version: str
     active_module_count: int = 0
     field_binding_count: int = 0
+    # Full form runtime authority is not claimed for Letters yet.
+    # When true, runtime_authority_scope must describe the bounded surface.
+    runtime_authority: bool = False
+    runtime_authority_scope: str | None = None
+    # Build 2: Review tab order / section registry consumed from this contract.
+    composition_authority: bool = False
     warnings: list[str] = Field(default_factory=list)
 
 
@@ -94,8 +183,12 @@ class IntakeV6ModularFormContract(BaseModel):
     summary: IntakeV6ModularFormContractSummary
     modules: list[IntakeModuleFormSection] = Field(default_factory=list)
     field_bindings: list[IntakeFormFieldBinding] = Field(default_factory=list)
+    render_sections: list[IntakeRenderSection] = Field(default_factory=list)
+    writable_workspace_paths: list[str] = Field(default_factory=list)
+    form_system_backbone: dict[str, Any] | None = None
     trigger_alignments: list[TriggerFieldAlignment] = Field(default_factory=list)
     valid_combinations: list[str] = Field(default_factory=list)
     invalid_combinations: list[str] = Field(default_factory=list)
     orphan_fields_audit: list[str] = Field(default_factory=list)
+    full_product_composition: FullProductCompositionSpec | None = None
     notes: list[str] = Field(default_factory=list)

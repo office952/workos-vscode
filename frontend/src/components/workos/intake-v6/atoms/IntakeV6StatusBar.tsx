@@ -15,7 +15,7 @@ export default function IntakeV6StatusBar({
 
 	return (
 		<div
-			className="flex flex-wrap items-center gap-4 border-b border-[#2A3548] bg-[#1E293B] px-7 py-2 text-[11px] text-slate-400"
+			className="flex flex-wrap items-center gap-4 border-b border-wo-border-strong bg-wo-hover px-7 py-2 text-[11px] text-wo-text-muted"
 			data-testid="intake-v6-status-bar"
 		>
 			<span className="inline-flex items-center gap-1.5">
@@ -28,7 +28,7 @@ export default function IntakeV6StatusBar({
 					{pending} pending
 				</span>
 			) : null}
-			<span className="ml-auto text-[10px] text-slate-500">{surfaceLabel}</span>
+			<span className="ml-auto text-[10px] text-wo-text-dim">{surfaceLabel}</span>
 		</div>
 	);
 }

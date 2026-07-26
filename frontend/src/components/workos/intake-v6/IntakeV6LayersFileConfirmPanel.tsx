@@ -7,6 +7,7 @@ import { v6 } from "./atoms/intakeV6Presentation";
 import type { IntakeV6GeometryMetricDisplay } from "@/lib/intakeV6/intakeV6GeometryMetricDisplay";
 import type { IntakeV6QuoteGeometry } from "@/lib/intakeV6/intakeV6QuoteGeometry";
 import type { SvgPreviewLayerHighlightTarget } from "@/lib/intakeV6/intakeV6SvgPreviewLayerHighlight";
+import type { SvgPreviewContourOverlayTarget } from "@/lib/intakeV6/intakeV6SvgPreviewContourOverlay";
 
 export default function IntakeV6LayersFileConfirmPanel({
   fileName,
@@ -20,6 +21,7 @@ export default function IntakeV6LayersFileConfirmPanel({
   onImportFile,
   onOpenInspect,
   highlightedLayer = null,
+  contourOverlay = null,
 }: {
   fileName?: string | null;
   previewSource?: string | null;
@@ -32,6 +34,7 @@ export default function IntakeV6LayersFileConfirmPanel({
   onImportFile: (file: File) => void | Promise<void>;
   onOpenInspect: () => void;
   highlightedLayer?: SvgPreviewLayerHighlightTarget | null;
+  contourOverlay?: SvgPreviewContourOverlayTarget | null;
 }) {
   const hasPreview = Boolean(previewSource);
 
@@ -73,6 +76,7 @@ export default function IntakeV6LayersFileConfirmPanel({
             missingExternalRasterMessage="Preview incomplet: SVG-ul face referire la imagini externe care nu sunt incluse în fișier."
             variant="thumb"
             highlightedLayer={highlightedLayer}
+            contourOverlay={contourOverlay}
           />
           {report ? (
             <div className="mt-2">
@@ -103,13 +107,14 @@ export default function IntakeV6LayersFileConfirmPanel({
               busyLabel="Analizez..."
               buttonClassName={v6.btnGhost}
               buttonTestId="intake-v6-change-svg-file"
+              inputTestId="intake-v6-svg-input-change"
               onFileSelected={(file) => void onImportFile(file)}
             />
           </div>
         </>
       ) : (
         <div
-          className="flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-[#2A3548] bg-[#0A0F1A]/40 px-4 py-6 text-center"
+          className="flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-wo-border-strong bg-wo-surface-inset/40 px-4 py-6 text-center"
           data-testid="intake-v6-svg-preview-empty"
         >
           <Upload className="h-8 w-8 text-slate-600" aria-hidden />
@@ -120,6 +125,7 @@ export default function IntakeV6LayersFileConfirmPanel({
             label="Încarcă SVG"
             busyLabel="Analizez..."
             buttonClassName={v6.btnPrimary}
+            inputTestId="intake-v6-svg-input-preview"
             onFileSelected={(file) => void onImportFile(file)}
           />
         </div>

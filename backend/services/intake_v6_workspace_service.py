@@ -1,4 +1,4 @@
-﻿"""Intake V6 workspace persistence, with its own payload contract."""
+"""Intake V6 workspace persistence, with its own payload contract."""
 
 from __future__ import annotations
 
@@ -23,6 +23,8 @@ from schemas.intake_v6 import (
     IntakeV6FinishSetup,
     IntakeV6LayerRoleSetup,
     IntakeV6LayerRoleUpdateRequest,
+    IntakeV6ProductTruthWriterDryRunRequest,
+    IntakeV6ProductTruthWriterPromoteRequest,
     IntakeV6ProductSystemBindingResponse,
     IntakeV6SvgUploadResponse,
     IntakeV6TaskPreviewResponse,
@@ -42,6 +44,17 @@ from services.intake_v6_layer_role_service import (
     apply_layer_role_updates,
     build_layer_role_setup_from_path_summary,
     merge_layer_roles_after_reupload,
+    selected_layer_refs_runtime_state,
+)
+from services.intake_v4_layer_role_service import sync_selected_layer_refs_on_payload
+from services.intake_v6_layer_binding_persistence_service import (
+    persist_logo_layer_bindings_from_composition_confirmation,
+)
+from services.intake_v6_product_composition_recommendation_service import (
+    apply_product_composition_recommendation,
+)
+from services.letters_acm_composition_commercial_v1 import (
+    resolve_letters_layer_outbox_m2,
 )
 from services.intake_v6_product_system_service import (
     build_binding_response,
@@ -49,6 +62,26 @@ from services.intake_v6_product_system_service import (
 )
 from services.product_template_availability_service import ProductTemplateAvailabilityService
 from services.intake_v6_production_preview_service import build_v6_task_preview_response
+from services.form_system_runtime_capture_read_model_service import (
+    build_form_system_runtime_capture_read_model,
+)
+from services.product_truth_promotion_planner_service import (
+    build_product_truth_promotion_plan,
+)
+from services.product_truth_writer_dry_run_service import (
+    build_product_truth_writer_dry_run_response,
+    compute_payload_hash,
+    compute_planner_hash,
+    downstream_write_intent_is_all_false,
+)
+from services.product_truth_writer_service import (
+    promote_product_truth_snapshot,
+    proposed_mutations_match_confirmed_snapshot,
+)
+from services.return_cant_product_truth_bridge import (
+    apply_return_cant_runtime_product_truth_bridge,
+    clear_return_cant_runtime_product_truth,
+)
 
 
 def _utcnow() -> datetime:
@@ -83,21 +116,145 @@ def _layer_setup_from_payload(raw: dict[str, Any]) -> IntakeV6LayerRoleSetup | N
     return IntakeV6LayerRoleSetup.model_validate(setup)
 
 
+def _sync_selected_layer_refs(payload_raw: dict[str, Any]) -> None:
+    sync_selected_layer_refs_on_payload(payload_raw, _layer_setup_from_payload(payload_raw))
+
+
+def _offer_scope_ready(payload: IntakeV6WorkspacePayload) -> bool:
+    """Legacy workspaces without offer_scope remain valid (full product)."""
+    if payload.offer_scope is None:
+        if payload.offer_scope_confirmed is None:
+            return True
+        return isinstance(payload.offer_scope_confirmed, dict) and payload.offer_scope_confirmed.get(
+            "confirmed"
+        ) is True
+
+    confirmed = payload.offer_scope_confirmed
+    if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
+        return False
+
+    from schemas.offer_scope import OfferScopeInput
+    from services.offer_scope_resolver_service import resolve_offer_scope
+
+    resolved = resolve_offer_scope(
+        OfferScopeInput(
+            contract_version=payload.offer_scope.contract_version,
+            mode=payload.offer_scope.mode,
+            sold_modules=list(payload.offer_scope.sold_modules),
+        )
+    )
+    if resolved.validation_errors:
+        return False
+
+    from services.sold_scope_dependency_validator_service import validate_sold_graph_from_payload
+
+    payload_raw = payload.model_dump(mode="json")
+    dependency = validate_sold_graph_from_payload(payload_raw if isinstance(payload_raw, dict) else None)
+    return dependency.valid_for_confirmation
+
+
 def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
     if payload.svg_source is None or payload.svg_source.upload_status != "analyzed":
         return "missing_svg"
     setup = payload.layer_role_setup
     if setup is None or setup.confirmation_status != "complete":
         return "layer_roles_incomplete"
+    recommendation = payload.product_composition_recommendation
+    if isinstance(recommendation, dict) and recommendation.get("status") == "blocked":
+        blockers = recommendation.get("blockers")
+        if isinstance(blockers, list) and blockers:
+            return str(blockers[0].get("code") if isinstance(blockers[0], dict) else blockers[0]).lower()
+        return "product_composition_blocked"
+    if isinstance(recommendation, dict):
+        confirmed = payload.product_composition_confirmed
+        if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
+            return "product_composition_not_confirmed"
+    if not _offer_scope_ready(payload):
+        return "offer_scope_not_confirmed"
     if payload.finish_setup is None or not payload.finish_setup.confirmed:
         return "finish_setup_incomplete"
-    return "ready_for_quote_preview"
+    if _is_logo_only_candidate_not_offerable(payload):
+        return "logo_only_candidate_not_offerable"
+
+    from services.intake_v6_canonical_readiness_service import (
+        list_runtime_capture_fatal_blocker_codes,
+        resolve_workspace_readiness_with_capture_blockers,
+    )
+
+    template_code = (
+        payload.product_binding.template_code
+        if payload.product_binding and payload.product_binding.template_code
+        else None
+    )
+    capture_blockers = list_runtime_capture_fatal_blocker_codes(
+        payload.model_dump(mode="json"),
+        template_code=template_code,
+    )
+    return resolve_workspace_readiness_with_capture_blockers(
+        "ready_for_quote_preview",
+        capture_blockers=capture_blockers,
+    )
+
+
+def _is_logo_only_candidate_not_offerable(payload: IntakeV6WorkspacePayload) -> bool:
+    """Logo remains candidate-only / non-offerable until a separate owner GO.
+
+    Confirmed artwork may make a Logo candidate technically complete, but must not
+    surface ready_for_quote_preview on a Logo-only or Logo-root workspace.
+    """
+    from services.template_usage_mode_policy import (
+        TPL_VOLUMETRIC_LOGO_V1,
+        normalize_template_code,
+    )
+
+    recommendation = payload.product_composition_recommendation
+    if isinstance(recommendation, dict) and recommendation.get("composition_type") == "logo_only":
+        return True
+
+    template_code = (
+        payload.product_binding.template_code
+        if payload.product_binding and payload.product_binding.template_code
+        else None
+    )
+    if normalize_template_code(template_code) == normalize_template_code(TPL_VOLUMETRIC_LOGO_V1):
+        return True
+
+    setup = payload.layer_role_setup
+    finish = payload.finish_setup
+    if setup is None or finish is None:
+        return False
+
+    has_letter_role = any(
+        (layer.confirmed_role or layer.auto_role) == "face"
+        for layer in setup.layers
+        if layer.confirmation_state != "ignored"
+    )
+    if has_letter_role:
+        return False
+
+    has_logo_artwork_role = any(
+        (layer.confirmed_role or layer.auto_role) in {"printed_artwork", "logo"}
+        for layer in setup.layers
+        if layer.confirmation_state != "ignored"
+    )
+    if not has_logo_artwork_role:
+        return False
+
+    letter_rows = finish.letter_group_finishes or []
+    artwork_rows = finish.artwork_finishes or []
+    # Constructive-model confirmation does not clear the candidate/non-offerable boundary.
+    return len(letter_rows) == 0 and len(artwork_rows) > 0
 
 
 def _derive_workspace_status(readiness_status: str) -> str:
     if readiness_status == "ready_for_quote_preview":
         return "ready_for_quote_preview"
-    if readiness_status in {"missing_svg", "layer_roles_incomplete"}:
+    if readiness_status in {
+        "missing_svg",
+        "layer_roles_incomplete",
+        "product_composition_not_confirmed",
+        "logo_only_candidate_not_offerable",
+    }:
         return "collecting_data"
     if readiness_status == "finish_setup_incomplete":
         return "collecting_data"
@@ -142,6 +299,52 @@ def _reset_internal_draft_quote_confirmation(payload_raw: dict[str, Any]) -> Non
     if isinstance(finish, dict) and finish.get("internal_draft_quote_confirmed"):
         finish["internal_draft_quote_confirmed"] = False
         payload_raw["finish_setup"] = finish
+
+
+def _read_scope_sold_modules(payload_raw: dict[str, Any]) -> set[str]:
+    scope = payload_raw.get("offer_scope")
+    if not isinstance(scope, dict):
+        return set()
+    if scope.get("mode") == "full_product":
+        return set()
+    sold = scope.get("sold_modules")
+    if not isinstance(sold, list):
+        return set()
+    return {str(code).strip() for code in sold if str(code).strip()}
+
+
+def _invalidate_finish_confirmations_for_deselected_scope(
+    payload_raw: dict[str, Any],
+    *,
+    previous_modules: set[str],
+    next_modules: set[str],
+) -> None:
+    deselected = previous_modules - next_modules
+    if not deselected:
+        return
+
+    finish = payload_raw.get("finish_setup")
+    if not isinstance(finish, dict):
+        return
+
+    if deselected.intersection({"FACE", "RETURN-CANT"}):
+        groups = finish.get("letter_group_finishes")
+        if isinstance(groups, list):
+            for group in groups:
+                if isinstance(group, dict) and group.get("confirmed") is True:
+                    group["confirmed"] = False
+
+    if "RETURN-CANT" in deselected:
+        artwork = finish.get("artwork_finishes")
+        if isinstance(artwork, list):
+            for row in artwork:
+                if isinstance(row, dict) and row.get("confirmed") is True:
+                    row["confirmed"] = False
+
+    if deselected.intersection({"FACE", "RETURN-CANT", "BACK"}):
+        finish["confirmed"] = False
+
+    payload_raw["finish_setup"] = finish
 
 
 def _record_to_response(record: IntakeV6WorkspaceRecord) -> IntakeV6WorkspaceResponse:
@@ -212,6 +415,24 @@ async def _persist_payload(
     return _record_to_response(record)
 
 
+async def _persist_payload_json_raw_for_product_truth_writer(
+    db: AsyncSession,
+    record: IntakeV6WorkspaceRecord,
+    payload_raw: dict[str, Any],
+    *,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    payload = _parse_payload(payload_raw)
+    record.payload_json = _json_dumps(payload_raw)
+    record.readiness_status = _derive_readiness_status(payload)
+    record.status = _derive_workspace_status(record.readiness_status)
+    record.updated_by_user_id = current_user.id
+    record.updated_at = _utcnow()
+    await db.commit()
+    await db.refresh(record)
+    return _record_to_response(record)
+
+
 async def create_intake_v6_workspace(
     db: AsyncSession,
     request: IntakeV6WorkspaceCreateRequest,
@@ -241,10 +462,14 @@ async def create_intake_v6_workspace(
         },
         intake_request_code=intake_request_code,
         offer_method=(request.offer_method or None),
+        analyzer_mode=(request.analyzer_mode or None),
+        template_hint_code=(request.template_hint_code or None),
         selected_template_code=(request.selected_template_code or request.template_code),
         source=(request.source or None),
         work_intake_context={
             "offer_method": request.offer_method,
+            "analyzer_mode": request.analyzer_mode,
+            "template_hint_code": request.template_hint_code,
             "selected_template_code": request.selected_template_code or request.template_code,
             "source": request.source,
             "selected_template_is_initial": True,
@@ -276,12 +501,353 @@ async def get_intake_v6_workspace(db: AsyncSession, workspace_id: str) -> Intake
     return _record_to_response(record)
 
 
+async def get_form_system_runtime_capture_read_model_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    read_model = build_form_system_runtime_capture_read_model(
+        payload,
+        template_code=workspace.template_code,
+    )
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "read_model_version": "v1",
+        "fields": read_model.get("fields") or [],
+        "blockers": read_model.get("blockers") or [],
+        "downstream_write_intent": read_model.get("downstream_write_intent") or {},
+        "notes": read_model.get("notes") or [],
+    }
+
+
+async def get_product_truth_promotion_planner_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    planner = build_product_truth_promotion_plan(
+        payload,
+        template_code=workspace.template_code,
+    )
+    downstream_write_intent = dict(planner.get("downstream_write_intent") or {})
+    downstream_write_intent.setdefault("product_truth_write", False)
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "planner_version": planner.get("planner_version") or "v1",
+        "eligible_entries": planner.get("eligible_entries") or [],
+        "blocked_entries": planner.get("blocked_entries") or [],
+        "blockers": planner.get("blockers") or [],
+        "downstream_write_intent": downstream_write_intent,
+        "notes": planner.get("notes") or [],
+    }
+
+
+async def get_product_truth_writer_dry_run_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterDryRunRequest,
+) -> dict[str, Any]:
+    if request.dry_run_only is not True:
+        raise HTTPException(status_code=422, detail={"error": "dry_run_only_required"})
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    product_binding = payload_raw.get("product_binding") if isinstance(payload_raw.get("product_binding"), dict) else {}
+    planner = build_product_truth_promotion_plan(
+        payload_raw,
+        template_code=record.template_code,
+    )
+    planner_response = {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": record.id,
+        "workspace_code": record.workspace_code,
+        "root_template_code": record.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "planner_version": planner.get("planner_version") or "v1",
+        "eligible_entries": planner.get("eligible_entries") or [],
+        "blocked_entries": planner.get("blocked_entries") or [],
+        "blockers": planner.get("blockers") or [],
+        "downstream_write_intent": dict(planner.get("downstream_write_intent") or {}),
+        "notes": planner.get("notes") or [],
+    }
+    planner_response["downstream_write_intent"].setdefault("product_truth_write", False)
+
+    if planner_response.get("read_only") is not True:
+        raise HTTPException(status_code=422, detail={"error": "planner_not_read_only"})
+    if not downstream_write_intent_is_all_false(planner_response.get("downstream_write_intent") or {}):
+        raise HTTPException(status_code=422, detail={"error": "downstream_write_intent_not_false"})
+    if request.expected_workspace_code and request.expected_workspace_code != record.workspace_code:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "workspace_code_mismatch",
+                "expected_workspace_code": request.expected_workspace_code,
+                "workspace_code": record.workspace_code,
+            },
+        )
+    if request.expected_root_template_code != record.template_code:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "root_template_code_mismatch",
+                "expected_root_template_code": request.expected_root_template_code,
+                "root_template_code": record.template_code,
+            },
+        )
+    if request.expected_product_binding_template_code != product_binding.get("template_code"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "product_binding_template_code_mismatch",
+                "expected_product_binding_template_code": request.expected_product_binding_template_code,
+                "product_binding_template_code": product_binding.get("template_code"),
+            },
+        )
+    if request.planner_version != planner_response.get("planner_version"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "planner_version_mismatch",
+                "expected_planner_version": request.planner_version,
+                "planner_version": planner_response.get("planner_version"),
+            },
+        )
+
+    payload_hash_basis = compute_payload_hash(payload_raw)
+    planner_hash = compute_planner_hash(planner_response)
+    if request.payload_hash_basis and request.payload_hash_basis != payload_hash_basis:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "payload_hash_basis_mismatch",
+                "expected_payload_hash_basis": request.payload_hash_basis,
+                "payload_hash_basis": payload_hash_basis,
+            },
+        )
+    if request.planner_hash and request.planner_hash != planner_hash:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "planner_hash_mismatch",
+                "expected_planner_hash": request.planner_hash,
+                "planner_hash": planner_hash,
+            },
+        )
+
+    return build_product_truth_writer_dry_run_response(
+        workspace_id=workspace_id,
+        workspace_record_id=record.id,
+        workspace_code=record.workspace_code,
+        root_template_code=record.template_code,
+        product_binding_template_code=product_binding.get("template_code"),
+        payload_raw=copy.deepcopy(payload_raw),
+        planner_response=copy.deepcopy(planner_response),
+        actor=request.actor,
+        requested_entry_keys=request.requested_entry_keys,
+    )
+
+
+def _payload_without_product_truth_confirmed_snapshot(payload_raw: dict[str, Any]) -> dict[str, Any]:
+    payload_copy = copy.deepcopy(payload_raw)
+    product_truth = payload_copy.get("product_truth")
+    if not isinstance(product_truth, dict):
+        return payload_copy
+    product_truth.pop("confirmed_snapshot_v1", None)
+    if not product_truth:
+        payload_copy.pop("product_truth", None)
+    return payload_copy
+
+
+async def confirm_job_product_truth_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: Any,
+    current_user: UserResponse,
+) -> dict[str, Any]:
+    """ConfirmJobProductTruth — pin typed bags into confirmed_snapshot_v1 job revision."""
+    from schemas.product_truth_job_confirm import ConfirmJobProductTruthRequest
+    from services.product_truth_job_confirm_service import confirm_job_product_truth
+
+    body = (
+        request
+        if isinstance(request, ConfirmJobProductTruthRequest)
+        else ConfirmJobProductTruthRequest.model_validate(request)
+    )
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    response, payload_raw = confirm_job_product_truth(
+        workspace_id=record.id,
+        workspace_code=record.workspace_code,
+        payload_raw=payload_raw,
+        expected_revision=body.expected_revision,
+        expected_draft_hash=body.expected_draft_hash,
+        expected_content_hash=body.expected_content_hash,
+        root_template_code=body.root_template_code or record.template_code,
+        root_template_version=None,
+        actor_id=str(current_user.id),
+        correction_reason=body.correction_reason,
+    )
+    if response.get("write_performed") is True:
+        await _persist_payload_json_raw_for_product_truth_writer(
+            db,
+            record,
+            payload_raw,
+            current_user=current_user,
+        )
+    return response
+
+
+async def get_job_product_truth_status_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    from services.product_truth_job_confirm_service import build_job_truth_status
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    return build_job_truth_status(workspace_id=record.id, payload_raw=payload_raw)
+
+
+async def promote_product_truth_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterPromoteRequest,
+    current_user: UserResponse,
+) -> dict[str, Any]:
+    if request.promotion_confirmed is not True:
+        raise HTTPException(status_code=422, detail={"error": "promotion_confirmed_required"})
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    current_payload_hash = compute_payload_hash(payload_raw)
+    payload_hash_without_snapshot = compute_payload_hash(
+        _payload_without_product_truth_confirmed_snapshot(payload_raw)
+    )
+    existing_snapshot = (
+        payload_raw.get("product_truth") if isinstance(payload_raw.get("product_truth"), dict) else {}
+    )
+    existing_snapshot = (
+        existing_snapshot.get("confirmed_snapshot_v1") if isinstance(existing_snapshot, dict) else {}
+    )
+    existing_planner_basis = (
+        existing_snapshot.get("planner_basis") if isinstance(existing_snapshot, dict) else {}
+    )
+    replay_basis_hash = (
+        existing_planner_basis.get("payload_hash_basis") if isinstance(existing_planner_basis, dict) else None
+    )
+    payload_hash_matches_current_basis = request.payload_hash_basis in {
+        current_payload_hash,
+        payload_hash_without_snapshot,
+    }
+    payload_hash_matches_replay_basis = bool(
+        request.payload_hash_basis and request.payload_hash_basis == replay_basis_hash
+    )
+    if request.payload_hash_basis and not payload_hash_matches_current_basis and not payload_hash_matches_replay_basis:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "payload_hash_basis_mismatch",
+                "expected_payload_hash_basis": request.payload_hash_basis,
+                "payload_hash_basis": current_payload_hash,
+                "payload_hash_basis_without_confirmed_snapshot": payload_hash_without_snapshot,
+            },
+        )
+
+    dry_run_request = IntakeV6ProductTruthWriterDryRunRequest.model_validate(
+        {
+            "dry_run_only": True,
+            "expected_workspace_code": request.expected_workspace_code,
+            "expected_root_template_code": request.expected_root_template_code,
+            "expected_product_binding_template_code": request.expected_product_binding_template_code,
+            "planner_version": request.planner_version,
+            "planner_hash": request.planner_hash,
+            "payload_hash_basis": current_payload_hash,
+            "actor": request.actor,
+            "requested_entry_keys": request.requested_entry_keys,
+        }
+    )
+    dry_run_response = await get_product_truth_writer_dry_run_for_workspace(db, workspace_id, dry_run_request)
+    downstream_write_intent = dry_run_response.get("downstream_write_intent") or {}
+    if not downstream_write_intent_is_all_false(downstream_write_intent):
+        raise HTTPException(status_code=422, detail={"error": "downstream_write_intent_not_false"})
+    if payload_hash_matches_replay_basis and not payload_hash_matches_current_basis:
+        if not proposed_mutations_match_confirmed_snapshot(
+            payload_raw,
+            dry_run_response.get("proposed_mutations") or [],
+        ):
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "payload_hash_basis_mismatch",
+                    "expected_payload_hash_basis": request.payload_hash_basis,
+                    "payload_hash_basis": current_payload_hash,
+                    "payload_hash_basis_without_confirmed_snapshot": payload_hash_without_snapshot,
+                },
+            )
+
+    actor_payload = copy.deepcopy(request.actor) if isinstance(request.actor, dict) else {}
+    actor_payload.setdefault("actor_id", current_user.id)
+    actor_payload.setdefault("actor_email", current_user.email)
+    actor_payload.setdefault("actor_role", current_user.role)
+    actor_payload.setdefault("actor_label", current_user.name or current_user.email or str(current_user.id))
+
+    payload_before, response = promote_product_truth_snapshot(
+        workspace_id=workspace_id,
+        workspace_code=record.workspace_code,
+        payload_raw=payload_raw,
+        dry_run_response=dry_run_response,
+        actor=actor_payload,
+    )
+    if response.get("write_performed") is not True:
+        return response
+
+    await _persist_payload_json_raw_for_product_truth_writer(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
+    persisted_payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(persisted_payload_raw, dict):
+        persisted_payload_raw = {}
+    response["payload_hash_before"] = compute_payload_hash(payload_before)
+    response["payload_hash_after"] = compute_payload_hash(persisted_payload_raw)
+    return response
+
+
 async def ensure_intake_v6_workspace_for_intake_request(
     db: AsyncSession,
     intake_request_code: str,
     current_user: UserResponse,
     *,
     offer_method: str | None = None,
+    analyzer_mode: str | None = None,
+    template_hint_code: str | None = None,
     selected_template_code: str | None = None,
     source: str | None = None,
 ) -> IntakeV6WorkspaceResponse:
@@ -306,8 +872,8 @@ async def ensure_intake_v6_workspace_for_intake_request(
     title = f"{intake.client_name} — {title_source}"[:200]
     resolved_template_code = await _resolve_offerable_template_code_or_raise(
         db,
-        selected_template_code,
-        require_selected=(source == "work_intake_new_request"),
+        selected_template_code or template_hint_code,
+        require_selected=(source == "work_intake_new_request" and analyzer_mode != "analyzer_first"),
     )
     create_request = IntakeV6WorkspaceCreateRequest(
         title=title,
@@ -316,7 +882,9 @@ async def ensure_intake_v6_workspace_for_intake_request(
         job_title=description or None,
         intake_request_code=code,
         offer_method=offer_method,
-        selected_template_code=resolved_template_code,
+        analyzer_mode=analyzer_mode,
+        template_hint_code=template_hint_code,
+        selected_template_code=selected_template_code,
         source=source,
     )
     return await create_intake_v6_workspace(db, create_request, current_user)
@@ -392,11 +960,21 @@ async def upload_svg_to_intake_v6_workspace(
         "file_hash": file_hash,
         "upload_status": "analyzed",
     }
+    # Persist source text so Page 1 can hydrate via the canonical client analyzer
+    # (server path_geometry_summary alone does not populate nest2 svg_analysis_json).
+    payload_raw["svg_source_text"] = validation.svg_text
     payload_raw["layer_role_setup"] = layer_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
+    apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
+        # Clear stale client analysis when a different SVG replaces the source.
+        payload_raw.pop("svg_analysis_json", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     response = await _persist_payload(db, record, payload, current_user=current_user)
@@ -462,14 +1040,18 @@ async def save_analysis_bundle_for_intake_v6_workspace(
     payload_raw["svg_analysis_json"] = request.svg_analysis_json
     payload_raw["layer_role_setup"] = layer_setup_dict
     payload_raw["svg_source_text"] = validation.svg_text
+    _sync_selected_layer_refs(payload_raw)
+    apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
-        payload_raw.pop("quote_geometry", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
         apply_v6_pricing_preview_derived_state(payload_raw)
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
@@ -496,11 +1078,264 @@ async def save_layer_roles_for_intake_v6_workspace(
     updates = [item.model_dump(mode="json") for item in request.layers]
     updated_setup = apply_layer_role_updates(setup, updates)
     payload_raw["layer_role_setup"] = updated_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
+    apply_product_composition_recommendation(payload_raw)
     _reset_internal_draft_quote_confirmation(payload_raw)
     if payload_raw.get("finish_setup"):
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
         apply_v6_pricing_preview_derived_state(payload_raw)
+        apply_return_cant_runtime_product_truth_bridge(payload_raw)
+    payload = _parse_payload(payload_raw)
+    return await _persist_payload(db, record, payload, current_user=current_user)
+
+
+async def save_product_composition_confirmation_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    *,
+    confirmed: bool,
+    items: list[dict[str, Any]] | None = None,
+    operator_note: str | None = None,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    record = await _get_record_or_404(db, workspace_id)
+    if record.archived_at is not None:
+        raise HTTPException(status_code=400, detail={"error": "workspace_archived", "workspace_id": workspace_id})
+
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    if not isinstance(payload_raw.get("product_composition_recommendation"), dict):
+        if payload_raw.get("layer_role_setup"):
+            apply_product_composition_recommendation(payload_raw)
+        else:
+            raise HTTPException(status_code=422, detail={"error": "product_composition_recommendation_missing"})
+
+    recommendation = payload_raw.get("product_composition_recommendation")
+    if isinstance(recommendation, dict) and recommendation.get("status") == "blocked" and confirmed:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "product_composition_blocked",
+                "blockers": recommendation.get("blockers") or [],
+            },
+        )
+
+    confirmed_items = items if items is not None else (
+        recommendation.get("composition_items") if isinstance(recommendation, dict) else []
+    )
+    payload_raw["product_composition_confirmed"] = {
+        "confirmed": bool(confirmed),
+        "confirmed_at": _utcnow().isoformat() if confirmed else None,
+        "confirmed_by": current_user.email or current_user.name or str(current_user.id),
+        "items": confirmed_items,
+        "operator_note": operator_note,
+        "source": "operator_confirmation_v1",
+    }
+    # Sync ACM panel instance composition_status (does not auto-confirm association/technical).
+    # Create finish_setup when missing so applied_content XOR survives before Montaj seed.
+    finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    items_list = confirmed_items if isinstance(confirmed_items, list) else []
+    acm_codes = {"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"}
+    has_acm = any(
+        isinstance(it, dict) and str(it.get("template_code") or "") in acm_codes for it in items_list
+    )
+    if finish is None and confirmed and has_acm:
+        finish = {}
+        payload_raw["finish_setup"] = finish
+    if isinstance(finish, dict):
+        next_comp_status = "confirmed" if (confirmed and has_acm) else "unconfirmed"
+        inst = finish.get("acm_panel_instance")
+        if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+            finish["acm_panel_instance"] = {**inst, "composition_status": next_comp_status}
+        sel = finish.get("svg_support_selection")
+        if isinstance(sel, dict) and isinstance(sel.get("acm_panel_instance"), dict):
+            nested = dict(sel["acm_panel_instance"])
+            nested["composition_status"] = next_comp_status
+            finish["svg_support_selection"] = {**sel, "acm_panel_instance": nested}
+
+        # ACM composition XOR: panel-alone → none; letters+ACM → letters (CPP connection gate).
+        recommendation = payload_raw.get("product_composition_recommendation")
+        composition_type = (
+            str(recommendation.get("composition_type") or "").strip().lower()
+            if isinstance(recommendation, dict)
+            else ""
+        )
+        letters_codes = {"TPL-VOLUMETRIC-LETTERS_v2"}
+        item_codes = {
+            str(it.get("template_code") or "").strip()
+            for it in items_list
+            if isinstance(it, dict)
+        }
+        item_codes.discard("")
+        is_support_only = composition_type in {"support_only", "support_only_pending"} or (
+            confirmed and item_codes == acm_codes
+        )
+        is_letters_plus_support = composition_type == "letters_plus_support" or (
+            confirmed
+            and has_acm
+            and bool(item_codes & letters_codes)
+            and not is_support_only
+        )
+        composition_confirmed = payload_raw.get("product_composition_confirmed")
+        if not isinstance(composition_confirmed, dict):
+            composition_confirmed = {}
+
+        if confirmed and is_support_only and has_acm:
+            finish["applied_content"] = "none"
+            composition_confirmed = {**composition_confirmed, "applied_content": "none"}
+            payload_raw["product_composition_confirmed"] = composition_confirmed
+        elif confirmed and is_letters_plus_support and has_acm:
+            finish["applied_content"] = "letters"
+            composition_confirmed = {**composition_confirmed, "applied_content": "letters"}
+            # Seed canonical outbox qty when missing (contract: integral layer, not per-glyph).
+            outbox_qty, outbox_src = resolve_letters_layer_outbox_m2(
+                {
+                    **payload_raw,
+                    "finish_setup": finish,
+                }
+            )
+            if outbox_qty is not None and finish.get("letters_layer_outbox_m2") in (
+                None,
+                "",
+                0,
+                0.0,
+            ):
+                finish["letters_layer_outbox_m2"] = outbox_qty
+                finish["letters_layer_outbox_source"] = outbox_src
+            composition_confirmed = {
+                **composition_confirmed,
+                "letters_layer_outbox_m2": finish.get("letters_layer_outbox_m2"),
+                "letters_layer_outbox_source": finish.get("letters_layer_outbox_source"),
+            }
+            payload_raw["product_composition_confirmed"] = composition_confirmed
+
+        payload_raw["finish_setup"] = finish
+    persist_logo_layer_bindings_from_composition_confirmation(
+        payload_raw,
+        confirmed=bool(confirmed),
+        confirmed_items=confirmed_items if isinstance(confirmed_items, list) else [],
+    )
+    _reset_internal_draft_quote_confirmation(payload_raw)
+    payload = _parse_payload(payload_raw)
+    return await _persist_payload(db, record, payload, current_user=current_user)
+
+
+async def save_offer_scope_for_intake_v6_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    *,
+    mode: str,
+    sold_modules: list[str],
+    confirmed: bool,
+    operator_note: str | None = None,
+    dependency_confirmation_codes: list[str] | None = None,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    from schemas.offer_scope import OfferScope, OfferScopeInput
+    from services.offer_scope_resolver_service import resolve_offer_scope
+    from services.sold_scope_dependency_validator_service import (
+        merge_dependency_confirmations,
+        sync_offer_scope_dependency_validation,
+        validate_sold_graph,
+    )
+
+    record = await _get_record_or_404(db, workspace_id)
+    if record.archived_at is not None:
+        raise HTTPException(status_code=400, detail={"error": "workspace_archived", "workspace_id": workspace_id})
+
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    normalized_mode = str(mode or "full_product").strip()
+    normalized_modules = [str(code).strip() for code in (sold_modules or []) if str(code).strip()]
+    previous_modules = _read_scope_sold_modules(payload_raw)
+    previous_scope = payload_raw.get("offer_scope")
+    previous_mode = previous_scope.get("mode") if isinstance(previous_scope, dict) else None
+    sold_modules_changed = set(previous_modules) != set(normalized_modules) or (
+        previous_mode != normalized_mode
+    )
+    if normalized_mode == "full_product":
+        scope = OfferScope(mode="full_product", sold_modules=[])
+        next_modules: set[str] = set()
+    else:
+        scope = OfferScope(mode="component_subset", sold_modules=normalized_modules)  # type: ignore[arg-type]
+        next_modules = set(normalized_modules)
+
+    resolved = resolve_offer_scope(
+        OfferScopeInput(
+            contract_version=scope.contract_version,
+            mode=scope.mode,
+            sold_modules=list(scope.sold_modules),
+        )
+    )
+    if confirmed and resolved.validation_errors:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "offer_scope_invalid",
+                "blockers": resolved.validation_errors,
+            },
+        )
+
+    merge_dependency_confirmations(
+        payload_raw,
+        new_codes=dependency_confirmation_codes,
+        sold_modules_changed=sold_modules_changed,
+    )
+
+    template_code = None
+    product_binding = payload_raw.get("product_binding")
+    if isinstance(product_binding, dict):
+        template_code = product_binding.get("template_code")
+
+    from services.sold_scope_dependency_validator_service import _read_dependency_confirmations
+
+    dependency = validate_sold_graph(
+        mode=scope.mode,
+        sold_modules=list(scope.sold_modules),
+        template_code=str(template_code) if template_code else None,
+        dependency_confirmations=_read_dependency_confirmations(payload_raw),
+    )
+
+    if confirmed and not dependency.valid_for_save:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "offer_scope_dependency_invalid",
+                "dependency_validation": dependency.model_dump(mode="json"),
+            },
+        )
+
+    payload_raw["offer_scope"] = scope.model_dump(mode="json")
+    payload_raw["offer_scope_confirmed"] = {
+        "confirmed": bool(confirmed),
+        "confirmed_at": _utcnow().isoformat() if confirmed else None,
+        "confirmed_by": current_user.email or current_user.name or str(current_user.id),
+        "operator_note": operator_note,
+        "source": "operator_offer_scope_v1",
+        "dependency_confirmations": (
+            payload_raw.get("offer_scope_confirmed", {}).get("dependency_confirmations", [])
+            if isinstance(payload_raw.get("offer_scope_confirmed"), dict)
+            else []
+        ),
+    }
+    sync_offer_scope_dependency_validation(payload_raw)
+    if normalized_mode == "component_subset":
+        _invalidate_finish_confirmations_for_deselected_scope(
+            payload_raw,
+            previous_modules=previous_modules,
+            next_modules=next_modules,
+        )
+    _reset_internal_draft_quote_confirmation(payload_raw)
+    if payload_raw.get("finish_setup"):
+        from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
+
+        apply_v6_pricing_preview_derived_state(payload_raw)
+        apply_return_cant_runtime_product_truth_bridge(payload_raw)
+
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 
@@ -532,6 +1367,54 @@ async def get_task_preview_for_workspace(
     )
 
 
+def _binding_geometry_role(raw: Any) -> str:
+    if isinstance(raw, dict):
+        return str(raw.get("geometry_role") or "").strip().upper()
+    return str(getattr(raw, "geometry_role", "") or "").strip().upper()
+
+
+def is_early_svg_component_association(request: IntakeV6FinishSetup) -> bool:
+    """Step-1 Contur suport / SUPPORT_CONTOUR may persist before layer roles are complete.
+
+    Derived closed-contour geometry is canonical via svg_component_bindings — it must not
+    be forced through a fake legacy layer role. Full confirmed FinishSetup still requires
+    complete layer roles.
+    """
+    if bool(getattr(request, "confirmed", False)):
+        return False
+    bindings = list(getattr(request, "svg_component_bindings", None) or [])
+    if any(_binding_geometry_role(item) == "SUPPORT_CONTOUR" for item in bindings):
+        return True
+    selection = getattr(request, "svg_support_selection", None)
+    if isinstance(selection, dict):
+        status = str(selection.get("status") or "").strip().lower()
+        role = str(selection.get("role") or "").strip().upper()
+        if status in {"proposed", "confirmed", "draft", "reconfirm_required"} and role == "ALUCOBOND_CASED_PANEL":
+            return True
+    if getattr(request, "acm_panel_instance", None):
+        return True
+    return False
+
+
+def _assert_early_svg_association_preconditions(payload_raw: dict[str, Any]) -> None:
+    """Lightweight gate for Step-1 support association — does not require complete layer roles."""
+    blockers: list[str] = []
+    svg_source = payload_raw.get("svg_source") if isinstance(payload_raw.get("svg_source"), dict) else {}
+    if not str(svg_source.get("file_hash") or "").strip() and not payload_raw.get("svg_analysis_json"):
+        blockers.append("missing_svg_analysis")
+    if _layer_setup_from_payload(payload_raw) is None:
+        blockers.append("missing_layer_role_setup")
+    if blockers:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "early_svg_association_blocked",
+                "message": "SVG analysis and layer_role_setup must exist before Contur suport association.",
+                "blockers": blockers,
+            },
+        )
+
+
 async def save_finish_setup_for_intake_v6_workspace(
     db: AsyncSession,
     workspace_id: str,
@@ -547,34 +1430,181 @@ async def save_finish_setup_for_intake_v6_workspace(
         payload_raw = {}
 
     setup = _layer_setup_from_payload(payload_raw)
-    if setup is None or setup.confirmation_status != "complete":
+    roles_complete = setup is not None and setup.confirmation_status == "complete"
+    early_svg_association = is_early_svg_component_association(request)
+
+    if setup is None:
+        raise HTTPException(status_code=422, detail={"error": "layer_roles_incomplete"})
+    if not roles_complete and not early_svg_association:
         raise HTTPException(status_code=422, detail={"error": "layer_roles_incomplete"})
 
     payload = _parse_payload(payload_raw)
     from services.intake_v6_analysis_boundary_service import assert_v6_analysis_boundary_or_raise
 
-    assert_v6_analysis_boundary_or_raise(payload)
+    if early_svg_association and not roles_complete:
+        # early_svg_component_association: skip full analysis-boundary layer_roles gate
+        _assert_early_svg_association_preconditions(payload_raw)
+    else:
+        assert_v6_analysis_boundary_or_raise(payload)
 
     from services.intake_v6_finish_truth_service import normalize_intake_v6_finish_setup
+    from services.intake_v4_finish_truth_service import (
+        dump_intake_v4_finish_setup_for_persist,
+        strip_global_backing_mirror_from_finish_dict,
+    )
+    from services.svg_component_binding_persistence import (
+        persist_normalized_bindings_on_finish,
+        sync_support_selection_from_bindings,
+        validate_bindings_for_new_selection,
+    )
+    from schemas.intake_v4 import IntakeV4FinishSetup
+
+    # Merge early association into existing finish_setup so sparse Step-1 patches do not wipe Review fields.
+    if early_svg_association and not roles_complete:
+        existing_finish = payload_raw.get("finish_setup")
+        req_dump = request.model_dump(mode="json")
+        if isinstance(existing_finish, dict) and existing_finish:
+            merged = dict(existing_finish)
+            for key in (
+                "svg_component_bindings",
+                "svg_support_selection",
+                "mounting_solution",
+                "power_supply_service_corner",
+                "segmented_background",
+                "acm_panel_instance",
+                "acm_panel_domain_action",
+            ):
+                if req_dump.get(key) is not None:
+                    merged[key] = req_dump[key]
+            merged["confirmed"] = False
+            merged["internal_draft_quote_confirmed"] = False
+            request = IntakeV6FinishSetup.model_validate(merged)
 
     normalized = normalize_intake_v6_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
+    if early_svg_association and not roles_complete:
+        # Never mark finish confirmed via early Contur suport association.
+        normalized = normalized.model_copy(update={"confirmed": False})
 
-    # Validate against dossier (non-blocking â€” warnings stored in payload)
+    finish_doc = normalized.model_dump(mode="json")
+    finish_doc = persist_normalized_bindings_on_finish(finish_doc)
+    binding_blockers = validate_bindings_for_new_selection(finish_doc.get("svg_component_bindings") or [])
+    if binding_blockers:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "svg_component_binding_invalid", "blockers": binding_blockers},
+        )
+    finish_doc = sync_support_selection_from_bindings(finish_doc)
+    from services.acm_segmented_background_service import (
+        coalesce_segmented_background_for_finish,
+        persist_segmented_background_on_finish,
+    )
+
+    existing_finish_doc = (
+        payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    )
+    finish_doc = coalesce_segmented_background_for_finish(finish_doc, existing_finish_doc)
+    from services.acm_panel_domain_service import coalesce_acm_panel_domain_for_finish
+
+    layer_setup_raw = (
+        payload_raw.get("layer_role_setup") if isinstance(payload_raw.get("layer_role_setup"), dict) else None
+    )
+    finish_doc = coalesce_acm_panel_domain_for_finish(
+        finish_doc,
+        existing_finish_doc,
+        layer_role_setup=layer_setup_raw,
+    )
+    from services.letter_group_instance_authority import coalesce_letter_group_authority_for_finish
+
+    svg_source = payload_raw.get("svg_source") if isinstance(payload_raw.get("svg_source"), dict) else {}
+    svg_hash = str(svg_source.get("file_hash") or "").strip() or None
+    finish_doc = coalesce_letter_group_authority_for_finish(
+        finish_doc,
+        existing_finish_doc,
+        svg_hash=svg_hash,
+    )
+
+    try:
+        finish_doc = persist_segmented_background_on_finish(finish_doc)
+    except ValueError as exc:
+        detail = exc.args[0] if exc.args else {"error": "segmented_background_invalid"}
+        if not isinstance(detail, dict):
+            detail = {"error": str(detail)}
+        raise HTTPException(status_code=422, detail=detail) from exc
+    normalized = IntakeV4FinishSetup.model_validate(finish_doc)
+
+    # Validate against dossier (non-blocking — warnings stored in payload)
     from services.intake_v6_template_option_contract_service import validate_finish_setup_against_dossier
 
     template_code = record.template_code or "TPL-VOLUMETRIC-LETTERS"
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
-    payload_raw["finish_setup"] = normalized.model_dump(mode="json")
+    payload_raw["finish_setup"] = dump_intake_v4_finish_setup_for_persist(normalized)
+    from services.intake_v6_volum_aluminum_module_truth_service import (
+        apply_volum_aluminum_module_truth_to_workspace_payload,
+    )
+
+    await apply_volum_aluminum_module_truth_to_workspace_payload(
+        db,
+        template_code=template_code,
+        payload_raw=payload_raw,
+    )
+    if payload_raw.get("finish_setup", {}).get("volum_aluminum_module_template_code"):
+        code = payload_raw["finish_setup"]["volum_aluminum_module_template_code"]
+        normalized = normalized.model_copy(update={"volum_aluminum_module_template_code": code})
+    if payload_raw.get("layer_role_setup"):
+        apply_product_composition_recommendation(payload_raw)
     if dossier_warnings:
         payload_raw.setdefault("_dossier_validation_warnings", [])
         payload_raw["_dossier_validation_warnings"] = dossier_warnings
     from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
     apply_v6_pricing_preview_derived_state(payload_raw)
-    payload = _parse_payload(payload_raw)
-    return await _persist_payload(db, record, payload, current_user=current_user)
+    strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
+    apply_return_cant_runtime_product_truth_bridge(payload_raw)
+
+    # Job Product Truth: draft edit after confirm → stale_after_edit (pin retained).
+    from services.product_truth_job_confirm_service import mark_job_revision_stale_if_confirmed
+
+    mark_job_revision_stale_if_confirmed(payload_raw)
+
+    # Stale production DXF measurements when config fingerprint no longer matches.
+    try:
+        from services.acm_production_geometry_attachment import (
+            compute_config_fingerprint,
+            mark_stale_attachments_in_instance,
+        )
+
+        finish_live = payload_raw.get("finish_setup")
+        if isinstance(finish_live, dict):
+            for key in ("acm_panel_instance",):
+                inst = finish_live.get(key)
+                if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                    fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                    mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+            sel = finish_live.get("svg_support_selection")
+            if isinstance(sel, dict):
+                inst = sel.get("acm_panel_instance")
+                if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                    fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                    mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+            ms = finish_live.get("mounting_solution")
+            if isinstance(ms, dict):
+                cfg = ms.get("configuration")
+                if isinstance(cfg, dict):
+                    inst = cfg.get("acm_panel_instance")
+                    if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                        fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                        mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+    except Exception:
+        pass
+
+    return await _persist_payload_json_raw_for_product_truth_writer(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
 
 
 async def save_sheet_footprint_override_for_intake_v6_workspace(
@@ -670,7 +1700,7 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         code = str(exc)
         status_code = 422
         if code == "note_required":
-            detail = {"error": code, "message": "NotÄƒ operator obligatorie pentru footprint manual."}
+            detail = {"error": code, "message": "Notă operator obligatorie pentru footprint manual."}
         elif code == "footprint_below_eligible_area":
             detail = {
                 "error": code,
@@ -679,10 +1709,10 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         elif code == "footprint_source_unavailable":
             detail = {
                 "error": code,
-                "message": "Sursa footprint selectatÄƒ nu are valoare disponibilÄƒ Ã®n analiza curentÄƒ.",
+                "message": "Sursa footprint selectată nu are valoare disponibilă în analiza curentă.",
             }
         elif code == "invalid_footprint_source":
-            detail = {"error": code, "message": "SursÄƒ footprint invalidÄƒ."}
+            detail = {"error": code, "message": "Sursă footprint invalidă."}
         else:
             detail = {"error": code, "message": "Dimensiuni footprint invalide."}
         raise HTTPException(status_code=status_code, detail=detail) from exc
@@ -691,7 +1721,7 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         selected_footprint_source=selected_source,
         width_cm=request.width_cm,
         height_cm=request.height_cm,
-        reason=request.reason or f"SursÄƒ footprint: {selected_source}",
+        reason=request.reason or f"Sursă footprint: {selected_source}",
         applies_to=request.applies_to,
         use_for_quote_estimate=request.use_for_quote_estimate,
         created_by=current_user.email or str(current_user.id),
@@ -788,7 +1818,7 @@ async def save_internal_draft_quote_confirmation_for_workspace(
             status_code=422,
             detail={
                 "error": "finish_setup_not_confirmed",
-                "message": "FinalizeazÄƒ È™i confirmÄƒ finisajele Ã®n Review Ã®nainte de draft quote.",
+                "message": "Finalizează și confirmă finisajele în Review înainte de draft quote.",
                 "blockers": ["finish_setup_not_confirmed"],
             },
         )
@@ -830,12 +1860,16 @@ async def get_pricing_input_preview_for_workspace(
     from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
 
     record = await _get_record_or_404(db, workspace_id)
-    payload = _parse_payload(_json_loads(record.payload_json, {}))
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    payload = _parse_payload(payload_raw)
     assert_v6_analysis_boundary_or_raise(payload)
     return build_v6_pricing_input_preview(
         workspace_id=workspace_id,
         payload=payload,
         template_code=record.template_code,
+        payload_raw=payload_raw,
     )
 
 

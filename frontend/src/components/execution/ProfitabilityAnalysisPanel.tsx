@@ -205,18 +205,71 @@ export function ProfitabilityAnalysisPanel({
                 </div>
                 <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px] tracking-wide">
-                    Actual margin
+                    Known material cost
                   </p>
-                  <p className="mt-1 text-slate-200 font-semibold tabular-nums">
-                    {data.actual_margin_amount === null
-                      ? "unavailable until actual costing is available"
+                  <p
+                    className="mt-1 text-slate-200 font-semibold tabular-nums"
+                    data-testid="profitability-known-material-cost"
+                  >
+                    {data.actual_materials_total === null ||
+                    data.actual_materials_total === undefined
+                      ? "not captured"
                       : fmtMoney(
-                          data.actual_margin_amount,
+                          data.actual_materials_total,
                           data.accepted_currency,
                         )}
                   </p>
                 </div>
+                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                  <p className="text-slate-500 uppercase text-[10px] tracking-wide">
+                    Known margin (partial)
+                  </p>
+                  <p
+                    className="mt-1 text-slate-200 font-semibold tabular-nums"
+                    data-testid="profitability-known-margin"
+                  >
+                    {data.known_actual_margin === null ||
+                    data.known_actual_margin === undefined
+                      ? "unavailable — cost coverage incomplete"
+                      : fmtMoney(
+                          data.known_actual_margin,
+                          data.accepted_currency,
+                        )}
+                  </p>
+                </div>
+                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                  <p className="text-slate-500 uppercase text-[10px] tracking-wide">
+                    Cost coverage
+                  </p>
+                  <p
+                    className="mt-1 text-slate-200 font-semibold"
+                    data-testid="profitability-coverage-status"
+                  >
+                    {data.cost_coverage_status ?? "NOT_AVAILABLE"}
+                  </p>
+                </div>
               </div>
+            )}
+
+            {data.profitability_wording && data.profitability_wording.length > 0 && (
+              <ul
+                className="space-y-1 text-[11px] text-slate-400"
+                data-testid="profitability-wording"
+              >
+                {data.profitability_wording.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            )}
+
+            {data.has_execution_reality && (
+              <p className="text-[11px] text-slate-500">
+                Final actual margin unavailable until labor monetary cost is
+                authorized —{" "}
+                {data.actual_margin_amount === null
+                  ? "actual_margin remains unset (not final profit)"
+                  : fmtMoney(data.actual_margin_amount, data.accepted_currency)}
+              </p>
             )}
 
             {data.warnings.length > 0 && (

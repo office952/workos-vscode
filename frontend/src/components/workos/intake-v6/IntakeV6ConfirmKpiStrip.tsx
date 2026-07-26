@@ -1,5 +1,6 @@
 import { FileCheck, Layers, Ruler } from "lucide-react";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
+import { COST_INTERN_ESTIMATIV_LABEL } from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 function KpiCell({
@@ -17,7 +18,7 @@ function KpiCell({
 }) {
   return (
     <div
-      className="flex min-w-0 flex-1 items-center gap-2 rounded border border-[#243044]/80 bg-[#101827]/60 px-2.5 py-2"
+      className="flex min-w-0 flex-1 items-center gap-2 rounded border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2.5 py-2"
       data-testid={testId}
     >
       <Icon className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" aria-hidden />
@@ -55,12 +56,12 @@ export default function IntakeV6ConfirmKpiStrip({
 
   return (
     <div
-      className="flex flex-wrap gap-2 rounded-md border border-[#2A3548]/90 bg-[#0A0F1A]/80 p-2"
+      className="flex flex-wrap gap-2 rounded-md border border-wo-border-strong/90 bg-wo-surface-inset/80 p-2"
       data-testid="intake-v6-confirm-kpi-strip"
     >
       <KpiCell
         icon={FileCheck}
-        label="Cost intern referință"
+        label={COST_INTERN_ESTIMATIV_LABEL}
         value={
           loading || internalCostEur == null
             ? "—"

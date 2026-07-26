@@ -13,6 +13,8 @@ from schemas.ai_informational_layer import (
     AiInformationalSuggestionEnvelope,
     AiInformationalSuggestionItem,
 )
+from schemas.offer_scope import CanonicalSoldModule, OfferScope, OfferScopeMode
+from schemas.sold_scope_dependency import SoldScopeDependencyValidationResult
 
 INTAKE_V4_SCHEMA_VERSION = "1.0.0"
 PILOT_V4_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
@@ -61,10 +63,32 @@ class IntakeV4LayerRoleLayer(BaseModel):
     dominant_fill: str | None = None
 
 
+class IntakeV4LayerBindingContract(BaseModel):
+    layer_key: str
+    source_layer_name: str | None = None
+    detected_kind: str | None = None
+    suggested_semantic_role: str | None = None
+    confirmed_semantic_role: str | None = None
+    target_template_code: str | None = None
+    binding_status: Literal["pending", "suggested", "confirmed", "ignored"] = "pending"
+
+
 class IntakeV4LayerRoleSetup(BaseModel):
     confirmation_status: LayerSetupStatus = "missing"
     layers: list[IntakeV4LayerRoleLayer] = Field(default_factory=list)
+    layer_bindings: list[IntakeV4LayerBindingContract] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
+
+
+class IntakeV4SelectedLayerRef(BaseModel):
+    layer_id: str = Field(min_length=1)
+    role: Literal["vector_litere", "vector_logo"]
+    source: Literal["operator_confirmed_layer_role"] = "operator_confirmed_layer_role"
+    confirmed: bool = True
+
+
+class IntakeV4SvgRuntime(BaseModel):
+    selected_layer_refs: list[IntakeV4SelectedLayerRef] = Field(default_factory=list)
 
 
 class IntakeV4LetterGroupFinish(BaseModel):
@@ -82,16 +106,33 @@ class IntakeV4LetterGroupFinish(BaseModel):
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
     face_vinyl_roll_width_mm: float | None = None
+    backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = None
     confirmed: bool = False
 
 
 class IntakeV4ArtworkFinish(BaseModel):
     layer_key: str
     layer_name: str | None = None
+    display_name: str | None = None
+    source_layer_name: str | None = None
+    original_detected_label: str | None = None
+    position_hint: str | None = None
     execution_type: str | None = "needs_decision"
     color_mode: str | None = "unknown"
     print_transparency: Literal["standard", "translucent", "transparent"] = "standard"
     material_code: str | None = None
+    face_personalization_method: Literal["none_raw_plexi", "oracal", "print_laminate"] | None = None
+    face_roll_width_mm: float | None = None
+    print_roll_width_mm: float | None = None
+    lamination_roll_width_mm: float | None = None
+    print_required: bool | None = None
+    lamination_required: bool | None = None
+    roll_side_retraction_mm: float | None = None
+    roll_total_retraction_mm: float | None = None
+    face_oracal_code: str | None = None
+    face_oracal_name: str | None = None
+    print_material_code: str | None = None
+    lamination_material_code: str | None = None
     estimated_area_m2: float | None = None
     element_count: int | None = None
     distinct_fill_count: int | None = None
@@ -99,6 +140,7 @@ class IntakeV4ArtworkFinish(BaseModel):
     return_oracal_code: str | None = None
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
+    backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = None
     confirmed: bool = False
 
 
@@ -117,9 +159,42 @@ class IntakeV4CommercialInputs(BaseModel):
     manual_adjustment_ron: float = 0.0
 
 
+class IntakeV4MountingSolution(BaseModel):
+    """Canonical mounting solution or installation-template-only sentinel.
+
+    Product System support children use ``kind=product_system_template`` (or omit kind)
+    with a non-empty ``template_code``. Installation template without ACM/metal uses
+    ``kind=installation_template`` and ``template_code=None``.
+    """
+
+    kind: Literal["product_system_template", "installation_template"] | None = None
+    template_code: str | None = None
+    configuration: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _validate_mounting_solution_shape(self) -> IntakeV4MountingSolution:
+        kind = (self.kind or "").strip() or None
+        code = (self.template_code or "").strip() or None
+        if kind == "installation_template":
+            if code:
+                raise ValueError(
+                    "installation_template mounting_solution must not set template_code"
+                )
+            self.template_code = None
+            self.kind = "installation_template"
+            return self
+        if not code:
+            raise ValueError("product_system_template mounting_solution requires template_code")
+        self.template_code = code
+        if kind is None:
+            self.kind = "product_system_template"
+        return self
+
+
 class IntakeV4FinishSetup(BaseModel):
     face_finish_type: str | None = None
     face_vinyl_roll_width_mm: float | None = None
+    finish_target: Literal["face", "cant", "artwork", "back", "all"] | None = None
     return_finish_type: str | None = None
     volum_aluminum_module_template_code: str | None = None
     return_oracal_code: str | None = None
@@ -140,6 +215,11 @@ class IntakeV4FinishSetup(BaseModel):
     psu_configuration: list[int] = Field(default_factory=list)
     psu_allocation_status: str | None = None
     letter_group_finishes: list[IntakeV4LetterGroupFinish] = Field(default_factory=list)
+    # Write authority for letter groups (JSON document — no DB migration).
+    # Legacy letter_group_finishes is one-way projection for old consumers.
+    letter_group_instances: list[dict[str, Any]] = Field(default_factory=list)
+    # Minimal placement relations (letters → wall/acm/frame/totem_face/none).
+    component_placements: list[dict[str, Any]] = Field(default_factory=list)
     artwork_finishes: list[IntakeV4ArtworkFinish] = Field(default_factory=list)
     artwork_complexity_decisions: list[IntakeV4ArtworkComplexityDecision] = Field(default_factory=list)
     backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = "forex_10_no_bevel"
@@ -147,8 +227,29 @@ class IntakeV4FinishSetup(BaseModel):
     mounting_template_enabled: bool | None = None
     mounting_template_area_m2: float | None = None
     mounting_template_material_type: Literal["forex", "paper"] | None = None
+    mounting_scope: (
+        Literal[
+            "none",
+            "preparation_only",
+            "preparation_and_site_installation",
+            "no_mounting",
+            "mounting_included",
+            "mounting_external",
+            "to_be_decided",
+        ]
+        | None
+    ) = None
+    site_installation_included: bool | None = None
+    mounting_solution: IntakeV4MountingSolution | None = None
     mounting_system: Literal["direct_wall", "steel_bars", "aluminum_bars", "acm_panel"] | None = None
     mounting_bar_profile: str | None = None
+    support_type: str | None = None
+    # Modular process config (typed Intake → ProductDefinition → resolver). Not pricing.
+    mains_cable_length_m: float | None = None
+    power_supply_service_corner: (
+        Literal["TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT", "MANUAL_CONFIRMED"] | None
+    ) = None
+    service_screw_finish: Literal["NATURAL", "PAINTED_TO_MATCH_CANT"] | None = None
     emblem_lighting_mode: Literal["excluded", "area_lit", "needs_decision"] = "area_lit"
     letter_led_module_count: int | None = None
     emblem_led_module_count: int | None = None
@@ -156,6 +257,28 @@ class IntakeV4FinishSetup(BaseModel):
     commercial_inputs: IntakeV4CommercialInputs | None = None
     confirmed: bool = False
     internal_draft_quote_confirmed: bool = False
+    # Component-aware SVG assignment (Product System authority). JSON document — no DB migration.
+    svg_component_bindings: list[dict[str, Any]] = Field(default_factory=list)
+    # Typed Alucobond/support selection (synced from SUPPORT_CONTOUR binding; must not be dropped).
+    svg_support_selection: dict[str, Any] | None = None
+    # Technical wall fixing system (Brat otel vertical, …) — independent of commercial mounting_scope.
+    mounting_fixing_system: dict[str, Any] | None = None
+    # ACP shell-common electrical + per-zone illumination intents (guarded; no invented LED/PSU qty).
+    acp_electrical_configuration: dict[str, Any] | None = None
+    # Nested multi-panel ACM/ACP assembly (JSON document — no DB migration).
+    # Analyzer may write PROPOSED; only operator CONFIRMED is PD/Aggregate authority.
+    segmented_background: dict[str, Any] | None = None
+    # Generic ACM panel component instance (reusable Component Template truth).
+    # finish_setup remains Intake transport; identity lives on acm_panel_instance.
+    acm_panel_instance: dict[str, Any] | None = None
+    # Explicit domain write intent — omit/accidental ≠ clear; no blind SUPPORT preserve.
+    acm_panel_domain_action: Literal["preserve", "upsert", "clear"] | None = None
+    # ACM boxed composition XOR (Decision A) — must survive workspace payload parse/dump.
+    # none = panel-alone offerable root; letters = Letters↔ACM connection CPP gate.
+    applied_content: Literal["none", "letters", "logo"] | None = None
+    # Letters↔ACM outbox layer (integral m²) — preferred qty for connection mp lines.
+    letters_layer_outbox_m2: float | None = None
+    letters_layer_outbox_source: str | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):
@@ -183,16 +306,27 @@ class IntakeV4WorkspacePayload(BaseModel):
     product_binding: IntakeV4ProductBinding
     intake_request_code: str | None = None
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
     work_intake_context: dict[str, Any] = Field(default_factory=dict)
     svg_source: IntakeV4SvgSource | None = None
+    svg: IntakeV4SvgRuntime | None = None
     svg_source_text: str | None = None
     svg_analysis_json: dict[str, Any] | None = None
     path_geometry_summary: dict[str, Any] | None = None
     quote_geometry: dict[str, Any] | None = None
     layer_role_setup: IntakeV4LayerRoleSetup | None = None
+    layer_role_review: dict[str, Any] | None = None
+    product_composition_recommendation: dict[str, Any] | None = None
+    product_composition_confirmed: dict[str, Any] | None = None
+    product_truth: dict[str, Any] | None = None
+    terminology_mode: str | None = None
     finish_setup: IntakeV4FinishSetup | None = None
+    offer_scope: OfferScope | None = None
+    offer_scope_confirmed: dict[str, Any] | None = None
+    offer_scope_dependency_validation: SoldScopeDependencyValidationResult | None = None
     sheet_quote_override: dict[str, Any] | None = None
 
 
@@ -203,6 +337,8 @@ class IntakeV4WorkspaceCreateRequest(BaseModel):
     job_title: str | None = None
     intake_request_code: str | None = None
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
 
@@ -210,8 +346,24 @@ class IntakeV4WorkspaceCreateRequest(BaseModel):
 class IntakeV4EnsureWorkspaceForIntakeRequestBody(BaseModel):
     intake_request_code: str = Field(min_length=1, max_length=64)
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
+
+
+class IntakeV4ProductCompositionConfirmationRequest(BaseModel):
+    confirmed: bool = True
+    items: list[dict[str, Any]] = Field(default_factory=list)
+    operator_note: str | None = None
+
+
+class IntakeV4OfferScopeSaveRequest(BaseModel):
+    mode: OfferScopeMode
+    sold_modules: list[CanonicalSoldModule] = Field(default_factory=list)
+    confirmed: bool = True
+    operator_note: str | None = None
+    dependency_confirmation_codes: list[str] = Field(default_factory=list)
 
 
 class IntakeV4WorkspaceResponse(BaseModel):
@@ -488,6 +640,8 @@ class IntakeV4MaterialQuantityRow(BaseModel):
     estimated_cost: float | None = None
     confidence: str = "estimate_for_quote"
     consumption_mode: Literal["quote_estimate"] = "quote_estimate"
+    source_part_ids: list[str] = Field(default_factory=list)
+    trace_markers: list[str] = Field(default_factory=list)
 
 
 class IntakeV4MaterialBreakdownTotals(BaseModel):
@@ -788,6 +942,8 @@ class IntakeV4QuoteHandoffPreviewResponse(BaseModel):
     operator_confirmation_complete: bool = False
     fatal_blockers: list[str] = Field(default_factory=list)
     review_warnings: list[str] = Field(default_factory=list)
+    # Aggregate info traces (dossier/authority/identity) — visible, never gate accept/convert/production.
+    diagnostic_warnings: list[str] = Field(default_factory=list)
     client_send_allowed: bool = False
     accept_allowed: bool = False
     convert_to_order_allowed: bool = False
@@ -1006,7 +1162,11 @@ class IntakeV4TemplateFormContractResponse(BaseModel):
     alignment_status: Literal["aligned", "partial", "blocked"] = "partial"
     template_active: bool = False
     dossier_status: str | None = None
-    dossier_source: Literal["product_blueprint_dossier", "static_contract_fallback"] = "static_contract_fallback"
+    dossier_source: Literal[
+        "product_blueprint_dossier",
+        "static_contract_fallback",
+        "canonical_template_contract",
+    ] = "static_contract_fallback"
     ui_must_not_invent_final_options: bool = True
     variant_fields: list[IntakeV4TemplateFormContractField] = Field(default_factory=list)
     canonical_rows: list[IntakeV4TemplateContractCanonicalRow] = Field(default_factory=list)

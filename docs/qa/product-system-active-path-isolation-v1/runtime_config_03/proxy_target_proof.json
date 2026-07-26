@@ -1,0 +1,10 @@
+{
+  "proof": "GET http://127.0.0.1:3000/api/v1/entities/intake_requests?limit=3",
+  "status": 200,
+  "vite_config_default": "http://127.0.0.1:8001",
+  "backend_direct_health": "http://127.0.0.1:8001/health → healthy",
+  "manual_BACKEND_PORT_required": false,
+  "restart_cycle_1_intake": 200,
+  "restart_cycle_2_intake": 200,
+  "classification": "PASS"
+}

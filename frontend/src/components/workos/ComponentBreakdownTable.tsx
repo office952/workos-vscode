@@ -49,24 +49,24 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
   const detailsId = `cbd-details-${comp.component_id ?? index}`;
 
   return (
-    <div className="border border-[#2A3548] rounded-lg overflow-hidden bg-[#1A2236]">
+    <div className="border border-wo-border-strong rounded-lg overflow-hidden bg-wo-surface-raised">
       {/* Header row */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={detailsId}
-        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-[#202B42] transition-colors text-left"
+        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-wo-hover transition-colors text-left"
       >
-        <span className="text-slate-400 shrink-0">
+        <span className="text-muted-foreground shrink-0">
           {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </span>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[12px] font-semibold text-slate-100 truncate">{title}</span>
+            <span className="text-[12px] font-semibold text-foreground truncate">{title}</span>
             {subtitle && (
-              <span className="text-[10px] font-mono text-slate-500 shrink-0">{subtitle}</span>
+              <span className="text-[10px] font-mono text-muted-foreground shrink-0">{subtitle}</span>
             )}
             {errors.length > 0 && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold rounded bg-red-900/40 text-red-300 border border-red-700/60 shrink-0">
@@ -83,7 +83,7 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
               </span>
             )}
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5">
+          <div className="text-[10px] text-muted-foreground mt-0.5">
             {comp.component_id ? `ID: ${comp.component_id}` : ""}
           </div>
         </div>
@@ -91,20 +91,20 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
         {/* Cost trio */}
         <div className="hidden sm:flex items-center gap-4 text-[11px] shrink-0">
           <div className="text-right">
-            <div className="text-slate-500 text-[9px] uppercase">Material</div>
-            <div className="text-slate-200 font-mono tabular-nums">
+            <div className="text-muted-foreground text-[9px] uppercase">Material</div>
+            <div className="text-foreground font-mono tabular-nums">
               {formatNumber(comp.material_cost)}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-slate-500 text-[9px] uppercase">Operații</div>
-            <div className="text-slate-200 font-mono tabular-nums">
+            <div className="text-muted-foreground text-[9px] uppercase">Operații</div>
+            <div className="text-foreground font-mono tabular-nums">
               {formatNumber(comp.operation_cost)}
             </div>
           </div>
           <div className="text-right min-w-[80px]">
-            <div className="text-slate-500 text-[9px] uppercase">Total</div>
-            <div className="text-slate-100 font-bold font-mono tabular-nums">
+            <div className="text-muted-foreground text-[9px] uppercase">Total</div>
+            <div className="text-foreground font-bold font-mono tabular-nums">
               {formatNumber(comp.total_component_cost)}
             </div>
           </div>
@@ -112,24 +112,24 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
 
         {/* Mobile: just the total */}
         <div className="sm:hidden text-right shrink-0">
-          <div className="text-slate-500 text-[9px] uppercase">Total</div>
-          <div className="text-slate-100 font-bold font-mono text-[12px]">
+          <div className="text-muted-foreground text-[9px] uppercase">Total</div>
+          <div className="text-foreground font-bold font-mono text-[12px]">
             {formatNumber(comp.total_component_cost)}
           </div>
         </div>
       </button>
 
       {/* Mobile: cost trio visible below header */}
-      <div className="sm:hidden flex items-center justify-around gap-2 px-3 pb-2 border-t border-[#2A3548]/50 text-[10px]">
+      <div className="sm:hidden flex items-center justify-around gap-2 px-3 pb-2 border-t border-wo-border-strong/50 text-[10px]">
         <div className="text-center">
-          <div className="text-slate-500 text-[9px] uppercase">Material</div>
-          <div className="text-slate-200 font-mono tabular-nums">
+          <div className="text-muted-foreground text-[9px] uppercase">Material</div>
+          <div className="text-foreground font-mono tabular-nums">
             {formatNumber(comp.material_cost)}
           </div>
         </div>
         <div className="text-center">
-          <div className="text-slate-500 text-[9px] uppercase">Operații</div>
-          <div className="text-slate-200 font-mono tabular-nums">
+          <div className="text-muted-foreground text-[9px] uppercase">Operații</div>
+          <div className="text-foreground font-mono tabular-nums">
             {formatNumber(comp.operation_cost)}
           </div>
         </div>
@@ -137,17 +137,17 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
 
       {/* Expanded details */}
       {open && (
-        <div id={detailsId} className="border-t border-[#2A3548] bg-[#151C2E] p-3 space-y-3">
+        <div id={detailsId} className="border-t border-wo-border-strong bg-wo-surface-shell p-3 space-y-3">
           {/* Materials sub-table */}
           <div>
-            <div className="text-[10px] font-semibold uppercase text-slate-400 mb-1.5">
+            <div className="text-[10px] font-semibold uppercase text-muted-foreground mb-1.5">
               Materiale ({comp.materials_detail?.length ?? 0})
             </div>
             {comp.materials_detail && comp.materials_detail.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-[11px] min-w-[480px]">
                   <thead>
-                    <tr className="text-slate-500 text-left border-b border-[#2A3548]">
+                    <tr className="text-muted-foreground text-left border-b border-wo-border-strong">
                       <th className="py-1 pr-2 font-medium">Cod</th>
                       <th className="py-1 pr-2 font-medium text-right">Cantitate</th>
                       <th className="py-1 pr-2 font-medium">Unitate</th>
@@ -157,18 +157,18 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
                   </thead>
                   <tbody>
                     {comp.materials_detail.map((m, i) => (
-                      <tr key={i} className="border-b border-[#2A3548]/50 last:border-0">
-                        <td className="py-1 pr-2 font-mono text-slate-200 text-[10px]">
+                      <tr key={i} className="border-b border-wo-border-strong/50 last:border-0">
+                        <td className="py-1 pr-2 font-mono text-foreground text-[10px]">
                           {m.material_code || m.name || "—"}
                         </td>
-                        <td className="py-1 pr-2 text-slate-300 text-right tabular-nums">
+                        <td className="py-1 pr-2 text-muted-foreground text-right tabular-nums">
                           {formatNumber(m.quantity, 2)}
                         </td>
-                        <td className="py-1 pr-2 text-slate-400">{m.unit ?? "—"}</td>
-                        <td className="py-1 pr-2 text-slate-300 text-right tabular-nums">
+                        <td className="py-1 pr-2 text-muted-foreground">{m.unit ?? "—"}</td>
+                        <td className="py-1 pr-2 text-muted-foreground text-right tabular-nums">
                           {formatNumber(m.unit_cost)}
                         </td>
-                        <td className="py-1 text-slate-100 font-semibold text-right tabular-nums">
+                        <td className="py-1 text-foreground font-semibold text-right tabular-nums">
                           {formatNumber(m.line_total)}
                         </td>
                       </tr>
@@ -177,45 +177,45 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
                 </table>
               </div>
             ) : (
-              <p className="text-[11px] text-slate-500 italic">Nu există materiale.</p>
+              <p className="text-[11px] text-muted-foreground italic">Nu există materiale.</p>
             )}
           </div>
 
           {/* Operations sub-table */}
           <div>
-            <div className="text-[10px] font-semibold uppercase text-slate-400 mb-1.5">
+            <div className="text-[10px] font-semibold uppercase text-muted-foreground mb-1.5">
               Operații ({comp.operations_detail?.length ?? 0})
             </div>
             {comp.operations_detail && comp.operations_detail.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-[11px] min-w-[560px]">
                   <thead>
-                    <tr className="text-slate-500 text-left border-b border-[#2A3548]">
+                    <tr className="text-muted-foreground text-left border-b border-wo-border-strong">
                       <th className="py-1 pr-2 font-medium">Cod</th>
                       <th className="py-1 pr-2 font-medium">Centru lucru</th>
                       <th className="py-1 pr-2 font-medium text-right">Min. est.</th>
                       <th className="py-1 pr-2 font-medium text-right">Ore</th>
-                      <th className="py-1 pr-2 font-medium text-right">Tarif/h</th>
+                      <th className="py-1 pr-2 font-medium text-right">Efort intern/h</th>
                       <th className="py-1 font-medium text-right">Total linie</th>
                     </tr>
                   </thead>
                   <tbody>
                     {comp.operations_detail.map((op, i) => (
-                      <tr key={i} className="border-b border-[#2A3548]/50 last:border-0">
-                        <td className="py-1 pr-2 font-mono text-slate-200 text-[10px]">
+                      <tr key={i} className="border-b border-wo-border-strong/50 last:border-0">
+                        <td className="py-1 pr-2 font-mono text-foreground text-[10px]">
                           {op.code || op.name || "—"}
                         </td>
-                        <td className="py-1 pr-2 text-slate-300">{op.workcenter ?? "—"}</td>
-                        <td className="py-1 pr-2 text-slate-300 text-right tabular-nums">
+                        <td className="py-1 pr-2 text-muted-foreground">{op.workcenter ?? "—"}</td>
+                        <td className="py-1 pr-2 text-muted-foreground text-right tabular-nums">
                           {formatNumber(op.estimated_minutes, 0)}
                         </td>
-                        <td className="py-1 pr-2 text-slate-300 text-right tabular-nums">
+                        <td className="py-1 pr-2 text-muted-foreground text-right tabular-nums">
                           {formatNumber(op.hours, 2)}
                         </td>
-                        <td className="py-1 pr-2 text-slate-300 text-right tabular-nums">
+                        <td className="py-1 pr-2 text-muted-foreground text-right tabular-nums">
                           {formatNumber(op.rate_per_hour)}
                         </td>
-                        <td className="py-1 text-slate-100 font-semibold text-right tabular-nums">
+                        <td className="py-1 text-foreground font-semibold text-right tabular-nums">
                           {formatNumber(op.line_total)}
                         </td>
                       </tr>
@@ -224,7 +224,7 @@ function ComponentRow({ comp, index }: { comp: ComponentBreakdownItem; index: nu
                 </table>
               </div>
             ) : (
-              <p className="text-[11px] text-slate-500 italic">Nu există operații.</p>
+              <p className="text-[11px] text-muted-foreground italic">Nu există operații.</p>
             )}
           </div>
 
@@ -293,7 +293,7 @@ export default function ComponentBreakdownTable({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-[10px] text-slate-500 px-1">
+      <div className="flex items-center justify-between text-[10px] text-muted-foreground px-1">
         <span>{components.length} {components.length === 1 ? "componentă" : "componente"}</span>
         <span className="italic">Apasă pe rând pentru detalii</span>
       </div>
@@ -305,22 +305,22 @@ export default function ComponentBreakdownTable({
       </div>
 
       {/* Footer totals — sum of the already-calculated values */}
-      <div className="flex items-center justify-between gap-4 px-3 py-2 rounded-lg bg-[#0F1624] border border-[#2A3548] text-[11px]">
-        <span className="text-slate-400 font-semibold uppercase text-[10px]">
+      <div className="flex items-center justify-between gap-4 px-3 py-2 rounded-lg bg-wo-surface-inset border border-wo-border-strong text-[11px]">
+        <span className="text-muted-foreground font-semibold uppercase text-[10px]">
           Total componente
         </span>
         <div className="flex items-center gap-4 font-mono tabular-nums">
           <div className="text-right">
-            <div className="text-slate-500 text-[9px] uppercase">Material</div>
-            <div className="text-slate-200">{formatNumber(totalMaterial)}</div>
+            <div className="text-muted-foreground text-[9px] uppercase">Material</div>
+            <div className="text-foreground">{formatNumber(totalMaterial)}</div>
           </div>
           <div className="text-right">
-            <div className="text-slate-500 text-[9px] uppercase">Operații</div>
-            <div className="text-slate-200">{formatNumber(totalOperation)}</div>
+            <div className="text-muted-foreground text-[9px] uppercase">Operații</div>
+            <div className="text-foreground">{formatNumber(totalOperation)}</div>
           </div>
           <div className="text-right min-w-[80px]">
-            <div className="text-slate-500 text-[9px] uppercase">Total</div>
-            <div className="text-slate-100 font-bold">{formatNumber(totalCost)}</div>
+            <div className="text-muted-foreground text-[9px] uppercase">Total</div>
+            <div className="text-foreground font-bold">{formatNumber(totalCost)}</div>
           </div>
         </div>
       </div>

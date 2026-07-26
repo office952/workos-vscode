@@ -36,16 +36,11 @@ export default defineConfig(() => {
       port: parseInt(process.env.VITE_PORT || '3000'),
       allowedHosts: true as const, // Allow App Viewer proxy hostnames
       // Backend port can be overridden with BACKEND_PORT=... pnpm run dev.
-      // Default 8000 matches the canonical uvicorn launch for this
-      // workspace. The upstream timeout bounds the proxy wait so that a
-      // mis-pointed or slow backend surfaces as an explicit 504 to the
-      // browser fetch() call instead of an indefinite pending request.
-      // The frontend also has an AbortController-based client-side
-      // timeout in src/api/execution.ts::generatePlan, which is the
-      // authoritative UI-liveness guard against "stuck loading" states.
+      // Default 8000 matches AGENTS.md / WorkOS canonical authoring stack
+      // (publication + e2e-readiness). Stale :8001 processes often 404 those routes.
       proxy: {
         '/api': {
-          target: `http://localhost:${process.env.BACKEND_PORT || '8000'}`,
+          target: `http://127.0.0.1:${process.env.BACKEND_PORT || '8000'}`,
           changeOrigin: true,
           timeout: 30_000,
           proxyTimeout: 30_000,

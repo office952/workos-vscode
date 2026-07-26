@@ -1,0 +1,51 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "storage": "execution_plan.tasks_json operational_tasks[]",
+  "assignment_field": "assigned_employee_id",
+  "assignment_cardinality": 1,
+  "assignment_metadata": ["assignment_source", "assignment_updated_at"],
+  "assigned_employee_id_semantics": "LEGACY_SHORTCUT_PLUS_COORDINATOR — single plan-level assignee; mobile treats as 'mine'; not exclusive runtime owner when multi-session exists",
+  "plan_without_assignee": true,
+  "assignment_in_frozen_snapshot": false,
+  "assignment_mutates_snapshot_identity": false,
+  "multi_participants_on_plan": false,
+  "min_recommended_people_fields": false,
+  "parallelizable_field": false,
+  "operational_quantity_progress_on_plan": false,
+  "concept_table": [
+    {
+      "concept": "assigned_employee_id",
+      "model": "execution_plan.tasks_json[]",
+      "cardinality": "0..1",
+      "mutability": "RUNTIME_MUTABLE",
+      "authority": "Execution Plan operational layer",
+      "limitation": "Single assignee; conflated with ownership in mobile list filters"
+    },
+    {
+      "concept": "depends_on_task_ids",
+      "model": "execution_plan.tasks_json[]",
+      "cardinality": "0..N",
+      "mutability": "FROZEN_AT_MATERIALIZE",
+      "authority": "Product System → plan compiler",
+      "limitation": "Readiness gate — not staffing"
+    },
+    {
+      "concept": "process_type / machine_type",
+      "model": "execution_plan.tasks_json[]",
+      "cardinality": "1 each",
+      "mutability": "FROZEN",
+      "authority": "Product System operation mapping",
+      "limitation": "Feeds eligibility — not people count"
+    },
+    {
+      "concept": "participants",
+      "model": "NOT_ON_PLAN",
+      "cardinality": "N/A",
+      "mutability": "N/A",
+      "authority": "Execution Reality sessions only",
+      "limitation": "Derived participants_count — not persisted relation"
+    }
+  ],
+  "verdict": "SINGLE_ASSIGNEE_PLAN_WITH_RUNTIME_SESSION_MULTIplicity"
+}

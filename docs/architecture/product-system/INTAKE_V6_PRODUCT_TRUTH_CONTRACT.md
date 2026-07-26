@@ -12,6 +12,10 @@
 
 Acest document defineste contractul central pentru Product Truth in Intake V6.
 
+Field, row, section, material, commercial and downstream confirmation rules are specified by:
+
+`docs/architecture/product-system/PRODUCT_TRUTH_CONFIRMATION_POLICY.md`
+
 Principiile de baza sunt:
 
 - Intake V6 este locul in care se captureaza Product Truth pentru litere volumetrice.

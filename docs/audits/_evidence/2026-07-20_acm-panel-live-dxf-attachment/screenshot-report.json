@@ -1,0 +1,190 @@
+{
+  "ui": "http://127.0.0.1:3011",
+  "fixture": "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+  "mutating_writes_during_capture": [],
+  "note": "Expand/inspect should be read-only; upload not exercised on IV6",
+  "rows": [
+    {
+      "id": 1,
+      "name": "full_intake_before_upload",
+      "file": "01-full-intake-before-upload.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Full Review page; no golden DXF bound",
+      "observed": "page loaded",
+      "verdict": "PASS"
+    },
+    {
+      "id": 2,
+      "name": "inspector_upload_location",
+      "file": "02-inspector-upload-location.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Compact DXF block in Geometrie; no money",
+      "observed": "production geometry block visible",
+      "verdict": "PASS"
+    },
+    {
+      "id": 3,
+      "name": "panel_selector",
+      "file": "03-panel-selector.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Panel association control when multi-panel",
+      "observed": "select present",
+      "verdict": "PASS"
+    },
+    {
+      "id": 4,
+      "name": "upload_control",
+      "file": "04-upload-control.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Încarcă DXF control present; not auto-bound",
+      "observed": "file input present",
+      "verdict": "PASS"
+    },
+    {
+      "id": 5,
+      "name": "measured_single_fold",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "QA golden only — not bound to IV6",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 6,
+      "name": "measured_double_fold",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "QA golden only — not bound to IV6",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 7,
+      "name": "cut_v_breakdown_measured",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "via live-calc when measured; IV6 unavailable",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 8,
+      "name": "unknown_aci_warning",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "unit/runtime proof",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 9,
+      "name": "stale_warning",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "runtime proof after L1 change",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 10,
+      "name": "replace_action",
+      "file": null,
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "QA fixtures / runtime-proof (not IV6)",
+      "viewport": "n/a",
+      "expected": "UI label Înlocuiește when attachment exists",
+      "observed": "skipped on IV6 by owner fixture strategy",
+      "verdict": "SKIP_BY_POLICY",
+      "opinion": "Correct — do not fake measured UI on mismatched fixture"
+    },
+    {
+      "id": 11,
+      "name": "live_calc_source",
+      "file": "11-live-calc-source.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Source unavailable or proxy honesty; not silent 5.4 measured",
+      "observed": "panel captured",
+      "verdict": "PASS"
+    },
+    {
+      "id": 12,
+      "name": "preview_blockers",
+      "file": "12-preview-blockers.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "final/offer blocked messaging",
+      "observed": "false",
+      "verdict": "PASS"
+    },
+    {
+      "id": 13,
+      "name": "no_money_in_inspector",
+      "file": "13-no-money-inspector.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "No provisional pricing money in inspector",
+      "observed": "no money header in inspector",
+      "verdict": "PASS"
+    },
+    {
+      "id": 14,
+      "name": "confirm_continuity",
+      "file": "14-confirm-continuity.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Confirm still shows provisional / blocked",
+      "observed": "confirm step",
+      "verdict": "PASS"
+    },
+    {
+      "id": 15,
+      "name": "mobile_layout",
+      "file": "15-mobile-layout.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "390x844",
+      "expected": "Compact mobile Review",
+      "observed": "captured",
+      "verdict": "PASS"
+    },
+    {
+      "id": 16,
+      "name": "full_page_final",
+      "file": "16-full-page-final.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "390x844",
+      "expected": "Full page mobile",
+      "observed": "captured",
+      "verdict": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "composition_mode": "root_with_linked_segments",
+  "summary": {
+    "status": "ok",
+    "segments_count": 2,
+    "confirmed_segments_count": 0,
+    "suggested_binding_count": 0,
+    "missing_finish_count": 2,
+    "missing_binding_count": 2,
+    "root_offerable_activation": false,
+    "separate_quote_activation": false,
+    "task_graph_activation": false,
+    "product_truth_readiness_status": "partial_runtime_mapping"
+  },
+  "product_truth_readiness_summary": {
+    "status": "blocked",
+    "ready_segments_count": 0,
+    "partial_segments_count": 0,
+    "blocked_segments_count": 2,
+    "pricing_ready": false,
+    "quote_ready": false,
+    "order_ready": false,
+    "execution_ready": false,
+    "reason": "linked_segment_required_data_missing",
+    "warnings_count": 0
+  },
+  "segments": [
+    {
+      "segment_key": "logo-dreapta",
+      "owning_template_code": "TPL-VOLUMETRIC-LOGO_v1",
+      "binding_status": "missing",
+      "binding_reason": null,
+      "state": "layer_confirmed_finish_pending",
+      "finish": {
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "return_finish_type": "white_aluminum",
+        "return_depth_mm": 60.0,
+        "confirmed": false
+      },
+      "product_truth_readiness": {
+        "status": "blocked",
+        "blockers": [
+          {
+            "code": "LINKED_TEMPLATE_BINDING_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment has no linked template binding in runtime payload."
+          },
+          {
+            "code": "LINKED_SEGMENT_FINISH_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment artwork finish is missing or not confirmed."
+          }
+        ]
+      }
+    },
+    {
+      "segment_key": "logo-stanga",
+      "owning_template_code": "TPL-VOLUMETRIC-LOGO_v1",
+      "binding_status": "missing",
+      "binding_reason": null,
+      "state": "layer_confirmed_finish_pending",
+      "finish": {
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "return_finish_type": "white_aluminum",
+        "return_depth_mm": 60.0,
+        "confirmed": false
+      },
+      "product_truth_readiness": {
+        "status": "blocked",
+        "blockers": [
+          {
+            "code": "LINKED_TEMPLATE_BINDING_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment has no linked template binding in runtime payload."
+          },
+          {
+            "code": "LINKED_SEGMENT_FINISH_MISSING",
+            "severity": "blocker",
+            "message": "Linked segment artwork finish is missing or not confirmed."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, useRef, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
   type ProductTemplateEntity,
@@ -35,6 +35,11 @@ import { isDevAuthFallback } from "@/lib/mockGuard";
 import { ProductAggregateOverviewPanel } from "@/features/product-system/ProductAggregateOverviewPanel";
 import { useProductAggregate } from "@/features/product-system/useProductAggregate";
 import type { ProductAggregate } from "@/api/productAggregate";
+import { ProductTemplatePublicationPanel } from "@/features/product-system/ProductTemplatePublicationPanel";
+import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
+import { ComponentContractUsedByPanel } from "@/features/product-system/ComponentContractUsedByPanel";
+import { humanTemplateName } from "@/features/product-system/productSystemAdminDisplay";
+import { MODULE_PRODUS_CODE_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
 import {
   DossierSectionEditorShell,
   VariantsEditor,
@@ -532,7 +537,7 @@ function SectionNav({
   completionStates: Record<string, { status: SectionCompletionState }>;
 }) {
   return (
-    <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-2 space-y-0.5">
+    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-2 space-y-0.5">
       <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold px-2 py-1">
         Navigare Secțiuni
       </p>
@@ -796,14 +801,19 @@ function TemplateModuleLinksPanel({
             <div key={link.id} className="rounded-lg border border-emerald-800/25 bg-emerald-950/10 p-3 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-mono font-bold text-emerald-300 truncate">{link.module_template_code}</p>
+                  <p className="text-[11px] font-bold text-emerald-200 truncate">
+                    {humanTemplateName(link.module_template_code)}
+                  </p>
+                  <p className="text-[9px] font-mono text-emerald-300/80 truncate mt-0.5" title={MODULE_PRODUS_CODE_LABEL}>
+                    {link.module_template_code}
+                  </p>
                   <p className="text-[9px] text-slate-500 mt-0.5">{link.relation_type} · {link.pricing_mode} · {link.execution_mode}</p>
                 </div>
                 <span className="px-1.5 py-0.5 text-[8px] font-bold bg-slate-800 text-slate-400 border border-slate-700 rounded">
                   {link.active ? "ACTIV" : "INACTIV"}
                 </span>
               </div>
-              <div className="rounded-md bg-[#0D1321] border border-[#1E293B] px-2 py-1.5">
+              <div className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 px-2 py-1.5">
                 <p className="text-[9px] text-slate-500 uppercase font-bold">Trigger</p>
                 <p className="text-[10px] text-slate-300 font-mono">{link.trigger_field} = {formatModuleLinkValue(triggerValue)}</p>
               </div>
@@ -859,7 +869,7 @@ function StatusTransitionBar({
   const currentCfg = STATUS_CONFIG[current];
 
   return (
-    <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-purple-400" />
@@ -1226,6 +1236,22 @@ function DossierEditor({
 
       <TemplateModuleLinksPanel links={moduleLinks} />
 
+      {/* Authoring rail: same Product System authority — dossier is not a second SoT */}
+      <div className="space-y-3" data-testid="blueprint-dossier-authoring-rail">
+        <p className="text-[10px] text-slate-500 px-1">
+          Dossier = documentație + dovezi review + punți aprobate. Publicarea șablonului și E2E Readiness rămân pe Product Template.
+        </p>
+        <div id="dossier-rail-publication" data-testid="dossier-rail-publication">
+          <ProductTemplatePublicationPanel templateCode={dossier.template_code} />
+        </div>
+        <div id="dossier-rail-contracts" data-testid="dossier-rail-contracts">
+          <ComponentContractUsedByPanel templateCode={dossier.template_code} />
+        </div>
+        <div id="dossier-rail-e2e" data-testid="dossier-rail-e2e">
+          <ProductE2EReadinessPanel templateCode={dossier.template_code} />
+        </div>
+      </div>
+
       <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
@@ -1286,7 +1312,7 @@ function DossierEditor({
                 value={ownerRole}
                 onChange={(e) => { setOwnerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: product_manager"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
             <div>
@@ -1296,7 +1322,7 @@ function DossierEditor({
                 value={reviewerRole}
                 onChange={(e) => { setReviewerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: tech_lead"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
           </div>
@@ -1321,7 +1347,7 @@ function DossierEditor({
           {/* Section cards summary */}
           <div className="space-y-3">
             {visibleGroups.map((group) => (
-              <div key={group.key} className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+              <div key={group.key} className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 p-3">
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div>
                     <p className="text-[11px] font-bold text-slate-200">{group.title}</p>
@@ -1666,6 +1692,81 @@ function DossierEditor({
           </div>
         </div>
       </div>
+
+      {/* Sticky footer — Salvează → Validează → Verifică → Publică (template authority, not dossier SoT) */}
+      <div
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-3"
+        data-testid="blueprint-dossier-sticky-publish-footer"
+        role="region"
+        aria-label="Comenzi Dossier: salvează, validează, verifică, publică"
+      >
+        <div className="text-[10px] text-slate-400">
+          <span className="font-semibold text-slate-200">Șablon</span>
+          {" · "}
+          <span className="text-slate-300">{dossier.template_code}</span>
+          {" · "}
+          dossier {dossier.status} (documentație)
+          {" · "}
+          Salvează → Validează → Verifică → Publică
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to={`/product-system/products/${encodeURIComponent(dossier.template_code)}`}
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
+            data-testid="blueprint-dossier-footer-open-template"
+          >
+            Deschide șablonul
+          </Link>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!dirty || saving || hasJsonError || readOnly}
+            className={`rounded-lg px-3 py-1.5 text-[11px] font-bold ${
+              dirty && !saving && !hasJsonError && !readOnly
+                ? "bg-emerald-600 text-white"
+                : "bg-slate-800 text-slate-500"
+            }`}
+            data-testid="blueprint-dossier-footer-save"
+          >
+            Salvează
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-contracts");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-slate-600 px-3 py-1.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
+            data-testid="blueprint-dossier-footer-validate"
+          >
+            Validează
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-e2e");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-cyan-800/50 bg-cyan-950/30 px-3 py-1.5 text-[11px] font-semibold text-cyan-100 hover:bg-cyan-900/30"
+            data-testid="blueprint-dossier-footer-e2e"
+          >
+            Verifică
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-publication");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-slate-700/70 bg-slate-900/50 px-3 py-1.5 text-[11px] font-semibold text-slate-400 hover:bg-slate-900"
+            data-testid="blueprint-dossier-footer-publish"
+            title="Deschide poarta de publicare — Publică e dezactivată când Pregătire E2E e BLOCKED"
+            aria-label="Deschide publicare (poartă fail-closed în panou)"
+          >
+            Publică
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1758,6 +1859,8 @@ function BoundaryWarning() {
 // MAIN PAGE
 // ============================================================
 export default function BlueprintDossierStudio() {
+  const [searchParams] = useSearchParams();
+  const deepLinkTemplate = (searchParams.get("template") || "").trim();
   const [dossiers, setDossiers] = useState<BlueprintDossierEntity[]>([]);
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
   const [moduleLinks, setModuleLinks] = useState<ProductTemplateModuleLinkEntity[]>([]);
@@ -1929,17 +2032,21 @@ export default function BlueprintDossierStudio() {
 
   useEffect(() => {
     if (loading || templates.length === 0 || initialFocusDone.current) return;
+    const fromQuery = deepLinkTemplate
+      ? templates.find((t) => t.template_code === deepLinkTemplate) ?? null
+      : null;
     const preferred =
+      fromQuery ??
       templates.find((t) => isOwnerValidActiveTemplate(t.template_code)) ??
       activeTemplates[0] ??
       null;
     if (!preferred) return;
     setSelectedTemplateId(preferred.id);
-    setListTab("active");
+    setListTab(isActiveTemplateForQuote(preferred) ? "active" : "archived");
     const dossier = dossierByTemplateId.get(preferred.id);
     if (dossier) setSelectedDossierId(dossier.id);
     initialFocusDone.current = true;
-  }, [loading, templates, activeTemplates, dossierByTemplateId]);
+  }, [loading, templates, activeTemplates, dossierByTemplateId, deepLinkTemplate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2240,7 +2347,7 @@ export default function BlueprintDossierStudio() {
               />
             </div>
 
-            <div className="flex gap-1 bg-[#0D1321] p-1 rounded-lg border border-[#1E293B]">
+            <div className="flex gap-1 bg-[#111827] p-1 rounded-lg border border-[#1E293B]">
               <button
                 type="button"
                 onClick={() => setListTab("active")}

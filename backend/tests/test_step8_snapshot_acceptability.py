@@ -140,7 +140,8 @@ async def test_v6_pricing_review_uses_snapshot_v2_when_quote_unpriced(volumetric
     refreshed = await volumetric_v2_db.get(Quotes, quote.id)
     notes = json.loads(refreshed.notes)
     pricing_record = notes[INTAKE_V6_LINKAGE_JSON_KEY][PRICING_REVIEW_JSON_KEY]
-    assert float(pricing_record["total"]) == 12.5
+    expected_gross = round(12.5 * 1.21, 2)
+    assert float(pricing_record["total"]) == expected_gross
 
 
 @pytest.mark.asyncio

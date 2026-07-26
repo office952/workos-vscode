@@ -1,0 +1,12 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "risks": [
+    { "id": "R1", "risk": "Removing _has_active_session_by_other too early", "severity": "HIGH", "mitigation": "Split pools before changing guard" },
+    { "id": "R2", "risk": "assignee conflated with participants", "severity": "HIGH", "mitigation": "Option A semantics + projections" },
+    { "id": "R3", "risk": "complete_my_task closes operation prematurely", "severity": "MEDIUM", "mitigation": "FLEX-07 split" },
+    { "id": "R4", "risk": "TaskClarificationRequest reused as help", "severity": "HIGH", "mitigation": "Separate contract — explicit in plan" },
+    { "id": "R5", "risk": "JSON envelope unbounded growth", "severity": "MEDIUM", "mitigation": "Event rotation / table migration later" },
+    { "id": "R6", "risk": "Progress race over-count", "severity": "MEDIUM", "mitigation": "Optimistic version + cap" },
+    { "id": "R7", "risk": "Sandu special-case temptation", "severity": "LOW", "mitigation": "General contract only — PAUSED" }
+  ]
+}

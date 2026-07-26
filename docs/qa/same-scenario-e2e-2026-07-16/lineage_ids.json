@@ -1,0 +1,14 @@
+{
+  "intake_request_code": "IR-BUILD1-1784237119",
+  "workspace_id": "e1b8d1e8-0197-4723-882a-037c41c64d35",
+  "quote_id": 3,
+  "snapshot_code": "QSN2-2026-0002",
+  "snapshot_task_rules": 13,
+  "order_id": 92402,
+  "order_code": "ORD-IV6-V2-1784237123-3",
+  "execution_plan_id": 8,
+  "planned_tasks": 18,
+  "task_id_closed": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+  "ui_url": "http://127.0.0.1:3000/execution/92402",
+  "not_order_23099": true
+}

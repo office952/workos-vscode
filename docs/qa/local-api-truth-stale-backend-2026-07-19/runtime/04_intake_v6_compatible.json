@@ -1,0 +1,9 @@
+{
+  "label": "04_intake_v6_compatible",
+  "url": "http://127.0.0.1:3000/intake-v6/5ea6b916-4642-4d5d-afad-9cd020a28ee8/operator",
+  "banner": 0,
+  "title": null,
+  "apiBase": null,
+  "writeErr": "WRITE_ALLOWED",
+  "shotPath": "C:\\w\\psiso\\docs\\qa\\local-api-truth-stale-backend-2026-07-19\\screenshots\\04_intake_v6_compatible.png"
+}

@@ -1,0 +1,338 @@
+[
+  {
+    "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "quote_offerable": true,
+    "status": "offerable",
+    "capabilities": {
+      "root_offerable": true,
+      "linked_child_offerable": true,
+      "internal_only": false
+    },
+    "readiness": {
+      "technical": {
+        "status": "TECHNICALLY_READY",
+        "blockers": []
+      },
+      "pricing": {
+        "status": "PRICING_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "MISSING_PRICING_REGISTRY_ENTRY",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial price for material MAT-ACM-BOND-PANEL.",
+            "source_code": "MAT-ACM-BOND-PANEL",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_PRICING_REGISTRY_ENTRY",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial price for material MAT-SURUBURI-GEN.",
+            "source_code": "MAT-SURUBURI-GEN",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for ACM_BOXED_ASSEMBLY.",
+            "source_code": "ACM_BOXED_ASSEMBLY",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for ACM_PANEL_CUTTING.",
+            "source_code": "ACM_PANEL_CUTTING",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for ACM_V_GROOVE.",
+            "source_code": "ACM_V_GROOVE",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for ASSEMBLY.",
+            "source_code": "ASSEMBLY",
+            "target_route": "/inventory/pricing"
+          }
+        ]
+      },
+      "execution": {
+        "status": "EXECUTION_READY",
+        "blockers": []
+      },
+      "commercial": {
+        "status": "OFFERABLE",
+        "blockers": []
+      },
+      "rollup": "BLOCKED"
+    }
+  },
+  {
+    "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    "quote_offerable": false,
+    "status": "runtime_module",
+    "capabilities": {
+      "root_offerable": false,
+      "linked_child_offerable": true,
+      "internal_only": true
+    },
+    "readiness": {
+      "technical": {
+        "status": "TECHNICALLY_READY",
+        "blockers": []
+      },
+      "pricing": {
+        "status": "PRICING_READY",
+        "blockers": []
+      },
+      "execution": {
+        "status": "EXECUTION_READY",
+        "blockers": []
+      },
+      "commercial": {
+        "status": "INTERNAL_ONLY",
+        "blockers": [
+          {
+            "code": "INTERNAL_MODULE_ONLY",
+            "dimension": "commercial",
+            "severity": "blocking",
+            "owner": "policy",
+            "message": "Internal module is not root-offerable.",
+            "source_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "rollup": "INTERNAL"
+    }
+  },
+  {
+    "template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "quote_offerable": false,
+    "status": "archived",
+    "capabilities": {
+      "root_offerable": false,
+      "linked_child_offerable": false,
+      "internal_only": true
+    },
+    "readiness": {
+      "technical": {
+        "status": "DRAFT",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "technical",
+            "severity": "blocking",
+            "owner": "registry",
+            "message": "Template inactive in database.",
+            "source_code": "TPL-VOLUM-ALUMINIU_v1",
+            "target_route": "/product-system/products"
+          }
+        ]
+      },
+      "pricing": {
+        "status": "PRICING_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "registry",
+            "message": "Inactive templates cannot be pricing-ready.",
+            "source_code": "TPL-VOLUM-ALUMINIU_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "execution": {
+        "status": "EXECUTION_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "execution",
+            "severity": "blocking",
+            "owner": "execution",
+            "message": "Inactive templates are not execution-ready.",
+            "source_code": "TPL-VOLUM-ALUMINIU_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "commercial": {
+        "status": "DEPRECATED",
+        "blockers": [
+          {
+            "code": "TEMPLATE_DEPRECATED",
+            "dimension": "commercial",
+            "severity": "blocking",
+            "owner": "policy",
+            "message": "Template is inactive or archived.",
+            "source_code": "TPL-VOLUM-ALUMINIU_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "rollup": "DEPRECATED"
+    }
+  },
+  {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "quote_offerable": true,
+    "status": "offerable",
+    "capabilities": {
+      "root_offerable": true,
+      "linked_child_offerable": false,
+      "internal_only": false
+    },
+    "readiness": {
+      "technical": {
+        "status": "TECHNICALLY_READY",
+        "blockers": []
+      },
+      "pricing": {
+        "status": "PRICING_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "PRICING_NEEDS_REVIEW",
+            "dimension": "pricing",
+            "severity": "warning",
+            "owner": "pricing",
+            "message": "Material MAT-CONSUMABILE-MONTAJ requires owner-approved pricing.",
+            "source_code": "MAT-CONSUMABILE-MONTAJ",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_PRICING_REGISTRY_ENTRY",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial price for material MAT-LED-PSU-12V.",
+            "source_code": "MAT-LED-PSU-12V",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_PRICING_REGISTRY_ENTRY",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial price for material MAT-PROFIL-LATERAL-LITERE.",
+            "source_code": "MAT-PROFIL-LATERAL-LITERE",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for ASSEMBLY.",
+            "source_code": "ASSEMBLY",
+            "target_route": "/inventory/pricing"
+          },
+          {
+            "code": "MISSING_OPERATION_RATE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "pricing",
+            "message": "Missing commercial operation rate for QC_INSPECTION.",
+            "source_code": "QC_INSPECTION",
+            "target_route": "/inventory/pricing"
+          }
+        ]
+      },
+      "execution": {
+        "status": "EXECUTION_READY",
+        "blockers": []
+      },
+      "commercial": {
+        "status": "OFFERABLE",
+        "blockers": []
+      },
+      "rollup": "BLOCKED"
+    }
+  },
+  {
+    "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+    "quote_offerable": false,
+    "status": "archived",
+    "capabilities": {
+      "root_offerable": false,
+      "linked_child_offerable": false,
+      "internal_only": true
+    },
+    "readiness": {
+      "technical": {
+        "status": "DRAFT",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "technical",
+            "severity": "blocking",
+            "owner": "registry",
+            "message": "Template inactive in database.",
+            "source_code": "TPL-VOLUMETRIC-LOGO_v1",
+            "target_route": "/product-system/products"
+          }
+        ]
+      },
+      "pricing": {
+        "status": "PRICING_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "pricing",
+            "severity": "blocking",
+            "owner": "registry",
+            "message": "Inactive templates cannot be pricing-ready.",
+            "source_code": "TPL-VOLUMETRIC-LOGO_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "execution": {
+        "status": "EXECUTION_INCOMPLETE",
+        "blockers": [
+          {
+            "code": "TEMPLATE_INACTIVE",
+            "dimension": "execution",
+            "severity": "blocking",
+            "owner": "execution",
+            "message": "Inactive templates are not execution-ready.",
+            "source_code": "TPL-VOLUMETRIC-LOGO_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "commercial": {
+        "status": "DEPRECATED",
+        "blockers": [
+          {
+            "code": "TEMPLATE_DEPRECATED",
+            "dimension": "commercial",
+            "severity": "blocking",
+            "owner": "policy",
+            "message": "Template is inactive or archived.",
+            "source_code": "TPL-VOLUMETRIC-LOGO_v1",
+            "target_route": null
+          }
+        ]
+      },
+      "rollup": "DEPRECATED"
+    }
+  }
+]

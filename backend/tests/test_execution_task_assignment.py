@@ -35,7 +35,7 @@ async def _seed_employee(db_session, *, name: str = "Assignee") -> Employees:
     return emp
 
 
-async def _seed_plan(db_session, *, order_id: int = 901, task_id: str = "T-ASSIGN") -> ExecutionPlan:
+async def _seed_plan(db_session, *, order_id: int = 98101, task_id: str = "T-ASSIGN") -> ExecutionPlan:
     tasks = [
         {
             "task_id": task_id,
@@ -75,6 +75,13 @@ def _cleanup():
     app.dependency_overrides.clear()
 
 
+@pytest.fixture(autouse=True)
+def _isolate_app_overrides():
+    app.dependency_overrides.clear()
+    yield
+    app.dependency_overrides.clear()
+
+
 @pytest.fixture
 def admin_client(db_fixture):
     uid = f"admin-{uuid.uuid4().hex[:8]}"
@@ -86,13 +93,13 @@ def admin_client(db_fixture):
 def test_assign_task_persists_in_plan_json(db_fixture, db_session, admin_client):
     async def _setup():
         emp = await _seed_employee(db_session, name="Mobile Worker")
-        await _seed_plan(db_session, order_id=901, task_id="T-ASSIGN")
+        await _seed_plan(db_session, order_id=98101, task_id="T-ASSIGN")
         return emp.id
 
     employee_id = db_fixture.run(_setup())
 
     response = admin_client.patch(
-        "/api/v1/execution/plan/901/tasks/T-ASSIGN/assign",
+        "/api/v1/execution/plan/98101/tasks/T-ASSIGN/assign",
         json={"assigned_employee_id": employee_id},
     )
     assert response.status_code == 200, response.text
@@ -100,7 +107,7 @@ def test_assign_task_persists_in_plan_json(db_fixture, db_session, admin_client)
     assert body["assigned_employee_id"] == employee_id
     assert body["task"]["assigned_employee_id"] == employee_id
 
-    plan = admin_client.get("/api/v1/execution/plan/901")
+    plan = admin_client.get("/api/v1/execution/plan/98101")
     assert plan.status_code == 200
     tasks = plan.json()["tasks"]
     match = next(t for t in tasks if t["task_id"] == "T-ASSIGN")
@@ -120,13 +127,13 @@ def test_assign_task_visible_in_employee_mobile(db_fixture, db_session, admin_cl
         db_session.add(emp)
         await db_session.commit()
         await db_session.refresh(emp)
-        await _seed_plan(db_session, order_id=902, task_id="T-MOBILE")
+        await _seed_plan(db_session, order_id=98102, task_id="T-MOBILE")
         return emp.id
 
     employee_id = db_fixture.run(_setup())
 
     assign = admin_client.patch(
-        "/api/v1/execution/plan/902/tasks/T-MOBILE/assign",
+        "/api/v1/execution/plan/98102/tasks/T-MOBILE/assign",
         json={"assigned_employee_id": employee_id},
     )
     assert assign.status_code == 200, assign.text
@@ -146,11 +153,11 @@ def test_assign_task_visible_in_employee_mobile(db_fixture, db_session, admin_cl
 def test_assign_completed_task_rejected(db_fixture, db_session, admin_client):
     async def _setup():
         emp = await _seed_employee(db_session)
-        await _seed_plan(db_session, order_id=903, task_id="T-DONE")
+        await _seed_plan(db_session, order_id=98103, task_id="T-DONE")
         db_session.add(
             ExecutionReality(
-                order_id=903,
-                order_code="ORD-903",
+                order_id=98103,
+                order_code="ORD-98103",
                 tasks_json=json.dumps(
                     [
                         {
@@ -168,7 +175,7 @@ def test_assign_completed_task_rejected(db_fixture, db_session, admin_client):
 
     employee_id = db_fixture.run(_setup())
     response = admin_client.patch(
-        "/api/v1/execution/plan/903/tasks/T-DONE/assign",
+        "/api/v1/execution/plan/98103/tasks/T-DONE/assign",
         json={"assigned_employee_id": employee_id},
     )
     assert response.status_code == 409, response.text
@@ -177,12 +184,12 @@ def test_assign_completed_task_rejected(db_fixture, db_session, admin_client):
 def test_assign_unknown_task_404(db_fixture, db_session, admin_client):
     async def _setup():
         emp = await _seed_employee(db_session)
-        await _seed_plan(db_session, order_id=904, task_id="T-REAL")
+        await _seed_plan(db_session, order_id=98104, task_id="T-REAL")
         return emp.id
 
     employee_id = db_fixture.run(_setup())
     response = admin_client.patch(
-        "/api/v1/execution/plan/904/tasks/T-MISSING/assign",
+        "/api/v1/execution/plan/98104/tasks/T-MISSING/assign",
         json={"assigned_employee_id": employee_id},
     )
     assert response.status_code == 404, response.text

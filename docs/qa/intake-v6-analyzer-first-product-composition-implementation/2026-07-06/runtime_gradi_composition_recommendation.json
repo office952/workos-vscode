@@ -1,0 +1,81 @@
+﻿{
+    "status":  "needs_confirmation",
+    "composition_type":  "letters_plus_logo",
+    "source":  "analyzer_rules_v1",
+    "recommended_templates":  [
+                                  {
+                                      "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                      "role_in_composition":  "letters",
+                                      "reason":  "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+                                      "source_layer_ids":  [
+                                                               "pseudo:maria",
+                                                               "pseudo:soare",
+                                                               "pseudo:ana",
+                                                               "pseudo:gradinita"
+                                                           ],
+                                      "confidence":  "high",
+                                      "status":  "suggested"
+                                  },
+                                  {
+                                      "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                      "role_in_composition":  "logo_vector_atipic",
+                                      "reason":  "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+                                      "source_layer_ids":  [
+                                                               "logo-stanga",
+                                                               "logo-dreapta"
+                                                           ],
+                                      "confidence":  "high",
+                                      "status":  "suggested"
+                                  }
+                              ],
+    "composition_items":  [
+                              {
+                                  "composition_item_id":  "letters",
+                                  "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                  "component_role":  "volumetric_letters",
+                                  "source_layer_ids":  [
+                                                           "pseudo:maria",
+                                                           "pseudo:soare",
+                                                           "pseudo:ana",
+                                                           "pseudo:gradinita"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "pseudo:maria",
+                                                           "pseudo:soare",
+                                                           "pseudo:ana",
+                                                           "pseudo:gradinita"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              },
+                              {
+                                  "composition_item_id":  "logo",
+                                  "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                  "component_role":  "volumetric_logo",
+                                  "source_layer_ids":  [
+                                                           "logo-stanga",
+                                                           "logo-dreapta"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "logo-stanga",
+                                                           "logo-dreapta"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              }
+                          ],
+    "shared_modules_policy":  {
+                                  "dedupe_common_operations":  true,
+                                  "graphic_verification_scope":  "assembly",
+                                  "file_preparation_scope":  "assembly",
+                                  "light_test_scope":  "assembly",
+                                  "packaging_scope":  "assembly"
+                              },
+    "blockers":  [
+
+                 ],
+    "warnings":  [
+
+                 ],
+    "generated_at":  "2026-07-05T21:53:57.811424+00:00"
+}

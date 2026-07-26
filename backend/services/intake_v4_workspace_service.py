@@ -41,12 +41,18 @@ from services.intake_v4_layer_role_service import (
     apply_layer_role_updates,
     build_layer_role_setup_from_path_summary,
     merge_layer_roles_after_reupload,
+    selected_layer_refs_runtime_state,
+    sync_selected_layer_refs_on_payload,
 )
 from services.intake_v4_product_system_service import (
     build_binding_response,
     resolve_product_template_or_raise,
 )
 from services.intake_v4_production_preview_service import build_v4_task_preview_response
+from services.return_cant_product_truth_bridge import (
+    apply_return_cant_runtime_product_truth_bridge,
+    clear_return_cant_runtime_product_truth,
+)
 
 
 def _utcnow() -> datetime:
@@ -79,6 +85,10 @@ def _layer_setup_from_payload(raw: dict[str, Any]) -> IntakeV4LayerRoleSetup | N
     if not isinstance(setup, dict):
         return None
     return IntakeV4LayerRoleSetup.model_validate(setup)
+
+
+def _sync_selected_layer_refs(payload_raw: dict[str, Any]) -> None:
+    sync_selected_layer_refs_on_payload(payload_raw, _layer_setup_from_payload(payload_raw))
 
 
 def _derive_readiness_status(payload: IntakeV4WorkspacePayload) -> str:
@@ -141,6 +151,24 @@ async def _persist_payload(
     current_user: UserResponse,
 ) -> IntakeV4WorkspaceResponse:
     record.payload_json = _json_dumps(payload.model_dump(mode="json"))
+    record.readiness_status = _derive_readiness_status(payload)
+    record.status = _derive_workspace_status(record.readiness_status)
+    record.updated_by_user_id = current_user.id
+    record.updated_at = _utcnow()
+    await db.commit()
+    await db.refresh(record)
+    return _record_to_response(record)
+
+
+async def _persist_payload_json_raw(
+    db: AsyncSession,
+    record: IntakeV4WorkspaceRecord,
+    payload_raw: dict[str, Any],
+    *,
+    current_user: UserResponse,
+) -> IntakeV4WorkspaceResponse:
+    payload = _parse_payload(payload_raw)
+    record.payload_json = _json_dumps(payload_raw)
     record.readiness_status = _derive_readiness_status(payload)
     record.status = _derive_workspace_status(record.readiness_status)
     record.updated_by_user_id = current_user.id
@@ -266,10 +294,14 @@ async def upload_svg_to_intake_v4_workspace(
         "upload_status": "analyzed",
     }
     payload_raw["layer_role_setup"] = layer_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     response = await _persist_payload(db, record, payload, current_user=current_user)
@@ -335,14 +367,18 @@ async def save_analysis_bundle_for_intake_v4_workspace(
     payload_raw["svg_analysis_json"] = request.svg_analysis_json
     payload_raw["layer_role_setup"] = layer_setup_dict
     payload_raw["svg_source_text"] = validation.svg_text
+    _sync_selected_layer_refs(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
         payload_raw.pop("quote_geometry", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         from services.intake_v4_pricing_preview_sync_service import apply_v4_pricing_preview_derived_state
 
         apply_v4_pricing_preview_derived_state(payload_raw)
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
@@ -369,11 +405,13 @@ async def save_layer_roles_for_intake_v4_workspace(
     updates = [item.model_dump(mode="json") for item in request.layers]
     updated_setup = apply_layer_role_updates(setup, updates)
     payload_raw["layer_role_setup"] = updated_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
     _reset_internal_draft_quote_confirmation(payload_raw)
     if payload_raw.get("finish_setup"):
         from services.intake_v4_pricing_preview_sync_service import apply_v4_pricing_preview_derived_state
 
         apply_v4_pricing_preview_derived_state(payload_raw)
+        apply_return_cant_runtime_product_truth_bridge(payload_raw)
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 
@@ -428,7 +466,11 @@ async def save_finish_setup_for_intake_v4_workspace(
 
     assert_v4_analysis_boundary_or_raise(payload)
 
-    from services.intake_v4_finish_truth_service import normalize_intake_v4_finish_setup
+    from services.intake_v4_finish_truth_service import (
+        dump_intake_v4_finish_setup_for_persist,
+        normalize_intake_v4_finish_setup,
+        strip_global_backing_mirror_from_finish_dict,
+    )
 
     normalized = normalize_intake_v4_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
@@ -439,15 +481,21 @@ async def save_finish_setup_for_intake_v4_workspace(
     template_code = record.template_code or "TPL-VOLUMETRIC-LETTERS"
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
-    payload_raw["finish_setup"] = normalized.model_dump(mode="json")
+    payload_raw["finish_setup"] = dump_intake_v4_finish_setup_for_persist(normalized)
     if dossier_warnings:
         payload_raw.setdefault("_dossier_validation_warnings", [])
         payload_raw["_dossier_validation_warnings"] = dossier_warnings
     from services.intake_v4_pricing_preview_sync_service import apply_v4_pricing_preview_derived_state
 
     apply_v4_pricing_preview_derived_state(payload_raw)
-    payload = _parse_payload(payload_raw)
-    return await _persist_payload(db, record, payload, current_user=current_user)
+    strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
+    apply_return_cant_runtime_product_truth_bridge(payload_raw)
+    return await _persist_payload_json_raw(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
 
 
 async def save_sheet_footprint_override_for_intake_v4_workspace(

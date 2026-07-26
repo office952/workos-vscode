@@ -1,0 +1,12 @@
+{
+  "restored_frontend_stopped": true,
+  "restored_backend_stopped": true,
+  "ports_3021_closed": true,
+  "ports_8021_closed": true,
+  "junction_removed": false,
+  "junction_needed": false,
+  "source_node_modules_present": true,
+  "backup_preserved": true,
+  "restore_tree_preserved": true,
+  "classification": "PASS"
+}

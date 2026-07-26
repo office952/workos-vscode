@@ -6,6 +6,34 @@ Read this before editing the WorkOS monorepo. Human developers can use it too.
 
 
 
+## 0. Current WorkOS reference freeze
+
+
+
+**Status: `CURRENT_WORKOS_FROZEN_AS_REFERENCE` — PASS**
+
+
+
+Declaration: [`docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md`](docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md) · Manifest: [`docs/freeze/CURRENT_WORKOS_REFERENCE_FREEZE_MANIFEST.json`](docs/freeze/CURRENT_WORKOS_REFERENCE_FREEZE_MANIFEST.json).
+
+
+
+Product System laboratory feature work is **closed** at production cost / EIC. This repository is historical laboratory / reference evidence.
+
+
+
+Canonical Workflow-ADV contracts: [`docs/workflow-adv/README.md`](docs/workflow-adv/README.md).
+
+
+
+Before any Workflow-ADV **implementation** work, read [`docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`](docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md) (Cursor rule: `.cursor/rules/workflow-adv-smart-code.mdc`). Smart Code is **not** yet a mandatory CI stack — product code in Workflow-ADV remains **blocked** until `WORKFLOW_ADV_SMART_CODE_ENFORCEMENT_BOOTSTRAP` is accepted.
+
+
+
+Post-freeze changes in this repo are limited to reference correction, evidence preservation, security/emergency repair, or explicit owner instruction `CURRENT_WORKOS_REFERENCE_FREEZE_OFF`. Do **not** expand Product System features, Lab UI, offer/Execution, Supplier Import, or in-repo SVG/DXF/DWG parsers without that unfreeze.
+
+
+
 ## 1. Prime directive
 
 
@@ -23,6 +51,23 @@ Read this before editing the WorkOS monorepo. Human developers can use it too.
 
 
 When a build spec exists under `docs/qa/BUILD_*.md`, follow its stated boundary.
+
+
+
+## 1.1 Logic placement, assisted interpretation, and operator confirmation
+
+For volumetric letters artwork and Product Truth:
+
+1. **Desktop analysis app observes** — all SVG/DWG/DXF (and other graphic) file intelligence lives outside WorkOS. Do **not** implement or extend WorkOS parsers/analyzers/auto-grouping.
+2. **WorkOS consumes** a versioned external structured result (observed/proposed only); validates contract/provenance; never treats it as Product Truth authority.
+3. **AI may interpret** (future assistant) — proposes and asks; **never** writes Product Truth, Pricing, CostEngine, Offer, Order, Execution, or production handoff.
+4. **Operator confirms** — only confirmed truth is saved.
+5. **Honesty when uncertain** — stop and ask the smallest useful question; do not invent groups, fuzzy-match, or ship unconfirmed truth into pricing.
+6. **Initial grouping modes** — operator declares `by_layer` or `by_color`; do not auto-mix methods. Layer/color names and fixture labels (e.g. Maria, Soare) are observations/test data, not domain identity.
+7. **Confirmed-case learning** — save versioned, auditable precedents for reuse; global model changes require dataset/eval/owner GO, not a single click.
+8. **Deterministic validation** of the **consumed** external payload remains mandatory; geometric correctness of the desktop parse is not a WorkOS readiness claim.
+
+Canonical ownership: [`docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md`](docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md). Teaching semantics: [`docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md`](docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md). Build 2 GO suspended pending re-audit: [`docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md`](docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md).
 
 
 
@@ -60,6 +105,8 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 
 | `npm run test:e2e:workintake-finish` | Playwright finish-display smoke |
 
+| `npm run template-lifecycle:validate` | Template lifecycle gate (local; exit 2 on required BLOCKED) |
+
 
 
 ### Validation truth
@@ -79,6 +126,8 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 | Full `test:backend` | Known failures exist | Prefer targeted pytest files |
 
 | E2E finish smoke | Passes when seeded + stack live | See E2E section |
+
+| `template-lifecycle:validate` | Local gate ready; **no real CI pipeline in-repo yet** | Run before template-affecting work; currently fails on Metal Premount baseline until dedicated GO |
 
 
 
@@ -365,6 +414,8 @@ For non-trivial work:
 5. **Never declare `validate:frontend` green** until TS debt is resolved.
 
 6. Document env/fixture steps when E2E or DB seed is required.
+
+7. For page finalization and docs impact, follow **`docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md`** (DoD, Figma policy, Documentation Impact Gate, Romanian-first, status vocabularies). Terminology: **`docs/architecture/WORKOS_UI_TERMINOLOGY_REGISTRY.md`**. Truth metadata schemas: **`docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md`**. Do not declare a page `FINAL` without owner verification per that foundation.
 
 
 

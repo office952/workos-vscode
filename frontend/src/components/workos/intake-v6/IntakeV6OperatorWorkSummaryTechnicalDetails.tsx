@@ -24,7 +24,7 @@ export default function IntakeV6OperatorWorkSummaryTechnicalDetails({
     <div className={`${v6.card} mb-4`} data-testid={testId}>
       <h3 className="mb-2 text-[12px] font-bold uppercase tracking-wide">Contoare geometrie</h3>
       <dl className="grid gap-0 text-[12px]">
-        <div className="flex justify-between gap-4 border-b border-[#2A3548] py-2">
+        <div className="flex justify-between gap-4 border-b border-wo-border-strong py-2">
           <dt className="text-slate-500" title={INTAKE_V6_VECTOR_PRODUCTION_PARTS_HINT}>
             {INTAKE_V6_VECTOR_PRODUCTION_PARTS_LABEL}
           </dt>

@@ -1,0 +1,23 @@
+{
+  "task": "OWNER-DECISION-07",
+  "flex_01_recommendation": "OPTION_B",
+  "options_evaluated": {
+    "A_derive_from_sessions_only": { "flex_01": "viable", "limitation": "no pre-session participant" },
+    "B_principal_assignee_helpers_sessions": { "flex_01": "SELECTED", "benefit": "matches current system without new persistence" },
+    "C_participants_json": { "flex_01": "REJECTED", "owner_concern": "concurrency, weak integrity, blob authority" },
+    "D_normalized_table_now": { "flex_01": "REJECTED", "reason": "premature before read-model validation" }
+  },
+  "read_model_shape": {
+    "principal_employee_id": "from assigned_employee_id when present",
+    "principal_source": "assignment_source or derived claimed/assigned/manager",
+    "active_participants": "derived from active sessions employee_id + role",
+    "historical_participants": "derived from ended sessions",
+    "active_sessions": "existing session list per task",
+    "operation_status": "derive_task_status_from_sessions",
+    "collaboration_capability": {
+      "current_ui": "CURRENTLY_INDIVIDUAL_UI",
+      "backend": "BACKEND_MULTI_SESSION_CAPABLE"
+    }
+  },
+  "naming_note": "Final field names must follow repository conventions in FLEX-01 implementation"
+}

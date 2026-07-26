@@ -1,0 +1,19 @@
+{
+  "search_fields": ["display_name", "template_code", "family"],
+  "operator_filters": [
+    "all",
+    "ready",
+    "blocked",
+    "standalone",
+    "linked-child"
+  ],
+  "advanced_filters": ["internal", "deprecated", "experimental"],
+  "empty_states": {
+    "operational": "Nu exista produse operationale disponibile.",
+    "filtered": "Niciun produs nu corespunde cautarii sau filtrelor selectate."
+  },
+  "runtime_exercised": {
+    "search": "ACM",
+    "filters": ["ready", "blocked", "all"]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "location": "backend/parity/",
+  "location_rationale": "Pachet izolat dedicat fundației de paritate — separat de schemas/ (contracte API) și services/ (logică operațională). Nu există locație canonică anterioară pentru instrumentare paritate.",
+  "contracts": [
+    {
+      "name": "ParityResultContract",
+      "version": "parity_result/v1",
+      "file": "backend/parity/contracts.py"
+    },
+    {
+      "name": "ParityEventV1",
+      "version": "parity_event/v1",
+      "file": "backend/parity/contracts.py"
+    },
+    {
+      "name": "ReconciliationSheetContract",
+      "version": "reconciliation_sheet/v1",
+      "file": "backend/parity/contracts.py"
+    },
+    {
+      "name": "ParityMetricDefinition",
+      "version": "catalog/v1",
+      "file": "backend/parity/contracts.py",
+      "count": 20
+    }
+  ],
+  "enums_file": "backend/parity/enums.py",
+  "domains": 12,
+  "comparison_results": 12,
+  "severity_levels": 5,
+  "discrepancy_statuses": 7,
+  "event_types": 12,
+  "metrics": 20,
+  "feature_flags": 16,
+  "pure_modules": [
+    "backend/parity/normalization.py",
+    "backend/parity/fingerprint.py",
+    "backend/parity/severity.py",
+    "backend/parity/confidentiality.py",
+    "backend/parity/comparators/generic.py",
+    "backend/parity/comparators/employee_identity.py",
+    "backend/parity/comparators/competence.py",
+    "backend/parity/comparators/authorization.py",
+    "backend/parity/comparators/workcenter.py",
+    "backend/parity/comparators/resource.py",
+    "backend/parity/comparators/explicit_mapping.py",
+    "backend/parity/comparators/eligibility.py"
+  ],
+  "flags_module": "backend/parity/flags.py",
+  "isolated_from_global_settings": true
+}

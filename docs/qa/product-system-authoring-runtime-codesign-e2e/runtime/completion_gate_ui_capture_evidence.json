@@ -1,0 +1,40 @@
+{
+  "fe_capture": "http://127.0.0.1:3020",
+  "fe_canonical": "http://127.0.0.1:3000",
+  "backend_for_capture": "8000 (BACKEND_PORT=8000)",
+  "canonical_backend_contract": "8001",
+  "route": "http://127.0.0.1:3020/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+  "panels": {
+    "lifecycle_tab": 1,
+    "publication": 1,
+    "readiness": 1,
+    "dual_axes": 1,
+    "dossier_publication": 1,
+    "dossier_readiness": 1
+  },
+  "proxy_checks": [
+    {
+      "fe": "3020",
+      "path": "/api/v1/product-system/template-availability",
+      "status": 200,
+      "note": "BACKEND_PORT=8000 → current BE with publication routers"
+    },
+    {
+      "fe": "3020",
+      "path": "/api/v1/product-system/templates/TPL-VOLUMETRIC-LETTERS_v2/publication",
+      "status": 200
+    },
+    {
+      "fe": "3020",
+      "path": "/api/v1/product-system/e2e-readiness/TPL-VOLUMETRIC-LETTERS_v2/static",
+      "status": 200
+    },
+    {
+      "fe": "3000",
+      "path": "/api/v1/product-system/templates/TPL-VOLUMETRIC-LETTERS_v2/publication",
+      "status": 404,
+      "class": "ENVIRONMENT_FAILURE",
+      "note": "Vite default proxies to BE 8001; process on 8001 lacks publication routers (stale). Canonical contract remains 8001 — restart BE 8001 with current tree or launch FE with BACKEND_PORT=8000."
+    }
+  ]
+}

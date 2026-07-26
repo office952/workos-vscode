@@ -1,4 +1,4 @@
-﻿"""TPL-VOLUMETRIC-LETTERS â€” internal-only QC and quote-priced operation policy."""
+"""TPL-VOLUMETRIC-LETTERS — internal-only QC and quote-priced operation policy."""
 
 from __future__ import annotations
 

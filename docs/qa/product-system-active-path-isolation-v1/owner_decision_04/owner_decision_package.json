@@ -1,0 +1,86 @@
+{
+  "task": "OWNER-DECISION-04",
+  "status": "OWNER_CONFIRMED_EXPLICIT",
+  "verdict": "OWNER_PARITY_PILOT_CONFIRMED_REMAIN_TWO_CONSUMERS",
+  "confirmation_date": "2026-07-15",
+  "confirmation_source": "owner_chat_explicit_ok",
+  "next_task_sequence": ["RUNTIME-CONFIG-03", "UI-TRUTH-01", "APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN"],
+  "next_task_immediate": "RUNTIME-CONFIG-03",
+  "app_auth_06c_blocked_until": ["RUNTIME-CONFIG-03", "UI-TRUTH-01"],
+  "decisions": {
+    "P1_signal_quality": {
+      "choice": "A",
+      "label": "Parity signal useful only for observe-only evaluation",
+      "owner_confirmed": true
+    },
+    "P2_duplicate_volume": {
+      "choice": "A",
+      "label": "Duplicate volume acceptable only for ephemeral dev/test logs",
+      "owner_confirmed": true
+    },
+    "P3_actionable_classification": {
+      "choice": "CONFIRMED",
+      "label": "ACTIONABLE split into CONFIRMATION_REQUIRED, TECHNICAL_INVESTIGATION, EXPECTED_TRANSITION, POLICY_DECISION, DEFECT_PROVEN, INSUFFICIENT_DATA",
+      "owner_confirmed": true
+    },
+    "P4_sandu": {
+      "choice": "A",
+      "label": "Sandu read-only observe; no reconciliation, competence, authorization, mapping, or eligibility changes",
+      "owner_confirmed": true
+    },
+    "P5_two_consumer_limit": {
+      "choice": "A",
+      "label": "Pilot frozen at two request consumers: Employee Mobile available ops + eligibility endpoint",
+      "owner_confirmed": true
+    },
+    "P6_third_consumer": {
+      "choice": "DEFER",
+      "label": "CONS-REGISTRY-CATALOG-API not connected now; separate audit if revisited",
+      "owner_confirmed": true
+    },
+    "P7_observation_storage": {
+      "choice": "A",
+      "label": "No parity persistence",
+      "owner_confirmed": true
+    },
+    "P8_manager_visibility": {
+      "choice": "A",
+      "label": "No manager projection",
+      "owner_confirmed": true
+    },
+    "P9_production_use": {
+      "choice": "CONFIRMED",
+      "label": "All production and staging parity flags remain false",
+      "owner_confirmed": true
+    },
+    "P10_next_gate": {
+      "choice": "AMENDED_CONFIRMED",
+      "label": "Sequence: RUNTIME-CONFIG-03 → UI-TRUTH-01 → APP-AUTH-06C",
+      "owner_confirmed": true
+    }
+  },
+  "owner_amendments_confirmed": [
+    "no_enforcement",
+    "no_source_switch",
+    "no_migration",
+    "no_third_consumer",
+    "no_eligibility_modification",
+    "no_sandu_data_modification",
+    "no_production_parity_extension",
+    "no_persistence",
+    "no_manager_ui"
+  ],
+  "blocked_scope": [
+    "third_consumer_wiring",
+    "production_flags",
+    "persistence",
+    "manager_projection",
+    "enforcement",
+    "source_switch",
+    "migration",
+    "automatic_reconciliation",
+    "PROD-ARCH-01",
+    "MOBILE-INT-02"
+  ],
+  "explicit_owner_response_required": false
+}

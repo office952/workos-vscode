@@ -1,0 +1,28 @@
+{
+  "task_id": "PRODUCT_SYSTEM_CATALOG_COLLAPSE_V1",
+  "role": "admin",
+  "bucket_headings_absent": [
+    "product-system-catalog-bucket-current-products",
+    "product-system-catalog-bucket-candidate-products",
+    "product-system-catalog-bucket-component-first-sets",
+    "product-system-catalog-bucket-legacy-shared-modules",
+    "product-system-catalog-bucket-archived"
+  ],
+  "visible_templates": [
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "TPL-VOLUMETRIC-LETTERS_v2"
+  ],
+  "hidden_templates": [
+    "TPL-VOLUMETRIC-LOGO_v1",
+    "component-first-set"
+  ],
+  "filters_exercised": [
+    "ready",
+    "blocked"
+  ],
+  "console_errors": [],
+  "network_errors": [],
+  "selected_template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "url": "http://localhost:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "archived_unknown_behavior": "explicit_unavailable"
+}

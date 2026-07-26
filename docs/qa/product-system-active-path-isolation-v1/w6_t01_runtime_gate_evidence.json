@@ -1,0 +1,25 @@
+{
+  "gate": "W6-T01",
+  "timestamp_utc": "2026-07-14T23:40:34.998492+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "gate_order_id": 23099,
+  "read_only": true,
+  "checks": {
+    "task_truth": {
+      "status_code": 200,
+      "contract_version": "operator_task_truth/v1",
+      "task_count": 13,
+      "readiness_authority": "FROZEN_ORDER_SNAPSHOT_V2",
+      "production_release_status": "RELEASE_ALLOWED",
+      "root_component_role": "root_product",
+      "mounting_template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "logo_segment": "logo_instance_001",
+      "internal_cost_visibility": "available"
+    },
+    "deterministic": {
+      "first_count": 13,
+      "second_count": 13,
+      "plan_unchanged": true
+    }
+  }
+}

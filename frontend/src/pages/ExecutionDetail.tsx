@@ -52,19 +52,31 @@ import { operationalRegistryApi, type OperationResourceMapping } from "@/api/ope
 import { OperationRegistryMappingBadge } from "@/features/operational-registry/OperationRegistryMappingBadge";
 import RealityQualityBadge from "@/components/workos/RealityQualityBadge";
 import {
-  fetchOrderProductionBlueprint,
-  type ProductionBlueprintTask,
-} from "@/api/operatorProductionBlueprint";
+  fetchOperatorTaskTruth,
+  type OperatorTaskTruthResponse,
+  type OperatorTaskTruthTask,
+} from "@/api/operatorTaskTruth";
+import { OperatorProductionReleaseSummary } from "@/components/workos/OperatorProductionReleaseSummary";
+import { OperatorOwnerDecisionDetailsPanel } from "@/components/workos/OperatorOwnerDecisionDetailsPanel";
+import { OperatorStructuredActionError } from "@/components/workos/OperatorStructuredActionError";
 import {
   operationalReadinessBadgeClasses,
   operationalReadinessLabel,
 } from "@/lib/executionOperationalReadinessDisplay";
 import { ProfitabilityAnalysisPanel } from "@/components/execution/ProfitabilityAnalysisPanel";
-
-type BlueprintTaskReadiness = Pick<
-  ProductionBlueprintTask,
-  "is_startable" | "readiness_label" | "readiness_reasons" | "blocking_reasons"
->;
+import { PostJobTruthPanel } from "@/components/execution/PostJobTruthPanel";
+import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
+import {
+  indexOperatorTaskTruth,
+  taskTruthReadinessFromRuntime,
+  type TaskTruthReadiness,
+} from "@/lib/operatorTaskPresentation";
+import {
+  fetchOrderTaskCollaborationRead,
+  type OrderTaskCollaborationReadDTO,
+} from "@/api/collaboration";
+import OperatorTaskCollaborationPanel from "@/components/workos/collaboration/OperatorTaskCollaborationPanel";
+import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
 
 // Human-readable labels for plan-generation failure codes coming from the
 // backend. We keep the raw code visible alongside so the operator (and QA)
@@ -98,6 +110,10 @@ const REALITY_ERROR_LABELS: Record<string, string> = {
   task_missing_start: "Task-ul nu are timestamp de start — stare inconsistentă.",
   order_not_found: "Comanda nu a fost găsită.",
   task_not_ready: "Task-ul nu este pregătit pentru start — verifică readiness.",
+  production_release_blocked:
+    "Pornire blocată — decizii owner de producție nerezolvate la nivel de comandă.",
+  ORDER_SNAPSHOT_V2_MISSING: "Snapshot V2 lipsă pentru această comandă.",
+  ORDER_SNAPSHOT_V2_CORRUPT: "Snapshot V2 corupt — contactați administratorul.",
   unknown: "Eroare necunoscută la înregistrarea realității.",
 };
 
@@ -138,14 +154,14 @@ function computeActualMinutes(obs: RealityTaskRow | null): number | null {
 function statusBadgeCls(status: ExecutionStatus): string {
   switch (status) {
     case "OK":
-      return "bg-emerald-900/40 text-emerald-300 border-emerald-700";
+      return "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700";
     case "WARNING":
-      return "bg-amber-900/40 text-amber-300 border-amber-700";
+      return "bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700";
     case "CRITICAL":
-      return "bg-red-900/40 text-red-300 border-red-700";
+      return "bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700";
     case "UNCONFIRMED":
     default:
-      return "bg-slate-800/60 text-slate-400 border-slate-600";
+      return "bg-muted/60 text-muted-foreground border-slate-600";
   }
 }
 
@@ -199,9 +215,9 @@ const REASON_LABELS: Record<string, string> = {
 function ReasonBadge({ code }: { code: string }) {
   const label = REASON_LABELS[code] ?? code;
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-slate-800/60 text-slate-300 border-slate-700">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded border bg-muted/60 text-muted-foreground border-border">
       <span>{label}</span>
-      <span className="text-slate-500">[{code}]</span>
+      <span className="text-muted-foreground">[{code}]</span>
     </span>
   );
 }
@@ -235,9 +251,13 @@ export default function ExecutionDetail() {
   const [realityActionError, setRealityActionError] =
     useState<RealityActionError | null>(null);
   const [realityActionAt, setRealityActionAt] = useState<string | null>(null);
-  const [blueprintReadinessByTaskId, setBlueprintReadinessByTaskId] = useState<
-    Record<string, BlueprintTaskReadiness>
+  const [taskTruthByTaskId, setTaskTruthByTaskId] = useState<
+    Record<string, OperatorTaskTruthTask>
   >({});
+  const [taskTruthResponse, setTaskTruthResponse] = useState<OperatorTaskTruthResponse | null>(
+    null,
+  );
+  const [ownerDetailsOpen, setOwnerDetailsOpen] = useState(false);
   const [overrideReasonByTaskId, setOverrideReasonByTaskId] = useState<
     Record<string, string>
   >({});
@@ -292,19 +312,12 @@ export default function ExecutionDetail() {
           setPlan(null);
         }
         try {
-          const blueprint = await fetchOrderProductionBlueprint(parsedId);
-          const readinessMap: Record<string, BlueprintTaskReadiness> = {};
-          for (const task of blueprint.tasks) {
-            readinessMap[task.task_id] = {
-              is_startable: task.is_startable,
-              readiness_label: task.readiness_label,
-              readiness_reasons: task.readiness_reasons,
-              blocking_reasons: task.blocking_reasons,
-            };
-          }
-          setBlueprintReadinessByTaskId(readinessMap);
+          const truth = await fetchOperatorTaskTruth(parsedId);
+          setTaskTruthResponse(truth);
+          setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
         } catch {
-          setBlueprintReadinessByTaskId({});
+          setTaskTruthResponse(null);
+          setTaskTruthByTaskId({});
         }
         await loadRealityOnly(parsedId);
       } else {
@@ -319,6 +332,18 @@ export default function ExecutionDetail() {
     }
   }, [isValidId, parsedId, order_id, loadRealityOnly]);
 
+  const refreshTaskTruth = useCallback(async () => {
+    if (!isValidId) return;
+    try {
+      const truth = await fetchOperatorTaskTruth(parsedId);
+      setTaskTruthResponse(truth);
+      setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
+    } catch {
+      setTaskTruthResponse(null);
+      setTaskTruthByTaskId({});
+    }
+  }, [isValidId, parsedId]);
+
   useEffect(() => {
     void load();
   }, [load]);
@@ -330,32 +355,32 @@ export default function ExecutionDetail() {
         <div className="flex items-center gap-2">
           <Link
             to="/execution"
-            className="inline-flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-200"
+            className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Dashboard
           </Link>
-          <span className="text-slate-600">/</span>
-          <ActivitySquare className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">
+          <span className="text-wo-text-dim">/</span>
+          <ActivitySquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-[18px] font-bold text-foreground">
             Detaliu execuție
           </h1>
           {obs && (
-            <span className="text-[11px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">
+            <span className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
               {obs.order_code} · #{obs.order_id}
             </span>
           )}
         </div>
         <div className="flex items-center gap-3">
           {lastRefreshed && (
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-muted-foreground">
               Ultima reîmprospătare: {lastRefreshed}
             </span>
           )}
           <button
             onClick={() => void load()}
             disabled={loading || !isValidId}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-muted-foreground text-white transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -364,7 +389,7 @@ export default function ExecutionDetail() {
       </div>
 
       {error && (
-        <div className="bg-red-900/20 border border-red-800/60 rounded-md px-4 py-3 text-[12px] text-red-300">
+        <div className="bg-red-900/20 border border-red-800/60 rounded-md px-4 py-3 text-[12px] text-red-600 dark:text-red-300">
           Eroare la încărcarea datelor: {error}
         </div>
       )}
@@ -373,7 +398,7 @@ export default function ExecutionDetail() {
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-            <p className="text-[12px] text-slate-500">Se încarcă observabilitatea...</p>
+            <p className="text-[12px] text-muted-foreground">Se încarcă observabilitatea...</p>
           </div>
         </div>
       )}
@@ -381,11 +406,11 @@ export default function ExecutionDetail() {
       {obs && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Observability panel */}
-          <section className="bg-[#1A2236] border border-[#2A3548] rounded-lg">
-            <header className="flex items-center justify-between px-4 py-3 border-b border-[#2A3548]">
+          <section className="bg-wo-surface-raised border border-wo-border-strong rounded-lg">
+            <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
               <div className="flex items-center gap-2">
-                <ActivitySquare className="w-4 h-4 text-blue-400" />
-                <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
+                <ActivitySquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">
                   Observabilitate
                 </h2>
               </div>
@@ -397,9 +422,9 @@ export default function ExecutionDetail() {
             </header>
             <div className="p-4 space-y-4">
               {obs.status === "UNCONFIRMED" && (
-                <div className="flex items-start gap-2 bg-slate-800/40 border border-slate-700 rounded-md px-3 py-2">
-                  <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <p className="text-[12px] text-slate-300">
+                <div className="flex items-start gap-2 bg-muted/40 border border-border rounded-md px-3 py-2">
+                  <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-muted-foreground">
                     <strong>NECONFIRMAT</strong> — date incomplete. Backend-ul
                     nu are suficiente informații pentru a clasifica această
                     comandă.
@@ -414,10 +439,10 @@ export default function ExecutionDetail() {
                   role="alert"
                   className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2"
                 >
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <div className="text-[12px] text-amber-200">
                     <p className="font-semibold">Nu există execution plan</p>
-                    <p className="text-amber-300/80 mt-0.5">
+                    <p className="text-amber-600 dark:text-amber-300/80 mt-0.5">
                       Nu s-a generat un plan de execuție pentru această comandă.
                       Acțiunile sunt indisponibile până la generarea planului.
                     </p>
@@ -427,12 +452,12 @@ export default function ExecutionDetail() {
               {!obs.has_reality && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 bg-slate-800/40 border border-slate-700 rounded-md px-3 py-2"
+                  className="flex items-start gap-2 bg-muted/40 border border-border rounded-md px-3 py-2"
                 >
-                  <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <div className="text-[12px] text-slate-300">
+                  <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <div className="text-[12px] text-muted-foreground">
                     <p className="font-semibold">Nu există execution reality</p>
-                    <p className="text-slate-400 mt-0.5">
+                    <p className="text-muted-foreground mt-0.5">
                       Nu s-au înregistrat date reale de execuție pentru această
                       comandă. Raportarea de divergență este indisponibilă până
                       la existența datelor reale.
@@ -443,21 +468,21 @@ export default function ExecutionDetail() {
 
               {/* Presence grid */}
               <div className="grid grid-cols-3 gap-2 text-[11px]">
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Comandă</p>
-                  <p className={`mt-1 font-semibold ${obs.has_order ? "text-blue-300" : "text-slate-500"}`}>
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Comandă</p>
+                  <p className={`mt-1 font-semibold ${obs.has_order ? "text-blue-600 dark:text-blue-300" : "text-muted-foreground"}`}>
                     {obs.has_order ? "prezent" : "lipsă"}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Plan</p>
-                  <p className={`mt-1 font-semibold ${obs.has_plan ? "text-blue-300" : "text-slate-500"}`}>
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Plan</p>
+                  <p className={`mt-1 font-semibold ${obs.has_plan ? "text-blue-600 dark:text-blue-300" : "text-muted-foreground"}`}>
                     {obs.has_plan ? "prezent" : "lipsă"}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Realitate</p>
-                  <p className={`mt-1 font-semibold ${obs.has_reality ? "text-blue-300" : "text-slate-500"}`}>
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Realitate</p>
+                  <p className={`mt-1 font-semibold ${obs.has_reality ? "text-blue-600 dark:text-blue-300" : "text-muted-foreground"}`}>
                     {obs.has_reality ? "prezent" : "lipsă"}
                   </p>
                 </div>
@@ -465,23 +490,23 @@ export default function ExecutionDetail() {
 
               {/* Totals */}
               <div className="grid grid-cols-3 gap-2 text-[11px]">
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Planificat</p>
-                  <p className="mt-1 text-slate-200 font-semibold tabular-nums">
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Planificat</p>
+                  <p className="mt-1 text-foreground font-semibold tabular-nums">
                     {fmtMinutes(obs.plan_total_estimated_minutes)}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Actual</p>
-                  <p className="mt-1 text-slate-200 font-semibold tabular-nums">
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Actual</p>
+                  <p className="mt-1 text-foreground font-semibold tabular-nums">
                     {fmtMinutes(obs.reality_total_actual_minutes)}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-                  <p className="text-slate-500 uppercase text-[9px] tracking-wide">Δ (minute / %)</p>
-                  <p className="mt-1 text-slate-200 font-semibold tabular-nums">
+                <div className="bg-card rounded px-2.5 py-2 border border-border">
+                  <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Δ (minute / %)</p>
+                  <p className="mt-1 text-foreground font-semibold tabular-nums">
                     {fmtNumber(obs.delta_minutes)}
-                    <span className="text-slate-500"> / </span>
+                    <span className="text-muted-foreground"> / </span>
                     {fmtPct(obs.delta_pct)}
                   </p>
                 </div>
@@ -489,12 +514,12 @@ export default function ExecutionDetail() {
 
               {/* Reasons */}
               <div>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1.5">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5">
                   Motive
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {obs.reasons.length === 0 ? (
-                    <span className="text-[11px] text-slate-500">—</span>
+                    <span className="text-[11px] text-muted-foreground">—</span>
                   ) : (
                     obs.reasons.map((r) => <ReasonBadge key={r} code={r} />)
                   )}
@@ -503,57 +528,57 @@ export default function ExecutionDetail() {
 
               {/* Thresholds from backend response — NEVER hardcoded. */}
               <div>
-                <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1.5">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5">
                   Praguri aplicate
-                  <span className="ml-1 text-slate-600 normal-case">
+                  <span className="ml-1 text-wo-text-dim normal-case">
                     (sursa: {obs.thresholds.source}
                     {obs.thresholds.is_active ? "" : ", inactivă"})
                   </span>
                 </p>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="flex justify-between bg-[#111827] rounded px-2.5 py-1.5 border border-[#1F2A44]">
-                    <span className="text-slate-500">Warning (min)</span>
-                    <span className="text-slate-300 tabular-nums">
+                  <div className="flex justify-between bg-card rounded px-2.5 py-1.5 border border-border">
+                    <span className="text-muted-foreground">Warning (min)</span>
+                    <span className="text-muted-foreground tabular-nums">
                       {fmtNumber(obs.thresholds.warning_time_delta_minutes)}
                     </span>
                   </div>
-                  <div className="flex justify-between bg-[#111827] rounded px-2.5 py-1.5 border border-[#1F2A44]">
-                    <span className="text-slate-500">Warning (%)</span>
-                    <span className="text-slate-300 tabular-nums">
+                  <div className="flex justify-between bg-card rounded px-2.5 py-1.5 border border-border">
+                    <span className="text-muted-foreground">Warning (%)</span>
+                    <span className="text-muted-foreground tabular-nums">
                       {fmtNumber(obs.thresholds.warning_time_delta_pct)}
                     </span>
                   </div>
-                  <div className="flex justify-between bg-[#111827] rounded px-2.5 py-1.5 border border-[#1F2A44]">
-                    <span className="text-slate-500">Critical (min)</span>
-                    <span className="text-slate-300 tabular-nums">
+                  <div className="flex justify-between bg-card rounded px-2.5 py-1.5 border border-border">
+                    <span className="text-muted-foreground">Critical (min)</span>
+                    <span className="text-muted-foreground tabular-nums">
                       {fmtNumber(obs.thresholds.critical_time_delta_minutes)}
                     </span>
                   </div>
-                  <div className="flex justify-between bg-[#111827] rounded px-2.5 py-1.5 border border-[#1F2A44]">
-                    <span className="text-slate-500">Critical (%)</span>
-                    <span className="text-slate-300 tabular-nums">
+                  <div className="flex justify-between bg-card rounded px-2.5 py-1.5 border border-border">
+                    <span className="text-muted-foreground">Critical (%)</span>
+                    <span className="text-muted-foreground tabular-nums">
                       {fmtNumber(obs.thresholds.critical_time_delta_pct)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <p className="text-[10px] text-slate-600 italic">
+              <p className="text-[10px] text-wo-text-dim italic">
                 Observat la: {fmtDateTime(obs.observed_at)}
               </p>
             </div>
           </section>
 
           {/* Alerts panel */}
-          <section className="bg-[#1A2236] border border-[#2A3548] rounded-lg">
-            <header className="flex items-center justify-between px-4 py-3 border-b border-[#2A3548]">
+          <section className="bg-wo-surface-raised border border-wo-border-strong rounded-lg">
+            <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
-                <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">
                   Alerte
                 </h2>
                 {alerts && (
-                  <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded-full">
+                  <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
                     {alerts.alerts.length}
                   </span>
                 )}
@@ -568,23 +593,23 @@ export default function ExecutionDetail() {
             </header>
             <div className="p-4">
               {!alerts ? (
-                <p className="text-[12px] text-slate-500">Se încarcă alertele...</p>
+                <p className="text-[12px] text-muted-foreground">Se încarcă alertele...</p>
               ) : alerts.status === "UNCONFIRMED" ? (
-                <div className="flex items-start gap-2 bg-slate-800/40 border border-slate-700 rounded-md px-3 py-2">
-                  <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <p className="text-[12px] text-slate-300">
+                <div className="flex items-start gap-2 bg-muted/40 border border-border rounded-md px-3 py-2">
+                  <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-muted-foreground">
                     <strong>NECONFIRMAT</strong> — date incomplete. Nu se poate
                     emite nicio alertă.
                   </p>
                 </div>
               ) : alerts.alerts.length === 0 ? (
-                <p className="text-[12px] text-slate-400">Nicio alertă activă.</p>
+                <p className="text-[12px] text-muted-foreground">Nicio alertă activă.</p>
               ) : (
                 <ul className="space-y-3">
                   {alerts.alerts.map((a, idx) => (
                     <li
                       key={`${a.order_id}-${a.metric}-${idx}`}
-                      className="bg-[#111827] border border-[#1F2A44] rounded-md p-3 space-y-2"
+                      className="bg-card border border-border rounded-md p-3 space-y-2"
                     >
                       <div className="flex items-center justify-between">
                         <span
@@ -592,33 +617,33 @@ export default function ExecutionDetail() {
                         >
                           {a.severity}
                         </span>
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-muted-foreground">
                           {fmtDateTime(a.created_at)}
                         </span>
                       </div>
-                      <div className="text-[12px] text-slate-200">
+                      <div className="text-[12px] text-foreground">
                         <ReasonBadge code={a.reason} />
                       </div>
                       <div className="grid grid-cols-4 gap-2 text-[11px]">
-                        <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
-                          <p className="text-slate-500 uppercase text-[9px]">Metric</p>
-                          <p className="text-slate-300 font-semibold">{a.metric}</p>
+                        <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-border">
+                          <p className="text-muted-foreground uppercase text-[9px]">Metric</p>
+                          <p className="text-muted-foreground font-semibold">{a.metric}</p>
                         </div>
-                        <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
-                          <p className="text-slate-500 uppercase text-[9px]">Așteptat</p>
-                          <p className="text-slate-300 font-semibold tabular-nums">
+                        <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-border">
+                          <p className="text-muted-foreground uppercase text-[9px]">Așteptat</p>
+                          <p className="text-muted-foreground font-semibold tabular-nums">
                             {fmtNumber(a.expected_value)}
                           </p>
                         </div>
-                        <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
-                          <p className="text-slate-500 uppercase text-[9px]">Actual</p>
-                          <p className="text-slate-300 font-semibold tabular-nums">
+                        <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-border">
+                          <p className="text-muted-foreground uppercase text-[9px]">Actual</p>
+                          <p className="text-muted-foreground font-semibold tabular-nums">
                             {fmtNumber(a.actual_value)}
                           </p>
                         </div>
-                        <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
-                          <p className="text-slate-500 uppercase text-[9px]">Δ</p>
-                          <p className="text-slate-300 font-semibold tabular-nums">
+                        <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-border">
+                          <p className="text-muted-foreground uppercase text-[9px]">Δ</p>
+                          <p className="text-muted-foreground font-semibold tabular-nums">
                             {fmtNumber(a.delta)}
                           </p>
                         </div>
@@ -639,19 +664,15 @@ export default function ExecutionDetail() {
         </div>
       )}
 
-      {obs && isValidId && (
-        <ProfitabilityAnalysisPanel orderId={parsedId} />
-      )}
-
       {/* Acțiuni operaționale — Sprint #30 plan-generation gate. The button
           appears ONLY when the backend reports has_plan=false; it forwards
           the structured error code from the backend (snapshot_incomplete,
           plan_already_exists, ...) without interpretation or silent retry. */}
       {obs && (
-        <section className="bg-[#1A2236] border border-[#2A3548] rounded-lg">
-          <header className="flex items-center gap-2 px-4 py-3 border-b border-[#2A3548]">
-            <ActivitySquare className="w-4 h-4 text-slate-400" />
-            <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
+        <section className="bg-wo-surface-raised border border-wo-border-strong rounded-lg">
+          <header className="flex items-center gap-2 px-4 py-3 border-b border-wo-border-strong">
+            <ActivitySquare className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-[13px] font-bold text-foreground uppercase tracking-wide">
               Acțiuni operaționale
             </h2>
           </header>
@@ -659,12 +680,12 @@ export default function ExecutionDetail() {
             {!obs.has_plan && (
               <div className="space-y-3">
                 <div className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <div className="text-[12px] text-amber-200">
                     <p className="font-semibold">
                       Planul de execuție nu este generat
                     </p>
-                    <p className="text-amber-300/80 mt-0.5">
+                    <p className="text-amber-600 dark:text-amber-300/80 mt-0.5">
                       Generarea planului este condiționată de un snapshot
                       canonical (product_definition + cost_result) salvat pe
                       comandă. Backend-ul este singura autoritate: dacă
@@ -709,7 +730,7 @@ export default function ExecutionDetail() {
                       }
                     }}
                     disabled={planSubmitting || !isValidId}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold rounded-md bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold rounded-md bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-muted-foreground text-white transition-colors"
                   >
                     <PlayCircle
                       className={`w-3.5 h-3.5 ${planSubmitting ? "animate-pulse" : ""}`}
@@ -718,7 +739,7 @@ export default function ExecutionDetail() {
                       ? "Se generează planul..."
                       : "Generează plan de execuție"}
                   </button>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-muted-foreground">
                     POST /api/v1/execution/plan/from-order/{parsedId}
                   </span>
                 </div>
@@ -728,34 +749,34 @@ export default function ExecutionDetail() {
                     className="bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2 space-y-1"
                   >
                     <div className="flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                      <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
                       <p className="text-[12px] font-semibold text-red-200">
                         {PLAN_ERROR_LABELS[planError.code] ??
                           PLAN_ERROR_LABELS.unknown}
                       </p>
                     </div>
-                    <div className="text-[11px] text-red-300/80 pl-6 space-y-0.5">
+                    <div className="text-[11px] text-red-600 dark:text-red-300/80 pl-6 space-y-0.5">
                       <p>
-                        <span className="text-red-400">HTTP {planError.httpStatus}</span>{" "}
-                        <span className="text-slate-500">·</span>{" "}
-                        <code className="text-red-300">{planError.code}</code>
+                        <span className="text-red-600 dark:text-red-400">HTTP {planError.httpStatus}</span>{" "}
+                        <span className="text-muted-foreground">·</span>{" "}
+                        <code className="text-red-600 dark:text-red-300">{planError.code}</code>
                       </p>
                       {planError.field && (
                         <p>
                           Câmp snapshot lipsă:{" "}
-                          <code className="text-red-300">{planError.field}</code>
+                          <code className="text-red-600 dark:text-red-300">{planError.field}</code>
                         </p>
                       )}
                       {planError.existingPlanId !== null && (
                         <p>
                           Plan existent:{" "}
-                          <code className="text-red-300">#{planError.existingPlanId}</code>
+                          <code className="text-red-600 dark:text-red-300">#{planError.existingPlanId}</code>
                         </p>
                       )}
                       {planError.message && planError.message !== planError.code && (
-                        <p className="text-slate-400">
+                        <p className="text-muted-foreground">
                           Mesaj backend:{" "}
-                          <code className="text-slate-300">{planError.message}</code>
+                          <code className="text-muted-foreground">{planError.message}</code>
                         </p>
                       )}
                     </div>
@@ -763,13 +784,30 @@ export default function ExecutionDetail() {
                 )}
                 {planSuccessAt && !planError && (
                   <div className="flex items-center gap-2 bg-emerald-900/20 border border-emerald-800/60 rounded-md px-3 py-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <p className="text-[12px] text-emerald-200">
                       Plan generat la {planSuccessAt}. Datele de observabilitate
                       au fost reîmprospătate din backend.
                     </p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {obs.has_plan && plan && (
+              <div className="space-y-3">
+                <OperatorProductionReleaseSummary
+                  truth={taskTruthResponse}
+                  onOpenDetails={() => setOwnerDetailsOpen(true)}
+                />
+                {ownerDetailsOpen ? (
+                  <OperatorOwnerDecisionDetailsPanel
+                    truth={taskTruthResponse}
+                    defaultOpen
+                    orderId={parsedId}
+                    onResolved={refreshTaskTruth}
+                  />
+                ) : null}
               </div>
             )}
 
@@ -783,7 +821,7 @@ export default function ExecutionDetail() {
                 actionInFlightTaskId={realityActionTaskId}
                 actionError={realityActionError}
                 lastActionAt={realityActionAt}
-                readinessByTaskId={blueprintReadinessByTaskId}
+                taskTruthByTaskId={taskTruthByTaskId}
                 overrideReasonByTaskId={overrideReasonByTaskId}
                 onOverrideReasonChange={(taskId, reason) => {
                   setOverrideReasonByTaskId((prev) => ({
@@ -810,6 +848,13 @@ export default function ExecutionDetail() {
                     // Refetch backend truth — no optimistic UI.
                     await loadRealityOnly(parsedId);
                     await load(); // observability may flip has_reality=true
+                    try {
+                      const truth = await fetchOperatorTaskTruth(parsedId);
+                      setTaskTruthResponse(truth);
+                      setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
+                    } catch {
+                      /* keep prior truth */
+                    }
                   } catch (e) {
                     if (e instanceof RealityActionError) {
                       setRealityActionError(e);
@@ -870,7 +915,7 @@ export default function ExecutionDetail() {
             )}
 
             {obs.has_plan && obs.has_reality && (
-              <p className="text-[12px] text-slate-400">
+              <p className="text-[12px] text-muted-foreground">
                 Planul și realitatea sunt ambele prezente. Acțiunile rămân
                 valide exclusiv prin endpoint-urile backend-ului; UI-ul nu
                 calculează, nu prezice și nu modifică realitatea în memoria
@@ -881,10 +926,19 @@ export default function ExecutionDetail() {
         </section>
       )}
 
+      {/* Post-job truth — actuals, reconciliation, profitability coverage */}
+      {obs && isValidId && (
+        <PostJobTruthPanel orderId={parsedId} />
+      )}
+
+      {obs && isValidId && (
+        <ProfitabilityAnalysisPanel orderId={parsedId} />
+      )}
+
       {/* BUILD 18 — Reality Quality Badge (Data Quality & Invalid Reality Marker) */}
       {obs && isValidId && obs.has_reality && reality && (
-        <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-slate-200 mb-3">
+        <section className="bg-card border border-border rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-foreground mb-3">
             Calitate Date Reality
           </h3>
           <RealityQualityBadge realityId={reality.id} />
@@ -893,7 +947,7 @@ export default function ExecutionDetail() {
 
       {/* S16 — Stock Deduction Panel (BUILD 16: Inventory Operational Loop) */}
       {obs && isValidId && obs.has_reality && (
-        <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <section className="bg-card border border-border rounded-lg p-4">
           <StockDeductionPanel orderId={parsedId} />
         </section>
       )}
@@ -903,7 +957,7 @@ export default function ExecutionDetail() {
         <GatePreviewSection orderId={parsedId} />
       )}
 
-      <p className="text-[10px] text-slate-600 italic">
+      <p className="text-[10px] text-wo-text-dim italic">
         Toate valorile provin din backend. UI nu calculează, nu prezice și nu
         substituie valori lipsă.
       </p>
@@ -924,10 +978,10 @@ function GatePreviewSection({ orderId }: { orderId: number }) {
   // Loading state
   if (gate.loading && !gate.data) {
     return (
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
         <div className="flex items-center gap-2">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div>
-          <p className="text-[12px] text-slate-400">
+          <p className="text-[12px] text-muted-foreground">
             Se încarcă evaluarea gate / ProductSystem preview...
           </p>
         </div>
@@ -938,12 +992,12 @@ function GatePreviewSection({ orderId }: { orderId: number }) {
   // Error state (gate endpoint failed)
   if (gate.error && !gate.data) {
     return (
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
         <div className="flex items-start gap-2 bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-          <div className="text-[12px] text-red-300">
+          <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+          <div className="text-[12px] text-red-600 dark:text-red-300">
             <p className="font-semibold">Gate evaluation indisponibilă</p>
-            <p className="text-[11px] text-red-300/70 mt-0.5">
+            <p className="text-[11px] text-red-600 dark:text-red-300/70 mt-0.5">
               {gate.error}
             </p>
           </div>
@@ -976,10 +1030,10 @@ function GatePreviewSection({ orderId }: { orderId: number }) {
 
       {/* Preview loading */}
       {preview.loading && !preview.data && (
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
           <div className="flex items-center gap-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div>
-            <p className="text-[12px] text-slate-400">
+            <p className="text-[12px] text-muted-foreground">
               Se încarcă ProductSystem preview...
             </p>
           </div>
@@ -988,12 +1042,12 @@ function GatePreviewSection({ orderId }: { orderId: number }) {
 
       {/* Preview error */}
       {preview.error && (
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
           <div className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2">
-            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-            <div className="text-[12px] text-amber-300">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="text-[12px] text-amber-600 dark:text-amber-300">
               <p className="font-semibold">ProductSystem preview indisponibil</p>
-              <p className="text-[11px] text-amber-300/70 mt-0.5">
+              <p className="text-[11px] text-amber-600 dark:text-amber-300/70 mt-0.5">
                 {preview.error}
               </p>
             </div>
@@ -1034,7 +1088,7 @@ interface RealityCapturePanelProps {
   actionInFlightTaskId: string | null;
   actionError: RealityActionError | null;
   lastActionAt: string | null;
-  readinessByTaskId: Record<string, BlueprintTaskReadiness>;
+  taskTruthByTaskId: Record<string, OperatorTaskTruthTask>;
   overrideReasonByTaskId: Record<string, string>;
   onOverrideReasonChange: (taskId: string, reason: string) => void;
   onStartTask: (
@@ -1054,7 +1108,7 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
     actionInFlightTaskId,
     actionError,
     lastActionAt,
-    readinessByTaskId,
+    taskTruthByTaskId,
     overrideReasonByTaskId,
     onOverrideReasonChange,
     onStartTask,
@@ -1062,6 +1116,26 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
   } = props;
 
   const [registryMappings, setRegistryMappings] = useState<OperationResourceMapping[]>([]);
+  const collabUiEnabled = isFlexCollabUiEnabled();
+  const [collabRead, setCollabRead] = useState<OrderTaskCollaborationReadDTO | null>(null);
+  const [collabError, setCollabError] = useState<string | null>(null);
+
+  const reloadCollab = useCallback(async () => {
+    if (!collabUiEnabled) {
+      setCollabRead(null);
+      setCollabError(null);
+      return;
+    }
+    try {
+      const payload = await fetchOrderTaskCollaborationRead(orderId);
+      setCollabRead(payload);
+      setCollabError(null);
+    } catch (e) {
+      setCollabError(
+        e instanceof Error ? e.message : "Nu am putut încărca colaborarea.",
+      );
+    }
+  }, [collabUiEnabled, orderId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1078,20 +1152,24 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
     };
   }, []);
 
+  useEffect(() => {
+    void reloadCollab();
+  }, [reloadCollab, lastActionAt]);
+
   const totalActual =
     reality && Number.isFinite(reality.total_actual_time_minutes)
       ? reality.total_actual_time_minutes
       : null;
 
   return (
-    <section className="space-y-3 pt-2 border-t border-[#2A3548]">
+    <section className="space-y-3 pt-2 border-t border-wo-border-strong">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ActivitySquare className="w-4 h-4 text-blue-400" />
-          <h3 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
+          <ActivitySquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <h3 className="text-[13px] font-bold text-foreground uppercase tracking-wide">
             Înregistrare execuție reală
           </h3>
-          <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded-full">
+          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
             {plan.tasks.length} task-uri în plan
           </span>
           {plan.operational_readiness_status ? (
@@ -1104,13 +1182,13 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
             </span>
           ) : null}
           {plan.prepared_by_user_id ? (
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[10px] text-muted-foreground">
               Instrumentare: {plan.prepared_by_user_id}
             </span>
           ) : null}
         </div>
         {lastActionAt && (
-          <span className="text-[11px] text-emerald-400">
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400">
             Ultima acțiune: {lastActionAt}
           </span>
         )}
@@ -1119,10 +1197,10 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
       {!reality && !loading && !error && (
         <div
           role="status"
-          className="flex items-start gap-2 bg-slate-800/40 border border-slate-700 rounded-md px-3 py-2"
+          className="flex items-start gap-2 bg-muted/40 border border-border rounded-md px-3 py-2"
         >
-          <Info className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-          <p className="text-[12px] text-slate-300">
+          <Info className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
+          <p className="text-[12px] text-muted-foreground">
             Execution reality nu a fost încă înregistrată. Pornește un task
             pentru a iniția realitatea pe această comandă.
           </p>
@@ -1130,49 +1208,30 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
       )}
 
       {error && (
-        <div className="bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2 text-[11px] text-red-300">
+        <div className="bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2 text-[11px] text-red-600 dark:text-red-300">
           Eroare la încărcarea realității: <code>{error}</code>
         </div>
       )}
 
       {actionError && (
-        <div
-          role="alert"
-          className="bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2 space-y-1"
-        >
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <p className="text-[12px] font-semibold text-red-200">
-              {REALITY_ERROR_LABELS[actionError.code] ??
-                REALITY_ERROR_LABELS.unknown}
-            </p>
-          </div>
-          <div className="text-[11px] text-red-300/80 pl-6 space-y-0.5">
-            <p>
-              <span className="text-red-400">HTTP {actionError.httpStatus}</span>{" "}
-              <span className="text-slate-500">·</span>{" "}
-              <code className="text-red-300">{actionError.rawCode}</code>
-            </p>
-            {actionError.detail && (
-              <p>
-                Detaliu:{" "}
-                <code className="text-red-300">{actionError.detail}</code>
-              </p>
-            )}
-            {actionError.message &&
-              actionError.message !== actionError.rawCode && (
-                <p className="text-slate-400">
-                  Mesaj backend:{" "}
-                  <code className="text-slate-300">{actionError.message}</code>
-                </p>
-              )}
-          </div>
-        </div>
+        <OperatorStructuredActionError
+          error={{
+            code: actionError.rawCode,
+            rawCode: actionError.rawCode,
+            httpStatus: actionError.httpStatus,
+            message: actionError.message,
+            detail: actionError.detail,
+            blockers: actionError.blockers,
+            readinessLabel: actionError.readinessLabel,
+            raw: actionError.raw,
+          }}
+          testId="execution-structured-start-error"
+        />
       )}
 
-      <div className="bg-[#0D1321] border border-[#1F2A44] rounded-md overflow-hidden">
+      <div className="bg-wo-surface-inset border border-border rounded-md overflow-hidden">
         <table className="w-full text-[12px]">
-          <thead className="bg-[#111827] text-slate-400 uppercase text-[10px] tracking-wide">
+          <thead className="bg-card text-muted-foreground uppercase text-[10px] tracking-wide">
             <tr>
               <th className="text-left px-3 py-2">Task</th>
               <th className="text-left px-3 py-2">Proces / Mașină</th>
@@ -1190,12 +1249,23 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
               );
               const actualMin = computeActualMinutes(observation);
               const inFlight = actionInFlightTaskId === t.task_id;
-              const readiness = readinessByTaskId[t.task_id];
+              const truth = taskTruthByTaskId[t.task_id];
+              const collabTask = collabRead?.tasks.find(
+                (item) => item.task_id === t.task_id,
+              );
+              const completeBlockedByCollab =
+                collabUiEnabled &&
+                collabTask?.can_complete_operation === false;
+              const readiness: TaskTruthReadiness | undefined = truth
+                ? taskTruthReadinessFromRuntime(truth.runtime)
+                : undefined;
               const startBlockedByReadiness =
                 status === "not_started" && readiness?.is_startable === false;
               const readinessMessage =
-                readiness?.readiness_reasons?.[0]?.message ||
-                readiness?.blocking_reasons?.[0]?.message ||
+                (readiness?.readiness_reasons?.[0] as { message?: string } | undefined)
+                  ?.message ||
+                (readiness?.blocking_reasons?.[0] as { message?: string } | undefined)
+                  ?.message ||
                 readiness?.readiness_label;
               const overrideReason = overrideReasonByTaskId[t.task_id] ?? "";
               const canOverrideStart =
@@ -1207,30 +1277,33 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
               };
               const statusCls: Record<RealityTaskStatus, string> = {
                 not_started:
-                  "bg-slate-800/60 text-slate-400 border-slate-600",
+                  "bg-muted/60 text-muted-foreground border-slate-600",
                 in_progress:
-                  "bg-amber-900/40 text-amber-300 border-amber-700",
+                  "bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700",
                 completed:
-                  "bg-emerald-900/40 text-emerald-300 border-emerald-700",
+                  "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
               };
 
               return (
                 <tr
                   key={t.task_id}
-                  className="border-t border-[#1F2A44] hover:bg-[#111827]/40"
+                  className="border-t border-border hover:bg-card/40"
                 >
-                  <td className="px-3 py-2 font-mono text-slate-200">
-                    {t.task_id}
-                    <div className="text-[10px] text-slate-500 font-sans">
-                      {t.name}
-                    </div>
+                  <td className="px-3 py-2">
+                    <OperatorTaskIdentityPresentation
+                      truth={truth}
+                      fallbackOperationName={t.name}
+                      fallbackTaskId={t.task_id}
+                      showDiagnostics
+                      testId={`execution-task-identity-${t.task_id}`}
+                    />
                   </td>
-                  <td className="px-3 py-2 text-slate-300">
-                    <code className="text-[11px] text-slate-400">
+                  <td className="px-3 py-2 text-muted-foreground">
+                    <code className="text-[11px] text-muted-foreground">
                       {t.process_type}
                     </code>
-                    <span className="mx-1 text-slate-600">·</span>
-                    <code className="text-[11px] text-slate-400">
+                    <span className="mx-1 text-wo-text-dim">·</span>
+                    <code className="text-[11px] text-muted-foreground">
                       {t.machine_type}
                     </code>
                     {t.process_type && (
@@ -1240,14 +1313,14 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                       />
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right tabular-nums text-slate-200">
-                    {t.estimated_time_minutes.toFixed(1)} min
+                  <td className="px-3 py-2 text-right tabular-nums text-foreground">
+                    {fmtMinutes(t.estimated_time_minutes)}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {actualMin === null ? (
-                      <span className="text-slate-500">—</span>
+                      <span className="text-muted-foreground">—</span>
                     ) : (
-                      <span className="text-slate-200">
+                      <span className="text-foreground">
                         {actualMin.toFixed(1)} min
                       </span>
                     )}
@@ -1259,17 +1332,17 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                       {statusLabel[status]}
                     </span>
                     {observation?.started_at && (
-                      <div className="text-[10px] text-slate-500 mt-0.5">
+                      <div className="text-[10px] text-muted-foreground mt-0.5">
                         Start: {fmtDateTime(observation.started_at)}
                       </div>
                     )}
                     {observation?.ended_at && (
-                      <div className="text-[10px] text-slate-500">
+                      <div className="text-[10px] text-muted-foreground">
                         End: {fmtDateTime(observation.ended_at)}
                       </div>
                     )}
                     {startBlockedByReadiness && readinessMessage ? (
-                      <div className="text-[10px] text-amber-400/90 mt-1 max-w-[220px]">
+                      <div className="text-[10px] text-amber-600 dark:text-amber-400/90 mt-1 max-w-[220px]">
                         {readinessMessage}
                       </div>
                     ) : null}
@@ -1284,7 +1357,7 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                             onOverrideReasonChange(t.task_id, e.target.value)
                           }
                           placeholder="Motiv override (min. 3 car.)"
-                          className="w-[180px] rounded border border-amber-800/60 bg-[#0A1020] px-2 py-1 text-[10px] text-slate-200 placeholder:text-slate-500"
+                          className="w-[180px] rounded border border-amber-800/60 bg-background px-2 py-1 text-[10px] text-foreground placeholder:text-muted-foreground"
                         />
                       ) : null}
                       <div className="inline-flex items-center gap-1.5">
@@ -1304,7 +1377,7 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                           status === "completed" ||
                           (startBlockedByReadiness && !canOverrideStart)
                         }
-                        className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors"
+                        className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-muted-foreground text-white transition-colors"
                         title={
                           startBlockedByReadiness && !canOverrideStart
                             ? readinessMessage || "Task nepregătit"
@@ -1319,8 +1392,17 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                       <button
                         type="button"
                         onClick={() => void onEndTask(t.task_id)}
-                        disabled={inFlight || status !== "in_progress"}
-                        className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors"
+                        disabled={
+                          inFlight ||
+                          status !== "in_progress" ||
+                          completeBlockedByCollab
+                        }
+                        className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-muted-foreground text-white transition-colors"
+                        title={
+                          completeBlockedByCollab
+                            ? "Complete permis doar când can_complete_operation este true"
+                            : undefined
+                        }
                       >
                         <CheckCircle2
                           className={`w-3 h-3 ${inFlight && status === "in_progress" ? "animate-pulse" : ""}`}
@@ -1334,27 +1416,27 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
               );
             })}
           </tbody>
-          <tfoot className="bg-[#111827] text-[11px]">
-            <tr className="border-t border-[#1F2A44]">
+          <tfoot className="bg-card text-[11px]">
+            <tr className="border-t border-border">
               <td
                 colSpan={2}
-                className="px-3 py-2 text-slate-400 uppercase text-[10px] tracking-wide"
+                className="px-3 py-2 text-muted-foreground uppercase text-[10px] tracking-wide"
               >
                 Total
               </td>
-              <td className="px-3 py-2 text-right tabular-nums text-slate-200">
+              <td className="px-3 py-2 text-right tabular-nums text-foreground">
                 {plan.total_estimated_time_minutes.toFixed(1)} min
               </td>
               <td className="px-3 py-2 text-right tabular-nums">
                 {totalActual === null ? (
-                  <span className="text-slate-500">—</span>
+                  <span className="text-muted-foreground">—</span>
                 ) : (
-                  <span className="text-slate-200">
+                  <span className="text-foreground">
                     {totalActual.toFixed(1)} min
                   </span>
                 )}
               </td>
-              <td colSpan={2} className="px-3 py-2 text-right text-[10px] text-slate-500">
+              <td colSpan={2} className="px-3 py-2 text-right text-[10px] text-muted-foreground">
                 POST /reality/start-task · /end-task (order #{orderId})
               </td>
             </tr>
@@ -1362,10 +1444,49 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
         </table>
       </div>
 
-      <p className="text-[10px] text-slate-600 italic">
+      <p className="text-[10px] text-wo-text-dim italic">
         Acțiunile sunt executate pe backend. După fiecare acțiune, UI-ul
         reîncarcă realitatea — nu există optimistic success.
       </p>
+
+      {collabUiEnabled ? (
+        <div
+          className="space-y-2 pt-2 border-t border-wo-border-strong"
+          data-testid="execution-collaboration-section"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-[12px] font-bold text-muted-foreground uppercase tracking-wide">
+              Colaborare flex (ajutor / helpers / sesiuni)
+            </h4>
+            <button
+              type="button"
+              className="text-[10px] text-muted-foreground hover:text-foreground underline"
+              onClick={() => void reloadCollab()}
+            >
+              Reîncarcă colaborarea
+            </button>
+          </div>
+          {collabError ? (
+            <p className="text-[11px] text-rose-300" role="alert">
+              {collabError}
+            </p>
+          ) : null}
+          {(collabRead?.tasks || []).map((task) => (
+            <OperatorTaskCollaborationPanel
+              key={task.task_id}
+              orderId={orderId}
+              task={task}
+              onChanged={reloadCollab}
+              testIdPrefix="execution-collab"
+            />
+          ))}
+          {collabRead && collabRead.tasks.length === 0 ? (
+            <p className="text-[11px] text-muted-foreground">
+              Niciun task operațional în proiecția de colaborare.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }

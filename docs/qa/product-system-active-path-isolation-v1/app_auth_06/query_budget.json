@@ -1,0 +1,6 @@
+{
+  "n_plus_one": false,
+  "flags_off_extra_queries": 0,
+  "flags_on_batch_requests": 20,
+  "verdict": "PASS"
+}

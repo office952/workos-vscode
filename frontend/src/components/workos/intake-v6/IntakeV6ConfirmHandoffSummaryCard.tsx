@@ -26,6 +26,7 @@ export default function IntakeV6ConfirmHandoffSummaryCard({
     ...new Set([...collectFatalHandoffBlockers(handoffPreview), ...bindingBlockers]),
   ];
   const reviewWarnings = handoffPreview?.review_warnings ?? [];
+  const diagnosticWarnings = (handoffPreview?.diagnostic_warnings ?? []).map(formatQuoteHandoffBlocker);
   const artworkWarnings = collectArtworkUndecidedWarnings(reviewWarnings);
   const nonArtworkWarnings = reviewWarnings
     .filter(
@@ -77,6 +78,22 @@ export default function IntakeV6ConfirmHandoffSummaryCard({
           </p>
           <ul className="space-y-1 text-[11px] text-amber-100/90">
             {[...artworkWarnings, ...nonArtworkWarnings].map((warning) => (
+              <li key={warning}>- {warning}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {diagnosticWarnings.length > 0 ? (
+        <div
+          className="mt-3 rounded border border-slate-600/40 bg-slate-900/40 px-3 py-2"
+          data-testid="intake-v6-confirm-diagnostic-warnings-above-fold"
+        >
+          <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-300">
+            Detalii tehnice (nu blochează)
+          </p>
+          <ul className="space-y-1 text-[11px] text-slate-400">
+            {diagnosticWarnings.map((warning) => (
               <li key={warning}>- {warning}</li>
             ))}
           </ul>

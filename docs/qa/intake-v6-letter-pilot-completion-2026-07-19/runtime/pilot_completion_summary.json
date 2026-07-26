@@ -1,0 +1,46 @@
+{
+  "ui": "http://127.0.0.1:3000",
+  "at": "2026-07-19T11:03:41.329Z",
+  "cases": [
+    {
+      "id": "acm_page2",
+      "workspace_id": "c53bd00c-ef57-4d8e-8482-c4c39d35a678",
+      "probe": {
+        "href": "http://127.0.0.1:3000/intake-v6/c53bd00c-ef57-4d8e-8482-c4c39d35a678/operator",
+        "composition": true,
+        "compositionTitle": "ProdusLitere volumetrice + Panou Alucobond casetatLitere volumetrice · Panou Alu",
+        "scope": true,
+        "pricing": true,
+        "pricingWeight": "secondary",
+        "commercialDisclosure": true,
+        "commercialExpanded": "false",
+        "letterAnatomy": true,
+        "lighting": true,
+        "montaj": true,
+        "rezultatComercial": true,
+        "technicalAuthorityOnL1": false,
+        "footerNext": true
+      }
+    },
+    {
+      "id": "simple_letters_page2",
+      "workspace_id": "aa0b6158-3d3d-416b-9473-258693e4b3ee",
+      "probe": {
+        "href": "http://127.0.0.1:3000/intake-v6/aa0b6158-3d3d-416b-9473-258693e4b3ee/operator",
+        "composition": true,
+        "compositionTitle": "ProdusLitere volumetriceLitere volumetriceNecesită confirmareConfirmă compoziția",
+        "scope": true,
+        "pricing": true,
+        "pricingWeight": "secondary",
+        "commercialDisclosure": true,
+        "commercialExpanded": "false",
+        "letterAnatomy": true,
+        "lighting": true,
+        "montaj": true,
+        "rezultatComercial": true,
+        "technicalAuthorityOnL1": false,
+        "footerNext": true
+      }
+    }
+  ]
+}

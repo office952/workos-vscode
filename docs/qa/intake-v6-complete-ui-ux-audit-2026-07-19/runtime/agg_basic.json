@@ -1,0 +1,27 @@
+{
+  "status": 200,
+  "keys": [
+    "aggregate_version",
+    "template_code",
+    "template_id",
+    "family_id",
+    "family_name",
+    "status",
+    "business_name_ro",
+    "source_layers",
+    "modules",
+    "components",
+    "materials",
+    "operations",
+    "form_contract",
+    "cost_contract",
+    "task_contract",
+    "conflicts",
+    "warnings",
+    "provenance_summary",
+    "mini_module_registry",
+    "composition_graph",
+    "commercial_measurements"
+  ],
+  "has_segmented_top_level": false
+}

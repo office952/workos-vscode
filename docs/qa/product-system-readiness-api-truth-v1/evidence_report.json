@@ -1,0 +1,43 @@
+{
+  "task_id": "PRODUCT_SYSTEM_READINESS_API_TRUTH_V1",
+  "head_before": "5c6b4e4",
+  "verdict": "PASS_WITH_LEGACY_STATUS_DEBT",
+  "timestamp": "2026-07-13",
+  "canonical_contract": {
+    "endpoint": "/api/v1/product-system/template-availability",
+    "additive_fields": ["capabilities", "readiness"],
+    "dimensions": ["technical", "pricing", "execution", "commercial"],
+    "rollup_values": ["READY", "PARTIALLY_READY", "BLOCKED", "INTERNAL", "DEPRECATED"]
+  },
+  "legacy_fields_preserved": [
+    "status",
+    "status_reason",
+    "readiness_reason",
+    "quote_offerable",
+    "product_system_role",
+    "display_group"
+  ],
+  "representative_templates": {
+    "TPL-VOLUMETRIC-LETTERS_v2": { "commercial": "OFFERABLE", "rollup": "BLOCKED", "root_offerable": true },
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": { "commercial": "OFFERABLE", "rollup": "BLOCKED", "root_offerable": true, "linked_child_offerable": true },
+    "TPL-METAL-PREMOUNT-STRUCTURE_v1": { "commercial": "INTERNAL_ONLY", "rollup": "INTERNAL", "linked_child_offerable": true },
+    "TPL-VOLUMETRIC-LOGO_v1": { "quote_offerable": false, "rollup": "DEPRECATED or INTERNAL per DB" },
+    "TPL-VOLUM-ALUMINIU_v1": { "rollup": "DEPRECATED or INTERNAL", "component_first": true }
+  },
+  "tests": {
+    "backend_pytest": "21 passed (readiness + availability)",
+    "frontend_vitest": "productSystemReadinessApiTypes.test.ts 2/2",
+    "playwright_smoke": "product-system-ui-shell-navigation-v1 canonical shell pass"
+  },
+  "visible_readiness_ui_added": false,
+  "files_changed": [
+    "backend/schemas/product_system_template_readiness.py",
+    "backend/services/product_system_template_readiness_service.py",
+    "backend/schemas/product_template_availability.py",
+    "backend/services/product_template_availability_service.py",
+    "backend/tests/test_product_system_template_readiness.py",
+    "frontend/src/lib/api.ts",
+    "frontend/src/features/product-system/productSystemReadinessApiTypes.test.ts"
+  ],
+  "next_slice": "PRODUCT_SYSTEM_CATALOG_COLLAPSE_V1"
+}

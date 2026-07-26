@@ -1,0 +1,138 @@
+{
+  "url": "http://127.0.0.1:3001/intake-v6/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/operator",
+  "title": "erpWork OS",
+  "tabs": [
+    {
+      "id": "intake-v6-review-tab-finisaje",
+      "text": "FinisajeFață · cant · Vector Logo",
+      "selected": "true"
+    },
+    {
+      "id": "intake-v6-review-tab-iluminare",
+      "text": "IluminareLED · backing",
+      "selected": "false"
+    },
+    {
+      "id": "intake-v6-review-tab-montaj",
+      "text": "MontajȘablon · sistem",
+      "selected": "false"
+    }
+  ],
+  "cardCountApprox": 73,
+  "tallCards": [
+    {
+      "i": 54,
+      "testid": "intake-v6-review-calculator-panel",
+      "text": "Calcul estimativ liveSe actualizează după configurația curentă. Valoarea finală se confirmă ulterior",
+      "h": 918.375
+    },
+    {
+      "i": 58,
+      "testid": null,
+      "text": "LinieConsumPreț / statusMateriale · 9Plexiglas 3 mm0.3447 m25,52 EURForex 10 mm0.3447 m25,52 EURVini",
+      "h": 623.5
+    },
+    {
+      "i": 60,
+      "testid": "intake-v6-pricing-input-preview",
+      "text": "Reglaje comercialeAdaos %Discount %TVA %Ajustare manuală (RON)Net—Preț comercial—Operatorul trebuie ",
+      "h": 318.75
+    },
+    {
+      "i": 61,
+      "testid": null,
+      "text": "Reglaje comercialeAdaos %Discount %TVA %Ajustare manuală (RON)Net—Preț comercial—Operatorul trebuie ",
+      "h": 292.75
+    }
+  ],
+  "badges": [
+    "Stare sistem: necesită verificare"
+  ],
+  "blockers": [
+    {
+      "testid": "environment-banner-details-toggle",
+      "text": "Stare sistem: necesită verificare"
+    },
+    {
+      "testid": null,
+      "text": "Necesita confirmare"
+    },
+    {
+      "testid": null,
+      "text": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETA"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-live-missing-rates-banner",
+      "text": "2 tarife lipsă"
+    },
+    {
+      "testid": "intake-v6-live-pending-save-inline",
+      "text": "Salvare…"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner",
+      "text": "5 probleme blochează Confirmarea · 2 avertismenteVezi detalii tehnice și diagnostic"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-toggle",
+      "text": "5 probleme blochează Confirmarea · 2 avertismente"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-title",
+      "text": "5 probleme blochează Confirmarea · 2 avertismente"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-diagnostic-link",
+      "text": "Vezi detalii tehnice și diagnostic"
+    },
+    {
+      "testid": "intake-v6-artwork-verify-instruction",
+      "text": "Confirmă fiecare Vector Logo înainte de a continua.Verifică Vector Logo"
+    },
+    {
+      "testid": "intake-v6-artwork-verify-cta",
+      "text": "Verifică Vector Logo"
+    },
+    {
+      "testid": null,
+      "text": "Lipsă"
+    },
+    {
+      "testid": null,
+      "text": "Sincronizare automata in asteptare"
+    },
+    {
+      "testid": "intake-v6-live-estimate-unavailable",
+      "text": "Operatorul trebuie sa confirme compozitia produsului propusa de analyzer inainte de priced dry-run ready."
+    },
+    {
+      "testid": "intake-v6-live-pending-save",
+      "text": "Ai modificari in curs de sincronizare. Preturile si materialele se actualizeaza automat."
+    },
+    {
+      "testid": "intake-v6-live-missing-rates-banner",
+      "text": "Tarife lipsă — Cant / volum; Accesorii montaj / conectori"
+    },
+    {
+      "testid": null,
+      "text": "— Cant / volum; Accesorii montaj / conectori"
+    }
+  ],
+  "headings": [
+    "Calcul estimativ live",
+    "Finisaje pe layer",
+    "Calcul estimativ live"
+  ]
+}

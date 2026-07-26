@@ -1,7 +1,9 @@
 """Read-only CommercialPriceProposal preview builder (Step 7G).
 
 Answers: "What commercial price do we propose for the product on commercial rules?"
-Does NOT use CostEngine, QuoteOrchestrator, workcenter_rates, or hourly basis.
+Does NOT use CostEngine, QuoteOrchestrator, or hourly basis.
+Linked-logo finish lines may map to existing Pricing Registry operation rates
+(workcenter_rates) plus company EUR→RON settings — never invent finish tariffs.
 """
 
 from __future__ import annotations
@@ -27,6 +29,7 @@ from schemas.commercial_price_proposal import (
 )
 from schemas.product_definition import ProductDefinitionPreview
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
+from services.linked_logo_commercial_price_service import build_linked_logo_commercial_lines
 from services.product_definition_builder_service import (
     ProductDefinitionBuilderService,
     _classify_modules,
@@ -49,6 +52,19 @@ CRITICAL_GEOMETRY_KEYS = frozenset(
     }
 )
 SUPPORTED_TEMPLATES = frozenset(RULES_BY_TEMPLATE.keys())
+
+
+def _rules_template_key(template_code: str) -> str | None:
+    """Map canonical/uppercased codes to RULES_BY_TEMPLATE keys (preserve declared casing)."""
+    if template_code in RULES_BY_TEMPLATE:
+        return template_code
+    needle = str(template_code or "").strip().upper()
+    if not needle:
+        return None
+    for key in RULES_BY_TEMPLATE:
+        if key.upper() == needle:
+            return key
+    return None
 
 
 def _get_by_path(root: Any, path: str) -> Any:
@@ -90,18 +106,38 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         "selected_psu_watts",
         "required_psu_watts",
         "led_module_count",
+        "letter_led_module_count",
+        "emblem_led_module_count",
+        "emblem_lighting_mode",
         "face_finish_type",
         "backing_mode",
         "letter_group_finishes",
+        "artwork_finishes",
+        "mounting_solution",
+        "mounting_scope",
+        "site_installation_included",
+        "applied_content",
+        "letters_layer_outbox_m2",
+        "letters_layer_outbox_source",
     ):
         if key in out and key not in merged_finish:
             merged_finish[key] = out[key]
     if merged_finish:
         out["finish_setup"] = merged_finish
+    # Lift composition markers for CPP gate when only nested on finish_setup.
+    if out.get("applied_content") in (None, "") and merged_finish.get("applied_content") not in (
+        None,
+        "",
+    ):
+        out["applied_content"] = merged_finish.get("applied_content")
+    if out.get("letters_layer_outbox_m2") in (None, "", 0, 0.0) and merged_finish.get(
+        "letters_layer_outbox_m2"
+    ) not in (None, "", 0, 0.0):
+        out["letters_layer_outbox_m2"] = merged_finish.get("letters_layer_outbox_m2")
 
     geometry = out.get("quote_geometry") if isinstance(out.get("quote_geometry"), dict) else {}
     merged_geometry = dict(geometry)
-    for key in ("letter_count", "letter_face_area_m2", "letter_perimeter_m", "depth_mm"):
+    for key in ("letter_count", "letter_face_area_m2", "letter_perimeter_m", "depth_mm", "artwork_boxes", "artwork_return_layers", "artwork_area_m2", "artwork_piece_count"):
         if key in out and key not in merged_geometry:
             merged_geometry[key] = out[key]
     if merged_geometry:
@@ -117,7 +153,9 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
 
     if "svg_source" not in out and _read_string(out.get("vector_file")):
         out["svg_source"] = {"file_name": out.get("vector_file")}
-    return out
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
+    return merge_acm_boxed_mounting_derived_fields(out)
 
 
 def _payload_from_sources(
@@ -147,6 +185,42 @@ def _payload_from_sources(
                     payload.setdefault("svg_source", {})["file_name"] = value
                 else:
                     payload[key] = value
+
+    # Enrich geometry/finish from ProductDefinition workspace projection when quote_input
+    # adapter omitted linked-logo fields (artwork boxes, letter/emblem LED splits).
+    geometry = payload.setdefault("quote_geometry", {})
+    if isinstance(geometry, dict) and isinstance(pd.geometry_inputs, dict):
+        for key, value in pd.geometry_inputs.items():
+            if key not in geometry or geometry.get(key) in (None, [], {}):
+                geometry[key] = value
+    finish = payload.setdefault("finish_setup", {})
+    if isinstance(finish, dict) and isinstance(pd.canonical_values, dict):
+        for key, value in pd.canonical_values.items():
+            if key.startswith("finish_setup."):
+                short = key.split(".", 1)[1]
+                if short not in finish or finish.get(short) in (None, [], {}):
+                    finish[short] = value
+            elif key in (
+                "letter_led_module_count",
+                "emblem_led_module_count",
+                "emblem_lighting_mode",
+                "artwork_finishes",
+                "mounting_solution",
+                "mounting_scope",
+                "site_installation_included",
+                "led_module_count",
+                "light_color",
+            ):
+                if key not in finish or finish.get(key) in (None, [], {}):
+                    finish[key] = value
+
+    if isinstance(finish, dict):
+        letter_led = _positive_number(finish.get("letter_led_module_count"))
+        emblem_led = _positive_number(finish.get("emblem_led_module_count"))
+        total_led = _positive_number(finish.get("led_module_count") or finish.get("total_led_module_count"))
+        if letter_led is None and total_led is not None and emblem_led is not None and total_led >= emblem_led:
+            finish["letter_led_module_count"] = round(total_led - emblem_led, 4)
+
     return payload
 
 
@@ -154,7 +228,7 @@ def _module_is_commercial_active(state: str) -> bool:
     return state in ("always_on", "active", "conditional_active")
 
 
-def _resolve_active_commercial_modules(
+def _legacy_resolve_active_commercial_modules(
     pd: ProductDefinitionPreview,
     payload: dict[str, Any],
 ) -> set[str]:
@@ -191,8 +265,16 @@ def _resolve_active_commercial_modules(
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):
@@ -204,8 +286,18 @@ def _resolve_active_commercial_modules(
         if _module_is_commercial_active(mod.state):
             active.add(code)
 
+    from services.acm_quote_input_helpers import is_acm_boxed_mounting_standalone_root_template
+
+    if is_acm_boxed_mounting_standalone_root_template(pd.template_code):
+        active.add("structura_suport")
+        return active
+
     mounting = _read_string(finish.get("mounting_system") or payload.get("mounting_system"))
-    if mounting:
+    from services.mounting_solution_service import is_structura_suport_active
+
+    if is_structura_suport_active(finish if isinstance(finish, dict) else {}):
+        active.add("structura_suport")
+    elif mounting:
         if mounting in BAR_MOUNTING:
             active.add("structura_suport")
         else:
@@ -220,6 +312,44 @@ def _resolve_active_commercial_modules(
         active.discard("sistem_led")
 
     return active
+
+
+def _resolve_active_commercial_modules(
+    pd: ProductDefinitionPreview,
+    payload: dict[str, Any],
+) -> set[str]:
+    from services.offer_scope_resolver_service import resolve_pricing_active_modules
+
+    return resolve_pricing_active_modules(
+        pd=pd,
+        payload=payload,
+        quote_input=payload,
+        legacy_fn=lambda p, qi: _legacy_resolve_active_commercial_modules(p, qi or {}),
+    )
+
+
+async def _resolve_commercial_modules_for_preview(
+    *,
+    db: AsyncSession,
+    pd: ProductDefinitionPreview,
+    payload: dict[str, Any],
+    template_code: str,
+    workspace_id: str | None,
+    quote_input: dict[str, Any] | None,
+) -> set[str]:
+    if workspace_id and pd.source_context.source_payload_type == "workspace_payload":
+        from services.product_aggregate_graph_cost_projection_service import resolve_cost_active_modules
+        from services.product_aggregate_service import ProductAggregateService
+
+        aggregate = await ProductAggregateService(db).build_for_workspace(template_code, workspace_id)
+        if aggregate and aggregate.composition_graph is not None:
+            active, _ = resolve_cost_active_modules(
+                pd=pd,
+                aggregate=aggregate,
+                quote_input=quote_input or payload,
+            )
+            return active
+    return _resolve_active_commercial_modules(pd, payload)
 
 
 def _extract_quantity(payload: dict[str, Any], paths: tuple[str, ...]) -> float | int | None:
@@ -246,7 +376,11 @@ def _material_gate_matches(payload: dict[str, Any], rule: CommercialRuleDefiniti
 
 
 def _sablon_enabled(payload: dict[str, Any]) -> bool:
+    from services.mounting_scope_service import is_mounting_preparation_active
+
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if not is_mounting_preparation_active(finish):
+        return False
     enabled = _read_bool(finish.get("mounting_template_enabled"))
     if enabled is None:
         enabled = _read_bool(payload.get("mounting_template_enabled"))
@@ -260,7 +394,42 @@ def _sablon_material(payload: dict[str, Any]) -> str | None:
     )
 
 
+def _site_install_commercially_required(payload: dict[str, Any]) -> bool:
+    """True when commercial montaj must be present (G5 / installation_template)."""
+    from services.mounting_scope_service import is_site_installation_active
+    from services.mounting_solution_service import is_installation_template_solution
+
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if is_site_installation_active(finish):
+        return True
+    if is_site_installation_active(payload):
+        return True
+    solution = finish.get("mounting_solution")
+    if solution is None:
+        solution = payload.get("mounting_solution")
+    return is_installation_template_solution(solution)
+
+
 def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payload: dict[str, Any]) -> bool:
+    from services.letters_acm_composition_commercial_v1 import (
+        COMPOSITION_LINE_PREFIX,
+        is_letters_acm_composition_active,
+    )
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+    from services.offer_scope_led_subscope_service import (
+        commercial_line_led_subscope,
+        led_consumer_row_allowed,
+        partial_led_subscope_filter,
+    )
+
+    # Site installation commercial marker — not surface finish; may fire without support module.
+    if rule.line_code == "montaj" and _site_install_commercially_required(payload):
+        return True
+
+    # Letters↔ACM composition connection sheet — independent of active_modules set.
+    if rule.line_code.startswith(COMPOSITION_LINE_PREFIX):
+        return is_letters_acm_composition_active(payload)
+
     module_key = rule.module_gate or rule.module_code
     if rule.always_include and rule.criticality == "optional":
         return module_key in active_modules or rule.module_code in active_modules
@@ -268,7 +437,23 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
     if module_key not in active_modules and rule.module_code not in active_modules:
         return False
 
+    scope = payload.get("offer_scope") if isinstance(payload.get("offer_scope"), dict) else {}
+    sold_led = partial_led_subscope_filter(frozenset(scope.get("sold_modules") or []))
+    mount_decision = resolve_lighting_mount_consumers(payload, payload)
+    if sold_led is not None and rule.module_code == "sistem_led":
+        sub = commercial_line_led_subscope(rule.line_code)
+        if not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led,
+            commercial_line_code=rule.line_code,
+            mount_decision=mount_decision,
+        ):
+            return False
+
     if rule.line_code.startswith("sablon_montaj"):
+        # ACM composition uses bundled letters_acm_conn_sablon_process @ 20 EUR/mp.
+        if is_letters_acm_composition_active(payload):
+            return False
         if not _sablon_enabled(payload):
             return False
         material = _sablon_material(payload)
@@ -283,17 +468,67 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
     if rule.material_gate_path and not _material_gate_matches(payload, rule):
         return False
 
+    if rule.line_code.startswith("acm_"):
+        from services.acm_quote_input_helpers import is_acm_boxed_mounting_payload
+
+        if not is_acm_boxed_mounting_payload(payload):
+            return False
+
     return True
 
 
-def _build_line(
+async def _build_line(
+    db: AsyncSession,
     rule: CommercialRuleDefinition,
     payload: dict[str, Any],
+    *,
+    measurement_qty: float | None = None,
+    measurement_source: str | None = None,
 ) -> CommercialPriceLine:
-    quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
+    from services.linked_logo_commercial_price_service import (
+        _load_registry_operation_rate,
+        _normalize_unit_price_to_cpp_ron,
+    )
+
     warnings = list(rule.warnings)
+    # LETTERS_CANONICAL_PRODUCT_SLICE_V1: prefer Aggregate commercial measurements.
+    if measurement_qty is not None:
+        quantity = float(measurement_qty)
+        source_prefix = measurement_source or "product_aggregate.commercial_measurements"
+        warnings.append(f"quantity_source={source_prefix}")
+    else:
+        quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
+        if quantity is not None:
+            warnings.append("quantity_source=COMPATIBILITY_WORKSPACE_PATH")
+
+    # Letters↔ACM composition mp lines — outbox / mounting_template_area honesty path.
+    if rule.line_code.startswith("letters_acm_conn_") and rule.basis_type == "m2":
+        from services.letters_acm_composition_commercial_v1 import (
+            resolve_letters_layer_outbox_m2,
+        )
+
+        outbox_qty, outbox_src = resolve_letters_layer_outbox_m2(payload)
+        if outbox_qty is not None:
+            quantity = float(outbox_qty)
+            warnings.append(f"quantity_source=letters_acm_outbox:{outbox_src}")
+            if outbox_src not in (
+                "letters_layer_outbox_m2",
+                "finish_setup.letters_layer_outbox_m2",
+            ):
+                warnings.append(
+                    "outbox_qty_fallback_not_canonical_letters_layer_outbox_m2"
+                )
+        elif quantity is None:
+            warnings.append("missing_letters_layer_outbox_m2")
+
     owner_required = rule.owner_decision_required
     basis_type = rule.basis_type
+    source = rule.source
+    registry_pricing_code = (rule.registry_pricing_code or "").strip().upper() or None
+    source_currency = rule.documented_unit_price_currency
+    cpp_currency: str | None = None
+    fx_rate: float | None = None
+    fx_source: str | None = None
 
     if rule.line_code == "finisaje_colantare_vopsire":
         groups = _get_by_path(payload, "finish_setup.letter_group_finishes")
@@ -303,13 +538,67 @@ def _build_line(
             warnings.append("Finish groups empty — owner review recommended.")
 
     unit_price = rule.documented_unit_price
+    if unit_price is not None and source_currency:
+        cpp_currency = "RON" if str(source_currency).upper() == "RON" else None
+
+    if registry_pricing_code:
+        resolved = await _load_registry_operation_rate(db, registry_pricing_code)
+        if resolved is None:
+            unit_price = None
+            owner_required = True
+            warnings.append(
+                f"registry_lookup_missed:{registry_pricing_code};configure_at=/inventory/pricing"
+            )
+            source = f"{rule.source}:registry_unresolved"
+        else:
+            ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
+                db,
+                unit_price=resolved.unit_price_source,
+                source_currency=resolved.source_currency,
+            )
+            if ron_price is None:
+                unit_price = None
+                owner_required = True
+                warnings.append(
+                    f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                )
+                source = f"{rule.source}:currency_gate_blocked"
+                source_currency = resolved.source_currency
+                cpp_currency = None
+            else:
+                unit_price = ron_price
+                owner_required = False
+                source_currency = resolved.source_currency
+                cpp_currency = "RON"
+                source = (
+                    f"pricing_registry:operation:{resolved.pricing_code}"
+                    f":{resolved.source_currency}->{cpp_currency}"
+                )
+                warnings.append(
+                    f"registry_bound={resolved.pricing_code};"
+                    f"source_unit_price={resolved.unit_price_source};"
+                    f"rate_basis={resolved.rate_basis}"
+                )
+
     if quantity is None and unit_price is not None:
-        if basis_type == "piece" or basis_type == "fixed":
+        if basis_type in ("piece", "fixed", "set"):
             quantity = 1.0
 
     subtotal = None
     if unit_price is not None and quantity is not None and basis_type not in ("unknown",):
         subtotal = round(float(quantity) * float(unit_price), 4)
+
+    if rule.pricing_rule_code == "ACM_BOXED_ASSEMBLY_M2_MIN" and unit_price is not None and quantity is not None:
+        from data.commercial_rules_volumetric_v2 import ACM_BOXED_ASSEMBLY_MIN_EUR
+
+        subtotal = round(max(float(quantity) * float(unit_price), ACM_BOXED_ASSEMBLY_MIN_EUR), 4)
+        warnings.append(f"minimum_charge_applied={ACM_BOXED_ASSEMBLY_MIN_EUR}EUR")
+
+    if rule.pricing_rule_code == "LETTERS_ACM_PACK_M2_MIN" and unit_price is not None and quantity is not None:
+        from data.commercial_rules_volumetric_v2 import LETTERS_ACM_PACK_MIN_EUR
+
+        subtotal = round(max(float(quantity) * float(unit_price), LETTERS_ACM_PACK_MIN_EUR), 4)
+        warnings.append(f"minimum_charge_applied={LETTERS_ACM_PACK_MIN_EUR}EUR")
 
     if basis_type == "unknown":
         owner_required = True
@@ -325,13 +614,20 @@ def _build_line(
         commercial_unit_price=unit_price,
         subtotal=subtotal,
         pricing_rule_code=rule.pricing_rule_code,
-        source=rule.source,
+        source=source,
         owner_decision_required=owner_required,
         warnings=warnings,
+        registry_pricing_code=registry_pricing_code,
+        source_currency=source_currency,
+        cpp_currency=cpp_currency,
+        currency_conversion_rate=fx_rate,
+        currency_conversion_source=fx_source,
     )
 
 
 def scan_forbidden_hourly_usage(lines: list[CommercialPriceLine]) -> list[str]:
+    import re
+
     hits: list[str] = []
     for line in lines:
         haystack = " ".join(
@@ -344,7 +640,8 @@ def scan_forbidden_hourly_usage(lines: list[CommercialPriceLine]) -> list[str]:
             ]
         ).lower()
         for token in FORBIDDEN_HOURLY_TOKENS:
-            if token in haystack:
+            # Word-boundary match so "workcenter_rates" does not trip "workcenter_rate".
+            if re.search(rf"(?<![a-z0-9_]){re.escape(token)}(?![a-z0-9_])", haystack):
                 hits.append(f"{line.code}:{token}")
     return hits
 
@@ -380,6 +677,7 @@ def _compute_status(
     forbidden_hourly: list[str],
     missing_geometry: list[str],
     has_payload: bool,
+    site_install_required: bool = False,
 ) -> tuple[CommercialProposalStatus, bool, str]:
     if forbidden_hourly:
         return "blocked", False, "low"
@@ -399,7 +697,27 @@ def _compute_status(
     if not has_payload:
         return "partial", False, "medium"
 
-    optional_line_codes = frozenset({"ambalare", "montaj"})
+    optional_line_codes = {"ambalare"}
+    if not site_install_required:
+        optional_line_codes.add("montaj")
+
+    # Linked-logo owner-pending tariffs keep proposal partial (fail closed).
+    logo_pending = [
+        line
+        for line in lines
+        if line.segment_key
+        and line.owner_decision_required
+        and line.commercial_unit_price is None
+        and line.quantity is not None
+    ]
+    if logo_pending:
+        return "partial", False, "medium"
+
+    if site_install_required:
+        montaj = next((line for line in lines if line.code == "montaj"), None)
+        if montaj is None or montaj.commercial_unit_price is None:
+            return "partial", False, "medium"
+
     critical_lines = [
         line
         for line in lines
@@ -432,17 +750,32 @@ class CommercialPriceProposalService:
         quote_input: dict[str, Any] | None = None,
         currency: str = "RON",
     ) -> CommercialPriceProposalPreview | None:
-        if template_code not in SUPPORTED_TEMPLATES:
+        rules_key = _rules_template_key(template_code)
+        if rules_key is None:
             return None
 
-        pd = await self._pd_builder.build_preview(template_code, workspace_id=workspace_id)
+        pd = await self._pd_builder.build_preview(rules_key, workspace_id=workspace_id)
         if pd is None:
             return None
 
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
+        # Prefer confirmed return perimeter for VL product-total; control quote_geometry bridge.
+        if str(rules_key or "").startswith("TPL-VOLUMETRIC-LETTERS"):
+            from services.volum_aluminiu_quantity_ownership import (
+                apply_confirmed_perimeter_quote_geometry_bridge,
+            )
+
+            payload, _perimeter_authority = apply_confirmed_perimeter_quote_geometry_bridge(payload)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
-        active_modules = _resolve_active_commercial_modules(pd, payload)
-        rules = RULES_BY_TEMPLATE[template_code]
+        active_modules = await _resolve_commercial_modules_for_preview(
+            db=self._db,
+            pd=pd,
+            payload=payload,
+            template_code=rules_key,
+            workspace_id=workspace_id,
+            quote_input=quote_input,
+        )
+        rules = RULES_BY_TEMPLATE[rules_key]
 
         lines: list[CommercialPriceLine] = []
         blockers: list[CommercialBlocker] = []
@@ -460,10 +793,51 @@ class CommercialPriceProposalService:
                     )
                 )
 
+        # Canonical Letters measurements from ProductAggregate (non-monetary).
+        measurement_by_line: dict[str, float] = {}
+        measurement_diag: list[str] = []
+        if workspace_id:
+            from services.letters_commercial_measurement_service import (
+                build_letters_commercial_measurements,
+                measurement_quantity_by_line_code,
+            )
+            from services.product_aggregate_service import ProductAggregateService
+
+            aggregate = await ProductAggregateService(self._db).build_for_workspace(
+                template_code, workspace_id
+            )
+            bundle = getattr(aggregate, "commercial_measurements", None) if aggregate else None
+            if bundle is None:
+                bundle = build_letters_commercial_measurements(
+                    template_code=template_code,
+                    pd=pd,
+                    quote_input=payload,
+                    active_modules=active_modules,
+                )
+                measurement_diag.append("measurements_built_inline_for_cpp")
+            if bundle is not None:
+                for rule in rules:
+                    qty, src = measurement_quantity_by_line_code(bundle, rule.line_code)
+                    if qty is not None:
+                        measurement_by_line[rule.line_code] = qty
+                measurement_diag.extend(list(bundle.diagnostics or []))
+
         for rule in rules:
             if not _rule_applies(rule, active_modules, payload):
                 continue
-            line = _build_line(rule, payload)
+            m_qty = measurement_by_line.get(rule.line_code)
+            m_src = (
+                "product_aggregate.commercial_measurements"
+                if m_qty is not None
+                else None
+            )
+            line = await _build_line(
+                self._db,
+                rule,
+                payload,
+                measurement_qty=m_qty,
+                measurement_source=m_src,
+            )
             lines.append(line)
             if line.owner_decision_required and rule.owner_decision_code:
                 owner_decisions.append(
@@ -483,6 +857,31 @@ class CommercialPriceProposalService:
                     )
                 )
 
+        # Linked logo commercial is composition/full-product only — not part of
+        # Letters Slice 1 component_subset (RETURN-CANT / FACE / BACK / LIGHTING).
+        from services.active_scope_resolver_service import compile_active_scope
+
+        _scope_for_logo = compile_active_scope(
+            template_code=rules_key,
+            payload=payload,
+            quote_input=quote_input or payload,
+        )
+        logo_lines: list[CommercialPriceLine] = []
+        logo_owner_decisions: list[CommercialOwnerDecision] = []
+        if _scope_for_logo.use_legacy_full_product:
+            logo_lines, logo_owner_decisions = await build_linked_logo_commercial_lines(
+                db=self._db,
+                payload=payload,
+                pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
+            )
+            lines.extend(logo_lines)
+            owner_decisions.extend(logo_owner_decisions)
+        elif getattr(pd, "linked_template_runtime_segments", None):
+            warnings.append(
+                "ACTIVE_SCOPE_SUBSET: linked logo commercial lines suppressed "
+                "(Logo remains BLOCKED for standalone sold scope)."
+            )
+
         missing_geometry = _missing_critical_geometry(payload, active_modules) if has_payload else []
         if missing_geometry:
             blockers.append(
@@ -499,6 +898,7 @@ class CommercialPriceProposalService:
             if mounting == "direct_wall":
                 warnings.append("structura_suport correctly inactive for direct_wall mounting.")
 
+        site_install_required = _site_install_commercially_required(payload)
         forbidden_hourly = scan_forbidden_hourly_usage(lines)
         status, quote_ready, confidence = _compute_status(
             lines=lines,
@@ -507,6 +907,7 @@ class CommercialPriceProposalService:
             forbidden_hourly=forbidden_hourly,
             missing_geometry=missing_geometry,
             has_payload=has_payload,
+            site_install_required=site_install_required,
         )
 
         subtotals = [line.subtotal for line in lines if line.subtotal is not None]
@@ -529,6 +930,14 @@ class CommercialPriceProposalService:
                 detail=f"modules={','.join(sorted(active_modules))}",
             ),
         ]
+        if logo_lines:
+            provenance.append(
+                CommercialProvenanceEntry(
+                    key="linked_logo_commercial",
+                    source="linked_logo_commercial_price_service",
+                    detail=f"segments={len({line.segment_key for line in logo_lines if line.segment_key})}",
+                )
+            )
         if quote_input:
             provenance.append(
                 CommercialProvenanceEntry(
@@ -540,12 +949,18 @@ class CommercialPriceProposalService:
 
         notes = [
             "Read-only CommercialPriceProposal preview — Step 7G.",
-            "Does not call /price, CostEngine, QuoteOrchestrator, or workcenter_rates.",
-            "Numeric RON totals deferred until owner commercial price registry (Step 7I).",
+            "Does not call /price, CostEngine, or QuoteOrchestrator.",
+            "Linked-logo print/laminate/application may bind to existing Pricing Registry "
+            "operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) "
+            "with company_commercial_settings EUR→RON conversion.",
+            "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD "
+            "(200 EUR fixed / locatie) via the same EUR→RON path; travel outside Bucharest "
+            "is not auto-added. Fail closed if the rate or FX is unavailable.",
+            "Hourly commercial basis is forbidden.",
         ]
 
         return CommercialPriceProposalPreview(
-            template_code=template_code,
+            template_code=rules_key,
             source=COMMERCIAL_PRICE_PROPOSAL_SOURCE,
             status=status,
             commercial_price_lines=lines,
@@ -564,5 +979,9 @@ class CommercialPriceProposalService:
                 "has_payload": has_payload,
                 "active_modules": sorted(active_modules),
                 "workspace_id": workspace_id,
+                "linked_logo_segments": sorted(
+                    {line.segment_key for line in logo_lines if line.segment_key}
+                ),
+                "site_install_required": site_install_required,
             },
         )

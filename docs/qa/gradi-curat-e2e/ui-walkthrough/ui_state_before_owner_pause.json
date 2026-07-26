@@ -1,0 +1,32 @@
+﻿{
+  "task": "WORKOS-GRADI-CURAT-UI-PRODUCT-CONFIGURATION-AND-PD-RESUME-V1",
+  "phase": "paused_waiting_owner_G1_G6",
+  "starting_head": "b3eb437d2fbe3865437bccf146873701589ef1ec",
+  "url": "http://127.0.0.1:3000/intake-v6/11891d68-c4c8-4719-acc5-f8fcb22a44af/operator",
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "workspace_code_visible": "IV6-5A24B7B0",
+  "file_hash_api": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+  "file_hash_expected": "593C4D439157B83CAB16C33D69CAF0AB426144D583FB1999FA7D1676D5AB6CF1",
+  "hash_match": true,
+  "ui_before": {
+    "step": "2 Configurare (also verified step 1 Straturi)",
+    "composition_visible": "Litere volumetrice + logo volumetric — Confirmata",
+    "dimensions_visible": "5087 mm × 600 mm",
+    "layers_visible": 6,
+    "letter_groups": ["maria", "soare", "ana", "gradinita"],
+    "logo_groups": ["Logo 1", "Logo 2"],
+    "finish_defaults_visible": {
+      "letter_face": "Fără finisaj — plexiglas brut",
+      "return": "Alb · 60 mm",
+      "backing": "Forex 10 mm fara sanfren",
+      "logo": "Print + laminare · Policrom"
+    },
+    "config_tabs": ["Finisaje", "Iluminare", "Montaj"],
+    "blocker_banner": "Acțiune necesară înainte de Confirmare",
+    "problems_count_step2": 10,
+    "finish_setup_api": null,
+    "readiness_api": "finish_setup_incomplete"
+  },
+  "configuration_writes": [],
+  "paused": true
+}

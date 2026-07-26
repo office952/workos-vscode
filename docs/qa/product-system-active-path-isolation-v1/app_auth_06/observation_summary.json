@@ -1,0 +1,58 @@
+{
+  "by_type": [
+    {
+      "type": "match",
+      "raw_count": 100,
+      "unique_fingerprints": 5,
+      "duplicates": 95,
+      "false_positives": 0,
+      "actionable": 0,
+      "classifications": [
+        "EXPECTED_TRANSITION"
+      ]
+    },
+    {
+      "type": "missing_required_competence",
+      "raw_count": 140,
+      "unique_fingerprints": 5,
+      "duplicates": 135,
+      "false_positives": 0,
+      "actionable": 0,
+      "classifications": [
+        "NOT_PROVEN"
+      ]
+    },
+    {
+      "type": "operational_eligible_canonical_ineligible",
+      "raw_count": 140,
+      "unique_fingerprints": 5,
+      "duplicates": 135,
+      "false_positives": 0,
+      "actionable": 140,
+      "classifications": [
+        "ACTIONABLE"
+      ]
+    },
+    {
+      "type": "value_conflict",
+      "raw_count": 40,
+      "unique_fingerprints": 1,
+      "duplicates": 39,
+      "false_positives": 0,
+      "actionable": 40,
+      "classifications": [
+        "ACTIONABLE"
+      ]
+    }
+  ],
+  "totals": {
+    "raw": 420,
+    "unique_fingerprints": 16,
+    "duplicates": 404,
+    "false_positives": 0,
+    "actionable": 180,
+    "expected_transition": 100,
+    "informational": 0,
+    "insufficient_data": 0
+  }
+}

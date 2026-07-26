@@ -42,6 +42,8 @@ import {
   type QuotePriceResponse,
   type QuoteUserConfig,
 } from "@/api/quotes";
+import { LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO } from "@/lib/legacyQuotePriceRetirement";
+import { LegacyQuotePriceRetiredBanner } from "@/components/workos/LegacyQuotePriceRetiredBanner";
 import {
   costSimulationApi,
   type CostSimulationResponse,
@@ -402,7 +404,7 @@ export default function QuoteWizard({
   }
 
   // ------------------------------------------------------------
-  // Submit — POST /entities/quotes/price
+  // Submit — legacy /entities/quotes/price is RETIRED (use Intake V6 / 7G)
   // ------------------------------------------------------------
   async function handleSubmit() {
     if (!selectedTemplate) return;
@@ -425,6 +427,13 @@ export default function QuoteWizard({
       vat_pct: vatPct,
       discount_pct: discountPct,
     };
+
+    if (!isVolumetricPreliminary) {
+      setSubmitError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
+      setBlockedReasons(["legacy_quote_price_retired"]);
+      setSubmitting(false);
+      return;
+    }
 
     if (isVolumetricPreliminary) {
       const qi = buildVolumetricQuoteInputPayload(quoteInput);
@@ -506,59 +515,8 @@ export default function QuoteWizard({
   }
 
   async function handleCommercialQuote() {
-    if (!selectedTemplate || !simulationResult) return;
-    const quoteGate = simulationResult.readiness?.quote_gate as
-      | VolumetricQuoteGate
-      | undefined;
-    if (!quoteGate?.can_create_commercial_quote) return;
-
-    setCommercialSubmitting(true);
-    setCommercialError(null);
-    setBlockedReasons([]);
-
-    const user_config: QuoteUserConfig = {
-      quantity,
-      dimensions: {
-        width_mm: widthMm,
-        height_mm: heightMm,
-        depth_mm: depthMm,
-      },
-    };
-    const pricing: QuotePricingInput = {
-      margin_pct: marginPct,
-      vat_pct: vatPct,
-      discount_pct: discountPct,
-    };
-    const qi = buildVolumetricQuoteInputPayload(quoteInput);
-
-    try {
-      const resp = await priceQuote({
-        product_template: selectedTemplate,
-        user_config,
-        pricing,
-        client_name: clientName.trim(),
-        intake_id: intakeDbId,
-        quote_input: {
-          ...qi,
-          width_mm: widthMm,
-          height_mm: heightMm,
-          depth_mm: depthMm,
-        },
-      });
-      setResult(resp);
-      onCreated?.({ quoteId: resp.quote_id, quoteCode: resp.quote_code });
-    } catch (err) {
-      if (err instanceof QuotePricingError) {
-        setCommercialError(err.message);
-        setBlockedReasons(err.blockedReasons);
-      } else {
-        setCommercialError(
-          err instanceof Error ? err.message : "Eroare la crearea ofertei comerciale."
-        );
-      }
-    } finally {
-      setCommercialSubmitting(false);
-    }
+    setCommercialError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
+    setBlockedReasons(["legacy_quote_price_retired"]);
   }
 
   const volumetricQuoteGate = simulationResult?.readiness?.quote_gate as
@@ -593,12 +551,12 @@ export default function QuoteWizard({
   // ------------------------------------------------------------
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-4xl max-h-[90vh] bg-[#0D1321] border border-[#1E293B] rounded-xl shadow-2xl flex flex-col">
+      <div className="w-full max-w-4xl max-h-[90vh] bg-wo-surface-inset border border-border rounded-xl shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-blue-400" />
-            <h2 className="text-[14px] font-semibold text-slate-100">
+            <h2 className="text-[14px] font-semibold text-foreground">
               {isVolumetricPreliminary ? "Calcul preliminar" : "Ofertă nouă"}
             </h2>
             {selectedTemplate && (
@@ -609,7 +567,7 @@ export default function QuoteWizard({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded hover:bg-slate-800 text-slate-400"
+            className="p-1.5 rounded hover:bg-muted text-muted-foreground"
             aria-label="Închide"
           >
             <X className="w-4 h-4" />
@@ -623,8 +581,12 @@ export default function QuoteWizard({
           />
         )}
 
+        <div className="px-5 pt-3">
+          <LegacyQuotePriceRetiredBanner />
+        </div>
+
         {/* Stepper */}
-        <div className="px-5 py-3 border-b border-[#1E293B] bg-[#0B111E]">
+        <div className="px-5 py-3 border-b border-border bg-background">
           <div className="flex items-center gap-2">
             {STEPS.map((s, i) => {
               const Icon = s.icon;
@@ -638,7 +600,7 @@ export default function QuoteWizard({
                         ? "bg-blue-600/20 text-blue-300 border-blue-600/50"
                         : done
                         ? "bg-emerald-900/30 text-emerald-300 border-emerald-800/50"
-                        : "bg-transparent text-slate-500 border-[#2A3548]"
+                        : "bg-transparent text-muted-foreground border-wo-border-strong"
                     }`}
                   >
                     {done ? (
@@ -650,7 +612,7 @@ export default function QuoteWizard({
                     <span>{s.label}</span>
                   </div>
                   {i < STEPS.length - 1 && (
-                    <ChevronRight className="w-3 h-3 text-slate-600" />
+                    <ChevronRight className="w-3 h-3 text-wo-text-dim" />
                   )}
                 </div>
               );
@@ -720,11 +682,11 @@ export default function QuoteWizard({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-[#1E293B] flex items-center justify-between bg-[#0B111E]">
+        <div className="px-5 py-3 border-t border-border flex items-center justify-between bg-background">
           <button
             onClick={goBack}
             disabled={step === 1 || submitting}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded border border-[#2A3548] text-slate-300 hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-muted-foreground hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Înapoi
@@ -734,7 +696,7 @@ export default function QuoteWizard({
             <button
               onClick={onClose}
               disabled={submitting}
-              className="px-3 py-1.5 text-[12px] rounded border border-[#2A3548] text-slate-400 hover:text-slate-200 disabled:opacity-40"
+              className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-muted-foreground hover:text-foreground disabled:opacity-40"
             >
               Anulează
             </button>
@@ -752,7 +714,7 @@ export default function QuoteWizard({
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             )}
-            {step === 4 && !result && !simulationResult && (
+            {step === 4 && !result && !simulationResult && isVolumetricPreliminary && (
               <button
                 onClick={handleSubmit}
                 disabled={!step4Valid || submitting}
@@ -766,11 +728,20 @@ export default function QuoteWizard({
                 ) : (
                   <>
                     <DollarSign className="w-3.5 h-3.5" />
-                    {isVolumetricPreliminary
-                      ? "Simulare preliminară"
-                      : "Calculează & salvează"}
+                    Simulare preliminară (intern)
                   </>
                 )}
+              </button>
+            )}
+            {step === 4 && !result && !simulationResult && !isVolumetricPreliminary && (
+              <button
+                type="button"
+                disabled
+                title={LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-slate-700 text-muted-foreground cursor-not-allowed opacity-60"
+              >
+                <DollarSign className="w-3.5 h-3.5" />
+                Flux comercial retras
               </button>
             )}
             {step === 4 &&
@@ -779,25 +750,12 @@ export default function QuoteWizard({
               !result && (
                 <button
                   onClick={handleCommercialQuote}
-                  disabled={!canCreateCommercialQuote || commercialSubmitting}
-                  title={
-                    canCreateCommercialQuote
-                      ? undefined
-                      : "Rezolvă blocker-ele de readiness înainte de ofertă comercială."
-                  }
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled
+                  title={LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-slate-700 text-muted-foreground cursor-not-allowed opacity-60"
                 >
-                  {commercialSubmitting ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Se creează...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-3.5 h-3.5" />
-                      Creează ofertă comercială
-                    </>
-                  )}
+                  <FileText className="w-3.5 h-3.5" />
+                  Ofertă comercială retrasă — Intake V6
                 </button>
               )}
             {step === 4 && (result || simulationResult) && (
@@ -840,7 +798,7 @@ function Step1(props: {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+        <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
           Nume client *
         </label>
         <input
@@ -848,16 +806,16 @@ function Step1(props: {
           value={clientName}
           onChange={(e) => setClientName(e.target.value)}
           placeholder="Ex: SC Exemplu SRL"
-          className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 placeholder:text-slate-600 outline-none focus:border-blue-500"
+          className="w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground placeholder:text-wo-text-dim outline-none focus:border-blue-500"
         />
       </div>
 
       <div>
-        <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+        <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
           Șablon produs *
         </label>
         {loading && (
-          <div className="flex items-center gap-2 text-[12px] text-slate-500">
+          <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <Loader2 className="w-3.5 h-3.5 animate-spin" /> Se încarcă șabloanele...
           </div>
         )}
@@ -867,7 +825,7 @@ function Step1(props: {
           </div>
         )}
         {!loading && !error && templates.length === 0 && (
-          <div className="text-[12px] text-slate-500">
+          <div className="text-[12px] text-muted-foreground">
             Nu există șabloane active. Adăugați unul din Product System.
           </div>
         )}
@@ -882,17 +840,17 @@ function Step1(props: {
                   className={`text-left p-3 rounded border transition-all ${
                     selected
                       ? "border-blue-500/60 bg-blue-900/20"
-                      : "border-[#2A3548] bg-[#111827] hover:border-slate-500"
+                      : "border-wo-border-strong bg-card hover:border-slate-500"
                   }`}
                 >
                   <div className="text-[12px] font-mono text-blue-400">
                     {t.template_code}
                   </div>
-                  <div className="text-[13px] font-semibold text-slate-100 mt-0.5">
+                  <div className="text-[13px] font-semibold text-foreground mt-0.5">
                     {t.family_name}
                   </div>
                   {t.family_id && (
-                    <div className="text-[10px] text-slate-500 mt-0.5">
+                    <div className="text-[10px] text-muted-foreground mt-0.5">
                       {t.family_id}
                     </div>
                   )}
@@ -932,7 +890,7 @@ function Step2(props: {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+        <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
           Cantitate (bucăți) *
         </label>
         <input
@@ -940,7 +898,7 @@ function Step2(props: {
           min={1}
           value={quantity}
           onChange={(e) => setQuantity(Math.max(1, Number(e.target.value) || 1))}
-          className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-blue-500"
+          className="w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground outline-none focus:border-blue-500"
         />
       </div>
       <div className="grid grid-cols-3 gap-3">
@@ -966,7 +924,7 @@ function Step2(props: {
           min={0}
         />
       </div>
-      <div className="text-[11px] text-slate-500 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2">
+      <div className="text-[11px] text-muted-foreground bg-background border border-border rounded px-3 py-2">
         Dimensiunile definesc geometria casetei. Parametrii formulei (aria feței,
         lungimi trasee etc.) se completează la pasul următor.
       </div>
@@ -985,7 +943,7 @@ function NumberField(props: {
   const { label, unit, value, onChange, min = 0, step } = props;
   return (
     <div>
-      <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+      <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
         {label} ({unit})
       </label>
       <input
@@ -997,7 +955,7 @@ function NumberField(props: {
           const n = Number(e.target.value);
           onChange(Number.isFinite(n) ? n : 0);
         }}
-        className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-blue-500"
+        className="w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground outline-none focus:border-blue-500"
       />
     </div>
   );
@@ -1013,7 +971,7 @@ function VolumetricPreliminaryBanner() {
         din SVG.
       </p>
       <p>
-        Simularea preliminară este permisă când CostEngine poate calcula. Oferta comercială
+        Simularea preliminară este permisă când modulul de cost intern poate calcula. Oferta comercială
         finală necesită gate separat (vector, geometrie, metadate, dossier).
       </p>
       <p>Nu se creează comandă automat. Butonul „Creează ofertă comercială” rămâne dezactivat până la readiness complet.</p>
@@ -1100,7 +1058,7 @@ function Step3(props: {
   }
   if (fields.length === 0) {
     return (
-      <div className="text-[12px] text-slate-400 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-4">
+      <div className="text-[12px] text-muted-foreground bg-background border border-border rounded px-3 py-4">
         Șablonul <span className="font-mono text-blue-400">{templateCode}</span>{" "}
         nu necesită parametri de formulă. Puteți trece la pasul următor.
       </div>
@@ -1126,8 +1084,8 @@ function Step3(props: {
         />
       )}
       {isVolumetricPreliminary && intakePrefillSummary && (
-        <div className="text-[11px] bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2 text-slate-400">
-          <p className="font-semibold text-slate-300 mb-1">
+        <div className="text-[11px] bg-background border border-border rounded px-3 py-2 text-muted-foreground">
+          <p className="font-semibold text-muted-foreground mb-1">
             Parametri de completat manual (geometrie / cost)
           </p>
           <ul className="list-disc pl-4 space-y-0.5">
@@ -1140,17 +1098,17 @@ function Step3(props: {
             {intakePrefillSummary.manualOtherFields.map((f) => (
               <li key={f.key}>
                 {f.label}{" "}
-                <span className="font-mono text-slate-500">({f.key})</span>
+                <span className="font-mono text-muted-foreground">({f.key})</span>
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-muted-foreground">
             Module LED rămân calculate automat din perimetru (readonly).
           </p>
         </div>
       )}
-      <div className="text-[11px] text-slate-500 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2">
-        Acești parametri sunt folosiți de CostEngine v2 pentru calculele
+      <div className="text-[11px] text-muted-foreground bg-background border border-border rounded px-3 py-2">
+        Acești parametri sunt folosiți de modulul de cost intern pentru calculele
         bazate pe formule (arii, perimetru, LED, profil, PSU). Toate câmpurile
         marcate cu <span className="text-amber-400">*</span> sunt obligatorii.
         {!isVolumetricPreliminary && (
@@ -1164,13 +1122,13 @@ function Step3(props: {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {fields.map((f) => (
           <div key={f.key}>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+            <label className="block text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">
               {f.label}{" "}
               {!f.computed && !f.optional && (
                 <span className="text-amber-400">*</span>
               )}{" "}
               {f.unit ? (
-                <span className="text-slate-600">({f.unit})</span>
+                <span className="text-wo-text-dim">({f.unit})</span>
               ) : null}
             </label>
             {f.boolean ? (
@@ -1181,13 +1139,13 @@ function Step3(props: {
                   onChange={(e) => set(f.key, e.target.checked ? "true" : "false")}
                   className="rounded border-slate-600"
                 />
-                <span className="text-[12px] text-slate-300">Activ</span>
+                <span className="text-[12px] text-muted-foreground">Activ</span>
               </label>
             ) : f.enumOptions ? (
               <select
                 value={values[f.key] ?? f.defaultEnum ?? ""}
                 onChange={(e) => set(f.key, e.target.value)}
-                className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-blue-500"
+                className="w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground outline-none focus:border-blue-500"
               >
                 {f.enumOptions.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -1199,7 +1157,7 @@ function Step3(props: {
               <select
                 value={values[f.key] ?? ""}
                 onChange={(e) => set(f.key, e.target.value)}
-                className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 outline-none focus:border-blue-500"
+                className="w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground outline-none focus:border-blue-500"
               >
                 <option value="">Selectați…</option>
                 {f.selectOptions.map((w) => (
@@ -1217,12 +1175,12 @@ function Step3(props: {
                 value={values[f.key] ?? ""}
                 onChange={(e) => set(f.key, e.target.value)}
                 placeholder={f.placeholder}
-                className={`w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[13px] text-slate-100 placeholder:text-slate-600 outline-none focus:border-blue-500 ${
+                className={`w-full bg-card border border-wo-border-strong rounded px-3 py-2 text-[13px] text-foreground placeholder:text-wo-text-dim outline-none focus:border-blue-500 ${
                   f.computed ? "opacity-80 cursor-not-allowed" : ""
                 }`}
               />
             )}
-            <p className="text-[10px] text-slate-500 mt-1">{f.helper}</p>
+            <p className="text-[10px] text-muted-foreground mt-1">{f.helper}</p>
           </div>
         ))}
       </div>
@@ -1274,9 +1232,9 @@ function Step4(props: {
           step={0.5}
         />
         <div className="space-y-1">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide">TVA</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">TVA</p>
           <p
-            className="text-[13px] text-slate-200 bg-[#0B1220] border border-[#1E293B] rounded px-3 py-2"
+            className="text-[13px] text-foreground bg-background border border-border rounded px-3 py-2"
             data-testid="quote-wizard-settings-vat"
           >
             TVA aplicat din Settings: {vatPct}%
@@ -1293,9 +1251,9 @@ function Step4(props: {
       </div>
 
       {submitting && (
-        <div className="flex items-center gap-2 text-[12px] text-slate-300 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2">
+        <div className="flex items-center gap-2 text-[12px] text-muted-foreground bg-background border border-border rounded px-3 py-2">
           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          Se trimite către CostEngine...
+          Calcul cost intern (legacy)...
         </div>
       )}
 
@@ -1342,16 +1300,16 @@ function Step4(props: {
       )}
 
       {!submitting && !result && !simulationResult && !submitError && (
-        <div className="text-[11px] text-slate-500 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2">
+        <div className="text-[11px] text-muted-foreground bg-background border border-border rounded px-3 py-2">
           Apăsați{" "}
-          <span className="text-slate-300">
+          <span className="text-muted-foreground">
             {isVolumetricPreliminary
               ? "Simulare preliminară"
               : "Calculează & salvează"}
           </span>{" "}
           {isVolumetricPreliminary
-            ? "pentru simulare read-only (fără ofertă persistată). Breakdown-ul vine de la CostEngine."
-            : "pentru a trimite oferta la backend. Breakdown-ul și prețul final sunt returnate de CostEngine v2 (nu se calculează în frontend)."}
+            ? "pentru simulare read-only (fără ofertă persistată). Breakdown-ul vine de la modulul de cost intern (legacy)."
+            : "pentru a trimite oferta la backend. Breakdown-ul și prețul final sunt returnate de modulul de cost intern (nu se calculează în frontend)."}
         </div>
       )}
     </div>
@@ -1389,7 +1347,7 @@ function PreliminarySimulationPreview({
             Simulare preliminară — {result.template_code} ({result.status})
           </span>
         </div>
-        <span className="text-[10px] font-mono text-slate-500">
+        <span className="text-[10px] font-mono text-muted-foreground">
           persisted={String(result.persisted)}
         </span>
       </div>
@@ -1427,24 +1385,24 @@ function PreliminarySimulationPreview({
         />
       </div>
 
-      <div className="text-[10px] text-slate-500 bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2">
-        CostEngine v2 raportează toate operațiile cu rată în{" "}
-        <span className="font-mono text-slate-400">labour_cost</span> (
-        <span className="font-mono text-slate-400">total_operation_cost</span>
-        ). Câmpul <span className="font-mono text-slate-400">machine_cost</span>{" "}
+      <div className="text-[10px] text-muted-foreground bg-background border border-border rounded px-3 py-2">
+        Modulul de cost intern raportează toate operațiile cu rată în{" "}
+        <span className="font-mono text-muted-foreground">labour_cost</span> (
+        <span className="font-mono text-muted-foreground">total_operation_cost</span>
+        ). Câmpul <span className="font-mono text-muted-foreground">machine_cost</span>{" "}
         rămâne 0 — operațiile pe workcenters (CNC, vopsire etc.) apar aici când
         au rată; altfel sunt listate ca blockers, fără valoare.
       </div>
 
       {(breakdown.includedOperationLines.length > 0 ||
         breakdown.excludedOperationLines.length > 0) && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded">
-          <div className="px-3 py-2 border-b border-[#1E293B] text-[11px] font-semibold text-slate-400 uppercase tracking-wide">
+        <div className="bg-card border border-border rounded">
+          <div className="px-3 py-2 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
             Detaliu operații (din component_breakdown)
           </div>
           <div className="max-h-48 overflow-auto">
             <table className="w-full text-[11px]">
-              <thead className="bg-[#0B111E] text-[10px] uppercase tracking-wide text-slate-500">
+              <thead className="bg-background text-[10px] uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="text-left px-3 py-1.5">Cod</th>
                   <th className="text-left px-3 py-1.5">Workcenter</th>
@@ -1457,11 +1415,11 @@ function PreliminarySimulationPreview({
                 {breakdown.includedOperationLines.map((line, i) => (
                   <tr
                     key={`in-${i}`}
-                    className="border-t border-[#1E293B] text-slate-200"
+                    className="border-t border-border text-foreground"
                   >
                     <td className="px-3 py-1.5 font-mono">{line.code || "—"}</td>
                     <td className="px-3 py-1.5 font-mono">{line.workcenter}</td>
-                    <td className="px-3 py-1.5 text-slate-400">
+                    <td className="px-3 py-1.5 text-muted-foreground">
                       {line.rateBasis ?? "—"}
                     </td>
                     <td className="px-3 py-1.5 text-right font-semibold">
@@ -1475,7 +1433,7 @@ function PreliminarySimulationPreview({
                 {breakdown.excludedOperationLines.map((line, i) => (
                   <tr
                     key={`ex-${i}`}
-                    className="border-t border-[#1E293B] text-slate-400"
+                    className="border-t border-border text-muted-foreground"
                   >
                     <td className="px-3 py-1.5 font-mono">{line.code || "—"}</td>
                     <td className="px-3 py-1.5 font-mono">{line.workcenter}</td>
@@ -1499,7 +1457,7 @@ function PreliminarySimulationPreview({
 
       {(result.blocked_reasons?.length ?? 0) > 0 && (
         <div className="bg-red-900/20 border border-red-800/50 rounded px-3 py-2 text-[11px] text-red-300">
-          <div className="font-semibold mb-1">Blockers CostEngine / readiness:</div>
+          <div className="font-semibold mb-1">Blockers cost intern / readiness:</div>
           <ul className="list-disc pl-5 font-mono">
             {result.blocked_reasons.map((r, i) => (
               <li key={i}>{r}</li>
@@ -1509,7 +1467,7 @@ function PreliminarySimulationPreview({
       )}
 
       {(result.warnings?.length ?? 0) > 0 && (
-        <div className="bg-slate-900/40 border border-slate-700 rounded px-3 py-2 text-[11px] text-slate-400">
+        <div className="bg-wo-surface-shell/40 border border-border rounded px-3 py-2 text-[11px] text-muted-foreground">
           <div className="font-semibold mb-1">Avertismente:</div>
           <ul className="list-disc pl-5 font-mono">
             {result.warnings.map((w, i) => (
@@ -1557,13 +1515,13 @@ function PricePreview({ result }: { result: QuotePriceResponse }) {
         />
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded">
-        <div className="px-3 py-2 border-b border-[#1E293B] text-[11px] font-semibold text-slate-400 uppercase tracking-wide">
+      <div className="bg-card border border-border rounded">
+        <div className="px-3 py-2 border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
           Breakdown ({cost.breakdown.length} linii)
         </div>
         <div className="max-h-64 overflow-auto">
           <table className="w-full text-[12px]">
-            <thead className="bg-[#0B111E] text-[10px] uppercase tracking-wide text-slate-500">
+            <thead className="bg-background text-[10px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="text-left px-3 py-1.5">Tip</th>
                 <th className="text-left px-3 py-1.5">Nume</th>
@@ -1576,7 +1534,7 @@ function PricePreview({ result }: { result: QuotePriceResponse }) {
               {cost.breakdown.map((line, i) => (
                 <tr
                   key={i}
-                  className="border-t border-[#1E293B] hover:bg-[#0B111E]"
+                  className="border-t border-border hover:bg-background"
                 >
                   <td className="px-3 py-1.5">
                     <span
@@ -1585,20 +1543,20 @@ function PricePreview({ result }: { result: QuotePriceResponse }) {
                           ? "bg-blue-900/40 text-blue-300"
                           : line.type === "labour"
                           ? "bg-amber-900/40 text-amber-300"
-                          : "bg-slate-800 text-slate-300"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {line.type}
                     </span>
                   </td>
-                  <td className="px-3 py-1.5 text-slate-200">{line.name}</td>
-                  <td className="px-3 py-1.5 text-right text-slate-400">
+                  <td className="px-3 py-1.5 text-foreground">{line.name}</td>
+                  <td className="px-3 py-1.5 text-right text-muted-foreground">
                     {line.quantity.toFixed(2)} {line.unit}
                   </td>
-                  <td className="px-3 py-1.5 text-right text-slate-400">
+                  <td className="px-3 py-1.5 text-right text-muted-foreground">
                     {formatRON(line.unit_cost)}
                   </td>
-                  <td className="px-3 py-1.5 text-right text-slate-100 font-semibold">
+                  <td className="px-3 py-1.5 text-right text-foreground font-semibold">
                     {formatRON(line.total)}
                   </td>
                 </tr>
@@ -1638,15 +1596,15 @@ function KPI({
       className={`border rounded px-3 py-2 ${
         highlight
           ? "bg-blue-900/20 border-blue-600/40"
-          : "bg-[#111827] border-[#1E293B]"
+          : "bg-card border-border"
       }`}
     >
-      <div className="text-[10px] uppercase tracking-wide text-slate-500">
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
         {label}
       </div>
       <div
         className={`text-[14px] font-bold mt-0.5 ${
-          highlight ? "text-blue-300" : "text-slate-100"
+          highlight ? "text-blue-300" : "text-foreground"
         }`}
       >
         {value}

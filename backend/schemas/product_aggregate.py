@@ -6,6 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from schemas.commercial_measurement_contract import CommercialMeasurementBundle
 from schemas.mini_module_registry import MiniModuleRegistryRef, REGISTRY_VERSION as MINI_MODULE_REGISTRY_VERSION
 
 ProvenanceValue = Literal[
@@ -55,6 +56,14 @@ class ProductAggregateOperation(BaseModel):
     component_ref: str | None = None
     formula_id: str | None = None
     priced: bool = True
+    # TE2E-028A: optional template-configured planning minutes (not formula invent).
+    estimated_minutes: float | None = None
+    calculation_type: str | None = None
+    # TE2E-028B: contract-driven planning duration (operational only; JSON fields).
+    planning_duration_mode: str | None = None  # static | formula | none
+    planning_duration_formula_id: str | None = None
+    planning_duration_status: str | None = None
+    planning_minutes_source: str | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None
@@ -123,11 +132,18 @@ class ProductAggregateTaskRule(BaseModel):
     trigger_condition: str | None = None
     provenance: ProvenanceValue = "dossier"
     mini_module_code: str | None = None
+    # Optional process-graph edges (Product Process Contract resolver). Sequence remains tie-break only.
+    depends_on_process_ids: list[str] = Field(default_factory=list)
+    process_code: str | None = None
 
 
 class ProductAggregateTaskContract(BaseModel):
     task_rules: list[ProductAggregateTaskRule] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    # Observability: modular_resolver | dossier_legacy (no DB column — JSON aggregate only)
+    process_graph_source: str | None = None
+    process_graph_hash: str | None = None
+    process_contract_version: str | None = None
 
 
 class ProductAggregateConflict(BaseModel):
@@ -143,6 +159,10 @@ class ProductAggregateProvenanceSummary(BaseModel):
     dossier: dict[str, int] = Field(default_factory=dict)
     linked_modules: dict[str, int] = Field(default_factory=dict)
     aggregate_totals: dict[str, int] = Field(default_factory=dict)
+    # Display/compiler provenance from ConfirmJobProductTruth — not persisted job truth.
+    product_truth_job_revision: int | None = None
+    product_truth_content_hash: str | None = None
+    product_truth_status: str | None = None
 
 
 class ProductAggregateMiniModuleRegistrySummary(BaseModel):
@@ -151,6 +171,58 @@ class ProductAggregateMiniModuleRegistrySummary(BaseModel):
     registry_version: str = MINI_MODULE_REGISTRY_VERSION
     module_refs: list[MiniModuleRegistryRef] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+
+
+class ProductAggregateCompositionNode(BaseModel):
+    """Explicit graph node compiled from ProductDefinition composition — no re-inference."""
+
+    node_id: str
+    template_code: str
+    node_role: str
+    module_code: str
+    module_role: str
+    parent_node_id: str | None = None
+    activation_source: str
+    inherited_inputs: dict[str, Any] = Field(default_factory=dict)
+    locally_owned_inputs: dict[str, Any] = Field(default_factory=dict)
+    unresolved_inputs: list[str] = Field(default_factory=list)
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    provenance: str = "product_definition_composition"
+
+
+class ProductAggregateCompositionEdge(BaseModel):
+    """Explicit graph edge compiled from ProductDefinition composition."""
+
+    edge_id: str
+    parent_template_code: str
+    parent_node_id: str
+    child_template_code: str
+    child_node_id: str
+    child_role: str
+    relation_type: str
+    dependency_role: str | None = None
+    inherited_inputs: dict[str, Any] = Field(default_factory=dict)
+    locally_owned_inputs: dict[str, Any] = Field(default_factory=dict)
+    blockers: list[str] = Field(default_factory=list)
+    provenance: str = "product_definition_composition"
+
+
+class ProductAggregateCompositionGraph(BaseModel):
+    """Frozen explicit composition graph consumed by Aggregate — authoritative structure."""
+
+    composed_graph_version: str
+    composition_mode: str
+    root_template_code: str
+    solution_status: str
+    compatibility_status: str
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    active_child_template_codes: list[str] = Field(default_factory=list)
+    nodes: list[ProductAggregateCompositionNode] = Field(default_factory=list)
+    edges: list[ProductAggregateCompositionEdge] = Field(default_factory=list)
+    frozen_mounting_solution: dict[str, Any] | None = None
+    compiler: str = "product_aggregate_explicit_composition"
 
 
 class ProductAggregate(BaseModel):
@@ -175,3 +247,6 @@ class ProductAggregate(BaseModel):
         default_factory=ProductAggregateProvenanceSummary
     )
     mini_module_registry: ProductAggregateMiniModuleRegistrySummary | None = None
+    composition_graph: ProductAggregateCompositionGraph | None = None
+    # LETTERS_CANONICAL_PRODUCT_SLICE_V1 — non-monetary commercial measurements for CPP 7G.
+    commercial_measurements: CommercialMeasurementBundle | None = None

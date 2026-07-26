@@ -20,6 +20,7 @@ import {
 import type { PricingRegistryItem, PricingRegistryResponse } from "@/api/pricingRegistry";
 import type { CommercialMarkupPolicy } from "@/api/commercialMarkupPoliciesAdmin";
 import type { PriceHistoryEntryDTO } from "@/api/inventoryMaterialsAdmin";
+import { MaterialMarketPriceRegistryPanel } from "@/features/pricing/MaterialMarketPriceRegistryPanel";
 import {
   buildDetailPanelModel,
   buildProblemQueue,
@@ -36,8 +37,12 @@ import {
   type TemplateListEntry,
 } from "@/lib/pricingRegistry";
 import { PricingEntryRow } from "./PricingEntryRow";
-import { SourceBadge } from "@/components/workos/design-system";
+import { SourceBadge, PreviewOfficialBanner, CapacityNotice, BoundaryBadge } from "@/components/workos/design-system";
 import { PRICING_VIEW_TAB_META } from "./pricingRegistryUi";
+import {
+  filterByTypedCatalogView,
+  type TypedCatalogView,
+} from "@/lib/pricing/pricingTypedCatalog";
 
 function fmtCost(n: number | null | undefined, currency?: string | null): string {
   if (n === null || n === undefined || Number.isNaN(n)) return "Lipsă";
@@ -57,7 +62,7 @@ function severityClass(sev: StatusSeverity): string {
     case "bad":
       return "text-red-400";
     default:
-      return "text-slate-400";
+      return "text-muted-foreground";
   }
 }
 
@@ -70,7 +75,7 @@ function readinessClass(readiness: string): string {
     case "blocked":
       return "text-red-400";
     default:
-      return "text-slate-400";
+      return "text-muted-foreground";
   }
 }
 
@@ -143,6 +148,7 @@ export function PricingRegistrySpaciousView({
   baseCurrency,
 }: PricingRegistrySpaciousViewProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [typedCatalogView, setTypedCatalogView] = useState<TypedCatalogView>("all");
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerFamily, setPickerFamily] = useState("all");
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -184,43 +190,48 @@ export function PricingRegistrySpaciousView({
   const problemBanner = formatProblemBanner(problemQueue);
 
   const filteredStackItems = useMemo(() => {
-    if (!stackSearch.trim()) return templateItems;
+    const typed = filterByTypedCatalogView(templateItems, typedCatalogView);
+    if (!stackSearch.trim()) return typed;
     const q = stackSearch.trim().toLowerCase();
-    return templateItems.filter(
+    return typed.filter(
       (i) =>
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q) ||
         i.registry_category.toLowerCase().includes(q)
     );
-  }, [templateItems, stackSearch]);
+  }, [templateItems, stackSearch, typedCatalogView]);
 
   const coverageSections = useMemo(
     () =>
       groupItemsForCoverageStack(
         filteredStackItems,
-        mainView === "coverage" ? registry.markup_policies : [],
+        mainView === "coverage" && typedCatalogView === "all"
+          ? registry.markup_policies
+          : [],
         { includeVerification: false }
       ),
-    [filteredStackItems, registry.markup_policies, mainView]
+    [filteredStackItems, registry.markup_policies, mainView, typedCatalogView]
   );
 
   const allEntriesFiltered = useMemo(() => {
-    if (!stackSearch.trim()) return registry.items;
+    const typed = filterByTypedCatalogView(registry.items, typedCatalogView);
+    if (!stackSearch.trim()) return typed;
     const q = stackSearch.trim().toLowerCase();
-    return registry.items.filter(
+    return typed.filter(
       (i) =>
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q)
     );
-  }, [registry.items, stackSearch]);
+  }, [registry.items, stackSearch, typedCatalogView]);
 
   const verifyItems = useMemo(() => {
-    const base = registry.items.filter(
+    const base = filterByTypedCatalogView(registry.items, typedCatalogView).filter(
       (i) =>
         i.status === "missing_price" ||
         i.status === "needs_review" ||
         i.confidence === "estimated" ||
-        i.confidence === "missing"
+        i.confidence === "missing" ||
+        (i.data_quality_flags ?? []).includes("rate_basis_column_mismatch")
     );
     if (!stackSearch.trim()) return base;
     const q = stackSearch.trim().toLowerCase();
@@ -229,7 +240,7 @@ export function PricingRegistrySpaciousView({
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q)
     );
-  }, [registry.items, stackSearch]);
+  }, [registry.items, stackSearch, typedCatalogView]);
 
   useEffect(() => {
     if (!pickerOpen) return;
@@ -249,24 +260,43 @@ export function PricingRegistrySpaciousView({
 
   return (
     <div className="flex flex-col min-h-0 space-y-2">
+      {/* Stage Banner */}
+      <PreviewOfficialBanner
+        stage="internal"
+        label="Registry intern de referință"
+        detail="Material / Reguli comerciale / Cost intern / Capacitate / Analytics. Nu este hub unic de ofertare. Oferta oficială = Snapshot V2."
+        compact={false}
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        <BoundaryBadge domain="pricing" label="Pricing Registry" />
+        <CapacityNotice
+          message="Efort intern / oră = capacitate — NU tarif client. Nu deblochează oferta."
+          compact
+        />
+      </div>
+
       {/* Header — compact */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <TrendingUp className="w-5 h-5 text-blue-400 shrink-0" />
-            <h1 className="text-[18px] font-bold text-slate-100">Pricing Registry</h1>
+            <h1 className="text-[18px] font-bold text-foreground">Pricing Registry</h1>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              Registry intern de referință — nu este fluxul operator Product Template → Structură produs → Product
+              Compiler.
+            </p>
             <SourceBadge
               source={source === "db" ? "db" : source === "loading" ? "loading" : "error"}
             />
           </div>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            <span className="text-slate-400">Pricing</span> = prețuri pentru calcul ofertă ·{" "}
-            <span className="text-slate-400">Inventory</span> = stoc și achiziții (referință operațională)
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            <span className="text-muted-foreground">Pricing</span> = registry intern (materiale / utilaje / manoperă) ·{" "}
+            <span className="text-muted-foreground">Inventory</span> = stoc și cost achiziție · Oferta client rămâne pe canal CPP
             {baseCurrency ? (
               <>
                 {" "}
                 · Monedă de bază (Settings):{" "}
-                <span className="text-slate-300 font-semibold">{baseCurrency}</span>
+                <span className="text-muted-foreground font-semibold">{baseCurrency}</span>
               </>
             ) : null}
           </p>
@@ -287,7 +317,7 @@ export function PricingRegistrySpaciousView({
             type="button"
             onClick={onRefresh}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded bg-slate-700 text-slate-300 hover:bg-slate-600 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded bg-slate-700 text-muted-foreground hover:bg-slate-600 disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
             Actualizează
@@ -320,7 +350,7 @@ export function PricingRegistrySpaciousView({
               className={`px-3 py-1.5 text-[12px] font-medium rounded-full border transition-all ${
                 mainView === key
                   ? "bg-blue-600/20 text-blue-300 border-blue-600/50"
-                  : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500 hover:text-slate-300"
+                  : "bg-transparent text-muted-foreground border-wo-border-strong hover:border-slate-500 hover:text-muted-foreground"
               }`}
             >
               {meta.label}
@@ -329,6 +359,39 @@ export function PricingRegistrySpaciousView({
           );
         })}
       </div>
+
+      {/* Typed catalog views — Pricing Foundation V1 */}
+      {(mainView === "coverage" || mainView === "all" || mainView === "verify") && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] uppercase tracking-wide text-muted-foreground mr-1">Catalog:</span>
+          {(
+            [
+              { key: "all" as const, label: "Toate tipurile" },
+              { key: "material" as const, label: "Preturi materiale" },
+              { key: "machine_operation" as const, label: "Operații utilaje" },
+              { key: "labor_service" as const, label: "Manoperă și servicii" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setTypedCatalogView(tab.key)}
+              className={`px-2.5 py-1 text-[11px] font-medium rounded-md border transition-all ${
+                typedCatalogView === tab.key
+                  ? "bg-cyan-900/30 text-cyan-200 border-cyan-700/50"
+                  : "bg-transparent text-muted-foreground border-wo-border-strong hover:border-slate-500 hover:text-muted-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {typedCatalogView === "material" &&
+      (mainView === "coverage" || mainView === "all" || mainView === "verify") ? (
+        <MaterialMarketPriceRegistryPanel />
+      ) : null}
 
       {/* Template zone — coverage + verify share template context */}
       {(mainView === "coverage" || mainView === "verify") && (
@@ -361,19 +424,19 @@ export function PricingRegistrySpaciousView({
 
       {/* Main workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-3 min-h-[480px]">
-        <div className="flex flex-col min-h-0 bg-[#0d1321] border border-[#1E293B] rounded-lg overflow-hidden">
-          <div className="px-4 py-2.5 bg-[#111827] border-b border-[#1E293B]">
+        <div className="flex flex-col min-h-0 bg-wo-surface-inset border border-border rounded-lg overflow-hidden">
+          <div className="px-4 py-2.5 bg-card border-b border-border">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <h2 className="text-[13px] font-semibold text-slate-100">{tabMeta.title}</h2>
+              <h2 className="text-[13px] font-semibold text-foreground">{tabMeta.title}</h2>
               {mainView !== "audit" && (
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" />
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                   <input
                     type="text"
                     placeholder="Caută cod, nume…"
                     value={stackSearch}
                     onChange={(e) => onStackSearchChange(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-[12px] bg-[#0d1321] border border-[#2A3548] rounded-lg text-slate-200 w-[200px] focus:outline-none focus:border-blue-600/50"
+                    className="pl-8 pr-3 py-1.5 text-[12px] bg-wo-surface-inset border border-wo-border-strong rounded-lg text-foreground w-[200px] focus:outline-none focus:border-blue-600/50"
                   />
                 </div>
               )}
@@ -420,7 +483,7 @@ export function PricingRegistrySpaciousView({
           </div>
         </div>
 
-        <div className="bg-[#0d1321] border border-[#1E293B] rounded-lg overflow-hidden min-h-[320px] lg:min-h-0">
+        <div className="bg-wo-surface-inset border border-border rounded-lg overflow-hidden min-h-[320px] lg:min-h-0">
           <DetailPanel
             item={selectedItem}
             priceHistory={priceHistory}
@@ -483,7 +546,7 @@ function TemplateZone({
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between gap-3 flex-wrap px-3 py-2.5 bg-[#111827] border border-[#1E293B] rounded-lg">
+      <div className="flex items-center justify-between gap-3 flex-wrap px-3 py-2.5 bg-card border border-border rounded-lg">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="font-mono text-[12px] font-semibold text-blue-400">{selectedTemplate}</p>
@@ -491,8 +554,8 @@ function TemplateZone({
               {templateStats.readinessLabel}
             </span>
           </div>
-          <p className="text-[12px] text-slate-300 mt-0.5 truncate">{templateHumanLabel(selectedTemplate)}</p>
-          <p className="text-[10px] text-slate-500 mt-1">
+          <p className="text-[12px] text-muted-foreground mt-0.5 truncate">{templateHumanLabel(selectedTemplate)}</p>
+          <p className="text-[10px] text-muted-foreground mt-1">
             {templateStats.ownerConfirmed} confirmate ·{" "}
             <span className="text-amber-400">{templateStats.estimated + templateStats.needsReview} review</span> ·{" "}
             <span className="text-red-400">{templateStats.missingPrice} lipsă</span>
@@ -501,7 +564,7 @@ function TemplateZone({
         <button
           type="button"
           onClick={onOpenPicker}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-[#2A3548] bg-[#0F1629] text-slate-200 hover:border-blue-600/40 hover:text-blue-300 transition-colors whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-wo-border-strong bg-wo-surface-inset text-foreground hover:border-blue-600/40 hover:text-blue-300 transition-colors whitespace-nowrap"
         >
           Schimbă template…
           <ChevronDown className="w-3.5 h-3.5" />
@@ -519,7 +582,7 @@ function TemplateZone({
               className={`px-2 py-0.5 rounded-full text-[10px] border transition-colors ${
                 code === selectedTemplate
                   ? "text-amber-300 border-amber-700/40 bg-amber-900/20"
-                  : "text-slate-500 border-[#2A3548] hover:text-amber-300"
+                  : "text-muted-foreground border-wo-border-strong hover:text-amber-300"
               }`}
             >
               ★ {code}
@@ -536,7 +599,7 @@ function TemplateZone({
                 className={`px-2 py-0.5 rounded-full text-[10px] border transition-colors ${
                   code === selectedTemplate
                     ? "text-blue-300 border-blue-700/40 bg-blue-900/25"
-                    : "text-slate-500 border-[#2A3548] hover:text-blue-300"
+                    : "text-muted-foreground border-wo-border-strong hover:text-blue-300"
                 }`}
               >
                 {code}
@@ -564,13 +627,13 @@ function TemplateZone({
         <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-6 bg-black/55">
           <div
             ref={pickerRef}
-            className="w-full max-w-lg max-h-[70vh] flex flex-col bg-[#0d1321] border border-[#1E293B] rounded-xl shadow-2xl overflow-hidden"
+            className="w-full max-w-lg max-h-[70vh] flex flex-col bg-wo-surface-inset border border-border rounded-xl shadow-2xl overflow-hidden"
           >
-            <div className="px-4 py-3 border-b border-[#1E293B]">
+            <div className="px-4 py-3 border-b border-border">
               <div className="flex items-center justify-between">
-                <h3 className="text-[14px] font-semibold text-slate-100">Selectează template</h3>
-                <button type="button" onClick={onClosePicker} className="p-1 rounded hover:bg-[#1E293B]">
-                  <X className="w-4 h-4 text-slate-400" />
+                <h3 className="text-[14px] font-semibold text-foreground">Selectează template</h3>
+                <button type="button" onClick={onClosePicker} className="p-1 rounded hover:bg-muted">
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
               <input
@@ -578,15 +641,15 @@ function TemplateZone({
                 placeholder="Caută template_code, nume, familie…"
                 value={pickerSearch}
                 onChange={(e) => onPickerSearchChange(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-[13px] bg-[#111827] border border-[#2A3548] rounded-lg text-slate-200 focus:outline-none focus:border-blue-600/50"
+                className="w-full mt-2 px-3 py-2 text-[13px] bg-card border border-wo-border-strong rounded-lg text-foreground focus:outline-none focus:border-blue-600/50"
                 autoFocus
               />
             </div>
-            <div className="flex gap-2 flex-wrap px-4 py-2 border-b border-[#1E293B] items-center">
+            <div className="flex gap-2 flex-wrap px-4 py-2 border-b border-border items-center">
               <select
                 value={pickerFamily}
                 onChange={(e) => onPickerFamilyChange(e.target.value)}
-                className="px-2 py-1 text-[11px] bg-[#111827] border border-[#2A3548] rounded text-slate-300"
+                className="px-2 py-1 text-[11px] bg-card border border-wo-border-strong rounded text-muted-foreground"
               >
                 {pickerFamilies.map((f) => (
                   <option key={f} value={f}>
@@ -594,13 +657,13 @@ function TemplateZone({
                   </option>
                 ))}
               </select>
-              <span className="text-[10px] text-slate-500 ml-auto">
+              <span className="text-[10px] text-muted-foreground ml-auto">
                 {allTemplates.length} template-uri active
               </span>
             </div>
             <div className="flex-1 overflow-y-auto p-2">
               {pickerTemplates.length === 0 ? (
-                <p className="text-center text-[12px] text-slate-500 py-8">Niciun template găsit.</p>
+                <p className="text-center text-[12px] text-muted-foreground py-8">Niciun template găsit.</p>
               ) : (
                 pickerTemplates.map((t) => {
                   const isFav = favoriteTemplates.includes(t.template_code);
@@ -608,7 +671,7 @@ function TemplateZone({
                     <div
                       key={t.template_code}
                       className={`flex items-start gap-1 rounded-lg mb-1 ${
-                        t.template_code === selectedTemplate ? "bg-blue-900/20" : "hover:bg-[#1A2236]/60"
+                        t.template_code === selectedTemplate ? "bg-blue-900/20" : "hover:bg-wo-surface-raised/60"
                       }`}
                     >
                       <button
@@ -617,15 +680,15 @@ function TemplateZone({
                         className="flex-1 text-left px-3 py-2.5"
                       >
                         <p className="font-mono text-[11px] font-semibold text-blue-400">{t.template_code}</p>
-                        <p className="text-[13px] text-slate-100 mt-0.5">{t.label}</p>
-                        <p className="text-[10px] text-slate-500 mt-1">
+                        <p className="text-[13px] text-foreground mt-0.5">{t.label}</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">
                           {t.family} · {t.materialCount} materiale · {t.workcenterCount} operații
                         </p>
                       </button>
                       <button
                         type="button"
                         onClick={() => onToggleFavoriteTemplate(t.template_code)}
-                        className="p-2 mt-1 text-slate-500 hover:text-amber-400"
+                        className="p-2 mt-1 text-muted-foreground hover:text-amber-400"
                         title={isFav ? "Elimină din favorite" : "Adaugă la favorite"}
                       >
                         <Star
@@ -637,7 +700,7 @@ function TemplateZone({
                 })
               )}
             </div>
-            <div className="px-4 py-2 border-t border-[#1E293B] text-[10px] text-slate-500">
+            <div className="px-4 py-2 border-t border-border text-[10px] text-muted-foreground">
               Căutare scalabilă — nu afișăm toate template-urile ca chip-uri.
             </div>
           </div>
@@ -650,16 +713,16 @@ function TemplateZone({
 function GroupHeader({ label, count }: { label: string; count: number }) {
   return (
     <div className="flex items-center gap-2 mt-5 mb-2 first:mt-0">
-      <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500 shrink-0">{label}</h4>
-      <div className="flex-1 h-px bg-[#1E293B]" />
-      <span className="text-[10px] text-slate-600">{count}</span>
+      <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground shrink-0">{label}</h4>
+      <div className="flex-1 h-px bg-muted" />
+      <span className="text-[10px] text-wo-text-dim">{count}</span>
     </div>
   );
 }
 
 function SectionHeader({ title }: { title: string }) {
   return (
-    <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2 mt-3 first:mt-0">
+    <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2 mt-3 first:mt-0">
       {title}
     </h3>
   );
@@ -682,7 +745,7 @@ function CoverageStack({
 }) {
   if (sections.length === 0) {
     return (
-      <p className="text-center text-[12px] text-slate-500 py-12">
+      <p className="text-center text-[12px] text-muted-foreground py-12">
         Niciun rând pentru template-ul selectat.
       </p>
     );
@@ -733,7 +796,7 @@ function FlatEntryList({
   loadingRate: boolean;
 }) {
   if (items.length === 0) {
-    return <p className="text-center text-[12px] text-slate-500 py-12">Niciun rând.</p>;
+    return <p className="text-center text-[12px] text-muted-foreground py-12">Niciun rând.</p>;
   }
   return (
     <div className="space-y-2">
@@ -771,7 +834,7 @@ function MarkupView({
         </p>
       </div>
       {policies.length === 0 ? (
-        <p className="text-[12px] text-slate-500 text-center py-8">Nu există reguli de adaos.</p>
+        <p className="text-[12px] text-muted-foreground text-center py-8">Nu există reguli de adaos.</p>
       ) : (
         <div className="space-y-2">
           {policies.map((item) => (
@@ -800,14 +863,14 @@ function AuditPlaceholder({
 }) {
   if (!selectedItem) {
     return (
-      <p className="text-center text-[12px] text-slate-500 py-12 px-4">
+      <p className="text-center text-[12px] text-muted-foreground py-12 px-4">
         Selectează un material sau o rată din acoperire pentru a vedea istoricul de preț disponibil.
       </p>
     );
   }
   if (selectedItem.pricing_kind !== "material") {
     return (
-      <p className="text-center text-[12px] text-slate-500 py-12 px-4">
+      <p className="text-center text-[12px] text-muted-foreground py-12 px-4">
         Istoricul detaliat este disponibil pentru materiale. Selectează un material din listă.
       </p>
     );
@@ -821,26 +884,26 @@ function AuditPlaceholder({
   }
   if (priceHistory.length === 0) {
     return (
-      <p className="text-center text-[12px] text-slate-500 py-12">
+      <p className="text-center text-[12px] text-muted-foreground py-12">
         Nu există intrări în istoricul de preț pentru {selectedItem.pricing_code}.
       </p>
     );
   }
   return (
     <div className="space-y-2">
-      <p className="text-[11px] font-semibold text-slate-400">
+      <p className="text-[11px] font-semibold text-muted-foreground">
         Istoric — {selectedItem.pricing_code}
       </p>
       {priceHistory.map((h, idx) => (
         <div
           key={idx}
-          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 text-[11px] hover:border-slate-500 transition-colors"
+          className="bg-card border border-border rounded-lg p-4 text-[11px] hover:border-slate-500 transition-colors"
         >
-          <p className="text-[14px] text-slate-100 font-bold">
+          <p className="text-[14px] text-foreground font-bold">
             {h.unit_cost != null ? fmtCost(h.unit_cost, h.currency) : "—"}
-            <span className="text-[11px] font-normal text-slate-500 ml-1">/ buc</span>
+            <span className="text-[11px] font-normal text-muted-foreground ml-1">/ buc</span>
           </p>
-          <p className="text-slate-500 mt-1">
+          <p className="text-muted-foreground mt-1">
             {h.valid_from ? new Date(h.valid_from).toLocaleDateString("ro-RO") : "—"}
             {h.change_reason ? ` · ${h.change_reason}` : ""}
           </p>
@@ -872,8 +935,8 @@ function DetailPanel({
   if (!model || !item) {
     return (
       <div className="flex flex-col items-center justify-center p-6 text-center min-h-[280px]">
-        <Info className="w-7 h-7 text-slate-600 mb-2" />
-        <p className="text-[12px] text-slate-500 max-w-[240px]">
+        <Info className="w-7 h-7 text-wo-text-dim mb-2" />
+        <p className="text-[12px] text-muted-foreground max-w-[240px]">
           Selectează o intrare pentru impact ofertă, sursă tehnică și acțiuni.
         </p>
       </div>
@@ -887,18 +950,21 @@ function DetailPanel({
 
   return (
     <div className="flex flex-col min-h-0 overflow-y-auto p-4 space-y-3">
-      <div className="border-b border-[#1E293B] pb-3">
-        <h2 className="text-[15px] font-bold text-slate-100">{model.name}</h2>
+      <div className="border-b border-border pb-3">
+        <h2 className="text-[15px] font-bold text-foreground">{model.name}</h2>
         <p className="font-mono text-[11px] text-blue-400 mt-0.5">{model.code}</p>
-        <p className="text-[10px] text-slate-500 mt-1">
+        <p className="text-[10px] text-muted-foreground mt-1">
           {model.typeLabel} · {model.category}
         </p>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Valoare în calcul ofertă</p>
-        <p className="text-[20px] font-bold text-slate-100">{costDisplay}</p>
-        <p className="text-[11px] text-slate-500">{model.unit}</p>
+      <div className="bg-card border border-border rounded-lg p-3">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">{model.costLabelRo}</p>
+        <p className="text-[20px] font-bold text-foreground">{costDisplay}</p>
+        <p className="text-[11px] text-muted-foreground">{model.unit}</p>
+        {model.machineFamilyLabel && (
+          <p className="text-[11px] text-cyan-300/80 mt-1">{model.machineFamilyLabel}</p>
+        )}
         <p className={`text-[11px] font-semibold mt-2 ${severityClass(model.status.severity)}`}>
           {model.status.text}
         </p>
@@ -908,38 +974,44 @@ function DetailPanel({
             {model.currencyMismatchWarning}
           </p>
         )}
+        {model.dataQualityWarningRo && (
+          <p className="text-[10px] text-amber-300 mt-2 leading-relaxed flex items-start gap-1">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            {model.dataQualityWarningRo}
+          </p>
+        )}
       </div>
 
-      <div className="text-[11px] text-slate-400 space-y-1">
+      <div className="text-[11px] text-muted-foreground space-y-1">
         <p>
-          <span className="text-slate-500">Impact ofertă:</span>{" "}
-          <span className="text-slate-200">{model.impact}</span>
+          <span className="text-muted-foreground">Impact ofertă:</span>{" "}
+          <span className="text-foreground">{model.impact}</span>
         </p>
-        <p className="text-[10px] text-slate-500 leading-relaxed">
+        <p className="text-[10px] text-muted-foreground leading-relaxed">
           Modifică valoarea folosită în calculul de ofertă. Nu modifică stocul, loturile sau ultimul preț de achiziție.
         </p>
       </div>
 
-      <div className="space-y-1.5 text-[11px] border-t border-[#1E293B] pt-3">
+      <div className="space-y-1.5 text-[11px] border-t border-border pt-3">
         <div className="flex justify-between gap-2">
-          <span className="text-slate-500 shrink-0">Sursă tehnică</span>
-          <span className="text-slate-300 font-mono text-right">{technicalSourceLabel(model.technicalSource)}</span>
+          <span className="text-muted-foreground shrink-0">Sursă tehnică</span>
+          <span className="text-muted-foreground font-mono text-right">{technicalSourceLabel(model.technicalSource)}</span>
         </div>
         {model.templates.length > 0 && (
           <div>
-            <span className="text-slate-500">Template-uri</span>
-            <p className="text-slate-300 mt-0.5 font-mono text-[10px] break-all">{model.templates.join(", ")}</p>
+            <span className="text-muted-foreground">Template-uri</span>
+            <p className="text-muted-foreground mt-0.5 font-mono text-[10px] break-all">{model.templates.join(", ")}</p>
           </div>
         )}
         {model.sourceNotes && (
           <div>
-            <span className="text-slate-500">Note sursă</span>
-            <p className="text-slate-400 mt-0.5 italic">{model.sourceNotes}</p>
+            <span className="text-muted-foreground">Note sursă</span>
+            <p className="text-muted-foreground mt-0.5 italic">{model.sourceNotes}</p>
           </div>
         )}
         {model.costEngineRate != null && (
           <div className="flex justify-between">
-            <span className="text-slate-500">CostEngine</span>
+            <span className="text-muted-foreground">CostEngine</span>
             <span className={model.costEngineRateMatch ? "text-emerald-400" : "text-amber-400"}>
               {model.costEngineRate} {model.costEngineRateMatch ? "✓" : "≠"}
             </span>
@@ -959,20 +1031,20 @@ function DetailPanel({
 
       {model.isMaterial && (
         <div>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1.5">Istoric recent</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5">Istoric recent</p>
           {loadingHistory ? (
             <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
           ) : priceHistory.length > 0 ? (
             <div className="space-y-1">
               {priceHistory.slice(0, 3).map((h, idx) => (
-                <p key={idx} className="text-[10px] text-slate-400">
+                <p key={idx} className="text-[10px] text-muted-foreground">
                   {h.unit_cost != null ? fmtCost(h.unit_cost, h.currency) : "—"} —{" "}
                   {h.valid_from ? new Date(h.valid_from).toLocaleDateString("ro-RO") : "—"}
                 </p>
               ))}
             </div>
           ) : (
-            <p className="text-[10px] text-slate-600">Nu există istoric disponibil.</p>
+            <p className="text-[10px] text-wo-text-dim">Nu există istoric disponibil.</p>
           )}
         </div>
       )}
@@ -1003,7 +1075,7 @@ function DetailPanel({
           <span className="text-[10px] text-amber-400/90 self-center">Editare reguli adaos — build separat</span>
         )}
         {!model.isMaterial && !model.isRate && !model.isMarkup && (
-          <span className="text-[10px] text-slate-500 self-center">Vizualizare read-only</span>
+          <span className="text-[10px] text-muted-foreground self-center">Vizualizare read-only</span>
         )}
       </div>
     </div>

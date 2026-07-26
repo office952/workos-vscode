@@ -196,6 +196,22 @@ function buildSixLayerReport(): SvgAnalysisCoreReport {
   return base;
 }
 
+function buildLogoOnlyReport(): SvgAnalysisCoreReport {
+  const base = buildReport();
+  base.sourceFileName = "cerc100cm.svg";
+  base.layers = [base.layers[1]!];
+  base.colors = {
+    unique: ["#2B2A29"],
+    dominant: ["#2B2A29"],
+    fills: [],
+    strokes: ["#2B2A29"],
+    byLayer: {
+      "logo stanga": ["#2B2A29"],
+    },
+  };
+  return base;
+}
+
 function buildConfirmation(): LayerRoleConfirmation {
   return {
     schemaVersion: "layer_role_confirmation_v1",
@@ -266,13 +282,56 @@ describe("IntakeV6LayersRoleTable display labels", () => {
       />,
     );
 
-    expect(screen.getByText("Layer 1 — albastru")).toBeInTheDocument();
+    expect(screen.getByText("Element 1 — albastru")).toBeInTheDocument();
     expect(screen.getByText("Grup detectat: maria")).toBeInTheDocument();
-    expect(screen.getByText("Țintă automată Product System: TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
-    expect(screen.getAllByText("Rol producție").length).toBeGreaterThan(0);
-    expect(screen.getByText("Layer 2 — contur negru")).toBeInTheDocument();
-    expect(screen.getByText("Grup detectat: logo stanga")).toBeInTheDocument();
+    expect(screen.queryByText(/Țintă automată Product System/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("Rol geometrie").length).toBeGreaterThan(0);
+    expect(screen.getByText("Element 2 — contur negru")).toBeInTheDocument();
+    expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(screen.queryByText(/pseudo maria/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/pseudo fill/i)).not.toBeInTheDocument();
+  });
+
+  it("shows Product System component on the same card as geometry role", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+        workspaceTemplateCode="TPL-VOLUMETRIC-LETTERS_v2"
+        bindables={[
+          {
+            component_template_code: "TPL-VOLUMETRIC-FACE_v1",
+            owner_label: "Vector litere",
+            accepted_geometry_roles: ["LETTER_VECTOR_SET"],
+            selection_mode: "LAYER_OR_GROUP",
+            cardinality: "MULTI",
+            required: true,
+            available: true,
+            active: true,
+            active_by_default: true,
+          },
+          {
+            component_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+            owner_label: "Vector logo",
+            accepted_geometry_roles: ["LOGO_VECTOR_SET"],
+            selection_mode: "LAYER_OR_GROUP",
+            cardinality: "MULTI",
+            required: false,
+            available: true,
+            active: false,
+            active_by_default: false,
+            guards: ["candidate_only"],
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByText("Față litere volumetrice").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Componentă logo volumetric").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Avertizare").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Componentă produs").length).toBeGreaterThan(0);
   });
 
   it("keeps role selection functional with display-only labels", () => {
@@ -288,10 +347,10 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     );
 
     fireEvent.change(screen.getByTestId("intake-v6-layer-role-pseudo:maria"), {
-      target: { value: "logo" },
+      target: { value: "printed_artwork" },
     });
 
-    expect(onUpdateLayerRole).toHaveBeenCalledWith("pseudo:maria", "logo");
+    expect(onUpdateLayerRole).toHaveBeenCalledWith("pseudo:maria", "printed_artwork");
   });
 
   it("renders owner-facing role labels for letters and atypical vectors", () => {
@@ -305,8 +364,8 @@ describe("IntakeV6LayersRoleTable display labels", () => {
       />,
     );
 
-    expect(screen.getByDisplayValue("face").selectedOptions[0]?.textContent).toBe("Vector Litere");
-    expect(screen.getByDisplayValue("printed_artwork").selectedOptions[0]?.textContent).toBe("Vector Atipic");
+    expect((screen.getByTestId("intake-v6-layer-role-pseudo:maria") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Litere");
+    expect((screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Logo");
   });
 
   it("keeps all six layers visible without pagination", () => {
@@ -321,10 +380,10 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     );
 
     expect(screen.queryByTestId("intake-v6-layer-card-pagination")).not.toBeInTheDocument();
-    expect(screen.getByText("Layer 6 — contur negru")).toBeInTheDocument();
+    expect(screen.getByText("Element 6 — contur negru")).toBeInTheDocument();
   });
 
-  it("shows contextual grouped dropdown options for letters and logo layers", () => {
+  it("shows owner-approved dropdown options for letters and logo layers", () => {
     render(
       <IntakeV6LayersRoleTable
         report={buildReport()}
@@ -338,11 +397,92 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     const lettersSelect = screen.getByTestId("intake-v6-layer-role-pseudo:maria");
     const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga");
 
-    expect(lettersSelect.querySelector('optgroup[label="Recomandate"]')).not.toBeNull();
-    expect(lettersSelect.querySelector('optgroup[label="Alte roluri"]')).not.toBeNull();
-    expect(logoSelect.querySelector('optgroup[label="Recomandate"]')).not.toBeNull();
-    expect(logoSelect.querySelector('optgroup[label="Alte roluri"]')).not.toBeNull();
-    expect(lettersSelect.querySelector('optgroup[label="Recomandate"] option')?.getAttribute("value")).toBe("face");
-    expect(logoSelect.querySelector('optgroup[label="Recomandate"] option')?.getAttribute("value")).toBe("logo");
+    expect(lettersSelect.querySelector("optgroup")).toBeNull();
+    expect(logoSelect.querySelector("optgroup")).toBeNull();
+    const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+    expect(letterOptions).toEqual([
+      "Vector Litere",
+      "Vector Logo",
+      "Contur suport",
+      "Text decupat",
+      "Logo decupat",
+      "Insert plexiglas",
+      "Decorativ / Ignore",
+    ]);
+    expect(logoOptions).toEqual(letterOptions);
+    expect(new Set(letterOptions).size).toBe(letterOptions.length);
+    expect(lettersSelect.textContent).not.toContain("Vinil aplicat");
+    expect(lettersSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
+    expect(lettersSelect.textContent).not.toContain("Cant / volum");
+    expect(lettersSelect.textContent).not.toContain("Spate / backing");
+    expect(lettersSelect.textContent).not.toContain("Vector Atipic");
+    expect(lettersSelect.textContent).not.toContain("Ignora strat");
+    expect(lettersSelect.textContent).not.toContain("Necesită confirmare");
+  });
+
+  it("uses the same owner taxonomy when the Letters+Logo context is detected from layer targets", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    const lettersSelect = screen.getByTestId("intake-v6-layer-role-pseudo:maria");
+    const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga");
+    const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+
+    expect(letterOptions).toHaveLength(7);
+    expect(logoOptions).toEqual(letterOptions);
+    expect(logoSelect.querySelector("optgroup")).toBeNull();
+    expect(logoSelect.textContent).not.toContain("Vector Atipic");
+    expect(logoSelect.textContent).not.toContain("Cant / volum");
+  });
+
+  it("keeps the owner-only dropdown in a single-logo workspace", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildLogoOnlyReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement;
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+
+    expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
+    expect(logoSelect.selectedOptions[0]?.textContent).toBe("Vector Logo");
+    expect(logoOptions).toHaveLength(7);
+    expect(logoSelect.textContent).not.toContain("Vinil aplicat");
+    expect(logoSelect.textContent).not.toContain("Ignora strat");
+    expect(logoSelect.textContent).not.toContain("Necesită confirmare");
+    expect(logoSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
+  });
+
+  it("hides per-card status icons when all layers are confirmed", () => {
+    const confirmation = buildConfirmation();
+    confirmation.confirmationStatus = "complete";
+    for (const layer of confirmation.layers) {
+      layer.confirmationState = "confirmed";
+      layer.confirmedRole = layer.autoRole;
+    }
+
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={confirmation}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    expect(screen.queryByTestId("intake-v6-layer-status-icon-pseudo:maria")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-layer-status-icon-logo-stanga")).not.toBeInTheDocument();
   });
 });

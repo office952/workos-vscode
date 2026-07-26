@@ -1,0 +1,498 @@
+{
+  "task": "APP-AUTH-06",
+  "generated_at": "2026-07-15T09:50:48.805178+00:00",
+  "pilot_mode": "OBSERVE_ONLY_DEV_TEST",
+  "pilot_port": 8011,
+  "trusted_backend": "http://127.0.0.1:8001",
+  "pilot_process": {
+    "started": true,
+    "pid": 4468,
+    "command": "uvicorn main:app --host 127.0.0.1 --port 8011",
+    "log_path": "C:\\w\\psiso\\docs\\qa\\product-system-active-path-isolation-v1\\app_auth_06\\pilot_process.log",
+    "cleanup": {
+      "port_closed": true,
+      "process_stopped": true
+    },
+    "verdict": "PASS"
+  },
+  "consumer_reconciliation": {
+    "task": "APP-AUTH-06",
+    "source": "app_auth_03/parity_consumer_matrix.json",
+    "inventoried_total": 18,
+    "connected_count": 2,
+    "remaining_unwired": 16,
+    "excluded_definitive_count": 5,
+    "reclassified": [
+      [
+        "CONS-SANDU-REPORT",
+        "observe_helper_not_request_consumer"
+      ]
+    ],
+    "app_auth_05_count_correction": {
+      "incorrect_figure": 14,
+      "correct_remaining_unwired": 16,
+      "explanation": "18 inventoried consumers minus 2 connected equals 16 remaining. The APP-AUTH-05 '14 unwired' figure conflated writers (14) or subtracted Sandu helper and Tablet exclusion incorrectly."
+    },
+    "matrix": [
+      {
+        "consumer": "CONS-EMPLOYEES-PAGE",
+        "surface": "/employees",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-UTILAJE-PAGE",
+        "surface": "/utilaje",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-MOBILE-AVAILABLE",
+        "surface": "Employee Mobile available tasks",
+        "inventoried": true,
+        "connected": true,
+        "excluded": false,
+        "remains_candidate": false,
+        "reason": "APP-AUTH-05 observe-only wiring"
+      },
+      {
+        "consumer": "CONS-MOBILE-ASSIGNED",
+        "surface": "Employee Mobile assigned tasks",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-MOBILE-CLAIM-START",
+        "surface": "Employee Mobile claim/start-from-available",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+      },
+      {
+        "consumer": "CONS-OPERATOR-TASKS",
+        "surface": "/operator",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-OPERATOR-ELIGIBILITY-FE",
+        "surface": "/operator eligibility UI",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-TABLET",
+        "surface": "/tablet",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "Parallel demo authority A19 \u2014 kiosk track separate"
+      },
+      {
+        "consumer": "CONS-SHOP-FLOOR",
+        "surface": "/shop-floor",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-ELIGIBILITY-ENDPOINT",
+        "surface": "operation eligibility check",
+        "inventoried": true,
+        "connected": true,
+        "excluded": false,
+        "remains_candidate": false,
+        "reason": "APP-AUTH-05 observe-only wiring"
+      },
+      {
+        "consumer": "CONS-ASSIGNMENT-SERVICE",
+        "surface": "assignment service",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+      },
+      {
+        "consumer": "CONS-EXECUTION-REALITY-START",
+        "surface": "ExecutionReality start guard",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+      },
+      {
+        "consumer": "CONS-PERSONAL-PAGE",
+        "surface": "/personal",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-PRODUCT-SYSTEM-MAPPING",
+        "surface": "/product-system operation mapping panel",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-OPERATOR-EMPLOYEES-HOOK",
+        "surface": "useOperatorEmployees",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-REGISTRY-CATALOG-API",
+        "surface": "operational-registry catalog",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": true,
+        "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+      },
+      {
+        "consumer": "CONS-ATTENDANCE-READ",
+        "surface": "pontaj read paths",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "P11 attendance domain \u2014 separate audit"
+      },
+      {
+        "consumer": "CONS-SANDU-REPORT",
+        "surface": "Sandu reconciliation report",
+        "inventoried": true,
+        "connected": false,
+        "excluded": false,
+        "remains_candidate": false,
+        "reason": "observe_helper_not_request_consumer"
+      },
+      {
+        "consumer": "CONS-MODULES-PAGE",
+        "surface": "/modules",
+        "inventoried": true,
+        "connected": false,
+        "excluded": true,
+        "remains_candidate": false,
+        "reason": "Module Chain pista separata \u2014 MODULE-INT-01 pe pauza; fara conectare la paritate"
+      }
+    ]
+  },
+  "flags_off_batch": {
+    "base_url": "http://127.0.0.1:8001",
+    "requests_per_consumer": 20,
+    "available": {
+      "latencies_ms": [
+        884.02,
+        326.0,
+        354.36,
+        377.35,
+        362.52,
+        278.91,
+        253.01,
+        300.23,
+        265.16,
+        383.77,
+        507.75,
+        422.82,
+        365.04,
+        241.96,
+        227.79,
+        234.77,
+        230.74,
+        225.36,
+        239.92,
+        428.41
+      ],
+      "p50_ms": 326.0,
+      "p95_ms": 507.75,
+      "max_ms": 884.02,
+      "unique_hashes": 1,
+      "hash_sample": "d3ef4dcef4b3172aa091bdfb9ef67ff492f8848d0cdacdd76d40a30e3bfb44da",
+      "status_codes": [
+        200
+      ]
+    },
+    "eligibility": {
+      "latencies_ms": [
+        108.47,
+        100.45,
+        114.4,
+        93.46,
+        94.82,
+        99.49,
+        65.85,
+        106.33,
+        68.28,
+        85.18,
+        85.16,
+        135.46,
+        101.79,
+        68.56,
+        71.77,
+        68.25,
+        75.82,
+        71.17,
+        88.55,
+        171.81
+      ],
+      "p50_ms": 93.46,
+      "p95_ms": 135.46,
+      "max_ms": 171.81,
+      "unique_hashes": 1,
+      "hash_sample": "c6269e99ba1915e7f6c470d81624904adc68a168fa99ea6ef832b54238b9adc6",
+      "status_codes": [
+        200
+      ]
+    }
+  },
+  "flags_on_batch": {
+    "base_url": "http://127.0.0.1:8011",
+    "requests_per_consumer": 20,
+    "available": {
+      "latencies_ms": [
+        121.91,
+        88.75,
+        84.14,
+        82.17,
+        80.81,
+        83.58,
+        84.07,
+        85.45,
+        87.21,
+        85.43,
+        85.55,
+        83.83,
+        84.47,
+        81.25,
+        85.79,
+        103.07,
+        110.66,
+        101.85,
+        85.69,
+        83.61
+      ],
+      "p50_ms": 85.45,
+      "p95_ms": 110.66,
+      "max_ms": 121.91,
+      "unique_hashes": 1,
+      "hash_sample": "d3ef4dcef4b3172aa091bdfb9ef67ff492f8848d0cdacdd76d40a30e3bfb44da",
+      "status_codes": [
+        200
+      ]
+    },
+    "eligibility": {
+      "latencies_ms": [
+        33.29,
+        30.71,
+        29.17,
+        30.0,
+        30.17,
+        32.67,
+        32.72,
+        31.76,
+        31.84,
+        31.43,
+        30.14,
+        30.79,
+        30.81,
+        31.03,
+        30.29,
+        47.49,
+        32.77,
+        30.64,
+        31.69,
+        33.39
+      ],
+      "p50_ms": 31.43,
+      "p95_ms": 33.39,
+      "max_ms": 47.49,
+      "unique_hashes": 1,
+      "hash_sample": "c6269e99ba1915e7f6c470d81624904adc68a168fa99ea6ef832b54238b9adc6",
+      "status_codes": [
+        200
+      ]
+    }
+  },
+  "observation_events": 420,
+  "observation_summary": {
+    "by_type": [
+      {
+        "type": "match",
+        "raw_count": 100,
+        "unique_fingerprints": 5,
+        "duplicates": 95,
+        "false_positives": 0,
+        "actionable": 0,
+        "classifications": [
+          "EXPECTED_TRANSITION"
+        ]
+      },
+      {
+        "type": "missing_required_competence",
+        "raw_count": 140,
+        "unique_fingerprints": 5,
+        "duplicates": 135,
+        "false_positives": 0,
+        "actionable": 0,
+        "classifications": [
+          "NOT_PROVEN"
+        ]
+      },
+      {
+        "type": "operational_eligible_canonical_ineligible",
+        "raw_count": 140,
+        "unique_fingerprints": 5,
+        "duplicates": 135,
+        "false_positives": 0,
+        "actionable": 140,
+        "classifications": [
+          "ACTIONABLE"
+        ]
+      },
+      {
+        "type": "value_conflict",
+        "raw_count": 40,
+        "unique_fingerprints": 1,
+        "duplicates": 39,
+        "false_positives": 0,
+        "actionable": 40,
+        "classifications": [
+          "ACTIONABLE"
+        ]
+      }
+    ],
+    "totals": {
+      "raw": 420,
+      "unique_fingerprints": 16,
+      "duplicates": 404,
+      "false_positives": 0,
+      "actionable": 180,
+      "expected_transition": 100,
+      "informational": 0,
+      "insufficient_data": 0
+    }
+  },
+  "sandu": {
+    "observed": true,
+    "mutations_performed": false,
+    "reconciliation_status": "confirmation_required",
+    "domains_with_signal": [
+      "competence"
+    ],
+    "fingerprints": [
+      "parity_fp_v1:1b8d59931088929ae16f30ad31efdf9deae7eeca8fd62a3ca27f044b29847294"
+    ],
+    "comparison_result": "value_conflict",
+    "explicit_mapping_operations": [
+      {
+        "operation_code": "assembly",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "colantare",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "field_installation",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "montaj_led",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "packaging",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "quality_control",
+        "explicit_override": true
+      },
+      {
+        "operation_code": "welding",
+        "explicit_override": true
+      }
+    ]
+  },
+  "response_invariance": {
+    "flags_off_available_hash_stable": true,
+    "flags_off_eligibility_hash_stable": true,
+    "flags_on_available_hash_stable": true,
+    "flags_on_eligibility_hash_stable": true,
+    "flags_off_vs_on_available_hash_match": true,
+    "flags_off_vs_on_eligibility_hash_match": true,
+    "status_invariance": true,
+    "trusted_backend_unchanged_after_pilot": true
+  },
+  "performance": {
+    "flags_off_p95_ms": 507.75,
+    "flags_on_p95_ms": 110.66,
+    "delta_percent": -78.21,
+    "threshold_percent": 15,
+    "verdict": "PASS"
+  },
+  "third_consumer": {
+    "recommendation": "CONNECT_NEXT",
+    "candidate_id": "CONS-REGISTRY-CATALOG-API",
+    "surface": "GET /api/v1/operational-registry/catalog",
+    "rationale": [
+      "read-only backend surface",
+      "same registry contracts as wired consumers",
+      "controlled volume",
+      "no HR payload",
+      "no assignment or ExecutionReality mutation",
+      "P1 priority in APP-AUTH-03 inventory"
+    ],
+    "alternatives_deferred": [
+      {
+        "id": "CONS-EMPLOYEES-PAGE",
+        "verdict": "NEEDS_SEPARATE_AUDIT",
+        "reason": "frontend + HR display risk"
+      },
+      {
+        "id": "CONS-OPERATOR-TASKS",
+        "verdict": "NEEDS_SEPARATE_AUDIT",
+        "reason": "execution surface P8/P10"
+      },
+      {
+        "id": "CONS-SHOP-FLOOR",
+        "verdict": "DO_NOT_CONNECT",
+        "reason": "silent mockData fallback risk"
+      }
+    ],
+    "app_auth_07_stays_observe_only": true
+  },
+  "normal_backend_final_flags": "ALL_FALSE",
+  "db_writes": 0,
+  "verdict": "APP_AUTH_06_PARITY_PILOT_PASS_READY_FOR_OWNER_REVIEW"
+}

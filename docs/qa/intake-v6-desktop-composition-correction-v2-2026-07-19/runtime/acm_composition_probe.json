@@ -1,0 +1,29 @@
+{
+  "id": "acm_composition_v2",
+  "workspace_id": "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+  "workspace_code": "IV6-EA145E74",
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+    "formLeads": true,
+    "formTop": 201.75,
+    "letterTop": 325.25,
+    "formAboveFold": true,
+    "letterAboveFold": true,
+    "fullWidthRose": false,
+    "cornerAttention": "corner",
+    "tabsOwnForm": "true",
+    "scopeChip": "chip",
+    "analyzerInPricing": false,
+    "pretDupaConfirmare": false,
+    "productSystemInMontaj": false,
+    "lightingHelper": false,
+    "iluminareContractDup": false,
+    "diagnosticInline": false,
+    "diagnosticEntry": true,
+    "footerCompact": "compact"
+  },
+  "confirm": {
+    "ready": false,
+    "headline": "Configurația nu este pregătită pentru confirmare."
+  }
+}

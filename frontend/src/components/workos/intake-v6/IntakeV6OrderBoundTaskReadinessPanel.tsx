@@ -92,7 +92,7 @@ export default function IntakeV6OrderBoundTaskReadinessPanel({
         </ul>
       ) : null}
 
-      <div className="border-t border-[#2A3548]/60 pt-3 text-[10px] text-slate-500">
+      <div className="border-t border-wo-border-strong/60 pt-3 text-[10px] text-slate-500">
         <p data-testid="intake-v6-readiness-next-action">
           Următorul pas: {contract.next_action_label} —{" "}
           {contract.next_action_enabled ? "activ" : "dezactivat"}

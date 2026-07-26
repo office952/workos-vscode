@@ -27,8 +27,10 @@ from main import app
 from tests.test_employee_mobile_tasks import (
     _cleanup_overrides,
     _client_for,
+    _seed_active_order,
     _seed_employee,
     _seed_plan_with_assigned_task,
+    _seed_print_eligibility,
     _user,
 )
 
@@ -44,6 +46,8 @@ def session_fixture(db_fixture, db_session):
     async def _setup():
         primary = await _seed_employee(db_session, user_id=f"primary-{uuid.uuid4().hex[:6]}")
         helper = await _seed_employee(db_session, user_id=f"helper-{uuid.uuid4().hex[:6]}")
+        await _seed_active_order(db_session, order_id=order_id)
+        await _seed_print_eligibility(db_session, primary.id)
         await _seed_plan_with_assigned_task(
             db_session,
             order_id=order_id,

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
   productTemplateAvailabilityApi,
@@ -40,6 +40,9 @@ import {
   VolumetricComponentProductionHint,
 } from "@/features/product-system/VolumetricProductionGuidance";
 import { TemplateGeneralTabPanel } from "@/features/product-system/TemplateGeneralTabPanel";
+import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
+import { ProductTemplatePublicationPanel } from "@/features/product-system/ProductTemplatePublicationPanel";
+import { ComponentContractUsedByPanel } from "@/features/product-system/ComponentContractUsedByPanel";
 import { getTemplateArchivePolicy } from "@/features/product-system/templateArchivePolicy";
 import {
   deriveConstructionStages,
@@ -72,30 +75,54 @@ import {
   ProductAggregateStructureList,
 } from "@/features/product-system/ProductAggregateOverviewPanel";
 import { FormSystemAdminPanel } from "@/features/product-system/FormSystemAdminPanel";
+import { OwnerReadonlyVolumetricProofPanel } from "@/features/product-system/OwnerReadonlyVolumetricProofPanel";
 import { useProductAggregate } from "@/features/product-system/useProductAggregate";
 import {
   isSyntheticAutoComponent,
   resolveDisplayCounts,
   shouldPreferAggregateDisplay,
 } from "@/features/product-system/productAggregateDisplay";
+import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
+import { ProductCompilerDisplayShell } from "@/features/product-system/ProductCompilerDisplayShell";
 import {
-  TemplateLibraryView,
-  type CatalogDensity,
-  type ProductSystemCatalogView,
-  type TemplateLibraryRowSummary,
-} from "@/features/product-system/TemplateLibraryView";
-import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
+  MODULE_PRODUS_BOUNDARY_LABEL,
+  MUST_OWN_ON_MODULE_LABEL,
+  PRODUCT_COMPILER_GRAPH_STAGE_LABEL,
+  PRODUCT_COMPILER_LABEL,
+  PRODUCT_TEMPLATE_COMPOSES_HELP,
+  PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP,
+  RETURN_CANT_MOVE_TRUTH_HELP,
+  MODULE_PRODUS_SHARED_SINGULAR_LABEL,
+  SHARED_FOUNDATION_HELP,
+  displayModuleSourceTypeLabel,
+  displayModuleTemplateWireLabel,
+  equalModulesHintRo,
+} from "@/features/product-system/productTemplateModulesVocabulary";
+import {
+  assessCandidateModuleProdusLiveCompleteness,
+  CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
+} from "@/features/product-system/candidateModuleProdusReadonlyCompleteness";
+import { buildCandidateModuleProdusReadonlySetModel } from "@/features/product-system/candidateModuleProdusReadonlySetModel";
+import { CandidateModuleProdusPanel } from "@/features/product-system/CandidateModuleProdusPanel";
+import { ProductSystemCanonicalCatalog } from "@/features/product-system/ProductSystemCanonicalCatalog";
+import { ProductSystemV2Workspace } from "@/features/product-system/ProductSystemV2Workspace";
+import { ProductSystemSpineBand } from "@/features/product-system/ProductSystemSpineBand";
+import { isPsLegacyCatalogEnabled } from "@/features/product-system/productSystemV2WorkspaceModel";
+import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
+import {
+  buildProductSystemProductDetailPath,
+  resolveRequestedTemplateCode,
+} from "@/features/product-system/productSystemRouteSync";
+import { useProductSystemShell } from "@/features/product-system/ProductSystemShellContext";
 import {
   getInitialProductSystemScreen,
   isTemplateEditableForQuote,
   shouldShowEditorScreen,
   shouldShowLibraryScreen,
-  type LibraryTab,
   type ProductSystemScreen,
 } from "@/features/product-system/productSystemNavigation";
 import {
   recordTemplateOpened,
-  resolveDefaultTemplate,
 } from "@/features/product-system/templateSelectionStorage";
 import {
   Package,
@@ -121,6 +148,8 @@ import {
   Hammer,
   RefreshCw,
   ScanLine,
+  MoreHorizontal,
+  Search,
 } from "lucide-react";
 import {
   Popover,
@@ -152,7 +181,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-blue-500/30",
     label: "Structură Metalică",
     description: "Cadrul principal — profile sudate, debitate CNC",
-    emoji: "🏗️",
+    emoji: "ðŸ—ï¸",
   },
   FATA_ACP_ROUTATA: {
     icon: <LayoutGrid className="w-5 h-5" />,
@@ -161,7 +190,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-amber-500/30",
     label: "Față ACP Routată",
     description: "Panoul frontal din aluminiu compozit, routat CNC",
-    emoji: "🎨",
+    emoji: "ðŸŽ¨",
   },
   DIFUZIE_PLEXI: {
     icon: <Sparkles className="w-5 h-5" />,
@@ -170,7 +199,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-cyan-500/30",
     label: "Difuzie Plexiglas",
     description: "Placa de difuzie din plexiglas opal pentru iluminare uniformă",
-    emoji: "💎",
+    emoji: "ðŸ’Ž",
   },
   ILUMINARE: {
     icon: <Lightbulb className="w-5 h-5" />,
@@ -179,7 +208,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-yellow-500/30",
     label: "Iluminare LED",
     description: "Module LED, drivere, cablaj electric",
-    emoji: "💡",
+    emoji: "ðŸ’¡",
   },
   RELIEF_PLEXI_10MM: {
     icon: <Box className="w-5 h-5" />,
@@ -188,7 +217,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-purple-500/30",
     label: "Relief Plexiglas 10mm",
     description: "Litere/forme 3D din plexiglas de 10mm, tăiate laser",
-    emoji: "✨",
+    emoji: "âœ¨",
   },
   FINISAJ: {
     icon: <Paintbrush className="w-5 h-5" />,
@@ -197,7 +226,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-emerald-500/30",
     label: "Finisaj",
     description: "Vopsire, lăcuire, aplicare folii, asamblare finală",
-    emoji: "🎯",
+    emoji: "ðŸŽ¯",
   },
   // BUILD 4: Advertising production types
   PRINT_SUBSTRATE: {
@@ -207,7 +236,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-rose-500/30",
     label: "Substrat Print",
     description: "Banner, mesh, PVC — suprafața de imprimare",
-    emoji: "🖨️",
+    emoji: "ðŸ–¨ï¸",
   },
   VINYL_APPLICATION: {
     icon: <Layers className="w-5 h-5" />,
@@ -216,7 +245,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-pink-500/30",
     label: "Aplicare Vinyl",
     description: "Autocolant, sticker, folie — aplicare și tăiere",
-    emoji: "📋",
+    emoji: "ðŸ“‹",
   },
   PLEXI_PANEL: {
     icon: <Box className="w-5 h-5" />,
@@ -225,7 +254,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-sky-500/30",
     label: "Panou Plexiglas",
     description: "Placă plexiglas — tăiere, gravare, montaj",
-    emoji: "🪟",
+    emoji: "ðŸªŸ",
   },
   FRAME_PROFILE: {
     icon: <Frame className="w-5 h-5" />,
@@ -234,7 +263,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-orange-500/30",
     label: "Profil Cadru",
     description: "Profil aluminiu pentru casetă luminoasă",
-    emoji: "🔲",
+    emoji: "ðŸ”²",
   },
   LITERE_3D: {
     icon: <Box className="w-5 h-5" />,
@@ -242,8 +271,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-violet-500/10",
     borderColor: "border-violet-500/30",
     label: "Litere 3D",
-    description: "Litere volumetrice — față plexi/acrilic, bordură aluminiu, spate Forex 10 mm, LED pe spate",
-    emoji: "🔤",
+    description: "Litere volumetrice — față plexiglas 3mm PMMA - opal, bordură aluminiu, spate Forex 10 mm, LED pe spate",
+    emoji: "ðŸ”¤",
   },
   ELECTRIC_LED: {
     icon: <Lightbulb className="w-5 h-5" />,
@@ -252,7 +281,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-amber-500/30",
     label: "Sistem LED",
     description: "Module LED, surse, cablaj pentru iluminare",
-    emoji: "⚡",
+    emoji: "âš¡",
   },
   EXTERNALIZARE: {
     icon: <RefreshCw className="w-5 h-5" />,
@@ -261,7 +290,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-red-500/30",
     label: "Externalizare",
     description: "Producție externalizată la furnizor",
-    emoji: "🏭",
+    emoji: "ðŸ­",
   },
   TAIERE_CNC_LASER: {
     icon: <Cog className="w-5 h-5" />,
@@ -270,7 +299,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-teal-500/30",
     label: "Tăiere CNC/Laser",
     description: "Operații de debitare CNC sau laser",
-    emoji: "⚙️",
+    emoji: "âš™ï¸",
   },
   LAMINARE: {
     icon: <Layers className="w-5 h-5" />,
@@ -279,7 +308,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-lime-500/30",
     label: "Laminare",
     description: "Laminare protecție UV, mat sau lucios",
-    emoji: "🛡️",
+    emoji: "ðŸ›¡ï¸",
   },
 };
 
@@ -330,8 +359,8 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!routing) {
     if (!opCode.trim()) return null;
     return (
-      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
-        ⚠ Routing lipsă
+      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-wo-text-dim border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
+        âš  Routing lipsă
       </span>
     );
   }
@@ -340,7 +369,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   return (
     <span
       className={`px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 border border-slate-700/50 whitespace-nowrap ${ws.color}`}
-      title={`Stație: ${ws.name} · Skill: ${routing.skillLabel} · Tablet-ready ✓`}
+      title={`Stație: ${ws.name} Â· Skill: ${routing.skillLabel} Â· Tablet-ready âœ“`}
     >
       {ws.icon} {ws.shortName}
     </span>
@@ -360,7 +389,7 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
     >
       {children}
       {show && (
-        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] text-slate-200 whitespace-nowrap pointer-events-none">
+        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] text-wo-text-primary whitespace-nowrap pointer-events-none">
           {text}
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-2 h-2 bg-slate-800 border-r border-b border-slate-600 rotate-45" />
         </div>
@@ -385,6 +414,7 @@ interface DraftTemplate {
   active: boolean;
   notes: string;
 }
+
 
 function entityToDraft(e: ProductTemplateEntity): DraftTemplate {
   const components = parseTemplateComponentsWithLegacy(
@@ -591,9 +621,9 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
 
   if (components.length === 0) {
     return (
-      <div className="text-center py-8 px-3 border border-dashed border-[#2A3548] rounded-lg bg-[#0D1321]/60">
-        <Package className="w-10 h-10 text-slate-600 mx-auto mb-2" />
-        <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+      <div className="text-center py-8 px-3 border border-dashed border-wo-border-strong rounded-lg bg-wo-surface-inset">
+        <Package className="w-10 h-10 text-wo-text-dim mx-auto mb-2" />
+        <p className="text-[11px] text-wo-text-muted font-medium leading-relaxed">
           Previzualizare indisponibilă — șablonul nu are componente definite.
         </p>
       </div>
@@ -679,7 +709,7 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
         </defs>
       </svg>
 
-      <p className="text-[9px] text-slate-600 text-center mt-2 italic">
+      <p className="text-[9px] text-wo-text-dim text-center mt-2 italic">
         Stratificare orientativă (tipuri principale)
       </p>
     </div>
@@ -703,33 +733,33 @@ function ProductPreviewPanel({
       className={
         compact
           ? "flex flex-col gap-3"
-          : "bg-[#111827] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3"
+          : "bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4 flex flex-col gap-3"
       }
     >
       {!compact && (
         <div className="space-y-1">
-          <h3 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
+          <h3 className="text-[11px] font-bold text-wo-text-primary uppercase tracking-wide">
             Previzualizare orientativă
           </h3>
-          <p className="text-[10px] text-slate-500 leading-relaxed">
-            Vizualizare orientativă · date din șablon
+          <p className="text-[10px] text-wo-text-muted leading-relaxed">
+            Vizualizare orientativă Â· date din șablon
           </p>
-          <p className="text-[9px] text-slate-600 italic">
+          <p className="text-[9px] text-wo-text-dim italic">
             Nu reprezintă randare tehnică finală
           </p>
         </div>
       )}
       {compact && (
-        <p className="text-[9px] text-slate-600 italic leading-relaxed">
-          Vizualizare orientativă · nu e randare tehnică finală
+        <p className="text-[9px] text-wo-text-dim italic leading-relaxed">
+          Vizualizare orientativă Â· nu e randare tehnică finală
         </p>
       )}
 
       <ProductIllustration components={draft.components} />
 
       {hasComponents && (
-        <div className="space-y-1.5 pt-1 border-t border-[#1E293B]">
-          <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold">
+        <div className="space-y-1.5 pt-1 border-t border-wo-border-subtle">
+          <p className="text-[9px] text-wo-text-dim uppercase tracking-wide font-bold">
             Etape / componente
           </p>
           <ol className="space-y-1 max-h-[200px] overflow-y-auto scrollbar-thin pr-0.5">
@@ -755,11 +785,11 @@ function ProductPreviewPanel({
                     <p className={`text-[9px] font-bold uppercase tracking-wide ${cfg.color}`}>
                       {index + 1}. {typeLabel}
                     </p>
-                    <p className="text-[10px] text-slate-300 truncate">
+                    <p className="text-[10px] text-wo-text-secondary truncate">
                       {formatComponentDisplayName(c.name) || "Fără denumire"}
                     </p>
-                    <p className="text-[8px] text-slate-500 mt-0.5">
-                      {opCount} op. · {matCount} mat.
+                    <p className="text-[8px] text-wo-text-muted mt-0.5">
+                      {opCount} op. Â· {matCount} mat.
                     </p>
                   </div>
                 </li>
@@ -862,7 +892,7 @@ function MaterialRegistryStatusReadonly({
   const sourceNotes = formatMaterialSourceNotes(registryRow);
 
   return (
-    <div className="mx-2 mb-1.5 px-2 py-1.5 rounded border border-[#1E293B] bg-[#0A0F1C]/60">
+    <div className="mx-2 mb-1.5 px-2 py-1.5 rounded border border-wo-border-subtle bg-wo-surface-inset">
       <div className="flex flex-wrap items-center gap-1 mb-1">
         {badges.map((b) => (
           <StatusBadge
@@ -876,11 +906,11 @@ function MaterialRegistryStatusReadonly({
         ))}
       </div>
       {hasMaterialSourceNotes(registryRow) && sourceNotes ? (
-        <div className="mt-1 border-t border-[#1E293B]/80 pt-1">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+        <div className="mt-1 border-t border-wo-border-subtle pt-1">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Note sursă (referință, nu alias runtime)
           </p>
-          <p className="text-[9px] text-slate-400 leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
+          <p className="text-[9px] text-wo-text-muted leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
             {sourceNotes}
           </p>
         </div>
@@ -913,36 +943,36 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
           </span>
         )}
         {row.calculation_type ? (
-          <span className="text-[9px] text-slate-500 font-mono">{row.calculation_type}</span>
+          <span className="text-[9px] text-wo-text-muted font-mono">{row.calculation_type}</span>
         ) : null}
       </div>
       {(row.formula_id || "").trim() ? (
-        <p className="text-[10px] text-slate-300 font-mono mb-1">
+        <p className="text-[10px] text-wo-text-secondary font-mono mb-1">
           Formula: <span className="text-cyan-300">{(row.formula_id || "").trim()}</span>
         </p>
       ) : null}
       {paramsText ? (
         <div className="mb-1">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Parametri formulă
           </p>
-          <pre className="text-[9px] text-slate-400 font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
+          <pre className="text-[9px] text-wo-text-muted font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-wo-surface-inset rounded px-2 py-1 border border-wo-border-subtle">
             {paramsText}
           </pre>
         </div>
       ) : null}
       {quoteInputs.length > 0 ? (
-        <p className="text-[9px] text-slate-400 mb-1">
+        <p className="text-[9px] text-wo-text-muted mb-1">
           Input ofertă:{" "}
           <span className="text-amber-300/90 font-mono">{quoteInputs.join(", ")}</span>
         </p>
       ) : null}
       {extrasText ? (
         <div>
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Metadate păstrate din șablon
           </p>
-          <pre className="text-[9px] text-slate-500 font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
+          <pre className="text-[9px] text-wo-text-muted font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-wo-surface-inset rounded px-2 py-1 border border-wo-border-subtle">
             {extrasText}
           </pre>
         </div>
@@ -1070,7 +1100,7 @@ function CollapsibleComponentCard({
           ? "border-purple-500/50 bg-purple-500/[0.06] ring-1 ring-purple-500/25"
           : expanded
           ? `${cfg.borderColor} ${cfg.bgColor}`
-          : "border-[#1E293B] bg-[#111827] hover:border-slate-600"
+          : "border-wo-border-subtle bg-wo-surface-raised hover:border-slate-600"
       }`}
     >
       {/* Collapsed header — always visible */}
@@ -1086,7 +1116,7 @@ function CollapsibleComponentCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-slate-500">#{index + 1}</span>
+            <span className="text-[10px] font-mono text-wo-text-muted">#{index + 1}</span>
             <span className={`text-[11px] font-bold ${cfg.color} uppercase tracking-wide`}>
               {typeDisplayLabel}
             </span>
@@ -1096,8 +1126,8 @@ function CollapsibleComponentCard({
               </span>
             )}
           </div>
-          <p className="text-[13px] font-semibold text-slate-200 truncate mt-0.5">
-            {displayName || <span className="text-slate-500 italic">Fără nume</span>}
+          <p className="text-[13px] font-semibold text-wo-text-primary truncate mt-0.5">
+            {displayName || <span className="text-wo-text-muted italic">Fără nume</span>}
           </p>
         </div>
 
@@ -1118,12 +1148,12 @@ function CollapsibleComponentCard({
               e.stopPropagation();
               onToggleExpand();
             }}
-            aria-label={expanded ? "Închide editarea componentei" : "Deschide editarea componentei"}
+            aria-label={expanded ? "ÃŽnchide editarea componentei" : "Deschide editarea componentei"}
             aria-expanded={expanded}
             className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
               expanded
                 ? "bg-purple-500/15 border-purple-500/40 text-purple-300"
-                : "bg-[#0D1321] border-[#2A3548] text-slate-500 hover:text-slate-300 hover:border-slate-600"
+                : "bg-wo-surface-inset border-wo-border-strong text-wo-text-muted hover:text-wo-text-secondary hover:border-slate-600"
             }`}
           >
             <ChevronDown
@@ -1135,7 +1165,7 @@ function CollapsibleComponentCard({
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-[#1E293B]">
+        <div className="px-4 pb-4 space-y-4 border-t border-wo-border-subtle">
           {isVolumetricLettersTemplate(templateCode) ? (
             <>
               <VolumetricComponentProductionHint componentId={component.component_id} />
@@ -1145,10 +1175,10 @@ function CollapsibleComponentCard({
           {/* Component identity fields */}
           <div className="grid grid-cols-3 gap-3 pt-3">
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 ID Componentă
                 <Tooltip text="Identificator unic intern (ex: comp_1, cadru_principal)">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <input
@@ -1156,20 +1186,20 @@ function CollapsibleComponentCard({
                 value={component.component_id}
                 onChange={(e) => patch({ component_id: e.target.value.trim() })}
                 placeholder="comp_1"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary font-mono outline-none focus:border-purple-500/50"
               />
             </div>
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 Tip Componentă
                 <Tooltip text="Categoria componentei — determină fluxul de producție">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <select
                 value={component.type}
                 onChange={(e) => patch({ type: e.target.value as ProductComponentType })}
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-purple-500/50"
               >
                 {PRODUCT_COMPONENT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -1184,10 +1214,10 @@ function CollapsibleComponentCard({
               </select>
             </div>
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 Nume Componentă
                 <Tooltip text="Denumirea descriptivă (ex: Cadru metalic sudat 2x1m)">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <input
@@ -1195,7 +1225,7 @@ function CollapsibleComponentCard({
                 value={component.name}
                 onChange={(e) => patch({ name: e.target.value })}
                 placeholder="ex: Cadru metalic sudat"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-purple-500/50"
               />
             </div>
           </div>
@@ -1217,27 +1247,27 @@ function CollapsibleComponentCard({
             </div>
           )}
 
-          <div className="px-3 py-2.5 rounded-lg border border-[#2A3548] bg-[#0D1321]/80 space-y-1.5">
-            <p className="text-[10px] text-slate-400 leading-relaxed">
+          <div className="px-3 py-2.5 rounded-lg border border-wo-border-strong bg-wo-surface-inset space-y-1.5">
+            <p className="text-[10px] text-wo-text-muted leading-relaxed">
               Câmpurile dinamice sunt afișate informativ. Editarea formulelor se va trata într-un pas separat.
             </p>
-            <p className="text-[10px] text-slate-300 leading-relaxed">
+            <p className="text-[10px] text-wo-text-secondary leading-relaxed">
               Parametrii configurabili ai produsului — text, font, înălțime, adâncime, tip iluminare, RAL,
               montaj — nu se editează aici ca reguli de șablon. Ei trebuie colectați în Intake / Dossier /
               Ofertă și folosiți de formulele dinamice.
             </p>
-            <p className="text-[10px] text-slate-500 italic leading-relaxed">
+            <p className="text-[10px] text-wo-text-muted italic leading-relaxed">
               Șablonul definește structura produsului; valorile concrete vin din cererea clientului și
               ofertare.
             </p>
           </div>
 
           {/* OPERATIONS */}
-          <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+          <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl p-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Cog className="w-4 h-4 text-blue-400" />
-                <span className="text-[12px] font-bold text-slate-200">
+                <span className="text-[12px] font-bold text-wo-text-primary">
                   Operații de Producție
                 </span>
                 <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-full font-bold">
@@ -1269,13 +1299,13 @@ function CollapsibleComponentCard({
                         invalid
                           ? "bg-red-900/10 border border-red-800/20"
                           : dynamicMeta
-                            ? "bg-[#111827] border border-cyan-800/30"
-                            : "bg-[#111827] border border-[#1E293B]"
+                            ? "bg-wo-surface-raised border border-cyan-800/30"
+                            : "bg-wo-surface-raised border border-wo-border-subtle"
                       }`}
                     >
                       <div className="flex items-center gap-2 p-2">
-                        <GripVertical className="w-3 h-3 text-slate-600 shrink-0" />
-                        <span className="text-[10px] text-slate-500 font-mono w-6 text-center shrink-0">
+                        <GripVertical className="w-3 h-3 text-wo-text-dim shrink-0" />
+                        <span className="text-[10px] text-wo-text-muted font-mono w-6 text-center shrink-0">
                           {op.sequence}
                         </span>
                         {dynamicMeta ? (
@@ -1291,14 +1321,14 @@ function CollapsibleComponentCard({
                           value={op.code}
                           onChange={(e) => updateOp(i, { ...op, code: e.target.value })}
                           placeholder="CNC_CUT"
-                          className="flex-1 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                          className="flex-1 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono outline-none focus:border-blue-500/50"
                         />
                         <input
                           type="text"
                           value={op.name}
                           onChange={(e) => updateOp(i, { ...op, name: e.target.value })}
                           placeholder="Debitare CNC"
-                          className="flex-[2] bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 outline-none focus:border-blue-500/50"
+                          className="flex-[2] bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary outline-none focus:border-blue-500/50"
                         />
                         <Tooltip text="Centrul de lucru (ex: CNC, Sudură, Vopsitorie)">
                           <input
@@ -1306,13 +1336,13 @@ function CollapsibleComponentCard({
                             value={op.workcenter}
                             onChange={(e) => updateOp(i, { ...op, workcenter: e.target.value })}
                             placeholder="CNC"
-                            className="w-20 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                            className="w-20 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono outline-none focus:border-blue-500/50"
                           />
                         </Tooltip>
                         <OperationRoutingBadge opCode={op.code} />
                         <Tooltip text={CALIBRATION_DURATION_TOOLTIP}>
                           <div className="flex flex-col items-end w-24 shrink-0">
-                            <span className="text-[8px] text-slate-600 uppercase tracking-wide">
+                            <span className="text-[8px] text-wo-text-dim uppercase tracking-wide">
                               calibrare
                             </span>
                             <div className="flex items-center gap-1 w-full">
@@ -1326,18 +1356,18 @@ function CollapsibleComponentCard({
                                     estimatedMinutes: Number(e.target.value) || 0,
                                   })
                                 }
-                                className="w-full bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono text-right outline-none focus:border-blue-500/50"
+                                className="w-full bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono text-right outline-none focus:border-blue-500/50"
                               />
-                              <span className="text-[9px] text-slate-600">min</span>
+                              <span className="text-[9px] text-wo-text-dim">min</span>
                             </div>
-                            <span className="text-[8px] text-slate-600 mt-0.5 truncate max-w-full">
+                            <span className="text-[8px] text-wo-text-dim mt-0.5 truncate max-w-full">
                               {formatOperationCalibrationLabel(op)}
                             </span>
                           </div>
                         </Tooltip>
                         <button
                           onClick={() => removeOp(i)}
-                          className="p-1 text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                          className="p-1 text-wo-text-dim hover:text-red-400 transition-colors shrink-0"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1351,11 +1381,11 @@ function CollapsibleComponentCard({
           </div>
 
           {/* MATERIALS */}
-          <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+          <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl p-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Box className="w-4 h-4 text-emerald-400" />
-                <span className="text-[12px] font-bold text-slate-200">
+                <span className="text-[12px] font-bold text-wo-text-primary">
                   Materiale Necesare
                 </span>
                 <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-bold">
@@ -1367,7 +1397,7 @@ function CollapsibleComponentCard({
                 disabled={materialsRegistryEmpty}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
                   materialsRegistryEmpty
-                    ? "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                    ? "bg-slate-700/60 text-wo-text-muted cursor-not-allowed"
                     : "bg-emerald-600 hover:bg-emerald-500 text-white"
                 }`}
               >
@@ -1402,8 +1432,8 @@ function CollapsibleComponentCard({
                         invalid
                           ? "bg-red-900/10 border border-red-800/20"
                           : dynamicMeta
-                            ? "bg-[#111827] border border-violet-800/30"
-                            : "bg-[#111827] border border-[#1E293B]"
+                            ? "bg-wo-surface-raised border border-violet-800/30"
+                            : "bg-wo-surface-raised border border-wo-border-subtle"
                       }`}
                     >
                       <div className="flex items-center gap-2 p-2">
@@ -1426,7 +1456,7 @@ function CollapsibleComponentCard({
                           className="flex-[2] min-w-[140px]"
                         />
                         <span
-                          className="flex-[2] text-[11px] text-slate-400 truncate hidden sm:block"
+                          className="flex-[2] text-[11px] text-wo-text-muted truncate hidden sm:block"
                           title={row ? row.name : m.name}
                         >
                           {row
@@ -1448,15 +1478,15 @@ function CollapsibleComponentCard({
                             min="0"
                             value={m.quantity}
                             onChange={(e) => updateMatQty(i, Number(e.target.value) || 0)}
-                            className="w-16 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono text-right outline-none focus:border-emerald-500/50"
+                            className="w-16 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono text-right outline-none focus:border-emerald-500/50"
                           />
                         </Tooltip>
-                        <span className="text-[10px] text-slate-500 font-mono w-10">
+                        <span className="text-[10px] text-wo-text-muted font-mono w-10">
                           {row ? row.unit : m.unit || "—"}
                         </span>
                         <button
                           onClick={() => removeMat(i)}
-                          className="p-1 text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                          className="p-1 text-wo-text-dim hover:text-red-400 transition-colors shrink-0"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1491,6 +1521,1234 @@ function CollapsibleComponentCard({
 // ============================================================
 // EDITOR PANEL — Redesigned with visual components
 // ============================================================
+const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
+  volumetric_face: "TPL-VOLUMETRIC-FACE_v1",
+  volumetric_back: "TPL-VOLUMETRIC-BACK_v1",
+  volumetric_return_side: "TPL-VOLUM-ALUMINIU_v1",
+  volumetric_surface_finish: "TPL-VOLUMETRIC-FINISH_v1",
+  volumetric_mounting_interface: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+  volumetric_lighting: "TPL-VOLUMETRIC-LED_v1",
+};
+
+type OwnershipFieldAudit = {
+  key: string;
+  productTruthPath: string;
+  sourceState: string;
+  warning: string;
+};
+
+type SharedComponentOwnershipAudit = {
+  componentKey: string;
+  label: string;
+  primaryTemplateCode: string;
+  separateCalculationStatus: "read_only_contract" | "partial_ready" | "calculation_blocked";
+  separateCalculationLabel: string;
+  shouldOwn: string[];
+  gaps: string[];
+  fields: OwnershipFieldAudit[];
+  note: string;
+};
+
+type ReturnCantSourcePathAudit = {
+  key:
+    | "material_profile"
+    | "return_depth_mm"
+    | "return_finish_type"
+    | "letter_perimeter_m"
+    | "operation_modelare_cant"
+    | "operation_bonding"
+    | "finish_source"
+    | "resources_tools"
+    | "separate_calculation_readiness";
+  label: string;
+  canonicalTarget: string;
+  currentSource: string;
+  currentSourcePath: string;
+  sourceStatus:
+    | "component-owned template only"
+    | "form system only"
+    | "parent aggregate only"
+    | "separate finish component"
+    | "operation registry missing"
+    | "component-owned source missing"
+    | "blocked";
+  blocker: string;
+  note: string;
+};
+
+type ReturnCantTruthContainerFieldAudit = {
+  key:
+    | "instance_id"
+    | "component_template_code"
+    | "component_id"
+    | "layer_group_ids"
+    | "source_face_component_id"
+    | "source_face_perimeter_ref"
+    | "perimeter_source"
+    | "confirmed_perimeter_m"
+    | "material_profile"
+    | "depth_mm"
+    | "finish_type"
+    | "color_source"
+    | "operation_modelare_cant_ref"
+    | "operation_bonding_ref"
+    | "resource_requirements_ref"
+    | "confirmation_state"
+    | "blockers";
+  label: string;
+  sourceType:
+    | "component truth"
+    | "Form System capture"
+    | "root geometry context"
+    | "parent aggregate support"
+    | "legacy alias"
+    | "component template / registry"
+    | "missing";
+  currentSource: string;
+  targetPath: string;
+  note: string;
+};
+
+type ProductCompositionReadModelEntry = {
+  key: string;
+  label: string;
+  componentType: "structural" | "functional";
+  componentTemplateCode: string;
+  componentId: string;
+  requiredInLetters: boolean;
+  currentWiring: "wired" | "partial" | "missing";
+  currentSourceType:
+    | "module produs"
+    | "component template"
+    | "parent aggregate"
+    | "dossier"
+    | "shared contract"
+    | "missing";
+  productTruthTarget: string;
+  formSystemFields: string[];
+  geometryDependency: string;
+  materialSource: string;
+  operationSource: string;
+  calculationReadiness: "ready" | "partial" | "blocked";
+  blockers: string[];
+  recommendation: string;
+};
+
+const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipAudit> = {
+  volumetric_face: {
+    componentKey: "volumetric_face",
+    label: "Face / front",
+    primaryTemplateCode: "TPL-VOLUMETRIC-FACE_v1",
+    separateCalculationStatus: "partial_ready",
+    separateCalculationLabel: "partial_ready",
+    shouldOwn: ["selected_layer_refs", "material", "thickness_mm", "finish_target"],
+    gaps: ["material still falls back in product-root flow", "selected layer ownership still needs explicit confirmation"],
+    fields: [
+      {
+        key: "selected_layer_refs",
+        productTruthPath: "components.face.selected_layer_refs",
+        sourceState: "product context only",
+        warning: "source not wired yet for component-owned confirmation",
+      },
+      {
+        key: "material",
+        productTruthPath: "components.face.material",
+        sourceState: "component-owned pending",
+        warning: "component-owned source missing confirmation",
+      },
+      {
+        key: "finish_target",
+        productTruthPath: "components.finish.target",
+        sourceState: "component-owned pending",
+        warning: "shared finish target still crosses product/root context",
+      },
+    ],
+    note: "Face truth exists directionally, but Product Template still carries fallback/hydrated context for material and finish alignment.",
+  },
+  volumetric_back: {
+    componentKey: "volumetric_back",
+    label: "Back / spate",
+    primaryTemplateCode: "TPL-VOLUMETRIC-BACK_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["backing_mode", "material", "bevel_enabled"],
+    gaps: ["back material remains too implicit", "back confirmation path is not explicit enough"],
+    fields: [
+      {
+        key: "backing_mode",
+        productTruthPath: "components.back.backing_mode",
+        sourceState: "component-owned fallback",
+        warning: "hydrated default is not final truth",
+      },
+      {
+        key: "material",
+        productTruthPath: "components.back.material",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet for explicit back material ownership",
+      },
+    ],
+    note: "Back remains component-shaped, but not ready for honest separate calculation without explicit owner-confirmed material truth.",
+  },
+  volumetric_return_side: {
+    componentKey: "volumetric_return_side",
+    label: "CANT / VOLUM DIN ALUMINIU",
+    primaryTemplateCode: "TPL-VOLUM-ALUMINIU_v1",
+    separateCalculationStatus: "partial_ready",
+    separateCalculationLabel:
+      "contract preview ready · confirmed perimeter required · publication blocked",
+    shouldOwn: [
+      "return_depth_mm",
+      "perimeter_source",
+      "confirmed_perimeter_m",
+      "material_profile",
+      "finish_type",
+      "color_target",
+      "layer_group_ids",
+      "confirmation_state",
+    ],
+    gaps: [
+      "publication/activation remain blocked (required inactive child)",
+      "operator must confirm perimeter — evidence-only quote_geometry cannot drive separate calc",
+      "dual id documented: BOM comp_volum_aluminiu_module vs pricing stub comp_lateral_litere",
+    ],
+    fields: [
+      {
+        key: "return_depth_mm",
+        productTruthPath: "components.return_cant.instances[].material_profile.width_mm",
+        sourceState: "component-owned gate 30/60/80/100",
+        warning: "depth must match material profile gate",
+      },
+      {
+        key: "perimeter_source",
+        productTruthPath: "components.return_cant.instances[].geometry.perimeter_source",
+        sourceState: "component-owned provenance",
+        warning: "evidence_only cannot confirm; operator_confirmed required for calc",
+      },
+      {
+        key: "confirmed_perimeter_m",
+        productTruthPath: "components.return_cant.instances[].geometry.confirmed_perimeter_m",
+        sourceState: "operator confirm → product truth",
+        warning: "required input for separate-calculation-preview",
+      },
+      {
+        key: "material_profile",
+        productTruthPath: "components.return_cant.instances[].material_profile",
+        sourceState: "component-owned from return_depth_mm",
+        warning: "width_mm maps to MAT-PROFIL-LATERAL-LITERE-*",
+      },
+      {
+        key: "finish_type",
+        productTruthPath: "components.return_cant.instances[].finish_variant",
+        sourceState: "component-owned (stock / Oracal / RAL)",
+        warning: "finish + pricing_keys emitted by return_cant bridge",
+      },
+      {
+        key: "color_target",
+        productTruthPath: "components.return_cant.instances[].finish_variant",
+        sourceState: "component-owned via finish_variant",
+        warning: "RAL / Oracal codes live on finish_variant + pricing_keys",
+      },
+      {
+        key: "layer_group_ids",
+        productTruthPath: "components.return_cant.instances[].layer_group_ids",
+        sourceState: "component-owned from confirmed layer roles",
+        warning: "required for confirmation; missing ids keep state blocked",
+      },
+      {
+        key: "confirmation_state",
+        productTruthPath: "components.return_cant.instances[].confirmation_state",
+        sourceState: "component-owned (requires confirmed_perimeter_m)",
+        warning: "evidence-only perimeter cannot set confirmed",
+      },
+    ],
+    note:
+      "Separate-calc preview: POST .../TPL-VOLUM-ALUMINIU_v1/separate-calculation-preview. Publication/activation stay blocked until dedicated owner GO.",
+  },
+  volumetric_surface_finish: {
+    componentKey: "volumetric_surface_finish",
+    label: "Finish / artwork",
+    primaryTemplateCode: "TPL-VOLUMETRIC-FINISH_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["finish_target", "print_required", "lamination_required"],
+    gaps: ["finish family boundaries remain mixed", "artwork-derived consequences still need a cleaner owner split"],
+    fields: [
+      {
+        key: "finish_target",
+        productTruthPath: "components.finish.target",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet as one canonical finish path",
+      },
+      {
+        key: "print_required",
+        productTruthPath: "components.finish.print_required",
+        sourceState: "component-owned pending",
+        warning: "derived consequence still depends on artwork decisions",
+      },
+    ],
+    note: "Finish is a real component boundary, but the current system should keep it read-only until the field ownership split is cleaner.",
+  },
+  volumetric_mounting_interface: {
+    componentKey: "volumetric_mounting_interface",
+    label: "Mounting / support",
+    primaryTemplateCode: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["mounting_system", "support_required"],
+    gaps: ["support_required is still missing as first-class component truth", "metal_support_required remains downstream-only"],
+    fields: [
+      {
+        key: "mounting_system",
+        productTruthPath: "components.mounting.system",
+        sourceState: "component-owned fallback",
+        warning: "hydrated/default mounting system is not final component truth",
+      },
+      {
+        key: "support_required",
+        productTruthPath: "components.support.support_required",
+        sourceState: "missing component truth",
+        warning: "component-owned source missing",
+      },
+    ],
+    note: "Mounting stays component-owned directionally, but support truth is still downstream-derived instead of first-class component input.",
+  },
+  volumetric_lighting: {
+    componentKey: "volumetric_lighting",
+    label: "Lighting",
+    primaryTemplateCode: "TPL-VOLUMETRIC-LED_v1",
+    separateCalculationStatus: "read_only_contract",
+    separateCalculationLabel: "read-only contract",
+    shouldOwn: ["illumination_type", "led_module_count", "strategy_profile"],
+    gaps: ["strategy exists, but primary lighting truth is still partial", "operator-confirmed lighting state is not component-complete"],
+    fields: [
+      {
+        key: "illumination_type",
+        productTruthPath: "components.lighting.illumination_type",
+        sourceState: "component-owned fallback",
+        warning: "current lighting mode is still hydrated or defaulted",
+      },
+      {
+        key: "led_module_count",
+        productTruthPath: "components.lighting.led_module_count",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet for operator-confirmed LED count",
+      },
+      {
+        key: "strategy_profile",
+        productTruthPath: "components.lighting.strategy_profile",
+        sourceState: "product context only",
+        warning: "strategy/profile is not the primary shared component truth",
+      },
+    ],
+    note: "Lighting is valid as a shared component, but separate calculation must remain read-only until owner-confirmed lighting truth is explicit.",
+  },
+};
+
+const SHARED_COMPONENT_OWNERSHIP_ORDER = [
+  "volumetric_face",
+  "volumetric_back",
+  "volumetric_return_side",
+  "volumetric_surface_finish",
+  "volumetric_mounting_interface",
+  "volumetric_lighting",
+] as const;
+
+function ownershipStatusClass(status: SharedComponentOwnershipAudit["separateCalculationStatus"]) {
+  switch (status) {
+    case "partial_ready":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    case "read_only_contract":
+      return "border-cyan-700/40 bg-cyan-950/30 text-cyan-200";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
+  {
+    key: "material_profile",
+    label: "material cant / profil aluminiu",
+    canonicalTarget: "components.return_cant.material_profile",
+    currentSource: "Module produs catalog gate",
+    currentSourcePath: "TPL-VOLUM-ALUMINIU_v1.required_materials_json[*] gate return_depth_mm",
+    sourceStatus: "component-owned source missing",
+    blocker: "RETURN_CANT_MATERIAL_MISSING",
+    note: "Profiles 30/60/80/100 mm exist in the Module produs catalog, but no confirmed module-owned Product Truth field exists yet.",
+  },
+  {
+    key: "return_depth_mm",
+    label: "return_depth_mm",
+    canonicalTarget: "components.return_cant.depth_mm",
+    currentSource: "Form System + legacy Product Truth alias",
+    currentSourcePath: "finish_setup.return_depth_mm; legacy components.return.depth_mm / components.returnCant.depthMm",
+    sourceStatus: "form system only",
+    blocker: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+    note: "Depth exists today as hydrated or fallback review input, not as confirmed component-owned truth.",
+  },
+  {
+    key: "return_finish_type",
+    label: "return_finish_type",
+    canonicalTarget: "components.return_cant.finish_type",
+    currentSource: "Form System + legacy Product Truth alias",
+    currentSourcePath: "finish_setup.return_finish_type; legacy components.returnCant.finishType",
+    sourceStatus: "form system only",
+    blocker: "RETURN_CANT_FINISH_MISSING",
+    note: "Finish intent exists in review payload, but the canonical component-owned path is still not confirmed.",
+  },
+  {
+    key: "letter_perimeter_m",
+    label: "letter_perimeter_m / perimeter dependency",
+    canonicalTarget: "components.return_cant.perimeter_source -> components.face.confirmed_perimeter",
+    currentSource: "Root geometry dependency",
+    currentSourcePath: "quote_geometry.letter_perimeter_m; future dependency target components.face.confirmed_perimeter",
+    sourceStatus: "parent aggregate only",
+    blocker: "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
+    note: "Perimeter still comes from root geometry context, not from an explicit confirmed dependency owned on the component boundary.",
+  },
+  {
+    key: "operation_modelare_cant",
+    label: "operation: modelare_cant",
+    canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_MACHINE_FORMING]",
+    currentSource: "Module produs operation",
+    currentSourcePath: "Module produs operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    sourceStatus: "component-owned template only",
+    blocker: "RETURN_CANT_DEPTH_MISSING",
+    note: "The operation exists on the Module produs and registry, but separate calculation is still blocked until module-owned inputs are explicit.",
+  },
+  {
+    key: "operation_bonding",
+    label: "operation: bonding / lipire cant",
+    canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_FACE_BONDING]",
+    currentSource: "Module produs operation",
+    currentSourcePath: "Module produs operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    sourceStatus: "component-owned template only",
+    blocker: "RETURN_CANT_MATERIAL_MISSING",
+    note: "Bonding is already modeled as a Module produs operation, but it still depends on missing material/profile truth and perimeter dependency confirmation.",
+  },
+  {
+    key: "finish_source",
+    label: "finish source",
+    canonicalTarget: "components.return_cant.finish_type + components.return_cant.color_target.*",
+    currentSource: "Form System + separate finish component",
+    currentSourcePath: "finish_setup.return_finish_type / return_oracal_code + TPL-VOLUMETRIC-FINISH_v1 boundary",
+    sourceStatus: "separate finish component",
+    blocker: "RETURN_CANT_FINISH_MISSING",
+    note: "Cant finish still crosses review setup and the separate finish component boundary, so it is not yet clean component-owned truth.",
+  },
+  {
+    key: "resources_tools",
+    label: "resources / tools",
+    canonicalTarget: "operation_resource_requirements + Module produs workcenters",
+    currentSource: "Workcenter hints only",
+    currentSourcePath: "WC_FORMING, WC_ASSEMBLY, WC_PAINT; operation_resource_requirements not surfaced in this panel",
+    sourceStatus: "operation registry missing",
+    blocker: "RETURN_CANT_OPERATION_RESOURCE_MAPPING_MISSING",
+    note: "Workcenters are present on Module produs operations, but explicit machine/resource authorization is still an operational registry concern, not a module-owned truth field.",
+  },
+  {
+    key: "separate_calculation_readiness",
+    label: "separate calculation readiness",
+    canonicalTarget: "component-owned truth + confirmed dependency + explicit confirmation",
+    currentSource: "Read-only ownership audit",
+    currentSourcePath: "Product System ownership panel + return_cant readonly mapper",
+    sourceStatus: "blocked",
+    blocker: "RETURN_CANT_MATERIAL_MISSING + RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED + RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+    note: "What we can calculate today is diagnostic only. Separate calculation remains blocked until the missing component-owned fields move out of parent/root context.",
+  },
+];
+
+const RETURN_CANT_TRUTH_CONTAINER_FIELDS: ReturnCantTruthContainerFieldAudit[] = [
+  {
+    key: "instance_id",
+    label: "instance_id",
+    sourceType: "missing",
+    currentSource: "not stabilized; readonly rows still keyed by group/artwork source rows",
+    targetPath: "components.return_cant.instances[].instance_id",
+    note: "Container target is canonical, but stable instance ids are not yet first-class runtime truth.",
+  },
+  {
+    key: "component_template_code",
+    label: displayModuleTemplateWireLabel("component_template_code"),
+    sourceType: "component template / registry",
+    currentSource: "TPL-VOLUM-ALUMINIU_v1",
+    targetPath: "components.return_cant.instances[].component_template_code",
+    note: "The structural boundary is already real at the Module produs (child Product Template) level.",
+  },
+  {
+    key: "component_id",
+    label: "component_id",
+    sourceType: "component template / registry",
+    currentSource: "comp_lateral_litere",
+    targetPath: "components.return_cant.instances[].component_id",
+    note: "The structural component id is stable in seed, dossier, and ProductAggregate mapping.",
+  },
+  {
+    key: "layer_group_ids",
+    label: "layer_group_ids",
+    sourceType: "missing",
+    currentSource: "selected_layer_refs and layer confirmations exist, but are not mapped as component truth",
+    targetPath: "components.return_cant.instances[].layer_group_ids",
+    note: "Still blocked until layer-group selection is component-scoped.",
+  },
+  {
+    key: "source_face_component_id",
+    label: "source_face_component_id",
+    sourceType: "parent aggregate support",
+    currentSource: "implied by comp_face_litere in composition/read-model",
+    targetPath: "components.return_cant.instances[].source_face_component_id",
+    note: "The dependency owner exists conceptually, but is not yet written as explicit instance truth.",
+  },
+  {
+    key: "source_face_perimeter_ref",
+    label: "source_face_perimeter_ref",
+    sourceType: "missing",
+    currentSource: "components.face.confirmed_perimeter is target language, not yet explicit reference wiring",
+    targetPath: "components.return_cant.instances[].source_face_perimeter_ref",
+    note: "Return/cant must reference face perimeter, not invent its own perimeter source.",
+  },
+  {
+    key: "perimeter_source",
+    label: "perimeter_source",
+    sourceType: "root geometry context",
+    currentSource: "quote_geometry.letter_perimeter_m",
+    targetPath: "components.return_cant.instances[].perimeter_source",
+    note: "Current root geometry evidence is context only; dependency remains blocked until face-confirmed perimeter is explicit.",
+  },
+  {
+    key: "confirmed_perimeter_m",
+    label: "confirmed_perimeter_m",
+    sourceType: "missing",
+    currentSource: "letter_perimeter_m exists, but not as component-owned confirmed_perimeter_m for return_cant",
+    targetPath: "components.return_cant.instances[].confirmed_perimeter_m",
+    note: "This must come from the face dependency, not from aggregate hydration.",
+  },
+  {
+    key: "material_profile",
+    label: "material_profile",
+    sourceType: "component template / registry",
+    currentSource: "profile width/material gates in TPL-VOLUM-ALUMINIU_v1",
+    targetPath: "components.return_cant.instances[].material_profile",
+    note: "The material family exists on the Module produs (child Product Template), but the selected truth field is still missing.",
+  },
+  {
+    key: "depth_mm",
+    label: "depth_mm",
+    sourceType: "Form System capture",
+    currentSource: "finish_setup.return_depth_mm",
+    targetPath: "components.return_cant.instances[].depth_mm",
+    note: "Current depth is still capture/hydration, not confirmed component truth.",
+  },
+  {
+    key: "finish_type",
+    label: "finish_type",
+    sourceType: "Form System capture",
+    currentSource: "finish_setup.return_finish_type",
+    targetPath: "components.return_cant.instances[].finish_type",
+    note: "Current finish token is still capture/hydration, not a completed component-owned field.",
+  },
+  {
+    key: "color_source",
+    label: "color_source",
+    sourceType: "Form System capture",
+    currentSource: "return_oracal_code / finish_setup + reusable finish interpretation",
+    targetPath: "components.return_cant.instances[].color_source",
+    note: "Color remains coupled to finish capture and catalog interpretation.",
+  },
+  {
+    key: "operation_modelare_cant_ref",
+    label: "operation_modelare_cant_ref",
+    sourceType: "component template / registry",
+    currentSource: "RETURN_PROFILE_MACHINE_FORMING / modelare_cant",
+    targetPath: "components.return_cant.instances[].operation_modelare_cant_ref",
+    note: "Operation exists already; truth inputs are what remain incomplete.",
+  },
+  {
+    key: "operation_bonding_ref",
+    label: "operation_bonding_ref",
+    sourceType: "component template / registry",
+    currentSource: "RETURN_PROFILE_FACE_BONDING",
+    targetPath: "components.return_cant.instances[].operation_bonding_ref",
+    note: "Bonding reference exists as operation identity, not yet as instance-bound truth.",
+  },
+  {
+    key: "resource_requirements_ref",
+    label: "resource_requirements_ref",
+    sourceType: "parent aggregate support",
+    currentSource: "operation_resource_requirements remains external operational registry boundary",
+    targetPath: "components.return_cant.instances[].resource_requirements_ref",
+    note: "Read-only only; do not treat workcenter hints as component truth.",
+  },
+  {
+    key: "confirmation_state",
+    label: "confirmation_state",
+    sourceType: "missing",
+    currentSource: "workflow/global confirmations only",
+    targetPath: "components.return_cant.instances[].confirmation_state",
+    note: "No row/global confirmation can be treated as final component confirmation.",
+  },
+  {
+    key: "blockers",
+    label: "blockers",
+    sourceType: "component truth",
+    currentSource: "readonly mapper blockers",
+    targetPath: "components.return_cant.instances[].blockers[]",
+    note: "Blockers are already explicit and should stay visible until source paths are real.",
+  },
+];
+
+const STRUCTURAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
+  {
+    key: "face",
+    label: "FACE / FATA",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUMETRIC-FACE_v1",
+    componentId: "comp_face_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.face.*",
+    formSystemFields: ["face_finish_type", "letter_face_area_m2", "letter_perimeter_m"],
+    geometryDependency: "selected_layer_refs + face area + perimeter",
+    materialSource: "fallback / partial face material",
+    operationSource: "debitare_fata / face_cnc_cut",
+    calculationReadiness: "partial",
+    blockers: ["FACE_MATERIAL_MISSING", "SELECTED_FACE_LAYER_MISSING", "FACE_FINISH_TARGET_MISSING"],
+    recommendation: "Promote explicit face material, thickness, and confirmed perimeter onto component-owned truth.",
+  },
+  {
+    key: "back",
+    label: "BACK / SPATE",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUMETRIC-BACK_v1",
+    componentId: "comp_spate_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.back.*",
+    formSystemFields: ["backing_mode", "back_bevel_enabled"],
+    geometryDependency: "follows face geometry and area",
+    materialSource: "implicit from backing mode / parent flow",
+    operationSource: "debitare_spate / back_cut",
+    calculationReadiness: "blocked",
+    blockers: ["BACK_MATERIAL_MISSING", "BACKING_MODE_CONFIRMATION_REQUIRED"],
+    recommendation: "Make back material explicit before calling the backing component separately calculable.",
+  },
+  {
+    key: "return_cant",
+    label: "RETURN_CANT / VOLUM",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUM-ALUMINIU_v1",
+    componentId: "comp_lateral_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "module produs",
+    productTruthTarget: "components.return_cant.*",
+    formSystemFields: ["return_depth_mm", "return_finish_type", "volum_aluminum_module_template_code", "letter_perimeter_m"],
+    geometryDependency: "depends on face confirmed perimeter",
+    materialSource: "Module produs profile gate only",
+    operationSource: "modelare_cant / RETURN_PROFILE_MACHINE_FORMING / RETURN_PROFILE_FACE_BONDING",
+    calculationReadiness: "blocked",
+    blockers: [
+      "RETURN_CANT_MATERIAL_MISSING",
+      "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
+      "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+    ],
+    recommendation: "Align return/cant truth container before any separate calculation or delete/move work.",
+  },
+];
+
+const FUNCTIONAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
+  {
+    key: "lighting",
+    label: "LIGHTING / LED",
+    componentType: "functional",
+    componentTemplateCode: "TPL-VOLUMETRIC-LED_v1",
+    componentId: "comp_led_litere",
+    requiredInLetters: false,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.lighting.*",
+    formSystemFields: ["lighting_system_type", "led_module_count", "selected_psu_watts"],
+    geometryDependency: "depends on face area and whole product geometry",
+    materialSource: "LED modules + PSU config",
+    operationSource: "sistem_led",
+    calculationReadiness: "partial",
+    blockers: ["LIGHTING_MODE_CONFIRMATION_REQUIRED", "LIGHTING_LED_COUNT_MISSING"],
+    recommendation: "Keep as functional boundary until zones/circuits/service-access truth is explicit.",
+  },
+  {
+    key: "finish",
+    label: "FINISH / FINISAJ",
+    componentType: "functional",
+    componentTemplateCode: "TPL-VOLUMETRIC-FINISH_v1",
+    componentId: "comp_finisaj_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.finish.*",
+    formSystemFields: ["letter_group_finishes", "mounting_template_enabled", "mounting_template_area_m2"],
+    geometryDependency: "depends on face/return/artwork scope",
+    materialSource: "review payload + finish family rules",
+    operationSource: "finisaje",
+    calculationReadiness: "blocked",
+    blockers: ["FINISH_TARGET_MISSING", "PRINT_REQUIRED_UNKNOWN"],
+    recommendation: "Separate finish, artwork, and cant ownership before claiming finish as complete component truth.",
+  },
+  {
+    key: "mounting",
+    label: "SUPPORT / MOUNTING",
+    componentType: "functional",
+    componentTemplateCode: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    componentId: "comp_premount_bars",
+    requiredInLetters: false,
+    currentWiring: "partial",
+    currentSourceType: "module produs",
+    productTruthTarget: "components.mounting.* / components.support.*",
+    formSystemFields: ["mounting_system", "metal_support_required", "premount_bar_length_ml"],
+    geometryDependency: "depends on width and installation strategy",
+    materialSource: "Module produs + derived support bridge",
+    operationSource: "structura_suport",
+    calculationReadiness: "blocked",
+    blockers: ["TRIGGER_FIELD_MISMATCH", "SUPPORT_REQUIRED_UNKNOWN"],
+    recommendation: "Do not treat derived metal_support_required as primary component truth.",
+  },
+];
+
+function ownershipFieldStateClass(sourceState: string) {
+  if (sourceState.includes("missing")) {
+    return "border-red-700/30 bg-red-950/20 text-red-200";
+  }
+  if (sourceState.includes("fallback") || sourceState.includes("pending")) {
+    return "border-amber-700/30 bg-amber-950/20 text-amber-200";
+  }
+  if (sourceState.includes("dependency")) {
+    return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
+  }
+  return "border-slate-700 bg-slate-900 text-wo-text-secondary";
+}
+
+function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceStatus"]) {
+  switch (status) {
+    case "component-owned template only":
+      return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
+    case "form system only":
+    case "separate finish component":
+      return "border-amber-700/30 bg-amber-950/20 text-amber-200";
+    case "parent aggregate only":
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
+    case "operation registry missing":
+    case "component-owned source missing":
+    case "blocked":
+      return "border-red-700/30 bg-red-950/20 text-red-200";
+    default:
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
+  }
+}
+
+function returnCantTruthSourceClass(sourceType: ReturnCantTruthContainerFieldAudit["sourceType"]) {
+  switch (sourceType) {
+    case "component truth":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "component dependency anchor":
+      return "border-cyan-700/40 bg-cyan-950/30 text-cyan-200";
+    case "Form System capture":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    case "root geometry context":
+    case "parent aggregate support":
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
+    case "legacy alias":
+      return "border-fuchsia-700/40 bg-fuchsia-950/20 text-fuchsia-200";
+    case "component template / registry":
+      return "border-cyan-700/40 bg-cyan-950/20 text-cyan-200";
+    default:
+      return "border-red-700/40 bg-red-950/20 text-red-200";
+  }
+}
+
+function ReturnCantTruthContainerPanel() {
+  const model = buildReturnCantReadonlyContainerModel();
+
+  return (
+    <section
+      data-testid="product-system-return-cant-truth-container"
+      className="mt-3 rounded-lg border border-fuchsia-800/40 bg-fuchsia-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-fuchsia-100">Return/Cant truth container</h4>
+          <p className="mt-0.5 text-[10px] text-fuchsia-300/80">
+            Target readonly container alignment for return/cant. This does not write Product Truth. It only aligns the language used by Product System, the readonly mapper, and the composition model.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+          <span className="rounded border border-fuchsia-700/40 bg-fuchsia-950/30 px-1.5 py-0.5 text-fuchsia-200">target: {model.targetContainerPath}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">status: {model.readiness.toUpperCase()}</span>
+        </div>
+      </div>
+
+      <div className="mt-2 rounded-lg border border-cyan-800/40 bg-cyan-950/15 px-3 py-2 text-[10px] text-cyan-200" data-testid="product-system-return-cant-face-dependency">
+        FACE -&gt; RETURN_CANT dependency: target upstream is `{model.upstreamDependencies[0]?.canonicalPath}`. Until that dependency is explicit and confirmed, return/cant stays blocked and must not invent its own perimeter truth from aggregate/root context.
+      </div>
+
+      <div className="mt-2 rounded-lg border border-fuchsia-800/40 bg-fuchsia-950/15 px-3 py-2 text-[10px] text-fuchsia-200" data-testid="product-system-return-cant-legacy-alias">
+        Legacy alias still present: `{model.legacyAliasPaths.join(", ")}` is diagnostic/compatibility language only. Canonical target remains `{model.targetContainerPath}`.
+      </div>
+
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 text-[10px] text-wo-text-secondary" data-testid="product-system-return-cant-aggregate-boundary">
+        {model.productAggregateBoundaryNote}
+      </div>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
+          <span>Field</span>
+          <span>Source type</span>
+          <span>Current source</span>
+          <span>Target path</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {model.sourceTypeRows.map((field) => (
+            <div key={field.key} data-testid={`product-system-return-cant-truth-field-${field.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2">
+                <div>
+                  <p className="font-bold text-wo-text-primary">{field.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{field.note}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantTruthSourceClass(field.sourceType)}`}>{displayModuleSourceTypeLabel(field.sourceType)}</span>
+                </div>
+                <p className="font-mono text-wo-text-secondary">{field.currentSource}</p>
+                <p className="font-mono text-cyan-200/85">{field.targetPath}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function compositionWiringClass(status: ProductCompositionReadModelEntry["currentWiring"]) {
+  switch (status) {
+    case "wired":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "partial":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+function compositionReadinessClass(status: ProductCompositionReadModelEntry["calculationReadiness"]) {
+  switch (status) {
+    case "ready":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "partial":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+function CompositionReadModelTable({
+  title,
+  entries,
+  testId,
+}: {
+  title: string;
+  entries: ProductCompositionReadModelEntry[];
+  testId: string;
+}) {
+  return (
+    <section data-testid={testId} className="mt-3 rounded-lg border border-violet-800/40 bg-violet-950/10 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-violet-100">{title}</h4>
+          <p className="mt-0.5 text-[10px] text-violet-300/80">
+            {PRODUCT_TEMPLATE_COMPOSES_HELP} {equalModulesHintRo()}
+          </p>
+        </div>
+        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-wo-text-secondary">Overall status: PARTIAL</span>
+      </div>
+
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 text-[10px] text-wo-text-secondary" data-testid={`${testId}-aggregate-boundary`}>
+        ProductAggregate is derived read model. If a row compensates for missing component truth, treat it as support/diagnostic output, not as the primary truth source.
+      </div>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
+          <span>Module</span>
+          <span>Module / id</span>
+          <span>Current source</span>
+          <span>Truth target / dependencies</span>
+          <span>Status</span>
+          <span>Blockers</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {entries.map((entry) => (
+            <div key={entry.key} data-testid={`${testId}-${entry.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2">
+                <div>
+                  <p className="font-bold text-wo-text-primary">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{entry.componentType === "structural" ? "Module produs (structural)" : "Module produs (functional)"}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
+                  <p className="mt-0.5 font-mono text-[9px] text-wo-text-muted">{entry.componentId}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionWiringClass(entry.currentWiring)}`}>{entry.currentWiring}</span>
+                  <p className="mt-1 text-[9px] text-wo-text-muted">source: {displayModuleSourceTypeLabel(entry.currentSourceType)}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-cyan-200/85">{entry.productTruthTarget}</p>
+                  <p className="mt-0.5 text-wo-text-muted">geometry: {entry.geometryDependency}</p>
+                  <p className="mt-0.5 text-wo-text-muted">material: {entry.materialSource}</p>
+                  <p className="mt-0.5 text-wo-text-muted">operation: {entry.operationSource}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionReadinessClass(entry.calculationReadiness)}`}>{entry.calculationReadiness}</span>
+                  <p className="mt-1 text-[9px] text-wo-text-muted">required: {entry.requiredInLetters ? "yes" : "conditional"}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-amber-200/85">{entry.blockers.join(", ")}</p>
+                  <p className="mt-0.5 text-wo-text-muted">{entry.recommendation}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReturnCantSeparateCalculationSourcePaths({
+  sharedWithProductCodes,
+}: {
+  sharedWithProductCodes: string[];
+}) {
+  const logoReuse = sharedWithProductCodes.includes("TPL-VOLUMETRIC-LOGO_v1");
+
+  return (
+    <section
+      data-testid="product-system-return-cant-source-paths"
+      className="mt-3 rounded-lg border border-cyan-800/40 bg-cyan-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-cyan-100">Separate calculation source paths</h4>
+          <p className="mt-0.5 text-[10px] text-cyan-300/80">
+            {RETURN_CANT_MOVE_TRUTH_HELP}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Module TPL-VOLUM-ALUMINIU_v1</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Component comp_lateral_litere</span>
+        </div>
+      </div>
+
+      <div className="mt-2 grid gap-2 md:grid-cols-3">
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">We can read now</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">Depth gate, finish token, component operations, component material variants, and workcenter hints.</p>
+        </div>
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">Still parent aggregate only</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">`quote_geometry.letter_perimeter_m`, linked aggregate operation traces, and global review setup hydration.</p>
+        </div>
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">{MUST_OWN_ON_MODULE_LABEL}</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">`material_profile`, `perimeter_source`, `layer_group_ids`, and `confirmation_state`.</p>
+        </div>
+      </div>
+
+      {logoReuse ? (
+        <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-[10px] text-amber-200" data-testid="product-system-return-cant-logo-reuse-note">
+          Reusable component check: `TPL-VOLUMETRIC-LOGO_v1` also points at this cant component boundary, so the missing source paths should be solved once for Letters and Logo. Logo remains candidate / read-only.
+        </div>
+      ) : null}
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
+          <span>Source key</span>
+          <span>Canonical target</span>
+          <span>Current source path</span>
+          <span>Source status</span>
+          <span>Blocker</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {RETURN_CANT_SEPARATE_SOURCE_PATHS.map((entry) => (
+            <div key={entry.key} data-testid={`product-system-return-cant-source-${entry.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2">
+                <div>
+                  <p className="font-bold text-wo-text-primary">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{entry.currentSource}</p>
+                </div>
+                <p className="font-mono text-cyan-200/85">{entry.canonicalTarget}</p>
+                <p className="font-mono text-wo-text-secondary">{entry.currentSourcePath}</p>
+                <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantSourceStatusClass(entry.sourceStatus)}`}>{entry.sourceStatus}</span>
+                <p className="font-mono text-amber-200/85">{entry.blocker}</p>
+              </div>
+              <p className="mt-1 text-[10px] text-wo-text-muted">{entry.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ComponentCalculationOwnershipPanel({
+  availability,
+}: {
+  availability?: ProductTemplateAvailabilityItem | null;
+}) {
+  const contracts = availability?.shared_component_contracts ?? [];
+  if (contracts.length === 0) {
+    return null;
+  }
+
+  const contractsByKey = new Map(contracts.map((contract) => [contract.component_key, contract]));
+  const rows = SHARED_COMPONENT_OWNERSHIP_ORDER
+    .map((componentKey) => {
+      const audit = SHARED_COMPONENT_OWNERSHIP_AUDIT[componentKey];
+      const contract = contractsByKey.get(componentKey);
+      if (!audit || !contract) {
+        return null;
+      }
+      return { audit, contract };
+    })
+    .filter((row): row is { audit: SharedComponentOwnershipAudit; contract: NonNullable<typeof contracts[number]> } => Boolean(row));
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const isLogoCandidate =
+    availability?.template_code === "TPL-VOLUMETRIC-LOGO_v1" ||
+    contracts.some((contract) => contract.profile_key === "logo");
+  const profileLabel = Array.from(new Set(contracts.map((contract) => contract.profile_key))).join(" + ");
+
+  return (
+    <section
+      data-testid="product-system-component-ownership-panel"
+      className="rounded-xl border border-amber-800/40 bg-amber-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-[13px] font-bold text-amber-100">Module calculation ownership</h3>
+          <p className="mt-0.5 text-[11px] text-amber-200/75">
+            {PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200">Read-only</span>
+          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200" data-testid="product-system-ownership-composer-badge">Product Template = composer</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component root</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component quote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No promote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No mutation call</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">Profile {profileLabel}</span>
+        </div>
+      </div>
+
+      <div
+        className="mt-3 rounded-lg border border-red-800/40 bg-red-950/15 px-3 py-2 text-[11px] text-red-200"
+        data-testid="product-system-ownership-product-template-warning"
+      >
+        Product Template still carries component-owned defaults, hydrated values, or dependencies in the product-root flow. Treat this page as ownership audit only until component-owned sources are wired.
+      </div>
+
+      <CompositionReadModelTable
+        title="Structural composition map"
+        entries={STRUCTURAL_COMPOSITION_READ_MODEL}
+        testId="product-system-structural-composition-map"
+      />
+
+      <CompositionReadModelTable
+        title="Functional composition map"
+        entries={FUNCTIONAL_COMPOSITION_READ_MODEL}
+        testId="product-system-functional-composition-map"
+      />
+
+      {isLogoCandidate ? (
+        <div
+          className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-[11px] text-amber-200"
+          data-testid="product-system-ownership-logo-candidate"
+        >
+          <p className="font-bold">TPL-VOLUMETRIC-LOGO_v1 remains candidate / read-only / linked child.</p>
+          <p className="mt-0.5 text-amber-200/75">Do not activate it as Work Intake root or commercial root from this surface.</p>
+        </div>
+      ) : null}
+
+      <div className="mt-3 grid gap-3 xl:grid-cols-2">
+        {rows.map(({ audit, contract }) => {
+          const moduleCode =
+            contract.shared_module_template_code ??
+            contract.module_template_code ??
+            audit.primaryTemplateCode;
+          return (
+            <article
+              key={audit.componentKey}
+              data-testid={`product-system-ownership-component-${audit.componentKey}`}
+              className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="text-[12px] font-bold text-wo-text-primary">{audit.label}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{moduleCode}</p>
+                  <p className="mt-0.5 text-[10px] text-wo-text-muted">{MODULE_PRODUS_BOUNDARY_LABEL}</p>
+                </div>
+                <span
+                  className={`rounded border px-2 py-0.5 text-[9px] font-bold ${ownershipStatusClass(audit.separateCalculationStatus)}`}
+                  data-testid={`product-system-ownership-status-${audit.componentKey}`}
+                >
+                  {audit.separateCalculationLabel}
+                </span>
+              </div>
+
+              <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Confidence {contract.confidence}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Owner decision {contract.owner_decision}</span>
+              </div>
+
+              <div className="mt-3 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">Should own</p>
+                <p className="mt-1 font-mono text-[10px] text-wo-text-primary">{audit.shouldOwn.join(", ")}</p>
+              </div>
+
+              <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">Current gaps</p>
+                <div className="mt-1 space-y-1 text-[10px] text-amber-200/85">
+                  {audit.gaps.map((gap) => (
+                    <p key={gap}>{gap}</p>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-2 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+                <div className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
+                  <span>Canonical field key</span>
+                  <span>Product Truth path</span>
+                  <span>Source/state</span>
+                  <span>Warning</span>
+                </div>
+                <div className="divide-y divide-slate-800/80">
+                  {audit.fields.map((field) => (
+                    <div key={field.key} className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]">
+                      <p className="font-mono font-bold text-wo-text-primary">{field.key}</p>
+                      <p className="font-mono text-cyan-200/85">{field.productTruthPath}</p>
+                      <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${ownershipFieldStateClass(field.sourceState)}`}>{field.sourceState}</span>
+                      <p className="text-amber-200/85">{field.warning}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {audit.componentKey === "volumetric_return_side" ? (
+                <>
+                  <ReturnCantTruthContainerPanel />
+                  <ReturnCantSeparateCalculationSourcePaths
+                    sharedWithProductCodes={availability?.shared_with_product_codes ?? []}
+                  />
+                </>
+              ) : null}
+
+              <p className="mt-2 text-[10px] text-wo-text-muted">{audit.note}</p>
+            </article>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-[10px] text-wo-text-muted">
+        Canonical field bindings stay read-only. Use the Form System tab for the backing field-binding map; do not treat ProductAggregate or ProductDefinition as primary owners.
+      </p>
+    </section>
+  );
+}
+
+function SharedVolumetricFoundationPanel({
+  availability,
+}: {
+  availability?: ProductTemplateAvailabilityItem | null;
+}) {
+  const contracts = availability?.shared_component_contracts ?? [];
+  if (contracts.length === 0) return null;
+
+  const profiles = Array.from(new Set(contracts.map((contract) => contract.profile_key))).join(" + ");
+  const lighting = contracts.find((contract) => contract.component_key === "volumetric_lighting");
+  const isCandidate = availability?.product_system_role === "candidate_product";
+  const isLogoProfile = contracts.some((contract) => contract.profile_key === "logo");
+  const runtimeStatusFor = (contract: (typeof contracts)[number]) => {
+    if (contract.component_key === "volumetric_lighting" && contract.strategy_status) {
+      return contract.strategy_status;
+    }
+    if (contract.component_key === "volumetric_lighting" && contract.profile_key === "logo") {
+      return "NEEDS_LED_CALCULATION_STRATEGY";
+    }
+    if (contract.component_key === "volumetric_lighting" && contract.profile_key === "letters") {
+      return "current LED strategy";
+    }
+    return availability?.quote_offerable ? "offerable binding" : "candidate / linked child binding";
+  };
+
+  return (
+    <section data-testid="product-system-editor-shared-foundation" className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 className="text-[13px] font-bold text-cyan-100">Shared component foundation</h3>
+          <p className="mt-0.5 text-[11px] text-cyan-300/70">{SHARED_FOUNDATION_HELP}</p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Read-only</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Profile {profiles}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">Contracts {contracts.length}</span>
+          {lighting?.confidence === "PARTIAL" ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting PARTIAL</span> : null}
+        </div>
+      </div>
+      {isCandidate && isLogoProfile ? (
+        <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/15 px-2.5 py-2 text-[10px] text-amber-200" data-testid="product-system-editor-logo-candidate-readiness">
+          <p className="font-bold">Candidate / linked child only Â· Not Work Intake</p>
+          <p className="mt-0.5 text-amber-200/75">Offerability requires Product Truth + Modular Form + ProductDefinition + Pricing readiness.</p>
+        </div>
+      ) : null}
+      <div className="mt-2 grid gap-1.5 md:grid-cols-2 xl:grid-cols-3">
+        {contracts.map((contract) => (
+          <div key={contract.component_key} className="rounded-lg border border-slate-800 bg-slate-950/40 px-2.5 py-1.5">
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p className="text-[11px] font-bold text-wo-text-primary">{contract.display_name}</p>
+                <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">{contract.component_key}</p>
+              </div>
+              <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-wo-text-secondary"}`}>{contract.confidence}</span>
+            </div>
+            <p className="mt-1 text-[10px] text-wo-text-muted">Profile: {contract.profile_key}</p>
+            <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {SHARED_VOLUMETRIC_EDITOR_MODULES[contract.component_key] ?? contract.shared_module_template_code ?? contract.module_template_code}</p>
+            {contract.component_key === "volumetric_lighting" && contract.shared_module_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {contract.shared_module_template_code}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.strategy_source_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Strategy source: {contract.strategy_source_template_code}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.calculation_strategy_key ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-amber-300">Strategy: {contract.calculation_strategy_key}</p>
+            ) : null}
+            <p className="mt-1 text-[10px] text-wo-text-muted">Owner decision: {contract.owner_decision}</p>
+            <p className="mt-0.5 text-[10px] font-bold text-wo-text-secondary">Runtime status: {runtimeStatusFor(contract)}</p>
+            {contract.component_key === "volumetric_lighting" && contract.strategy_meaning ? (
+              <p className="mt-0.5 text-[9px] text-wo-text-muted">{contract.strategy_meaning}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.reserved_module_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[9px] text-wo-text-muted">Logo lighting strategy/profile source: {contract.reserved_module_template_code}</p>
+            ) : null}
+            <p className="mt-0.5 text-[9px] text-wo-text-dim">No pricing / no runtime activation.</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TemplateEditor({
   draft,
   isNew,
@@ -1505,6 +2763,10 @@ function TemplateEditor({
   saving,
   families,
   materials,
+  availability,
+  allTemplates,
+  availabilityItems,
+  ownerProofWorkspaceId = null,
 }: {
   draft: DraftTemplate;
   isNew: boolean;
@@ -1523,6 +2785,11 @@ function TemplateEditor({
   saving: boolean;
   families: ProductFamily[];
   materials: InventoryMaterialEntity[];
+  availability?: ProductTemplateAvailabilityItem | null;
+  allTemplates: ProductTemplateEntity[];
+  availabilityItems: ProductTemplateAvailabilityItem[];
+  /** When set with volumetric template, shows owner read-only chain proof. */
+  ownerProofWorkspaceId?: string | null;
 }) {
   const [studioTab, setStudioTab] = useState<"structure" | "general" | "operational" | "form-system">("structure");
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
@@ -1686,31 +2953,61 @@ function TemplateEditor({
     "";
 
   const internalHoursLabel = formatInternalTemplateHours(draft.estimated_hours);
+  const isLogoSharedProfile = availability?.shared_component_contracts?.some(
+    (contract) => contract.profile_key === "logo"
+  ) ?? false;
+
+  const candidateModuleProdusReadonlyPanel = (
+    <CandidateModuleProdusPanel
+      templates={allTemplates}
+      availabilityItems={availabilityItems}
+      selectedTemplateCode={draft.template_code}
+      variant="inline"
+    />
+  );
 
   const generalTabPanel = (
-    <TemplateGeneralTabPanel
-      draft={draft}
-      readOnly={readOnly}
-      saving={saving}
-      isNew={isNew}
-      familyList={familyList}
-      internalHoursLabel={internalHoursLabel}
-      componentCount={displayCounts.components}
-      operationCount={displayCounts.operations}
-      materialCount={displayCounts.materials}
-      isArchivedForQuote={archivePolicy.isArchivedForQuote}
-      canArchive={archivePolicy.canArchive}
-      archiveBlockReason={archivePolicy.blockReason}
-      onNotesChange={(value) => update("notes", value)}
-      onDescriptionChange={(value) => update("description", value)}
-      onArchive={readOnly ? undefined : onArchive}
-    />
+    <div className="space-y-3">
+      {candidateModuleProdusReadonlyPanel}
+      <TemplateGeneralTabPanel
+        draft={draft}
+        readOnly={readOnly}
+        saving={saving}
+        isNew={isNew}
+        familyList={familyList}
+        internalHoursLabel={internalHoursLabel}
+        componentCount={displayCounts.components}
+        operationCount={displayCounts.operations}
+        materialCount={displayCounts.materials}
+        isArchivedForQuote={archivePolicy.isArchivedForQuote}
+        canArchive={archivePolicy.canArchive}
+        archiveBlockReason={archivePolicy.blockReason}
+        onNotesChange={(value) => update("notes", value)}
+        onDescriptionChange={(value) => update("description", value)}
+        onArchive={readOnly ? undefined : onArchive}
+      />
+      <SharedVolumetricFoundationPanel availability={availability} />
+      {draft.template_code ? (
+        <>
+          <ProductTemplatePublicationPanel templateCode={draft.template_code} />
+          <ComponentContractUsedByPanel templateCode={draft.template_code} />
+          <ProductE2EReadinessPanel templateCode={draft.template_code} />
+        </>
+      ) : null}
+    </div>
   );
 
   const structurePanel = (
     <div className="space-y-4">
+      <ProductCompilerDisplayShell stage="both" />
+      {candidateModuleProdusReadonlyPanel}
+
+      <ComponentCalculationOwnershipPanel availability={availability} />
+
       {aggregateLoading ? (
-        <div className="text-[11px] text-slate-500">Se încarcă ProductAggregate…</div>
+        <div className="text-[11px] text-wo-text-muted">Se încarcă {PRODUCT_COMPILER_LABEL}…</div>
+      ) : isLogoSharedProfile ? (
+        <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
         <ProductAggregateOverviewPanel
           aggregate={aggregate}
@@ -1719,11 +3016,11 @@ function TemplateEditor({
         />
       )}
 
-      {preferAggregateDisplay && aggregate ? (
+      {preferAggregateDisplay && aggregate && !isLogoSharedProfile ? (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-            <h3 className="text-[14px] font-bold text-slate-100">Structură produs (ProductAggregate)</h3>
+            <h3 className="text-[14px] font-bold text-wo-text-primary">{PRODUCT_COMPILER_GRAPH_STAGE_LABEL}</h3>
             <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
               {aggregate.components.length}
             </span>
@@ -1738,7 +3035,7 @@ function TemplateEditor({
       ) : (
         <>
       {constructionStages.length > 0 ? (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
           <TemplateConstructionStageRow
             stages={constructionStages}
             selectedIndex={selectedComponentIndex}
@@ -1754,12 +3051,12 @@ function TemplateEditor({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-              <h3 className="text-[14px] font-bold text-slate-100">Structură produs</h3>
+              <h3 className="text-[14px] font-bold text-wo-text-primary">Structură produs</h3>
               <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
                 {draft.components.length}
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 mt-1 pl-7">
+            <p className="text-[10px] text-wo-text-muted mt-1 pl-7">
               Apasă pe o componentă pentru detalii în panoul din dreapta. Folosește săgeata pentru
               editare inline.
             </p>
@@ -1776,10 +3073,10 @@ function TemplateEditor({
         </div>
 
         {draft.components.length === 0 ? (
-          <div className="bg-[#111827] border border-[#1E293B] border-dashed rounded-xl p-8 text-center">
-            <Layers className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentă definită</p>
-            <p className="text-[11px] text-slate-500 mb-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle border-dashed rounded-xl p-8 text-center">
+            <Layers className="w-10 h-10 text-wo-text-dim mx-auto mb-3" />
+            <p className="text-[13px] text-wo-text-muted font-semibold mb-1">Nicio componentă definită</p>
+            <p className="text-[11px] text-wo-text-muted mb-4">
               Adaugă componentele care definesc structura produsului.
             </p>
             {!readOnly ? (
@@ -1826,7 +3123,7 @@ function TemplateEditor({
   );
 
   return (
-    <div className="flex flex-col w-full min-h-[min(720px,calc(100vh-240px))] max-h-[calc(100vh-200px)] border border-[#1E293B] rounded-xl overflow-hidden bg-[#0A0F1C]">
+    <div className="flex flex-col w-full min-h-[min(720px,calc(100vh-240px))] max-h-[calc(100vh-200px)] border border-wo-border-subtle rounded-xl overflow-hidden bg-wo-surface-inset">
       <TemplateEditorCommandBar
         templateCode={draft.template_code}
         displayName={templateDisplayName}
@@ -1846,6 +3143,15 @@ function TemplateEditor({
         readOnly={readOnly}
       />
 
+      {ownerProofWorkspaceId && isVolumetricLettersTemplate(draft.template_code) ? (
+        <div className="shrink-0 border-b border-wo-border-subtle px-3 py-2 overflow-y-auto max-h-[42vh]">
+          <OwnerReadonlyVolumetricProofPanel
+            templateCode={draft.template_code}
+            workspaceId={ownerProofWorkspaceId}
+          />
+        </div>
+      ) : null}
+
       {readOnly ? (
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/15 border-b border-amber-800/30 text-[11px] text-amber-300 shrink-0">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
@@ -1857,24 +3163,25 @@ function TemplateEditor({
         <div
           className={`flex flex-col min-w-0 min-h-0 ${
             studioTab === "structure"
-              ? "xl:flex-[7] xl:border-r border-[#1E293B]"
+              ? "xl:flex-[7] xl:border-r border-wo-border-subtle"
               : studioTab === "operational" || studioTab === "form-system"
                 ? "flex-1"
                 : "flex-1"
           }`}
         >
-          <div className="flex items-center justify-between px-4 py-2 bg-[#111827] border-b border-[#1E293B] shrink-0">
-            <div className="flex gap-1 bg-[#0D1321] p-1 rounded-lg border border-[#1E293B]">
+          <div className="flex items-center justify-between px-4 py-2 bg-wo-surface-raised border-b border-wo-border-subtle shrink-0">
+            <div className="flex gap-1 bg-wo-surface-inset p-1 rounded-lg border border-wo-border-subtle">
               <button
                 type="button"
                 onClick={() => setStudioTab("structure")}
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "structure"
                     ? "bg-purple-600/30 text-purple-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
+                data-testid="product-system-studio-tab-compiler"
               >
-                Structură produs
+                {PRODUCT_COMPILER_LABEL}
               </button>
               <button
                 type="button"
@@ -1882,7 +3189,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "operational"
                     ? "bg-violet-600/30 text-violet-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
               >
                 Resurse operaționale
@@ -1893,7 +3200,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "form-system"
                     ? "bg-sky-600/30 text-sky-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
                 data-testid="product-system-form-system-tab"
               >
@@ -1905,7 +3212,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "general"
                     ? "bg-purple-600/30 text-purple-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
               >
                 Informații generale
@@ -1922,7 +3229,7 @@ function TemplateEditor({
                 : studioTab === "form-system"
                   ? (
                       isNew ? (
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-wo-text-muted">
                           Form System este disponibil după salvarea template-ului.
                         </div>
                       ) : (
@@ -1934,7 +3241,7 @@ function TemplateEditor({
         </div>
 
         {studioTab === "structure" ? (
-          <div className="flex flex-col min-h-0 min-w-0 flex-1 xl:flex-[3] xl:min-w-[300px] xl:max-w-[38%] border-t xl:border-t-0 border-[#1E293B]">
+          <div className="flex flex-col min-h-0 min-w-0 flex-1 xl:flex-[3] xl:min-w-[300px] xl:max-w-[38%] border-t xl:border-t-0 border-wo-border-subtle">
             <ComponentDetailInsightPanel
               selectedComponent={selectedComponent}
               selectedIndex={selectedComponentIndex}
@@ -1981,6 +3288,65 @@ function productSystemLoadModeToSource(
   }
 }
 
+function ProductSystemLibraryMoreMenu({
+  onCreateTemplate,
+  readOnly = false,
+}: {
+  onCreateTemplate: () => void;
+  readOnly?: boolean;
+}) {
+  if (readOnly) return null;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        data-testid="product-system-library-more-menu"
+        aria-label="More catalog actions"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
+      >
+        <MoreHorizontal className="h-3.5 w-3.5" />
+      </button>
+      {open ? (
+        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[12rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
+          <p className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-wo-text-muted">
+            Design-time (admin)
+          </p>
+          <button
+            type="button"
+            data-testid="product-system-library-create-template"
+            onClick={() => {
+              onCreateTemplate();
+              setOpen(false);
+            }}
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-wo-text-primary hover:bg-slate-800"
+          >
+            Șablon nou
+          </button>
+          <p
+            data-testid="product-system-library-design-time-note"
+            className="px-2 pb-1 text-[10px] leading-snug text-wo-text-muted"
+          >
+            Admin design-time only — not operator quoting
+          </p>
+          <div className="my-1 border-t border-slate-800" />
+          <Link
+            to="/product-system/blueprint-dossier"
+            data-testid="product-system-library-blueprint-link"
+            className="block rounded px-2 py-1 text-[11px] text-wo-text-primary hover:bg-slate-800"
+            onClick={() => setOpen(false)}
+          >
+            Blueprint Dossier
+          </Link>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function ProductSystemInfoPopover({
   loadMode,
   catalogCounts = {
@@ -1990,6 +3356,7 @@ function ProductSystemInfoPopover({
     sharedComponents: 0,
     archivedExperimental: 0,
   },
+  compact = false,
 }: {
   loadMode: "api" | "mock" | "empty_real" | "auth_required" | "error";
   catalogCounts?: {
@@ -1999,24 +3366,29 @@ function ProductSystemInfoPopover({
     sharedComponents: number;
     archivedExperimental: number;
   };
+  compact?: boolean;
 }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
+          className={
+            compact
+              ? "rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
+              : "flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-wo-text-secondary border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
+          }
           aria-label="Informații ProductSystem"
         >
-          <Info className="w-3.5 h-3.5" /> Info
+          <Info className="w-3.5 h-3.5" /> {compact ? null : "Info"}
         </button>
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-[#111827] p-4 text-slate-200 shadow-xl"
+        className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-wo-surface-raised p-4 text-wo-text-primary shadow-xl"
       >
-        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcționează?</p>
-        <ul className="space-y-2 text-[11px] text-slate-400 leading-relaxed list-disc pl-4">
+        <p className="text-[12px] font-bold text-wo-text-primary mb-2">Cum funcționează?</p>
+        <ul className="space-y-2 text-[11px] text-wo-text-muted leading-relaxed list-disc pl-4">
           <li>
             Fiecare produs este definit ca un <strong className="text-purple-300">șablon</strong>{" "}
             format din <strong className="text-blue-300">componente</strong>.
@@ -2028,12 +3400,13 @@ function ProductSystemInfoPopover({
           <li>
             Șablonul este folosit în{" "}
             <Link
-              to="/intake"
+              to="/intake-v6/operator"
+              data-testid="product-system-page-intake-v6-link"
               className="text-purple-300 underline underline-offset-2 hover:text-purple-200"
             >
-              Work Intake
+              Intake V6
             </Link>{" "}
-            și la generarea ofertelor.
+            (downstream) — Oferta client nu se formează aici.
           </li>
           <li>
             Validarea completă a șablonului se face în pașii următori (ofertare, comenzi, prețuri).
@@ -2043,18 +3416,18 @@ function ProductSystemInfoPopover({
             — structură produs, materiale și operații.
           </li>
           <li>
-            Șabloanele nu se șterg din interfață; se <strong className="text-slate-300">arhivează</strong>{" "}
+            Șabloanele nu se șterg din interfață; se <strong className="text-wo-text-secondary">arhivează</strong>{" "}
             pentru a păstra istoricul.
           </li>
         </ul>
-        <p className="mt-3 text-[10px] text-slate-500 border-t border-slate-700/80 pt-3">
+        <p className="mt-3 text-[10px] text-wo-text-muted border-t border-slate-700/80 pt-3">
           Prețurile și ofertele folosesc aceste șabloane în modulele dedicate — fără modificarea datelor
           istorice.
         </p>
-        <p className="mt-2 text-[10px] text-slate-600">
-          Sursă date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
-          {" · "}
-          {catalogCounts.activeProducts} produse ofertabile · {catalogCounts.candidateProducts} in pregatire · {catalogCounts.internalModules} module interne
+        <p className="mt-2 text-[10px] text-wo-text-dim">
+          Sursă date: <span className="text-wo-text-muted">{loadModeChipLabel(loadMode)}</span>
+          {" Â· "}
+          {catalogCounts.activeProducts} produse ofertabile Â· {catalogCounts.candidateProducts} in pregatire Â· {catalogCounts.internalModules} module interne
         </p>
       </PopoverContent>
     </Popover>
@@ -2066,6 +3439,14 @@ function ProductSystemInfoPopover({
 // ============================================================
 export default function ProductSystem() {
   type TemplateLoadMode = "api" | "mock" | "empty_real" | "auth_required" | "error";
+  const navigate = useNavigate();
+  const { templateCode: routeTemplateCode } = useParams<{ templateCode?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { operatorReadOnly, shellMode } = useProductSystemShell();
+  const requestedTemplateCode = resolveRequestedTemplateCode({
+    pathTemplateCode: routeTemplateCode,
+    queryTemplateCode: searchParams.get("template"),
+  });
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
   const [availabilityItems, setAvailabilityItems] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [families, setFamilies] = useState<ProductFamily[]>([]);
@@ -2075,16 +3456,48 @@ export default function ProductSystem() {
   const [warning, setWarning] = useState<string | null>(null);
   const [loadMode, setLoadMode] = useState<TemplateLoadMode>("api");
   const [screen, setScreen] = useState<ProductSystemScreen>(getInitialProductSystemScreen);
-  const [libraryTab, setLibraryTab] = useState<LibraryTab>("active");
-  const [librarySearch, setLibrarySearch] = useState("");
-  const [catalogView, setCatalogView] = useState<ProductSystemCatalogView>("overview");
-  const [catalogDensity, setCatalogDensity] = useState<CatalogDensity>("compact");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState<DraftTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState("");
+
+  const useLegacyCatalog = isPsLegacyCatalogEnabled(searchParams);
+
+  const handleRequestedTemplateCodeChange = useCallback(
+    (templateCode: string | null) => {
+      if (shellMode) {
+        const legacySuffix = useLegacyCatalog ? "?ps_legacy=1" : "";
+        if (templateCode) {
+          navigate(
+            `${buildProductSystemProductDetailPath(templateCode)}${legacySuffix}`,
+            { replace: false },
+          );
+        } else {
+          navigate(`/product-system/products${legacySuffix}`, { replace: false });
+        }
+        return;
+      }
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (templateCode) {
+            next.set("template", templateCode);
+          } else {
+            next.delete("template");
+          }
+          if (useLegacyCatalog) {
+            next.set("ps_legacy", "1");
+          }
+          return next;
+        },
+        { replace: false },
+      );
+    },
+    [navigate, setSearchParams, shellMode, useLegacyCatalog],
+  );
 
   const loadTemplates = useCallback(async (): Promise<ProductTemplateEntity[]> => {
     setLoading(true);
@@ -2229,6 +3642,9 @@ export default function ProductSystem() {
     }),
     [availabilityItems]
   );
+  const selectedAvailability = draft
+    ? availabilityItems.find((item) => item.template_code.trim().toUpperCase() === draft.template_code.trim().toUpperCase()) ?? null
+    : null;
 
   const materialsByCode = useMemo(() => {
     const m = new Map<string, InventoryMaterialEntity>();
@@ -2236,62 +3652,29 @@ export default function ProductSystem() {
     return m;
   }, [materials]);
 
-  const templateSummaries = useMemo(() => {
-    const map = new Map<number, TemplateLibraryRowSummary>();
-    for (const t of templates) {
-      const d = entityToDraft(t);
-      const validation = computeValidation(d, families, materialsByCode);
-      const counts = getDraftDisplayCounts(d);
-      map.set(t.id, {
-        components: counts.components,
-        operations: counts.operations,
-        materials: counts.materials,
-        validationPassed: validation.filter((v) => v.ok).length,
-        validationTotal: validation.length,
-      });
-    }
-    return map;
-  }, [templates, families, materialsByCode]);
-
-  const templateCodes = useMemo(
-    () => templates.map((t) => t.template_code).filter(Boolean),
-    [templates],
+  const hasCandidateModuleProdusCandidate = useMemo(
+    () =>
+      buildCandidateModuleProdusReadonlySetModel(templates, availabilityItems, CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE) !=
+      null,
+    [templates, availabilityItems],
   );
-  const { summaries: aggregateLibrarySummaries } = useProductAggregateLibrarySummaries(templateCodes);
 
-  const enrichedTemplateSummaries = useMemo(() => {
-    const map = new Map<number, TemplateLibraryRowSummary>();
-    for (const t of templates) {
-      const base = templateSummaries.get(t.id);
-      if (!base) continue;
-      const agg = aggregateLibrarySummaries.get(t.template_code);
-      if (agg?.showDualCounts && agg.aggregateCounts) {
-        map.set(t.id, {
-          ...base,
-          components: agg.aggregateCounts.components,
-          operations: agg.aggregateCounts.operations,
-          materials: agg.aggregateCounts.materials,
-          aggregateCounts: agg.aggregateCounts,
-          parentDirectCounts: agg.parentCounts,
-          showDualCounts: true,
-        });
-      } else {
-        map.set(t.id, base);
-      }
-    }
-    return map;
-  }, [templates, templateSummaries, aggregateLibrarySummaries]);
+  const ownerDecisionRequiredCount = useMemo(
+    () => availabilityItems.filter((item) => item.owner_decision_required).length,
+    [availabilityItems],
+  );
 
-  const recommendedTemplate = useMemo(
-    () => resolveDefaultTemplate(templates),
-    [templates]
+  const candidateModuleProdusCompleteness = useMemo(
+    () => assessCandidateModuleProdusLiveCompleteness(templates),
+    [templates],
   );
 
   const editorReadOnly = useMemo(() => {
+    if (operatorReadOnly) return true;
     if (isNew || !selectedId) return false;
     const entity = templates.find((t) => t.id === selectedId);
     return entity ? !isTemplateEditableForQuote(entity) : false;
-  }, [isNew, selectedId, templates]);
+  }, [isNew, operatorReadOnly, selectedId, templates]);
 
   const handleBackToLibrary = useCallback(() => {
     setScreen("library");
@@ -2302,15 +3685,17 @@ export default function ProductSystem() {
   }, []);
 
   const handleOpenEditor = useCallback((t: ProductTemplateEntity) => {
+    if (operatorReadOnly) return;
     recordTemplateOpened(t.id);
     setSelectedId(t.id);
     setDraft(entityToDraft(t));
     setIsNew(false);
     setScreen("editor");
     setPickerOpen(false);
-  }, []);
+  }, [operatorReadOnly]);
 
   const handleNew = () => {
+    if (operatorReadOnly) return;
     setSelectedId(null);
     setDraft(emptyDraft());
     setIsNew(true);
@@ -2423,78 +3808,199 @@ export default function ProductSystem() {
   }, [draft?.id, templates, activeOwnerCount]);
 
   return (
-    <div className="space-y-3">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-[11px] text-slate-500">
-        <Link
-          to="/dashboard"
-          className="flex items-center gap-1 hover:text-slate-300 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
-        </Link>
-        <ChevronRight className="w-3 h-3" />
-        <span className="text-slate-300">
-          {shouldShowEditorScreen(screen, draft)
-            ? "ProductSystem / Blueprint Studio"
-            : "ProductSystem / Șabloane"}
-        </span>
-      </div>
+    <div
+      className="space-y-4"
+      data-testid="product-system-products-page"
+      data-canonical-template-code={routeTemplateCode ?? undefined}
+    >
+      {shouldShowLibraryScreen(screen) && useLegacyCatalog ? (
+        <div className="space-y-2 rounded-xl border border-slate-800/60 bg-slate-950/20 p-3" data-testid="product-system-library-header">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
+            <div className="flex min-w-0 items-center gap-2">
+              {!shellMode ? (
+                <Link
+                  to="/dashboard"
+                  className="shrink-0 rounded-md border border-slate-800 p-2 text-wo-text-muted transition-colors hover:border-slate-700 hover:text-wo-text-secondary"
+                  aria-label="Înapoi la Dashboard"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              ) : null}
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  {shellMode ? (
+                    <h2
+                      className="truncate text-sm font-semibold leading-tight text-wo-text-primary"
+                      data-testid="product-system-products-title"
+                    >
+                      Catalog vechi (intern)
+                    </h2>
+                  ) : (
+                    <h1 className="truncate text-base font-bold leading-tight text-wo-text-primary">Product System</h1>
+                  )}
+                  <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+                  <span
+                    className="rounded border border-amber-800/40 bg-amber-950/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200/90"
+                    data-testid="product-system-legacy-catalog-badge"
+                  >
+                    Legacy
+                  </span>
+                </div>
+              </div>
+            </div>
 
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
-          <div className="p-2 bg-purple-500/10 rounded-xl shrink-0">
-            <Package className="w-6 h-6 text-purple-400" />
+            <div className="flex min-w-[12rem] flex-1 items-center gap-2 rounded-md border border-slate-800/80 bg-[#0a0f18]/80 px-2.5 py-1.5 lg:max-w-md">
+              <Search className="h-3.5 w-3.5 shrink-0 text-wo-text-muted" />
+              <input
+                type="text"
+                value={catalogSearch}
+                onChange={(event) => setCatalogSearch(event.target.value)}
+                placeholder="Caută cod, familie, descriere…"
+                data-testid="product-system-unified-search"
+                className="w-full bg-transparent text-sm text-wo-text-primary outline-none placeholder:text-wo-text-muted"
+              />
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1.5">
+              <Link
+                to="/product-system/products"
+                data-testid="product-system-return-v2-link"
+                className="rounded-md border border-sky-800/50 px-2 py-1.5 text-[11px] font-medium text-sky-200 hover:bg-sky-950/30"
+              >
+                Înapoi la V2
+              </Link>
+              <button
+                onClick={loadTemplates}
+                disabled={loading}
+                aria-label="Reîncarcă"
+                data-testid="product-system-reload-icon"
+                className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              </button>
+              <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
+              <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} readOnly={operatorReadOnly} />
+            </div>
           </div>
-          <div className="min-w-0">
-            <h1 className="text-[18px] font-bold text-slate-100">
-              {shouldShowEditorScreen(screen, draft)
-                ? "ProductSystem / Blueprint Studio"
-                : "Product System Catalog"}
-            </h1>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              {shouldShowEditorScreen(screen, draft)
-                ? "Editor pentru structura șablonului selectat."
-                : "Catalogul logic al produselor, modulelor si componentelor Product System."}
+          <ProductSystemSpineBand testId="product-system-catalog-overview" />
+          {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+            <p className="rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">
+              {loadMode === "mock"
+                ? "Mod previzualizare — date mock, nu API live."
+                : loadMode === "auth_required"
+                  ? "Autentificare necesară pentru șabloane reale."
+                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend-ul."}
             </p>
-            {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
-              <p className="text-[10px] text-amber-400/90 mt-2">
-                {loadMode === "mock"
-                  ? "Mod previzualizare — date mock, nu API live."
-                  : loadMode === "auth_required"
-                    ? "Autentificare necesară pentru șabloane reale."
-                    : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
-              </p>
-            ) : null}
-          </div>
+          ) : null}
         </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+      ) : shouldShowLibraryScreen(screen) && !useLegacyCatalog ? (
+        <div
+          className="flex flex-wrap items-center justify-end gap-2"
+          data-testid="product-system-v2-page-toolbar"
+        >
+          {/* No second title here — shell owns "Product System"; workspace owns the spine once. */}
+          <span className="sr-only" data-testid="product-system-products-title">
+            Product System workspace
+          </span>
           <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
-          <ProductSystemInfoPopover
-            loadMode={loadMode}
-            catalogCounts={catalogCounts}
-          />
-          <Link
-            to="/product-system/blueprint-dossier"
-            className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
-          >
-            <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
-          </Link>
           <button
             onClick={loadTemplates}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+            aria-label="Reîncarcă"
+            data-testid="product-system-reload-icon"
+            className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
-          <button
-            onClick={handleNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
-          >
-            <Plus className="w-3.5 h-3.5" /> Șablon Nou
-          </button>
+          <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
+          {!operatorReadOnly ? (
+            <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} readOnly={operatorReadOnly} />
+          ) : null}
+          {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+            <p className="w-full rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">
+              {loadMode === "mock"
+                ? "Mod previzualizare — date mock, nu API live."
+                : loadMode === "auth_required"
+                  ? "Autentificare necesară pentru șabloane reale."
+                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend-ul."}
+            </p>
+          ) : null}
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 text-[10px] text-wo-text-muted">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1 hover:text-wo-text-secondary transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
+            </Link>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-wo-text-secondary">
+              {shouldShowEditorScreen(screen, draft)
+                ? "ProductSystem / Editor șablon"
+                : "ProductSystem / Șabloane"}
+              </span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="p-1.5 bg-purple-500/10 rounded-lg shrink-0">
+                <Package className="w-5 h-5 text-purple-400" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-[16px] font-bold text-wo-text-primary leading-tight">
+                  {shouldShowEditorScreen(screen, draft)
+                    ? "ProductSystem / Editor șablon"
+                    : "Product System Catalog"}
+                </h1>
+                {shouldShowEditorScreen(screen, draft) ? (
+                  <p className="text-[10px] text-wo-text-muted mt-0.5">Editor pentru structura șablonului selectat.</p>
+                ) : null}
+                {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+                  <p className="text-[10px] text-amber-400/90 mt-0.5">
+                    {loadMode === "mock"
+                      ? "Mod previzualizare — date mock, nu API live."
+                      : loadMode === "auth_required"
+                        ? "Autentificare necesară pentru șabloane reale."
+                        : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+              <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+              <ProductSystemInfoPopover
+                loadMode={loadMode}
+                catalogCounts={catalogCounts}
+              />
+              {!operatorReadOnly ? (
+                <Link
+                  to="/product-system/blueprint-dossier"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
+                >
+                  <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
+                </Link>
+              ) : null}
+              <button
+                onClick={loadTemplates}
+                disabled={loading}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-wo-text-primary rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
+              </button>
+              {!operatorReadOnly ? (
+              <button
+                onClick={handleNew}
+                className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
+              >
+                <Plus className="w-3.5 h-3.5" /> Șablon Nou
+              </button>
+              ) : null}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Message toast */}
       {message && (
@@ -2538,7 +4044,7 @@ export default function ProductSystem() {
         </div>
       )}
 
-      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-200px)]">
+      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-132px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
           <TemplateEditor
             key={selectedId ?? (isNew ? "new" : draft.template_code)}
@@ -2555,35 +4061,44 @@ export default function ProductSystem() {
             saving={saving}
             families={families}
             materials={materials}
+            availability={selectedAvailability}
+            allTemplates={templates}
+            availabilityItems={availabilityItems}
+            ownerProofWorkspaceId={
+              searchParams.get("owner_proof") === "1" ? searchParams.get("workspace_id") : null
+            }
           />
         ) : loadMode === "auth_required" && !loading ? (
-          <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">
+          <div className="bg-wo-surface-raised border border-amber-800/30 rounded-xl p-12 text-center">
             <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
             <p className="text-[12px] text-amber-300 font-semibold">
               Lipsă sesiune / autentificare necesară pentru API real.
             </p>
             <p className="text-[11px] text-amber-400/80 mt-1">
-              ProductSystem nu poate valida șabloanele reale fără autentificare.
+              Product System nu poate valida șabloanele reale fără autentificare.
             </p>
           </div>
-        ) : shouldShowLibraryScreen(screen) ? (
-          <TemplateLibraryView
+        ) : shouldShowLibraryScreen(screen) && useLegacyCatalog ? (
+          <ProductSystemCanonicalCatalog
             templates={templates}
             availabilityItems={availabilityItems}
-            tab={libraryTab}
-            onTabChange={setLibraryTab}
-            search={librarySearch}
-            onSearchChange={setLibrarySearch}
-            catalogView={catalogView}
-            onCatalogViewChange={setCatalogView}
-            density={catalogDensity}
-            onDensityChange={setCatalogDensity}
-            summaries={enrichedTemplateSummaries}
-            recommendedTemplateId={recommendedTemplate?.id ?? null}
-            activeCount={activeOwnerCount}
-            archivedCount={archivedCount}
             loading={loading}
+            search={catalogSearch}
+            onSearchChange={setCatalogSearch}
+            requestedTemplateCode={requestedTemplateCode}
+            onRequestedTemplateCodeChange={handleRequestedTemplateCodeChange}
             onOpenTemplate={handleOpenEditor}
+          />
+        ) : shouldShowLibraryScreen(screen) ? (
+          <ProductSystemV2Workspace
+            templates={templates}
+            availabilityItems={availabilityItems}
+            loading={loading}
+            search={catalogSearch}
+            onSearchChange={setCatalogSearch}
+            requestedTemplateCode={requestedTemplateCode}
+            onRequestedTemplateCodeChange={handleRequestedTemplateCodeChange}
+            onOpenTemplate={operatorReadOnly ? undefined : handleOpenEditor}
           />
         ) : null}
       </div>

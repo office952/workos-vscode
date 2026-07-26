@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import { buildIntakeV6LiveMaterialsUsedRows } from "./intakeV6LiveMaterialsUsedDisplay";
 import type {
 	IntakeV6CncOperationRow,
@@ -76,17 +76,28 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 		expect(buildIntakeV6LiveMaterialsUsedRows({ breakdown: null })).toEqual([]);
 	});
 
-	it("splits plexiglas between letter faces and emblem/logo faces when both references exist", () => {
+	it("groups shared plexiglas under one inventory identity even when letters and logo both consume it", () => {
 		const rows = buildIntakeV6LiveMaterialsUsedRows({
 			breakdown: breakdown({
 				materialRows: [
 					materialRow({
 						material_key: "plexiglas_face",
-						display_name: "Plexiglas 3 mm / fata litere",
+						display_name: "plexiglas 3mm PMMA - opal",
+						registry_code: "MAT-ACP-FATA-LITERE",
 						base_quantity: 2,
 						quantity: 2,
 						priced_quantity: 2,
 						quantity_with_waste: 2,
+						unit_price: 16,
+					}),
+					materialRow({
+						material_key: "artwork_logo_1_plexiglas_face",
+						display_name: "Plexiglas față emblemă — Logo 1",
+						registry_code: "MAT-ACP-FATA-LITERE",
+						base_quantity: 0.5,
+						quantity: 0.5,
+						priced_quantity: 0.5,
+						quantity_with_waste: 0.5,
 						unit_price: 16,
 					}),
 				],
@@ -95,11 +106,11 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 			artworkFinishes: [{ layer_key: "logo", estimated_area_m2: 0.5 }],
 		});
 
-		expect(rows.find((item) => item.groupKey === "plexi_letters")?.quantityText).toContain("1.500 m");
-		expect(rows.find((item) => item.groupKey === "plexi_letters")?.costText).toBe("24.00 EUR");
-		expect(rows.find((item) => item.groupKey === "plexi_emblems")?.quantityText).toContain("0.500 m");
-		expect(rows.find((item) => item.groupKey === "plexi_emblems")?.costText).toBe("8.00 EUR");
-		expect(rows.some((item) => item.groupKey === "plexi")).toBe(false);
+		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("plexiglas 3mm PMMA - opal");
+		expect(rows.find((item) => item.groupKey === "plexi")?.quantityText).toContain("2.500 m");
+		expect(rows.find((item) => item.groupKey === "plexi")?.costText).toBe("40.00 EUR");
+		expect(rows.find((item) => item.groupKey === "plexi")?.technicalDetails).toContain("Sursă: plexiglas 3mm PMMA - opal");
+		expect(rows.find((item) => item.groupKey === "plexi")?.technicalDetails).toContain("Sursă: Plexiglas față emblemă — Logo 1");
 	});
 
 	it("keeps a single plexiglas row when emblem split data is unavailable", () => {
@@ -108,7 +119,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 				materialRows: [
 					materialRow({
 						material_key: "plexiglas_face",
-						display_name: "Plexiglas 3 mm / fata litere",
+						display_name: "plexiglas 3mm PMMA - opal",
 						base_quantity: 1.264,
 						quantity: 1.264,
 						priced_quantity: 2.5238,
@@ -121,6 +132,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 
 		expect(rows.find((item) => item.groupKey === "plexi")?.quantityText).toContain("2.524 m");
 		expect(rows.find((item) => item.groupKey === "plexi")?.costText).toBe("40.38 EUR");
+		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("plexiglas 3mm PMMA - opal");
 	});
 
 	it("separates Oracal face vinyl series and cant vinyl with their own prices", () => {
@@ -152,9 +164,9 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 			}),
 		});
 
-		expect(rows.find((item) => item.groupKey === "oracal_651")?.label).toBe("Oracal 651 / față litere");
+		expect(rows.find((item) => item.groupKey === "oracal_651")?.label).toBe("Oracal 651");
 		expect(rows.find((item) => item.groupKey === "oracal_651")?.costText).toBe("7.53 EUR");
-		expect(rows.find((item) => item.groupKey === "oracal_8500")?.label).toBe("Oracal 8500 / față litere");
+		expect(rows.find((item) => item.groupKey === "oracal_8500")?.label).toBe("Oracal 8500");
 		expect(rows.find((item) => item.groupKey === "oracal_8500")?.costText).toBe("15.48 EUR");
 		expect(rows.find((item) => item.groupKey === "oracal_cant_651")?.label).toBe("Oracal 651 / cant volum");
 		expect(rows.find((item) => item.groupKey === "oracal_cant_651")?.costText).toBe("4.47 EUR");
@@ -222,13 +234,13 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 
 		expect(rows.find((item) => item.groupKey === "print_vinyl")?.quantityText).toContain("0.400 m");
 		expect(rows.find((item) => item.groupKey === "print_vinyl")?.costText).toBe("0.72 EUR");
-		expect(rows.find((item) => item.groupKey === "lamination")?.quantityText).toContain("0.400 m");
-		expect(rows.find((item) => item.groupKey === "lamination")?.costText).toBe("2.40 EUR");
+		expect(rows.find((item) => item.groupKey === "lamination_material")?.quantityText).toContain("0.400 m");
+		expect(rows.find((item) => item.groupKey === "lamination_material")?.costText).toBe("2.40 EUR");
 		expect(rows.find((item) => item.groupKey === "print_service")?.quantityText).toContain("0.480 m");
 		expect(rows.find((item) => item.groupKey === "print_service")?.costText).toBe("4.08 EUR");
 	});
 
-	it("separates letter cant from emblem/logo cant while using real base perimeter", () => {
+	it("groups same cant resource identity across letters and logo while preserving technical sources", () => {
 		const rows = buildIntakeV6LiveMaterialsUsedRows({
 			breakdown: breakdown({
 				materialRows: [
@@ -263,10 +275,11 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 			}),
 		});
 
-		expect(rows.find((item) => item.groupKey === "cant_letters")?.quantityText).toBe("26.75 m");
-		expect(rows.find((item) => item.groupKey === "cant_letters")?.costText).toBe("96.29 EUR");
-		expect(rows.find((item) => item.groupKey === "cant_emblems")?.quantityText).toBe("4.89 m");
-		expect(rows.find((item) => item.groupKey === "cant_emblems")?.costText).toBe("17.61 EUR");
+		expect(rows.find((item) => item.groupKey === "cant_profile")?.label).toBe("Cant / volum");
+		expect(rows.find((item) => item.groupKey === "cant_profile")?.quantityText).toBe("31.64 m");
+		expect(rows.find((item) => item.groupKey === "cant_profile")?.costText).toBe("113.90 EUR");
+		expect(rows.find((item) => item.groupKey === "cant_profile")?.technicalDetails).toContain("Sursă: Cant / volum litere");
+		expect(rows.find((item) => item.groupKey === "cant_profile")?.technicalDetails).toContain("Sursă: Cant / volum emblema - logo stanga");
 	});
 
 	it("includes LED modules and mounting accessories as separate consumables", () => {
@@ -329,7 +342,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 				operationRows: [
 					operationRow({
 						key: "cnc_face_cutting_plexiglas_3mm",
-						display_name: "Debitare CNC fata Plexiglas 3 mm",
+						display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
 						quantity: 24.6488,
 						operation_equivalent_quantity: 24.6488,
 						operation_equivalent_unit: "ml-pass",
@@ -383,6 +396,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 		expect(rows.find((item) => item.groupKey === "cnc_backing")?.quantityText).toContain("123.24 ml-pass");
 		expect(rows.find((item) => item.groupKey === "cnc_backing")?.costText).toBe("184.87 EUR");
 		expect(rows.find((item) => item.groupKey === "cnc_backing_bevel")?.costText).toBe("36.97 EUR");
+		expect(rows.find((item) => item.groupKey === "edge_bond")?.label).toBe("Lipire cant / volum");
 		expect(rows.find((item) => item.groupKey === "edge_bond")?.quantityText).toBe("31.64 m");
 		expect(rows.find((item) => item.groupKey === "edge_bond")?.costText).toBe("158.19 EUR");
 		expect(rows.find((item) => item.groupKey === "edge_oracal_application")?.costText).toBe("tarif lipsă");

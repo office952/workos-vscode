@@ -1,0 +1,11 @@
+{
+  "task": "UI-TRUTH-01A",
+  "backend_files_changed": 0,
+  "auth_files_changed": 0,
+  "environment_banner_visual_changed": false,
+  "environment_banner_imports_hook": false,
+  "db_business_writes": 0,
+  "parity_flags": "ALL_FALSE",
+  "intake_http": 200,
+  "route_behavior_changed": false
+}

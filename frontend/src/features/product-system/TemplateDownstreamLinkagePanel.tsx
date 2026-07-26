@@ -40,9 +40,9 @@ function statusClass(status: string | null | undefined): string {
     case "post_materialization_only":
       return "border-sky-500/30 bg-sky-500/10 text-sky-300";
     case "future":
-      return "border-slate-500/30 bg-slate-500/10 text-slate-300";
+      return "border-slate-500/30 bg-slate-500/10 text-wo-text-secondary";
     default:
-      return "border-slate-700/40 bg-slate-900/40 text-slate-500";
+      return "border-slate-700/40 bg-slate-900/40 text-wo-text-muted";
   }
 }
 
@@ -66,11 +66,11 @@ function moduleStateClass(state: string | null | undefined): string {
     case "pending":
       return "border-amber-500/30 bg-amber-500/10 text-amber-300";
     case "inactive":
-      return "border-slate-500/30 bg-slate-500/10 text-slate-300";
+      return "border-slate-500/30 bg-slate-500/10 text-wo-text-secondary";
     case "future_reserved":
       return "border-sky-500/30 bg-sky-500/10 text-sky-300";
     default:
-      return "border-slate-700/40 bg-slate-900/40 text-slate-500";
+      return "border-slate-700/40 bg-slate-900/40 text-wo-text-muted";
   }
 }
 
@@ -138,26 +138,26 @@ export function TemplateDownstreamLinkagePanel({
 
   return (
     <section
-      className="rounded-xl border border-[#1E293B] bg-[#0D1321]/80 p-4"
+      className="rounded-xl border border-wo-border-subtle bg-wo-surface-inset p-4"
       data-testid={`template-downstream-linkage-${variant}`}
     >
       <div className="mb-3">
-        <h3 className="text-[12px] font-bold uppercase tracking-wide text-slate-200">
+        <h3 className="text-[12px] font-bold uppercase tracking-wide text-wo-text-primary">
           Linkage downstream template
         </h3>
-        <p className="mt-1 text-[11px] text-slate-400">
+        <p className="mt-1 text-[11px] text-wo-text-muted">
           {variant === "intake-v6"
             ? "Contractul modular folosit in Pasul 1 pentru SVG analyzer si pentru propagarea controlata catre inventar, pricing, taskuri, angajati si utilaje."
             : "Contract read-only intre Intake V6, inventar, pricing, taskuri, angajati si utilaje pentru template-ul activ."}
         </p>
       </div>
 
-      {loading ? <p className="text-[11px] text-slate-500">Incarc linkage modular...</p> : null}
+      {loading ? <p className="text-[11px] text-wo-text-muted">Incarc linkage modular...</p> : null}
       {error ? <p className="text-[11px] text-red-300">{error}</p> : null}
 
       {contract ? (
         <div className="space-y-3">
-          <p className="text-[10px] text-slate-500" data-testid={`template-downstream-linkage-summary-${variant}`}>
+          <p className="text-[10px] text-wo-text-muted" data-testid={`template-downstream-linkage-summary-${variant}`}>
             Template runtime: {summary.template_code} · module active: {summary.active_module_count ?? modules.length}
             {!canLoad && variant === "intake-v6" ? " · fallback pilot scope" : ""}
           </p>
@@ -177,10 +177,10 @@ export function TemplateDownstreamLinkagePanel({
                   {evaluation.readiness_status ?? "partial"}
                 </span>
               </div>
-              <p className="mt-1 text-[10px] text-slate-300">
+              <p className="mt-1 text-[10px] text-wo-text-secondary">
                 module selectate {evaluation.selected_module_codes?.length ?? 0} · opționale {evaluation.optional_module_codes?.length ?? 0} · inactive {evaluation.inactive_module_codes?.length ?? 0}
               </p>
-              <p className="mt-1 text-[10px] text-slate-400">
+              <p className="mt-1 text-[10px] text-wo-text-muted">
                 sursă {evaluation.source_payload_type ?? "template_only"}
                 {evaluation.workspace_id ? ` · workspace ${evaluation.workspace_id}` : ""}
                 {evaluation.missing_required_fields?.length
@@ -205,10 +205,10 @@ export function TemplateDownstreamLinkagePanel({
                   {definitionValidation?.readiness_status ?? "partial"}
                 </span>
               </div>
-              <p className="mt-1 text-[10px] text-slate-300">
+              <p className="mt-1 text-[10px] text-wo-text-secondary">
                 module selectate {definitionSelectedModules.length} · componente {definitionComponents.length} · materiale {definitionMaterials.length} · operații {definitionOperations.length}
               </p>
-              <p className="mt-1 text-[10px] text-slate-400">
+              <p className="mt-1 text-[10px] text-wo-text-muted">
                 sursă {definitionPreview.source_context?.source_payload_type ?? "template_only"}
                 {definitionPreview.source_context?.workspace_id
                   ? ` · workspace ${definitionPreview.source_context.workspace_id}`
@@ -235,7 +235,7 @@ export function TemplateDownstreamLinkagePanel({
                 {svgAnalyzerBindings.map((binding) => (
                   <span
                     key={binding.canonical_key}
-                    className="rounded border border-cyan-500/20 bg-[#0D1321] px-2 py-1 text-[10px] text-slate-200"
+                    className="rounded border border-cyan-500/20 bg-wo-surface-inset px-2 py-1 text-[10px] text-wo-text-primary"
                     data-testid={`template-downstream-linkage-svg-binding-${binding.canonical_key}`}
                   >
                     {binding.label_ro ?? binding.canonical_key}
@@ -275,20 +275,20 @@ export function TemplateDownstreamLinkagePanel({
                 return (
               <div
                 key={link.module_code}
-                className="rounded-lg border border-[#243044] bg-[#111827]/70 px-3 py-2"
+                className="rounded-lg border border-[#243044] bg-wo-surface-raised px-3 py-2"
                 data-testid={`template-downstream-linkage-row-${link.module_code}`}
               >
                 <div className="flex flex-wrap items-center gap-2 justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-[11px] font-semibold text-slate-200">{link.module_code}</p>
+                      <p className="text-[11px] font-semibold text-wo-text-primary">{link.module_code}</p>
                       {evaluatedModule ? (
                         <span className={`rounded border px-2 py-0.5 text-[10px] ${moduleStateClass(evaluatedModule.state)}`}>
                           {evaluatedModule.state}
                         </span>
                       ) : null}
                     </div>
-                    <p className="text-[10px] text-slate-500">
+                    <p className="text-[10px] text-wo-text-muted">
                       inventar {link.inventory_material_roles?.length ?? 0} · pricing {link.pricing_inputs?.length ?? 0} · taskuri {link.execution_task_outputs?.length ?? 0}
                     </p>
                   </div>
@@ -305,7 +305,7 @@ export function TemplateDownstreamLinkagePanel({
                   </div>
                 </div>
                 {link.linkage_notes && link.linkage_notes.length > 0 ? (
-                  <p className="mt-2 text-[10px] text-slate-400">
+                  <p className="mt-2 text-[10px] text-wo-text-muted">
                     {link.linkage_notes[0]}
                     {evaluatedModule?.missing_fields?.length
                       ? ` · lipsă ${evaluatedModule.missing_fields.join(", ")}`

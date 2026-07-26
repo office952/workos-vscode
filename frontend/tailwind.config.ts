@@ -64,6 +64,46 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        /* ─── WorkOS Semantic Colors ─── */
+        'wo-surface': {
+          app: 'hsl(var(--wo-surface-app))',
+          shell: 'hsl(var(--wo-surface-shell))',
+          raised: 'hsl(var(--wo-surface-raised))',
+          inset: 'hsl(var(--wo-surface-inset))',
+          input: 'hsl(var(--wo-surface-input))',
+        },
+        'wo-border': {
+          subtle: 'hsl(var(--wo-border-subtle))',
+          strong: 'hsl(var(--wo-border-strong))',
+        },
+        'wo-text': {
+          primary: 'hsl(var(--wo-text-primary))',
+          secondary: 'hsl(var(--wo-text-secondary))',
+          muted: 'hsl(var(--wo-text-muted))',
+          dim: 'hsl(var(--wo-text-dim))',
+        },
+        'wo-success': {
+          DEFAULT: 'hsl(var(--wo-success))',
+          foreground: 'hsl(var(--wo-success-foreground))',
+          muted: 'hsl(var(--wo-success-muted))',
+        },
+        'wo-warning': {
+          DEFAULT: 'hsl(var(--wo-warning))',
+          foreground: 'hsl(var(--wo-warning-foreground))',
+          muted: 'hsl(var(--wo-warning-muted))',
+        },
+        'wo-error': {
+          DEFAULT: 'hsl(var(--wo-error))',
+          foreground: 'hsl(var(--wo-error-foreground))',
+          muted: 'hsl(var(--wo-error-muted))',
+        },
+        'wo-info': {
+          DEFAULT: 'hsl(var(--wo-info))',
+          foreground: 'hsl(var(--wo-info-foreground))',
+          muted: 'hsl(var(--wo-info-muted))',
+        },
+        'wo-hover': 'hsl(var(--wo-hover))',
+        'wo-active': 'hsl(var(--wo-active))',
       },
       borderRadius: {
         lg: 'var(--radius)',

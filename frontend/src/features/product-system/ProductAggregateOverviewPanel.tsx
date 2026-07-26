@@ -4,6 +4,8 @@ import {
   PROVENANCE_LABELS,
   provenanceBadgeClass,
 } from "@/features/product-system/productAggregateDisplay";
+import { ProductCompilerDisplayShell } from "@/features/product-system/ProductCompilerDisplayShell";
+import { PRODUCT_COMPILER_GRAPH_STAGE_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
 import { AlertTriangle, Layers, Link2, Package, Cog } from "lucide-react";
 
 function ConflictList({
@@ -16,7 +18,7 @@ function ConflictList({
   if (!items.length) return null;
   return (
     <div className="space-y-1.5">
-      <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{title}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">{title}</p>
       {items.map((item) => (
         <div
           key={`${item.code}-${item.message}`}
@@ -25,12 +27,12 @@ function ConflictList({
               ? "border-red-700/40 bg-red-900/15 text-red-200"
               : item.severity === "warning"
                 ? "border-amber-700/40 bg-amber-900/15 text-amber-200"
-                : "border-slate-700/40 bg-slate-900/30 text-slate-300"
+                : "border-slate-700/40 bg-slate-900/30 text-wo-text-secondary"
           }`}
           data-testid={`aggregate-${title.toLowerCase()}-${item.code}`}
         >
           <span className="font-mono font-bold">{item.code}</span>
-          <span className="mx-1.5 text-slate-500">·</span>
+          <span className="mx-1.5 text-wo-text-muted">·</span>
           {item.message}
         </div>
       ))}
@@ -52,17 +54,17 @@ function ProvenanceBadge({ provenance }: { provenance: string }) {
 function AggregateComponentRow({ component }: { component: ProductAggregateComponent }) {
   return (
     <div
-      className="rounded-lg border border-[#1E293B] bg-[#0D1321]/80 px-3 py-2.5"
+      className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset px-3 py-2.5"
       data-testid={`aggregate-component-${component.component_id}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[12px] font-semibold text-slate-100 truncate">
+          <p className="text-[12px] font-semibold text-wo-text-primary truncate">
             {component.label_ro || component.component_id}
           </p>
-          <p className="text-[10px] font-mono text-slate-500 truncate">{component.component_id}</p>
+          <p className="text-[10px] font-mono text-wo-text-muted truncate">{component.component_id}</p>
           {component.role ? (
-            <p className="text-[10px] text-slate-400 mt-0.5">{component.role}</p>
+            <p className="text-[10px] text-wo-text-muted mt-0.5">{component.role}</p>
           ) : null}
           {component.mini_module_code ? (
             <p className="text-[10px] text-purple-300/80 mt-0.5">modul: {component.mini_module_code}</p>
@@ -115,18 +117,22 @@ export function ProductAggregateOverviewPanel({
 
   return (
     <div className="space-y-4" data-testid="product-aggregate-overview">
+      <ProductCompilerDisplayShell stage="graph" compact />
       <div className="rounded-xl border border-purple-700/30 bg-purple-900/10 px-4 py-3">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] uppercase tracking-wide font-bold text-purple-300/90">
-              ProductAggregate (read model)
+              {PRODUCT_COMPILER_GRAPH_STAGE_LABEL}
             </p>
-            <p className="text-[13px] font-bold text-slate-100 mt-0.5">
+            <p className="text-[11px] text-wo-text-muted mt-0.5">
+              Output tehnic derivat (read model intern: ProductAggregate)
+            </p>
+            <p className="text-[13px] font-bold text-wo-text-primary mt-0.5">
               {aggregate.business_name_ro || aggregate.template_code}
             </p>
-            <p className="text-[10px] font-mono text-slate-500">{aggregate.template_code}</p>
+            <p className="text-[10px] font-mono text-wo-text-muted">{aggregate.template_code}</p>
           </div>
-          <span className="text-[9px] font-mono text-slate-500">v{aggregate.aggregate_version}</span>
+          <span className="text-[9px] font-mono text-wo-text-muted">v{aggregate.aggregate_version}</span>
         </div>
 
         {showParentEmptyMessage ? (
@@ -134,26 +140,27 @@ export function ProductAggregateOverviewPanel({
             className="mt-3 text-[11px] text-amber-200 bg-amber-900/20 border border-amber-700/30 rounded-lg px-3 py-2"
             data-testid="aggregate-parent-empty-message"
           >
-            Parent template has no direct components. Showing ProductAggregate from dossier and linked modules.
+            Parent template has no direct components. Showing Product Compiler graph from dossier and linked Module
+            produs.
           </p>
         ) : null}
 
         <div className="grid grid-cols-3 gap-2 mt-3 text-[10px]">
-          <div className="rounded-lg bg-[#0D1321]/60 border border-[#1E293B] px-2 py-1.5">
-            <span className="text-slate-500 block">Parent</span>
-            <span className="font-mono text-slate-300">
+          <div className="rounded-lg bg-wo-surface-inset border border-wo-border-subtle px-2 py-1.5">
+            <span className="text-wo-text-muted block">Parent</span>
+            <span className="font-mono text-wo-text-secondary">
               C:{parentCounts.components ?? 0} O:{parentCounts.operations ?? 0} M:{parentCounts.materials ?? 0}
             </span>
           </div>
-          <div className="rounded-lg bg-[#0D1321]/60 border border-[#1E293B] px-2 py-1.5">
-            <span className="text-slate-500 block">Dossier</span>
-            <span className="font-mono text-slate-300">
+          <div className="rounded-lg bg-wo-surface-inset border border-wo-border-subtle px-2 py-1.5">
+            <span className="text-wo-text-muted block">Dossier</span>
+            <span className="font-mono text-wo-text-secondary">
               C:{dossierCounts.components ?? 0} keys O:{dossierCounts.operation_keys ?? 0}
             </span>
           </div>
-          <div className="rounded-lg bg-[#0D1321]/60 border border-[#1E293B] px-2 py-1.5">
-            <span className="text-slate-500 block">Modules</span>
-            <span className="font-mono text-slate-300">
+          <div className="rounded-lg bg-wo-surface-inset border border-wo-border-subtle px-2 py-1.5">
+            <span className="text-wo-text-muted block">Modules</span>
+            <span className="font-mono text-wo-text-secondary">
               req:{linkedCounts.required ?? 0} opt:{linkedCounts.optional ?? 0}
             </span>
           </div>
@@ -166,8 +173,8 @@ export function ProductAggregateOverviewPanel({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Layers className="w-4 h-4 text-emerald-400" />
-          <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
-            Componente aggregate ({aggregate.components.length})
+            <h4 className="text-[11px] font-bold text-wo-text-primary uppercase tracking-wide">
+            Module / componente în Compiler ({aggregate.components.length})
           </h4>
         </div>
         <div className="space-y-2">
@@ -181,7 +188,7 @@ export function ProductAggregateOverviewPanel({
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Link2 className="w-4 h-4 text-blue-400" />
-            <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">Linked modules</h4>
+            <h4 className="text-[11px] font-bold text-wo-text-primary uppercase tracking-wide">Linked Module produs</h4>
           </div>
           <div className="space-y-2">
             {aggregate.modules.required.map((mod) => (
@@ -191,8 +198,8 @@ export function ProductAggregateOverviewPanel({
                 data-testid={`aggregate-module-required-${mod.child_template_code}`}
               >
                 <p className="text-[10px] font-bold text-blue-300 uppercase">Required</p>
-                <p className="text-[12px] font-mono text-slate-100">{mod.child_template_code}</p>
-                <p className="text-[10px] text-slate-500">{mod.module_code}</p>
+                <p className="text-[12px] font-mono text-wo-text-primary">{mod.child_template_code}</p>
+                <p className="text-[10px] text-wo-text-muted">{mod.module_code}</p>
               </div>
             ))}
             {aggregate.modules.optional.map((mod) => (
@@ -201,9 +208,9 @@ export function ProductAggregateOverviewPanel({
                 className="rounded-lg border border-slate-700/40 bg-slate-900/20 px-3 py-2"
                 data-testid={`aggregate-module-optional-${mod.child_template_code}`}
               >
-                <p className="text-[10px] font-bold text-slate-400 uppercase">Optional</p>
-                <p className="text-[12px] font-mono text-slate-100">{mod.child_template_code}</p>
-                <p className="text-[10px] text-slate-500">{mod.module_code}</p>
+                <p className="text-[10px] font-bold text-wo-text-muted uppercase">Optional</p>
+                <p className="text-[12px] font-mono text-wo-text-primary">{mod.child_template_code}</p>
+                <p className="text-[10px] text-wo-text-muted">{mod.module_code}</p>
               </div>
             ))}
           </div>
@@ -213,10 +220,10 @@ export function ProductAggregateOverviewPanel({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Package className="w-3.5 h-3.5 text-slate-400" />
-            <h4 className="text-[10px] font-bold text-slate-400 uppercase">Materiale ({aggregate.materials.length})</h4>
+            <Package className="w-3.5 h-3.5 text-wo-text-muted" />
+            <h4 className="text-[10px] font-bold text-wo-text-muted uppercase">Materiale ({aggregate.materials.length})</h4>
           </div>
-          <div className="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono text-slate-400">
+          <div className="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono text-wo-text-muted">
             {aggregate.materials.slice(0, 12).map((mat) => (
               <div key={`${mat.material_code}-${mat.provenance}-${mat.source_template_code}`} className="flex items-center justify-between gap-2">
                 <span className="truncate">{mat.material_code}</span>
@@ -227,10 +234,10 @@ export function ProductAggregateOverviewPanel({
         </div>
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Cog className="w-3.5 h-3.5 text-slate-400" />
-            <h4 className="text-[10px] font-bold text-slate-400 uppercase">Operații ({aggregate.operations.length})</h4>
+            <Cog className="w-3.5 h-3.5 text-wo-text-muted" />
+            <h4 className="text-[10px] font-bold text-wo-text-muted uppercase">Operații ({aggregate.operations.length})</h4>
           </div>
-          <div className="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono text-slate-400">
+          <div className="max-h-32 overflow-y-auto space-y-1 text-[10px] font-mono text-wo-text-muted">
             {aggregate.operations.slice(0, 12).map((op) => (
               <div key={`${op.operation_code}-${op.provenance}-${op.source_template_code}`} className="flex items-center justify-between gap-2">
                 <span className="truncate">{op.operation_code}</span>

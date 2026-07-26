@@ -1,0 +1,27 @@
+{
+  "montaj": {
+    "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+    "fundal": true,
+    "commercial": true,
+    "electrical": true,
+    "segmentedStatus": "Confirmat",
+    "hasConsumabile": true,
+    "hasMountingScopeInactive": false,
+    "hasLegacyTemplateNote": false
+  },
+  "commercial": {
+    "templateInactiveLegacy": false,
+    "templateEnabledControl": false,
+    "scopeText": null
+  },
+  "confirm": {
+    "url": "http://127.0.0.1:3000/intake-v6/3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982/operator",
+    "hasConfirmRoot": true,
+    "hasMountingScopeInactive": false,
+    "hasServiceCornerRequired": false
+  },
+  "reload": {
+    "fundal": true,
+    "segmentedStatus": "Confirmat"
+  }
+}

@@ -12,6 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, Sequence
 
+from services.cnc_processable_badge import CNC_PROCESSABLE_BADGE_CODE
 from services.shared_cnc_operation_model import (
     CncMaterialSource,
     DEFAULT_CNC_PRICING_RATE_KEY,
@@ -99,7 +100,7 @@ class CncMaterialCostPreviewRow:
 PLEXIGLAS_3MM_PROFILE = CncMaterialProcessProfile(
     material_key="plexiglas_3mm",
     material_family="plexiglas",
-    material_name="Plexiglas 3 mm",
+    material_name="plexiglas 3mm PMMA - opal",
     thickness_mm=3.0,
     stock_material_key="MAT-ACP-FATA-LITERE",
     stock_unit="m2",
@@ -122,7 +123,8 @@ PLEXIGLAS_3MM_PROFILE = CncMaterialProcessProfile(
     operation_pricing_status="missing_rate",
     notes=(
         "Față litere volumetrice; șanfren față obligatoriu în TPL-VOLUMETRIC-LETTERS. "
-        "Cod stoc operațional MAT-ACP-FATA-LITERE (PMMA 3 mm — cod legacy ACP în nume)."
+        "Cod stoc operațional MAT-ACP-FATA-LITERE (plexiglas 3mm PMMA - opal — cod legacy ACP). "
+        f"Capability badge: {CNC_PROCESSABLE_BADGE_CODE}."
     ),
 )
 

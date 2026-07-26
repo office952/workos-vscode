@@ -14,6 +14,7 @@ from schemas.intake_v6_modular_form import IntakeFormFieldBinding, IntakeModuleF
 from schemas.product_aggregate import ProductAggregate, ProductAggregateComponent
 from schemas.product_definition import (
     ProductDefinitionComponentRole,
+    ProductDefinitionComposition,
     ProductDefinitionMaterialRole,
     ProductDefinitionModuleRef,
     ProductDefinitionOperationRole,
@@ -24,9 +25,30 @@ from schemas.product_definition import (
     ProductDefinitionValidation,
     ReadinessStatus,
 )
+from services.product_definition_composition_contract import (
+    build_product_definition_composition,
+    metal_support_required_from_composition,
+    structura_suport_active_from_composition,
+)
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
+from services.linked_template_runtime_segment_extraction_service import (
+    extract_linked_template_segments_from_workspace_payload,
+)
 from services.mini_module_registry_service import MiniModuleRegistryService, get_mini_module_registry_service
+from services.mounting_solution_service import (
+    is_structura_suport_active,
+    legacy_mounting_system_from_solution,
+    read_mounting_solution,
+)
 from services.product_aggregate_service import ProductAggregateService
+from services.acm_quote_input_helpers import (
+    ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS,
+    is_acm_boxed_mounting_standalone_root_template,
+    merge_acm_boxed_mounting_derived_fields,
+)
+from services.template_architecture_scope import resolve_template_identity
+from schemas.active_scope import ActiveScopeResult
+from services.active_scope_resolver_service import compile_active_scope
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1"})
@@ -98,6 +120,8 @@ def _resolve_module_state(
     quote_geometry: dict[str, Any],
     svg_source: dict[str, Any],
     analysis_ready: bool,
+    composition: ProductDefinitionComposition | None = None,
+    active_scope: ActiveScopeResult | None = None,
 ) -> str:
     mounting_system = _read_string(finish.get("mounting_system"))
 
@@ -105,11 +129,29 @@ def _resolve_module_state(
         return "future_reserved"
 
     code = module.module_code
+
+    # Letters Slice 1 — sold/active scope is authority. Unselected modules are inactive
+    # (not pending) so they cannot block readiness.
+    if active_scope is not None and not active_scope.use_legacy_full_product:
+        if active_scope.errors:
+            return "inactive"
+        allowed = active_scope.active_set()
+        if code not in allowed:
+            return "inactive"
+        # Selected / prerequisite modules use scoped activation rules below.
+
     if code == "geometry_svg":
         return "always_on" if _has_geometry_basics({"svg_source": svg_source, "quote_geometry": quote_geometry}) else "pending"
     if code in ("debitare_fata", "debitare_spate", "modelare_cant"):
+        # Full product: co-active when analysis ready.
+        # Subset: only modules already allowlisted by active_scope reach here.
         return "always_on" if analysis_ready else "pending"
     if code == "structura_suport":
+        if composition is not None:
+            return "active" if structura_suport_active_from_composition(composition) else "inactive"
+        if is_structura_suport_active(finish):
+            return "active"
+        mounting_system = _read_string(finish.get("mounting_system"))
         if not mounting_system:
             return "pending"
         return "active" if mounting_system in BAR_MOUNTING else "inactive"
@@ -121,8 +163,20 @@ def _resolve_module_state(
             return "pending"
         return "conditional_active"
     if code == "finisaje":
-        if _read_bool(finish.get("mounting_template_enabled")) is True:
-            return "conditional_active"
+        # Surface finish only — template/packaging are separate runtime codes.
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            # Slice1 does not sell FINISH; activate only when allowlisted.
+            return "active"
+        return "always_on"
+    if code == "sablon_montaj":
+        template_on = _read_bool(finish.get("mounting_template_enabled")) is True
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            return "conditional_active" if template_on else "inactive"
+        return "conditional_active" if template_on else "inactive"
+    if code == "ambalare_livrare_montaj":
+        # Composition/logistics — full Letters composition, never MOUNTING-only.
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            return "active" if code in active_scope.active_set() else "inactive"
         return "always_on"
 
     kind = module.activation_kind
@@ -131,6 +185,55 @@ def _resolve_module_state(
     if kind == "optional_addon":
         return "inactive"
     return "pending"
+
+
+def _resolve_letter_face_area_m2(quote_geometry: dict[str, Any]) -> Any:
+    if quote_geometry.get("letter_face_area_m2") is not None:
+        return quote_geometry["letter_face_area_m2"]
+    if quote_geometry.get("face_area_m2") is not None:
+        return quote_geometry["face_area_m2"]
+    return None
+
+
+def _resolve_dimension_mm(
+    key: str,
+    *,
+    quote_geometry: dict[str, Any],
+    client: dict[str, Any],
+) -> Any:
+    geom_val = quote_geometry.get(key)
+    if geom_val is not None and geom_val != "":
+        return geom_val
+    client_val = client.get(key)
+    if client_val is not None and client_val != "":
+        return client_val
+    return None
+
+
+def _resolve_binding_value(
+    canonical_key: str,
+    *,
+    finish: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    client: dict[str, Any],
+    svg_source: dict[str, Any],
+) -> Any:
+    if canonical_key == "vector_file":
+        return _read_string(svg_source.get("file_name"))
+    if canonical_key in ("width_mm", "height_mm"):
+        return _resolve_dimension_mm(canonical_key, quote_geometry=quote_geometry, client=client)
+    if canonical_key == "letter_face_area_m2":
+        return _resolve_letter_face_area_m2(quote_geometry)
+    finish_val = finish.get(canonical_key)
+    if finish_val is not None and finish_val != "":
+        return finish_val
+    geom_val = quote_geometry.get(canonical_key)
+    if geom_val is not None and geom_val != "":
+        return geom_val
+    client_val = client.get(canonical_key)
+    if client_val is not None and client_val != "":
+        return client_val
+    return None
 
 
 def _collect_missing_fields(
@@ -147,23 +250,20 @@ def _collect_missing_fields(
 
     missing: list[str] = []
     for field_key in module.required_form_fields:
-        if field_key == "vector_file":
-            if not _read_string(svg_source.get("file_name")):
-                missing.append(field_key)
-            continue
-        finish_val = finish.get(field_key)
-        geom_val = quote_geometry.get(field_key)
-        client_val = client.get(field_key)
-        has_value = any(
-            v is not None and v != ""
-            for v in (finish_val, geom_val, client_val)
-        )
-        if not has_value:
+        if _resolve_binding_value(
+            field_key,
+            finish=finish,
+            quote_geometry=quote_geometry,
+            client=client,
+            svg_source=svg_source,
+        ) is None:
             missing.append(field_key)
     return missing
 
 
-def _derive_metal_support_required(mounting_system: str | None) -> bool | None:
+def _derive_metal_support_required(mounting_system: str | None, finish: dict[str, Any] | None = None) -> bool | None:
+    if isinstance(finish, dict) and is_structura_suport_active(finish):
+        return True
     if not mounting_system:
         return None
     return mounting_system in BAR_MOUNTING
@@ -172,14 +272,21 @@ def _derive_metal_support_required(mounting_system: str | None) -> bool | None:
 def _build_canonical_values(
     bindings: list[IntakeFormFieldBinding],
     payload: dict[str, Any],
+    *,
+    composition: ProductDefinitionComposition | None = None,
 ) -> dict[str, Any]:
     values: dict[str, Any] = {}
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
+    client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
+    svg_source = payload.get("svg_source") if isinstance(payload.get("svg_source"), dict) else {}
 
     for binding in bindings:
         if binding.field_role == "derived_quote_input":
             if binding.canonical_key == "metal_support_required":
-                derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")))
+                derived = metal_support_required_from_composition(composition, finish=finish)
+                if derived is None:
+                    derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")), finish)
                 if derived is not None:
                     values[binding.canonical_key] = derived
             continue
@@ -187,6 +294,308 @@ def _build_canonical_values(
         val = _get_by_path(payload, binding.workspace_path)
         if val is not None and val != "":
             values[binding.canonical_key] = val
+
+    for binding in bindings:
+        if binding.field_role == "derived_quote_input":
+            continue
+        if binding.canonical_key in values:
+            continue
+        resolved = _resolve_binding_value(
+            binding.canonical_key,
+            finish=finish,
+            quote_geometry=quote_geometry,
+            client=client,
+            svg_source=svg_source,
+        )
+        if resolved is not None and resolved != "":
+            values[binding.canonical_key] = resolved
+
+    if "mounting_system" not in values:
+        explicit_mounting = _read_string(finish.get("mounting_system"))
+        if explicit_mounting:
+            values["mounting_system"] = explicit_mounting
+        else:
+            projected = legacy_mounting_system_from_solution(read_mounting_solution(finish))
+            if projected:
+                values["mounting_system"] = projected
+
+    # Layer-scoped backing (letter_group_finishes[].backing_mode) is canonical when the
+    # global finish_setup.backing_mode mirror is intentionally cleared.
+    if values.get("backing_mode") in (None, ""):
+        from services.intake_v4_backing_mode_service import (
+            finish_has_explicit_layer_backing_modes,
+            resolve_backing_mode_from_finish,
+            resolve_layer_backing_mode,
+        )
+
+        mode = resolve_backing_mode_from_finish(finish)
+        if mode is None and finish_has_explicit_layer_backing_modes(finish):
+            for group in finish.get("letter_group_finishes") or []:
+                if isinstance(group, dict) and group.get("backing_mode") is not None:
+                    mode = resolve_layer_backing_mode(group, finish)
+                    break
+            if mode is None:
+                for artwork in finish.get("artwork_finishes") or []:
+                    if isinstance(artwork, dict) and artwork.get("backing_mode") is not None:
+                        mode = resolve_layer_backing_mode(artwork, finish)
+                        break
+        if mode is not None:
+            values["backing_mode"] = mode
+
+    # Component-aware SVG bindings (Product System authority) → PD instances.
+    from services.svg_component_binding_persistence import (
+        build_face_treatment_readiness_summary,
+        build_svg_component_instances,
+        read_svg_component_bindings,
+        sync_support_selection_from_bindings,
+    )
+
+    finish_for_pd = dict(finish) if isinstance(finish, dict) else {}
+    if read_svg_component_bindings(finish_for_pd):
+        finish_for_pd = sync_support_selection_from_bindings(finish_for_pd)
+    instances = build_svg_component_instances(finish_for_pd)
+    if instances:
+        values["svg_component_instances"] = instances
+        values["svg_component_bindings"] = read_svg_component_bindings(finish_for_pd) or finish_for_pd.get(
+            "svg_component_bindings"
+        )
+        # Nested face_treatment_instances live on ACP shell / letter instances (identity only).
+        face_treatments = []
+        for inst in instances:
+            for ft in inst.get("face_treatment_instances") or []:
+                face_treatments.append(ft)
+        if face_treatments:
+            values["face_treatment_instances"] = face_treatments
+        readiness = build_face_treatment_readiness_summary(finish_for_pd)
+        if readiness.get("items") or readiness.get("warnings"):
+            values["face_treatment_readiness"] = readiness
+        from services.svg_component_binding_persistence import (
+            build_acp_local_modules_aggregate_from_finish,
+            collect_local_modules_from_finish,
+        )
+
+        local_modules = collect_local_modules_from_finish(finish_for_pd)
+        if local_modules:
+            values["acp_local_face_module_instances"] = [
+                m
+                for m in local_modules
+                if str(m.get("status") or "").upper() != "INACTIVE"
+            ]
+        electrical = finish_for_pd.get("acp_electrical_configuration")
+        if isinstance(electrical, dict) and electrical.get("schema"):
+            values["acp_electrical_configuration"] = electrical
+        module_projection = build_acp_local_modules_aggregate_from_finish(finish_for_pd)
+        if module_projection:
+            values["acp_local_face_modules_aggregate_projection"] = module_projection
+
+    # Segmented ACM/ACP background (shell-owned nested panels). PROPOSED/INACTIVE → no PD leak.
+    from services.acm_segmented_background_service import (
+        project_segmented_background_for_aggregate,
+        project_segmented_background_for_product_definition,
+        read_segmented_background_from_finish,
+    )
+
+    segmented = read_segmented_background_from_finish(finish_for_pd)
+    if segmented is not None:
+        # Keep raw normalized only for debug when unconfirmed; PD canonical = confirmed only.
+        pd_segmented = project_segmented_background_for_product_definition(segmented)
+        if pd_segmented is not None:
+            values["segmented_background"] = pd_segmented
+            agg_segmented = project_segmented_background_for_aggregate(segmented)
+            if agg_segmented is not None:
+                values["segmented_background_aggregate_projection"] = agg_segmented
+        # Explicit zero-leak marker for proposal/inactive (optional observability, no effects)
+        status_seg = str(segmented.get("status") or "").upper()
+        if status_seg in {"PROPOSED", "INACTIVE", "REJECTED"}:
+            values["segmented_background_proposal"] = {
+                "schema": segmented.get("schema"),
+                "status": status_seg,
+                "assembly_id": segmented.get("assembly_id"),
+                "detection": segmented.get("detection"),
+                "operator_confirmed": False,
+                "downstream_effects": False,
+                "host_component_template_code": segmented.get("host_component_template_code"),
+                "panels": segmented.get("panels") or [],
+                "joints": segmented.get("joints") or [],
+                "assembly_dimensions": segmented.get("assembly_dimensions"),
+                "element_bindings": segmented.get("element_bindings") or [],
+                "meta": segmented.get("meta") if isinstance(segmented.get("meta"), dict) else {},
+                "materials": [],
+                "processes": [],
+                "task_rules": [],
+                "future_task_intent_authority": "INFORMATIONAL_ONLY",
+            }
+
+    # Generic ACM panel instance (reusable component — not letters-only).
+    # Prefer top-level; fall back to nested selection/mounting embeds (transport adapters).
+    acm_instance = finish_for_pd.get("acm_panel_instance") or finish.get("acm_panel_instance")
+    if not isinstance(acm_instance, dict):
+        sel_probe = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
+        if isinstance(sel_probe, dict) and isinstance(sel_probe.get("acm_panel_instance"), dict):
+            acm_instance = sel_probe.get("acm_panel_instance")
+        else:
+            ms = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
+            cfg = ms.get("configuration") if isinstance(ms, dict) else None
+            if isinstance(cfg, dict) and isinstance(cfg.get("acm_panel_instance"), dict):
+                acm_instance = cfg.get("acm_panel_instance")
+    if isinstance(acm_instance, dict) and acm_instance.get("schema") == "acm_panel_component_instance_v1":
+        values["acm_panel_instance"] = acm_instance
+        values["acm_panel_association_status"] = acm_instance.get("association_status")
+        values["acm_panel_technical_configuration_status"] = acm_instance.get(
+            "technical_configuration_status"
+        )
+        values["acm_panel_composition_status"] = acm_instance.get("composition_status")
+        values["acm_panel_capabilities"] = acm_instance.get("capabilities")
+        values["support_type"] = "alucobond_cased"
+        # Active for observability when association proposed/confirmed — catalog_default ≠ confirmed truth.
+        values["acp_panel_active"] = str(acm_instance.get("association_status") or "") in {
+            "proposed",
+            "confirmed",
+        }
+        values["acp_panel_technical_confirmed"] = (
+            str(acm_instance.get("technical_configuration_status") or "") == "confirmed"
+        )
+
+    # SVG Alucobond selection (typed). proposed = association only; confirmed = operator technical truth.
+    selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
+    if isinstance(selection, dict) and selection.get("schema") == "svg_support_selection_v1":
+        status = str(selection.get("status") or "").strip()
+        role = str(selection.get("role") or "").strip()
+        if role == "ALUCOBOND_CASED_PANEL" and status in {"proposed", "confirmed"}:
+            values["svg_support_selection"] = selection
+            if selection.get("svg_support_element_id"):
+                values["svg_support_element_id"] = selection.get("svg_support_element_id")
+            geom = selection.get("panel_geometry")
+            if isinstance(geom, dict):
+                values["panel_geometry"] = geom
+            casing = selection.get("casing_profile")
+            if isinstance(casing, dict):
+                values["casing_profile"] = casing
+                # Catalog defaults must not be treated as operator-confirmed technical truth.
+                auth = selection.get("field_authority") if isinstance(selection.get("field_authority"), dict) else {}
+                values["casing_profile_field_authority"] = auth
+            if selection.get("service_corner"):
+                values["service_corner"] = selection.get("service_corner")
+            values["internal_frame_enabled"] = bool(selection.get("internal_frame_enabled"))
+            values["support_type"] = "alucobond_cased"
+            values["acp_panel_active"] = True
+            values["acp_panel_selection_status"] = status
+            values["acp_panel_technical_confirmed"] = status == "confirmed" and str(
+                selection.get("technical_configuration_status") or ""
+            ) in {"confirmed", ""}
+            # Nested typed frame from mounting_solution (Shared RO) wins over bare boolean.
+            mounting = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
+            if isinstance(mounting, dict):
+                mcfg = mounting.get("configuration")
+                if isinstance(mcfg, dict) and isinstance(mcfg.get("internal_frame"), dict):
+                    from services.acp_internal_frame_domain import normalize_internal_frame_config
+
+                    frame = normalize_internal_frame_config(
+                        mcfg.get("internal_frame"),
+                        panel_width_mm=mcfg.get("panel_width_mm"),
+                        panel_height_mm=mcfg.get("panel_height_mm"),
+                        panel_thickness_mm=mcfg.get("acm_thickness_mm"),
+                        fold_count=mcfg.get("fold_count"),
+                    )
+                    # Prefer selection marker if mounting frame disabled but selection enabled.
+                    if values["internal_frame_enabled"] and not frame.get("enabled"):
+                        frame = normalize_internal_frame_config(
+                            {**frame, "enabled": True},
+                            panel_width_mm=mcfg.get("panel_width_mm"),
+                            panel_height_mm=mcfg.get("panel_height_mm"),
+                            panel_thickness_mm=mcfg.get("acm_thickness_mm"),
+                            fold_count=mcfg.get("fold_count"),
+                        )
+                    if frame.get("enabled"):
+                        values["internal_frame"] = frame
+                        values["internal_frame_enabled"] = True
+                        from services.acp_internal_frame_domain import (
+                            build_aggregate_frame_projection,
+                        )
+
+                        projection = build_aggregate_frame_projection(frame)
+                        if projection:
+                            values["internal_frame_aggregate_projection"] = projection
+                    else:
+                        values["internal_frame_enabled"] = False
+                elif values["internal_frame_enabled"]:
+                    from services.acp_internal_frame_domain import (
+                        build_aggregate_frame_projection,
+                        normalize_internal_frame_config,
+                    )
+
+                    values["internal_frame"] = normalize_internal_frame_config(
+                        {"enabled": True},
+                        panel_width_mm=(selection.get("panel_geometry") or {}).get("width_mm")
+                        if isinstance(selection.get("panel_geometry"), dict)
+                        else None,
+                        panel_height_mm=(selection.get("panel_geometry") or {}).get("height_mm")
+                        if isinstance(selection.get("panel_geometry"), dict)
+                        else None,
+                        panel_thickness_mm=3,
+                    )
+                    projection = build_aggregate_frame_projection(values["internal_frame"])
+                    if projection:
+                        values["internal_frame_aggregate_projection"] = projection
+        elif status == "reconfirm_required":
+            values["svg_support_selection"] = {
+                "status": "reconfirm_required",
+                "schema": "svg_support_selection_v1",
+                "contour_id": selection.get("contour_id"),
+                "geometry_hash": selection.get("geometry_hash"),
+            }
+
+    # Commercial mounting scope + technical fixing system (separate authorities).
+    from services.mounting_scope_service import normalize_mounting_scope
+    from services.mounting_fixing_system_service import (
+        build_fixing_aggregate_projection,
+        normalize_mounting_fixing_system,
+    )
+    from services.mounting_solution_service import is_acp_product_component_active
+
+    commercial_scope = normalize_mounting_scope(
+        finish_for_pd.get("mounting_scope") or finish.get("mounting_scope"),
+        setup=finish_for_pd if isinstance(finish_for_pd, dict) else finish,
+    )
+    values["commercial_mounting_scope"] = commercial_scope
+    acp_active = is_acp_product_component_active(
+        finish_for_pd if isinstance(finish_for_pd, dict) else finish
+    )
+    if acp_active:
+        values["acp_panel_active"] = True
+        values["product_components"] = {
+            "acp_panel": {
+                "active": True,
+                "internal_frame": values.get("internal_frame"),
+                "internal_frame_enabled": values.get("internal_frame_enabled"),
+            }
+        }
+    fixing_for_config: dict[str, Any] | None = None
+    fixing_raw = finish_for_pd.get("mounting_fixing_system")
+    if fixing_raw is None:
+        fixing_raw = finish.get("mounting_fixing_system")
+    if fixing_raw is not None:
+        fixing = normalize_mounting_fixing_system(fixing_raw)
+        if fixing.get("type_code"):
+            values["mounting_fixing_system"] = fixing
+            fixing_for_config = fixing
+            projection = build_fixing_aggregate_projection(fixing)
+            if projection:
+                values["mounting_fixing_aggregate_projection"] = projection
+    values["mounting_configuration"] = {
+        "commercial_mounting_scope": commercial_scope,
+        "fixing_system": fixing_for_config,
+    }
+
+    from services.acm_assembly_extent import inject_assembly_extent_keys
+
+    inject_assembly_extent_keys(
+        values,
+        finish=finish_for_pd if isinstance(finish_for_pd, dict) else finish,
+        acm_instance=values.get("acm_panel_instance")
+        if isinstance(values.get("acm_panel_instance"), dict)
+        else None,
+    )
 
     return values
 
@@ -196,6 +605,8 @@ def _build_geometry_inputs(canonical_values: dict[str, Any]) -> dict[str, Any]:
         "vector_file",
         "width_mm",
         "height_mm",
+        "assembly_width_mm",
+        "assembly_height_mm",
         "letter_count",
         "letter_perimeter_m",
         "letter_face_area_m2",
@@ -216,10 +627,17 @@ def _classify_modules(
     svg_source: dict[str, Any],
     client: dict[str, Any],
     analysis_ready: bool,
+    composition: ProductDefinitionComposition | None = None,
+    active_scope: ActiveScopeResult | None = None,
 ) -> tuple[list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef]]:
     selected: list[ProductDefinitionModuleRef] = []
     optional: list[ProductDefinitionModuleRef] = []
     inactive: list[ProductDefinitionModuleRef] = []
+    scoped_subset = (
+        active_scope is not None
+        and not active_scope.use_legacy_full_product
+        and not active_scope.errors
+    )
 
     for module in modules:
         state = _resolve_module_state(
@@ -228,6 +646,8 @@ def _classify_modules(
             quote_geometry=quote_geometry,
             svg_source=svg_source,
             analysis_ready=analysis_ready,
+            composition=composition,
+            active_scope=active_scope,
         )
         missing = _collect_missing_fields(
             module,
@@ -240,16 +660,22 @@ def _classify_modules(
         if missing and state in ("always_on", "active", "conditional_active"):
             state = "pending"
 
+        reason = module.warnings[0] if module.warnings else None
+        if scoped_subset and state == "inactive":
+            reason = reason or "inactive_outside_offer_scope"
+
         ref = ProductDefinitionModuleRef(
             module_code=module.module_code,
             module_name=module.module_name,
             activation_kind=module.activation_kind,
             state=state,  # type: ignore[arg-type]
-            activation_reason=module.warnings[0] if module.warnings else None,
-            missing_fields=missing,
+            activation_reason=reason,
+            missing_fields=missing if state not in ("inactive", "future_reserved") else [],
         )
 
         if state == "future_reserved":
+            inactive.append(ref)
+        elif state == "inactive":
             inactive.append(ref)
         elif module.activation_kind == "optional_addon":
             optional.append(ref)
@@ -260,12 +686,16 @@ def _classify_modules(
         elif _module_is_active(state):
             selected.append(ref)
         elif state == "pending":
-            optional.append(ref)
+            # In-scope pending still belongs to the selected graph (missing fields
+            # block readiness, not scope membership). Outside subset, keep optional.
+            if scoped_subset:
+                selected.append(ref)
+            else:
+                optional.append(ref)
         else:
             inactive.append(ref)
 
     return selected, optional, inactive
-
 
 def _active_module_codes(
     selected: list[ProductDefinitionModuleRef],
@@ -381,6 +811,175 @@ def _compute_readiness(
     return "ready"
 
 
+def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str, Any]:
+    from services.acm_panel_pd_projection import (
+        project_acm_finish_into_canonical,
+        project_face_treatments_into_values,
+    )
+
+    merged = merge_acm_boxed_mounting_derived_fields(payload)
+    values: dict[str, Any] = {}
+    for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS:
+        if key in merged and merged[key] is not None:
+            values[key] = merged[key]
+    for key, value in merged.items():
+        if key not in values and value is not None:
+            values[key] = value
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    # Cross-template / Letters-hosted AcmPanel: project instance + assembly_* without inventing owner.
+    project_acm_finish_into_canonical(values, finish if finish else None)
+    # Axis B face treatments — ensure projection even when finish_setup is flat/empty.
+    project_face_treatments_into_values(values, finish if finish else None, payload)
+    if not finish and payload:
+        # Flat payload already coalesced at root (standalone quote-input style).
+        from services.acm_assembly_extent import inject_assembly_extent_keys
+
+        inject_assembly_extent_keys(values, finish=payload, acm_instance=values.get("acm_panel_instance"))
+    return values
+
+
+def _build_acm_standalone_geometry_inputs(canonical_values: dict[str, Any]) -> dict[str, Any]:
+    geometry: dict[str, Any] = {}
+    for key in (
+        "panel_width_mm",
+        "panel_height_mm",
+        "assembly_width_mm",
+        "assembly_height_mm",
+        "panel_area_m2",
+        "panel_perimeter_m",
+        "fold_length_m",
+        "return_strip_area_m2",
+        "acm_thickness_mm",
+        "return_depth_mm",
+    ):
+        if key in canonical_values:
+            geometry[key] = canonical_values[key]
+    return geometry
+
+
+async def _build_acm_standalone_product_definition_preview(
+    *,
+    aggregate: ProductAggregate,
+    template_code: str,
+    workspace_id: str | None,
+    payload: dict[str, Any],
+    source_type: str,
+    linked_workspace_template_code: str | None = None,
+    cross_template_acm_parity: bool = False,
+) -> ProductDefinitionPreview:
+    active_modules = {"structura_suport"}
+    structura_ref = ProductDefinitionModuleRef(
+        module_code="structura_suport",
+        module_name="Structura suport ACM casetat",
+        activation_kind="always_on",
+        state="active",
+        activation_reason="Standalone boxed ACM mounting root template.",
+        missing_fields=[],
+    )
+
+    canonical_values = _build_acm_standalone_canonical_values(payload) if payload else {}
+    geometry_inputs = _build_acm_standalone_geometry_inputs(canonical_values)
+    has_payload = source_type == "workspace_payload" or bool(canonical_values)
+
+    missing_required = [
+        key
+        for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS
+        if key not in canonical_values or canonical_values[key] in (None, "")
+    ]
+    if has_payload and canonical_values.get("acm_thickness_mm") == 4:
+        missing_required.append("acm_thickness_mm_unsupported_4mm")
+
+    validation = ProductDefinitionValidation(
+        readiness_status=_compute_readiness(
+            missing_required=sorted(set(missing_required)),
+            invalid_combinations=[],
+            unresolved_warnings=[],
+            has_payload=has_payload,
+        ),
+        missing_required_fields=sorted(set(missing_required)),
+        invalid_combinations=[],
+        unresolved_warnings=[],
+    )
+
+    warnings = [f"{w.code}: {w.message}" for w in aggregate.warnings if hasattr(w, "code")]
+
+    provenance = [
+        ProductDefinitionProvenanceEntry(
+            key="product_aggregate",
+            source="product_aggregate_service",
+            detail=f"standalone_root=true components={len(aggregate.components)} operations={len(aggregate.operations)}",
+        ),
+        ProductDefinitionProvenanceEntry(
+            key="standalone_root_contract",
+            source="acm_quote_input_helpers",
+            detail="boxed_mounting_standalone_root_v1",
+        ),
+    ]
+    if workspace_id:
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="workspace_payload",
+                source="intake_v6_workspaces.payload_json",
+                detail=f"workspace_id={workspace_id} read_only=true",
+            )
+        )
+    if cross_template_acm_parity and linked_workspace_template_code:
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="linked_workspace_template_code",
+                source="intake_v6_workspaces.template_code",
+                detail=str(linked_workspace_template_code),
+            )
+        )
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="read_mode",
+                source="acm_panel_pd_projection",
+                detail="cross_template_acm_parity",
+            )
+        )
+
+    return ProductDefinitionPreview(
+        template_code=template_code,
+        business_name_ro=aggregate.business_name_ro or aggregate.family_name,
+        source_context=ProductDefinitionSourceContext(
+            template_code=template_code,
+            workspace_id=workspace_id,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+        ),
+        selected_modules=[structura_ref],
+        optional_modules=[],
+        inactive_modules=[],
+        components=_build_components(aggregate, active_modules),
+        material_roles=_build_material_roles(aggregate, active_modules),
+        operation_roles=_build_operation_roles(aggregate, active_modules),
+        linked_template_runtime_segments=None,
+        canonical_values=canonical_values,
+        geometry_inputs=geometry_inputs,
+        validation=validation,
+        provenance=provenance,
+        resource_hints=ProductDefinitionResourceHints(),
+        warnings=warnings,
+        notes=[
+            "Read-only ProductDefinition preview — standalone boxed ACM mounting root.",
+            "Reuses linked-child aggregate/BOM truth; no Intake V6 modular form contract.",
+            *(
+                [
+                    "Cross-template AcmPanel parity read — no new instance/lifecycle/owner.",
+                ]
+                if cross_template_acm_parity
+                else []
+            ),
+        ],
+        composition=build_product_definition_composition(
+            root_template_code=template_code,
+            payload=payload,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+            standalone_root=True,
+        ),
+    )
+
+
 class ProductDefinitionBuilderService:
     """Build read-only ProductDefinition preview from contracts + optional workspace payload."""
 
@@ -402,31 +1001,108 @@ class ProductDefinitionBuilderService:
         *,
         workspace_id: str | None = None,
     ) -> ProductDefinitionPreview | None:
-        form_contract = self._form.get_for_template(template_code)
-        if form_contract is None:
-            return None
-
+        identity = resolve_template_identity(template_code)
         aggregate = await self._aggregate_svc.build(template_code)
         if aggregate is None:
             return None
 
+        stored_template_code = aggregate.template_code
+
         payload: dict[str, Any] = {}
         source_type: str = "template_only"
+        linked_workspace_template_code: str | None = None
+        cross_template_acm_parity = False
         if workspace_id:
-            ws_payload, ws_error = await self._load_workspace_payload(workspace_id, template_code)
+            ws_payload, ws_error = await self._load_workspace_payload(workspace_id, stored_template_code)
             if ws_error == "workspace_not_found":
                 return None
             if ws_error == "workspace_template_mismatch":
                 payload = {}
+                # ACM boxed root may read Letters-hosted AcmPanel for parity (read-only).
+                if is_acm_boxed_mounting_standalone_root_template(stored_template_code):
+                    any_payload, linked_code = await self._load_workspace_payload_any(workspace_id)
+                    from services.acm_panel_pd_projection import workspace_has_real_acm_panel
+
+                    if any_payload is not None and workspace_has_real_acm_panel(any_payload):
+                        payload = any_payload
+                        source_type = "workspace_payload"
+                        linked_workspace_template_code = linked_code
+                        cross_template_acm_parity = True
             else:
                 payload = ws_payload or {}
                 source_type = "workspace_payload"
+
+        if is_acm_boxed_mounting_standalone_root_template(stored_template_code):
+            preview = await _build_acm_standalone_product_definition_preview(
+                aggregate=aggregate,
+                template_code=stored_template_code,
+                workspace_id=workspace_id,
+                payload=payload,
+                source_type=source_type,
+                linked_workspace_template_code=linked_workspace_template_code,
+                cross_template_acm_parity=cross_template_acm_parity,
+            )
+            preview.provenance.insert(
+                0,
+                ProductDefinitionProvenanceEntry(
+                    key="template_identity",
+                    source="template_architecture_scope",
+                    detail=(
+                        f"requested={identity.requested_template_code!r} "
+                        f"canonical={identity.canonical_template_code!r} "
+                        f"type={identity.resolution_type} "
+                        f"alias={identity.legacy_alias_used} "
+                        f"src={identity.resolution_source}"
+                    ),
+                ),
+            )
+            return preview
+
+        form_contract = self._form.get_for_template(stored_template_code)
+        if form_contract is None:
+            return None
+
+        # Prefer pinned typed bags from ConfirmJobProductTruth when revision is non-stale.
+        truth_status = "draft"
+        truth_revision = None
+        truth_content_hash = None
+        try:
+            from services.product_truth_job_confirm_service import (
+                apply_pinned_bags_onto_payload,
+                commercial_freeze_allowed,
+                get_job_revision_metadata,
+            )
+
+            job_meta = get_job_revision_metadata(payload)
+            if job_meta and commercial_freeze_allowed(payload):
+                payload = apply_pinned_bags_onto_payload(payload)
+                truth_status = "confirmed"
+                truth_revision = job_meta.get("revision")
+                truth_content_hash = job_meta.get("content_hash")
+            elif job_meta and str(job_meta.get("confirmation_state") or "") == "stale_after_edit":
+                truth_status = "stale_after_edit"
+                truth_revision = job_meta.get("revision")
+                truth_content_hash = job_meta.get("content_hash")
+        except Exception:
+            pass
 
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
         quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
         svg_source = payload.get("svg_source") if isinstance(payload.get("svg_source"), dict) else {}
         client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
         analysis_ready = bool(payload.get("analysis_ready")) or _has_geometry_basics(payload)
+
+        active_scope = compile_active_scope(
+            template_code=stored_template_code,
+            payload=payload,
+            quote_input=payload,
+        )
+
+        composition = build_product_definition_composition(
+            root_template_code=stored_template_code,
+            payload=payload,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+        )
 
         selected, optional, inactive = _classify_modules(
             form_contract.modules,
@@ -435,9 +1111,11 @@ class ProductDefinitionBuilderService:
             svg_source=svg_source,
             client=client,
             analysis_ready=analysis_ready,
+            composition=composition,
+            active_scope=active_scope,
         )
 
-        registry_response = self._registry.get_by_template(template_code)
+        registry_response = self._registry.get_by_template(stored_template_code)
         classified_codes = {
             m.module_code
             for m in selected + optional + inactive
@@ -456,10 +1134,26 @@ class ProductDefinitionBuilderService:
                         missing_fields=[],
                     )
                 )
-        active_modules = _active_module_codes(selected)
+        selected_codes = _active_module_codes(selected)
+        if not active_scope.use_legacy_full_product and not active_scope.errors:
+            # Composition graph nodes (mounting/ACM) only when allowlisted by sold scope.
+            composition_active = set(composition.active_module_codes) & active_scope.active_set()
+            active_modules = selected_codes | composition_active
+        else:
+            active_modules = selected_codes | set(composition.active_module_codes)
 
-        canonical_values = _build_canonical_values(form_contract.field_bindings, payload)
+        canonical_values = _build_canonical_values(form_contract.field_bindings, payload, composition=composition)
         geometry_inputs = _build_geometry_inputs(canonical_values)
+
+        linked_template_runtime_segments = None
+        backbone = form_contract.form_system_backbone if isinstance(form_contract.form_system_backbone, dict) else {}
+        linked_template_composition = backbone.get("linked_template_composition")
+        if isinstance(linked_template_composition, dict):
+            linked_template_runtime_segments = extract_linked_template_segments_from_workspace_payload(
+                root_template_code=stored_template_code,
+                workspace_payload=payload,
+                linked_template_composition=linked_template_composition,
+            )
 
         inactive_module_codes = {
             m.module_code for m in inactive if m.state in ("inactive", "future_reserved")
@@ -476,29 +1170,60 @@ class ProductDefinitionBuilderService:
             mod_codes = binding.module_codes
             if mod_codes and all(code in inactive_module_codes for code in mod_codes):
                 continue
+            # Active-scope: skip required bindings whose owning modules are all outside sold set.
+            if (
+                not active_scope.use_legacy_full_product
+                and not active_scope.errors
+                and mod_codes
+                and not any(code in active_scope.active_set() for code in mod_codes)
+            ):
+                continue
             if binding.canonical_key not in canonical_values:
                 missing_required.append(binding.canonical_key)
 
         invalid_combinations: list[str] = []
         mounting = _read_string(finish.get("mounting_system"))
-        if mounting and mounting not in BAR_MOUNTING and mounting not in ("direct_wall", "none", "template_only"):
+        mounting_scope_active = (
+            "structura_suport" in active_modules or "sablon_montaj" in active_modules
+        )
+        if (
+            mounting_scope_active
+            and mounting
+            and mounting not in BAR_MOUNTING
+            and mounting not in ("direct_wall", "none", "template_only")
+        ):
             invalid_combinations.append(f"unknown mounting_system value: {mounting}")
 
         unresolved_warnings: list[str] = []
         warnings: list[str] = list(form_contract.summary.warnings)
-        for align in form_contract.trigger_alignments:
-            unresolved_warnings.append(
-                f"{align.warning_code}: {align.module_code} link={align.module_link_trigger_field} "
-                f"intake={align.canonical_intake_field}"
-            )
-            warnings.append(
-                f"{align.warning_code} for {align.module_code} — canonical intake is {align.canonical_intake_field}"
-            )
+        if active_scope.use_legacy_full_product:
+            for align in form_contract.trigger_alignments:
+                unresolved_warnings.append(
+                    f"{align.warning_code}: {align.module_code} link={align.module_link_trigger_field} "
+                    f"intake={align.canonical_intake_field}"
+                )
+                warnings.append(
+                    f"{align.warning_code} for {align.module_code} — canonical intake is {align.canonical_intake_field}"
+                )
 
-        for w in aggregate.warnings:
-            msg = f"{w.code}: {w.message}"
-            warnings.append(msg)
-            unresolved_warnings.append(msg)
+            for w in aggregate.warnings:
+                msg = f"{w.code}: {w.message}"
+                warnings.append(msg)
+                unresolved_warnings.append(msg)
+
+            for code in composition.blockers:
+                invalid_combinations.append(code)
+            for code in composition.warnings:
+                warnings.append(code)
+                unresolved_warnings.append(code)
+        else:
+            # Subset: only surface warnings/blockers tied to active modules.
+            for code in composition.blockers:
+                if any(mod in active_modules for mod in ("structura_suport", "modelare_cant")):
+                    invalid_combinations.append(code)
+            warnings.append(
+                f"ACTIVE_SCOPE_SUBSET mode={active_scope.mode} sold={','.join(active_scope.sold_module_codes)}"
+            )
 
         for w in form_contract.orphan_fields_audit:
             warnings.append(f"ORPHAN_FIELD: {w}")
@@ -521,6 +1246,17 @@ class ProductDefinitionBuilderService:
 
         provenance = [
             ProductDefinitionProvenanceEntry(
+                key="template_identity",
+                source="template_architecture_scope",
+                detail=(
+                    f"requested={identity.requested_template_code!r} "
+                    f"canonical={identity.canonical_template_code!r} "
+                    f"type={identity.resolution_type} "
+                    f"alias={identity.legacy_alias_used} "
+                    f"src={identity.resolution_source}"
+                ),
+            ),
+            ProductDefinitionProvenanceEntry(
                 key="form_contract",
                 source="intake_v6_modular_form_contract",
                 detail=f"version={form_contract.summary.contract_version} bindings={form_contract.summary.field_binding_count}",
@@ -535,6 +1271,21 @@ class ProductDefinitionBuilderService:
                 source="product_aggregate_service",
                 detail=f"components={len(aggregate.components)} operations={len(aggregate.operations)}",
             ),
+            ProductDefinitionProvenanceEntry(
+                key="composition_contract",
+                source="product_definition_composition_contract",
+                detail=f"mode={composition.composition_mode} nodes={len(composition.nodes)} edges={len(composition.edges)}",
+            ),
+            ProductDefinitionProvenanceEntry(
+                key="active_scope",
+                source="active_scope_resolver_service",
+                detail=(
+                    f"resolver={active_scope.resolver_version} mode={active_scope.mode} "
+                    f"legacy={active_scope.use_legacy_full_product} "
+                    f"sold={active_scope.sold_module_codes} "
+                    f"active={active_scope.active_runtime_modules}"
+                ),
+            ),
         ]
         if workspace_id:
             provenance.append(
@@ -544,17 +1295,36 @@ class ProductDefinitionBuilderService:
                     detail=f"workspace_id={workspace_id} read_only=true",
                 )
             )
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="product_truth_job_revision",
+                source="product_truth.confirmed_snapshot_v1",
+                detail=(
+                    f"truth_status={truth_status} revision={truth_revision} "
+                    f"content_hash={truth_content_hash} catalog_write=false"
+                ),
+            )
+        )
 
         notes = [
             "Read-only ProductDefinition preview — Step 6. No pricing, quote, order, or task generation.",
             "Template-level preview marks missing required fields when workspace payload is absent.",
+            "Active-scope readiness validates selected modules only (offer_scope component_subset).",
+            f"Product Truth job status: {truth_status}.",
         ]
 
+        truth_revision_int: int | None = None
+        if truth_revision is not None:
+            try:
+                truth_revision_int = int(truth_revision)
+            except (TypeError, ValueError):
+                truth_revision_int = None
+
         return ProductDefinitionPreview(
-            template_code=template_code,
+            template_code=stored_template_code,
             business_name_ro=aggregate.business_name_ro or aggregate.family_name,
             source_context=ProductDefinitionSourceContext(
-                template_code=template_code,
+                template_code=stored_template_code,
                 workspace_id=workspace_id,
                 source_payload_type=source_type,  # type: ignore[arg-type]
             ),
@@ -564,13 +1334,18 @@ class ProductDefinitionBuilderService:
             components=_build_components(aggregate, active_modules),
             material_roles=_build_material_roles(aggregate, active_modules),
             operation_roles=_build_operation_roles(aggregate, active_modules),
+            linked_template_runtime_segments=linked_template_runtime_segments,
             canonical_values=canonical_values,
             geometry_inputs=geometry_inputs,
             validation=validation,
             provenance=provenance,
-            resource_hints=_build_resource_hints(self._registry, template_code),
+            resource_hints=_build_resource_hints(self._registry, stored_template_code),
             warnings=warnings,
             notes=notes,
+            composition=composition,
+            product_truth_job_revision=truth_revision_int,
+            product_truth_content_hash=str(truth_content_hash) if truth_content_hash else None,
+            product_truth_status=truth_status,
         )
 
     async def _load_workspace_payload(
@@ -587,3 +1362,16 @@ class ProductDefinitionBuilderService:
         if record.template_code != template_code:
             return None, "workspace_template_mismatch"
         return _parse_workspace_payload(record.payload_json), None
+
+    async def _load_workspace_payload_any(
+        self,
+        workspace_id: str,
+    ) -> tuple[dict[str, Any] | None, str | None]:
+        """Load workspace payload without template match — used for ACM-root parity only."""
+        result = await self._db.execute(
+            select(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.id == workspace_id).limit(1)
+        )
+        record = result.scalar_one_or_none()
+        if record is None:
+            return None, None
+        return _parse_workspace_payload(record.payload_json), record.template_code

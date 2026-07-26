@@ -1,0 +1,20 @@
+﻿{
+    "at":  "2026-07-20T01:53:34.2240213+03:00",
+    "listeners":  {
+                      "3000":  [
+                                   {
+                                       "cmd":  "node   \"C:\\w\\psiso\\frontend\\node_modules\\.bin\\\\..\\vite\\bin\\vite.js\" \"--host\" \"127.0.0.1\" \"--port\" \"3000\"",
+                                       "pid":  3640
+                                   }
+                               ],
+                      "8003":  [
+                                   {
+                                       "cmd":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn main:app --host 127.0.0.1 --port 8003",
+                                       "pid":  34480
+                                   }
+                               ],
+                      "8013":  [
+
+                               ]
+                  }
+}

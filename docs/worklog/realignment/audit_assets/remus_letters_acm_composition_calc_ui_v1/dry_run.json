@@ -1,0 +1,1152 @@
+{
+  "codes": [
+    "debitare_fata",
+    "modelare_cant_aluminiu",
+    "debitare_spate",
+    "sistem_led_module",
+    "sursa_led",
+    "finisaje_colantare_vopsire",
+    "ambalare",
+    "montaj",
+    "acm_panel_cut",
+    "acm_v_groove",
+    "acm_panel_face_material",
+    "acm_return_strip_material",
+    "acm_boxed_assembly",
+    "acm_fasteners",
+    "letters_acm_conn_sablon_process",
+    "letters_acm_conn_fasten_forex",
+    "letters_acm_conn_electric_psu",
+    "letters_acm_conn_cable_5m",
+    "letters_acm_conn_light_test",
+    "letters_acm_conn_attach_body",
+    "letters_acm_conn_pack"
+  ],
+  "dry": {
+    "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED",
+    "pricing_authority": null,
+    "commercial_authority_status": "blocked",
+    "workspace_id": "007782b5-59b5-4a79-8a29-c56568726bc3",
+    "workspace_code": "IV6-152626E4",
+    "intake_code": null,
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_composition_recommendation": {
+      "status": "needs_confirmation",
+      "composition_type": "letters_plus_support",
+      "source": "analyzer_rules_v1",
+      "recommended_templates": [
+        {
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "role_in_composition": "letters",
+          "reason": "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+          "source_layer_ids": [
+            "Litere_x0020_Volumetrice"
+          ],
+          "confidence": "high",
+          "status": "suggested"
+        },
+        {
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "role_in_composition": "support_panel",
+          "reason": "Support/background contour detected; maps to live optional component TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 (legacy alias TPL-BOND-CASETAT is not authority).",
+          "source_layer_ids": [
+            "Alucobond_x0020_Casetat"
+          ],
+          "confidence": "medium",
+          "status": "available_optional"
+        }
+      ],
+      "composition_items": [
+        {
+          "composition_item_id": "letters",
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "component_role": "volumetric_letters",
+          "source_layer_ids": [
+            "Litere_x0020_Volumetrice"
+          ],
+          "source_group_ids": [
+            "Litere_x0020_Volumetrice"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "suggested"
+        },
+        {
+          "composition_item_id": "support",
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "component_role": "support_panel",
+          "source_layer_ids": [
+            "Alucobond_x0020_Casetat"
+          ],
+          "source_group_ids": [
+            "Alucobond_x0020_Casetat"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "available_optional"
+        }
+      ],
+      "shared_modules_policy": {
+        "dedupe_common_operations": true,
+        "graphic_verification_scope": "assembly",
+        "file_preparation_scope": "assembly",
+        "light_test_scope": "assembly",
+        "packaging_scope": "assembly"
+      },
+      "blockers": [],
+      "warnings": [
+        {
+          "code": "SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM",
+          "message": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETAT este legacy/deprecated."
+        }
+      ],
+      "generated_at": "2026-07-24T10:49:12.173096+00:00"
+    },
+    "product_composition_confirmed": {
+      "confirmed": true,
+      "confirmed_at": "2026-07-24T10:49:12.122595+00:00",
+      "confirmed_by": "dev@localhost",
+      "items": [
+        {
+          "composition_item_id": "letters",
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "component_role": "volumetric_letters",
+          "source_layer_ids": [
+            "Litere_x0020_Volumetrice"
+          ],
+          "source_group_ids": [
+            "Litere_x0020_Volumetrice"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "suggested"
+        },
+        {
+          "composition_item_id": "support",
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "component_role": "support_panel",
+          "source_layer_ids": [
+            "Alucobond_x0020_Casetat"
+          ],
+          "source_group_ids": [
+            "Alucobond_x0020_Casetat"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "available_optional"
+        }
+      ],
+      "operator_note": null,
+      "source": "operator_confirmation_v1",
+      "applied_content": "letters",
+      "letters_layer_outbox_m2": null,
+      "letters_layer_outbox_source": null
+    },
+    "composition_items": [
+      {
+        "composition_item_id": "letters",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "component_role": "volumetric_letters",
+        "source_layer_ids": [
+          "Litere_x0020_Volumetrice"
+        ],
+        "source_group_ids": [
+          "Litere_x0020_Volumetrice"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      },
+      {
+        "composition_item_id": "support",
+        "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "component_role": "support_panel",
+        "source_layer_ids": [
+          "Alucobond_x0020_Casetat"
+        ],
+        "source_group_ids": [
+          "Alucobond_x0020_Casetat"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "available_optional"
+      }
+    ],
+    "pricing_source": "intake_v6_backend_priced_dry_run",
+    "pricing_mode": "dry_run",
+    "commercial_totals": {
+      "subtotal_net": null,
+      "vat_rate": 21,
+      "vat_amount": null,
+      "total_gross": null,
+      "currency": "RON"
+    },
+    "commercial_line_items": [
+      {
+        "code": "debitare_fata",
+        "label": "Debitare față litere",
+        "module_code": "debitare_fata",
+        "component_code": "comp_face_litere",
+        "basis_type": "ml",
+        "quantity": 7.0474,
+        "unit": "ml",
+        "commercial_unit_price": 25,
+        "subtotal": 176.185,
+        "pricing_rule_code": "VOL_V2_FACE_CNC_ML",
+        "source": "commercial_rules_volumetric_v2:face_perimeter_ml",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "modelare_cant_aluminiu",
+        "label": "Modelare cant aluminiu",
+        "module_code": "modelare_cant",
+        "component_code": "comp_lateral_litere",
+        "basis_type": "ml",
+        "quantity": 7.0474,
+        "unit": "ml",
+        "commercial_unit_price": 30,
+        "subtotal": 211.422,
+        "pricing_rule_code": "VOL_V2_RETURN_PROFILE_ML",
+        "source": "commercial_rules_volumetric_v2:return_profile_ml",
+        "owner_decision_required": false,
+        "warnings": [
+          "Technical inputs: letter_perimeter_m, return_depth_mm — not minutes.",
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "debitare_spate",
+        "label": "Debitare spate litere",
+        "module_code": "debitare_spate",
+        "component_code": "comp_spate_litere",
+        "basis_type": "m2",
+        "quantity": 0.3298,
+        "unit": "m2",
+        "commercial_unit_price": 20,
+        "subtotal": 6.596,
+        "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+        "source": "commercial_rules_volumetric_v2:back_m2_dev_bridge",
+        "owner_decision_required": false,
+        "warnings": [
+          "Step 8 dev bridge: interim m² basis until owner formalizes ml vs m² in Pricing Registry.",
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "sistem_led_module",
+        "label": "Sistem LED — module",
+        "module_code": "sistem_led",
+        "component_code": "comp_led_litere",
+        "basis_type": "piece",
+        "quantity": 29,
+        "unit": "buc",
+        "commercial_unit_price": 5,
+        "subtotal": 145,
+        "pricing_rule_code": "VOL_V2_LED_MODULE_PIECE",
+        "source": "commercial_rules_volumetric_v2:letter_led_module_count",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "sursa_led",
+        "label": "Sursă LED (PSU)",
+        "module_code": "sistem_led",
+        "component_code": "comp_led_litere",
+        "basis_type": "piece",
+        "quantity": 1,
+        "unit": "buc",
+        "commercial_unit_price": 150,
+        "subtotal": 150,
+        "pricing_rule_code": "VOL_V2_LED_PSU_PIECE",
+        "source": "commercial_rules_volumetric_v2:psu_piece_dev_bridge",
+        "owner_decision_required": false,
+        "warnings": [
+          "Commercial sells one PSU unit; selected_psu_watts is reference only.",
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "finisaje_colantare_vopsire",
+        "label": "Finisaje — colantare / vopsire",
+        "module_code": "finisaje",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "m2",
+        "quantity": 0.3298,
+        "unit": "m2",
+        "commercial_unit_price": 35,
+        "subtotal": 11.543,
+        "pricing_rule_code": "VOL_V2_FINISH_M2_OR_MINIMUM",
+        "source": "commercial_rules_volumetric_v2:finish_area_m2",
+        "owner_decision_required": false,
+        "warnings": [
+          "Unconfirmed finish groups may require owner review before numeric pricing.",
+          "quantity_source=product_aggregate.commercial_measurements",
+          "Finish groups not confirmed — numeric commercial price deferred."
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "ambalare",
+        "label": "Ambalare",
+        "module_code": "ambalare_livrare_montaj",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "fixed",
+        "quantity": null,
+        "unit": "set",
+        "commercial_unit_price": null,
+        "subtotal": null,
+        "pricing_rule_code": "VOL_V2_PACKAGING_PENDING",
+        "source": "commercial_rules_volumetric_v2:packaging_rule_pending",
+        "owner_decision_required": true,
+        "warnings": [],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": null,
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "montaj",
+        "label": "Montaj șantier",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "fixed",
+        "quantity": 1,
+        "unit": "locatie",
+        "commercial_unit_price": 1000,
+        "subtotal": 1000,
+        "pricing_rule_code": "VOL_V2_SITE_INSTALLATION_STANDARD",
+        "source": "pricing_registry:operation:SITE_INSTALLATION_STANDARD:EUR->RON",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements",
+          "registry_bound=SITE_INSTALLATION_STANDARD;source_unit_price=200.0;rate_basis=per_piece"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": "SITE_INSTALLATION_STANDARD",
+        "source_currency": "EUR",
+        "cpp_currency": "RON",
+        "currency_conversion_rate": 5,
+        "currency_conversion_source": "company_commercial_settings.eur_to_ron_rate"
+      },
+      {
+        "code": "acm_panel_cut",
+        "label": "Debitare panou ACM",
+        "module_code": "structura_suport",
+        "component_code": "comp_acm_panel_face",
+        "basis_type": "ml",
+        "quantity": 5.48,
+        "unit": "ml",
+        "commercial_unit_price": 1.5,
+        "subtotal": 8.22,
+        "pricing_rule_code": "ACM_BOXED_PANEL_CUT_LM",
+        "source": "commercial_rules_volumetric_v2:acm_panel_cut_owner_eur_lm",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "acm_v_groove",
+        "label": "Frezare V-groove ACM",
+        "module_code": "structura_suport",
+        "component_code": "comp_casetted_returns",
+        "basis_type": "ml",
+        "quantity": 5.48,
+        "unit": "ml",
+        "commercial_unit_price": 3,
+        "subtotal": 16.44,
+        "pricing_rule_code": "ACM_BOXED_V_GROOVE_LM",
+        "source": "commercial_rules_volumetric_v2:acm_v_groove_owner_eur_lm",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "acm_panel_face_material",
+        "label": "Material ACM față panou",
+        "module_code": "structura_suport",
+        "component_code": "comp_acm_panel_face",
+        "basis_type": "m2",
+        "quantity": 1,
+        "unit": "m2",
+        "commercial_unit_price": 15,
+        "subtotal": 15,
+        "pricing_rule_code": "ACM_BOXED_MAT_FACE_M2",
+        "source": "commercial_rules_volumetric_v2:acm_mat_face_owner_eur_m2",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "acm_return_strip_material",
+        "label": "Material ACM canturi / întoarceri",
+        "module_code": "structura_suport",
+        "component_code": "comp_casetted_returns",
+        "basis_type": "m2",
+        "quantity": 0.3144,
+        "unit": "m2",
+        "commercial_unit_price": 15,
+        "subtotal": 4.716,
+        "pricing_rule_code": "ACM_BOXED_MAT_RETURN_M2",
+        "source": "commercial_rules_volumetric_v2:acm_mat_return_owner_eur_m2",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "acm_boxed_assembly",
+        "label": "Asamblare suport ACM casetat",
+        "module_code": "structura_suport",
+        "component_code": "comp_mounting_fasteners",
+        "basis_type": "m2",
+        "quantity": 1,
+        "unit": "m2",
+        "commercial_unit_price": 15,
+        "subtotal": 20,
+        "pricing_rule_code": "ACM_BOXED_ASSEMBLY_M2_MIN",
+        "source": "commercial_rules_volumetric_v2:acm_assembly_owner_eur_m2_min",
+        "owner_decision_required": false,
+        "warnings": [
+          "Minimum commercial charge 20.0 EUR/product when area × rate is lower.",
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+          "minimum_charge_applied=20.0EUR"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "acm_fasteners",
+        "label": "Suruburi / prinderi standard ACM",
+        "module_code": "structura_suport",
+        "component_code": "comp_mounting_fasteners",
+        "basis_type": "set",
+        "quantity": 1,
+        "unit": "set",
+        "commercial_unit_price": 5,
+        "subtotal": 5,
+        "pricing_rule_code": "ACM_BOXED_SURUBURI_SET",
+        "source": "commercial_rules_volumetric_v2:acm_suruburi_owner_eur_set",
+        "owner_decision_required": false,
+        "warnings": [],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_sablon_process",
+        "label": "Proces șablon pe Alucobond (material+cutter+transfer+aplicare)",
+        "module_code": "sablon_montaj",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "m2",
+        "quantity": 0.35,
+        "unit": "m2",
+        "commercial_unit_price": 20,
+        "subtotal": 7,
+        "pricing_rule_code": "LETTERS_ACM_SABLON_PROCESS_M2",
+        "source": "commercial_rules_volumetric_v2:letters_acm_sablon_20_eur_m2",
+        "owner_decision_required": false,
+        "warnings": [
+          "Owner-locked 20 EUR/mp on letters-layer outbox integral. Suppresses legacy sablon_montaj_* split under ACM composition.",
+          "quantity_source=product_aggregate.commercial_measurements",
+          "quantity_source=letters_acm_outbox:letters_layer_outbox_m2"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_fasten_forex",
+        "label": "Prindere Forex pe bond (autoforante)",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "m2",
+        "quantity": 0.35,
+        "unit": "m2",
+        "commercial_unit_price": 8,
+        "subtotal": 2.8,
+        "pricing_rule_code": "LETTERS_ACM_FASTEN_FOREX_M2",
+        "source": "commercial_rules_volumetric_v2:letters_acm_fasten_forex",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements",
+          "quantity_source=letters_acm_outbox:letters_layer_outbox_m2"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_electric_psu",
+        "label": "Electrică în carcasa bond + legare transformator",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "piece",
+        "quantity": 1,
+        "unit": "buc",
+        "commercial_unit_price": 35,
+        "subtotal": 35,
+        "pricing_rule_code": "LETTERS_ACM_ELECTRIC_PSU_BUC",
+        "source": "commercial_rules_volumetric_v2:letters_acm_electric_psu",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_cable_5m",
+        "label": "Cablu alimentare 5 m 220V (2×1.5) + atasare",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "piece",
+        "quantity": 1,
+        "unit": "buc",
+        "commercial_unit_price": 6,
+        "subtotal": 6,
+        "pricing_rule_code": "LETTERS_ACM_CABLE_5M_BUC",
+        "source": "commercial_rules_volumetric_v2:letters_acm_cable_5m",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_light_test",
+        "label": "Test lumină",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "piece",
+        "quantity": 1,
+        "unit": "buc",
+        "commercial_unit_price": 8,
+        "subtotal": 8,
+        "pricing_rule_code": "LETTERS_ACM_LIGHT_TEST_BUC",
+        "source": "commercial_rules_volumetric_v2:letters_acm_light_test",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_attach_body",
+        "label": "Prindere corp pe Forex (autoforante fine vopsite)",
+        "module_code": "structura_suport",
+        "component_code": null,
+        "basis_type": "m2",
+        "quantity": 0.35,
+        "unit": "m2",
+        "commercial_unit_price": 12,
+        "subtotal": 4.2,
+        "pricing_rule_code": "LETTERS_ACM_ATTACH_BODY_M2",
+        "source": "commercial_rules_volumetric_v2:letters_acm_attach_body",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=product_aggregate.commercial_measurements",
+          "quantity_source=letters_acm_outbox:letters_layer_outbox_m2"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      },
+      {
+        "code": "letters_acm_conn_pack",
+        "label": "Impachetare ansamblu Litere + Alucobond",
+        "module_code": "ambalare_livrare_montaj",
+        "component_code": null,
+        "basis_type": "m2",
+        "quantity": 0.35,
+        "unit": "m2",
+        "commercial_unit_price": 10,
+        "subtotal": 15,
+        "pricing_rule_code": "LETTERS_ACM_PACK_M2_MIN",
+        "source": "commercial_rules_volumetric_v2:letters_acm_pack_min",
+        "owner_decision_required": false,
+        "warnings": [
+          "Minimum commercial charge 15.0 EUR when area × rate is lower.",
+          "quantity_source=product_aggregate.commercial_measurements",
+          "quantity_source=letters_acm_outbox:letters_layer_outbox_m2",
+          "minimum_charge_applied=15.0EUR"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": null,
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null
+      }
+    ],
+    "acm_panel_commercial_preview": {
+      "status": "official_ready",
+      "currency": "EUR",
+      "estimated_total": 69.376,
+      "lines": [
+        {
+          "code": "acm_panel_cut",
+          "label": "Debitare panou ACM",
+          "quantity": 5.48,
+          "unit": "ml",
+          "rate": 1.5,
+          "amount": 8.22,
+          "source": "commercial_rules_volumetric_v2:acm_panel_cut_owner_eur_lm",
+          "status": "provisional",
+          "warnings": [
+            "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+          ],
+          "basis_type": "ml"
+        },
+        {
+          "code": "acm_v_groove",
+          "label": "Frezare V-groove ACM",
+          "quantity": 5.48,
+          "unit": "ml",
+          "rate": 3,
+          "amount": 16.44,
+          "source": "commercial_rules_volumetric_v2:acm_v_groove_owner_eur_lm",
+          "status": "provisional",
+          "warnings": [
+            "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+          ],
+          "basis_type": "ml"
+        },
+        {
+          "code": "acm_panel_face_material",
+          "label": "Material ACM față panou",
+          "quantity": 1,
+          "unit": "m2",
+          "rate": 15,
+          "amount": 15,
+          "source": "commercial_rules_volumetric_v2:acm_mat_face_owner_eur_m2",
+          "status": "provisional",
+          "warnings": [
+            "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+          ],
+          "basis_type": "m2"
+        },
+        {
+          "code": "acm_return_strip_material",
+          "label": "Material ACM canturi / întoarceri",
+          "quantity": 0.3144,
+          "unit": "m2",
+          "rate": 15,
+          "amount": 4.716,
+          "source": "commercial_rules_volumetric_v2:acm_mat_return_owner_eur_m2",
+          "status": "provisional",
+          "warnings": [
+            "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+          ],
+          "basis_type": "m2"
+        },
+        {
+          "code": "acm_boxed_assembly",
+          "label": "Asamblare suport ACM casetat",
+          "quantity": 1,
+          "unit": "m2",
+          "rate": 15,
+          "amount": 20,
+          "source": "commercial_rules_volumetric_v2:acm_assembly_owner_eur_m2_min",
+          "status": "provisional",
+          "warnings": [
+            "Minimum commercial charge 20.0 EUR/product when area × rate is lower.",
+            "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+            "minimum_charge_applied=20.0EUR"
+          ],
+          "basis_type": "m2"
+        },
+        {
+          "code": "acm_fasteners",
+          "label": "Suruburi / prinderi standard ACM",
+          "quantity": 1,
+          "unit": "set",
+          "rate": 5,
+          "amount": 5,
+          "source": "commercial_rules_volumetric_v2:acm_suruburi_owner_eur_set",
+          "status": "provisional",
+          "warnings": [],
+          "basis_type": "set"
+        }
+      ],
+      "geometry_summary": {
+        "assembly_width_mm": 2000,
+        "assembly_height_mm": 500,
+        "envelope_width_mm": 2000,
+        "envelope_height_mm": 500,
+        "face_area_m2": 1,
+        "cut_length_m": 5.48,
+        "fold_length_m": 5.48,
+        "v_groove_l1_ml": 5.48,
+        "v_groove_l2_ml": 0,
+        "v_groove_total_ml": 5.48,
+        "assembly_exterior_perimeter_m": 5,
+        "panel_count": 1,
+        "joint_count": 0,
+        "envelope_ignored_for_multi_panel": false,
+        "path_measurement_status": "commercial_deduced",
+        "path_measurement_source": "commercial_deduced"
+      },
+      "production_geometry_metrics": {
+        "schema": "acm_panel_assembly_geometry_metrics_v1",
+        "assembly_width_mm": 2000,
+        "assembly_height_mm": 500,
+        "panel_count": 1,
+        "joint_count": 0,
+        "panels": [
+          {
+            "schema": "acm_panel_production_geometry_metrics_v1",
+            "panel_id": "p1",
+            "construction_type": "single_fold",
+            "active_width_mm": 2000,
+            "active_height_mm": 500,
+            "l1_mm": 60,
+            "l2_mm": 0,
+            "active_face_area_m2": 1,
+            "blank_area_m2": 1.3144,
+            "return_material_area_m2": 0.3144,
+            "cut_length_ml": 5.48,
+            "v_groove_l1_ml": 5.48,
+            "v_groove_l2_ml": 0,
+            "v_groove_total_ml": 5.48,
+            "measurement_source": "commercial_deduced",
+            "measurement_status": "commercial_deduced",
+            "semantic_mapping_version": "acm_aci_semantic_mapping_v1",
+            "assumptions": [
+              "cut_uses_blank_outer_perimeter_no_cnc_relief",
+              "return_area_is_commercial_blank_minus_face_not_exact_finished_returns"
+            ],
+            "warnings": [
+              "quantity_source=commercial_deduction"
+            ]
+          }
+        ],
+        "total_active_face_area_m2": 1,
+        "total_blank_area_m2": 1.3144,
+        "total_cut_length_ml": 5.48,
+        "total_v_groove_l1_ml": 5.48,
+        "total_v_groove_l2_ml": 0,
+        "total_v_groove_ml": 5.48,
+        "measurement_status": "commercial_deduced",
+        "measurement_source": "commercial_deduced",
+        "semantic_mapping_version": "acm_aci_semantic_mapping_v1",
+        "warnings": [
+          "quantity_source=commercial_deduction",
+          "cut_v_quantity_source=commercial_deduction"
+        ]
+      },
+      "material_reference": {
+        "preferred_sku": "MAT-ACM-BOND-3MM",
+        "legacy_alias": "MAT-ACP-3MM",
+        "legacy_excluded_from_duplicate": true
+      },
+      "rate_version": "acm_commercial_geometry_v1",
+      "authority_summary": {
+        "status": "official_ready",
+        "association_status": "confirmed",
+        "technical_configuration_status": "confirmed",
+        "composition_status": "confirmed",
+        "segmented_status": null,
+        "catalog_default_fields": [],
+        "technical_confirmed": true,
+        "segmented_confirmed": true,
+        "composition_inconsistent": false,
+        "final_eligibility": true,
+        "offer_eligibility": true,
+        "execution_eligibility": false,
+        "warnings": [],
+        "blockers": [
+          "execution_blocked"
+        ]
+      },
+      "warnings": [
+        "quantity_source=commercial_deduction",
+        "cut_v_quantity_source=commercial_deduction"
+      ],
+      "blockers": [
+        "execution_blocked"
+      ],
+      "final_eligibility": true,
+      "offer_eligibility": true,
+      "execution_eligibility": false,
+      "line_count": 6,
+      "hourly_commercial_detected": false
+    },
+    "internal_cost_trace": {
+      "available": true,
+      "workspace_id": "007782b5-59b5-4a79-8a29-c56568726bc3",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "estimated_cost_total": 436.77,
+      "material_cost_total": 436.77,
+      "currency": "EUR",
+      "contains_estimates": true,
+      "contains_missing_prices": false
+    },
+    "estimated_internal_cost_trace": {
+      "available": true,
+      "source": "estimated_internal_cost",
+      "status": "blocked",
+      "estimated_total_internal_cost": 504.5048,
+      "estimated_material_cost": 176.387,
+      "estimated_operation_cost": 328.1178,
+      "currency": "RON",
+      "blockers": [
+        {
+          "code": "INTERNAL_MATERIAL_COST_MISSING",
+          "message": "Missing inventory unit_cost for MAT-ADEZIV-CANT-LITERE.",
+          "module_code": "modelare_cant"
+        }
+      ],
+      "provenance": [
+        {
+          "key": "aggregate_cost_bom",
+          "source": "aggregate_cost_bom_builder_service",
+          "detail": "workspace=True bom_status=blocked materials=11 operations=9 logo_operations=0"
+        },
+        {
+          "key": "internal_rules",
+          "source": "internal_cost_rules_volumetric_v2",
+          "detail": "temporary_local_catalog_until_step_7i"
+        },
+        {
+          "key": "inventory",
+          "source": "inventory_materials.unit_cost",
+          "detail": "acquisition_cost_not_commercial_price"
+        },
+        {
+          "key": "active_modules",
+          "source": "estimated_internal_cost_service",
+          "detail": "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sablon_montaj,sistem_led,structura_suport"
+        }
+      ]
+    },
+    "diagnostic_cost_plus_trace": {
+      "subtotal_net": 2948.2,
+      "vat_rate": 21,
+      "vat_amount": 619.12,
+      "total_gross": 3567.32,
+      "currency": "RON",
+      "cost_plus_trace": {
+        "internal_cost_total": 436.77,
+        "internal_cost_currency": "EUR",
+        "eur_to_ron_rate": 5,
+        "production_base_ron": 2183.85,
+        "markup_percent": 35,
+        "markup_value": 764.35,
+        "manual_adjustment_ron": 0,
+        "discount_percent": 0,
+        "discount_value": 0
+      },
+      "diagnostic_only": true,
+      "td_id": "TD-W3-V6-DIAG-COST-PLUS-001",
+      "canonical_authority": "commercial_price_proposal_7g"
+    },
+    "pricing_input_trace": {
+      "workspace_id": "007782b5-59b5-4a79-8a29-c56568726bc3",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "is_ready_for_quote": false,
+      "adapter_status": "blocked",
+      "adapter_blockers": [
+        "MISSING_FACE_VINYL_ROLL_WIDTH",
+        "runtime_capture:PRINT_REQUIRED_UNKNOWN",
+        "runtime_capture:LAMINATION_REQUIRED_UNKNOWN"
+      ],
+      "adapter_warnings": [
+        "Analiza brută și modelul confirmat diferă la număr de contururi/litere — operatorul a confirmat modelul de producție.",
+        "Fără suport comun: sursele calculate se includ în colet la ambalare.",
+        "MaterialIntent conține estimări conceptuale — fără mutație inventory.",
+        "PSU will be packed and handled at packaging/delivery stage."
+      ],
+      "production_counts": {
+        "letter_count": 5,
+        "real_letters_count": 5,
+        "cut_contour_count": 6,
+        "inner_hole_count": 1,
+        "cutting_contours_count": 6,
+        "material_piece_count": 5,
+        "volumetric_piece_count": 5,
+        "artwork_piece_count": 0
+      },
+      "finish_summary": {
+        "face_finish_type": "vinyl",
+        "face_vinyl_enabled": true,
+        "return_finish_type": "oracal_651",
+        "return_depth_mm": 60,
+        "return_wrapped": true,
+        "return_painted": false
+      },
+      "quote_input_keys": [
+        "artwork_piece_count",
+        "artwork_return_perimeter_ml",
+        "back_bevel_enabled",
+        "back_material",
+        "backing_material",
+        "backing_mode",
+        "backing_present",
+        "backing_thickness_mm",
+        "bar_material",
+        "bevel_perimeter_ml",
+        "can_create_quote",
+        "canonical_readiness",
+        "cnc_cutting_perimeter_ml",
+        "cut_contour_count",
+        "cutting_contours_count",
+        "cutting_perimeter_ml",
+        "depth_mm",
+        "estimated_led_watts",
+        "face_area_m2",
+        "face_cutting_perimeter_ml",
+        "face_finish_type",
+        "face_vinyl_enabled",
+        "face_vinyl_roll_width_mm",
+        "geometry_calculation_quality",
+        "height_mm",
+        "hole_perimeter_ml",
+        "illuminated",
+        "inner_hole_count",
+        "inner_holes_count",
+        "intake_schema_version",
+        "intake_source",
+        "inventory_mutation_allowed",
+        "led_module_count",
+        "led_module_power_w",
+        "led_perimeter_ml",
+        "led_strip_power_w_per_ml",
+        "letter_count",
+        "letter_face_area_m2",
+        "letter_perimeter_m",
+        "letter_return_perimeter_ml",
+        "light_color",
+        "lighting_system_type",
+        "material_piece_count",
+        "metal_support_required",
+        "module_wattage",
+        "mounting_scope",
+        "mounting_solution",
+        "mounting_system",
+        "mounting_template_area_m2",
+        "mounting_template_enabled",
+        "mounting_template_material_type",
+        "offer_scope",
+        "operation_flags",
+        "psu_configuration",
+        "raw_vector_total_perimeter_ml",
+        "readiness_status",
+        "real_letters_count",
+        "required_psu_watts",
+        "return_depth_mm",
+        "return_finish_type",
+        "return_material_perimeter_ml",
+        "return_painted",
+        "return_wrapped",
+        "selected_psu_watts",
+        "site_installation_included",
+        "support_mode",
+        "template_code",
+        "total_letter_perimeter_ml",
+        "vector_file",
+        "vector_total_perimeter_source",
+        "volumetric_piece_count",
+        "width_mm"
+      ]
+    },
+    "commercial_proposal_trace": {
+      "available": true,
+      "source": "commercial_price_proposal",
+      "status": "ready",
+      "quote_ready_for_commercial_review": true,
+      "subtotal_commercial": 1848.122,
+      "provenance": [
+        {
+          "key": "product_definition",
+          "source": "product_definition_builder_service",
+          "detail": "read_only=true workspace_id=007782b5-59b5-4a79-8a29-c56568726bc3"
+        },
+        {
+          "key": "commercial_rules",
+          "source": "commercial_rules_volumetric_v2",
+          "detail": "temporary_local_catalog_until_step_7i"
+        },
+        {
+          "key": "active_modules",
+          "source": "commercial_price_proposal_service",
+          "detail": "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sablon_montaj,sistem_led,structura_suport"
+        },
+        {
+          "key": "quote_input",
+          "source": "request_body",
+          "detail": "read_only_normalization_no_pricing_engine"
+        }
+      ],
+      "official_authority": null,
+      "diagnostic_cost_plus_td": "TD-W3-V6-DIAG-COST-PLUS-001"
+    },
+    "warnings": [
+      "Analiza brută și modelul confirmat diferă la număr de contururi/litere — operatorul a confirmat modelul de producție.",
+      "Fără suport comun: sursele calculate se includ în colet la ambalare.",
+      "MaterialIntent conține estimări conceptuale — fără mutație inventory.",
+      "PSU will be packed and handled at packaging/delivery stage.",
+      "Commercial packaging rule (fixed/set) not yet owner-defined.",
+      "acm_panel:quantity_source=commercial_deduction",
+      "acm_panel:cut_v_quantity_source=commercial_deduction"
+    ],
+    "blockers": [
+      {
+        "code": "MISSING_FACE_VINYL_ROLL_WIDTH",
+        "message": "V6 backend pricing input is not ready for dry-run."
+      },
+      {
+        "code": "runtime_capture:PRINT_REQUIRED_UNKNOWN",
+        "message": "V6 backend pricing input is not ready for dry-run."
+      },
+      {
+        "code": "runtime_capture:LAMINATION_REQUIRED_UNKNOWN",
+        "message": "V6 backend pricing input is not ready for dry-run."
+      }
+    ],
+    "can_write_quote_totals": false,
+    "can_create_quote_snapshot": false,
+    "dry_run_only": true,
+    "persistence": {
+      "creates_quote": false,
+      "updates_quote": false,
+      "writes_quote_totals": false,
+      "creates_quote_snapshot": false,
+      "creates_order": false
+    }
+  }
+}

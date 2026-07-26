@@ -1,0 +1,18 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "verbs": {
+    "CLAIM": { "actor": "eligible employee", "effect": "sets PRINCIPAL assignee if open", "starts_session": false },
+    "ASSIGN": { "actor": "manager/operator", "effect": "sets PRINCIPAL assignee", "starts_session": false },
+    "JOIN": { "actor": "eligible employee", "effect": "adds HELPER participant", "modifies_assignee": false },
+    "REASSIGN": { "actor": "manager", "effect": "changes PRINCIPAL assignee with audit", "requires_policy": "active session handling" },
+    "LEAVE": { "actor": "participant", "effect": "ends own session; marks participant left", "modifies_assignee": false }
+  },
+  "concurrency": {
+    "single_active_principal": true,
+    "multiple_helpers": true,
+    "double_claim": "409 task_already_assigned — existing MOBILE-T06 lock preserved",
+    "helper_join_not_blocked_by_claim": true,
+    "principal_leave": "requires replacement OR manager override OR policy allows orphan principal"
+  },
+  "preserve_existing": ["assign_plan_task lock", "claim_my_task", "start-from-available rollback"]
+}

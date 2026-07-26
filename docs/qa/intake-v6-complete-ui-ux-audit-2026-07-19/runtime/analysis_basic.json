@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "readiness": "layer_roles_incomplete",
+  "layers": {
+    "confirmation_status": "missing",
+    "layers": [
+      {
+        "layer_key": "pseudo:fill-c5c6c6",
+        "layer_id": "pseudo:fill-c5c6c6",
+        "layer_name": "pseudo fill-c5c6c6",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": null,
+        "confirmation_state": "pending",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "pseudo:fill-e31e24",
+        "layer_id": "pseudo:fill-e31e24",
+        "layer_name": "pseudo fill-e31e24",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": null,
+        "confirmation_state": "pending",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      }
+    ],
+    "layer_bindings": [],
+    "warnings": []
+  }
+}

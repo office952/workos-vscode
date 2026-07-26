@@ -1,0 +1,588 @@
+﻿{
+    "pricing_status":  "V6_PRICED_DRY_RUN_READY",
+    "pricing_authority":  "commercial_price_proposal_7g",
+    "commercial_authority_status":  "ready",
+    "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+    "workspace_code":  "IV6-EA145E74",
+    "intake_code":  null,
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_composition_recommendation":  {
+                                               "status":  "needs_confirmation",
+                                               "composition_type":  "letters_plus_support",
+                                               "source":  "analyzer_rules_v1",
+                                               "recommended_templates":  [
+                                                                             {
+                                                                                 "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                                                 "role_in_composition":  "letters",
+                                                                                 "reason":  "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+                                                                                 "source_layer_ids":  [
+                                                                                                          "pseudo:fill-e31e24"
+                                                                                                      ],
+                                                                                 "confidence":  "high",
+                                                                                 "status":  "suggested"
+                                                                             },
+                                                                             {
+                                                                                 "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                                                                 "role_in_composition":  "support_panel",
+                                                                                 "reason":  "Support/background contour detected; maps to live optional component TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 (legacy alias TPL-BOND-CASETAT is not authority).",
+                                                                                 "source_layer_ids":  [
+                                                                                                          "pseudo:fill-c5c6c6"
+                                                                                                      ],
+                                                                                 "confidence":  "medium",
+                                                                                 "status":  "available_optional"
+                                                                             }
+                                                                         ],
+                                               "composition_items":  [
+                                                                         {
+                                                                             "composition_item_id":  "letters",
+                                                                             "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                                             "component_role":  "volumetric_letters",
+                                                                             "source_layer_ids":  [
+                                                                                                      "pseudo:fill-e31e24"
+                                                                                                  ],
+                                                                             "source_group_ids":  [
+                                                                                                      "pseudo:fill-e31e24"
+                                                                                                  ],
+                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                             "status":  "suggested"
+                                                                         },
+                                                                         {
+                                                                             "composition_item_id":  "support",
+                                                                             "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                                                             "component_role":  "support_panel",
+                                                                             "source_layer_ids":  [
+                                                                                                      "pseudo:fill-c5c6c6"
+                                                                                                  ],
+                                                                             "source_group_ids":  [
+                                                                                                      "pseudo:fill-c5c6c6"
+                                                                                                  ],
+                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                             "status":  "available_optional"
+                                                                         }
+                                                                     ],
+                                               "shared_modules_policy":  {
+                                                                             "dedupe_common_operations":  true,
+                                                                             "graphic_verification_scope":  "assembly",
+                                                                             "file_preparation_scope":  "assembly",
+                                                                             "light_test_scope":  "assembly",
+                                                                             "packaging_scope":  "assembly"
+                                                                         },
+                                               "blockers":  [
+
+                                                            ],
+                                               "warnings":  [
+                                                                {
+                                                                    "code":  "SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM",
+                                                                    "message":  "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETAT este legacy/deprecated."
+                                                                }
+                                                            ],
+                                               "generated_at":  "2026-07-19T15:12:03.822725+00:00"
+                                           },
+    "product_composition_confirmed":  {
+                                          "confirmed":  true,
+                                          "confirmed_at":  "2026-07-19T15:12:19.269340+00:00",
+                                          "confirmed_by":  "dev@localhost",
+                                          "items":  [
+                                                        {
+                                                            "composition_item_id":  "letters",
+                                                            "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                            "component_role":  "volumetric_letters",
+                                                            "source_layer_ids":  [
+                                                                                     "pseudo:fill-e31e24"
+                                                                                 ],
+                                                            "source_group_ids":  [
+                                                                                     "pseudo:fill-e31e24"
+                                                                                 ],
+                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                            "status":  "suggested"
+                                                        },
+                                                        {
+                                                            "composition_item_id":  "support",
+                                                            "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                                            "component_role":  "support_panel",
+                                                            "source_layer_ids":  [
+                                                                                     "pseudo:fill-c5c6c6"
+                                                                                 ],
+                                                            "source_group_ids":  [
+                                                                                     "pseudo:fill-c5c6c6"
+                                                                                 ],
+                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                            "status":  "available_optional"
+                                                        }
+                                                    ],
+                                          "operator_note":  null,
+                                          "source":  "operator_confirmation_v1"
+                                      },
+    "composition_items":  [
+                              {
+                                  "composition_item_id":  "letters",
+                                  "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                  "component_role":  "volumetric_letters",
+                                  "source_layer_ids":  [
+                                                           "pseudo:fill-e31e24"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "pseudo:fill-e31e24"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              },
+                              {
+                                  "composition_item_id":  "support",
+                                  "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                  "component_role":  "support_panel",
+                                  "source_layer_ids":  [
+                                                           "pseudo:fill-c5c6c6"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "pseudo:fill-c5c6c6"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "available_optional"
+                              }
+                          ],
+    "pricing_source":  "intake_v6_backend_priced_dry_run",
+    "pricing_mode":  "dry_run",
+    "commercial_totals":  {
+                              "subtotal_net":  669.47,
+                              "vat_rate":  21.0,
+                              "vat_amount":  140.59,
+                              "total_gross":  810.06,
+                              "currency":  "RON"
+                          },
+    "commercial_line_items":  [
+                                  {
+                                      "code":  "debitare_fata",
+                                      "label":  "Debitare faÈÄ litere",
+                                      "module_code":  "debitare_fata",
+                                      "component_code":  "comp_face_litere",
+                                      "basis_type":  "ml",
+                                      "quantity":  6.6456,
+                                      "unit":  "ml",
+                                      "commercial_unit_price":  25.0,
+                                      "subtotal":  166.14,
+                                      "pricing_rule_code":  "VOL_V2_FACE_CNC_ML",
+                                      "source":  "commercial_rules_volumetric_v2:face_perimeter_ml",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "quantity_source=product_aggregate.commercial_measurements"
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "modelare_cant_aluminiu",
+                                      "label":  "Modelare cant aluminiu",
+                                      "module_code":  "modelare_cant",
+                                      "component_code":  "comp_lateral_litere",
+                                      "basis_type":  "ml",
+                                      "quantity":  6.6456,
+                                      "unit":  "ml",
+                                      "commercial_unit_price":  30.0,
+                                      "subtotal":  199.368,
+                                      "pricing_rule_code":  "VOL_V2_RETURN_PROFILE_ML",
+                                      "source":  "commercial_rules_volumetric_v2:return_profile_ml",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Technical inputs: letter_perimeter_m, return_depth_mm â not minutes.",
+                                                       "quantity_source=product_aggregate.commercial_measurements"
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "debitare_spate",
+                                      "label":  "Debitare spate litere",
+                                      "module_code":  "debitare_spate",
+                                      "component_code":  "comp_spate_litere",
+                                      "basis_type":  "m2",
+                                      "quantity":  0.3447,
+                                      "unit":  "m2",
+                                      "commercial_unit_price":  20.0,
+                                      "subtotal":  6.894,
+                                      "pricing_rule_code":  "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+                                      "source":  "commercial_rules_volumetric_v2:back_m2_dev_bridge",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Step 8 dev bridge: interim mÂ² basis until owner formalizes ml vs mÂ² in Pricing Registry.",
+                                                       "quantity_source=product_aggregate.commercial_measurements"
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "sistem_led_module",
+                                      "label":  "Sistem LED â module",
+                                      "module_code":  "sistem_led",
+                                      "component_code":  "comp_led_litere",
+                                      "basis_type":  "piece",
+                                      "quantity":  27.0,
+                                      "unit":  "buc",
+                                      "commercial_unit_price":  5.0,
+                                      "subtotal":  135.0,
+                                      "pricing_rule_code":  "VOL_V2_LED_MODULE_PIECE",
+                                      "source":  "commercial_rules_volumetric_v2:letter_led_module_count",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "quantity_source=product_aggregate.commercial_measurements"
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "sursa_led",
+                                      "label":  "SursÄ LED (PSU)",
+                                      "module_code":  "sistem_led",
+                                      "component_code":  "comp_led_litere",
+                                      "basis_type":  "piece",
+                                      "quantity":  1.0,
+                                      "unit":  "buc",
+                                      "commercial_unit_price":  150.0,
+                                      "subtotal":  150.0,
+                                      "pricing_rule_code":  "VOL_V2_LED_PSU_PIECE",
+                                      "source":  "commercial_rules_volumetric_v2:psu_piece_dev_bridge",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Commercial sells one PSU unit; selected_psu_watts is reference only.",
+                                                       "quantity_source=product_aggregate.commercial_measurements"
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "finisaje_colantare_vopsire",
+                                      "label":  "Finisaje â colantare / vopsire",
+                                      "module_code":  "finisaje",
+                                      "component_code":  "comp_finisaj_litere",
+                                      "basis_type":  "m2",
+                                      "quantity":  0.3447,
+                                      "unit":  "m2",
+                                      "commercial_unit_price":  35.0,
+                                      "subtotal":  12.0645,
+                                      "pricing_rule_code":  "VOL_V2_FINISH_M2_OR_MINIMUM",
+                                      "source":  "commercial_rules_volumetric_v2:finish_area_m2",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Unconfirmed finish groups may require owner review before numeric pricing.",
+                                                       "quantity_source=product_aggregate.commercial_measurements",
+                                                       "Finish groups not confirmed â numeric commercial price deferred."
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  "RON",
+                                      "cpp_currency":  "RON",
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  },
+                                  {
+                                      "code":  "ambalare",
+                                      "label":  "Ambalare",
+                                      "module_code":  "ambalare_livrare_montaj",
+                                      "component_code":  "comp_finisaj_litere",
+                                      "basis_type":  "fixed",
+                                      "quantity":  null,
+                                      "unit":  "set",
+                                      "commercial_unit_price":  null,
+                                      "subtotal":  null,
+                                      "pricing_rule_code":  "VOL_V2_PACKAGING_PENDING",
+                                      "source":  "commercial_rules_volumetric_v2:packaging_rule_pending",
+                                      "owner_decision_required":  true,
+                                      "warnings":  [
+
+                                                   ],
+                                      "segment_key":  null,
+                                      "layer_identity":  null,
+                                      "linked_template_code":  null,
+                                      "registry_pricing_code":  null,
+                                      "source_currency":  null,
+                                      "cpp_currency":  null,
+                                      "currency_conversion_rate":  null,
+                                      "currency_conversion_source":  null
+                                  }
+                              ],
+    "internal_cost_trace":  {
+                                "available":  true,
+                                "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+                                "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                "estimated_cost_total":  369.37,
+                                "material_cost_total":  369.37,
+                                "currency":  "EUR",
+                                "contains_estimates":  true,
+                                "contains_missing_prices":  false
+                            },
+    "estimated_internal_cost_trace":  {
+                                          "available":  true,
+                                          "source":  "estimated_internal_cost",
+                                          "status":  "blocked",
+                                          "estimated_total_internal_cost":  677.7183,
+                                          "estimated_material_cost":  366.3831,
+                                          "estimated_operation_cost":  311.3352,
+                                          "currency":  "RON",
+                                          "blockers":  [
+                                                           {
+                                                               "code":  "INTERNAL_MATERIAL_COST_MISSING",
+                                                               "message":  "Missing inventory unit_cost for MAT-ADEZIV-CANT-LITERE.",
+                                                               "module_code":  "modelare_cant"
+                                                           }
+                                                       ],
+                                          "provenance":  [
+                                                             {
+                                                                 "key":  "aggregate_cost_bom",
+                                                                 "source":  "aggregate_cost_bom_builder_service",
+                                                                 "detail":  "workspace=True bom_status=blocked materials=18 operations=7 logo_operations=0"
+                                                             },
+                                                             {
+                                                                 "key":  "internal_rules",
+                                                                 "source":  "internal_cost_rules_volumetric_v2",
+                                                                 "detail":  "temporary_local_catalog_until_step_7i"
+                                                             },
+                                                             {
+                                                                 "key":  "inventory",
+                                                                 "source":  "inventory_materials.unit_cost",
+                                                                 "detail":  "acquisition_cost_not_commercial_price"
+                                                             },
+                                                             {
+                                                                 "key":  "active_modules",
+                                                                 "source":  "estimated_internal_cost_service",
+                                                                 "detail":  "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sablon_montaj,sistem_led"
+                                                             }
+                                                         ]
+                                      },
+    "diagnostic_cost_plus_trace":  {
+                                       "subtotal_net":  2493.25,
+                                       "vat_rate":  21.0,
+                                       "vat_amount":  523.58,
+                                       "total_gross":  3016.83,
+                                       "currency":  "RON",
+                                       "cost_plus_trace":  {
+                                                               "internal_cost_total":  369.37,
+                                                               "internal_cost_currency":  "EUR",
+                                                               "eur_to_ron_rate":  5.0,
+                                                               "production_base_ron":  1846.85,
+                                                               "markup_percent":  35.0,
+                                                               "markup_value":  646.4,
+                                                               "manual_adjustment_ron":  0.0,
+                                                               "discount_percent":  0.0,
+                                                               "discount_value":  0.0
+                                                           },
+                                       "diagnostic_only":  true,
+                                       "td_id":  "TD-W3-V6-DIAG-COST-PLUS-001",
+                                       "canonical_authority":  "commercial_price_proposal_7g"
+                                   },
+    "pricing_input_trace":  {
+                                "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+                                "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                "is_ready_for_quote":  true,
+                                "adapter_status":  "warnings",
+                                "adapter_blockers":  [
+
+                                                     ],
+                                "adapter_warnings":  [
+                                                         "Analiza brutÄ Èi modelul confirmat diferÄ la numÄr de contururi/litere â operatorul a confirmat modelul de producÈie.",
+                                                         "FÄrÄ suport comun: sursele calculate se includ Ã®n colet la ambalare.",
+                                                         "MaterialIntent conÈine estimÄri conceptuale â fÄrÄ mutaÈie inventory.",
+                                                         "PSU will be packed and handled at packaging/delivery stage."
+                                                     ],
+                                "production_counts":  {
+                                                          "letter_count":  11,
+                                                          "real_letters_count":  11,
+                                                          "cut_contour_count":  14,
+                                                          "inner_hole_count":  2,
+                                                          "cutting_contours_count":  14,
+                                                          "material_piece_count":  11,
+                                                          "volumetric_piece_count":  13,
+                                                          "artwork_piece_count":  2
+                                                      },
+                                "finish_summary":  {
+                                                       "face_finish_type":  "none",
+                                                       "face_vinyl_enabled":  false,
+                                                       "return_finish_type":  "raw_material",
+                                                       "return_depth_mm":  60.0,
+                                                       "return_wrapped":  false,
+                                                       "return_painted":  false,
+                                                       "letter_group_count":  1,
+                                                       "grouped_finish_pricing_mode":  "per_group_handoff",
+                                                       "letter_group_finish_matrix":  [
+                                                                                          {
+                                                                                              "group_id":  "pseudo:fill-e31e24",
+                                                                                              "group_label":  "pseudo fill-e31e24",
+                                                                                              "face_finish_type":  "none",
+                                                                                              "face_finish_template_type":  "none",
+                                                                                              "face_oracal_code":  null,
+                                                                                              "face_oracal_name":  null,
+                                                                                              "return_finish_type":  "white_aluminum",
+                                                                                              "return_finish_template_type":  "none",
+                                                                                              "return_oracal_code":  null,
+                                                                                              "return_oracal_name":  null,
+                                                                                              "return_depth_mm":  60,
+                                                                                              "confirmed":  true,
+                                                                                              "face_area_m2":  0.34470940764336555,
+                                                                                              "perimeter_m":  7.270753215906503,
+                                                                                              "element_count":  1,
+                                                                                              "source_fill_color":  "#e31e24"
+                                                                                          }
+                                                                                      ]
+                                                   },
+                                "quote_input_keys":  [
+                                                         "artwork_layer_count",
+                                                         "artwork_piece_count",
+                                                         "artwork_return_perimeter_ml",
+                                                         "back_bevel_enabled",
+                                                         "back_material",
+                                                         "backing_material",
+                                                         "backing_mode",
+                                                         "backing_present",
+                                                         "backing_thickness_mm",
+                                                         "bar_material",
+                                                         "bevel_perimeter_ml",
+                                                         "can_create_quote",
+                                                         "canonical_readiness",
+                                                         "cnc_cutting_perimeter_ml",
+                                                         "cut_contour_count",
+                                                         "cutting_contours_count",
+                                                         "cutting_perimeter_ml",
+                                                         "depth_mm",
+                                                         "estimated_led_watts",
+                                                         "face_area_m2",
+                                                         "face_cutting_perimeter_ml",
+                                                         "face_finish_type",
+                                                         "face_vinyl_enabled",
+                                                         "face_vinyl_roll_width_mm",
+                                                         "geometry_calculation_quality",
+                                                         "grouped_finish_pricing_mode",
+                                                         "height_mm",
+                                                         "hole_perimeter_ml",
+                                                         "illuminated",
+                                                         "inner_hole_count",
+                                                         "inner_holes_count",
+                                                         "intake_schema_version",
+                                                         "intake_source",
+                                                         "inventory_mutation_allowed",
+                                                         "led_module_count",
+                                                         "led_module_power_w",
+                                                         "led_perimeter_ml",
+                                                         "led_strip_power_w_per_ml",
+                                                         "letter_count",
+                                                         "letter_face_area_m2",
+                                                         "letter_group_count",
+                                                         "letter_group_finish_matrix",
+                                                         "letter_group_finish_source",
+                                                         "letter_perimeter_m",
+                                                         "letter_return_perimeter_ml",
+                                                         "light_color",
+                                                         "lighting_system_type",
+                                                         "material_piece_count",
+                                                         "metal_support_required",
+                                                         "module_wattage",
+                                                         "mounting_scope",
+                                                         "mounting_solution",
+                                                         "mounting_system",
+                                                         "mounting_template_area_m2",
+                                                         "mounting_template_enabled",
+                                                         "mounting_template_material_type",
+                                                         "operation_flags",
+                                                         "psu_configuration",
+                                                         "raw_vector_total_perimeter_ml",
+                                                         "readiness_status",
+                                                         "real_letters_count",
+                                                         "required_psu_watts",
+                                                         "requires_grouped_finish_review",
+                                                         "return_depth_mm",
+                                                         "return_finish_type",
+                                                         "return_material_perimeter_ml",
+                                                         "return_painted",
+                                                         "return_wrapped",
+                                                         "selected_psu_watts",
+                                                         "support_mode",
+                                                         "template_code",
+                                                         "total_letter_perimeter_ml",
+                                                         "vector_file",
+                                                         "vector_total_perimeter_source",
+                                                         "volumetric_piece_count",
+                                                         "width_mm"
+                                                     ]
+                            },
+    "commercial_proposal_trace":  {
+                                      "available":  true,
+                                      "source":  "commercial_price_proposal",
+                                      "status":  "ready",
+                                      "quote_ready_for_commercial_review":  true,
+                                      "subtotal_commercial":  669.4665,
+                                      "provenance":  [
+                                                         {
+                                                             "key":  "product_definition",
+                                                             "source":  "product_definition_builder_service",
+                                                             "detail":  "read_only=true workspace_id=3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982"
+                                                         },
+                                                         {
+                                                             "key":  "commercial_rules",
+                                                             "source":  "commercial_rules_volumetric_v2",
+                                                             "detail":  "temporary_local_catalog_until_step_7i"
+                                                         },
+                                                         {
+                                                             "key":  "active_modules",
+                                                             "source":  "commercial_price_proposal_service",
+                                                             "detail":  "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sablon_montaj,sistem_led"
+                                                         },
+                                                         {
+                                                             "key":  "quote_input",
+                                                             "source":  "request_body",
+                                                             "detail":  "read_only_normalization_no_pricing_engine"
+                                                         }
+                                                     ],
+                                      "official_authority":  "commercial_price_proposal_7g",
+                                      "diagnostic_cost_plus_td":  "TD-W3-V6-DIAG-COST-PLUS-001"
+                                  },
+    "warnings":  [
+                     "Analiza brutÄ Èi modelul confirmat diferÄ la numÄr de contururi/litere â operatorul a confirmat modelul de producÈie.",
+                     "FÄrÄ suport comun: sursele calculate se includ Ã®n colet la ambalare.",
+                     "MaterialIntent conÈine estimÄri conceptuale â fÄrÄ mutaÈie inventory.",
+                     "PSU will be packed and handled at packaging/delivery stage.",
+                     "Commercial packaging rule (fixed/set) not yet owner-defined."
+                 ],
+    "blockers":  [
+
+                 ],
+    "can_write_quote_totals":  false,
+    "can_create_quote_snapshot":  false,
+    "dry_run_only":  true,
+    "persistence":  {
+                        "creates_quote":  false,
+                        "updates_quote":  false,
+                        "writes_quote_totals":  false,
+                        "creates_quote_snapshot":  false,
+                        "creates_order":  false
+                    }
+}

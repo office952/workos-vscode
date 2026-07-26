@@ -1,0 +1,43 @@
+﻿{
+    "port":  8013,
+    "health":  {
+                   "status":  "healthy"
+               },
+    "health_err":  null,
+    "finish":  {
+                   "workspace_code":  "IV6-EA145E74",
+                   "updated_at":  "2026-07-19T15:37:15.857960",
+                   "mounting_scope":  "none",
+                   "mounting_solution":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                   "mounting_template_enabled":  true,
+                   "corner":  null,
+                   "seg":  "CONFIRMED",
+                   "ecm":  "DRAFT"
+               },
+    "pd":  {
+               "solution_status":  "confirmed",
+               "blockers":  [
+
+                            ],
+               "compatibility_status":  "compatible",
+               "acm_included":  [
+                                    {
+                                        "code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                        "included":  true
+                                    }
+                                ],
+               "provenance":  [
+                                  "frozen_mounting_resolution=prep_active=False scope=none",
+                                  "mounting_solution=TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+                              ]
+           },
+    "agg":  {
+                "conflict_codes":  [
+
+                                   ],
+                "has_MOUNTING_SCOPE_INACTIVE":  false
+            },
+    "errors":  [
+
+               ]
+}

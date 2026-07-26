@@ -1,0 +1,11 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "verdict": "PROD_FLEX_ARCH_01_PLAN_READY_REQUIRES_DB_DECISION",
+  "recommended_next": "OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE",
+  "rationale": "Plan complete; owner must gate JSON-extension vs tables and approve FLEX-01 start",
+  "alternatives": [
+    { "gate": "PROD-FLEX-ARCH-01B-PARTICIPANT-PERSISTENCE-DECISION", "when": "Owner wants persistence split before implementation gate" },
+    { "gate": "PROD-FLEX-ARCH-01C-PROGRESS-PERSISTENCE-DECISION", "when": "Quantity progress storage debated separately" }
+  ],
+  "do_not_implement": true
+}

@@ -62,7 +62,7 @@ function readBlockerCodes(dryRun: IntakeV6PricedQuoteDryRunResponse | null): str
 }
 
 function formatMoney(value: number | null | undefined, currency = "RON"): string {
-  if (value == null || Number.isNaN(value)) return "—";
+  if (value == null || typeof value !== "number" || Number.isNaN(value)) return "—";
   return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }
 
@@ -86,42 +86,42 @@ function buildWorkflowSteps(args: {
   return [
     {
       id: "price",
-      label: "Prețuire",
-      done: priced,
-      active: !priced && args.dryRunReady,
-    },
-    {
-      id: "snapshot",
-      label: "Snapshot V2",
-      done: args.snapshotExists,
-      active: priced && !args.snapshotExists,
-    },
-    {
-      id: "review",
-      label: "Review",
-      done: args.pricingDone,
-      active: args.snapshotExists && !args.pricingDone,
-    },
-    {
-      id: "owner",
-      label: "Aprobare",
-      done: args.ownerValid,
-      active: args.pricingDone && !args.ownerValid,
-    },
-    {
-      id: "accept",
-      label: "Accept",
-      done: args.accepted,
-      active: args.ownerValid && !args.accepted,
-    },
-    {
-      id: "order",
-      label: "Comandă",
-      done: args.converted,
-      active: args.accepted && !args.converted,
-    },
-  ];
-}
+          label: "Ofertă client",
+          done: priced,
+          active: !priced && args.dryRunReady,
+        },
+        {
+          id: "snapshot",
+          label: "Snapshot V2",
+          done: args.snapshotExists,
+          active: priced && !args.snapshotExists,
+        },
+        {
+          id: "review",
+          label: "Review",
+          done: args.pricingDone,
+          active: args.snapshotExists && !args.pricingDone,
+        },
+        {
+          id: "owner",
+          label: "Aprobare",
+          done: args.ownerValid,
+          active: args.pricingDone && !args.ownerValid,
+        },
+        {
+          id: "accept",
+          label: "Accept",
+          done: args.accepted,
+          active: args.ownerValid && !args.accepted,
+        },
+        {
+          id: "order",
+          label: "Comandă",
+          done: args.converted,
+          active: args.accepted && !args.converted,
+        },
+      ];
+    }
 
 function WorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
   return (
@@ -137,7 +137,7 @@ function WorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
               ? "border-emerald-700/40 bg-emerald-950/20 text-emerald-200"
               : step.active
                 ? "border-amber-600/40 bg-amber-950/20 text-amber-100"
-                : "border-[#1E293B] bg-[#0B1220] text-slate-500"
+                : "border-wo-border-subtle bg-wo-surface-input text-slate-500"
           }`}
           data-testid={`intake-v6-workflow-step-${step.id}`}
         >
@@ -219,7 +219,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
   const dryRunReady = dryRun?.pricing_status === "V6_PRICED_DRY_RUN_READY";
   const dryRunTotals = dryRun?.commercial_totals;
-  const expectedTotalGross = dryRunTotals?.total_gross ?? null;
+  const dryRunExpectedGross = dryRunTotals?.total_gross ?? null;
   const dryRunBlockers = useMemo(() => readBlockerCodes(dryRun), [dryRun]);
 
   if (!intakeCode) {
@@ -240,9 +240,43 @@ export default function IntakeV6QuoteCommercialSpinePanel({
   const snapshotV2 = state?.snapshot_v2 ?? {};
   const snapshotExists = snapshotV2.exists === true;
   const snapshotAcceptAllowed = snapshotV2.accept_allowed === true;
+  const snapshotAuthoritativeOffer = state?.snapshot_authoritative_offer ?? null;
+  const pricingReviewReadModel = state?.pricing_review_read_model ?? null;
+  const snapshotCommercialTotals =
+    pricingReviewReadModel &&
+    typeof pricingReviewReadModel === "object" &&
+    pricingReviewReadModel.commercial_totals &&
+    typeof pricingReviewReadModel.commercial_totals === "object"
+      ? (pricingReviewReadModel.commercial_totals as Record<string, unknown>)
+      : null;
+  const snapshotAuthorityGross =
+    typeof snapshotCommercialTotals?.total_gross === "number"
+      ? snapshotCommercialTotals.total_gross
+      : null;
+  const snapshotAuthorityCurrency =
+    typeof snapshotCommercialTotals?.currency === "string"
+      ? snapshotCommercialTotals.currency
+      : "RON";
+  const columnDriftBlocked = pricingReviewReadModel?.column_drift_blocked === true;
+  const internalCostReview = pricingReviewReadModel?.internal_cost as
+    | Record<string, unknown>
+    | undefined;
   const accepted = state?.quote_accepted === true;
   const converted = state?.v6_order_conversion?.converted === true;
   const convertBlockers = readBlockedReasons(state?.v6_order_conversion?.blocked_reasons);
+
+  const offerHandoffExpectedGross =
+    snapshotExists && quoteTotalsAvailable
+      ? (state?.quote_commercial_totals?.grand_total as number | null | undefined) ?? null
+      : dryRunExpectedGross;
+  const offerHandoffReady = snapshotExists
+    ? quoteTotalsAvailable && offerHandoffExpectedGross != null
+    : dryRunReady && offerHandoffExpectedGross != null;
+  const offerHandoffSuccessStatuses = new Set([
+    "V6_PRICED_QUOTE_WRITTEN",
+    "V6_OFFER_FROM_SNAPSHOT_WRITTEN",
+    "V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT",
+  ]);
 
   const workflowSteps = buildWorkflowSteps({
     quoteTotalsAvailable,
@@ -254,17 +288,26 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     dryRunReady,
   });
 
-  const heroTotal = quoteTotalsAvailable
-    ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
-    : dryRunReady
-      ? formatMoney(expectedTotalGross, dryRunTotals?.currency)
-      : "Nepretuit";
+  const heroTotal =
+    snapshotExists && snapshotAuthorityGross != null
+      ? formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)
+      : quoteTotalsAvailable
+        ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
+        : dryRunReady
+          ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
+          : "Nepretuit";
 
-  const heroHint = quoteTotalsAvailable
-    ? "Total oficial pe quote. Continuă cu snapshot și review."
-    : dryRunReady
-      ? "Previzualizare backend pregătită. Scrie totalurile pe ofertă."
-      : "Completează workspace-ul V6 sau rezolvă blockerele de mai jos.";
+  const heroHint = snapshotExists
+    ? snapshotAuthoritativeOffer
+      ? columnDriftBlocked
+        ? "Snapshot V2 inghetat — proiectia pe quote nu mai corespunde. Re-trimite oferta din snapshot."
+        : "Oferta si review folosesc snapshot V2 inghetat. Continua cu review si accept."
+      : "Snapshot V2 inghetat — trimiterea in ofertare foloseste snapshot-ul, nu dry-run live."
+    : quoteTotalsAvailable
+      ? "Ofertă client pe quote. Continuă cu snapshot și review."
+      : dryRunReady
+        ? "Previzualizare backend pregătită. Scrie totalurile pe Oferta client."
+        : "Completează workspace-ul V6 sau rezolvă blockerele de mai jos.";
 
   const primaryAction = resolvePrimarySpineAction({
     quoteTotalsAvailable,
@@ -287,11 +330,14 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     <div className={v6.card} data-testid="intake-v6-commercial-spine">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Flux comercial V6</h3>
+          <h3 className="text-[13px] font-bold text-slate-100">Flux Ofertă client (V6)</h3>
           <p className="mt-1 text-[11px] text-slate-400">{heroHint}</p>
+          <p className="mt-1 text-[10px] text-slate-500">
+            Ofertă client = preț pentru client. Cost intern estimativ = referință atelier (canal separat).
+          </p>
         </div>
         <div className="text-right" data-testid="intake-v6-hero-total">
-          <p className="text-[10px] uppercase tracking-wide text-slate-500">Total estimat / oficial</p>
+          <p className="text-[10px] uppercase tracking-wide text-slate-500">Ofertă client (total)</p>
           <p
             className={`text-[18px] font-bold ${quoteTotalsAvailable || dryRunReady ? "text-slate-100" : "text-amber-300"}`}
           >
@@ -302,13 +348,49 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       <WorkflowStepper steps={workflowSteps} />
 
+      {snapshotExists && pricingReviewReadModel ? (
+        <div
+          className="mb-4 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3"
+          data-testid="intake-v6-pricing-review-authority"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[11px] text-slate-300">
+              Sursa review:{" "}
+              <strong data-testid="intake-v6-pricing-review-source">
+                {pricingReviewReadModel.authority_source === "quote_snapshot_v2"
+                  ? "Snapshot V2 inghetat"
+                  : "Previzualizare pre-freeze"}
+              </strong>
+            </p>
+            {snapshotAuthorityGross != null ? (
+              <p className="text-[11px] text-slate-200" data-testid="intake-v6-pricing-review-gross">
+                Total client: {formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)}
+              </p>
+            ) : null}
+          </div>
+            {internalCostReview?.available === true ? (
+            <p className="mt-2 text-[11px] text-amber-200/90" data-testid="intake-v6-internal-cost-review">
+              Cost intern estimativ:{" "}
+              {internalCostReview.execution_blocked === true
+                ? "partial / blocat pentru executie"
+                : "disponibil (nu este Ofertă client)"}
+            </p>
+          ) : null}
+          {columnDriftBlocked ? (
+            <p className="mt-2 text-[11px] text-rose-300" data-testid="intake-v6-column-drift-blocker">
+              Proiectia pe quote nu corespunde snapshot-ului inghetat. Re-trimite oferta din snapshot inainte de review.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {loading && !state ? (
         <p className="mb-3 text-[12px] text-slate-400">Încarc starea comercială…</p>
       ) : null}
 
-      <section className="mb-4 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3" data-testid="intake-v6-priced-quote-bridge">
+      <section className="mb-4 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3" data-testid="intake-v6-priced-quote-bridge">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h4 className="text-[12px] font-semibold text-slate-200">1. Prețuire oficială</h4>
+          <h4 className="text-[12px] font-semibold text-slate-200">1. Ofertă client</h4>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
               pricingSectionComplete || dryRunReady
@@ -318,14 +400,14 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             data-testid="intake-v6-dry-run-status-label"
           >
             {pricingSectionComplete
-              ? "Prețuit"
+              ? "Ofertă scrisă"
               : dryRunStatusLabel(dryRun?.pricing_status, dryRunLoading)}
           </span>
         </div>
 
         {pricingSectionComplete && !showSecondaryActions && primaryAction !== "snapshot" ? (
           <p className="text-[11px] text-emerald-200/90" data-testid="intake-v6-pricing-complete-summary">
-            Totalurile oficiale sunt pe ofertă.
+            Totalurile Ofertă client sunt pe ofertă.
           </p>
         ) : dryRunLoading && !dryRun ? (
           <p className="text-[11px] text-slate-400">Calculez previzualizarea backend…</p>
@@ -334,7 +416,12 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             {!quoteTotalsAvailable && dryRunReady ? (
               <p className="mb-3 text-[11px] text-slate-300">
                 Total propus:{" "}
-                <strong data-testid="intake-v6-dry-run-total">{formatMoney(expectedTotalGross, dryRunTotals?.currency)}</strong>
+                <strong data-testid="intake-v6-dry-run-total">
+                  {formatMoney(
+                    dryRunExpectedGross,
+                    typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON",
+                  )}
+                </strong>
               </p>
             ) : null}
 
@@ -344,6 +431,39 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                   <li key={code}>• {formatQuoteHandoffBlocker(code)}</li>
                 ))}
               </ul>
+            ) : null}
+
+            {Array.isArray(dryRun?.commercial_line_items) && dryRun.commercial_line_items.length > 0 ? (
+              <details className="mb-3" data-testid="intake-v6-commercial-line-provenance">
+                <summary className="cursor-pointer text-[11px] text-slate-300">
+                  Linii comerciale ({dryRun.commercial_line_items.length})
+                </summary>
+                <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto text-[11px] text-slate-400">
+                  {dryRun.commercial_line_items.map((raw, index) => {
+                    const line = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+                    const code = String(line.code ?? `line-${index}`);
+                    const label = String(line.label ?? code);
+                    const segment = typeof line.segment_key === "string" ? line.segment_key : null;
+                    const subtotal = typeof line.subtotal === "number" ? line.subtotal : null;
+                    const unitPrice = line.commercial_unit_price;
+                    const missing =
+                      line.owner_decision_required === true &&
+                      (unitPrice == null || subtotal == null);
+                    const money =
+                      subtotal != null
+                        ? formatMoney(subtotal, typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON")
+                        : "tarif lipsă";
+                    return (
+                      <li key={code}>
+                        {missing ? "⚠ " : "• "}
+                        {label}
+                        {segment ? ` [${segment}]` : ""}
+                        {` — ${money}`}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </details>
             ) : null}
 
             {!quoteTotalsAvailable && !pricingDone ? (
@@ -360,8 +480,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                 className={v6.btnPrimary}
                 disabled={
                   !!busyAction ||
-                  !dryRunReady ||
-                  expectedTotalGross == null ||
+                  !offerHandoffReady ||
                   !clientAnalysisHash
                 }
                 data-testid="intake-v6-handoff-to-offer"
@@ -369,11 +488,11 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                   void runAction("handoff", async () => {
                     const result = await handoffIntakeV6ToOffer(workspaceId, {
                       client_analysis_hash: clientAnalysisHash,
-                      expected_total_gross: expectedTotalGross as number,
-                      expected_pricing_hash: dryRun?.pricing_hash ?? undefined,
+                      expected_total_gross: offerHandoffExpectedGross as number,
+                      expected_pricing_hash: snapshotExists ? undefined : dryRun?.pricing_hash ?? undefined,
                       operator_confirmation: true,
                     });
-                    if (result.status !== "V6_PRICED_QUOTE_WRITTEN") {
+                    if (!offerHandoffSuccessStatuses.has(result.status)) {
                       const blockerCodes = (result.blockers ?? []).map((item) => item.code).join(", ");
                       throw new Error(
                         blockerCodes
@@ -394,13 +513,13 @@ export default function IntakeV6QuoteCommercialSpinePanel({
               <button
                 type="button"
                 className={primaryAction === "write" ? v6.btnPrimary : v6.btnGhost}
-                disabled={!!busyAction || !dryRunReady || quoteTotalsAvailable || expectedTotalGross == null}
+                disabled={!!busyAction || !dryRunReady || quoteTotalsAvailable || dryRunExpectedGross == null}
                 data-testid="intake-v6-write-priced-quote"
                 onClick={() =>
                   void runAction("write", async () => {
                     const result = await writeIntakeV6PricedQuote(workspaceId, {
                       quote_id: quoteId,
-                      expected_total_gross: expectedTotalGross as number,
+                      expected_total_gross: dryRunExpectedGross as number,
                       expected_pricing_hash: dryRun?.pricing_hash ?? undefined,
                       operator_confirmation: true,
                     });
@@ -466,7 +585,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         )}
       </section>
 
-      <section className="mb-3 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3">
+      <section className="mb-3 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3">
         <h4 className="mb-2 text-[12px] font-semibold text-slate-200">2. Aprobare & conversie</h4>
         {convertBlockers.length > 0 && !converted ? (
           <ul className="mb-3 space-y-1 text-[11px] text-amber-200" data-testid="intake-v6-spine-blockers">
@@ -622,7 +741,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       {showTechnical ? (
         <div
-          className="mt-3 rounded border border-[#1E293B] bg-[#090f18] p-3 text-[10px] text-slate-500"
+          className="mt-3 rounded border border-wo-border-subtle bg-wo-surface-inset p-3 text-[10px] text-slate-500"
           data-testid="intake-v6-commercial-spine-truth-boundary"
         >
           <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -652,8 +771,8 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             </div>
           </dl>
           <p className="mt-2 leading-relaxed">
-            Totalurile oficiale provin din backend V6, nu din preview Intake. Snapshot V2 îngheață oferta
-            înainte de accept; conversia creează doar order snapshot, fără plan de execuție.
+            Totalurile Ofertă client provin din backend V6, nu din preview Intake. Snapshot V2 îngheață
+            Oferta client înainte de accept; conversia creează doar order snapshot, fără plan de execuție.
           </p>
           {dryRunTotals ? (
             <p className="mt-2" data-testid="intake-v6-dry-run-subtotal">

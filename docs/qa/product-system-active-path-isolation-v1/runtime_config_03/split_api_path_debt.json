@@ -1,0 +1,19 @@
+{
+  "paths": [
+    {
+      "consumer": "web-sdk createClient (intakesApi, quotesApi, ordersApi)",
+      "route": "same-origin /api via Vite proxy",
+      "target": "http://127.0.0.1:8001 (when canonical)"
+    },
+    {
+      "consumer": "getAPIBaseURL() direct fetch (execution, productFamilies)",
+      "route": "http://127.0.0.1:8001/api/v1/...",
+      "target": "direct backend"
+    }
+  ],
+  "risk_classification": "MEDIUM",
+  "can_produce_route_differences": true,
+  "notes": "If proxy mis-pointed, web-sdk routes fail while some direct-fetch routes may still work in dev",
+  "implementation_in_this_task": false,
+  "classification": "OPEN_DEBT"
+}

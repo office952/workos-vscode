@@ -1,0 +1,887 @@
+{
+  "id": "f682756c-4bbc-415d-8b33-d226ae4f1f29",
+  "finish_setup": {
+    "face_finish_type": "none",
+    "face_vinyl_roll_width_mm": null,
+    "finish_target": "all",
+    "return_finish_type": "white_aluminum",
+    "volum_aluminum_module_template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "return_oracal_code": null,
+    "return_oracal_name": null,
+    "return_depth_mm": 60,
+    "illuminated": true,
+    "lighting_system_type": "led_modules",
+    "light_color": "neutral",
+    "led_module_power_w": 0.75,
+    "led_strip_power_w_per_ml": 5,
+    "led_module_count": 27,
+    "letter_led_strip_length_m": null,
+    "emblem_led_strip_length_m": null,
+    "total_led_strip_length_m": null,
+    "estimated_led_watts": 20.25,
+    "required_psu_watts": 26.32,
+    "selected_psu_watts": 60,
+    "psu_configuration": [
+      60
+    ],
+    "psu_allocation_status": "ok",
+    "letter_group_finishes": [
+      {
+        "group_key": "pseudo:fill-e31e24",
+        "layer_name": "pseudo fill-e31e24",
+        "source_fill_color": "#e31e24",
+        "face_area_m2": 0.34470940764336555,
+        "perimeter_m": 7.270753215906503,
+        "element_count": 1,
+        "face_finish_type": "none",
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60,
+        "face_vinyl_roll_width_mm": null,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "artwork_finishes": [
+      {
+        "layer_key": "pseudo:fill-c5c6c6",
+        "layer_name": "pseudo fill-c5c6c6",
+        "display_name": null,
+        "source_layer_name": "pseudo fill-c5c6c6",
+        "original_detected_label": "pseudo fill-c5c6c6",
+        "position_hint": null,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "print_transparency": "translucent",
+        "material_code": null,
+        "face_personalization_method": "print_laminate",
+        "face_roll_width_mm": null,
+        "print_roll_width_mm": null,
+        "lamination_roll_width_mm": null,
+        "print_required": true,
+        "lamination_required": true,
+        "roll_side_retraction_mm": null,
+        "roll_total_retraction_mm": null,
+        "face_oracal_code": null,
+        "face_oracal_name": null,
+        "print_material_code": null,
+        "lamination_material_code": null,
+        "estimated_area_m2": 0.7000002749689588,
+        "element_count": 2,
+        "distinct_fill_count": 2,
+        "return_finish_type": "white_aluminum",
+        "return_oracal_code": null,
+        "return_oracal_name": null,
+        "return_depth_mm": 60,
+        "backing_mode": null,
+        "confirmed": false
+      }
+    ],
+    "artwork_complexity_decisions": [
+      {
+        "artwork_id": "layer:pseudo:fill-c5c6c6",
+        "operator_application": "vinyl_cut",
+        "accepted_system_recommendation": false,
+        "override_manual_vinyl_cut": false,
+        "operator_note": null
+      }
+    ],
+    "backing_mode": "forex_10_no_bevel",
+    "back_bevel_enabled": false,
+    "mounting_template_enabled": true,
+    "mounting_template_area_m2": 0.7004,
+    "mounting_template_material_type": "forex",
+    "mounting_scope": "none",
+    "site_installation_included": null,
+    "mounting_solution": {
+      "kind": "product_system_template",
+      "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "configuration": {
+        "panel_width_mm": 1000,
+        "panel_height_mm": 350,
+        "acm_thickness_mm": 3,
+        "return_depth_mm": 60,
+        "rear_lip_mm": 25,
+        "fold_sides": "all",
+        "v_groove_angle_deg": 135,
+        "frame_clearance_mm": 0,
+        "fold_count": 2,
+        "finished_depth_mm": 60,
+        "svg_support_element_id": "el-1",
+        "geometry_hash": "7af1352f",
+        "contour_id": "cc_7af1352f",
+        "panel_area_mm2": 350000.137,
+        "panel_perimeter_mm": 2700.001,
+        "internal_frame_enabled": false,
+        "internal_frame": {
+          "enabled": false,
+          "material_code": null,
+          "profile_code": null,
+          "panel_outer_width_mm": null,
+          "panel_outer_height_mm": null,
+          "panel_material_thickness_mm": null,
+          "total_fit_allowance_mm": 2,
+          "frame_outer_width_mm": null,
+          "frame_outer_height_mm": null,
+          "crossbar_rule_code": "MATERIAL_SPACING_V1",
+          "max_crossbar_spacing_mm": null,
+          "crossbar_orientation": null,
+          "suggested_crossbar_count": null,
+          "confirmed_crossbar_count": null,
+          "override_reason": null,
+          "structural_review_required": false,
+          "confirmation_status": "NOT_APPLICABLE",
+          "quantity_status": "NOT_APPLICABLE",
+          "blockers": [],
+          "provenance": {
+            "resource_registry_version": "structural_resource_options/v1"
+          }
+        },
+        "panel_area_m2": 0.35,
+        "panel_perimeter_m": 2.7,
+        "fold_length_m": 2.7,
+        "return_strip_area_m2": 0.162,
+        "unit_ambiguity": false,
+        "dimension_source": "svg_support_selection",
+        "svg_source_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+      }
+    },
+    "mounting_system": null,
+    "mounting_bar_profile": null,
+    "support_type": null,
+    "mains_cable_length_m": null,
+    "power_supply_service_corner": null,
+    "service_screw_finish": null,
+    "emblem_lighting_mode": "area_lit",
+    "letter_led_module_count": 27,
+    "emblem_led_module_count": 0,
+    "total_led_module_count": 27,
+    "commercial_inputs": {
+      "markup_percent": 35,
+      "discount_percent": 0,
+      "vat_percent": 21,
+      "manual_adjustment_ron": 0
+    },
+    "confirmed": true,
+    "internal_draft_quote_confirmed": false,
+    "svg_component_bindings": [],
+    "svg_support_selection": null,
+    "mounting_fixing_system": null,
+    "acp_electrical_configuration": {
+      "schema": "acp_electrical_configuration_v1",
+      "ownership_mode": "SHELL_COMMON_WITH_ZONE_INTENTS",
+      "contract_version": "acp_local_face_modules/v1",
+      "service_corner": null,
+      "zone_intents": [],
+      "led_configuration_status": "OWNER_GATE_REQUIRED",
+      "psu_configuration_status": "OWNER_GATE_REQUIRED",
+      "wiring_configuration_status": "OWNER_GATE_REQUIRED",
+      "electrical_test_status": "OWNER_GATE_REQUIRED",
+      "policy": {
+        "mode": "SHELL_COMMON_WITH_ZONE_INTENTS",
+        "contract_version": "acp_local_face_modules/v1",
+        "zone_declares": "illumination_intent",
+        "shell_owns": [
+          "led_configuration",
+          "psu_configuration",
+          "wiring",
+          "service_access"
+        ],
+        "no_duplicate_psu_per_zone": true,
+        "letters_electrical_path": "SEPARATE_PRODUCT — not ACP cavity",
+        "legacy_light_routed": "PARALLEL_LEGACY_COST_PATH — reference only"
+      }
+    },
+    "segmented_background": {
+      "schema": "acm_segmented_background_v1",
+      "contract_version": "acm_segmented_background/v1",
+      "status": "PROPOSED",
+      "assembly_id": "asm_el-1_el-2",
+      "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "operator_confirmed": false,
+      "graphic_continuity": true,
+      "panels": [
+        {
+          "panel_id": "panel_1",
+          "order": 1,
+          "width_mm": 1000,
+          "height_mm": 350,
+          "position": {
+            "x_mm": 0,
+            "y_mm": 0
+          },
+          "contour_element_id": "el-1"
+        },
+        {
+          "panel_id": "panel_2",
+          "order": 2,
+          "width_mm": 1000,
+          "height_mm": 350,
+          "position": {
+            "x_mm": 1000,
+            "y_mm": 0
+          },
+          "contour_element_id": "el-2"
+        }
+      ],
+      "joints": [
+        {
+          "joint_id": "joint_panel_1_panel_2",
+          "left_panel_id": "panel_1",
+          "right_panel_id": "panel_2",
+          "orientation": "VERTICAL"
+        }
+      ],
+      "assembly_dimensions": {
+        "width_mm": 2000,
+        "height_mm": 350
+      },
+      "element_bindings": [],
+      "detection": {
+        "source": "svg_analyzer_proposal",
+        "nearby_support_count": 2,
+        "message_code": "SEGMENTATION_PROPOSAL",
+        "message": "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.",
+        "authority": "PROPOSAL_ONLY"
+      },
+      "meta": {
+        "schema": "acm_segmented_background_v1",
+        "contract_version": "acm_segmented_background/v1",
+        "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "support_contour_role": "ASSEMBLY_ENVELOPE_MAX_ONE",
+        "panels_role": "PHYSICAL_MEMBERS_NESTED",
+        "detection_authority": "PROPOSAL_ONLY",
+        "confirmation_authority": "OPERATOR",
+        "letters_ownership": "EXTERNAL — interface binding only",
+        "no_auto_divide": true,
+        "no_task_materialization": true,
+        "no_pricing": true
+      },
+      "validation": {
+        "blockers": [],
+        "warnings": [],
+        "infos": [
+          {
+            "code": "SEGMENTATION_PROPOSAL",
+            "level": "info",
+            "message": "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma."
+          }
+        ]
+      }
+    }
+  },
+  "closed_contours": {
+    "schema": "closed_contour_candidates_v1",
+    "candidate_count": 16,
+    "closed_contour_count": 16,
+    "unit_ambiguity": false,
+    "mm_per_vbu_used": 15.098495935247726,
+    "mm_per_vbu_raw": 15.098495935247726,
+    "scale_correction": "none",
+    "warnings": [],
+    "candidates": [
+      {
+        "contour_id": "cc_7af1352f",
+        "element_id": "el-1",
+        "source_element_type": "rect",
+        "source_index": 1,
+        "source_subpath_index": null,
+        "is_closed": true,
+        "closure_method": "primitive_closed",
+        "geometry_hash": "7af1352f",
+        "bbox": {
+          "x": 0.00584,
+          "y": 0.00584,
+          "width": 66.23178,
+          "height": 23.18112
+        },
+        "width_mm": 1000,
+        "height_mm": 350,
+        "area_mm2": 350000.137,
+        "perimeter_mm": 2700.001,
+        "centroid": {
+          "x": 33.1217,
+          "y": 11.5964
+        },
+        "orientation": "landscape",
+        "contains_count": 2,
+        "contained_area_ratio": 0.0171,
+        "rectangularity_score": 0.7725,
+        "warnings": [],
+        "overlay_d": null,
+        "overlay_points": "0.00584,0.00584 66.23762,0.00584 66.23762,23.18696 0.00584,23.18696",
+        "confidence": 0.7,
+        "reasons": [
+          "candidat panou: probabil",
+          "contur închis",
+          "suprafață mare (42.9% din compoziție)",
+          "rectangularitate 0.7725"
+        ],
+        "is_outer_candidate": true
+      },
+      {
+        "contour_id": "cc_d249e6bb",
+        "element_id": "el-2",
+        "source_element_type": "rect",
+        "source_index": 2,
+        "source_subpath_index": null,
+        "is_closed": true,
+        "closure_method": "primitive_closed",
+        "geometry_hash": "d249e6bb",
+        "bbox": {
+          "x": 66.23762,
+          "y": 0.00584,
+          "width": 66.23178,
+          "height": 23.18112
+        },
+        "width_mm": 1000,
+        "height_mm": 350,
+        "area_mm2": 350000.137,
+        "perimeter_mm": 2700.001,
+        "centroid": {
+          "x": 99.3535,
+          "y": 11.5964
+        },
+        "orientation": "landscape",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7725,
+        "warnings": [],
+        "overlay_d": null,
+        "overlay_points": "66.23762,0.00584 132.4694,0.00584 132.4694,23.18696 66.23762,23.18696",
+        "confidence": 0.7,
+        "reasons": [
+          "contur închis",
+          "suprafață mare (42.9% din compoziție)",
+          "rectangularitate 0.7725"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_9b579069",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 11,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "9b579069",
+        "bbox": {
+          "x": 8.25188,
+          "y": -11.366959999999999,
+          "width": 9.572479999999999,
+          "height": 11.52908
+        },
+        "width_mm": 144.53,
+        "height_mm": 174.072,
+        "area_mm2": 19625.651,
+        "perimeter_mm": 511.174,
+        "centroid": {
+          "x": 13.0381,
+          "y": -5.6024
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7977,
+        "warnings": [],
+        "overlay_d": "m13.03812 0.16212c-1.5229,0 -2.69847,-0.42741 -3.53435,-1.27855 -0.83586,-0.85483 -1.25189,-2.05232 -1.25189,-3.59984l0 -1.82387c0,-1.5328 0.41603,-2.72291 1.25189,-3.563 0.83588,-0.84377 2.01145,-1.26382 3.53435,-1.26382 1.51908,0 2.69845,0.42005 3.53434,1.26382 0.83204,0.84008 1.2519,2.0302 1.2519,3.563l0 1.85703c0,1.53647 -0.41986,2.73028 -1.2519,3.57773 -0.83588,0.84377 -2.01526,1.2675 -3.53434,1.2675z",
+        "overlay_points": null,
+        "confidence": 0.25,
+        "reasons": [
+          "contur închis",
+          "rectangularitate 0.7977",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_87ed6567",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 12,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "87ed6567",
+        "bbox": {
+          "x": -2.50381,
+          "y": -9.43623,
+          "width": 5.00762,
+          "height": 7.34339
+        },
+        "width_mm": 75.608,
+        "height_mm": 110.874,
+        "area_mm2": 6741.928,
+        "perimeter_mm": 304.338,
+        "centroid": {
+          "x": 0,
+          "y": -5.7645
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7614,
+        "warnings": [],
+        "overlay_d": "m0 -2.09284c0.7977,0 1.41221,-0.24318 1.85114,-0.72587 0.43512,-0.48268 0.65267,-1.15696 0.65267,-2.02652l0 -1.85703c0,-0.87325 -0.21755,-1.54385 -0.65267,-2.01916 -0.43892,-0.47531 -1.05344,-0.71481 -1.85114,-0.71481 -0.79008,0 -1.40458,0.23951 -1.84732,0.71481 -0.43894,0.47531 -0.65649,1.14592 -0.65649,2.01916l0 1.85703c0,0.86956 0.21755,1.54384 0.65649,2.02652 0.44274,0.48268 1.05724,0.72587 1.84732,0.72587z",
+        "overlay_points": null,
+        "confidence": 0.25,
+        "reasons": [
+          "contur închis",
+          "rectangularitate 0.7614",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_cd296219",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 5,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "cd296219",
+        "bbox": {
+          "x": -3.91601,
+          "y": -11.26011,
+          "width": 5.23279,
+          "height": 1.9859899999999993
+        },
+        "width_mm": 79.007,
+        "height_mm": 29.985,
+        "area_mm2": 2369.069,
+        "perimeter_mm": 217.985,
+        "centroid": {
+          "x": -1.2996,
+          "y": -10.2671
+        },
+        "orientation": "landscape",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7828,
+        "warnings": [],
+        "overlay_d": "m-3.91601 -9.27412l0 -1.98599 5.23279 0 0 1.98599 -5.23279 0z",
+        "overlay_points": null,
+        "confidence": 0.25,
+        "reasons": [
+          "contur închis",
+          "rectangularitate 0.7828",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_bc8c29bf",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 2,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "bc8c29bf",
+        "bbox": {
+          "x": 11.76329,
+          "y": -15.696349999999999,
+          "width": 2.27862,
+          "height": 2.2033699999999996
+        },
+        "width_mm": 34.404,
+        "height_mm": 33.268,
+        "area_mm2": 1144.529,
+        "perimeter_mm": 135.343,
+        "centroid": {
+          "x": 12.9026,
+          "y": -14.5947
+        },
+        "orientation": "square",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.9884,
+        "warnings": [],
+        "overlay_d": "m11.76329 -13.49298l0 -2.20337 2.27862 0 0 2.20337 -2.27862 0z",
+        "overlay_points": null,
+        "confidence": 0.25,
+        "reasons": [
+          "contur închis",
+          "rectangularitate 0.9884",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_9c5147b4",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 10,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "9c5147b4",
+        "bbox": {
+          "x": 12.221319999999999,
+          "y": -15.85847,
+          "width": 12.77093,
+          "height": 15.69635
+        },
+        "width_mm": 192.822,
+        "height_mm": 236.991,
+        "area_mm2": 15778.488,
+        "perimeter_mm": 997.853,
+        "centroid": {
+          "x": 18.6068,
+          "y": -8.0103
+        },
+        "orientation": "portrait",
+        "contains_count": 1,
+        "contained_area_ratio": 0.0014,
+        "rectangularity_score": 0.5092,
+        "warnings": [],
+        "overlay_d": "m17.52282 -0.16212l-5.3015 -15.69635 2.4809 0 3.90457 12.30653 3.90074 -12.30653 2.48472 0 -5.3015 15.69635 -2.16793 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_2545fd86",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 6,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "2545fd86",
+        "bbox": {
+          "x": 8.030479999999999,
+          "y": -2.1481100000000017,
+          "width": 9.48088,
+          "height": 11.52908
+        },
+        "width_mm": 143.147,
+        "height_mm": 174.072,
+        "area_mm2": 13494.797,
+        "perimeter_mm": 988.413,
+        "centroid": {
+          "x": 12.7709,
+          "y": 3.6164
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.6398,
+        "warnings": [],
+        "overlay_d": "m13.11826 9.38097c-1.61833,0 -2.87023,-0.43478 -3.75952,-1.30802 -0.88551,-0.86957 -1.32826,-2.10759 -1.32826,-3.71039l0 -1.26381c0,-1.66912 0.42749,-2.96241 1.27862,-3.87619 0.85497,-0.91377 2.05724,-1.37067 3.60686,-1.37067 1.46182,0 2.5916,0.51953 3.39311,1.5549 0.80152,1.03537 1.20229,2.49077 1.20229,4.36255l0 0.73324 -7.82821 0 0 -1.7723 5.66029 0 0 0c-0.0687,-0.90641 -0.31298,-1.61385 -0.73282,-2.126 -0.41986,-0.51216 -0.98473,-0.7664 -1.69466,-0.7664 -0.85495,0 -1.52289,0.27266 -1.99999,0.82166 -0.47709,0.54532 -0.71754,1.31909 -0.71754,2.3213l0 1.42225c0,0.9285 0.25571,1.64332 0.76718,2.13705 0.51144,0.49743 1.22899,0.74798 2.15266,0.74798 0.46183,0 0.91983,-0.09212 1.37402,-0.27266 0.45421,-0.17686 0.8626,-0.4311 1.22137,-0.75534l0 0 1.49618 1.44804 0 0c-0.57251,0.53059 -1.21755,0.94327 -1.93509,1.23434 -0.71375,0.29108 -1.43512,0.43847 -2.15648,0.43847z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_535635a3",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 9,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "535635a3",
+        "bbox": {
+          "x": 2.8282300000000005,
+          "y": -2.8187100000000003,
+          "width": 9.48087,
+          "height": 11.52908
+        },
+        "width_mm": 143.147,
+        "height_mm": 174.072,
+        "area_mm2": 13494.767,
+        "perimeter_mm": 988.413,
+        "centroid": {
+          "x": 7.5687,
+          "y": 2.9458
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.6398,
+        "warnings": [],
+        "overlay_d": "m7.916 8.71037c-1.61833,0 -2.87022,-0.43478 -3.75953,-1.30802 -0.88551,-0.86957 -1.32824,-2.10759 -1.32824,-3.71039l0 -1.26381c0,-1.66912 0.42748,-2.96241 1.27862,-3.87619 0.85495,-0.91377 2.05724,-1.37067 3.60686,-1.37067 1.46182,0 2.59159,0.51953 3.3931,1.5549 0.80152,1.03537 1.20229,2.49077 1.20229,4.36255l0 0.73324 -7.82822 0 0 -1.7723 5.66029 0 0 0c-0.0687,-0.90641 -0.31298,-1.61385 -0.73282,-2.126 -0.41985,-0.51216 -0.98473,-0.7664 -1.69464,-0.7664 -0.85497,0 -1.52291,0.27266 -2,0.82166 -0.4771,0.54532 -0.71756,1.31909 -0.71756,2.3213l0 1.42225c0,0.9285 0.25572,1.64332 0.76718,2.13705 0.51145,0.49743 1.229,0.74798 2.15267,0.74798 0.46182,0 0.91984,-0.09212 1.37403,-0.27266 0.4542,-0.17686 0.8626,-0.4311 1.22138,-0.75534l0 0 1.49616 1.44804 0 0c-0.57251,0.53059 -1.21754,0.94327 -1.93509,1.23434 -0.71374,0.29108 -1.43512,0.43847 -2.15647,0.43847z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_c068072b",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 13,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "c068072b",
+        "bbox": {
+          "x": 8.0305,
+          "y": -13.76564,
+          "width": 4.05724,
+          "height": 15.751619999999999
+        },
+        "width_mm": 61.258,
+        "height_mm": 237.826,
+        "area_mm2": 8585.976,
+        "perimeter_mm": 574.459,
+        "centroid": {
+          "x": 10.0591,
+          "y": -5.8898
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.4732,
+        "warnings": [],
+        "overlay_d": "m10.30912 -13.76563l0 12.80395c0,0.26528 0.06489,0.47532 0.18703,0.62637 0.12213,0.15107 0.29388,0.22476 0.51908,0.22476l1.07251 0 0 2.09653 -1.3397 0c-0.85875,0 -1.5267,-0.2616 -2.00381,-0.77745 -0.47709,-0.51953 -0.71373,-1.24908 -0.71373,-2.19234l0 -12.78183 2.27862 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_aa951fc0",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 0,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "aa951fc0",
+        "bbox": {
+          "x": 19.07379,
+          "y": 2.78102,
+          "width": 2.2824300000000015,
+          "height": 15.69635
+        },
+        "width_mm": 34.461,
+        "height_mm": 236.991,
+        "area_mm2": 8167.018,
+        "perimeter_mm": 542.905,
+        "centroid": {
+          "x": 20.215,
+          "y": 10.6292
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7009,
+        "warnings": [],
+        "overlay_d": "M19.07379 18.47737l0 -15.69635 2.28243 0 0 15.69635 -2.28243 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_dc6f5447",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 4,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "dc6f5447",
+        "bbox": {
+          "x": 6.049600000000001,
+          "y": -14.4657,
+          "width": 4.03433,
+          "height": 14.52097
+        },
+        "width_mm": 60.912,
+        "height_mm": 219.245,
+        "area_mm2": 7971.069,
+        "perimeter_mm": 537.695,
+        "centroid": {
+          "x": 8.0668,
+          "y": -7.2052
+        },
+        "orientation": "portrait",
+        "contains_count": 1,
+        "contained_area_ratio": 0.0071,
+        "rectangularity_score": 0.4852,
+        "warnings": [],
+        "overlay_d": "m8.76715 0.05527c-0.95419,0 -1.64503,-0.25792 -2.07633,-0.76639 -0.42747,-0.51216 -0.64122,-1.24539 -0.64122,-2.20339l0 -11.55119 2.28244 0 0 11.57331c0,0.26528 0.05344,0.47532 0.16413,0.62637 0.11449,0.15107 0.27861,0.22476 0.49235,0.22476l1.09541 0 0 2.09653 -1.31678 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_bb328780",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 3,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "bb328780",
+        "bbox": {
+          "x": 0,
+          "y": 2.2881399999999985,
+          "width": 2.27862,
+          "height": 11.20484
+        },
+        "width_mm": 34.404,
+        "height_mm": 169.176,
+        "area_mm2": 5820.294,
+        "perimeter_mm": 407.16,
+        "centroid": {
+          "x": 1.1393,
+          "y": 7.8906
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7212,
+        "warnings": [],
+        "overlay_d": "m0 13.49298l0 -11.20484 2.27862 0 0 11.20484 -2.27862 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_e7618812",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 7,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "e7618812",
+        "bbox": {
+          "x": 7.526669999999999,
+          "y": -11.36696,
+          "width": 2.27862,
+          "height": 11.20484
+        },
+        "width_mm": 34.404,
+        "height_mm": 169.176,
+        "area_mm2": 5820.294,
+        "perimeter_mm": 407.16,
+        "centroid": {
+          "x": 8.666,
+          "y": -5.7645
+        },
+        "orientation": "portrait",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7212,
+        "warnings": [],
+        "overlay_d": "m7.52667 -0.16212l0 -11.20484 2.27862 0 0 11.20484 -2.27862 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_13e4f01e",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 1,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "13e4f01e",
+        "bbox": {
+          "x": 1.14123,
+          "y": -2.09284,
+          "width": 9.30528,
+          "height": 2.09284
+        },
+        "width_mm": 140.496,
+        "height_mm": 31.599,
+        "area_mm2": 4439.488,
+        "perimeter_mm": 344.189,
+        "centroid": {
+          "x": 5.7939,
+          "y": -1.0464
+        },
+        "orientation": "landscape",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.7287,
+        "warnings": [],
+        "overlay_d": "m1.14123 0l0 -2.09284 9.30528 0 0 2.09284 -9.30528 0z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      },
+      {
+        "contour_id": "cc_32a8505e",
+        "element_id": "el-3",
+        "source_element_type": "path_subpath",
+        "source_index": 4,
+        "source_subpath_index": 8,
+        "is_closed": true,
+        "closure_method": "explicit_z",
+        "geometry_hash": "32a8505e",
+        "bbox": {
+          "x": 2.0458,
+          "y": -11.366959999999999,
+          "width": 5.8244,
+          "height": 4.274140000000001
+        },
+        "width_mm": 87.94,
+        "height_mm": 64.533,
+        "area_mm2": 2437.039,
+        "perimeter_mm": 255.466,
+        "centroid": {
+          "x": 4.958,
+          "y": -9.2299
+        },
+        "orientation": "landscape",
+        "contains_count": 0,
+        "contained_area_ratio": 0,
+        "rectangularity_score": 0.536,
+        "warnings": [],
+        "overlay_d": "m6.38547 -8.54824c-0.2023,-0.23951 -0.45802,-0.42005 -0.76336,-0.54164 -0.30534,-0.12159 -0.65648,-0.18423 -1.06105,-0.18423 -0.72138,0 -1.28244,0.19528 -1.68321,0.57848 -0.39695,0.38689 -0.59923,0.92116 -0.59923,1.60281l-0.23282 -2.15918c0.35115,-0.65954 0.80915,-1.17907 1.38167,-1.5549 0.56869,-0.37214 1.19848,-0.56006 1.88167,-0.56006 0.53054,0 1.01145,0.07369 1.43893,0.22108 0.42748,0.14738 0.80152,0.36477 1.12213,0.65217l-1.48472 1.94547z",
+        "overlay_points": null,
+        "confidence": 0.1,
+        "reasons": [
+          "contur închis",
+          "contur mic față de compoziție (probabil literă/decor)"
+        ],
+        "is_outer_candidate": false
+      }
+    ]
+  }
+}

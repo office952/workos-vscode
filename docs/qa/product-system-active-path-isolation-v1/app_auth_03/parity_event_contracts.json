@@ -1,0 +1,339 @@
+{
+  "contract_version": "parity_event/v1",
+  "task": "APP-AUTH-03",
+  "execution_mode_authorized": "OBSERVE_ONLY",
+  "module_chain_excluded": true,
+  "shared_envelope": {
+    "version": "1.0.0",
+    "event_id": "uuid",
+    "event_type": "string",
+    "fingerprint": "sha256(domain+entity_keys+canonical_hash+transitional_hash)",
+    "entity_type": "employee|operation|resource|workcenter|session|assignment|surface|attendance",
+    "entity_id": "string",
+    "canonical_source": "string",
+    "transitional_source": "string",
+    "canonical_value": "object (redacted)",
+    "transitional_value": "object (redacted)",
+    "comparison_result": "string",
+    "severity": "CRITICAL|HIGH|MEDIUM|LOW|INFORMATIONAL",
+    "timestamp_utc": "ISO8601",
+    "actor_employee_id": "int|null",
+    "actor_user_id": "int|null",
+    "operation_code": "string|null",
+    "order_id": "int|null",
+    "task_id": "string|null",
+    "command_id": "string|null",
+    "consumer_id": "string|null",
+    "writer_id": "string|null",
+    "surface_id": "string|null",
+    "metadata_safe": "object — no secrets, no full HR snapshots",
+    "resolution_status": "open|acknowledged|reconciled|wont_fix|reopened",
+    "resolution_owner": "manager|hr|technical|owner|null",
+    "dedup_key": "fingerprint",
+    "dedup_policy": "same fingerprint within 24h updates last_seen; new occurrence increments count"
+  },
+  "events": [
+    {
+      "event_type": "EMPLOYEE_IDENTITY_PARITY_DIFFERENCE",
+      "domain": "P1",
+      "version": "1.0.0",
+      "entity": "employee",
+      "canonical_source": "employees + EmployeeRecord + user_id",
+      "transitional_source": "name/email fallback, session actor, demo identity",
+      "comparison_results": [
+        "ALIGNED",
+        "NO_USER_LINK",
+        "MULTI_USER_LINK",
+        "MULTI_EMPLOYEE_USER",
+        "HR_RECORD_MISSING",
+        "HR_RECORD_DUPLICATE",
+        "ACTOR_MISMATCH"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["ACTOR_MISMATCH on active session", "MULTI_EMPLOYEE_USER on production path"],
+        "HIGH": ["NO_USER_LINK on Mobile path", "HR_RECORD_MISSING"],
+        "MEDIUM": ["name/email fallback used"],
+        "LOW": ["label mismatch only"],
+        "INFORMATIONAL": ["demo identity on tablet"]
+      },
+      "fingerprint_fields": ["domain", "employee_id", "comparison_result", "canonical_value_hash", "transitional_value_hash"]
+    },
+    {
+      "event_type": "COMPETENCE_PARITY_DIFFERENCE",
+      "domain": "P2",
+      "version": "1.0.0",
+      "entity": "employee|operation",
+      "canonical_source": "employee_skill_authorizations + skills catalog",
+      "transitional_source": "employees.skills JSON + /employees display",
+      "comparison_results": [
+        "ALIGNED",
+        "REGISTRY_ONLY",
+        "LEGACY_ONLY",
+        "CODE_MISMATCH",
+        "LABEL_MISMATCH",
+        "ROLE_MIXED",
+        "AUTH_MIXED",
+        "NO_OPERATION_REQUIREMENT",
+        "ELIGIBLE_WITHOUT_COMPETENCE"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["ELIGIBLE_WITHOUT_COMPETENCE on risky operation"],
+        "HIGH": ["REGISTRY_ONLY vs LEGACY_ONLY conflict affecting eligibility"],
+        "MEDIUM": ["CODE_MISMATCH", "LABEL_MISMATCH"],
+        "LOW": ["LABEL_MISMATCH cosmetic"],
+        "INFORMATIONAL": ["catalog label drift"]
+      },
+      "fingerprint_fields": ["domain", "employee_id", "operation_code", "skill_code_set_hash"]
+    },
+    {
+      "event_type": "AUTHORIZATION_PARITY_DIFFERENCE",
+      "domain": "P3",
+      "version": "1.0.0",
+      "entity": "employee|resource|operation",
+      "canonical_source": "employee_resource_authorizations + workcenter authorizations + operation requirements",
+      "transitional_source": "legacy JSON proxy + explicit mapping bypass",
+      "comparison_results": [
+        "ALIGNED",
+        "MISSING_AUTHORIZATION",
+        "EXPIRED",
+        "TYPE_USED_AS_EXACT",
+        "COMPETENCE_AS_AUTHORIZATION",
+        "MAPPING_BYPASS",
+        "INACTIVE_RESOURCE"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["MISSING_AUTHORIZATION on mandatory resource operation", "MAPPING_BYPASS on montaj_led class"],
+        "HIGH": ["EXPIRED on active assignment"],
+        "MEDIUM": ["TYPE_USED_AS_EXACT"],
+        "LOW": ["metadata authorization note"],
+        "INFORMATIONAL": ["historical authorization"]
+      },
+      "fingerprint_fields": ["domain", "employee_id", "operation_code", "resource_id", "authorization_hash"]
+    },
+    {
+      "event_type": "WORKCENTER_PARITY_DIFFERENCE",
+      "domain": "P4",
+      "version": "1.0.0",
+      "entity": "workcenter|operation|machine",
+      "canonical_source": "operational-registry workcenter catalog",
+      "transitional_source": "machine_type constants + mockData",
+      "comparison_results": [
+        "ALIGNED",
+        "DUPLICATE_CODE",
+        "MACHINE_AS_CENTER",
+        "OPERATION_AS_CENTER",
+        "EMPTY_CENTER",
+        "NO_ELIGIBLE_EMPLOYEES"
+      ],
+      "severity_rules": {
+        "CRITICAL": [],
+        "HIGH": ["OPERATION_AS_CENTER affecting eligibility"],
+        "MEDIUM": ["DUPLICATE_CODE", "MACHINE_AS_CENTER"],
+        "LOW": ["label mismatch"],
+        "INFORMATIONAL": ["EMPTY_CENTER planned"]
+      },
+      "fingerprint_fields": ["domain", "workcenter_code", "related_entity_id", "concept_hash"]
+    },
+    {
+      "event_type": "RESOURCE_PARITY_DIFFERENCE",
+      "domain": "P5",
+      "version": "1.0.0",
+      "entity": "machine|resource",
+      "canonical_source": "machines + MachineRegistry + registry resources",
+      "transitional_source": "mockData specs + Shop Floor projection",
+      "comparison_results": [
+        "ALIGNED",
+        "CODE_MISSING",
+        "ID_MISMATCH",
+        "METADATA_DIFF",
+        "TYPE_MISSING",
+        "MOCK_SPEC",
+        "INACTIVE_USED",
+        "WRONG_RESOURCE_AUTH",
+        "TASK_WITHOUT_REQUIRED_RESOURCE"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["INACTIVE_USED on Start", "TASK_WITHOUT_REQUIRED_RESOURCE"],
+        "HIGH": ["ID_MISMATCH same physical machine"],
+        "MEDIUM": ["METADATA_DIFF", "MOCK_SPEC"],
+        "LOW": ["TYPE_MISSING non-blocking"],
+        "INFORMATIONAL": ["display label drift"]
+      },
+      "fingerprint_fields": ["domain", "resource_code", "machine_id", "metadata_hash"]
+    },
+    {
+      "event_type": "ELIGIBILITY_PARITY_DIFFERENCE",
+      "domain": "P7",
+      "version": "1.0.0",
+      "entity": "employee|operation",
+      "canonical_source": "canonical eligibility simulation",
+      "transitional_source": "current operational eligibility (hybrid/explicit/legacy)",
+      "comparison_results": [
+        "ALINIAT_ELIGIBIL",
+        "ALINIAT_NEELIGIBIL",
+        "OPERATIONAL_ELIGIBIL_CANONIC_NEELIGIBIL",
+        "OPERATIONAL_NEELIGIBIL_CANONIC_ELIGIBIL",
+        "NECALCULABIL_DATE_LIPSA",
+        "EXCEPTIE_TRANZITORIE",
+        "AUTORIZARE_LIPSA",
+        "CERINTA_OPERATIE_LIPSA"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["OPERATIONAL_ELIGIBIL_CANONIC_NEELIGIBIL on risky operation"],
+        "HIGH": ["OPERATIONAL_ELIGIBIL_CANONIC_NEELIGIBIL", "OPERATIONAL_NEELIGIBIL_CANONIC_ELIGIBIL"],
+        "MEDIUM": ["EXCEPTIE_TRANZITORIE", "CERINTA_OPERATIE_LIPSA"],
+        "LOW": ["NECALCULABIL_DATE_LIPSA recoverable"],
+        "INFORMATIONAL": ["shadow skipped by flag"]
+      },
+      "fingerprint_fields": ["domain", "employee_id", "operation_code", "machine_type", "outcome_pair_hash"]
+    },
+    {
+      "event_type": "LEGACY_FALLBACK_USED",
+      "domain": "cross",
+      "version": "1.0.0",
+      "entity": "consumer|writer",
+      "canonical_source": "registry/API path",
+      "transitional_source": "legacy JSON / mockData / demo",
+      "comparison_results": ["FALLBACK_READ", "FALLBACK_WRITE", "SILENT_FALLBACK"],
+      "severity_rules": {
+        "CRITICAL": ["SILENT_FALLBACK on production eligibility"],
+        "HIGH": ["FALLBACK_READ on Mobile assigned"],
+        "MEDIUM": ["FALLBACK_READ on Shop Floor", "mockData seed path"],
+        "LOW": ["dev-only fallback"],
+        "INFORMATIONAL": ["tablet demo"]
+      },
+      "fingerprint_fields": ["domain", "consumer_id", "path", "fallback_source"]
+    },
+    {
+      "event_type": "EXPLICIT_MAPPING_USED",
+      "domain": "P6",
+      "version": "1.0.0",
+      "entity": "operation|employee",
+      "canonical_source": "operation_employee_authorizations",
+      "transitional_source": "hybrid eligibility path",
+      "comparison_results": [
+        "SELECTIE_DINTRE_ELIGIBILI",
+        "RESTRANGERE_ELIGIBILITATE",
+        "COMPATIBILITATE_TRANZITORIE",
+        "ADAUGARE_FARA_COMPETENTA",
+        "ADAUGARE_FARA_AUTORIZARE",
+        "SCOP_NECUNOSCUT"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["ADAUGARE_FARA_AUTORIZARE on risky operation"],
+        "HIGH": ["ADAUGARE_FARA_COMPETENTA", "ADAUGARE_FARA_AUTORIZARE"],
+        "MEDIUM": ["COMPATIBILITATE_TRANZITORIE"],
+        "LOW": ["SELECTIE_DINTRE_ELIGIBILI"],
+        "INFORMATIONAL": ["SCOP_NECUNOSCUT logged"]
+      },
+      "fingerprint_fields": ["domain", "operation_code", "employee_id", "classification"]
+    },
+    {
+      "event_type": "EXECUTION_SURFACE_PARITY_DIFFERENCE",
+      "domain": "P8",
+      "version": "1.0.0",
+      "entity": "surface|employee|operation",
+      "canonical_source": "Employee Mobile truth path",
+      "transitional_source": "operator/tablet/shop-floor paths",
+      "comparison_results": [
+        "ALIGNED",
+        "TASK_SET_DIFF",
+        "READINESS_DIFF",
+        "ASSIGNMENT_DIFF",
+        "START_COMPLETE_DIFF",
+        "COMPETENCE_SOURCE_DIFF",
+        "AUTH_SOURCE_DIFF",
+        "DEMO_DATA_ACTIVE"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["START_COMPLETE_DIFF unauthorized"],
+        "HIGH": ["TASK_SET_DIFF", "ASSIGNMENT_DIFF", "DEMO_DATA_ACTIVE in prod"],
+        "MEDIUM": ["READINESS_DIFF", "COMPETENCE_SOURCE_DIFF"],
+        "LOW": ["display-only diff"],
+        "INFORMATIONAL": ["tablet demo expected"]
+      },
+      "fingerprint_fields": ["domain", "surface_a", "surface_b", "employee_id", "operation_code", "diff_hash"]
+    },
+    {
+      "event_type": "ASSIGNMENT_WRITER_OUTSIDE_AUTHORITY",
+      "domain": "P9",
+      "version": "1.0.0",
+      "entity": "assignment|task",
+      "canonical_source": "execution_task_assignment_service",
+      "transitional_source": "direct tasks_json writer / legacy path",
+      "comparison_results": [
+        "CANONICAL",
+        "NON_CANONICAL_WRITER",
+        "LEGACY_WRITER",
+        "DEMO_WRITER"
+      ],
+      "severity_rules": {
+        "CRITICAL": [],
+        "HIGH": ["NON_CANONICAL_WRITER on production", "LEGACY_WRITER"],
+        "MEDIUM": ["DEMO_WRITER"],
+        "LOW": ["CANONICAL with metadata drift"],
+        "INFORMATIONAL": ["test fixture writer"]
+      },
+      "fingerprint_fields": ["domain", "writer_id", "order_id", "task_id", "employee_id", "before_after_hash"]
+    },
+    {
+      "event_type": "SESSION_AUTHORITY_DIFFERENCE",
+      "domain": "P10",
+      "version": "1.0.0",
+      "entity": "session|employee",
+      "canonical_source": "ExecutionRealityService",
+      "transitional_source": "direct session mutation / legacy identity",
+      "comparison_results": [
+        "ALIGNED",
+        "NO_EMPLOYEE",
+        "SHARED_ACTOR",
+        "ASSIGNMENT_MISMATCH",
+        "INELIGIBLE_OPERATION",
+        "UNAUTHORIZED_MACHINE",
+        "MULTIPLE_SESSIONS",
+        "NON_CANONICAL_WRITE"
+      ],
+      "severity_rules": {
+        "CRITICAL": ["WRONG_EMPLOYEE_SESSION", "INELIGIBLE_OPERATION active", "UNAUTHORIZED_MACHINE active"],
+        "HIGH": ["ASSIGNMENT_MISMATCH", "MULTIPLE_SESSIONS"],
+        "MEDIUM": ["NON_CANONICAL_WRITE"],
+        "LOW": ["metadata session source"],
+        "INFORMATIONAL": ["demo session"]
+      },
+      "fingerprint_fields": ["domain", "session_id", "employee_id", "operation_code", "surface_id", "state_hash"]
+    },
+    {
+      "event_type": "ATTENDANCE_EXECUTION_DIFFERENCE",
+      "domain": "P11",
+      "version": "1.0.0",
+      "entity": "employee|attendance",
+      "canonical_source": "attendance/pontaj records",
+      "transitional_source": "execution sessions / Start events",
+      "comparison_results": [
+        "ALIGNED",
+        "PRESENT_NO_SESSION",
+        "ABSENT_WITH_START",
+        "SCHEDULE_SESSION_MISMATCH",
+        "HOURS_PRODUCTION_MISMATCH",
+        "ACTOR_EMPLOYEE_MISMATCH"
+      ],
+      "severity_rules": {
+        "CRITICAL": [],
+        "HIGH": ["ABSENT_WITH_START"],
+        "MEDIUM": ["PRESENT_NO_SESSION", "HOURS_PRODUCTION_MISMATCH"],
+        "LOW": ["SCHEDULE_SESSION_MISMATCH"],
+        "INFORMATIONAL": ["actor label mismatch"]
+      },
+      "fingerprint_fields": ["domain", "employee_id", "date", "comparison_result"],
+      "auto_correction": false
+    }
+  ],
+  "deduplication": {
+    "create_new": "fingerprint not seen in retention window OR resolution_status=reconciled and values changed",
+    "update_existing": "same fingerprint within window — update last_seen_at, increment occurrence_count, merge metadata_safe",
+    "close": "resolution_status=reconciled|wont_fix AND canonical_value_hash matches transitional_value_hash post-reconciliation",
+    "reopen": "same fingerprint after close when transitional_value diverges again",
+    "anti_spam": "max 1 event per fingerprint per consumer per 60s; batch identical surface diffs",
+    "history": "retain occurrence_count + first_seen + last_seen; full value history only after persistence GO"
+  }
+}

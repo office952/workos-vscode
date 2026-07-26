@@ -1,0 +1,80 @@
+{
+  "assigned": true,
+  "proposal": {
+    "schema": "acm_segmented_background_v1",
+    "contract_version": "acm_segmented_background/v1",
+    "status": "PROPOSED",
+    "assembly_id": "asm_el-1_el-2",
+    "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "operator_confirmed": false,
+    "graphic_continuity": true,
+    "panels": [
+      {
+        "panel_id": "panel_1",
+        "order": 1,
+        "width_mm": 1000,
+        "height_mm": 350,
+        "position": {
+          "x_mm": 0,
+          "y_mm": 0
+        },
+        "contour_element_id": "el-1"
+      },
+      {
+        "panel_id": "panel_2",
+        "order": 2,
+        "width_mm": 1000,
+        "height_mm": 350,
+        "position": {
+          "x_mm": 1000,
+          "y_mm": 0
+        },
+        "contour_element_id": "el-2"
+      }
+    ],
+    "joints": [
+      {
+        "joint_id": "joint_panel_1_panel_2",
+        "left_panel_id": "panel_1",
+        "right_panel_id": "panel_2",
+        "orientation": "VERTICAL"
+      }
+    ],
+    "assembly_dimensions": {
+      "width_mm": 2000,
+      "height_mm": 350
+    },
+    "element_bindings": [],
+    "detection": {
+      "source": "svg_analyzer_proposal",
+      "nearby_support_count": 2,
+      "message_code": "SEGMENTATION_PROPOSAL",
+      "message": "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.",
+      "authority": "PROPOSAL_ONLY"
+    },
+    "meta": {
+      "schema": "acm_segmented_background_v1",
+      "contract_version": "acm_segmented_background/v1",
+      "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "support_contour_role": "ASSEMBLY_ENVELOPE_MAX_ONE",
+      "panels_role": "PHYSICAL_MEMBERS_NESTED",
+      "detection_authority": "PROPOSAL_ONLY",
+      "confirmation_authority": "OPERATOR",
+      "letters_ownership": "EXTERNAL — interface binding only",
+      "no_auto_divide": true,
+      "no_task_materialization": true,
+      "no_pricing": true
+    },
+    "validation": {
+      "blockers": [],
+      "warnings": [],
+      "infos": [
+        {
+          "code": "SEGMENTATION_PROPOSAL",
+          "level": "info",
+          "message": "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma."
+        }
+      ]
+    }
+  }
+}

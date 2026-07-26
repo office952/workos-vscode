@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:3000/intake",
+  "automated_proxy_intake_status": 200,
+  "classification": "PARTIAL",
+  "owner_steps": [
+    "Run: npm run dev:stack (no manual BACKEND_PORT)",
+    "Open http://127.0.0.1:3000/intake after dev auth",
+    "Confirm no Source Error / Network Error",
+    "Confirm counters reflect backend (4 intakes in DB at proof time)",
+    "DevTools Network: GET /api/v1/entities/intake_requests → 200 via :3000 proxy to :8001"
+  ],
+  "screenshot": "deferred_owner_session",
+  "network_proof_endpoint": "/api/v1/entities/intake_requests",
+  "network_proof_target": "127.0.0.1:8001"
+}

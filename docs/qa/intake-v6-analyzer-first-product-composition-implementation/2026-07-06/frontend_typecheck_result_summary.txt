@@ -1,0 +1,4 @@
+frontend typecheck: PASS
+Command: cd frontend; npx.cmd --yes pnpm@8.10.0 exec tsc --noEmit -p tsconfig.app.json
+Result: command completed with exit code 0 and no diagnostics in frontend_typecheck_result.txt.
+Notes: previous artifact contained stale TS debt output; this file records the regenerated artifact from 2026-07-06.

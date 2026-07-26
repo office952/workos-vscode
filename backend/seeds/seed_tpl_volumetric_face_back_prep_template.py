@@ -130,7 +130,7 @@ def volumetric_face_back_prep_components() -> List[Dict[str, Any]]:
                     "mp",
                     "letter_face_area",
                     {"waste_pct": 0.15},
-                    "Plexiglas 3 mm — față litere (MAT-ACP-FATA-LITERE alias)",
+                    "plexiglas 3mm PMMA - opal (MAT-ACP-FATA-LITERE)",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
             ],

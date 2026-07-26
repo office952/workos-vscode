@@ -12,7 +12,7 @@ import { v6 } from "./atoms/intakeV6Presentation";
 import { patchLetterGroupFinishes } from "./letterGroupFinishSectionHelpers";
 
 const selectClass =
-  "w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px]";
+  "w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px]";
 
 export default function IntakeV6ReviewFaceLettersSection({
   groups,
@@ -43,7 +43,7 @@ export default function IntakeV6ReviewFaceLettersSection({
           return (
             <div
               key={group.group_key}
-              className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 p-3"
+              className="rounded border border-wo-border-strong bg-wo-surface-inset/40 p-3"
               data-testid={`intake-v6-letter-group-face-${group.group_key}`}
             >
               <div className="mb-3 flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function IntakeV6ReviewFaceLettersSection({
               </div>
 
               <div
-                className="rounded border border-[#243044]/80 bg-[#0A0F1A]/30 p-3"
+                className="rounded border border-wo-border-strong/80 bg-wo-surface-inset/30 p-3"
                 data-testid={`intake-v6-face-letter-zone-${group.group_key}`}
               >
                 <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
@@ -128,7 +128,7 @@ export default function IntakeV6ReviewFaceLettersSection({
 
                 {showColor ? (
                   <div
-                    className="mt-3 border-t border-[#2A3548]/60 pt-3"
+                    className="mt-3 border-t border-wo-border-strong/60 pt-3"
                     data-testid={`intake-v6-face-color-row-${group.group_key}`}
                   >
                     <ColorRegistrySelect

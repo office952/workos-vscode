@@ -1,0 +1,23 @@
+{
+  "at": "2026-07-20T00:27:08.042Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "backend": "http://127.0.0.1:8001",
+  "ui": "http://127.0.0.1:3000",
+  "results": [
+    {
+      "id": "case1-acm-segmentat",
+      "ok": true,
+      "workspaceId": "319c706e-fd7d-407a-9903-67f5c560085b",
+      "screenshots": 17
+    },
+    {
+      "id": "case2-gradi-curat",
+      "ok": true,
+      "workspaceId": "ebfed730-eaf9-4e90-ad9e-aa949a061c7d",
+      "screenshots": 18
+    }
+  ]
+}

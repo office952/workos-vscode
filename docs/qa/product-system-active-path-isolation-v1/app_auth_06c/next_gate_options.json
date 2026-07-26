@@ -1,0 +1,47 @@
+{
+  "task": "APP-AUTH-06C",
+  "options": [
+    {
+      "option": "A",
+      "name": "Owner reconciliation only",
+      "benefit": "Closes authority gaps without expanding parity surface; aligns with P1-P10 and session ledger",
+      "risk": "Sandu drift remains visible in runtime until data/policy decisions made",
+      "prerequisite": "OWNER-DECISION-05 answers Q1-Q8",
+      "recommendation": "RECOMMENDED_DEFAULT"
+    },
+    {
+      "option": "B",
+      "name": "Technical audit of ambiguous fingerprints",
+      "benefit": "Would isolate comparator/fixture defects if any emerge later",
+      "risk": "May distract from primary policy/data questions; none classified TECHNICAL_INVESTIGATION now",
+      "prerequisite": "Fingerprint reclassified TECHNICAL_INVESTIGATION with new evidence",
+      "recommendation": "OPTIONAL_ONLY_IF_NEW_AMBIGUITY"
+    },
+    {
+      "option": "C",
+      "name": "Continue observe-only with same two consumers",
+      "benefit": "More ephemeral samples if owner delays decisions",
+      "risk": "Duplicate volume grows without new truth; does not resolve Sandu",
+      "prerequisite": "Owner explicitly defers OWNER-DECISION-05",
+      "recommendation": "DEFER_SECONDARY"
+    },
+    {
+      "option": "D",
+      "name": "Plan third consumer",
+      "benefit": "Could add registry catalog boundary coverage",
+      "risk": "Premature — interpretation maturity insufficient; P6 DEFER stands",
+      "prerequisite": "OWNER-DECISION-05 + separate CONS-REGISTRY-CATALOG-API audit",
+      "recommendation": "NOT_NOW"
+    },
+    {
+      "option": "E",
+      "name": "Begin enforcement or persistence",
+      "benefit": "None authorized at this stage",
+      "risk": "Would violate P7/P8/P9 and session blocked scope",
+      "prerequisite": "FORBIDDEN",
+      "recommendation": "FORBIDDEN"
+    }
+  ],
+  "recommended_next_gate": "A",
+  "optional_supplement": "B only if owner or technical review surfaces new comparator ambiguity"
+}

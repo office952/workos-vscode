@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.orders import Orders
 from models.quote_output_snapshots import QuoteOutputSnapshot
+from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from services.intake_v6_commercial_quote_service import INTAKE_V6_LINKAGE_JSON_KEY, intake_v6_linkage_code
 from services.intake_v6_priced_quote_dry_run_service import (
 	V6_PRICED_DRY_RUN_READY,
@@ -34,6 +35,7 @@ V6_PRICED_QUOTE_WRITE_NOT_V6_QUOTE = "V6_PRICED_QUOTE_WRITE_NOT_V6_QUOTE"
 V6_PRICED_QUOTE_WRITE_WORKSPACE_MISMATCH = "V6_PRICED_QUOTE_WRITE_WORKSPACE_MISMATCH"
 V6_PRICED_QUOTE_WRITE_ALREADY_PRICED = "V6_PRICED_QUOTE_WRITE_ALREADY_PRICED"
 V6_PRICED_QUOTE_WRITE_SNAPSHOT_EXISTS = "V6_PRICED_QUOTE_WRITE_SNAPSHOT_EXISTS"
+V6_PRICED_QUOTE_WRITE_SNAPSHOT_ALREADY_FROZEN = "V6_PRICED_QUOTE_WRITE_SNAPSHOT_ALREADY_FROZEN"
 V6_PRICED_QUOTE_WRITE_ORDER_EXISTS = "V6_PRICED_QUOTE_WRITE_ORDER_EXISTS"
 V6_PRICED_QUOTE_WRITE_OPERATOR_CONFIRMATION_REQUIRED = "V6_PRICED_QUOTE_WRITE_OPERATOR_CONFIRMATION_REQUIRED"
 V6_PRICED_QUOTE_WRITE_FORBIDDEN_SOURCE = "V6_PRICED_QUOTE_WRITE_FORBIDDEN_SOURCE"
@@ -157,6 +159,33 @@ async def _order_count(db: AsyncSession, quote_id: int) -> int:
 	return int(result.scalar() or 0)
 
 
+async def _has_frozen_quote_snapshot_v2(
+	db: AsyncSession,
+	*,
+	quote_id: int,
+	workspace_id: str,
+) -> bool:
+	query = (
+		select(func.count(QuoteSnapshotV2Record.id))
+		.where(
+			QuoteSnapshotV2Record.quote_id == quote_id,
+			QuoteSnapshotV2Record.status == "frozen",
+		)
+	)
+	result = await db.execute(query)
+	if int(result.scalar() or 0) > 0:
+		return True
+	ws_query = (
+		select(func.count(QuoteSnapshotV2Record.id))
+		.where(
+			QuoteSnapshotV2Record.workspace_id == workspace_id,
+			QuoteSnapshotV2Record.status == "frozen",
+		)
+	)
+	ws_result = await db.execute(ws_query)
+	return int(ws_result.scalar() or 0) > 0
+
+
 def _internal_cost_trace_summary(dry_run: dict[str, Any]) -> dict[str, Any]:
 	trace = dry_run.get("internal_cost_trace") if isinstance(dry_run.get("internal_cost_trace"), dict) else {}
 	return {
@@ -190,23 +219,33 @@ async def write_intake_v6_priced_quote_totals(
 	operator_identifier: str | None = None,
 ) -> dict[str, Any]:
 	workspace_id_str = str(workspace_id)
-	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="write_priced_quote")
-	totals = dry_run.get("commercial_totals") if isinstance(dry_run.get("commercial_totals"), dict) else {}
-	dry_run_lines = dry_run.get("commercial_line_items") if isinstance(dry_run.get("commercial_line_items"), list) else []
-	warnings = list(dry_run.get("warnings") or [])
 
 	if not operator_confirmation:
 		return _blocked(
 			quote_id=quote_id,
-			commercial_totals=totals,
 			blockers=[
 				_blocker(
 					V6_PRICED_QUOTE_WRITE_OPERATOR_CONFIRMATION_REQUIRED,
 					"Operator confirmation is required before writing V6 priced quote totals.",
 				)
 			],
-			warnings=warnings,
 		)
+
+	if await _has_frozen_quote_snapshot_v2(db, quote_id=quote_id, workspace_id=workspace_id_str):
+		return _blocked(
+			quote_id=quote_id,
+			blockers=[
+				_blocker(
+					V6_PRICED_QUOTE_WRITE_SNAPSHOT_ALREADY_FROZEN,
+					"Frozen Quote Snapshot V2 exists; priced-quote/write cannot reprice. Use handoff-to-offer with snapshot authority.",
+				)
+			],
+		)
+
+	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="write_priced_quote")
+	totals = dry_run.get("commercial_totals") if isinstance(dry_run.get("commercial_totals"), dict) else {}
+	dry_run_lines = dry_run.get("commercial_line_items") if isinstance(dry_run.get("commercial_line_items"), list) else []
+	warnings = list(dry_run.get("warnings") or [])
 
 	if dry_run.get("pricing_status") != V6_PRICED_DRY_RUN_READY:
 		return _blocked(
@@ -405,16 +444,38 @@ async def write_intake_v6_priced_quote_totals(
 	notes_payload[INTAKE_V6_LINKAGE_JSON_KEY] = linkage_payload
 
 	vat_amount = _money(totals.get("vat_amount") or 0)
+	adjustment_trace = (
+		totals.get("commercial_adjustment_trace")
+		if isinstance(totals.get("commercial_adjustment_trace"), dict)
+		else {}
+	)
+	# Quote.margin_pct stores operator Adaos comercial % (markup on 7G base), not true margin.
+	markup_percent = adjustment_trace.get("markup_percent")
+	try:
+		margin_pct = float(markup_percent) if markup_percent is not None else 0.0
+	except (TypeError, ValueError):
+		margin_pct = 0.0
+	discount_percent = adjustment_trace.get("discount_percent")
+	try:
+		discount_pct = float(discount_percent) if discount_percent is not None else 0.0
+	except (TypeError, ValueError):
+		discount_pct = 0.0
+	discount_value = adjustment_trace.get("discount_value")
+	try:
+		discount_amount = float(discount_value) if discount_value is not None else 0.0
+	except (TypeError, ValueError):
+		discount_amount = 0.0
+	linkage_payload["intake_v6_priced_quote_write_v1"]["commercial_adjustment_trace"] = adjustment_trace
 	update_data = {
 		"status": "priced",
 		"line_items": json.dumps(mapped_line_items, default=str),
 		"subtotal": _money(subtotal),
-		"discount": 0.0,
-		"discount_pct": 0.0,
+		"discount": _money(discount_amount),
+		"discount_pct": discount_pct,
 		"total_before_vat": _money(subtotal),
 		"vat": vat_amount,
 		"grand_total": _money(total_gross),
-		"margin_pct": 0.0,
+		"margin_pct": margin_pct,
 		"notes": json.dumps(notes_payload, default=str),
 	}
 	updated = await quotes_service.update(quote_id, update_data)

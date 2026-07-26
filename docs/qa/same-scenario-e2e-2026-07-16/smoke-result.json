@@ -1,0 +1,46 @@
+{
+  "label": "LOCAL LIVE STACK SAME-SCENARIO BUILD1",
+  "verdict": "SAME_SCENARIO_LINEAGE_PASS_WITH_EXPLICIT_GAPS",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "lineage": {
+    "intake_request_code": "IR-BUILD1-1784237119",
+    "workspace_id": "e1b8d1e8-0197-4723-882a-037c41c64d35",
+    "quote_id": 3,
+    "snapshot_code": "QSN2-2026-0002",
+    "order_id": 92402,
+    "order_code": "ORD-IV6-V2-1784237123-3",
+    "execution_plan_id": 8,
+    "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+    "not_order_23099": true
+  },
+  "product": {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "logo_root": false,
+    "live_pa_task_rules": 13,
+    "snapshot_task_rules": 13
+  },
+  "commercial": {
+    "accept_convert": true,
+    "freeze_immutability_observed": true
+  },
+  "execution": {
+    "plan_v2_persist": true,
+    "materialize_tasks": 18,
+    "owner_decisions_resolved": true,
+    "reality_session_closed": true,
+    "post_job_truth": true
+  },
+  "gaps_explicit": {
+    "planning_minutes": "partial_missing_planning_minutes / PLANNING_MINUTES_SOURCE_REQUIRED",
+    "stock": "controlled — deduction not required when not eligible (G3)",
+    "labor_money": "excluded by design (PARTIAL profitability)",
+    "fixture_setup": "payload cloned from known disposable Letters workspace into new IR (not stage stitch)"
+  },
+  "code_fix": "ProductAggregateService compiles dossier.task_rules_json into task_contract (unblocked Plan V2)",
+  "evidence_files": [
+    "lineage_evidence_fresh.json",
+    "post_job_after_reality.json",
+    "walk_build1_fresh.py"
+  ]
+}

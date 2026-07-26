@@ -5,10 +5,16 @@ import type {
   IntakeV6PricingInputPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import {
+  applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   resolveIntakeV6OfferCommercialDefaults,
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
+import {
+  intakeV6HasOfficialCommercialTotals,
+  intakeV6OfficialPricingBlockerMessage,
+  intakeV6OperatorFacingPricingBlocker,
+} from "@/lib/intakeV6/intakeV6OfficialPricing";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 import { IntakeV6AggregateCostTruthNotice } from "./IntakeV6AggregateCostTruthNotice";
@@ -52,7 +58,7 @@ export default function IntakeV6PricingInputPanel({
   breakdown,
   officialPricing,
   loading,
-  title = "Rezumat ofertare V6",
+  title = "Rezumat Ofertă client (V6)",
   showDebugPayload = false,
   commercialInputs,
   onCommercialInputsChange,
@@ -71,7 +77,13 @@ export default function IntakeV6PricingInputPanel({
   if (!preview) {
     return (
       <div className={`${v6.card} mb-4`} data-testid="intake-v6-pricing-input-preview">
-        <p className="text-[12px] text-slate-400">Pricing input preview indisponibil.</p>
+        <IntakeV6AggregateCostTruthNotice compact />
+        <p className="text-[12px] text-slate-300">
+          Product Truth incomplet — Oferta client apare după confirmarea operatorului.
+        </p>
+        <p className="mt-1 text-[11px] text-slate-500">
+          Nu bloca pe registry intern: Pricing / Utilaje / Pontaj rămân helper, nu fluxul principal.
+        </p>
       </div>
     );
   }
@@ -104,10 +116,30 @@ export default function IntakeV6PricingInputPanel({
   }
 
   const officialTotals = officialPricing?.commercial_totals ?? null;
-  const hasOfficialTotals =
-    officialPricing?.pricing_status === "V6_PRICED_DRY_RUN_READY" &&
-    officialTotals?.subtotal_net != null &&
-    officialTotals?.total_gross != null;
+  const hasOfficialTotals = intakeV6HasOfficialCommercialTotals(officialPricing);
+  const officialPricingBlocker = intakeV6OfficialPricingBlockerMessage(officialPricing);
+  const commercialBaseSubtotal =
+    hasOfficialTotals &&
+    officialTotals?.commercial_base_subtotal != null &&
+    Number.isFinite(officialTotals.commercial_base_subtotal)
+      ? officialTotals.commercial_base_subtotal
+      : hasOfficialTotals &&
+          officialTotals?.subtotal_net != null &&
+          Number.isFinite(officialTotals.subtotal_net) &&
+          (officialTotals.commercial_adjustment_trace?.markup_percent ?? 0) === 0 &&
+          (officialTotals.commercial_adjustment_trace?.discount_percent ?? 0) === 0 &&
+          (officialTotals.commercial_adjustment_trace?.manual_adjustment_ron ?? 0) === 0
+        ? officialTotals.subtotal_net
+        : null;
+  const adjustedOfficialTotals =
+    hasOfficialTotals && commercialBaseSubtotal != null
+      ? applyIntakeV6CommercialAdjustments(commercialBaseSubtotal, activeCommercialInputs)
+      : null;
+  const displayOfficialNet = adjustedOfficialTotals?.subtotalNet ?? officialTotals?.subtotal_net ?? null;
+  const displayOfficialVat = adjustedOfficialTotals?.vatValue ?? officialTotals?.vat_amount ?? null;
+  const displayOfficialGross = adjustedOfficialTotals?.totalGross ?? officialTotals?.total_gross ?? null;
+  const displayOfficialVatRate =
+    adjustedOfficialTotals?.vatPercent ?? officialTotals?.vat_rate ?? activeCommercialInputs.vatPercent;
   const internalEstimateRon =
     offerModel.internalEstimateTotal != null
       ? roundMoney(
@@ -116,7 +148,7 @@ export default function IntakeV6PricingInputPanel({
             : offerModel.internalEstimateTotal * offerModel.eurToRonRate,
         )
       : null;
-  const officialNetRon = hasOfficialTotals ? officialTotals.subtotal_net : offerModel.subtotalNet;
+  const officialNetRon = hasOfficialTotals ? displayOfficialNet : null;
   const internalMarginVsNetRon =
     internalEstimateRon != null && officialNetRon != null ? roundMoney(officialNetRon - internalEstimateRon) : null;
   const hasNegativeInternalMargin =
@@ -128,7 +160,7 @@ export default function IntakeV6PricingInputPanel({
     >
       <p className="font-semibold">Marjă internă negativă</p>
       <p className="mt-1 text-red-100/90">
-        Cost intern referință {formatCurrency(internalEstimateRon as number)} depășește prețul net oficial cu{" "}
+        Cost intern estimativ {formatCurrency(internalEstimateRon as number)} depășește Oferta client (net) cu{" "}
         {formatCurrency(Math.abs(internalMarginVsNetRon as number))}.
       </p>
     </div>
@@ -152,11 +184,13 @@ export default function IntakeV6PricingInputPanel({
     !(group.items.length === 1 && group.items[0]?.label === group.label);
 
   const commercialSlidersBlock = (
-    <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
-      <h4 className="mb-3 text-[12px] font-semibold text-slate-200">Reglaje comerciale</h4>
+    <div className="rounded border border-wo-border-strong/40 bg-wo-surface-inset/35 p-2.5">
+      <h4 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        Reglaje comerciale
+      </h4>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-[11px] text-slate-300">
-          <span className="mb-1 block text-slate-400">Adaos %</span>
+          <span className="mb-1 block text-slate-400">Adaos comercial % (pe baza 7G)</span>
           <input
             type="number"
             min={0}
@@ -169,7 +203,7 @@ export default function IntakeV6PricingInputPanel({
                 markupPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-markup"
           />
         </label>
@@ -187,7 +221,7 @@ export default function IntakeV6PricingInputPanel({
                 discountPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-discount"
           />
         </label>
@@ -199,13 +233,9 @@ export default function IntakeV6PricingInputPanel({
             max={100}
             step={1}
             value={activeCommercialInputs.vatPercent}
-            onChange={(event) =>
-              setCommercialInputs({
-                ...activeCommercialInputs,
-                vatPercent: Number(event.target.value) || 0,
-              })
-            }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            readOnly
+            disabled
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-vat"
           />
         </label>
@@ -221,32 +251,39 @@ export default function IntakeV6PricingInputPanel({
                 manualAdjustmentRon: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-manual-adjustment"
           />
         </label>
       </div>
-      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[#2A3548] pt-3 text-[11px]">
+      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-wo-border-strong pt-3 text-[11px]">
         <div className="flex justify-between gap-2 text-slate-400">
           <dt>Net</dt>
-          <dd className="text-slate-200">
-            {formatCurrency(hasOfficialTotals ? officialTotals.subtotal_net : offerModel.subtotalNet)}
+          <dd className="text-slate-200" data-testid="intake-v6-offer-net-price">
+            {hasOfficialTotals && displayOfficialNet != null ? formatCurrency(displayOfficialNet) : "—"}
           </dd>
         </div>
         <div className="flex justify-between gap-2 font-semibold text-emerald-300">
-          <dt>{hasOfficialTotals ? "Preț oficial" : "Cu TVA"}</dt>
+          <dt>{hasOfficialTotals ? "Ofertă client" : "Ofertă client (estimată)"}</dt>
           <dd data-testid="intake-v6-offer-final-price">
-            {formatCurrency(hasOfficialTotals ? officialTotals.total_gross : offerModel.totalGross)}
+            {hasOfficialTotals && displayOfficialGross != null ? formatCurrency(displayOfficialGross) : "—"}
           </dd>
         </div>
+        {!hasOfficialTotals && officialPricingBlocker ? (
+          <div className="col-span-2 text-[11px] text-amber-200/90" data-testid="intake-v6-official-pricing-blocker">
+            {intakeV6OperatorFacingPricingBlocker(officialPricingBlocker) ?? officialPricingBlocker}
+          </div>
+        ) : null}
         {hasOfficialTotals ? (
           <div className="col-span-2 flex justify-between gap-2 text-[11px] text-slate-500">
             <dt>Sursă preț</dt>
             <dd data-testid="intake-v6-offer-price-source">
-              Backend V6 · TVA {Number(officialTotals.vat_rate ?? 0).toLocaleString("ro-RO", {
+              Backend V6 · baza 7G + adaos · TVA{" "}
+              {Number(displayOfficialVatRate ?? 0).toLocaleString("ro-RO", {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
-              })}%
+              })}
+              %
             </dd>
           </div>
         ) : offerModel.internalEstimateCurrency === "EUR" ? (
@@ -268,35 +305,49 @@ export default function IntakeV6PricingInputPanel({
 
   if (variant === "commercialSliders") {
     return (
-      <div className={`${v6.cardCompact} mb-3 !p-3`} data-testid="intake-v6-pricing-input-preview">
+      <div
+        className="rounded-md border border-wo-border-strong/40 bg-transparent p-0"
+        data-testid="intake-v6-pricing-input-preview"
+      >
         {commercialSlidersBlock}
       </div>
     );
   }
 
   if (variant === "confirmHero") {
-    const heroNet = hasOfficialTotals ? officialTotals.subtotal_net : offerModel.subtotalNet;
-    const heroGross = hasOfficialTotals ? officialTotals.total_gross : offerModel.totalGross;
+    const heroNet = hasOfficialTotals ? officialTotals?.subtotal_net ?? null : null;
+    const heroGross = hasOfficialTotals ? officialTotals?.total_gross ?? null : null;
 
     return (
       <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-confirm-pricing-hero">
         <IntakeV6AggregateCostTruthNotice compact />
-        <h3 className={`mb-2 ${v6.sectionTitle}`}>Ofertă comercială</h3>
-        <p className={`mb-1 ${v6.metricLabel}`}>{hasOfficialTotals ? "Preț oficial cu TVA" : "Total cu TVA"}</p>
-        <p
-          className="text-[28px] font-bold tabular-nums leading-none text-emerald-300"
-          data-testid="intake-v6-confirm-pricing-hero-gross"
-        >
-          {formatCurrency(heroGross)}
+        <h3 className={`mb-2 ${v6.sectionTitle}`}>Ofertă client</h3>
+        <p className={`mb-1 ${v6.metricLabel}`}>
+          {hasOfficialTotals ? "Ofertă client cu TVA" : "Ofertă client"}
         </p>
-        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-[#243044]/70 pt-2 text-[11px]">
-          <span className="text-slate-500">Net</span>
+        {hasOfficialTotals && heroGross != null ? (
+          <p
+            className="text-[28px] font-bold tabular-nums leading-none text-emerald-300"
+            data-testid="intake-v6-confirm-pricing-hero-gross"
+          >
+            {formatCurrency(heroGross)}
+          </p>
+        ) : (
+          <p
+            className="text-[13px] leading-relaxed text-amber-200/90"
+            data-testid="intake-v6-confirm-pricing-hero-blocked"
+          >
+            {officialPricingBlocker ?? "Oferta client nu este disponibilă."}
+          </p>
+        )}
+        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-wo-border-strong/70 pt-2 text-[11px]">
+          <span className="text-slate-500">Ofertă client netă</span>
           <span className="tabular-nums text-cyan-200" data-testid="intake-v6-confirm-pricing-hero-net">
-            {formatCurrency(heroNet)}
+            {heroNet != null ? formatCurrency(heroNet) : "—"}
           </span>
         </div>
         <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 text-[11px]">
-          <span className="text-slate-500">Cost intern referință</span>
+          <span className="text-slate-500">Cost intern estimativ</span>
           <span className="tabular-nums text-slate-200">
             {breakdown?.totals.estimated_cost_total != null
               ? formatFaceBackPrepMoney(
@@ -309,11 +360,11 @@ export default function IntakeV6PricingInputPanel({
         {offerModel.internalEstimateCurrency === "EUR" ? (
           <p className="mt-1 text-[10px] text-slate-500" data-testid="intake-v6-confirm-pricing-hero-fx">
             {hasOfficialTotals
-              ? `Preț oficial backend V6 · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
+              ? `Ofertă client (backend V6) · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
                 })}%`
-              : `Oferta în RON · curs ${offerModel.eurToRonRate.toLocaleString("ro-RO", {
+              : `Ofertă client în RON · curs ${offerModel.eurToRonRate.toLocaleString("ro-RO", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 4,
                 })} RON/EUR`}
@@ -373,7 +424,7 @@ export default function IntakeV6PricingInputPanel({
       </dl>
 
       <div className="mb-4 grid gap-3 lg:grid-cols-[1.3fr_0.9fr]">
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/50 p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
             <h4 className={`${v6.zoneTitle} text-slate-200`}>Structura cost V6</h4>
             <span className="text-[10px] text-slate-500">
@@ -384,8 +435,8 @@ export default function IntakeV6PricingInputPanel({
           </div>
           <div className="space-y-3 text-[11px]">
             {groupedCostLines.map((group) => (
-              <section key={group.key} className="rounded border border-[#1C2433] bg-[#0F1724]/60 p-2.5">
-                <div className="mb-2 flex items-center justify-between gap-3 border-b border-[#1C2433] pb-2">
+              <section key={group.key} className="rounded border border-wo-border-subtle bg-wo-surface-inset/60 p-2.5">
+                <div className="mb-2 flex items-center justify-between gap-3 border-b border-wo-border-subtle pb-2">
                   <h5 className={v6.zoneTitle}>{group.label}</h5>
                   <strong className="text-slate-100">
                     {formatCurrency(group.items.reduce((sum, item) => sum + item.amount, 0))}
@@ -415,11 +466,11 @@ export default function IntakeV6PricingInputPanel({
           </div>
         </div>
 
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/50 p-3">
           <h4 className={`mb-3 ${v6.sectionTitle}`}>Setări comerciale</h4>
           <div className="space-y-3 text-[11px] text-slate-300">
             <label className="block">
-              <span className="mb-1 block text-slate-400">Adaos comercial %</span>
+              <span className="mb-1 block text-slate-400">Adaos comercial % (pe baza 7G)</span>
               <input
                 type="number"
                 min={0}
@@ -432,7 +483,7 @@ export default function IntakeV6PricingInputPanel({
                     markupPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-markup"
               />
             </label>
@@ -450,7 +501,7 @@ export default function IntakeV6PricingInputPanel({
                     discountPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-discount"
               />
             </label>
@@ -462,13 +513,9 @@ export default function IntakeV6PricingInputPanel({
                 max={100}
                 step={1}
                 value={activeCommercialInputs.vatPercent}
-                onChange={(event) =>
-                  setCommercialInputs({
-                    ...activeCommercialInputs,
-                    vatPercent: Number(event.target.value) || 0,
-                  })
-                }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                readOnly
+                disabled
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-vat"
               />
             </label>
@@ -484,46 +531,67 @@ export default function IntakeV6PricingInputPanel({
                     manualAdjustmentRon: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-manual-adjustment"
               />
             </label>
           </div>
 
           <dl className="mt-4 space-y-2 text-[11px]">
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>Baza productie</dt>
-              <dd>{formatCurrency(offerModel.productionBase)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>Adaos</dt>
-              <dd>{formatCurrency(offerModel.markupValue)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>Ajustare manuala</dt>
-              <dd>{formatCurrency(offerModel.manualAdjustmentRon)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>Discount</dt>
-              <dd>-{formatCurrency(offerModel.discountValue)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>Total net</dt>
-              <dd>{formatCurrency(offerModel.subtotalNet)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 text-slate-300">
-              <dt>TVA ({activeCommercialInputs.vatPercent}%)</dt>
-              <dd>{formatCurrency(offerModel.vatValue)}</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3 border-t border-[#2A3548] pt-2 text-[12px] font-semibold text-emerald-300">
-              <dt>Total cu TVA</dt>
-              <dd data-testid="intake-v6-offer-final-price">{formatCurrency(offerModel.totalGross)}</dd>
-            </div>
+            {hasOfficialTotals ? (
+              <>
+                <div className="flex items-center justify-between gap-3 text-slate-300">
+                  <dt>Ofertă client netă</dt>
+                  <dd data-testid="intake-v6-offer-net-price">
+                    {formatCurrency(displayOfficialNet ?? 0)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-slate-300">
+                  <dt>TVA ({Number(displayOfficialVatRate)}%)</dt>
+                  <dd data-testid="intake-v6-offer-vat-amount">
+                    {formatCurrency(displayOfficialVat ?? 0)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3 border-t border-wo-border-strong pt-2 text-[12px] font-semibold text-emerald-300">
+                  <dt>Ofertă client cu TVA</dt>
+                  <dd data-testid="intake-v6-offer-final-price">
+                    {formatCurrency(displayOfficialGross ?? 0)}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-[10px] text-slate-500">
+                  <dt>Sursă Ofertă client</dt>
+                  <dd data-testid="intake-v6-offer-price-source">Backend V6 · baza 7G + adaos</dd>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between gap-3 text-slate-300">
+                  <dt>Ofertă client netă</dt>
+                  <dd>—</dd>
+                </div>
+                <div className="flex items-center justify-between gap-3 border-t border-wo-border-strong pt-2 text-[12px] font-semibold text-amber-200/90">
+                  <dt>Ofertă client</dt>
+                  <dd data-testid="intake-v6-offer-final-price">—</dd>
+                </div>
+                {officialPricingBlocker ? (
+                  <div className="text-[11px] text-amber-200/90" data-testid="intake-v6-official-pricing-blocker">
+                    {officialPricingBlocker}
+                  </div>
+                ) : null}
+                <div className="rounded border border-wo-border-subtle bg-wo-surface-inset/40 p-2 text-[10px] text-slate-500">
+                  <p className="mb-1 font-semibold text-slate-400">Estimare locală (nu este Ofertă client)</p>
+                  <div className="flex items-center justify-between gap-3 text-slate-400">
+                    <span>Bază Cost intern estimativ × adaos</span>
+                    <span>{formatCurrency(offerModel.totalGross)}</span>
+                  </div>
+                </div>
+              </>
+            )}
           </dl>
         </div>
       </div>
 
-      <div className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/40 p-3 text-[11px] text-slate-400">
+      <div className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/40 p-3 text-[11px] text-slate-400">
         <h4 className={`mb-2 ${v6.sectionTitle}`}>Bază tehnică pentru ofertă</h4>
         <div className="grid gap-2 sm:grid-cols-3">
           <div>
@@ -559,7 +627,7 @@ export default function IntakeV6PricingInputPanel({
       {showDebugPayload ? (
         <details className="text-[11px] text-slate-400">
           <summary className="cursor-pointer text-slate-300">quote_input_payload (debug)</summary>
-          <pre className="mt-2 max-h-48 overflow-auto rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-2 text-[10px]">
+          <pre className="mt-2 max-h-48 overflow-auto rounded border border-wo-border-strong bg-wo-surface-inset/60 p-2 text-[10px]">
             {JSON.stringify(preview.quote_input_payload, null, 2)}
           </pre>
         </details>

@@ -74,6 +74,7 @@ async def get_employee_my_order_blueprint(
         raise HTTPException(status_code=403, detail={"error": "order_not_accessible_to_employee"})
 
     my_task_ids = {str(row["task_id"]) for row in my_on_order}
+    my_by_task = {str(row["task_id"]): row for row in my_on_order}
     client_label = str(my_on_order[0].get("client") or "").strip()
 
     full = await get_order_production_blueprint(db, order_id)
@@ -117,6 +118,7 @@ async def get_employee_my_order_blueprint(
         readiness = employee_safe_readiness_payload(readiness_by_id.get(task_id, {}))
         is_startable = bool(readiness.get("is_startable"))
         readiness_status = str(readiness.get("readiness_status") or "")
+        mine_row = my_by_task.get(task_id) or {}
         mobile_tasks.append(
             {
                 "task_id": task_id,
@@ -129,8 +131,22 @@ async def get_employee_my_order_blueprint(
                     is_startable
                     or readiness_status == READINESS_IN_PROGRESS
                 ),
+                # Phase 2: split flags — never overload a single can_assist boolean.
                 "can_assist": False,
-                "eligibility_reason": "assigned_to_me" if is_mine else "other_post",
+                "visible_as_principal": bool(mine_row.get("visible_as_principal", is_mine)),
+                "visible_as_helper": bool(mine_row.get("visible_as_helper", False)),
+                "can_view_help": bool(mine_row.get("can_view_help", False)),
+                "can_accept_help": bool(mine_row.get("can_accept_help", False)),
+                "can_start_helper_work": bool(mine_row.get("can_start_helper_work", False)),
+                "can_stop_own_session": bool(mine_row.get("can_stop_own_session", False)),
+                "can_complete_operation": bool(
+                    mine_row.get("can_complete_operation", is_mine and mine_row.get("visible_as_principal", is_mine))
+                )
+                if is_mine
+                else False,
+                "eligibility_reason": "assigned_to_me"
+                if mine_row.get("visible_as_principal")
+                else ("helper_member" if mine_row.get("visible_as_helper") else "other_post"),
                 "active_helper_count": employee_safe_helper_count(
                     active_workers,
                     viewer_employee_id=employee_id,

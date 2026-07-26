@@ -15,6 +15,8 @@ from models.orders import Orders
 from schemas.execution_plan_v2 import (
     EXECUTION_PLAN_V2_SOURCE,
     IGNORED_PRICING_SOURCES,
+    PLANNING_MINUTES_SOURCE_AGGREGATE_OPS,
+    PLANNING_MINUTES_WARNING,
     READINESS_GATE_EXCLUDED_WARNING,
     READINESS_GATE_TASK_TYPE,
     EmployeeRoleRequirementSummary,
@@ -27,11 +29,24 @@ from schemas.execution_plan_v2 import (
     PlannedTaskMachineRequirement,
     PlannedTaskPreview,
 )
+from schemas.product_aggregate import ProductAggregateOperation
 from schemas.order_snapshot_v2 import ORDER_SNAPSHOT_V2_VERSION, OrderSnapshotV2
 from schemas.product_aggregate import ProductAggregate, ProductAggregateTaskRule
 from schemas.product_definition import ProductDefinitionPreview, ProductDefinitionOperationRole
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry
 from services.execution_plan_gate_service import CANONICAL_TASK_TYPES
+from services.execution_sold_scope_reader_service import (
+    BLOCKED_MISSING_SOLD_SCOPE,
+    ExecutionSoldScopeContext,
+    include_operation_for_sold_scope,
+    include_task_rule_for_sold_scope,
+    read_execution_sold_scope,
+)
+from services.execution_plan_v2_frozen_task_identity_service import (
+    build_frozen_task_identity,
+    collect_effective_task_rules,
+    mark_shared_operations,
+)
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 
 FORBIDDEN_IMPORT_SUBSTRINGS = (
@@ -41,7 +56,55 @@ FORBIDDEN_IMPORT_SUBSTRINGS = (
     "product_system_execution_output",
 )
 
-PLANNING_MINUTES_WARNING = "PLANNING_MINUTES_SOURCE_REQUIRED"
+
+def resolve_planning_minutes_from_aggregate_op(
+    agg_op: ProductAggregateOperation | None,
+) -> tuple[float | None, str | None]:
+    """TE2E-028A/B: map authorized aggregate op minutes into plan preview.
+
+    CONTRACT RULE (consumer only — does not evaluate formulas):
+    - static mode / calculation_type static → configured minutes + static source
+    - formula mode with resolved minutes → Aggregate provenance (incl. formula id)
+    - formula_based seed placeholder 0 without resolved formula → reject (null)
+    - missing minutes → null
+    Explicit 0 is accepted only when Aggregate emitted minutes with provenance.
+    """
+    if agg_op is None:
+        return None, None
+
+    mode = (getattr(agg_op, "planning_duration_mode", None) or "").strip().lower()
+    status = (getattr(agg_op, "planning_duration_status", None) or "").strip().lower()
+    emitted_source = getattr(agg_op, "planning_minutes_source", None)
+    if isinstance(emitted_source, str):
+        emitted_source = emitted_source.strip() or None
+    else:
+        emitted_source = None
+
+    if agg_op.estimated_minutes is None:
+        return None, None
+    try:
+        minutes = float(agg_op.estimated_minutes)
+    except (TypeError, ValueError):
+        return None, None
+
+    # TE2E-028B: Aggregate-resolved formula duration (including explicit zero).
+    if mode == "formula" and status == "resolved" and emitted_source:
+        return minutes, emitted_source
+
+    calc = (agg_op.calculation_type or "").strip().lower()
+    # Reject commercial/quantity placeholders that were never resolved.
+    if calc == "formula_based" and minutes == 0.0 and mode != "formula":
+        return None, None
+    if mode == "formula" and status != "resolved":
+        return None, None
+
+    if mode == "static" or calc == "static":
+        return minutes, emitted_source or PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
+
+    # Resolved non-placeholder minutes already on Aggregate (legacy path).
+    if minutes == 0.0 and calc == "formula_based":
+        return None, None
+    return minutes, emitted_source or PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
 
 
 class ExecutionPlanV2PreviewOrderNotFound(Exception):
@@ -153,9 +216,13 @@ def _resolve_canonical_type(
 def _build_planned_operations(
     aggregate: ProductAggregate,
     op_roles: dict[str, ProductDefinitionOperationRole],
+    *,
+    sold_scope: ExecutionSoldScopeContext,
 ) -> list[PlannedOperationPreview]:
     operations: list[PlannedOperationPreview] = []
     for idx, op in enumerate(aggregate.operations):
+        if not include_operation_for_sold_scope(op, ctx=sold_scope):
+            continue
         role = op_roles.get(op.operation_code)
         operations.append(
             PlannedOperationPreview(
@@ -174,25 +241,35 @@ def _build_planned_operations(
 
 
 def _build_planned_tasks(
+    snapshot: OrderSnapshotV2,
     aggregate: ProductAggregate,
     product_definition: ProductDefinitionPreview,
     *,
     owner_decision_codes: set[str],
+    sold_scope: ExecutionSoldScopeContext,
 ) -> tuple[list[PlannedTaskPreview], list[str], str | None]:
     op_roles = _operation_role_index(product_definition)
-    op_by_code = {op.operation_code: op for op in aggregate.operations}
+    op_by_code = {
+        str(op.operation_code or "").strip().lower(): op for op in aggregate.operations
+    }
     tasks: list[PlannedTaskPreview] = []
     blockers: list[str] = []
     readiness_gate_excluded = False
 
-    rules = list(aggregate.task_contract.task_rules or [])
-    rules.sort(key=lambda rule: (rule.sequence if rule.sequence is not None else 9999, rule.task_name))
+    effective_rules = collect_effective_task_rules(
+        aggregate,
+        graph=aggregate.composition_graph,
+    )
+    frozen_identities: list = []
 
-    for rule in rules:
+    for effective in effective_rules:
+        rule = effective.rule
         if _is_readiness_gate_rule(rule):
             readiness_gate_excluded = True
             continue
         if not _should_include_task_rule(rule, owner_decision_codes=owner_decision_codes):
+            continue
+        if not include_task_rule_for_sold_scope(rule, ctx=sold_scope):
             continue
 
         canonical = _resolve_canonical_type(rule)
@@ -201,7 +278,7 @@ def _build_planned_tasks(
             continue
 
         priced_op = (rule.priced_operation or "").strip()
-        agg_op = op_by_code.get(priced_op) if priced_op else None
+        agg_op = op_by_code.get(priced_op.lower()) if priced_op else None
         role = op_roles.get(priced_op) if priced_op else None
 
         label = rule.task_name.replace("_", " ").strip().title()
@@ -219,9 +296,30 @@ def _build_planned_tasks(
         if workcenter:
             machine_req = PlannedTaskMachineRequirement(workcenter=workcenter)
 
+        frozen_identity = build_frozen_task_identity(
+            snapshot=snapshot,
+            effective=effective,
+            aggregate=aggregate,
+            agg_op=agg_op,
+        )
+        frozen_identities.append(frozen_identity)
+
+        task_provenance = ["product_aggregate_snapshot.task_contract.task_rules"]
+        if effective.origin == "composition_graph_operation":
+            task_provenance.append("product_aggregate_snapshot.composition_graph.operations")
+        elif effective.origin == "linked_segment_task_rule":
+            task_provenance.append("product_aggregate_snapshot.linked_segment_task_rules")
+
+        estimated_minutes, planning_minutes_source = resolve_planning_minutes_from_aggregate_op(
+            agg_op
+        )
+        task_warnings: list[str] = []
+        if estimated_minutes is None:
+            task_warnings.append(PLANNING_MINUTES_WARNING)
+
         tasks.append(
             PlannedTaskPreview(
-                task_key=rule.task_name,
+                task_key=frozen_identity.deterministic_task_key,
                 label=label,
                 canonical_task_type=canonical,
                 source_module_code=rule.mini_module_code,
@@ -229,13 +327,21 @@ def _build_planned_tasks(
                 source_operation_code=priced_op or None,
                 source_task_rule_code=rule.task_name,
                 sequence_index=rule.sequence,
-                estimated_minutes=None,
-                planning_minutes_source=None,
+                estimated_minutes=estimated_minutes,
+                planning_minutes_source=planning_minutes_source,
                 machine_requirement=machine_req,
-                warnings=[PLANNING_MINUTES_WARNING],
-                provenance=["product_aggregate_snapshot.task_contract.task_rules"],
+                warnings=task_warnings,
+                provenance=task_provenance,
+                frozen_identity=frozen_identity,
             )
         )
+
+    frozen_identities = mark_shared_operations(frozen_identities)
+    identity_by_key = {ident.deterministic_task_key: ident for ident in frozen_identities}
+    for task in tasks:
+        ident = identity_by_key.get(task.task_key)
+        if ident is not None:
+            task.frozen_identity = ident
 
     tasks.sort(key=lambda item: (item.sequence_index if item.sequence_index is not None else 9999, item.task_key))
 
@@ -321,6 +427,33 @@ def _build_preview_from_snapshot(
         ]
     )
 
+    sold_scope = read_execution_sold_scope(snapshot)
+    if sold_scope.block_preview:
+        return ExecutionPlanV2Preview(
+            status="blocked_missing_sold_scope",
+            order_id=order.id,
+            order_code=getattr(order, "code", None),
+            quote_id=snapshot.quote_id,
+            quote_snapshot_v2_id=snapshot.quote_snapshot_v2_id,
+            source_snapshot_code=snapshot.snapshot_code,
+            source_content_hash=snapshot.content_hash,
+            source_order_snapshot_version=snapshot.snapshot_version,
+            order_snapshot_hash=order_snapshot_hash,
+            blockers=[sold_scope.block_reason or BLOCKED_MISSING_SOLD_SCOPE],
+            provenance=provenance,
+            ignored_pricing_sources=list(IGNORED_PRICING_SOURCES),
+            message="Component subset order snapshot is missing frozen sold runtime modules.",
+        )
+
+    if sold_scope.filter_enabled:
+        provenance.append(
+            QuoteSnapshotProvenanceEntry(
+                key="execution_sold_scope_frozen",
+                source="execution_sold_scope_reader_service",
+                detail=f"mode={sold_scope.mode} sold_modules={sorted(sold_scope.sold_runtime_modules)}",
+            )
+        )
+
     if not aggregate.task_contract.task_rules:
         return ExecutionPlanV2Preview(
             status="blocked_missing_task_rules",
@@ -338,9 +471,11 @@ def _build_preview_from_snapshot(
         )
 
     tasks, task_blockers, unknown_blocker, readiness_gate_excluded = _build_planned_tasks(
+        snapshot,
         aggregate,
         product_definition,
         owner_decision_codes=owner_codes,
+        sold_scope=sold_scope,
     )
     if unknown_blocker is not None:
         return ExecutionPlanV2Preview(
@@ -360,9 +495,15 @@ def _build_preview_from_snapshot(
             message="One or more task rules could not be mapped to canonical task types.",
         )
 
-    operations = _build_planned_operations(aggregate, _operation_role_index(product_definition))
+    operations = _build_planned_operations(
+        aggregate,
+        _operation_role_index(product_definition),
+        sold_scope=sold_scope,
+    )
     dependencies = _build_dependencies(tasks)
-    warnings = [PLANNING_MINUTES_WARNING]
+    warnings: list[str] = []
+    if any(task.estimated_minutes is None for task in tasks):
+        warnings.append(PLANNING_MINUTES_WARNING)
     if readiness_gate_excluded and READINESS_GATE_EXCLUDED_WARNING not in warnings:
         warnings.append(READINESS_GATE_EXCLUDED_WARNING)
 
@@ -395,6 +536,9 @@ def _build_preview_from_snapshot(
             "operation_count": len(operations),
             "template_code": aggregate.template_code,
             "owner_decision_count": len(owner_codes),
+            "sold_scope_mode": sold_scope.mode,
+            "sold_scope_filter_enabled": sold_scope.filter_enabled,
+            "sold_runtime_modules_count": len(sold_scope.sold_runtime_modules),
         },
     )
 

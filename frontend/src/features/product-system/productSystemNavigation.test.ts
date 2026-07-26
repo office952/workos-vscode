@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { ProductTemplateEntity } from "@/lib/api";
+import { TPL_ACM_BOXED_MOUNTING_SUPPORT } from "@/lib/acmQuoteInput";
 import { OWNER_VALID_ACTIVE_TEMPLATE_CODE } from "@/lib/activeTemplateScope";
 import {
   filterLibraryTemplates,
@@ -34,13 +35,16 @@ describe("productSystemNavigation", () => {
   it("filters active templates for quote scope", () => {
     const templates = [
       makeTemplate({ id: 1, template_code: OWNER_VALID_ACTIVE_TEMPLATE_CODE }),
+      makeTemplate({ id: 3, template_code: TPL_ACM_BOXED_MOUNTING_SUPPORT }),
       makeTemplate({ id: 2, template_code: "TPL-ARCHIVED", active: false }),
     ];
     const active = filterLibraryTemplates(templates, "active", "");
-    expect(active).toHaveLength(1);
-    expect(active[0].template_code).toBe(OWNER_VALID_ACTIVE_TEMPLATE_CODE);
+    expect(active).toHaveLength(2);
+    expect(active.map((t) => t.template_code).sort()).toEqual(
+      [OWNER_VALID_ACTIVE_TEMPLATE_CODE, TPL_ACM_BOXED_MOUNTING_SUPPORT].sort(),
+    );
     expect(isTemplateEditableForQuote(active[0])).toBe(true);
-    expect(isTemplateEditableForQuote(templates[1])).toBe(false);
+    expect(isTemplateEditableForQuote(templates[2])).toBe(false);
   });
 
   it("filters archived templates separately from active", () => {

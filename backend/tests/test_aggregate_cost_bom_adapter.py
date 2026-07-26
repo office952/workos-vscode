@@ -87,7 +87,10 @@ async def bom_context(volumetric_v2_db):
 
     async def _build(*, workspace_id: str | None = None, quote_input=None, rates=None, wc=None, inventory=None, external_selections=None):
         pd = await pd_builder.build_preview(TEMPLATE, workspace_id=workspace_id)
-        aggregate = await aggregate_svc.build(TEMPLATE)
+        if workspace_id:
+            aggregate = await aggregate_svc.build_for_workspace(TEMPLATE, workspace_id)
+        else:
+            aggregate = await aggregate_svc.build(TEMPLATE)
         assert pd is not None and aggregate is not None
         return adapter.build(
             product_definition=pd,
@@ -184,16 +187,28 @@ async def test_structura_suport_excluded_for_direct_wall(bom_context, volumetric
 
 
 @pytest.mark.asyncio
-async def test_structura_suport_included_for_steel_bars(bom_context, volumetric_v2_db):
+async def test_structura_suport_included_for_premount_graph(bom_context, volumetric_v2_db):
+    from services.mounting_solution_service import METAL_PREMOUNT_TEMPLATE_CODE
+
+    payload = _full_payload(mounting_system="direct_wall")
+    payload["finish_setup"].pop("mounting_system", None)
+    payload["finish_setup"]["mounting_solution"] = {
+        "template_code": METAL_PREMOUNT_TEMPLATE_CODE,
+        "configuration": {
+            "bar_count": 2,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "steel",
+        },
+    }
     ws_id = str(uuid.uuid4())
     volumetric_v2_db.add(
         IntakeV6WorkspaceRecord(
             id=ws_id,
             workspace_code=f"WS-BOM-{ws_id[:8]}",
-            title="BOM steel bars",
+            title="BOM premount graph",
             template_code=TEMPLATE,
             status="draft",
-            payload_json=json.dumps(_full_payload(mounting_system="steel_bars")),
+            payload_json=json.dumps(payload),
         )
     )
     await volumetric_v2_db.commit()
@@ -202,6 +217,7 @@ async def test_structura_suport_included_for_steel_bars(bom_context, volumetric_
         m.module_code == "structura_suport" and m.included_in_cost_bom for m in bom.active_modules
     )
     assert structura_active
+    assert bom.graph_cost_projection is not None
     premount_mats = [
         m for m in bom.costable_materials if m.source_template_code and "PREMOUNT" in (m.source_template_code or "")
     ]
@@ -242,7 +258,7 @@ async def test_missing_psu_watts_produces_requirement_not_zero_cost(bom_context,
     )
     await volumetric_v2_db.commit()
     bom = await bom_context(workspace_id=ws_id)
-    assert "selected_psu_watts" in bom.missing_geometry or any(
+    assert any("selected_psu_watts" in g for g in bom.missing_geometry) or any(
         m.reason == "missing_psu_watts_selection" for m in bom.missing_pricing
     )
     psu_mats = [m for m in bom.costable_materials if "PSU" in m.material_code]

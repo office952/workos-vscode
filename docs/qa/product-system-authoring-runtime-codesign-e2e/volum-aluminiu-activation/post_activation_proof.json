@@ -1,0 +1,290 @@
+{
+  "identity_table": [
+    {
+      "Layer": "Template code",
+      "Identifier": "TPL-VOLUM-ALUMINIU_v1",
+      "Active target": true,
+      "Verdict": "PASS"
+    },
+    {
+      "Layer": "BOM component_id",
+      "Identifier": "comp_volum_aluminiu_module",
+      "Active target": "modelare_cant",
+      "Verdict": "PASS"
+    },
+    {
+      "Layer": "Pricing stub alias",
+      "Identifier": "comp_lateral_litere",
+      "Active target": "modelare_cant",
+      "Verdict": "PASS"
+    },
+    {
+      "Layer": "Aspirational alias",
+      "Identifier": "TPL-COMP-LETTER-RETURN-CANT_v1",
+      "Active target": null,
+      "Verdict": "PASS"
+    },
+    {
+      "Layer": "Logo return (out of scope)",
+      "Identifier": "TPL-VOLUMETRIC-LOGO-RETURN_v1",
+      "Active target": true,
+      "Verdict": "PASS_UNTOUCHED"
+    },
+    {
+      "Layer": "Parent VL",
+      "Identifier": "TPL-VOLUMETRIC-LETTERS_v2",
+      "Active target": true,
+      "Verdict": "PASS_NOT_PUBLISHED"
+    },
+    {
+      "Layer": "Duplicate aluminiu rows",
+      "Identifier": "1",
+      "Active target": 1,
+      "Verdict": "PASS"
+    }
+  ],
+  "aluminiu_row": {
+    "id": 10,
+    "active": true,
+    "publication_status": null,
+    "published_at": null
+  },
+  "parent_row": {
+    "id": 8,
+    "active": true,
+    "publication_status": null,
+    "published_at": null
+  },
+  "module_links": [
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "relation": "required_module",
+      "active": true
+    }
+  ],
+  "identity_view": {
+    "schema": "volum_aluminiu_identity_convergence_v1",
+    "status": "PASS",
+    "canonical": {
+      "template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "bom_component_id": "comp_volum_aluminiu_module",
+      "aggregate_module_code": "modelare_cant"
+    },
+    "aliases": {
+      "pricing_component_code": "comp_lateral_litere",
+      "pt_role": "return_cant",
+      "produced_roles": [
+        "sidewall",
+        "side_wall",
+        "return_profile",
+        "lateral_cant"
+      ],
+      "process_aliases": [
+        "RETURN-CANT",
+        "RETURN_CANT",
+        "CANT"
+      ],
+      "aspirational_template_code": "TPL-COMP-LETTER-RETURN-CANT_v1",
+      "aspirational_component_id": "comp_letter_return_cant_v1",
+      "admin_label": "Cant / volum din aluminiu"
+    },
+    "used_by": [
+      "product_truth.components.return_cant",
+      "Aggregate modelare_cant (CHILD_TEMPLATE + dossier aliases)",
+      "CPP modelare_cant_aluminiu / comp_lateral_litere stub",
+      "EIC INT_VOL_V2_RETURN_ML",
+      "separate-calculation-preview",
+      "readiness identity_convergence finding"
+    ],
+    "lookup_policy": "id_or_code_only_via_IDENTITY_MAP",
+    "name_based_lookup": false,
+    "double_counting_policy": "aggregate_keys_once_by_modelare_cant",
+    "publication_remains_blocked": true,
+    "activation_forbidden_in_this_build": false
+  },
+  "flags": {
+    "activation_forbidden": false,
+    "publication_remains_blocked": true
+  },
+  "preview": {
+    "separate_calculation": "PASS",
+    "quantity_m": 12.5,
+    "commercial_basis": "ml",
+    "persist": false
+  },
+  "readiness": {
+    "verdict": "STATIC_READY_WITH_WARNINGS",
+    "e2e_ready": false,
+    "build_closure_status": "PASS_WITH_WARNINGS",
+    "template_publication_status": "PASS",
+    "inactive_blocker_present": false,
+    "required_active_pass": true,
+    "not_tested_count": 6,
+    "not_tested_sample": [
+      "product_truth.runtime_revision",
+      "cpp.not_tested",
+      "eic.not_tested",
+      "quote_snapshot.runtime_freeze",
+      "order_snapshot.not_tested",
+      "execution_preview.not_tested"
+    ],
+    "systems": {
+      "catalog": "PASS",
+      "components": "PASS_WITH_WARNINGS",
+      "intake": "PASS",
+      "product_truth": "NOT_TESTED",
+      "product_definition": "PASS",
+      "aggregate": "PASS",
+      "quantity": "PASS",
+      "cpp": "NOT_TESTED",
+      "eic": "NOT_TESTED",
+      "quote_snapshot": "NOT_TESTED",
+      "order_snapshot": "NOT_TESTED",
+      "execution_preview": "NOT_TESTED"
+    }
+  },
+  "publication_state": {
+    "publication_status": null,
+    "publish_allowed": true,
+    "active_is_not_published": true
+  },
+  "parent_impact": "PASS_WITH_WARNINGS_NOT_PUBLISHED",
+  "findings_aluminiu_related": [
+    {
+      "check_id": "catalog.template_present",
+      "system": "catalog",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Catalog template TPL-VOLUMETRIC-LETTERS_v2 present and active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.module_links_present",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Aggregate/module links: 5 required, 2 optional.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUM-ALUMINIU_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUM-ALUMINIU_v1 is active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-FACE_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-FACE_v1 is active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-BACK_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-BACK_v1 is active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-LED_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-LED_v1 is active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-FINISH_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-FINISH_v1 is active.",
+      "conflict_code": null
+    },
+    {
+      "check_id": "components.aggregate_warning.TRIGGER_FIELD_MISMATCH",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+      "conflict_code": "TRIGGER_FIELD_MISMATCH"
+    },
+    {
+      "check_id": "components.aggregate_warning.DOSSIER_METADATA_ONLY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Blueprint dossier is metadata for BOM/ops; task_rules_json is consumed into task_contract for ExecutionPlan V2.",
+      "conflict_code": "DOSSIER_METADATA_ONLY"
+    },
+    {
+      "check_id": "components.aggregate_warning.CANONICAL_CONTRACT_AUTHORITY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "ProductAggregate compiled from canonical template/component contracts.",
+      "conflict_code": "CANONICAL_CONTRACT_AUTHORITY"
+    },
+    {
+      "check_id": "components.aggregate_warning.TEMPLATE_IDENTITY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Template identity resolution trace.",
+      "conflict_code": "TEMPLATE_IDENTITY"
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "default_illuminated_true_template_only",
+      "conflict_code": "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY"
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "default_screw_finish_NATURAL",
+      "conflict_code": "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL"
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_GRAPH_MODULAR_RESOLVER",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "task_contract compiled from modular product process resolver (not dossier list).",
+      "conflict_code": "PROCESS_GRAPH_MODULAR_RESOLVER"
+    },
+    {
+      "check_id": "components.volum_aluminiu.separate_calc_contract",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu separate-calc contract present (confirmed perimeter required; parent publication is a separate GO).",
+      "conflict_code": "volum_aluminiu_contract_completeness"
+    },
+    {
+      "check_id": "components.volum_aluminiu.identity_convergence",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu dual-id closed via explicit IDENTITY_MAP (BOM owner + pricing stub alias → modelare_cant once).",
+      "conflict_code": "volum_aluminiu_identity_convergence"
+    },
+    {
+      "check_id": "components.volum_aluminiu.geometry_convergence",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu product-total prefers confirmed Product Truth perimeter; quote_geometry is controlled compatibility bridge or demoted legacy fallback; divergence fail-closed. Parent publication is a separate GO.",
+      "conflict_code": "volum_aluminiu_geometry_convergence"
+    }
+  ]
+}

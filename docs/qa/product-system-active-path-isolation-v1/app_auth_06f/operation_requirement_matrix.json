@@ -1,0 +1,12 @@
+{
+  "task": "APP-AUTH-06F",
+  "matrix": [
+    {"operation": "volumetric_letter_assembly", "competence": "SK_ASSEMBLY required; SK_PRINT_OPERATOR present", "level": "UNDECIDED", "authorization": "MISSING for WA-ASSEMBLY", "supervision": "UNKNOWN", "workcenter": "WC_ASSEMBLY", "exception_allowed": "POSSIBLE_WITH_SUPERVISION", "safety_sensitive": false, "confidence": "medium"},
+    {"operation": "vinyl_cutting", "competence": "SK_VINYL_APPLICATOR required; absent registry", "level": "UNDECIDED", "authorization": "MISSING laminator/assembly", "supervision": "UNKNOWN", "workcenter": "WC_VINYL_APPLICATION", "exception_allowed": "POSSIBLE_WITH_SUPERVISION", "safety_sensitive": false, "confidence": "medium"},
+    {"operation": "led_assembly", "competence": "SK_ELECTRICIAN required; absent registry", "level": "UNDECIDED", "authorization": "MISSING", "supervision": "LIKELY_REQUIRED", "workcenter": "WC_LED_ASSEMBLY", "exception_allowed": "NOT_ALLOWED_SAFETY_WITHOUT_CONTRACT", "safety_sensitive": true, "confidence": "medium"},
+    {"operation": "led_wiring", "competence": "SK_ELECTRICIAN required; absent registry", "level": "UNDECIDED", "authorization": "MISSING", "supervision": "LIKELY_REQUIRED", "workcenter": "WC_LED_ASSEMBLY", "exception_allowed": "NOT_ALLOWED_SAFETY_WITHOUT_CONTRACT", "safety_sensitive": true, "confidence": "medium"},
+    {"operation": "installation_prep", "competence": "SK_FIELD_INSTALLER required; absent registry", "level": "UNDECIDED", "authorization": "PARTIAL team auth", "supervision": "TEAM_OPERATION", "workcenter": "WC_FIELD_INSTALLATION", "exception_allowed": "ALLOWED_BY_POLICY_WITH_SUPERVISION", "safety_sensitive": true, "confidence": "low"},
+    {"operation": "packaging", "competence": "SK_ASSEMBLY required; absent registry", "level": "UNDECIDED", "authorization": "MISSING", "supervision": "UNKNOWN", "workcenter": "WC_ASSEMBLY", "exception_allowed": "POSSIBLE_WITH_SUPERVISION", "safety_sensitive": false, "confidence": "low"},
+    {"operation": "quality_control", "competence": "SK_ASSEMBLY required; absent registry", "level": "UNDECIDED", "authorization": "MISSING", "supervision": "UNKNOWN", "workcenter": "WC_ASSEMBLY", "exception_allowed": "POSSIBLE_WITH_SUPERVISION", "safety_sensitive": false, "confidence": "low"}
+  ]
+}

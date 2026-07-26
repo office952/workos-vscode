@@ -301,8 +301,8 @@ class TestIntakeV4InternalDraftQuoteConfirmationPolicy:
 
         assert has_unclassified_vector_artwork(payload) is False
 
-    def test_vector_residual_case_b_unconfirmed_logos_warning_remains(self):
-        """Unconfirmed artwork must not enter confirmed denominator."""
+    def test_vector_residual_case_b_product_configured_logos_without_finish_confirmed_flag(self):
+        """Execution-decided Vector Logos count like letters even when confirmed=false."""
         payload = IntakeV4WorkspacePayload.model_validate(
             {
                 "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
@@ -318,6 +318,166 @@ class TestIntakeV4InternalDraftQuoteConfirmationPolicy:
                             "layer_key": "logo-stanga",
                             "layer_name": "logo stanga",
                             "execution_type": "print_on_vinyl_laminated",
+                            "confirmed": False,
+                        },
+                        {
+                            "layer_key": "logo-dreapta",
+                            "layer_name": "logo dreapta",
+                            "execution_type": "print_on_vinyl_laminated",
+                            "confirmed": True,
+                        },
+                    ],
+                },
+            }
+        )
+
+        assert has_unclassified_vector_artwork(payload) is False
+
+    def test_vector_logo_scalability_zero_one_two_four_and_partial_incomplete(self):
+        """Generic N logos: zero/one/two/four; incomplete Logo 3 does not drop 1/2/4."""
+        letters = [{"group_key": "letters", "perimeter_m": 26.7472, "confirmed": True}]
+        raw = {"perimeter_mm_approx": 31637.330856}
+
+        zero = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": raw,
+                "finish_setup": {"confirmed": True, "letter_group_finishes": letters, "artwork_finishes": []},
+            }
+        )
+        assert has_unclassified_vector_artwork(zero) is True
+
+        one = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": raw,
+                "svg_analysis_json": {
+                    "layers": [{"id": "logo_instance_001", "name": "Logo 1", "perimeterMl": 4.891}],
+                },
+                "finish_setup": {
+                    "confirmed": True,
+                    "letter_group_finishes": letters,
+                    "artwork_finishes": [
+                        {
+                            "layer_key": "logo_instance_001",
+                            "layer_name": "Logo 1",
+                            "execution_type": "print_laminate",
+                            "confirmed": False,
+                        }
+                    ],
+                },
+            }
+        )
+        assert has_unclassified_vector_artwork(one) is False
+
+        two = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": raw,
+                "svg_analysis_json": {
+                    "layers": [
+                        {"id": "logo_instance_001", "name": "Logo 1", "perimeterMl": 2.4455},
+                        {"id": "logo_instance_002", "name": "Logo 2", "perimeterMl": 2.4455},
+                    ],
+                },
+                "finish_setup": {
+                    "confirmed": True,
+                    "letter_group_finishes": letters,
+                    "artwork_finishes": [
+                        {
+                            "layer_key": "logo_instance_001",
+                            "layer_name": "Logo 1",
+                            "execution_type": "print_laminate",
+                            "confirmed": False,
+                        },
+                        {
+                            "layer_key": "logo_instance_002",
+                            "layer_name": "Logo 2",
+                            "execution_type": "print_laminate",
+                            "confirmed": False,
+                        },
+                    ],
+                },
+            }
+        )
+        assert has_unclassified_vector_artwork(two) is False
+
+        four_layers = [
+            {"id": f"logo_instance_{i:03d}", "name": f"Logo {i}", "perimeterMl": 1.22275}
+            for i in range(1, 5)
+        ]
+        four_rows = [
+            {
+                "layer_key": f"logo_instance_{i:03d}",
+                "layer_name": f"Logo {i}",
+                "execution_type": "print_laminate",
+                "confirmed": False,
+            }
+            for i in range(1, 5)
+        ]
+        four = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": raw,
+                "svg_analysis_json": {"layers": four_layers},
+                "finish_setup": {
+                    "confirmed": True,
+                    "letter_group_finishes": letters,
+                    "artwork_finishes": four_rows,
+                },
+            }
+        )
+        assert has_unclassified_vector_artwork(four) is False
+
+        # Logo 3 incomplete (needs_decision): only that logo is excluded; residual remains.
+        partial_rows = [
+            {
+                "layer_key": f"logo_instance_{i:03d}",
+                "layer_name": f"Logo {i}",
+                "execution_type": "needs_decision" if i == 3 else "print_laminate",
+                "confirmed": False,
+            }
+            for i in range(1, 5)
+        ]
+        partial = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": raw,
+                "svg_analysis_json": {"layers": four_layers},
+                "finish_setup": {
+                    "confirmed": True,
+                    "letter_group_finishes": letters,
+                    "artwork_finishes": partial_rows,
+                },
+            }
+        )
+        assert has_unclassified_vector_artwork(partial) is True
+        # Eligible logos 1+2+4 still contribute (3.66825); residual ~1.22 from Logo 3.
+        from services.intake_v4_internal_draft_quote_policy_service import (
+            _operator_confirmed_artwork_perimeter_m,
+        )
+
+        eligible = _operator_confirmed_artwork_perimeter_m(partial)
+        assert eligible is not None
+        assert abs(eligible - (1.22275 * 3)) < 0.001
+
+    def test_vector_residual_case_b_unconfirmed_logos_warning_remains(self):
+        """Undecided execution must not enter confirmed denominator."""
+        payload = IntakeV4WorkspacePayload.model_validate(
+            {
+                "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+                "path_geometry_summary": {"perimeter_mm_approx": 31637.330856},
+                "quote_geometry": {"artwork_return_perimeter_ml": 4.891},
+                "finish_setup": {
+                    "confirmed": True,
+                    "letter_group_finishes": [
+                        {"group_key": "letters", "perimeter_m": 26.7472, "confirmed": True},
+                    ],
+                    "artwork_finishes": [
+                        {
+                            "layer_key": "logo-stanga",
+                            "layer_name": "logo stanga",
+                            "execution_type": "needs_decision",
                             "confirmed": False,
                         },
                         {

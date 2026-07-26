@@ -1,5 +1,6 @@
 import { CheckCircle2, CircleDashed, EyeOff } from "lucide-react";
 import type { LayerRoleConfirmation } from "@/lib/svgAnalyzer";
+import { layerStatusIconLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 export type LayerConfirmationState =
   LayerRoleConfirmation["layers"][number]["confirmationState"] | undefined;
@@ -9,17 +10,17 @@ const STATUS_META: Record<
   { label: string; className: string; Icon: typeof CheckCircle2 }
 > = {
   confirmed: {
-    label: "Confirmat",
+    label: layerStatusIconLabelRo("confirmed"),
     className: "text-emerald-400",
     Icon: CheckCircle2,
   },
   pending: {
-    label: "De confirmat",
+    label: layerStatusIconLabelRo("pending"),
     className: "text-amber-400",
     Icon: CircleDashed,
   },
   ignored: {
-    label: "Ignorat",
+    label: layerStatusIconLabelRo("ignored"),
     className: "text-slate-500",
     Icon: EyeOff,
   },

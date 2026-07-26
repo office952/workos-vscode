@@ -1,0 +1,48 @@
+﻿
+=== acm_finish_setup_slice.json top workspace_id,workspace_code,title,readiness,mounting_scope,site_installation_included,mounting_solution,mounting_template_enabled,mounting_template_area_m2,mounting_template_material_type,mains_cable_length_m,power_supply_service_corner,service_screw_finish,mounting_fixing_system,support_type,mounting_system,mounting_bar_profile,confirmed,svg_support_selection,segmented_background,acp_electrical_configuration,bindings_count,binding_roles,composition
+{
+  scope: 'none',
+  template: [ true, 'forex', 0.7004 ],
+  sol: [ 'product_system_template', 'TPL-ACM-BOXED-MOUNTING-SUPPORT_v1' ],
+  seg: 'PROPOSED',
+  support: [ 'confirmed', 'ALUCOBOND_CASED_PANEL' ],
+  bindings: [ null, null ],
+  cable: null,
+  corner: null
+}
+
+=== acm_priced_quote_dry_run.json top pricing_status,pricing_authority,commercial_authority_status,workspace_id,workspace_code,intake_code,template_code,product_composition_recommendation,product_composition_confirmed,composition_items,pricing_source,pricing_mode,commercial_totals,commercial_line_items,internal_cost_trace,estimated_internal_cost_trace,diagnostic_cost_plus_trace,pricing_input_trace,commercial_proposal_trace,warnings,blockers,can_write_quote_totals,can_create_quote_snapshot,dry_run_only,persistence
+{
+  Accesorii: false,
+  Tarife: false,
+  sablon: true,
+  montaj_line: false,
+  gate: undefined
+}
+montaj-ish lines []
+blockers []
+
+=== acm_task_preview.json top workspace_id,template_code,items,preview_only,operation_flags,preview_engine
+{"workspace_id":"3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982","template_code":"TPL-VOLUMETRIC-LETTERS_v2","items":[{"operation_code":"graphic_vector_preflight","label":"Verificare grafic├ä┬â / vectorizare","workcenter":"graphics_workstation","sequence":1,"component_ref":null,"active":true,"inactive_reason":null,"source":"operation_catalog","depends_on":[],"required_skill":["graphic_design","vector_preflight"],"active_reason":"vector_asset_or_analysis_present","operator_instruction":"Verific├ä┬â SVG, straturi ├ê┬Öi preg├ä┬âtire pentru model produc├ê┬¢ie."},{"operation_code":"confirmed_production_model","label":"Confirmare model produc├ê┬¢ie din vector","workcenter":"graphics_workstation","sequence":2,"component_ref":null,"active":true,"inactive_reason":null,"source":"operation_catalog","depends_on":["graphic_vector_preflight"],"required_skill":["graphic_design","vector_preflight"],"active_reason":"always_active_for_volumetric_pilot","operator_instruction":"Confirm├ä┬â litere, contururi ├ê┬Öi goluri interioare."},{"operation_code":"cnc_file_preparation","label":"Preg├ä┬âtire fi├ê┬Öiere CNC pentru debitare fa├ê┬¢├ä┬â/spate","workcenter":"cnc_preparation_station","sequence":3,"component_ref":null,"active":true,"inactive_reason":null,"source":"operation_catalog","depends_on":["confirmed_production_model"],"required_skill":["cnc_file_preparation"],"active_reason":"always_active_for_volumetric_pilot","operator_instruction":"Preg├ä┬âte├ê┬Öte fi├ê┬Öiere debitare fa├ê┬¢├ä┬â plexiglas ├ê┬Öi spate Forex."},{"operation_code":"retu
+
+=== acm_runtime_capture_read_model.json top read_only,workspace_id,workspace_record_id,workspace_code,root_template_code,product_binding_template_code,read_model_version,fields,blockers,downstream_write_intent,notes
+MOUNTING []
+{"read_only":true,"workspace_id":"3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982","workspace_record_id":"3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982","workspace_code":"IV6-EA145E74","root_template_code":"TPL-VOLUMETRIC-LETTERS_v2","product_binding_template_code":"TPL-VOLUMETRIC-LETTERS_v2","read_model_version":"v1","fields":[{"field_key":"svg.selected_layer_refs[]","runtime_source":"svg.selected_layer_refs[]","product_truth_path":"svg.selected_layer_refs[]","state":"confirmed","confirmation_rule":"Persisted selected layer refs require layer_role_setup.confirmation_status=complete plus stable layer_id and confirmation_state=confirmed.","blockers":[],"ready_for_product_truth":true},{"field_key":"finish.finish_target","runtime_source":"finish_setup.finish_target","product_truth_path":"components.finish.target","state":"confirmed","confirmation_rule":"Explicit persisted finish_setup.finish_target and finish_setup.confirmed=true.","blockers":[],"ready_for_product_truth":true},{"field_key":"finish.print_required","runtime_source":"finish_setup.artwork_finishes[].print_required","product_truth_path":"components.artwork.items[].printRequired","state":"confirmed","confirmation_rule":"Every persisted artwork finish row must carry an explicit print_required value and row confirmation or finish_setup.confirmed=true.","blockers":[],"ready_for_product_truth":true},{"field_key":"finish.lamination_required","runtime_source":"finish_setup.artwork_finishes[].lamination_required","product_truth_path":"components.artwork.items[].laminationRequired","state":"confirmed","confirmation_rule":"Every persisted artwork finish row must carry an explicit lamination_required value and row confirmation or finish_setup.confirmed=true.","blockers":[],"ready_for_product_truth":true},{"field_key":"mounting.mounting_scope
+
+=== acm_product_definition.json top preview_version,template_code,business_name_ro,source_context,selected_modules,optional_modules,inactive_modules,components,material_roles,operation_roles,linked_template_runtime_segments,canonical_values,geometry_inputs,validation,provenance,resource_hints,warnings,notes,composition
+mounting_scope true
+mounting_solution true
+segmented true
+service_corner true
+mains_cable false
+fixing true
+svg_support true
+ALUCOBOND true
+
+=== acm_product_aggregate.json top aggregate_version,template_code,template_id,family_id,family_name,status,business_name_ro,source_layers,modules,components,materials,operations,form_contract,cost_contract,task_contract,conflicts,warnings,provenance_summary,mini_module_registry,composition_graph,commercial_measurements
+{
+  mounting: true,
+  segmented: false,
+  task_rules: true,
+  forex_template: true
+}

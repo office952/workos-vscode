@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { getIntakeV6RoleOptionsForLayer } from "./intakeV6LayerRoleOptions";
+import {
+  getIntakeV6RoleOptionsForLayer,
+  INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS,
+  normalizeIntakeV6OwnerSelectableRole,
+} from "./intakeV6LayerRoleOptions";
 
 describe("getIntakeV6RoleOptionsForLayer", () => {
-  it("returns letters-first recommended roles for volumetric letters layers", () => {
+  it("returns the two owner-approved roles for volumetric letters layers", () => {
     const result = getIntakeV6RoleOptionsForLayer({
       layer: { name: "maria", layerKind: "pseudo", autoRole: "face" },
       layerDisplay: "Grup detectat: maria",
@@ -15,17 +19,13 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
 
     expect(result.recommendedOptions.map((option) => option.value)).toEqual([
       "face",
-      "return",
-      "backing",
-      "vinyl",
-      "ignore",
-      "unknown",
+      "printed_artwork",
     ]);
-    expect(result.secondaryOptions.map((option) => option.value)).toContain("drill");
-    expect(result.secondaryOptions.map((option) => option.value)).toContain("logo");
+    expect(result.secondaryOptions).toEqual([]);
+    expect(result.fallbackOptions).toEqual([]);
   });
 
-  it("returns logo-first recommended roles for volumetric logo layers", () => {
+  it("returns the same two owner-approved roles for volumetric logo layers", () => {
     const result = getIntakeV6RoleOptionsForLayer({
       layer: { name: "logo stanga", layerKind: "pseudo", autoRole: "printed_artwork" },
       layerDisplay: "Grup detectat: logo stanga",
@@ -37,15 +37,41 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
     });
 
     expect(result.recommendedOptions.map((option) => option.value)).toEqual([
-      "logo",
-      "printed_artwork",
-      "vinyl",
       "face",
-      "ignore",
-      "unknown",
+      "printed_artwork",
     ]);
-    expect(result.secondaryOptions.map((option) => option.value)).toContain("return");
-    expect(result.secondaryOptions.map((option) => option.value)).not.toContain("logo");
+    expect(result.secondaryOptions).toEqual([]);
+    expect(result.fallbackOptions).toEqual([]);
+  });
+
+  it("exposes Contur suport and ACP shell-local roles in owner layer dropdown", () => {
+    expect(INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((o) => o.value)).toEqual([
+      "face",
+      "printed_artwork",
+      "support_panel",
+      "cutout_text",
+      "cutout_logo",
+      "acrylic_insert",
+      "ignore",
+    ]);
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "support_panel" },
+        confirmedRole: "support_panel",
+      }),
+    ).toBe("support_panel");
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "face" },
+        confirmedRole: "cutout_text",
+      }),
+    ).toBe("cutout_text");
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "face" },
+        confirmedRole: "acrylic_insert",
+      }),
+    ).toBe("acrylic_insert");
   });
 
   it("keeps a safe grouped fallback for unknown layers", () => {
@@ -61,26 +87,47 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
 
     expect(result.recommendedOptions.map((option) => option.value)).toEqual([
       "face",
-      "logo",
-      "printed_artwork",
-      "support_panel",
+      "return",
+      "backing",
       "vinyl",
+      "ignore",
+      "unknown",
     ]);
-    expect(result.secondaryOptions.map((option) => option.value)).toContain("backing");
-    expect(result.fallbackOptions.map((option) => option.value)).toEqual(["ignore", "unknown"]);
+    expect(result.secondaryOptions.map((option) => option.value)).toContain("support_panel");
+    expect(result.fallbackOptions).toEqual([]);
   });
 
-  it("keeps the currently selected role available even when it is not recommended", () => {
+  it("keeps grouped fallback behavior for non-volumetric contexts", () => {
     const result = getIntakeV6RoleOptionsForLayer({
       layer: { name: "maria", layerKind: "pseudo", autoRole: "face" },
       layerDisplay: "Grup detectat: maria",
       confirmedRole: "bevel",
       detectedKind: "pseudo",
-      targetTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
-      activeTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
-      assemblyType: "letters_only",
+      targetTemplateCode: null,
+      activeTemplateCode: null,
+      assemblyType: null,
     });
 
-    expect(result.secondaryOptions.map((option) => option.value)).toContain("bevel");
+    expect(result.secondaryOptions.map((option) => option.value)).toContain("drill");
+  });
+
+  it("normalizes legacy logo-ish roles to Vector Logo for owner dropdowns", () => {
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { name: "Logo 1", layerKind: "pseudo", autoRole: "printed_artwork" },
+        confirmedRole: "vinyl",
+        targetTemplateCode: "TPL-VOLUMETRIC-LOGO_v1",
+      }),
+    ).toBe("printed_artwork");
+  });
+
+  it("normalizes unknown letter-ish roles to Vector Litere for owner dropdowns", () => {
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { name: "maria", layerKind: "pseudo", autoRole: "face" },
+        confirmedRole: "unknown",
+        targetTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
+      }),
+    ).toBe("face");
   });
 });

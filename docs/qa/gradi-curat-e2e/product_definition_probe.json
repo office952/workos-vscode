@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/product-definition",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/product-definition-preview",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  },
+  {
+    "path": "/api/v1/product-definitions/from-intake-v6/11891d68-c4c8-4719-acc5-f8fcb22a44af",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/readiness",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  }
+]

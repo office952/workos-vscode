@@ -1,0 +1,145 @@
+{
+  "url": "http://127.0.0.1:3001/intake-v6/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/operator",
+  "title": "erpWork OS",
+  "tabs": [
+    {
+      "id": "intake-v6-review-tab-finisaje",
+      "text": "FinisajeFață · cant · Vector Logo",
+      "selected": "false"
+    },
+    {
+      "id": "intake-v6-review-tab-iluminare",
+      "text": "IluminareLED · backing",
+      "selected": "true"
+    },
+    {
+      "id": "intake-v6-review-tab-montaj",
+      "text": "MontajȘablon · sistem",
+      "selected": "false"
+    }
+  ],
+  "cardCountApprox": 72,
+  "tallCards": [
+    {
+      "i": 45,
+      "testid": "intake-v6-review-lighting-section",
+      "text": "Iluminare LEDPerimetru litere: 6.646 mLED activIluminareCuloare luminaWarm whiteNeutral whiteCool wh",
+      "h": 415.25
+    },
+    {
+      "i": 54,
+      "testid": "intake-v6-review-calculator-panel",
+      "text": "Calcul estimativ liveSe actualizează după configurația curentă. Valoarea finală se confirmă ulterior",
+      "h": 1020.5
+    },
+    {
+      "i": 57,
+      "testid": null,
+      "text": "LinieConsumPreț / statusMateriale · 11Plexiglas 3 mm0.3447 m25,52 EURForex 10 mm0.3447 m25,52 EURMat",
+      "h": 765.5
+    },
+    {
+      "i": 59,
+      "testid": "intake-v6-pricing-input-preview",
+      "text": "Reglaje comercialeAdaos %Discount %TVA %Ajustare manuală (RON)Net—Preț comercial—Operatorul trebuie ",
+      "h": 318.75
+    },
+    {
+      "i": 60,
+      "testid": null,
+      "text": "Reglaje comercialeAdaos %Discount %TVA %Ajustare manuală (RON)Net—Preț comercial—Operatorul trebuie ",
+      "h": 292.75
+    }
+  ],
+  "badges": [
+    "Stare sistem: necesită verificare"
+  ],
+  "blockers": [
+    {
+      "testid": "environment-banner-details-toggle",
+      "text": "Stare sistem: necesită verificare"
+    },
+    {
+      "testid": null,
+      "text": "Necesita confirmare"
+    },
+    {
+      "testid": null,
+      "text": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETA"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-live-missing-rates-banner",
+      "text": "1 tarif lipsă"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner",
+      "text": "1 problemă blochează ConfirmareaHandoff-ul către ofertă reală este blocat. — Confirmă rolurile layerelor/grupurilor și d"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-toggle",
+      "text": "1 problemă blochează Confirmarea"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-title",
+      "text": "1 problemă blochează Confirmarea"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-compact-one",
+      "text": "Handoff-ul către ofertă reală este blocat. — Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte d"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-diagnostic-link",
+      "text": "Vezi detalii tehnice și diagnostic"
+    },
+    {
+      "testid": null,
+      "text": "Electrică"
+    },
+    {
+      "testid": "intake-v6-live-estimate-unavailable",
+      "text": "Operatorul trebuie sa confirme compozitia produsului propusa de analyzer inainte de priced dry-run ready."
+    },
+    {
+      "testid": "intake-v6-live-missing-rates-banner",
+      "text": "Tarife lipsă — Accesorii montaj / conectori"
+    },
+    {
+      "testid": null,
+      "text": "— Accesorii montaj / conectori"
+    },
+    {
+      "testid": "intake-v6-live-material-cost-material.forex_backing",
+      "text": "5,52 EUR"
+    },
+    {
+      "testid": "intake-v6-live-material-cost-material.print",
+      "text": "1,26 EUR"
+    },
+    {
+      "testid": "intake-v6-live-material-cost-material.lamination",
+      "text": "8,40 EUR"
+    },
+    {
+      "testid": "intake-v6-live-material-cost-material.led_modules",
+      "text": "16,20 EUR"
+    }
+  ],
+  "headings": [
+    "Calcul estimativ live",
+    "Iluminare",
+    "Iluminare",
+    "Calcul estimativ live"
+  ]
+}

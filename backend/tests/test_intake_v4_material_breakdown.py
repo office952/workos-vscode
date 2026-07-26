@@ -279,6 +279,355 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
         assert plexi.quantity == 1.5
         assert plexi.quantity_basis == BASIS_AREA_FALLBACK
 
+    def test_logo_only_artwork_blocks_letters_sheet_prorated_fallback_for_plexiglas(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {
+                                    "partId": "art-a",
+                                    "sourceLayerName": "Logo 1",
+                                    "placedWidthMm": 1000,
+                                    "placedHeightMm": 1000,
+                                }
+                            ],
+                        }
+                    ]
+                },
+                "parts": {
+                    "items": [
+                        {
+                            "id": "art-a",
+                            "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"},
+                        }
+                    ]
+                },
+                "layers": [
+                    {
+                        "id": "logo-dreapta",
+                        "name": "Logo 1",
+                        "perimeterMl": 3.142,
+                        "filledAreaSqm": 1.0,
+                    }
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 1.0004,
+                "letter_face_area_m2": 1.0004,
+                "artwork_area_m2": 1.0,
+                "artwork_boxes": [
+                    {"layer_key": "logo-dreapta", "width_mm": 1000, "height_mm": 1000, "area_m2": 1.0}
+                ],
+                "return_material_perimeter_ml": 6.284,
+                "letter_return_perimeter_ml": 3.142,
+                "artwork_return_perimeter_ml": 3.142,
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 1.0004,
+                "letter_face_area_m2": 1.0004,
+                "artwork_area_m2": 1.0,
+                "return_material_perimeter_ml": 6.284,
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+            "finish_setup": {
+                "face_finish_type": "oracal_651",
+                "return_finish_type": "white_aluminum",
+                "return_depth_mm": 60,
+                "illuminated": True,
+                "letter_group_finishes": [],
+                "artwork_finishes": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "execution_type": "none_raw_plexi",
+                        "face_personalization_method": "none_raw_plexi",
+                        "estimated_area_m2": 1.0,
+                        "return_finish_type": "white_aluminum",
+                        "return_depth_mm": 60,
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-only-prorated-blocked", payload)
+        plexi = next(row for row in result.material_rows if row.material_key == "plexiglas_face")
+        assert plexi.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
+        assert plexi.quantity == pytest.approx(1.0, rel=0, abs=1e-4)
+        assert plexi.estimated_cost is None
+        assert not any(w.code == "sheet_nesting_prorated_fallback" for w in result.warnings)
+        assert any(w.code == "sheet_nesting_prorated_fallback_blocked_for_logo_only" for w in result.warnings)
+
+    def test_logo_only_unconfirmed_backing_does_not_emit_forex_from_area_fallback(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "art-a", "sourceLayerName": "Logo 1", "placedWidthMm": 1500, "placedHeightMm": 1500}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {"items": [{"id": "art-a", "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"}}]},
+                "layers": [
+                    {"id": "logo-dreapta", "name": "Logo 1", "perimeterMl": 4.7553, "filledAreaSqm": 1.5547, "widthMm": 1500, "heightMm": 1500}
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-unconfirmed-backing", payload)
+        keys = {row.material_key for row in result.material_rows}
+        assert "plexiglas_face" in keys
+        assert "forex_backing" not in keys
+        assert any(w.code == "backing_not_confirmed" for w in result.warnings)
+
+    def test_logo_only_physical_material_rows_use_artwork_box_footprint_source(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "art-a", "sourceLayerName": "Logo 1", "placedWidthMm": 1500, "placedHeightMm": 1500}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {"items": [{"id": "art-a", "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"}}]},
+                "layers": [
+                    {"id": "logo-dreapta", "name": "Logo 1", "perimeterMl": 4.7553, "filledAreaSqm": 1.5547, "widthMm": 1500, "heightMm": 1500}
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+            "finish_setup": {
+                "backing_mode": "forex_10_no_bevel",
+                "letter_group_finishes": [],
+                "artwork_finishes": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "execution_type": "none_raw_plexi",
+                        "face_personalization_method": "none_raw_plexi",
+                        "estimated_area_m2": 1.5547,
+                        "return_finish_type": "white_aluminum",
+                        "return_depth_mm": 60,
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-footprint-contract", payload)
+        plexi = next(row for row in result.material_rows if row.material_key == "plexiglas_face")
+        forex = next(row for row in result.material_rows if row.material_key == "forex_backing")
+
+        assert plexi.quantity == pytest.approx(2.25, rel=0, abs=1e-4)
+        assert forex.quantity == pytest.approx(2.25, rel=0, abs=1e-4)
+        assert plexi.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
+        assert forex.quantity_basis == "backing_area_fallback_from_artwork_box_footprint"
+        assert plexi.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert forex.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert plexi.source_part_ids == ["art-a"]
+        assert forex.source_part_ids == ["art-a"]
+        assert plexi.trace_markers == []
+        assert forex.trace_markers == []
+        assert "artwork_area_m2" not in plexi.quantity_source
+        assert "face_area_m2" not in plexi.quantity_source
+        assert "artwork_area_m2" not in forex.quantity_source
+        assert "face_area_m2" not in forex.quantity_source
+        assert any(w.code == "backing_artwork_box_footprint_used" for w in result.warnings)
+
+    def test_print_material_should_not_use_raw_area_alias_as_final_physical_source(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["face_finish_type"] = "print_laminate"
+        payload["finish_setup"]["letter_group_finishes"] = [
+            {
+                "group_key": "litere-volumetrice-1",
+                "layer_name": "litere-volumetrice-1",
+                "face_finish_type": "print_laminate",
+                "face_area_m2": 1.5,
+                "return_finish_type": "standard_aluminum",
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-print-contract", payload)
+        print_row = next(row for row in result.material_rows if row.material_key.endswith("print_vinyl"))
+
+        assert "face_area_m2" not in (print_row.quantity_source or "")
+        assert "artwork_finishes|svg_analysis_json.layers" not in (print_row.quantity_source or "")
+
+    def test_letters_plus_logo_linked_segment_adds_logo_backing_and_runtime_face_rows(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "face-a", "sourceLayerName": "letters", "placedWidthMm": 1000, "placedHeightMm": 1263.8}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {
+                    "items": [
+                        {"id": "face-a", "source": {"layerId": "letters", "layerName": "letters"}},
+                        {"id": "part_logo_1_001", "source": {"layerId": "logo-stanga", "layerName": "Logo 1"}},
+                        {"id": "part_logo_2_002", "source": {"layerId": "logo-dreapta", "layerName": "Logo 2"}},
+                    ]
+                },
+                "layers": [
+                    {"id": "letters", "name": "letters", "filledAreaSqm": 1.2638, "perimeterMl": 10.0},
+                    {"id": "logo-stanga", "name": "Logo 1", "filledAreaSqm": 0.4002},
+                    {"id": "logo-dreapta", "name": "Logo 2", "filledAreaSqm": 0.4002},
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 1.2638,
+                "letter_face_area_m2": 1.2638,
+                "artwork_area_m2": 0.8005,
+                "artwork_boxes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "width_mm": 667.2126344054284, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "width_mm": 667.2126344054288, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                ],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 1.2638,
+                "letter_face_area_m2": 1.2638,
+                "artwork_area_m2": 0.8005,
+                "artwork_boxes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "width_mm": 667.2126344054284, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "width_mm": 667.2126344054288, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                ],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {"layer_key": "letters", "layer_name": "letters", "confirmed_role": "face", "confirmation_state": "confirmed"},
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "confirmed_role": "printed_artwork", "confirmation_state": "confirmed"},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "confirmed_role": "printed_artwork", "confirmation_state": "confirmed"},
+                ],
+            },
+            "finish_setup": {
+                "backing_mode": "forex_10_no_bevel",
+                "letter_group_finishes": [{"group_key": "letters", "layer_name": "letters", "face_area_m2": 1.2638, "face_finish_type": "oracal_651"}],
+                "artwork_finishes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "execution_type": "print_laminate", "face_personalization_method": "print_laminate", "estimated_area_m2": 0.4002, "return_depth_mm": 60},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "execution_type": "print_laminate", "face_personalization_method": "print_laminate", "estimated_area_m2": 0.4002, "return_depth_mm": 60},
+                ],
+            },
+            "product_composition_recommendation": {
+                "composition_type": "letters_plus_logo",
+                "recommended_templates": [
+                    {"template_code": PILOT_V4_TEMPLATE_CODE, "role_in_composition": "letters"},
+                    {"template_code": "TPL-VOLUMETRIC-LOGO_v1", "role_in_composition": "logo_vector_atipic"},
+                ],
+                "composition_items": [
+                    {"composition_item_id": "letters", "template_code": PILOT_V4_TEMPLATE_CODE, "component_role": "volumetric_letters", "source_layer_ids": ["letters"]},
+                    {"composition_item_id": "logo", "template_code": "TPL-VOLUMETRIC-LOGO_v1", "component_role": "volumetric_logo", "source_layer_ids": ["logo-stanga", "logo-dreapta"]},
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-linked-logo-backing", payload)
+        logo_plexi_rows = [row for row in result.material_rows if row.material_key.startswith("artwork_plexiglas_")]
+        logo_forex_rows = [row for row in result.material_rows if row.material_key.startswith("artwork_forex_backing_")]
+
+        assert len(logo_plexi_rows) == 2
+        assert len(logo_forex_rows) == 2
+        assert sum(row.quantity for row in logo_plexi_rows) == pytest.approx(0.8004, rel=0, abs=1e-4)
+        assert sum(row.quantity for row in logo_forex_rows) == pytest.approx(0.8004, rel=0, abs=1e-4)
+        assert all(row.quantity_basis == "linked_logo_face_bounding_footprint_quote_estimate" for row in logo_plexi_rows)
+        assert all(row.quantity_basis == "linked_logo_backing_bounding_footprint_quote_estimate" for row in logo_forex_rows)
+        assert all("linked_logo_segment" in row.quantity_source for row in logo_plexi_rows)
+        assert all("linked_logo_segment" in row.quantity_source for row in logo_forex_rows)
+        assert {part_id for row in logo_plexi_rows for part_id in row.source_part_ids} == {"part_logo_1_001", "part_logo_2_002"}
+        assert {part_id for row in logo_forex_rows for part_id in row.source_part_ids} == {"part_logo_1_001", "part_logo_2_002"}
+        assert any(w.code == "linked_logo_backing_fallback_used" for w in result.warnings)
+
 
 class TestIntakeV4ArtworkVolumetricBreakdown:
     def test_separate_emblem_adds_plexiglas_and_return(self):
@@ -565,10 +914,41 @@ class TestIntakeV4NestingMaterialPrecisionIntegration:
         payload["finish_setup"]["required_psu_watts"] = 200
         result = build_intake_v4_material_breakdown("ws-led", payload)
         led = next(row for row in result.consumable_rows if row.material_key == "led_modules")
-        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu")
+        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu_100w")
         assert led.confidence == CONFIDENCE_FORMULA
         assert psu.quantity_basis == "psu_configuration_quote_estimate"
         assert psu.confidence == CONFIDENCE_FORMULA
+
+    def test_led_psu_configuration_splits_rows_by_wattage(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["illuminated"] = True
+        payload["finish_setup"]["led_module_count"] = 42
+        payload["finish_setup"]["psu_configuration"] = [160, 60, 60]
+        payload["finish_setup"]["required_psu_watts"] = 269.57
+
+        result = build_intake_v4_material_breakdown("ws-led-split", payload)
+        psu_rows = [row for row in result.consumable_rows if str(row.material_key).startswith("led_psu_")]
+
+        assert len(psu_rows) == 2
+        by_code = {row.registry_code: row for row in psu_rows}
+        assert by_code["MAT-LED-PSU-12V-160W"].quantity == 1.0
+        assert by_code["MAT-LED-PSU-12V-60W"].quantity == 2.0
+        assert sum(row.quantity for row in psu_rows) == 3.0
+        assert all(row.quantity_basis == "psu_configuration_quote_estimate" for row in psu_rows)
+
+    def test_led_psu_configuration_unknown_wattage_exposes_warning(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["illuminated"] = True
+        payload["finish_setup"]["led_module_count"] = 42
+        payload["finish_setup"]["psu_configuration"] = [180]
+        payload["finish_setup"]["required_psu_watts"] = 180
+
+        result = build_intake_v4_material_breakdown("ws-led-unknown", payload)
+        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu_180w")
+
+        assert psu.registry_code == "MAT-LED-PSU-12V"
+        assert psu.price_source == "missing"
+        assert "PSU material missing for 180W" in psu.warnings
 
     def test_roll_color_split_warning(self):
         payload = _payload_with_letter_groups(roll_nesting=True)
@@ -655,6 +1035,218 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         assert "face_vinyl" not in keys
         assert "letter_face_print_vinyl" not in keys
         assert "artwork_layer-1_print_vinyl" not in keys
+
+    def test_artwork_raw_skips_global_oracal_face_fallback(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "none_raw_plexi",
+                "face_personalization_method": "none_raw_plexi",
+                "color_mode": "none",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-raw", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert "Vinil față Oracal 651" not in names
+        assert all("Serviciu aplicare — litere" != name for name in op_names)
+        assert any("plexiglas 3mm PMMA - opal" == name for name in names)
+
+    def test_artwork_oracal_641_adds_logo_specific_vinyl_and_application(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "cut_vinyl",
+                "face_personalization_method": "oracal",
+                "material_code": "ORACAL_641",
+                "color_mode": "monochrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-641", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
+        assert any("Vinil față Oracal 641 — Logo 1" == name for name in names)
+        assert "Vinil față Oracal 651" not in names
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    def test_artwork_oracal_8500_adds_logo_specific_vinyl_and_application(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "translucent_vinyl",
+                "face_personalization_method": "oracal",
+                "material_code": "ORACAL_8500",
+                "color_mode": "monochrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-8500", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
+        assert any("Vinil față Oracal 8500 — Logo 1" == name for name in names)
+        assert "Vinil față Oracal 651" not in names
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    def test_artwork_print_laminate_adds_logo_specific_rows(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "print_laminate",
+                "face_personalization_method": "print_laminate",
+                "material_code": "ORAFOL_PRINT_LAMINATION",
+                "print_material_code": "ORAFOL_PRINT",
+                "lamination_material_code": "ORAFOL_LAMINATION",
+                "color_mode": "polychrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-print", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
+        assert any("Material print Orafol — Logo 1" == name for name in names)
+        assert any("Material laminare Orafol — Logo 1" == name for name in names)
+        assert any("Serviciu print — Logo 1" == name for name in op_names)
+        assert any("Serviciu laminare X-PRO — Logo 1" == name for name in op_names)
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    def test_artwork_print_laminate_prefers_artwork_box_footprint_source_when_available(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "print_laminate",
+                "face_personalization_method": "print_laminate",
+                "material_code": "ORAFOL_PRINT_LAMINATION",
+                "print_material_code": "ORAFOL_PRINT",
+                "lamination_material_code": "ORAFOL_LAMINATION",
+                "color_mode": "polychrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        payload["svg_analysis_json"]["layers"] = [
+            {
+                "id": "layer-1",
+                "name": "Logo 1",
+                "filledAreaSqm": 0.198,
+                "widthMm": 600,
+                "heightMm": 500,
+            }
+        ]
+        payload["layer_role_setup"] = {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "layer-1",
+                    "layer_name": "Logo 1",
+                    "confirmed_role": "printed_artwork",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+        }
+        payload["svg_analysis_json"]["parts"] = {
+            "items": [
+                {
+                    "id": "art-logo-1",
+                    "source": {"layerId": "layer-1", "layerName": "Logo 1"},
+                }
+            ]
+        }
+
+        result = build_intake_v4_material_breakdown("ws-art-print-footprint", payload)
+
+        print_row = next(row for row in result.material_rows if row.material_key == "artwork_layer-1_print_vinyl")
+        laminate_row = next(row for row in result.material_rows if row.material_key == "artwork_layer-1_laminated_vinyl")
+        print_service = next(row for row in result.operation_rows if row.key == "artwork_layer-1_print_service")
+        application_service = next(row for row in result.operation_rows if row.key == "artwork_layer-1_application_service")
+
+        assert print_row.quantity == pytest.approx(0.3, rel=0, abs=1e-4)
+        assert laminate_row.quantity == pytest.approx(0.3, rel=0, abs=1e-4)
+        assert print_row.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert laminate_row.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert print_row.source_part_ids == ["art-logo-1"]
+        assert laminate_row.source_part_ids == ["art-logo-1"]
+        assert print_service.operation_equivalent_quantity == pytest.approx(round(0.3 * (1.0 + WASTE_PERCENT / 100.0), 4), rel=0, abs=1e-4)
+        assert application_service.operation_equivalent_quantity == pytest.approx(round(0.3 * (1.0 + WASTE_PERCENT / 100.0), 4), rel=0, abs=1e-4)
+
+    @pytest.mark.asyncio
+    async def test_artwork_finish_totals_are_additive_relative_to_raw(self):
+        def _artwork_payload(execution_type: str, face_personalization_method: str, material_code: str | None):
+            payload = _payload_finish_truth_base()
+            payload["finish_setup"]["letter_group_finishes"] = []
+            payload["finish_setup"]["artwork_finishes"] = [
+                {
+                    "layer_key": "layer-1",
+                    "layer_name": "Logo 1",
+                    "execution_type": execution_type,
+                    "face_personalization_method": face_personalization_method,
+                    "material_code": material_code,
+                    "print_material_code": "ORAFOL_PRINT" if execution_type == "print_laminate" else None,
+                    "lamination_material_code": "ORAFOL_LAMINATION" if execution_type == "print_laminate" else None,
+                    "color_mode": "polychrome" if execution_type == "print_laminate" else ("none" if execution_type == "none_raw_plexi" else "monochrome"),
+                    "estimated_area_m2": 0.198,
+                    "return_finish_type": "standard_aluminum",
+                    "return_depth_mm": 60,
+                }
+            ]
+            return payload
+
+        material_prices = {
+            "MAT-ACP-FATA-LITERE": {"unit_cost": 16.0, "currency": "EUR"},
+            "MAT-VINYL-PRINT": {"unit_cost": 1.8, "currency": "EUR"},
+            "MAT-VINYL-PRINT-LAMINATED": {"unit_cost": 12.0, "currency": "EUR"},
+        }
+
+        with patch(
+            "services.inventory_materials_admin_service.load_material_pricing_dict",
+            new_callable=AsyncMock,
+        ) as material_lookup, patch(
+            "services.workcenter_rates_service.load_workcenter_rate_pricing_dict",
+            new_callable=AsyncMock,
+        ) as rate_lookup:
+            material_lookup.return_value = material_prices
+            rate_lookup.return_value = {}
+
+            raw = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-raw", _artwork_payload("none_raw_plexi", "none_raw_plexi", None))  # type: ignore[arg-type]
+            o641 = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-641", _artwork_payload("cut_vinyl", "oracal", "ORACAL_641"))  # type: ignore[arg-type]
+            o8500 = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-8500", _artwork_payload("translucent_vinyl", "oracal", "ORACAL_8500"))  # type: ignore[arg-type]
+            pr = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-print", _artwork_payload("print_laminate", "print_laminate", "ORAFOL_PRINT_LAMINATION"))  # type: ignore[arg-type]
+
+        assert raw.totals.estimated_cost_total is not None
+        assert o641.totals.estimated_cost_total is not None
+        assert o8500.totals.estimated_cost_total is not None
+        assert pr.totals.estimated_cost_total is not None
+        assert o641.totals.estimated_cost_total >= raw.totals.estimated_cost_total
+        assert o8500.totals.estimated_cost_total >= raw.totals.estimated_cost_total
+        assert pr.totals.estimated_cost_total >= raw.totals.estimated_cost_total
 
     def test_standard_aluminum_return_label_not_oracal_wrapped(self):
         result = build_intake_v4_material_breakdown("ws-truth-e", _payload_finish_truth_base())

@@ -19,6 +19,16 @@ export type PricingRegistryConfidence =
   | "imported_from_inventory"
   | "missing";
 
+export type PricingTypedCatalog =
+  | "material"
+  | "machine_operation"
+  | "labor"
+  | "service"
+  | "unknown"
+  | "markup_rule";
+
+export type PricingMachineFamily = "cnc_mechanical" | "cnc_laser" | "other_machine";
+
 export interface PricingRegistryItem {
   pricing_code: string;
   display_name: string;
@@ -40,6 +50,13 @@ export interface PricingRegistryItem {
   rate_basis?: string;
   scope_type?: string;
   scope_value?: string;
+  /** Additive typed catalog (Pricing Foundation V1). */
+  typed_catalog?: PricingTypedCatalog;
+  machine_family?: PricingMachineFamily | null;
+  data_quality_flags?: string[];
+  data_quality_message_ro?: string | null;
+  cost_meaning?: "purchase_cost" | "reusable_rate" | "markup";
+  cost_label_ro?: string | null;
 }
 
 export interface PricingRegistryResponse {

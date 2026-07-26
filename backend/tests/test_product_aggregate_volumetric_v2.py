@@ -15,9 +15,13 @@ from services.product_aggregate_service import ProductAggregateService
 TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
 CHILD_ALUMINUM = "TPL-VOLUM-ALUMINIU_v1"
 CHILD_PREMOUNT = "TPL-METAL-PREMOUNT-STRUCTURE_v1"
+CHILD_FACE = "TPL-VOLUMETRIC-FACE_v1"
+CHILD_BACK = "TPL-VOLUMETRIC-BACK_v1"
+CHILD_LED = "TPL-VOLUMETRIC-LED_v1"
+CHILD_FINISH = "TPL-VOLUMETRIC-FINISH_v1"
 
 DOSSIER_COMPONENTS = [
-    {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexi/acrilic"},
+    {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexiglas 3mm PMMA - opal"},
     {"id": "comp_lateral_litere", "label": "VOLUM ALUMINIU", "role": "profil lateral"},
     {"id": "comp_spate_litere", "label": "CAPAC SPATE", "role": "spate Forex"},
     {"id": "comp_led_litere", "label": "SISTEM LED", "role": "LED"},
@@ -57,10 +61,82 @@ COSTENGINE_MAPPING = {
 
 TASK_RULES = {
     "rules": [
-        {"task_name": "cnc_face_cut", "task_type": "cnc_routing", "priced_operation": "face_cnc_cut", "sequence": 2},
-        {"task_name": "electrical_wiring", "task_type": "led_wiring", "priced_operation": "electrical_letters", "sequence": 9},
+        {
+            "task_name": "cnc_face_cut",
+            "task_type": "cnc_routing",
+            "priced_operation": "face_cnc_cut",
+            "sequence": 2,
+            "mini_module_code": "debitare_fata",
+        },
+        {
+            "task_name": "return_face_bonding",
+            "task_type": "assembly",
+            "priced_operation": "RETURN_PROFILE_FACE_BONDING",
+            "sequence": 4,
+            "mini_module_code": "modelare_cant",
+        },
+        {
+            "task_name": "electrical_wiring",
+            "task_type": "led_wiring",
+            "priced_operation": "electrical_letters",
+            "sequence": 9,
+            "mini_module_code": "sistem_led",
+        },
     ]
 }
+
+
+async def _ensure_face_cant_interface_fixture_rows(session) -> None:
+    """Upsert Build 3 interface technical rows on an existing thin fixture (no global seed)."""
+    from sqlalchemy import select
+
+    child = (
+        await session.execute(
+            select(Product_templates).where(Product_templates.template_code == CHILD_ALUMINUM).limit(1)
+        )
+    ).scalar_one_or_none()
+    if child is None:
+        return
+    ops = json.loads(child.operations_json or "[]")
+    mats = json.loads(child.required_materials_json or "[]")
+    op_codes = {str(row.get("code")) for row in ops if isinstance(row, dict)}
+    mat_codes = {
+        str(row.get("material_code") or row.get("materialCode"))
+        for row in mats
+        if isinstance(row, dict)
+    }
+    changed = False
+    if "RETURN_PROFILE_FACE_BONDING" not in op_codes:
+        ops.append(
+            {
+                "code": "RETURN_PROFILE_FACE_BONDING",
+                "workcenter": "WC_ASSEMBLY",
+                "component_ref": "comp_volum_aluminiu_module",
+            }
+        )
+        changed = True
+    if "MAT-ADEZIV-CANT-LITERE" not in mat_codes:
+        mats.append(
+            {
+                "material_code": "MAT-ADEZIV-CANT-LITERE",
+                "unit": "ml",
+                "component_ref": "comp_volum_aluminiu_module",
+            }
+        )
+        changed = True
+    if changed:
+        child.operations_json = json.dumps(ops)
+        child.required_materials_json = json.dumps(mats)
+
+    dossier = (
+        await session.execute(
+            select(ProductBlueprintDossier).where(ProductBlueprintDossier.template_code == TEMPLATE_CODE).limit(1)
+        )
+    ).scalar_one_or_none()
+    if dossier is not None:
+        dossier.task_rules_json = json.dumps(TASK_RULES)
+    if changed or dossier is not None:
+        await session.commit()
 
 
 async def _seed_volumetric_v2_fixture(session) -> None:
@@ -71,40 +147,52 @@ async def _seed_volumetric_v2_fixture(session) -> None:
         select(Product_templates).where(Product_templates.template_code == TEMPLATE_CODE).limit(1)
     )
     if existing.scalar_one_or_none() is not None:
+        await _ensure_face_cant_interface_fixture_rows(session)
         return
 
+    # Root identity stubs only — BOM/ops owned by linked child Product Templates.
+    parent_component_stubs = [
+        {"component_id": row["id"], "name": row["label"], "operations": [], "materials": []}
+        for row in DOSSIER_COMPONENTS
+    ]
     parent = Product_templates(
         template_code=TEMPLATE_CODE,
         family_id="litere_volumetrice",
         family_name="Litere volumetrice luminoase",
         description="Parent volumetric v2 test fixture",
-        components_json=json.dumps([]),
-        operations_json=json.dumps(
-            [
-                {
-                    "code": "svg_geometry_analysis",
-                    "workcenter": "PREPRESS",
-                    "sequence": 0,
-                    "formula_id": "svg_geometry_readiness_gate",
-                    "formula_params": {"non_priced": True},
-                }
-            ]
-        ),
-        required_materials_json=json.dumps(
-            [
-                {"material_code": "MAT-SABLON-MONTAJ", "unit": "mp", "formula_id": "mounting_template_area"},
-                {"material_code": "MAT-SABLON-HARTIE", "unit": "mp", "formula_id": "mounting_template_area"},
-            ]
-        ),
+        components_json=json.dumps(parent_component_stubs),
+        operations_json=json.dumps([]),
+        required_materials_json=json.dumps([]),
         active=True,
     )
+    # Mirror production seed interface rows (Build 4A.1 / Build 3 authority):
+    # MAT-ADEZIV-CANT-LITERE + RETURN_PROFILE_FACE_BONDING on child aluminum.
+    # Inline test fixture only — not a global seed_sync change.
     child_al = Product_templates(
         template_code=CHILD_ALUMINUM,
         family_id="volum_aluminiu_modular",
         family_name="Volum aluminiu modular",
         components_json=json.dumps([{"component_id": "comp_volum_aluminiu_module"}]),
-        operations_json=json.dumps([{"code": "RETURN_PROFILE_MACHINE_FORMING", "workcenter": "WC_METAL"}]),
-        required_materials_json=json.dumps([{"material_code": "MAT-PROFIL-LATERAL-LITERE-60MM"}]),
+        operations_json=json.dumps(
+            [
+                {"code": "RETURN_PROFILE_MACHINE_FORMING", "workcenter": "WC_METAL"},
+                {
+                    "code": "RETURN_PROFILE_FACE_BONDING",
+                    "workcenter": "WC_ASSEMBLY",
+                    "component_ref": "comp_volum_aluminiu_module",
+                },
+            ]
+        ),
+        required_materials_json=json.dumps(
+            [
+                {"material_code": "MAT-PROFIL-LATERAL-LITERE-60MM"},
+                {
+                    "material_code": "MAT-ADEZIV-CANT-LITERE",
+                    "unit": "ml",
+                    "component_ref": "comp_volum_aluminiu_module",
+                },
+            ]
+        ),
         active=True,
     )
     child_pm = Product_templates(
@@ -116,7 +204,57 @@ async def _seed_volumetric_v2_fixture(session) -> None:
         required_materials_json=json.dumps([{"material_code": "MAT-PREMOUNT-BAR-STEEL"}]),
         active=True,
     )
-    session.add_all([parent, child_al, child_pm])
+    child_face = Product_templates(
+        template_code=CHILD_FACE,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        components_json=json.dumps([{"component_id": "comp_face_litere"}]),
+        operations_json=json.dumps([{"code": "face_cnc_cut", "component_ref": "comp_face_litere"}]),
+        required_materials_json=json.dumps(
+            [{"material_code": "MAT-ACP-FATA-LITERE", "component_ref": "comp_face_litere"}]
+        ),
+        active=True,
+    )
+    child_back = Product_templates(
+        template_code=CHILD_BACK,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        components_json=json.dumps([{"component_id": "comp_spate_litere"}]),
+        operations_json=json.dumps([{"code": "back_cut", "component_ref": "comp_spate_litere"}]),
+        required_materials_json=json.dumps(
+            [{"material_code": "MAT-SPATE-PVC-LITERE", "component_ref": "comp_spate_litere"}]
+        ),
+        active=True,
+    )
+    child_led = Product_templates(
+        template_code=CHILD_LED,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        components_json=json.dumps([{"component_id": "comp_led_litere"}]),
+        operations_json=json.dumps(
+            [{"code": "led_install_letters", "component_ref": "comp_led_litere"}]
+        ),
+        required_materials_json=json.dumps(
+            [{"material_code": "MAT-LED-MODULE", "component_ref": "comp_led_litere"}]
+        ),
+        active=True,
+    )
+    child_finish = Product_templates(
+        template_code=CHILD_FINISH,
+        family_id="litere_volumetrice",
+        family_name="Litere volumetrice",
+        components_json=json.dumps([{"component_id": "comp_finisaj_litere"}]),
+        operations_json=json.dumps(
+            [{"code": "packaging_letters", "component_ref": "comp_finisaj_litere"}]
+        ),
+        required_materials_json=json.dumps(
+            [{"material_code": "MAT-SABLON-MONTAJ", "component_ref": "comp_finisaj_litere"}]
+        ),
+        active=True,
+    )
+    session.add_all(
+        [parent, child_al, child_pm, child_face, child_back, child_led, child_finish]
+    )
     await session.flush()
 
     dossier = ProductBlueprintDossier(
@@ -128,33 +266,50 @@ async def _seed_volumetric_v2_fixture(session) -> None:
         costengine_mapping_json=json.dumps(COSTENGINE_MAPPING),
         task_rules_json=json.dumps(TASK_RULES),
     )
-    link_required = ProductTemplateModuleLink(
-        parent_template_id=parent.id,
-        parent_template_code=TEMPLATE_CODE,
-        module_template_id=child_al.id,
-        module_template_code=CHILD_ALUMINUM,
-        relation_type="required_module",
-        trigger_field="volum_aluminum_module_template_code",
-        trigger_value_json='["TPL-VOLUM-ALUMINIU_v1"]',
-        input_mapping_json="{}",
-        pricing_mode="separate_quote_line",
-        execution_mode="linked_child_work",
-        active=True,
+    required_specs = [
+        (child_al, CHILD_ALUMINUM, "volum_aluminum_module_template_code", "letter_group_instances.sidewall"),
+        (child_face, CHILD_FACE, "face_module_template_code", "letter_group_instances.face"),
+        (child_back, CHILD_BACK, "back_module_template_code", "letter_group_instances.back"),
+        (child_led, CHILD_LED, "led_module_template_code", "letter_group_instances.lighting"),
+        (child_finish, CHILD_FINISH, "finish_module_template_code", "letter_group_instances.finish"),
+    ]
+    links = []
+    for child_row, code, trigger, schema in required_specs:
+        links.append(
+            ProductTemplateModuleLink(
+                parent_template_id=parent.id,
+                parent_template_code=TEMPLATE_CODE,
+                module_template_id=child_row.id,
+                module_template_code=code,
+                relation_type="required_module",
+                trigger_field=trigger,
+                trigger_value_json=json.dumps([code]),
+                input_mapping_json="{}",
+                pricing_mode="separate_quote_line",
+                execution_mode="linked_child_work",
+                usage_mode="linked_child",
+                instance_schema_id=schema,
+                active=True,
+            )
+        )
+    links.append(
+        ProductTemplateModuleLink(
+            parent_template_id=parent.id,
+            parent_template_code=TEMPLATE_CODE,
+            module_template_id=child_pm.id,
+            module_template_code=CHILD_PREMOUNT,
+            relation_type="optional_addon",
+            trigger_field="metal_support_required",
+            trigger_value_json="true",
+            input_mapping_json="{}",
+            pricing_mode="separate_quote_line",
+            execution_mode="linked_child_work",
+            usage_mode="linked_child",
+            instance_schema_id="component_placements.mounting",
+            active=True,
+        )
     )
-    link_optional = ProductTemplateModuleLink(
-        parent_template_id=parent.id,
-        parent_template_code=TEMPLATE_CODE,
-        module_template_id=child_pm.id,
-        module_template_code=CHILD_PREMOUNT,
-        relation_type="optional_addon",
-        trigger_field="metal_support_required",
-        trigger_value_json="true",
-        input_mapping_json="{}",
-        pricing_mode="separate_quote_line",
-        execution_mode="linked_child_work",
-        active=True,
-    )
-    session.add_all([dossier, link_required, link_optional])
+    session.add_all([dossier, *links])
     await session.commit()
 
 
@@ -173,10 +328,12 @@ async def test_aggregate_exists_for_volumetric_v2(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_parent_direct_components_zero_in_provenance(volumetric_v2_db):
+async def test_parent_direct_components_are_identity_stubs(volumetric_v2_db):
     service = ProductAggregateService(volumetric_v2_db)
     aggregate = await service.build(TEMPLATE_CODE)
-    assert aggregate.provenance_summary.parent["components"] == 0
+    assert aggregate.provenance_summary.parent["components"] == 5
+    assert aggregate.provenance_summary.parent["operations"] == 0
+    assert aggregate.provenance_summary.parent["materials"] == 0
 
 
 @pytest.mark.asyncio
@@ -190,7 +347,7 @@ async def test_aggregate_does_not_produce_comp_auto_1(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_aggregate_includes_dossier_components(volumetric_v2_db):
+async def test_aggregate_includes_root_identity_components(volumetric_v2_db):
     service = ProductAggregateService(volumetric_v2_db)
     aggregate = await service.build(TEMPLATE_CODE)
     ids = {c.component_id for c in aggregate.components}
@@ -199,6 +356,28 @@ async def test_aggregate_includes_dossier_components(volumetric_v2_db):
     assert "comp_spate_litere" in ids
     assert "comp_led_litere" in ids
     assert "comp_finisaj_litere" in ids
+    assert all(c.provenance == "parent" for c in aggregate.components)
+
+
+@pytest.mark.asyncio
+async def test_aggregate_compiles_modular_process_graph_for_execution_plan(volumetric_v2_db):
+    """Live Aggregate bridge: volumetric v2 uses modular resolver (not dossier list concat)."""
+    service = ProductAggregateService(volumetric_v2_db)
+    aggregate = await service.build(TEMPLATE_CODE)
+    assert aggregate is not None
+    assert aggregate.task_contract.process_graph_source == "modular_resolver"
+    assert aggregate.task_contract.process_graph_hash
+    rule_names = {r.task_name for r in aggregate.task_contract.task_rules}
+    assert "CUT_FACE" in rule_names
+    assert "BOND_FACE_TO_CANT" in rule_names
+    assert "FORM_CANT_CNC" in rule_names
+    # Dossier still loaded for provenance count, but not concatenated into task_rules
+    assert aggregate.provenance_summary.dossier["task_rules"] == 3
+    bonding = next(r for r in aggregate.task_contract.task_rules if r.task_name == "BOND_FACE_TO_CANT")
+    assert bonding.depends_on_process_ids
+    assert bonding.provenance == "derived"
+    assert bonding.mini_module_code == "modelare_cant"
+    assert any(w.code == "PROCESS_GRAPH_MODULAR_RESOLVER" for w in aggregate.warnings)
 
 
 @pytest.mark.asyncio
@@ -218,11 +397,11 @@ async def test_aggregate_includes_optional_linked_module(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_aggregate_includes_parent_components_empty_warning(volumetric_v2_db):
+async def test_aggregate_does_not_warn_parent_components_empty_when_stubs_present(volumetric_v2_db):
     service = ProductAggregateService(volumetric_v2_db)
     aggregate = await service.build(TEMPLATE_CODE)
     codes = {w.code for w in aggregate.warnings}
-    assert "PARENT_COMPONENTS_EMPTY" in codes
+    assert "PARENT_COMPONENTS_EMPTY" not in codes
 
 
 @pytest.mark.asyncio
@@ -284,7 +463,8 @@ def test_get_endpoint_returns_200(volumetric_auth_client):
     body = response.json()
     assert body["template_code"] == TEMPLATE_CODE
     assert len(body["components"]) == 5
-    assert any(w["code"] == "PARENT_COMPONENTS_EMPTY" for w in body.get("warnings", []))
+    assert body["provenance_summary"]["parent"]["operations"] == 0
+    assert body["provenance_summary"]["linked_modules"]["required"] >= 5
 
 
 def test_get_endpoint_returns_404(volumetric_auth_client):

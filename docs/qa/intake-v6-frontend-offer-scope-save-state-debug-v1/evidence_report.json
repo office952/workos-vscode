@@ -1,0 +1,89 @@
+{
+  "task": "INTAKE_V6_FRONTEND_OFFER_SCOPE_SAVE_STATE_DEBUG_V1",
+  "workspace_code": "IR-MRI01769",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T08:56:24.452Z",
+  "classification": "FRONTEND_MULTIPLE_SAVING_SOURCES",
+  "root_cause": "Persist queue retried failed intents and workspace phase could remain persisting while panel saving stuck; PERSIST_SUCCESS also advanced step away from layers.",
+  "saving_state_source": "IntakeV6OfferScopePanel.saving (authoritative UI); workspace phase persisting only disables controls",
+  "put_log": [
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    },
+    {
+      "status": 200,
+      "durationMs": 0,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"collecting_data\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere v"
+    }
+  ],
+  "network_summary": {
+    "offer_scope_put_count": 12,
+    "all_http_200": true
+  },
+  "console_summary": {
+    "error_count": 2,
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ]
+  },
+  "soak_seconds": 60,
+  "screenshots": [
+    "01_before_save.png",
+    "02_after_200_saving_cleared.png",
+    "03_reload_persisted.png",
+    "04_empty_to_back_lighting_stable.png"
+  ]
+}

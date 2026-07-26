@@ -4,9 +4,13 @@ import { REVIEW_LAYER_CARD_HEADER_GRID } from "./layerCardCollapsedLayout";
 export default function IntakeV6LayerCardColumnHeader({
   faceLabel = "Față",
   cantLabel = "Cant",
+  showFace = true,
+  showCant = true,
 }: {
   faceLabel?: string;
   cantLabel?: string;
+  showFace?: boolean;
+  showCant?: boolean;
 }) {
   return (
     <div
@@ -17,8 +21,8 @@ export default function IntakeV6LayerCardColumnHeader({
       <span />
       <span />
       <span className={`${v6.metricLabel} truncate`}>Strat</span>
-      <span className={`${v6.metricLabel} truncate`}>{faceLabel}</span>
-      <span className={`${v6.metricLabel} truncate`}>{cantLabel}</span>
+      {showFace ? <span className={`${v6.metricLabel} truncate`}>{faceLabel}</span> : <span />}
+      {showCant ? <span className={`${v6.metricLabel} truncate`}>{cantLabel}</span> : <span />}
       <span />
       <span />
     </div>

@@ -1,0 +1,1263 @@
+{
+  "contract_version": "intake_v6_vl_form_field_ownership_map_v1",
+  "pilot_template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "form_system_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+  "fields": [
+    {
+      "field_id": "vector_file",
+      "label": "Fi\u0219ier SVG",
+      "type": "file",
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "geometry_svg",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "readiness"
+      ],
+      "affects": [
+        "geometry_pipeline",
+        "svg_geometry_analysis"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "svg_source.file_name",
+      "product_definition_keys": [
+        "vector_file"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [],
+      "readiness_keys": [
+        "vector_file_present"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": true,
+      "classification": "vl_specific_ui",
+      "consumers": [
+        "geometry_svg",
+        "svg_geometry_analysis"
+      ],
+      "decision": "operator_upload"
+    },
+    {
+      "field_id": "width_mm",
+      "label": "L\u0103\u021bime total\u0103",
+      "type": "number",
+      "unit": "mm",
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=mm",
+      "owner": "geometry_svg",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "affects": [
+        "bounding_box",
+        "support_structure"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "client.width_mm",
+      "product_definition_keys": [
+        "dimensions.width_mm"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "width_mm"
+      ],
+      "cost_lines": [
+        "structura_suport"
+      ],
+      "readiness_keys": [
+        "dimensions"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "width_mm",
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "geometry_svg",
+        "debitare_fata",
+        "structura_suport"
+      ],
+      "decision": "operator_input"
+    },
+    {
+      "field_id": "height_mm",
+      "label": "\u00cen\u0103l\u021bime total\u0103",
+      "type": "number",
+      "unit": "mm",
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=mm",
+      "owner": "geometry_svg",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler"
+      ],
+      "affects": [
+        "bounding_box"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "client.height_mm",
+      "product_definition_keys": [
+        "dimensions.height_mm"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "height_mm"
+      ],
+      "cost_lines": [],
+      "readiness_keys": [
+        "dimensions"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "height_mm",
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "geometry_svg"
+      ],
+      "decision": "operator_input"
+    },
+    {
+      "field_id": "letter_count",
+      "label": "Num\u0103r litere",
+      "type": "number",
+      "unit": "count",
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=count",
+      "owner": "geometry_svg",
+      "source": "ANALYZER_OBSERVED",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler",
+        "cost_breakdown"
+      ],
+      "affects": [
+        "element_count",
+        "packaging"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_geometry.letter_count",
+      "product_definition_keys": [
+        "quantity"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "letter_count"
+      ],
+      "cost_lines": [
+        "packaging_heuristics"
+      ],
+      "readiness_keys": [
+        "geometry_quantities"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "element_count",
+      "confirmation_required": true,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "geometry_svg"
+      ],
+      "decision": "svg_analyzer_derived"
+    },
+    {
+      "field_id": "letter_perimeter_m",
+      "label": "Perimetru litere",
+      "type": "number",
+      "unit": "m",
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=m",
+      "owner": "geometry_svg",
+      "source": "ANALYZER_OBSERVED",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "child_template_input",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "affects": [
+        "return_profile_ml",
+        "face_cut",
+        "led_count",
+        "adhesive"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_geometry.letter_perimeter_m",
+      "product_definition_keys": [
+        "letter_perimeter_m"
+      ],
+      "child_template_codes": [
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "quantity_keys": [
+        "letter_perimeter_m"
+      ],
+      "cost_lines": [
+        "debitare_fata",
+        "modelare_cant",
+        "led",
+        "adhesive"
+      ],
+      "readiness_keys": [
+        "geometry_quantities"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "total_perimeter_m",
+      "confirmation_required": true,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "geometry_svg",
+        "modelare_cant",
+        "debitare_fata"
+      ],
+      "decision": "svg_analyzer_derived"
+    },
+    {
+      "field_id": "letter_face_area_m2",
+      "label": "Suprafa\u021b\u0103 fa\u021b\u0103",
+      "type": "number",
+      "unit": "m2",
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=m2",
+      "owner": "geometry_svg",
+      "source": "ANALYZER_OBSERVED",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "affects": [
+        "face_material_qty",
+        "back_material_qty"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_geometry.letter_face_area_m2",
+      "product_definition_keys": [
+        "letter_face_area_m2"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "letter_face_area_m2"
+      ],
+      "cost_lines": [
+        "debitare_fata",
+        "debitare_spate"
+      ],
+      "readiness_keys": [
+        "geometry_quantities"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "filled_area_m2",
+      "confirmation_required": true,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "geometry_svg",
+        "debitare_fata",
+        "debitare_spate"
+      ],
+      "decision": "svg_analyzer_derived"
+    },
+    {
+      "field_id": "face_finish_type",
+      "label": "Finisaj fa\u021b\u0103",
+      "type": "enum",
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [
+        "none",
+        "oracal_651",
+        "oracal_641",
+        "oracal_8500",
+        "printed_vinyl",
+        "printed_laminated_vinyl",
+        "print_laminate",
+        "colored_plexiglas"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "debitare_fata",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "face_finish_materials",
+        "vinyl_ops"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.face_finish_type",
+      "product_definition_keys": [
+        "layers[].components.comp_face_litere"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "face_finish"
+      ],
+      "readiness_keys": [
+        "face_finish"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "suggested_material_mappings",
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "debitare_fata",
+        "CostEngine Step 7 face_cnc_cut / vinyl"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "return_depth_mm",
+      "label": "Ad\u00e2ncime cant",
+      "type": "number",
+      "unit": "mm",
+      "required": true,
+      "default": null,
+      "options": [
+        "30",
+        "60",
+        "80",
+        "100"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "required;unit=mm",
+      "owner": "modelare_cant",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "child_template_input",
+        "cost_recipe"
+      ],
+      "affects": [
+        "return_profile_linear_meter"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.return_depth_mm",
+      "product_definition_keys": [
+        "return_depth_mm"
+      ],
+      "child_template_codes": [
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "quantity_keys": [
+        "return_depth_mm"
+      ],
+      "cost_lines": [
+        "modelare_cant"
+      ],
+      "readiness_keys": [
+        "return_cant"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "modelare_cant",
+        "CostEngine Step 7 return_profile_linear_meter"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "return_finish_type",
+      "label": "Finisaj cant",
+      "type": "enum",
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [
+        "white_aluminum",
+        "black_aluminum",
+        "gold_aluminum",
+        "mirror_silver",
+        "ral_paint",
+        "oracal_wrapped"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "modelare_cant",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "child_template_input",
+        "cost_recipe"
+      ],
+      "affects": [
+        "cant_finish_gate"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.return_finish_type",
+      "product_definition_keys": [
+        "return_finish_type"
+      ],
+      "child_template_codes": [
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [
+        "modelare_cant"
+      ],
+      "readiness_keys": [
+        "return_cant"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "modelare_cant",
+        "CostEngine Step 7 RAL vs Oracal gate"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "volum_aluminum_module_template_code",
+      "label": "Modul volum aluminiu",
+      "type": null,
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "modelare_cant",
+      "source": "OWNER_DEFAULT",
+      "destinations": [
+        "product_definition",
+        "child_template_input"
+      ],
+      "affects": [
+        "child_composition"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.volum_aluminum_module_template_code",
+      "product_definition_keys": [
+        "linked_modules.TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "child_template_codes": [
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [],
+      "readiness_keys": [
+        "child_module_link"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": true,
+      "classification": "vl_specific_schema",
+      "consumers": [],
+      "decision": null
+    },
+    {
+      "field_id": "backing_mode",
+      "label": "Mod spate",
+      "type": "enum",
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [
+        "forex_10_no_bevel",
+        "forex_10_with_bevel"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "debitare_spate",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "back_component"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.backing_mode",
+      "product_definition_keys": [
+        "backing_mode"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "debitare_spate"
+      ],
+      "readiness_keys": [
+        "backing"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "debitare_spate",
+        "components.comp_spate_litere"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "back_bevel_enabled",
+      "label": "Bevel spate",
+      "type": "boolean",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": "backing_mode=forex_10_with_bevel",
+      "validation_rule": null,
+      "owner": "debitare_spate",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "back_bevel_ops"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.back_bevel_enabled",
+      "product_definition_keys": [
+        "back_bevel_enabled"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "debitare_spate"
+      ],
+      "readiness_keys": [
+        "backing"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "debitare_spate"
+      ],
+      "decision": "operator_toggle"
+    },
+    {
+      "field_id": "lighting_system_type",
+      "label": "Tip iluminare",
+      "type": "enum",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [
+        "led_modules",
+        "led_strip",
+        "none"
+      ],
+      "visibility_rule": "illuminated=true",
+      "validation_rule": null,
+      "owner": "sistem_led",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe",
+        "readiness"
+      ],
+      "affects": [
+        "led_component_activation"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.lighting_system_type",
+      "product_definition_keys": [
+        "lighting_system_type"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "sistem_led"
+      ],
+      "readiness_keys": [
+        "lighting"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "sistem_led",
+        "components.comp_led_litere"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "led_module_count",
+      "label": "Num\u0103r module LED",
+      "type": "readonly",
+      "unit": "buc",
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": "unit=buc",
+      "owner": "sistem_led",
+      "source": "DERIVED",
+      "destinations": [
+        "product_definition",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "affects": [
+        "led_qty",
+        "psu_sizing"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.led_module_count",
+      "product_definition_keys": [
+        "led_module_count"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "led_module_count"
+      ],
+      "cost_lines": [
+        "sistem_led"
+      ],
+      "readiness_keys": [
+        "lighting"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "element_count",
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": null
+    },
+    {
+      "field_id": "selected_psu_watts",
+      "label": "PSU selectat",
+      "type": "select",
+      "unit": "W",
+      "required": false,
+      "default": null,
+      "options": [
+        "60",
+        "100",
+        "150",
+        "200",
+        "250",
+        "300"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "unit=W",
+      "owner": "sistem_led",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "psu_material"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.selected_psu_watts",
+      "product_definition_keys": [
+        "selected_psu_watts"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "selected_psu_watts"
+      ],
+      "cost_lines": [
+        "MAT-LED-PSU-*"
+      ],
+      "readiness_keys": [
+        "lighting"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "mounting_system",
+      "label": "Sistem montaj",
+      "type": "enum",
+      "unit": null,
+      "required": true,
+      "default": null,
+      "options": [
+        "direct_wall",
+        "steel_bars",
+        "aluminum_bars",
+        "acm_panel"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "required",
+      "owner": "structura_suport",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe",
+        "readiness"
+      ],
+      "affects": [
+        "optional_capability_structura"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.mounting_system",
+      "product_definition_keys": [
+        "mounting_system"
+      ],
+      "child_template_codes": [
+        "TPL-STRUCTURE-PREMOUNT_v1",
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [
+        "structura_suport"
+      ],
+      "readiness_keys": [
+        "mounting"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": true,
+      "classification": "vl_specific_ui",
+      "consumers": [
+        "structura_suport"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "mounting_solution",
+      "label": "Solu\u021bie suport",
+      "type": "object",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "structura_suport",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "support_type_process"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.mounting_solution",
+      "product_definition_keys": [
+        "mounting_solution"
+      ],
+      "child_template_codes": [
+        "TPL-STRUCTURE-PREMOUNT_v1",
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [
+        "structura_suport"
+      ],
+      "readiness_keys": [
+        "mounting"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": true,
+      "classification": "vl_specific_ui",
+      "consumers": [
+        "structura_suport",
+        "modular_process_resolver"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "mains_cable_length_m",
+      "label": "Lungime cablu alimentare (m)",
+      "type": "number",
+      "unit": "m",
+      "required": false,
+      "default": null,
+      "options": [
+        "2.5",
+        "5",
+        "7.5",
+        "10",
+        "12.5",
+        "15",
+        "17.5",
+        "20",
+        "22.5",
+        "25"
+      ],
+      "visibility_rule": null,
+      "validation_rule": "unit=m",
+      "owner": "sistem_led",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth"
+      ],
+      "affects": [
+        "cable_qty"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.mains_cable_length_m",
+      "product_definition_keys": [
+        "mains_cable_length_m"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "mains_cable_length_m"
+      ],
+      "cost_lines": [
+        "MAT-CABLU-*"
+      ],
+      "readiness_keys": [],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [
+        "modular_process_resolver"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "power_supply_service_corner",
+      "label": "Colt service transformator",
+      "type": "enum",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [
+        "TOP_LEFT",
+        "TOP_RIGHT",
+        "BOTTOM_LEFT",
+        "BOTTOM_RIGHT",
+        "MANUAL_CONFIRMED"
+      ],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "structura_suport",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth"
+      ],
+      "affects": [
+        "acm_cased_service"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.power_supply_service_corner",
+      "product_definition_keys": [
+        "power_supply_service_corner"
+      ],
+      "child_template_codes": [
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [],
+      "readiness_keys": [
+        "acm_cased"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "modular_process_resolver"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "service_screw_finish",
+      "label": "Finisaj \u0219uruburi corp",
+      "type": "enum",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [
+        "NATURAL",
+        "PAINTED_TO_MATCH_CANT"
+      ],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "ambalare_livrare_montaj",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "screw_finish_ops"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.service_screw_finish",
+      "product_definition_keys": [
+        "service_screw_finish"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "ambalare_livrare_montaj"
+      ],
+      "readiness_keys": [],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "vl_specific_schema",
+      "consumers": [
+        "modular_process_resolver"
+      ],
+      "decision": "operator_select"
+    },
+    {
+      "field_id": "mounting_template_enabled",
+      "label": "\u0218ablon montaj activ",
+      "type": "boolean",
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "sablon_montaj",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe",
+        "readiness"
+      ],
+      "affects": [
+        "sablon_montaj_activation"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.mounting_template_enabled",
+      "product_definition_keys": [
+        "mounting_template_enabled"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "sablon_montaj"
+      ],
+      "readiness_keys": [
+        "mounting_template"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": "operator_toggle"
+    },
+    {
+      "field_id": "mounting_template_area_m2",
+      "label": "Suprafa\u021b\u0103 \u0219ablon montaj",
+      "type": "number",
+      "unit": "m2",
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": "truthy:finish_setup.mounting_template_enabled",
+      "validation_rule": "min=0.0;unit=m2",
+      "owner": "sablon_montaj",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "quantity_compiler",
+        "cost_recipe"
+      ],
+      "affects": [
+        "sablon_area"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.mounting_template_area_m2",
+      "product_definition_keys": [
+        "mounting_template_area_m2"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [
+        "mounting_template_area_m2"
+      ],
+      "cost_lines": [
+        "sablon_montaj"
+      ],
+      "readiness_keys": [
+        "mounting_template"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": "operator_input"
+    },
+    {
+      "field_id": "letter_group_finishes",
+      "label": "Finisaje pe grup litere",
+      "type": null,
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "debitare_fata",
+      "source": "OPERATOR",
+      "destinations": [
+        "product_definition",
+        "product_truth",
+        "cost_recipe"
+      ],
+      "affects": [
+        "per_group_finish"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "finish_setup.letter_group_finishes",
+      "product_definition_keys": [
+        "letter_group_finishes"
+      ],
+      "child_template_codes": [],
+      "quantity_keys": [],
+      "cost_lines": [
+        "finisaje"
+      ],
+      "readiness_keys": [
+        "letter_groups"
+      ],
+      "analyzer_candidate": true,
+      "analyzer_field": "suggested_groups",
+      "confirmation_required": true,
+      "hardcoded_ui": true,
+      "classification": "vl_specific_ui",
+      "consumers": [],
+      "decision": null
+    },
+    {
+      "field_id": "metal_support_required",
+      "label": "Suport metal derivat",
+      "type": null,
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "structura_suport",
+      "source": "DERIVED",
+      "destinations": [
+        "product_definition",
+        "readiness",
+        "cost_recipe"
+      ],
+      "affects": [
+        "premount_activation"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_input.metal_support_required",
+      "product_definition_keys": [
+        "metal_support_required"
+      ],
+      "child_template_codes": [
+        "TPL-STRUCTURE-PREMOUNT_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [
+        "structura_suport"
+      ],
+      "readiness_keys": [
+        "mounting"
+      ],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": null
+    },
+    {
+      "field_id": "premount_bar_length_ml",
+      "label": "Lungime bare premontaj",
+      "type": null,
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "structura_suport",
+      "source": "DERIVED",
+      "destinations": [
+        "quantity_compiler",
+        "cost_recipe",
+        "cost_breakdown"
+      ],
+      "affects": [
+        "premount_bar_linear_meter"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_input.premount_bar_length_ml",
+      "product_definition_keys": [],
+      "child_template_codes": [
+        "TPL-STRUCTURE-PREMOUNT_v1"
+      ],
+      "quantity_keys": [
+        "premount_bar_length_ml"
+      ],
+      "cost_lines": [
+        "premount_bar_linear_meter"
+      ],
+      "readiness_keys": [],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": null
+    },
+    {
+      "field_id": "bar_material",
+      "label": "Material bare",
+      "type": null,
+      "unit": null,
+      "required": false,
+      "default": null,
+      "options": [],
+      "visibility_rule": null,
+      "validation_rule": null,
+      "owner": "structura_suport",
+      "source": "DERIVED",
+      "destinations": [
+        "product_definition",
+        "cost_recipe"
+      ],
+      "affects": [
+        "bar_material_code"
+      ],
+      "version": "intake_v6_vl_form_field_ownership_map_v1",
+      "workspace_path": "quote_input.bar_material",
+      "product_definition_keys": [],
+      "child_template_codes": [
+        "TPL-STRUCTURE-PREMOUNT_v1"
+      ],
+      "quantity_keys": [],
+      "cost_lines": [
+        "structura_suport"
+      ],
+      "readiness_keys": [],
+      "analyzer_candidate": false,
+      "analyzer_field": null,
+      "confirmation_required": false,
+      "hardcoded_ui": false,
+      "classification": "reusable_contract",
+      "consumers": [],
+      "decision": null
+    }
+  ],
+  "classification_notes": {
+    "reusable_contract": "Field shape (id/type/unit/source/destination/visibility) is transferable to Workflow-ADV Form System.",
+    "vl_specific_schema": "Option sets / labels are VL product schema \u2014 transfer as template schema, not as hardcoded page.",
+    "vl_specific_ui": "Specialized renderer or page adapter \u2014 do not treat as universal Form Generator.",
+    "legacy": "Legacy path \u2014 do not transfer as authority.",
+    "unsafe_to_transfer": "Coupled to WorkOS parser or commercial path \u2014 exclude from handoff."
+  },
+  "hardcoded_ui_field_ids": [
+    "vector_file",
+    "volum_aluminum_module_template_code",
+    "mounting_system",
+    "mounting_solution",
+    "letter_group_finishes"
+  ],
+  "analyzer_candidate_field_ids": [
+    "width_mm",
+    "height_mm",
+    "letter_count",
+    "letter_perimeter_m",
+    "letter_face_area_m2",
+    "face_finish_type",
+    "led_module_count",
+    "letter_group_finishes"
+  ],
+  "reusable_field_ids": [
+    "width_mm",
+    "height_mm",
+    "letter_count",
+    "letter_perimeter_m",
+    "letter_face_area_m2",
+    "return_depth_mm",
+    "back_bevel_enabled",
+    "led_module_count",
+    "mains_cable_length_m",
+    "mounting_template_enabled",
+    "mounting_template_area_m2",
+    "metal_support_required",
+    "premount_bar_length_ml",
+    "bar_material"
+  ]
+}

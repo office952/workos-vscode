@@ -1,0 +1,21 @@
+{
+  "verdict": "GRADI_CURAT_UI_FIRST_BLOCKER_FOUND",
+  "first_blocker": {
+    "classification": "INTAKE_UI",
+    "field": "backing_mode",
+    "expected_owner": "none (no continuous Forex/ACM letter plate; INSTALLATION_TEMPLATE only)",
+    "actual_persisted": "forex_10_no_bevel",
+    "ui_control": "Finisaj spate select — options only forex_10_no_bevel / forex_10_with_bevel",
+    "type_has_none": true,
+    "ui_exposes_none": false,
+    "normalize_forces_forex": true,
+    "tests_assert_no_fara_spate_option": true,
+    "api_injection_forbidden": true
+  },
+  "secondary_blockers": [
+    "runtime_capture:MOUNTING_SOLUTION_MISSING (mounting_solution null despite Fără soluție suplimentară)",
+    "plexiglas opal 3mm / alb mat not discrete UI fields beyond face_finish_type=none",
+    "laminare mata finish grade not discrete beyond print_laminate enum"
+  ],
+  "did_not_click_continua_claiming_ready": true
+}

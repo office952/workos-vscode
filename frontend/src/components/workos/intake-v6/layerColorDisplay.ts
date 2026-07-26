@@ -1,4 +1,5 @@
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel, isPositionalLogoLayer } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 
 const KNOWN_FILL_LABELS: Record<string, string> = {
   "#009846": "Verde · ANA",
@@ -32,9 +33,13 @@ export function resolveLayerColorHumanLabel(
   if (!norm) return "Culoare necunoscută";
 
   if (report) {
+    const logoLabelMap = buildOperatorLogoLabelMap(report.layers);
     for (const layer of report.layers) {
       const matches = (layer.colors ?? []).some((value) => normalizeHexColor(value) === norm);
       if (!matches) continue;
+      if (isPositionalLogoLayer(layer.id, layer.name)) {
+        return getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap });
+      }
       const fromName = pseudoLabelFromLayerName(layer.name);
       if (fromName) return fromName;
     }

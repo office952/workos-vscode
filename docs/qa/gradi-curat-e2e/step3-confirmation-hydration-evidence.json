@@ -1,0 +1,54 @@
+{
+  "task": "WORKOS-GRADI-CURAT-STEP3-CONFIRMATION-HYDRATION-FIX-V1",
+  "date": "2026-07-16",
+  "starting_head": "da2e0b5000f94ceda0fc9c2ec348bf23fc04425d",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "verdict": "GRADI_CURAT_STEP3_CONFIRMATION_HYDRATION_COMPLETE",
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "operator_url": "http://127.0.0.1:3000/intake-v6/11891d68-c4c8-4719-acc5-f8fcb22a44af/operator?step=confirm",
+  "runtime": {
+    "backend": "http://127.0.0.1:8001",
+    "frontend": "http://127.0.0.1:3000",
+    "reused_healthy_stack": true
+  },
+  "root_cause": "confirmInternalDraft useState(false) never hydrated from finish_setup / handoff preview",
+  "source_of_truth": [
+    "finish_setup.internal_draft_quote_confirmed",
+    "handoffPreview.operator_confirmation_complete"
+  ],
+  "proofs": {
+    "hard_reload_checkbox_checked": true,
+    "route_remount_checkbox_checked": true,
+    "finish_setup_reset_checkbox_unchecked": true,
+    "ui_reconfirm_then_reload_checked": true,
+    "final_confirmed": true,
+    "can_create_internal_draft_quote": true,
+    "handoff_allowed": true,
+    "quote_id": null,
+    "order_id": null
+  },
+  "pricing": {
+    "status": "V6_PRICED_DRY_RUN_READY",
+    "subtotal_net": 3513.56,
+    "vat_amount": 737.85,
+    "total_gross": 4251.41,
+    "currency": "RON"
+  },
+  "frontend_tests": {
+    "files": [
+      "intakeV6InternalDraftConfirmationHydration.test.ts",
+      "IntakeV6ConfirmHandoffPanel.test.tsx",
+      "IntakeV6ConfirmStep.test.tsx"
+    ],
+    "passed": 30
+  },
+  "screenshots": [
+    "docs/qa/gradi-curat-e2e/screenshots/step3-before-confirm.png",
+    "docs/qa/gradi-curat-e2e/screenshots/step3-after-confirm.png",
+    "docs/qa/gradi-curat-e2e/screenshots/step3-hydration-after-reload.png"
+  ],
+  "quote_creation": false,
+  "order_creation": false,
+  "push": false,
+  "pr": false
+}

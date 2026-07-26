@@ -1,0 +1,36 @@
+{
+  "fixture_class": "TEST_FIXTURE",
+  "canonicality": "NOT_CANONICAL_TRUTH",
+  "is_test_fixture": true,
+  "metadata_version": "workos_truth_metadata/v1",
+  "document_id": "fixture.doc.legacy_superseded",
+  "title": "Legacy architecture note (superseded fixture)",
+  "path": "docs/plans/2026-07-16-workos-wave-0-foundation-truth-pages-plan.md",
+  "category": "PLAN",
+  "authority": "SUPERSEDED",
+  "status": "SUPERSEDED",
+  "owner": "fixture_owner",
+  "last_validated_at": "2026-07-16T00:00:00Z",
+  "supersedes": [],
+  "superseded_by": "fixture.doc.wave0_plan_consolidated",
+  "systems": ["module_chain", "governance"],
+  "pages": ["modules", "governance"],
+  "routes": ["/modules", "/governance"],
+  "contracts": ["workos_truth_metadata/v1"],
+  "figma_refs": [],
+  "code_refs": [],
+  "api_refs": [],
+  "test_refs": ["tests/test_truth_metadata_contract.py"],
+  "qa_refs": [],
+  "worklog_refs": [
+    "docs/worklog/realignment/2026-07-16_workos_wave_0_b1_truth_metadata_contract.md"
+  ],
+  "runtime_refs": [],
+  "drift_status": "DOCUMENTATION_DRIFT",
+  "visibility_class": "INTERNAL_TECHNICAL",
+  "display": {
+    "display_label_ro": "Document plan Wave 0 (exemplu superseded)",
+    "technical_alias": "Wave 0 plan fixture",
+    "translation_key": "truth.document.wave0_plan_fixture"
+  }
+}

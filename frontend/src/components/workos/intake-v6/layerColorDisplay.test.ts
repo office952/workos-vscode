@@ -25,4 +25,23 @@ describe("resolveLayerColorHumanLabel", () => {
       } as never),
     ).toBe("ana");
   });
+
+  it("uses neutral logo numbering instead of positional labels", () => {
+    expect(
+      resolveLayerColorHumanLabel("#2B2A29", {
+        layers: [
+          {
+            id: "logo-dreapta",
+            name: "logo dreapta",
+            colors: ["#2B2A29"],
+            layerKind: "pseudo",
+            autoRole: "printed_artwork",
+            autoConfidence: "high",
+            paintEvidence: { paintKind: "none", isMulticolor: false },
+            warnings: [],
+          },
+        ],
+      } as never),
+    ).toBe("Logo 1");
+  });
 });

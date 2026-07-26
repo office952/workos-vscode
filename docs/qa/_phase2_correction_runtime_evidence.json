@@ -1,0 +1,338 @@
+{
+  "order_id": 23099,
+  "primary_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+  "complete_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+  "steps": [
+    {
+      "step": "baseline",
+      "helpers": 3,
+      "has_open_help": true,
+      "op_completed": false,
+      "assigned": 4
+    },
+    {
+      "step": "list_help",
+      "status": 200
+    },
+    {
+      "step": "cleanup_cancel",
+      "status": 200,
+      "help_id": 19,
+      "err": null
+    },
+    {
+      "step": "create_broadcast",
+      "status": 200,
+      "help_id": 20
+    },
+    {
+      "step": "requester_cancel",
+      "status": 200,
+      "help_status": "CANCELLED"
+    },
+    {
+      "step": "non_requester_cancel",
+      "proven_by": "pytest:test_c1_cancel_requester_only"
+    },
+    {
+      "step": "create_broadcast_2",
+      "status": 200,
+      "help_id": 21
+    },
+    {
+      "step": "accept",
+      "status": 200,
+      "membership_id": 1
+    },
+    {
+      "step": "helper_session_start",
+      "status": 200
+    },
+    {
+      "step": "helper_session_stop",
+      "status": 200,
+      "operation_completed": false
+    },
+    {
+      "step": "helper_session_start_again",
+      "status": 200
+    },
+    {
+      "step": "duplicate_helper_start",
+      "status": 409,
+      "body": {
+        "detail": {
+          "error": "helper_session_already_active",
+          "message": "Employee already has an active session on this task."
+        }
+      }
+    },
+    {
+      "step": "helper_session_stop_after_dup",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "action": "helper_session_stop",
+        "order_id": 23099,
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "employee_id": 4,
+        "operation_completed": false,
+        "membership_unchanged": true,
+        "sessions_for_task": [
+          {
+            "session_id": "ws-ad3577291d9f",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "started_at": "2026-07-15T00:46:02.098000+00:00",
+            "ended_at": "2026-07-16T03:31:30.809441+00:00",
+            "duration_minutes": 1605,
+            "status": "completed",
+            "completion_notes": "phase2 integrity correction proof",
+            "completed_by_employee_id": 4,
+            "completed_by_employee_name": "Putaru Sandu"
+          },
+          {
+            "session_id": "ws-e68c36180022",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 2,
+            "employee_name": "Octavian Dumitru",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T02:56:01.357265+00:00",
+            "ended_at": "2026-07-16T02:56:01.365264+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-9e34555994cb",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:31:30.476512+00:00",
+            "ended_at": "2026-07-16T03:31:30.522406+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-24c5d8201175",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:31:30.575701+00:00",
+            "ended_at": "2026-07-16T03:31:30.657203+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-326edd643a96",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:33:59.507476+00:00",
+            "ended_at": "2026-07-16T03:33:59.541427+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-68c9573b9451",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:33:59.582496+00:00",
+            "ended_at": "2026-07-16T03:33:59.612676+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-5a7354cf935a",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:44:41.089168+00:00",
+            "ended_at": "2026-07-16T03:44:41.128037+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-47a24af391dd",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:44:41.176496+00:00",
+            "ended_at": "2026-07-16T03:44:41.250761+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-248bf093eb3b",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:45:29.539338+00:00",
+            "ended_at": "2026-07-16T03:45:29.605912+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-7edb48a4d7a3",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:45:29.726124+00:00",
+            "ended_at": "2026-07-16T03:45:29.893750+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-00182b686a02",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:46:01.161852+00:00",
+            "ended_at": "2026-07-16T03:46:01.228858+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-637b7b3badf1",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:46:01.330452+00:00",
+            "ended_at": "2026-07-16T03:46:01.479655+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-e60aabebd036",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:47:05.196558+00:00",
+            "ended_at": "2026-07-16T03:47:05.208969+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          },
+          {
+            "session_id": "ws-701c539229fc",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "employee_id": 4,
+            "employee_name": "Putaru Sandu",
+            "role": "helper",
+            "session_type": "assist",
+            "started_at": "2026-07-16T03:47:05.280919+00:00",
+            "ended_at": "2026-07-16T03:47:05.409795+00:00",
+            "duration_minutes": 0,
+            "status": "ended",
+            "source": "helper_collaboration"
+          }
+        ]
+      }
+    },
+    {
+      "step": "never_started_complete_rejected",
+      "status": 422,
+      "body": {
+        "detail": {
+          "error": "task_not_started",
+          "detail": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep__never_started_probe"
+        }
+      }
+    },
+    {
+      "step": "complete_task_chosen",
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "mode": "already_completed"
+    },
+    {
+      "step": "create_open_for_complete",
+      "status": 200,
+      "help_id": 22,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut"
+    },
+    {
+      "step": "before_complete",
+      "op_completed": true,
+      "has_open_help": true,
+      "helpers": 0,
+      "mode": "already_completed"
+    },
+    {
+      "step": "operator_complete",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "action": "complete",
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "timestamp": "2026-07-16T03:47:06.417933+00:00",
+        "completion_notes": "phase2 integrity correction proof",
+        "completed_by_employee_id": 4
+      },
+      "mode": "already_completed"
+    },
+    {
+      "step": "after_complete",
+      "op_completed": true,
+      "has_open_help": false,
+      "helpers": 0,
+      "assigned": 4,
+      "mode": "already_completed"
+    },
+    {
+      "step": "operator_complete_retry",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "action": "complete",
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "timestamp": "2026-07-16T03:47:06.551603+00:00",
+        "completion_notes": null,
+        "completed_by_employee_id": 4
+      }
+    },
+    {
+      "step": "after_retry",
+      "has_open_help": false,
+      "op_completed": true,
+      "helpers": 0
+    },
+    {
+      "step": "primary_memberships_remain",
+      "helpers": 3,
+      "assigned": 4
+    }
+  ]
+}

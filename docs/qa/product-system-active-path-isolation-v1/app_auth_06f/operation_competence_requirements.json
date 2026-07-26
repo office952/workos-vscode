@@ -1,0 +1,18 @@
+{
+  "task": "APP-AUTH-06F",
+  "requirements": [
+    {"operation": "volumetric_letter_assembly", "registry_operation": "assembly", "required_competence": "SK_ASSEMBLY", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed_operational_workforce_registry OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "vinyl_cutting", "registry_operation": "colantare", "required_competence": "SK_VINYL_APPLICATOR", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "led_assembly", "registry_operation": "montaj_led", "required_competence": "SK_ELECTRICIAN", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "led_wiring", "registry_operation": "montaj_led", "required_competence": "SK_ELECTRICIAN", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "installation_prep", "registry_operation": "field_installation", "required_competence": "SK_FIELD_INSTALLER", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "packaging", "registry_operation": "packaging", "required_competence": "SK_ASSEMBLY", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"},
+    {"operation": "quality_control", "registry_operation": "quality_control", "required_competence": "SK_ASSEMBLY", "minimum_level": "NOT_DEFINED_IN_RUNTIME", "source": "seed OPERATIONS", "enforcement": "hybrid_eligibility_path", "authority": "CONFIRMED_RUNTIME", "confidence": "high"}
+  ],
+  "summary": {
+    "proven_runtime": 7,
+    "partial": 0,
+    "absent": 0,
+    "minimum_level_defined": 0
+  }
+}

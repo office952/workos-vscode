@@ -1,0 +1,92 @@
+{
+  "task": "UI-TRUTH-01",
+  "starting_head": "6eea3e3",
+  "component": "frontend/src/components/workos/EnvironmentBanner.tsx",
+  "mount": {
+    "file": "frontend/src/App.tsx",
+    "line_approx": 358,
+    "position": "Below global header, above <main> content",
+    "route_persistence": "Global — all authenticated shell routes",
+    "mobile_desktop": "Same strip; flex row, text-[11px], px-4 py-1.5; no responsive breakpoint switch"
+  },
+  "consumers": [
+    {
+      "file": "frontend/src/App.tsx",
+      "import": "default EnvironmentBanner",
+      "usage": "Single global mount in app shell"
+    }
+  ],
+  "frontend_tests": {
+    "environment_banner_tests": "NONE",
+    "related_health_pattern": "frontend/src/hooks/useModuleChainData.ts (Module Chain only, not banner)"
+  },
+  "ui": {
+    "modes": {
+      "live_db": {
+        "trigger": "authState === 'authenticated' OR fallback when !mockOn && !devFallback",
+        "short_label": "LIVE / DB",
+        "detail_text": "Sursa de date: backend live",
+        "color": "emerald (bg-emerald-950/30, border-emerald-900/30, text-emerald-400)",
+        "icon": "Database (lucide-react)",
+        "tooltip": "NONE",
+        "refresh": "NONE — derived from authState only on re-render"
+      },
+      "dev_mock": {
+        "trigger": "isMockEnabled() === true (VITE_ENABLE_MOCK_DATA)",
+        "short_label": "DEV / MOCK",
+        "detail_text": "aceste date nu vin din API real",
+        "color": "amber warning strip",
+        "icon": "AlertTriangle"
+      },
+      "dev_no_auth": {
+        "trigger": "unauthenticated, auth_config_missing, dev_auth_enabled, or isDevAuthFallback()",
+        "short_label": "DEV / NO AUTH",
+        "detail_text": "Lipsă sesiune / autentificare necesară pentru API real",
+        "color": "amber warning strip",
+        "icon": "AlertTriangle + Shield badge 'Auth demo'"
+      },
+      "unknown": {
+        "short_label": "NECUNOSCUT",
+        "color": "slate neutral strip",
+        "icon": "Monitor"
+      }
+    }
+  },
+  "frontend_dependencies": {
+    "auth": "useAuth() from AuthContext — authState only",
+    "mock": "isMockEnabled(), isDevAuthFallback() from mockGuard",
+    "health_api": "NONE",
+    "hooks": "NONE",
+    "direct_api_calls": "NONE",
+    "polling": "NONE",
+    "environment_env": "VITE_ENABLE_MOCK_DATA, VITE_ENABLE_DEV_AUTH, VITE_DEV_GUARD_BYPASS"
+  },
+  "logic_summary": {
+    "getEnvironmentMode": "mockOn → dev_mock; authenticated → live_db; dev paths → dev_no_auth; else live_db",
+    "health_check_real": false,
+    "endpoint_used": null,
+    "classification": "MISLEADING"
+  },
+  "backend_sources_inspected": [
+    "/api/v1/system/health",
+    "/api/v1/system/diagnostics",
+    "/api/v1/system/version",
+    "/health (root liveness)"
+  ],
+  "runtime_probes_2026_07_15": {
+    "proxy_health": {
+      "url": "http://127.0.0.1:3000/api/v1/system/health",
+      "status": "warning",
+      "checks": {}
+    },
+    "direct_health": {
+      "url": "http://127.0.0.1:8001/api/v1/system/health",
+      "status": "warning",
+      "checks": {}
+    },
+    "root_health": {
+      "url": "http://127.0.0.1:8001/health",
+      "body": { "status": "healthy" }
+    }
+  }
+}

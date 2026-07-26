@@ -72,13 +72,17 @@ class ExecutionRealityService:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    async def _get_row(self, order_id: int) -> Optional[ExecutionReality]:
+    async def _get_row(self, order_id: int, *, for_update: bool = False) -> Optional[ExecutionReality]:
         stmt = select(ExecutionReality).where(ExecutionReality.order_id == order_id)
+        if for_update:
+            stmt = stmt.with_for_update()
         res = await self.db.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def _get_or_create_row(self, order_id: int, order_code: str) -> ExecutionReality:
-        row = await self._get_row(order_id)
+    async def _get_or_create_row(
+        self, order_id: int, order_code: str, *, for_update: bool = False
+    ) -> ExecutionReality:
+        row = await self._get_row(order_id, for_update=for_update)
         if row is not None:
             return row
         row = ExecutionReality(
@@ -88,7 +92,19 @@ class ExecutionRealityService:
             total_actual_time_minutes=0.0,
         )
         self.db.add(row)
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except Exception:
+            # Concurrent insert of the same order_id — load the winner.
+            await self.db.rollback()
+            existing = await self._get_row(order_id, for_update=for_update)
+            if existing is None:
+                raise
+            return existing
+        if for_update:
+            locked = await self._get_row(order_id, for_update=True)
+            if locked is not None:
+                return locked
         return row
 
     @staticmethod
@@ -145,7 +161,8 @@ class ExecutionRealityService:
             raise RealityInputError("task_id_invalid")
         started_at = _iso_utc(timestamp)
 
-        row = await self._get_or_create_row(order_id, order_code)
+        # Serialize session append against concurrent starts (helper + principal).
+        row = await self._get_or_create_row(order_id, order_code, for_update=True)
         tasks = self._parse_tasks(row.tasks_json)
 
         employee_id = None
@@ -242,7 +259,7 @@ class ExecutionRealityService:
             raise RealityInputError("task_id_invalid")
         ended_at = _iso_utc(timestamp)
 
-        row = await self._get_row(order_id)
+        row = await self._get_row(order_id, for_update=True)
         if row is None:
             raise RealityInputError("reality_not_initialised", str(order_id))
 
@@ -282,6 +299,31 @@ class ExecutionRealityService:
             matched = True
             break
         if not matched:
+            if is_completion and employee_id is not None:
+                for t in tasks:
+                    if t.get("task_id") != task_id:
+                        continue
+                    if not t.get("ended_at"):
+                        continue
+                    try:
+                        completed_by = int(t.get("completed_by_employee_id") or 0)
+                    except (TypeError, ValueError):
+                        completed_by = 0
+                    try:
+                        entry_employee = int(t.get("employee_id") or 0)
+                    except (TypeError, ValueError):
+                        entry_employee = 0
+                    # Explicit complete only — helper STOP (status=ended) must not
+                    # count as idempotent completion for the same employee.
+                    if completed_by == employee_id:
+                        await self.db.refresh(row)
+                        return row
+                    if (
+                        entry_employee == employee_id
+                        and str(t.get("status") or "") == SESSION_STATUS_COMPLETED
+                    ):
+                        await self.db.refresh(row)
+                        return row
             raise RealityInputError("task_not_started", task_id)
 
         row.tasks_json = json.dumps(tasks)

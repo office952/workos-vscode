@@ -15,6 +15,8 @@ from schemas.execution_plan_v2_materialize import (
 )
 
 V2_ENVELOPE_SOURCE = "order_snapshot_v2"
+LINKED_SEGMENT_PREFIX = "linked_segment:"
+SEGMENT_NAMESPACE_SEP = "::"
 
 
 @dataclass
@@ -133,6 +135,20 @@ def _eligible_role_from_planned(planned: dict[str, Any]) -> str | None:
     return None
 
 
+def _linked_segment_key_from_component_ref(component_ref: Any) -> str | None:
+    ref = str(component_ref or "").strip()
+    if not ref:
+        return None
+    if ref.lower().startswith(LINKED_SEGMENT_PREFIX):
+        payload = ref[len(LINKED_SEGMENT_PREFIX) :]
+        if SEGMENT_NAMESPACE_SEP in payload:
+            return payload.split(SEGMENT_NAMESPACE_SEP, 1)[0].strip() or None
+        return payload.strip() or None
+    if SEGMENT_NAMESPACE_SEP in ref:
+        return ref.split(SEGMENT_NAMESPACE_SEP, 1)[1].strip() or None
+    return None
+
+
 def materialize_operational_tasks_from_v2_envelope(
     envelope: dict[str, Any],
     *,
@@ -186,12 +202,14 @@ def materialize_operational_tasks_from_v2_envelope(
 
         estimated_raw = planned.get("estimated_minutes")
         task_warnings = list(planned.get("warnings") or [])
+        planning_minutes_source = planned.get("planning_minutes_source")
+        # TE2E-028A: preserve absence as null — do not invent 0.0 for missing source.
         if estimated_raw is None:
             if PLANNING_MINUTES_WARNING not in task_warnings:
                 task_warnings.append(PLANNING_MINUTES_WARNING)
             if PLANNING_MINUTES_WARNING not in warnings:
                 warnings.append(PLANNING_MINUTES_WARNING)
-            estimated_time_minutes = 0.0
+            estimated_time_minutes = None
         else:
             try:
                 estimated_time_minutes = float(estimated_raw)
@@ -209,6 +227,15 @@ def materialize_operational_tasks_from_v2_envelope(
         provenance.append("execution_plan_v2_materialize.1")
 
         eligible_role = _eligible_role_from_planned(planned)
+        source_operation_code = str(planned.get("source_operation_code") or "").strip() or None
+        source_component_code = planned.get("source_component_code")
+        linked_segment_key = _linked_segment_key_from_component_ref(source_component_code)
+        frozen_identity = planned.get("frozen_identity")
+        if isinstance(frozen_identity, dict):
+            segment_from_identity = frozen_identity.get("source_segment_key")
+            if segment_from_identity and not linked_segment_key:
+                linked_segment_key = str(segment_from_identity).strip() or None
+
         operational: dict[str, Any] = {
             "task_id": task_key,
             "source_task_key": task_key,
@@ -216,11 +243,12 @@ def materialize_operational_tasks_from_v2_envelope(
             "display_name": label,
             "technical_name": technical_name,
             "process_type": str(planned.get("canonical_task_type") or "").strip(),
-            "process_id": str(planned.get("source_operation_code") or "").strip(),
+            "process_id": source_operation_code or "",
             "machine_type": _machine_type_from_planned(planned),
             "depends_on_task_ids": dep_ids,
             "sequence_index": planned.get("sequence_index"),
             "estimated_time_minutes": estimated_time_minutes,
+            "planning_minutes_source": planning_minutes_source,
             "quantity": 1.0,
             "layer_id": V2_LAYER_ID,
             "assigned_employee_id": None,
@@ -230,10 +258,29 @@ def materialize_operational_tasks_from_v2_envelope(
             "order_id": order_id,
             "provenance": provenance,
             "source_module_code": planned.get("source_module_code"),
-            "source_component_code": planned.get("source_component_code"),
+            "source_component_code": source_component_code,
+            "source_operation_code": source_operation_code,
+            "source_task_rule_code": planned.get("source_task_rule_code"),
             "material_inputs": planned.get("material_inputs") or [],
             "warnings": task_warnings,
         }
+        if frozen_identity:
+            operational["frozen_identity"] = frozen_identity
+            if isinstance(frozen_identity, dict):
+                for field in (
+                    "source_graph_node_id",
+                    "source_component_role",
+                    "source_template_code",
+                    "source_component_instance_id",
+                    "operation_scope",
+                    "identity_classification",
+                    "deterministic_task_key",
+                ):
+                    value = frozen_identity.get(field)
+                    if value is not None:
+                        operational[field] = value
+        if linked_segment_key:
+            operational["linked_segment_key"] = linked_segment_key
         if eligible_role:
             operational["eligible_role_code"] = eligible_role
             operational["employee_role_requirement"] = planned.get("employee_role_requirement")

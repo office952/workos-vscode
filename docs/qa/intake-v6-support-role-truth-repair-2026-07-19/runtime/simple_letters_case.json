@@ -1,0 +1,26 @@
+{
+  "id": "simple_letters",
+  "workspace_id": "d16ba2e6-4ee5-48fe-9bde-7eff403a05bd",
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/d16ba2e6-4ee5-48fe-9bde-7eff403a05bd/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-00a0e3",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "empty": false,
+    "supportError": null,
+    "text": {
+      "vectorLitere": true,
+      "conturSuport": true
+    },
+    "confirmDisabled": true,
+    "confirmAria": null
+  },
+  "pass": {
+    "hasFace": true,
+    "noSupportForced": true
+  }
+}

@@ -21,6 +21,29 @@
 
   <body>
     <div id="root"></div>
+    <!-- Apply stored theme before React paint so Day/Night tokens match on first frame -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("workos-theme");
+          var resolved;
+          if (stored === "light" || stored === "dark") {
+            resolved = stored;
+          } else if (stored === "system") {
+            resolved = window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          } else {
+            // Match ThemeProvider defaultTheme="light"
+            resolved = "light";
+          }
+          document.documentElement.classList.remove("light", "dark");
+          document.documentElement.classList.add(resolved);
+        } catch (e) {
+          document.documentElement.classList.add("light");
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

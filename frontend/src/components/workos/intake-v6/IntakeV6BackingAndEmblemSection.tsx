@@ -23,13 +23,13 @@ export default function IntakeV6BackingAndEmblemSection({
     <div className={`${v6.card} mb-4`} data-testid="intake-v6-backing-section">
       <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide">Spate / backing litere</h2>
       <p className="mb-3 text-[11px] text-slate-500">
-        Față litere: <strong className="text-slate-300">Plexiglas 3 mm</strong> - șanfren față
+        Față litere: <strong className="text-slate-300">plexiglas 3mm PMMA - opal</strong> - șanfren față
         obligatoriu (operații CNC separate în breakdown).
       </p>
       <label className="mb-4 block">
         <span className={v6.label}>Backing Forex</span>
         <select
-          className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
+          className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px]"
           value={backingMode}
           onChange={(e) => onBackingChange(e.target.value as IntakeV6BackingMode)}
           data-testid="intake-v6-backing-mode"
@@ -43,7 +43,7 @@ export default function IntakeV6BackingAndEmblemSection({
       <label className="block">
         <span className={v6.label}>Iluminare emblemă</span>
         <select
-          className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
+          className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px]"
           value={emblemLightingMode}
           onChange={(e) => onEmblemLightingChange(e.target.value as IntakeV6EmblemLightingMode)}
           data-testid="intake-v6-emblem-lighting-mode"

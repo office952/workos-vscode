@@ -1,0 +1,28 @@
+{
+  "date": "2026-07-21",
+  "kickoff_head": "5dfe807aac7918843342c2532c066034d07614a0",
+  "decision": "A",
+  "root": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "applied_content_xor": ["letters", "logo"],
+  "letters_pack": [
+    "TPL-VOLUMETRIC-FACE_v1",
+    "TPL-VOLUMETRIC-BACK_v1",
+    "TPL-VOLUM-ALUMINIU_v1",
+    "TPL-VOLUMETRIC-LED_v1",
+    "TPL-VOLUMETRIC-FINISH_v1"
+  ],
+  "logo_root": "TPL-VOLUMETRIC-LOGO_v1",
+  "logo_branch_status": "honestly_blocked_candidate",
+  "metal_frame": {
+    "kind": "acp_internal_frame",
+    "cardinality": "optional",
+    "automatic_thresholds": false
+  },
+  "cycle_guard": "do_not_link_VL_root_under_ACM",
+  "tests": {
+    "test_acm_boxed_support_composition_v1.py": "PASS",
+    "AcmBoxedAppliedContentPanel.test.tsx": "PASS_4_4"
+  },
+  "publication_recommendation": "KEEP_DRAFT",
+  "screenshots_1_20": "NOT_CAPTURED"
+}

@@ -97,6 +97,14 @@ async def materialize_execution_plan_v2_operational_tasks(
         )
 
     envelope: dict[str, Any] = dict(parsed.envelope)
+    preview_status = str(envelope.get("preview_status") or "").strip()
+    if preview_status.startswith("blocked_"):
+        _raise_blocked(
+            "PREVIEW_STATUS_BLOCKED",
+            f"Execution plan preview_status {preview_status!r} is not materializable.",
+            [preview_status],
+        )
+
     if _already_materialized(envelope):
         raise HTTPException(
             status_code=409,
@@ -117,6 +125,13 @@ async def materialize_execution_plan_v2_operational_tasks(
             "MATERIALIZATION_BLOCKED",
             "Operational task materialization blocked.",
             blockers,
+        )
+
+    if len(operational_tasks) != len(envelope.get("planned_tasks") or []):
+        _raise_blocked(
+            "PLANNED_OPERATIONAL_COUNT_MISMATCH",
+            "Operational tasks must mirror filtered planned_tasks exactly.",
+            ["planned_operational_count_mismatch"],
         )
 
     activation_hash = compute_activation_hash(envelope)

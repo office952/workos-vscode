@@ -1,0 +1,13 @@
+{
+  "task": "UI-TRUTH-01A",
+  "default_fetch_diagnostics": false,
+  "rules": [
+    "401/403 on diagnostics → authorized false, DB unknown, backend unaffected",
+    "No raw diagnostics stored in React state",
+    "DB confirmed only from explicit checks.database.status",
+    "Sensitive fields discarded in normalizer",
+    "No console logging of payloads"
+  ],
+  "hook_option": "fetchDiagnostics: false by default",
+  "production_expectation": "diagnostics requires system.diagnostics.read"
+}

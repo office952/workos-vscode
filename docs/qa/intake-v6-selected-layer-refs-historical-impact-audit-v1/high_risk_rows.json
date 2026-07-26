@@ -1,0 +1,126 @@
+[
+  {
+    "workspace_id": "96009ff3-a20b-40d7-a8c7-540e48058526",
+    "workspace_code": "IV6-AA7F2532",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "setup_state": "complete",
+    "persisted_ref_count": 0,
+    "derived_ref_count": 6,
+    "persisted_roles": [],
+    "derived_roles": [
+      "vector_litere",
+      "vector_logo"
+    ],
+    "difference": "PRINTED_ARTWORK_LOGO_GAP",
+    "classification": "PRINTED_ARTWORK_LOGO_GAP",
+    "risk": "HIGH",
+    "downstream": {
+      "quote_snapshot_v2": true,
+      "quote": true,
+      "order": true,
+      "execution_plan": true,
+      "product_truth_promotion": false
+    },
+    "readiness_status": "ready_for_quote_preview",
+    "workspace_status": "ready_for_quote_preview"
+  },
+  {
+    "workspace_id": "8887a6d0-8b97-4cb2-9ef5-43e193739996",
+    "workspace_code": "IV6-8D2ABB4E",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "setup_state": "complete",
+    "persisted_ref_count": 0,
+    "derived_ref_count": 6,
+    "persisted_roles": [],
+    "derived_roles": [
+      "vector_litere",
+      "vector_logo"
+    ],
+    "difference": "PRINTED_ARTWORK_LOGO_GAP",
+    "classification": "PRINTED_ARTWORK_LOGO_GAP",
+    "risk": "HIGH",
+    "downstream": {
+      "quote_snapshot_v2": true,
+      "quote": true,
+      "order": true,
+      "execution_plan": false,
+      "product_truth_promotion": false
+    },
+    "readiness_status": "ready_for_quote_preview",
+    "workspace_status": "ready_for_quote_preview"
+  },
+  {
+    "workspace_id": "b13acdb3-d64b-44f8-9377-8f135bb54afe",
+    "workspace_code": "IV6-54F02286",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "setup_state": "complete",
+    "persisted_ref_count": 0,
+    "derived_ref_count": 6,
+    "persisted_roles": [],
+    "derived_roles": [
+      "vector_litere",
+      "vector_logo"
+    ],
+    "difference": "PRINTED_ARTWORK_LOGO_GAP",
+    "classification": "PRINTED_ARTWORK_LOGO_GAP",
+    "risk": "HIGH",
+    "downstream": {
+      "quote_snapshot_v2": true,
+      "quote": true,
+      "order": true,
+      "execution_plan": false,
+      "product_truth_promotion": false
+    },
+    "readiness_status": "ready_for_quote_preview",
+    "workspace_status": "ready_for_quote_preview"
+  },
+  {
+    "workspace_id": "10171236-4126-4556-baa3-3489b777c0ec",
+    "workspace_code": "IV6-294FF5D4",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "setup_state": "complete",
+    "persisted_ref_count": 0,
+    "derived_ref_count": 6,
+    "persisted_roles": [],
+    "derived_roles": [
+      "vector_litere",
+      "vector_logo"
+    ],
+    "difference": "PRINTED_ARTWORK_LOGO_GAP",
+    "classification": "PRINTED_ARTWORK_LOGO_GAP",
+    "risk": "HIGH",
+    "downstream": {
+      "quote_snapshot_v2": true,
+      "quote": true,
+      "order": false,
+      "execution_plan": false,
+      "product_truth_promotion": false
+    },
+    "readiness_status": "ready_for_quote_preview",
+    "workspace_status": "ready_for_quote_preview"
+  },
+  {
+    "workspace_id": "4d920970-b4a5-4543-a1d3-2445d5669550",
+    "workspace_code": "IV6-47460D41",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "setup_state": "complete",
+    "persisted_ref_count": 0,
+    "derived_ref_count": 2,
+    "persisted_roles": [],
+    "derived_roles": [
+      "vector_litere"
+    ],
+    "difference": "MISSING_PERSISTED_REFS",
+    "classification": "MISSING_PERSISTED_REFS",
+    "risk": "HIGH",
+    "downstream": {
+      "quote_snapshot_v2": true,
+      "quote": true,
+      "order": false,
+      "execution_plan": false,
+      "product_truth_promotion": false
+    },
+    "readiness_status": "ready_for_quote_preview",
+    "workspace_status": "ready_for_quote_preview"
+  }
+]

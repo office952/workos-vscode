@@ -11,7 +11,7 @@ export interface PersonalNavItem {
 export const personalNavItems: PersonalNavItem[] = [
   { to: "/employees", label: "Angajați operaționali", icon: Users },
   { to: "/employees-records", label: "Evidență internă HR", icon: FileText },
-  { to: "/attendance", label: "Pontaj", icon: Activity },
+  { to: "/attendance", label: "Pontaj (registry intern)", icon: Activity },
   { to: "/employee-payments", label: "Plăți angajați", icon: BarChart3 },
   { to: "/employee-advances", label: "Avansuri / Datorii", icon: Warehouse },
 ];

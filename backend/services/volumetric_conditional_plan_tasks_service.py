@@ -21,6 +21,7 @@ from services.volumetric_finish_assignment_service import (
     resolve_volumetric_operational_quote_input,
 )
 from services.volumetric_material_rate_resolver import is_volumetric_template_code
+from services.mounting_scope_service import is_mounting_preparation_active
 from services.volumetric_quote_input_policy import (
     ILLUMINATION_DISABLED_TYPES,
     ILLUMINATION_ENABLED_TYPES,
@@ -241,9 +242,13 @@ def should_include_mounting_template_cnc_in_plan(
     if not _has_mounting_template_signal(quote_input, product_spec):
         return False
     ctx = _merged_context(quote_input, product_spec)
+    if not is_mounting_preparation_active(ctx):
+        return False
     if not normalize_mounting_template_enabled(
         ctx.get("mounting_template_enabled"),
         mounting_system=ctx.get("mounting_system"),
+        mounting_scope=ctx.get("mounting_scope"),
+        quote_input=ctx,
     ):
         return False
     return normalize_mounting_template_material_type(ctx) == "forex"

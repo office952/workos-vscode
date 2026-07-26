@@ -1,0 +1,13 @@
+{
+  "task": "APP-AUTH-06F",
+  "elements": [
+    {"plan_element": "operation_inventory + alias matrix", "sandu_specific": false, "reusable": true, "notes": "Template for any employee review"},
+    {"plan_element": "competence requirements from seed", "sandu_specific": false, "reusable": true, "notes": "Operation truth shared"},
+    {"plan_element": "registry snapshot", "sandu_specific": true, "reusable": true, "notes": "Same shape per employee"},
+    {"plan_element": "legacy evidence matrix", "sandu_specific": true, "reusable": true, "notes": "Pattern reusable"},
+    {"plan_element": "runtime work history probe", "sandu_specific": true, "reusable": true, "notes": "Method reusable; data per employee"},
+    {"plan_element": "owner questions GQ-01..06", "sandu_specific": true, "reusable": "partial", "notes": "Electrical/field questions may vary"},
+    {"plan_element": "Sandu print-only registry anomaly", "sandu_specific": true, "reusable": false, "notes": "Do not assume other employees share this drift pattern"}
+  ],
+  "broader_review_authorized": false
+}

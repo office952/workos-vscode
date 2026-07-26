@@ -1,0 +1,42 @@
+{
+  "task": "OWNER-DECISION-05",
+  "transition_policy": "S13:A — observe-only until exit criteria met",
+  "exit_criteria": [
+    {
+      "id": "EC-01",
+      "criterion": "Employee review complete for affected workforce (starting with Sandu)",
+      "status": "NOT_MET"
+    },
+    {
+      "id": "EC-02",
+      "criterion": "Competence registry complete per S1:A and S8 levels",
+      "status": "NOT_MET"
+    },
+    {
+      "id": "EC-03",
+      "criterion": "Authorization registry complete per S4:A",
+      "status": "NOT_MET"
+    },
+    {
+      "id": "EC-04",
+      "criterion": "Operation requirements documented per registry",
+      "status": "PARTIAL"
+    },
+    {
+      "id": "EC-05",
+      "criterion": "Temporary-exception contract approved and tooling planned (S9)",
+      "status": "CONFIRMED_NOT_IMPLEMENTED"
+    },
+    {
+      "id": "EC-06",
+      "criterion": "Targeted tests for eligibility invariance when changes occur",
+      "status": "NOT_MET"
+    },
+    {
+      "id": "EC-07",
+      "criterion": "Explicit owner GO for any enforcement or migration phase",
+      "status": "NOT_MET"
+    }
+  ],
+  "enforcement_before_exit": "FORBIDDEN"
+}

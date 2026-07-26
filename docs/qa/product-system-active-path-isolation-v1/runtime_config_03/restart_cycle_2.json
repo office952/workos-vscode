@@ -1,0 +1,13 @@
+﻿{
+    "cycle":  2,
+    "manual_backend_port_env_at_start":  "unset",
+    "backend_health":  "healthy",
+    "frontend_shell":  200,
+    "intake_proxy_status":  200,
+    "backend_listener_count":  1,
+    "frontend_listener_count":  1,
+    "backend_launcher_pid":  30084,
+    "frontend_launcher_pid":  21388,
+    "proxy_target_expected":  "http://127.0.0.1:8001",
+    "result":  "PASS"
+}

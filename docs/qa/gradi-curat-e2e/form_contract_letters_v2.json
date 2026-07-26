@@ -1,0 +1,1582 @@
+{
+  "summary": {
+    "contract_version": "1.0.0",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "registry_version": "1.0.0",
+    "active_module_count": 7,
+    "field_binding_count": 22,
+    "warnings": [
+      "TRIGGER_FIELD_MISMATCH for structura_suport is documented \u2014 canonical intake trigger is mounting_system."
+    ]
+  },
+  "modules": [
+    {
+      "module_code": "modelare_cant",
+      "module_name": "Volum aluminiu \u2014 cant/lateral",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "required_module",
+      "intake_trigger_fields": [
+        "volum_aluminum_module_template_code"
+      ],
+      "consumed_form_fields": [
+        "return_depth_mm",
+        "return_finish_type",
+        "return_oracal_code",
+        "letter_perimeter_m",
+        "return_material_perimeter_ml",
+        "lighting_system_type"
+      ],
+      "required_form_fields": [
+        "letter_perimeter_m",
+        "return_depth_mm",
+        "return_finish_type",
+        "volum_aluminum_module_template_code"
+      ],
+      "optional_form_fields": [
+        "letter_group_finishes"
+      ],
+      "product_definition_outputs": [
+        "layers[].components.comp_lateral_litere",
+        "layers[].processes.RETURN_PROFILE_MACHINE_FORMING",
+        "layers[].materials.MAT-PROFIL-LATERAL-LITERE-*"
+      ],
+      "valid_when": [],
+      "invalid_when": [],
+      "warnings": []
+    },
+    {
+      "module_code": "structura_suport",
+      "module_name": "Structur\u0103 metalic\u0103 premontaj",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "optional_addon",
+      "intake_trigger_fields": [
+        "mounting_system"
+      ],
+      "consumed_form_fields": [
+        "metal_support_required",
+        "mounting_system",
+        "premount_bar_length_ml",
+        "bar_material",
+        "mounting_bar_profile",
+        "width_mm"
+      ],
+      "required_form_fields": [
+        "mounting_system",
+        "width_mm"
+      ],
+      "optional_form_fields": [],
+      "product_definition_outputs": [
+        "layers[].components.comp_premount_bars",
+        "layers[].processes.premount_bar_preparation"
+      ],
+      "valid_when": [
+        "mounting_system in (steel_bars, aluminum_bars)"
+      ],
+      "invalid_when": [
+        "mounting_system=direct_wall without premount intent"
+      ],
+      "warnings": [
+        "premount_bar_preparation is non_priced in child template today \u2014 Cost Engine wiring in Step 7."
+      ]
+    },
+    {
+      "module_code": "debitare_fata",
+      "module_name": "Debitare fa\u021b\u0103 litere",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "always_on",
+      "intake_trigger_fields": [],
+      "consumed_form_fields": [
+        "width_mm",
+        "height_mm",
+        "letter_face_area_m2",
+        "face_finish_type",
+        "face_vinyl_color_code",
+        "vector_file"
+      ],
+      "required_form_fields": [
+        "face_finish_type",
+        "letter_face_area_m2",
+        "letter_perimeter_m",
+        "width_mm"
+      ],
+      "optional_form_fields": [
+        "letter_group_finishes"
+      ],
+      "product_definition_outputs": [
+        "layers[].components.comp_face_litere",
+        "layers[].processes.face_cnc_cut"
+      ],
+      "valid_when": [],
+      "invalid_when": [],
+      "warnings": [
+        "Parent BOM does not include face ops \u2014 dossier mapping is audit contract until Step 7."
+      ]
+    },
+    {
+      "module_code": "debitare_spate",
+      "module_name": "Debitare spate litere",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "always_on",
+      "intake_trigger_fields": [],
+      "consumed_form_fields": [
+        "backing_mode",
+        "backing_thickness_mm",
+        "back_bevel_enabled"
+      ],
+      "required_form_fields": [
+        "backing_mode",
+        "letter_face_area_m2"
+      ],
+      "optional_form_fields": [
+        "back_bevel_enabled"
+      ],
+      "product_definition_outputs": [
+        "layers[].components.comp_spate_litere",
+        "layers[].processes.back_cut"
+      ],
+      "valid_when": [],
+      "invalid_when": [],
+      "warnings": []
+    },
+    {
+      "module_code": "sistem_led",
+      "module_name": "Sistem LED litere",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "conditional_gate",
+      "intake_trigger_fields": [
+        "lighting_system_type"
+      ],
+      "consumed_form_fields": [
+        "lighting_system_type",
+        "led_module_count",
+        "selected_psu_watts",
+        "psu_configuration"
+      ],
+      "required_form_fields": [],
+      "optional_form_fields": [
+        "led_module_count",
+        "lighting_system_type",
+        "selected_psu_watts"
+      ],
+      "product_definition_outputs": [
+        "layers[].components.comp_led_litere"
+      ],
+      "valid_when": [
+        "lighting_system_type != none OR illuminated=true"
+      ],
+      "invalid_when": [],
+      "warnings": []
+    },
+    {
+      "module_code": "finisaje",
+      "module_name": "Finisaj, sablon montaj, ambalare",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "conditional_gate",
+      "intake_trigger_fields": [
+        "mounting_template_enabled"
+      ],
+      "consumed_form_fields": [
+        "mounting_template_enabled",
+        "mounting_template_area_m2",
+        "letter_group_finishes",
+        "paint_ral_code"
+      ],
+      "required_form_fields": [
+        "mounting_system"
+      ],
+      "optional_form_fields": [
+        "letter_group_finishes",
+        "mounting_template_area_m2",
+        "mounting_template_enabled"
+      ],
+      "product_definition_outputs": [
+        "layers[].components.comp_finisaj_litere"
+      ],
+      "valid_when": [
+        "mounting_template_enabled optional"
+      ],
+      "invalid_when": [],
+      "warnings": [
+        "Parent holds sablon materials; dossier holds finish/QC documentation."
+      ]
+    },
+    {
+      "module_code": "geometry_svg",
+      "module_name": "Analiz\u0103 SVG \u0219i geometrie",
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "activation_kind": "always_on",
+      "intake_trigger_fields": [],
+      "consumed_form_fields": [
+        "vector_file",
+        "width_mm",
+        "height_mm",
+        "depth_mm",
+        "letter_count",
+        "letter_perimeter_m"
+      ],
+      "required_form_fields": [
+        "height_mm",
+        "letter_count",
+        "letter_face_area_m2",
+        "letter_perimeter_m",
+        "vector_file",
+        "width_mm"
+      ],
+      "optional_form_fields": [],
+      "product_definition_outputs": [
+        "dimensions",
+        "quantity",
+        "geometry metrics"
+      ],
+      "valid_when": [],
+      "invalid_when": [],
+      "warnings": [
+        "Non-priced gate operation \u2014 does not generate priced task until Step 9 wiring."
+      ]
+    }
+  ],
+  "field_bindings": [
+    {
+      "canonical_key": "vector_file",
+      "workspace_path": "svg_source.file_name",
+      "label_ro": "Fi\u0219ier SVG",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "vector_file"
+      ],
+      "aggregate_trace": [
+        "operations.parent svg_geometry_analysis"
+      ],
+      "cost_engine_step": "Step 7 readiness gate",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "width_mm",
+      "workspace_path": "client.width_mm",
+      "label_ro": "L\u0103\u021bime total\u0103",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg",
+        "debitare_fata",
+        "structura_suport"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "dimensions.width_mm"
+      ],
+      "aggregate_trace": [
+        "form_contract.required_quote_input_keys"
+      ],
+      "cost_engine_step": "Step 7",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "height_mm",
+      "workspace_path": "client.height_mm",
+      "label_ro": "\u00cen\u0103l\u021bime total\u0103",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "dimensions.height_mm"
+      ],
+      "aggregate_trace": [
+        "form_contract.required_quote_input_keys"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "letter_count",
+      "workspace_path": "quote_geometry.letter_count",
+      "label_ro": "Num\u0103r litere",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "quantity"
+      ],
+      "aggregate_trace": [
+        "form_contract.required_quote_input_keys"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "letter_perimeter_m",
+      "workspace_path": "quote_geometry.letter_perimeter_m",
+      "label_ro": "Perimetru litere",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg",
+        "modelare_cant",
+        "debitare_fata"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "letter_perimeter_m"
+      ],
+      "aggregate_trace": [
+        "form_contract.required_quote_input_keys"
+      ],
+      "cost_engine_step": "Step 7",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "letter_face_area_m2",
+      "workspace_path": "quote_geometry.letter_face_area_m2",
+      "label_ro": "Suprafa\u021b\u0103 fa\u021b\u0103",
+      "required": true,
+      "field_role": "geometry_input",
+      "module_codes": [
+        "geometry_svg",
+        "debitare_fata",
+        "debitare_spate"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "letter_face_area_m2"
+      ],
+      "aggregate_trace": [
+        "form_contract.required_quote_input_keys"
+      ],
+      "cost_engine_step": "Step 7",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "face_finish_type",
+      "workspace_path": "finish_setup.face_finish_type",
+      "label_ro": "Finisaj fa\u021b\u0103",
+      "required": true,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "debitare_fata"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "layers[].components.comp_face_litere"
+      ],
+      "aggregate_trace": [
+        "components.comp_face_litere"
+      ],
+      "cost_engine_step": "Step 7 face_cnc_cut / vinyl",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "return_depth_mm",
+      "workspace_path": "finish_setup.return_depth_mm",
+      "label_ro": "Ad\u00e2ncime cant",
+      "required": true,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "modelare_cant"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "return_depth_mm"
+      ],
+      "aggregate_trace": [
+        "modules.required TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "cost_engine_step": "Step 7 return_profile_linear_meter",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "return_finish_type",
+      "workspace_path": "finish_setup.return_finish_type",
+      "label_ro": "Finisaj cant",
+      "required": true,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "modelare_cant"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "return_finish_type"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": "Step 7 RAL vs Oracal gate",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "volum_aluminum_module_template_code",
+      "workspace_path": "finish_setup.volum_aluminum_module_template_code",
+      "label_ro": "Modul volum aluminiu",
+      "required": true,
+      "field_role": "module_activation",
+      "module_codes": [
+        "modelare_cant"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "linked_modules.TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "aggregate_trace": [
+        "modules.required"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": [
+        "Module link trigger field \u2014 matches Intake UI."
+      ]
+    },
+    {
+      "canonical_key": "backing_mode",
+      "workspace_path": "finish_setup.backing_mode",
+      "label_ro": "Mod spate",
+      "required": true,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "debitare_spate"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "backing_mode"
+      ],
+      "aggregate_trace": [
+        "components.comp_spate_litere"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "back_bevel_enabled",
+      "workspace_path": "finish_setup.back_bevel_enabled",
+      "label_ro": "Bevel spate",
+      "required": false,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "debitare_spate"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "back_bevel_enabled"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "lighting_system_type",
+      "workspace_path": "finish_setup.lighting_system_type",
+      "label_ro": "Tip iluminare",
+      "required": false,
+      "field_role": "module_activation",
+      "module_codes": [
+        "sistem_led"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "lighting_system_type"
+      ],
+      "aggregate_trace": [
+        "components.comp_led_litere"
+      ],
+      "cost_engine_step": "Step 7 led_install_letters",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "led_module_count",
+      "workspace_path": "finish_setup.led_module_count",
+      "label_ro": "Num\u0103r module LED",
+      "required": false,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "sistem_led"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "led_module_count"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": "Step 7",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "selected_psu_watts",
+      "workspace_path": "finish_setup.selected_psu_watts",
+      "label_ro": "PSU selectat",
+      "required": false,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "sistem_led"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "selected_psu_watts"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "mounting_system",
+      "workspace_path": "finish_setup.mounting_system",
+      "label_ro": "Sistem montaj",
+      "required": true,
+      "field_role": "module_activation",
+      "module_codes": [
+        "structura_suport",
+        "finisaje"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "mounting_system"
+      ],
+      "aggregate_trace": [
+        "modules.optional trigger candidate"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": [
+        "Canonical Intake field for premount structure activation."
+      ]
+    },
+    {
+      "canonical_key": "mounting_template_enabled",
+      "workspace_path": "finish_setup.mounting_template_enabled",
+      "label_ro": "\u0218ablon montaj activ",
+      "required": false,
+      "field_role": "module_activation",
+      "module_codes": [
+        "finisaje"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "mounting_template_enabled"
+      ],
+      "aggregate_trace": [
+        "materials.parent MAT-SABLON-*"
+      ],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "mounting_template_area_m2",
+      "workspace_path": "finish_setup.mounting_template_area_m2",
+      "label_ro": "Suprafa\u021b\u0103 \u0219ablon montaj",
+      "required": false,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "finisaje"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "mounting_template_area_m2"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": "Step 7 mounting_template_area",
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "letter_group_finishes",
+      "workspace_path": "finish_setup.letter_group_finishes",
+      "label_ro": "Finisaje pe grup litere",
+      "required": false,
+      "field_role": "module_configuration",
+      "module_codes": [
+        "debitare_fata",
+        "modelare_cant",
+        "finisaje"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "letter_group_finishes"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": null,
+      "derived_from": null,
+      "derivation_rule": null,
+      "notes": []
+    },
+    {
+      "canonical_key": "metal_support_required",
+      "workspace_path": "quote_input.metal_support_required",
+      "label_ro": "Suport metal derivat",
+      "required": false,
+      "field_role": "derived_quote_input",
+      "module_codes": [
+        "structura_suport"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [
+        "metal_support_required"
+      ],
+      "aggregate_trace": [],
+      "cost_engine_step": null,
+      "derived_from": "finish_setup.mounting_system",
+      "derivation_rule": "mounting_system in ('steel_bars','aluminum_bars')",
+      "notes": [
+        "Not a finish_setup control \u2014 derived at quote adapter.",
+        "Module link still uses trigger_field metal_support_required (DB)."
+      ]
+    },
+    {
+      "canonical_key": "premount_bar_length_ml",
+      "workspace_path": "quote_input.premount_bar_length_ml",
+      "label_ro": "Lungime bare premontaj",
+      "required": false,
+      "field_role": "derived_quote_input",
+      "module_codes": [
+        "structura_suport"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [],
+      "aggregate_trace": [],
+      "cost_engine_step": "Step 7 premount_bar_linear_meter",
+      "derived_from": "quote_input.width_mm",
+      "derivation_rule": "Set when structura_suport active",
+      "notes": []
+    },
+    {
+      "canonical_key": "bar_material",
+      "workspace_path": "quote_input.bar_material",
+      "label_ro": "Material bare",
+      "required": false,
+      "field_role": "derived_quote_input",
+      "module_codes": [
+        "structura_suport"
+      ],
+      "operational_status": "ACTIVE_OPERATIONAL",
+      "product_definition_keys": [],
+      "aggregate_trace": [],
+      "cost_engine_step": null,
+      "derived_from": "finish_setup.mounting_system",
+      "derivation_rule": "steel_bars -> steel; aluminum_bars -> aluminum",
+      "notes": []
+    }
+  ],
+  "form_system_backbone": {
+    "contract_version": "form_system_backbone_v1",
+    "read_only": true,
+    "root": {
+      "requested_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "canonical_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_type": "product_template",
+      "quote_mode": "product_total",
+      "offerability_status": "allowed_owner_valid_root",
+      "canonical_alias_resolution": false,
+      "allowed": true,
+      "blocked": false,
+      "blocker_code": null,
+      "reason": "Owner-valid product template root for read-only Form System backbone."
+    },
+    "components": [
+      {
+        "component_key": "svg_layer_roles",
+        "label": "SVG / layer roles",
+        "component_template_code": null,
+        "module_code": "geometry_svg",
+        "coverage": "covered",
+        "role": "suggestion_source",
+        "contract_reference": "Intake V6 SVG Analyzer / geometry_svg",
+        "operations_contract_reference": "contract_only_non_priced_gate",
+        "notes": "Analyzer suggests layer/group roles and geometry; operator confirmation is required."
+      },
+      {
+        "component_key": "face",
+        "label": "Face",
+        "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+        "module_code": "debitare_fata",
+        "coverage": "covered",
+        "role": "front_visual_face",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_face",
+        "operations_contract_reference": "face.geometry_review / face.cut preview_only",
+        "notes": "Owns face layer, material, thickness, area and face finish target requirements."
+      },
+      {
+        "component_key": "back",
+        "label": "Back",
+        "component_template_code": "TPL-VOLUMETRIC-BACK_v1",
+        "module_code": "debitare_spate",
+        "coverage": "partial",
+        "role": "back_panel",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_back",
+        "operations_contract_reference": "back.cut preview_only",
+        "notes": "Back material/mode exists in current contracts; explicit confirmation state remains partial."
+      },
+      {
+        "component_key": "return_cant",
+        "label": "Return / cant",
+        "component_template_code": "TPL-VOLUM-ALUMINIU_v1",
+        "module_code": "modelare_cant",
+        "coverage": "covered",
+        "role": "return_side_wall",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_return_side",
+        "operations_contract_reference": "return.perimeter_review / return.form preview_only",
+        "notes": "Owns return depth, material, perimeter basis and return finish requirements."
+      },
+      {
+        "component_key": "finish_artwork",
+        "label": "Finish / artwork",
+        "component_template_code": "TPL-VOLUMETRIC-FINISH_v1",
+        "module_code": "finisaje",
+        "coverage": "partial",
+        "role": "surface_finish_and_artwork",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_surface_finish",
+        "operations_contract_reference": "finish.target_review / finish.apply_* preview_only",
+        "notes": "Finish options exist, but finish target/stage and artwork confirmation remain partial."
+      },
+      {
+        "component_key": "lighting_led",
+        "label": "Lighting / LED",
+        "component_template_code": "TPL-VOLUMETRIC-LED_v1",
+        "module_code": "sistem_led",
+        "coverage": "partial",
+        "role": "lighting_and_led",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_lighting",
+        "operations_contract_reference": "led.lighting_review / led.install preview_only",
+        "notes": "Shared LED component is active for Letters; electrical strategy remains partial and no LED formula is invented here."
+      },
+      {
+        "component_key": "mounting_support",
+        "label": "Mounting / support",
+        "component_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "module_code": "structura_suport",
+        "coverage": "partial",
+        "role": "mounting_support_structure",
+        "contract_reference": "shared_volumetric_component_contracts.volumetric_mounting_interface",
+        "operations_contract_reference": "mounting.method_select / structure.prepare preview_only",
+        "notes": "Mounting exists; support trigger alignment remains a warning until a future scoped cleanup."
+      },
+      {
+        "component_key": "electrical",
+        "label": "Electrical",
+        "component_template_code": "TPL-VOLUMETRIC-LED_v1",
+        "module_code": "sistem_led",
+        "coverage": "partial",
+        "role": "electrical_dependency",
+        "contract_reference": "lighting_electrical reusable component contract",
+        "operations_contract_reference": "led.wire / led.electrical_test preview_only",
+        "notes": "Electrical truth is modeled as part of lighting/LED for this slice; detailed electrical component remains future."
+      },
+      {
+        "component_key": "production_operations_reference",
+        "label": "Production operations reference",
+        "component_template_code": null,
+        "module_code": null,
+        "coverage": "covered",
+        "role": "contract_reference_only",
+        "contract_reference": "PRODUCT_SYSTEM_COMPONENT_PRODUCTION_OPERATIONS_CONTRACT.md",
+        "operations_contract_reference": "contract_only_no_materialization",
+        "notes": "References component-owned operation contracts only; no task graph, execution plan, or materialization intent."
+      }
+    ],
+    "fields": [
+      {
+        "field_key": "svg.layer_group_role",
+        "operator_label": "Rol strat/grup SVG",
+        "owning_component": "svg_layer_roles",
+        "component_template_code": null,
+        "source_type": "svg_suggested",
+        "state": "suggested",
+        "product_truth_path": "svg.layer_roles[].suggested_role",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "LAYER_ROLES_INCOMPLETE",
+        "notes": "Suggestion only. Operator confirmation must create the confirmed role map.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "svg.selected_layer_group",
+        "operator_label": "Layer/grup selectat",
+        "owning_component": "svg_layer_roles",
+        "component_template_code": null,
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "svg.selected_layer_refs[]",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "SELECTED_FACE_LAYER_MISSING",
+        "notes": "Explicit selected/confirmed layer refs are required before quote-safe truth.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "face.material",
+        "operator_label": "Material fa\u021b\u0103",
+        "owning_component": "face",
+        "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+        "source_type": "manual_input",
+        "state": "missing",
+        "product_truth_path": "components.face.material",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "FACE_MATERIAL_MISSING",
+        "notes": "SVG cannot decide face material; Form System asks and operator confirms."
+      },
+      {
+        "field_key": "face.finish_artwork_target",
+        "operator_label": "\u021aint\u0103 finisaj/artwork fa\u021b\u0103",
+        "owning_component": "finish_artwork",
+        "component_template_code": "TPL-VOLUMETRIC-FINISH_v1",
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.finish.target",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "FACE_FINISH_TARGET_MISSING",
+        "notes": "Separates face, return/cant, and artwork finish targets."
+      },
+      {
+        "field_key": "finish.print_required",
+        "operator_label": "Print artwork necesar",
+        "owning_component": "finish_artwork",
+        "component_template_code": "TPL-VOLUMETRIC-FINISH_v1",
+        "source_type": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].printRequired",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "PRINT_REQUIRED_UNKNOWN",
+        "notes": "Artwork print requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "finish.lamination_required",
+        "operator_label": "Laminare artwork necesar\u0103",
+        "owning_component": "finish_artwork",
+        "component_template_code": "TPL-VOLUMETRIC-FINISH_v1",
+        "source_type": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].laminationRequired",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "LAMINATION_REQUIRED_UNKNOWN",
+        "notes": "Artwork lamination requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "return.material",
+        "operator_label": "Material cant/return",
+        "owning_component": "return_cant",
+        "component_template_code": "TPL-VOLUM-ALUMINIU_v1",
+        "source_type": "manual_input",
+        "state": "missing",
+        "product_truth_path": "components.return.material",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "RETURN_CANT_MATERIAL_MISSING",
+        "notes": "Current contracts expose return profile families; final material remains operator/form truth."
+      },
+      {
+        "field_key": "return.depth_mm",
+        "operator_label": "Ad\u00e2ncime cant",
+        "owning_component": "return_cant",
+        "component_template_code": "TPL-VOLUM-ALUMINIU_v1",
+        "source_type": "hydrated",
+        "state": "hydrated",
+        "product_truth_path": "components.return.depth_mm",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+        "notes": "A hydrated/default depth such as 60 mm does not count as confirmed until operator acceptance.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "lighting.type",
+        "operator_label": "Tip iluminare",
+        "owning_component": "lighting_led",
+        "component_template_code": "TPL-VOLUMETRIC-LED_v1",
+        "source_type": "fallback",
+        "state": "fallback",
+        "product_truth_path": "components.lighting.illumination_type",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "LIGHTING_MODE_CONFIRMATION_REQUIRED",
+        "notes": "Fallback/hydrated lighting defaults do not unlock quote by themselves.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "lighting.led_profile",
+        "operator_label": "Profil LED / surs\u0103 strategie",
+        "owning_component": "lighting_led",
+        "component_template_code": "TPL-VOLUMETRIC-LED_v1",
+        "source_type": "contract_default",
+        "state": "warning",
+        "product_truth_path": "components.lighting.strategy_profile",
+        "required_for": [
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": null,
+        "notes": "Letters LED strategy is contract-level direction; detailed formula remains future and not pricing truth."
+      },
+      {
+        "field_key": "mounting.support_option",
+        "operator_label": "Op\u021biune montaj/suport",
+        "owning_component": "mounting_support",
+        "component_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "source_type": "hydrated",
+        "state": "hydrated",
+        "product_truth_path": "components.mounting.system",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "MOUNTING_SYSTEM_CONFIRMATION_REQUIRED",
+        "notes": "Hydrated mounting system must be confirmed; support trigger mismatch remains a warning.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "mounting.mounting_scope",
+        "operator_label": "Scope comercial montaj",
+        "owning_component": "mounting_support",
+        "component_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.mounting.mountingScope",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "MOUNTING_SCOPE_MISSING",
+        "notes": "Commercial mounting scope must be captured explicitly from operator finish setup; mounting_system and support_type are separate fields.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "mounting.mounting_solution",
+        "operator_label": "Solu\u021bie montaj canonic\u0103",
+        "owning_component": "mounting_support",
+        "component_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.mounting.solution",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "MOUNTING_SOLUTION_MISSING",
+        "notes": "Canonical mounting_solution must be persisted when mounting preparation is active; legacy mounting_system and support_type are compatibility-only.",
+        "requires_operator_confirmation": true
+      },
+      {
+        "field_key": "support.support_type",
+        "operator_label": "Tip suport tehnic (legacy)",
+        "owning_component": "mounting_support",
+        "component_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.support.supportType",
+        "required_for": [],
+        "blocker_code": null,
+        "notes": "Legacy compatibility field only; canonical mounting_solution owns mounting truth when preparation is active.",
+        "requires_operator_confirmation": false
+      },
+      {
+        "field_key": "readiness.product_truth_blockers",
+        "operator_label": "Blockere Product Truth",
+        "owning_component": "readiness",
+        "component_template_code": null,
+        "source_type": "blocked",
+        "state": "blocked",
+        "product_truth_path": "readiness.blockers[]",
+        "required_for": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "blocker_code": "PRODUCT_TRUTH_INCOMPLETE",
+        "notes": "Readiness summarizes missing required truth. It is not a pricing or execution write intent."
+      }
+    ],
+    "readiness": {
+      "status": "blocked",
+      "blockers": [
+        {
+          "field_key": "svg.layer_group_role",
+          "owning_component": "svg_layer_roles",
+          "blocker_code": "LAYER_ROLES_INCOMPLETE",
+          "state": "suggested",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Suggestion only. Operator confirmation must create the confirmed role map."
+        },
+        {
+          "field_key": "svg.selected_layer_group",
+          "owning_component": "svg_layer_roles",
+          "blocker_code": "SELECTED_FACE_LAYER_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Explicit selected/confirmed layer refs are required before quote-safe truth."
+        },
+        {
+          "field_key": "face.material",
+          "owning_component": "face",
+          "blocker_code": "FACE_MATERIAL_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "SVG cannot decide face material; Form System asks and operator confirms."
+        },
+        {
+          "field_key": "face.finish_artwork_target",
+          "owning_component": "finish_artwork",
+          "blocker_code": "FACE_FINISH_TARGET_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Separates face, return/cant, and artwork finish targets."
+        },
+        {
+          "field_key": "finish.print_required",
+          "owning_component": "finish_artwork",
+          "blocker_code": "PRINT_REQUIRED_UNKNOWN",
+          "state": "blocked",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Artwork print requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth."
+        },
+        {
+          "field_key": "finish.lamination_required",
+          "owning_component": "finish_artwork",
+          "blocker_code": "LAMINATION_REQUIRED_UNKNOWN",
+          "state": "blocked",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Artwork lamination requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth."
+        },
+        {
+          "field_key": "return.material",
+          "owning_component": "return_cant",
+          "blocker_code": "RETURN_CANT_MATERIAL_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Current contracts expose return profile families; final material remains operator/form truth."
+        },
+        {
+          "field_key": "return.depth_mm",
+          "owning_component": "return_cant",
+          "blocker_code": "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+          "state": "hydrated",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "A hydrated/default depth such as 60 mm does not count as confirmed until operator acceptance."
+        },
+        {
+          "field_key": "lighting.type",
+          "owning_component": "lighting_led",
+          "blocker_code": "LIGHTING_MODE_CONFIRMATION_REQUIRED",
+          "state": "fallback",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Fallback/hydrated lighting defaults do not unlock quote by themselves."
+        },
+        {
+          "field_key": "mounting.support_option",
+          "owning_component": "mounting_support",
+          "blocker_code": "MOUNTING_SYSTEM_CONFIRMATION_REQUIRED",
+          "state": "hydrated",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Hydrated mounting system must be confirmed; support trigger mismatch remains a warning."
+        },
+        {
+          "field_key": "mounting.mounting_scope",
+          "owning_component": "mounting_support",
+          "blocker_code": "MOUNTING_SCOPE_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Commercial mounting scope must be captured explicitly from operator finish setup; mounting_system and support_type are separate fields."
+        },
+        {
+          "field_key": "mounting.mounting_solution",
+          "owning_component": "mounting_support",
+          "blocker_code": "MOUNTING_SOLUTION_MISSING",
+          "state": "missing",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Canonical mounting_solution must be persisted when mounting preparation is active; legacy mounting_system and support_type are compatibility-only."
+        },
+        {
+          "field_key": "readiness.product_truth_blockers",
+          "owning_component": "readiness",
+          "blocker_code": "PRODUCT_TRUTH_INCOMPLETE",
+          "state": "blocked",
+          "blocks": [
+            "quote_preview",
+            "priced_quote",
+            "order_snapshot",
+            "product_definition",
+            "execution_later"
+          ],
+          "message": "Readiness summarizes missing required truth. It is not a pricing or execution write intent."
+        }
+      ],
+      "operator_confirmation_required": [
+        "svg.layer_group_role",
+        "svg.selected_layer_group",
+        "finish.print_required",
+        "finish.lamination_required",
+        "return.depth_mm",
+        "lighting.type",
+        "mounting.support_option",
+        "mounting.mounting_scope",
+        "mounting.mounting_solution"
+      ],
+      "suggestions_allowed": [
+        "svg.layer_group_role"
+      ],
+      "fallback_or_hydrated_not_confirmed": [
+        "return.depth_mm",
+        "lighting.type",
+        "mounting.support_option"
+      ],
+      "downstream_later": [
+        "product_aggregate",
+        "task_graph",
+        "owner_gated_execution_later",
+        "shop_floor",
+        "employee_mobile"
+      ]
+    },
+    "blockers": [
+      {
+        "field_key": "svg.layer_group_role",
+        "owning_component": "svg_layer_roles",
+        "blocker_code": "LAYER_ROLES_INCOMPLETE",
+        "state": "suggested",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Suggestion only. Operator confirmation must create the confirmed role map."
+      },
+      {
+        "field_key": "svg.selected_layer_group",
+        "owning_component": "svg_layer_roles",
+        "blocker_code": "SELECTED_FACE_LAYER_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Explicit selected/confirmed layer refs are required before quote-safe truth."
+      },
+      {
+        "field_key": "face.material",
+        "owning_component": "face",
+        "blocker_code": "FACE_MATERIAL_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "SVG cannot decide face material; Form System asks and operator confirms."
+      },
+      {
+        "field_key": "face.finish_artwork_target",
+        "owning_component": "finish_artwork",
+        "blocker_code": "FACE_FINISH_TARGET_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Separates face, return/cant, and artwork finish targets."
+      },
+      {
+        "field_key": "finish.print_required",
+        "owning_component": "finish_artwork",
+        "blocker_code": "PRINT_REQUIRED_UNKNOWN",
+        "state": "blocked",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Artwork print requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth."
+      },
+      {
+        "field_key": "finish.lamination_required",
+        "owning_component": "finish_artwork",
+        "blocker_code": "LAMINATION_REQUIRED_UNKNOWN",
+        "state": "blocked",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Artwork lamination requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth."
+      },
+      {
+        "field_key": "return.material",
+        "owning_component": "return_cant",
+        "blocker_code": "RETURN_CANT_MATERIAL_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Current contracts expose return profile families; final material remains operator/form truth."
+      },
+      {
+        "field_key": "return.depth_mm",
+        "owning_component": "return_cant",
+        "blocker_code": "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+        "state": "hydrated",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "A hydrated/default depth such as 60 mm does not count as confirmed until operator acceptance."
+      },
+      {
+        "field_key": "lighting.type",
+        "owning_component": "lighting_led",
+        "blocker_code": "LIGHTING_MODE_CONFIRMATION_REQUIRED",
+        "state": "fallback",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Fallback/hydrated lighting defaults do not unlock quote by themselves."
+      },
+      {
+        "field_key": "mounting.support_option",
+        "owning_component": "mounting_support",
+        "blocker_code": "MOUNTING_SYSTEM_CONFIRMATION_REQUIRED",
+        "state": "hydrated",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Hydrated mounting system must be confirmed; support trigger mismatch remains a warning."
+      },
+      {
+        "field_key": "mounting.mounting_scope",
+        "owning_component": "mounting_support",
+        "blocker_code": "MOUNTING_SCOPE_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Commercial mounting scope must be captured explicitly from operator finish setup; mounting_system and support_type are separate fields."
+      },
+      {
+        "field_key": "mounting.mounting_solution",
+        "owning_component": "mounting_support",
+        "blocker_code": "MOUNTING_SOLUTION_MISSING",
+        "state": "missing",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Canonical mounting_solution must be persisted when mounting preparation is active; legacy mounting_system and support_type are compatibility-only."
+      },
+      {
+        "field_key": "readiness.product_truth_blockers",
+        "owning_component": "readiness",
+        "blocker_code": "PRODUCT_TRUTH_INCOMPLETE",
+        "state": "blocked",
+        "blocks": [
+          "quote_preview",
+          "priced_quote",
+          "order_snapshot",
+          "product_definition",
+          "execution_later"
+        ],
+        "message": "Readiness summarizes missing required truth. It is not a pricing or execution write intent."
+      }
+    ],
+    "linked_template_composition": {
+      "contract_version": "linked_template_composition_v1",
+      "read_only": true,
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_role": "root_product",
+      "composition_mode": "root_with_linked_segments",
+      "linked_templates": [
+        {
+          "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+          "composition_role": "linked_logo_segment",
+          "binding_status": "suggested",
+          "activation_state": "child_only_not_root_offerable",
+          "source": "svg_layer_binding",
+          "segment_discovery": {
+            "status": "runtime_payload_required",
+            "runtime_sources": [
+              "payload.layer_role_setup.layer_bindings",
+              "payload.finish_setup.artwork_finishes"
+            ],
+            "expected_layer_role": "printed_artwork",
+            "notes": "The backbone service has no workspace runtime payload. Segment keys must come from stable neutral Intake V6 layer instance IDs in the workspace payload (for example logo_instance_001). Position labels are not canonical identities."
+          },
+          "segments": [],
+          "product_truth_path": "linked_templates.logo",
+          "quote_policy": "no_separate_quote",
+          "root_offerability_policy": "blocked_as_root_in_this_flow",
+          "component_quote_policy": "blocked",
+          "task_merge_policy": "emit_intents_merge_later_no_task_runtime_now"
+        }
+      ],
+      "no_duplicate_task_policy": {
+        "status": "declared_only",
+        "task_graph_implemented": false,
+        "rule": "Linked templates may contribute future task intents; duplicate real operations must be merged later under an owner-approved task composer."
+      },
+      "forbidden_runtime_effects": [
+        "no_pricing_change",
+        "no_quote_or_order_change",
+        "no_execution_runtime_change",
+        "no_product_aggregate_change",
+        "no_db_write",
+        "no_seed_or_migration"
+      ]
+    },
+    "downstream_write_intent": {
+      "pricing_write": false,
+      "quote_write": false,
+      "order_write": false,
+      "product_definition_write": false,
+      "product_aggregate_write": false,
+      "task_graph_write": false,
+      "execution_runtime_write": false,
+      "inventory_movement": false,
+      "db_write": false
+    },
+    "notes": [
+      "Read-only contract map. It does not create Product Truth, quote, order, execution, tasks, inventory movements, or DB writes.",
+      "SVG suggested values, fallback values, and hydrated values remain distinct from confirmed operator truth.",
+      "ProductDefinition may be listed in required_for only as a consumer boundary; no ProductDefinition write behavior is invoked."
+    ]
+  },
+  "trigger_alignments": [
+    {
+      "module_code": "structura_suport",
+      "module_link_trigger_field": "metal_support_required",
+      "canonical_intake_field": "finish_setup.mounting_system",
+      "derived_quote_input_key": "metal_support_required",
+      "derivation_rule": "mounting_system in ('steel_bars','aluminum_bars')",
+      "warning_code": "TRIGGER_FIELD_MISMATCH",
+      "backwards_compatible": true,
+      "resolution_owner_step": 5,
+      "notes": [
+        "Intake operator selects mounting_system; commercial quote adapter derives metal_support_required.",
+        "ProductAggregate warning remains until module link trigger_field is migrated (future DB step)."
+      ]
+    }
+  ],
+  "valid_combinations": [
+    "geometry_svg + debitare_fata + modelare_cant + debitare_spate + sistem_led (illuminated) + finisaje",
+    "structura_suport activates when mounting_system is steel_bars or aluminum_bars",
+    "finisaje sablon materials when mounting_template_enabled=true",
+    "modelare_cant always required for volumetric letters v2 (required_module link)"
+  ],
+  "invalid_combinations": [
+    "structura_suport without steel_bars/aluminum_bars mounting_system",
+    "sistem_led with lighting_system_type=none while illuminated product expected",
+    "Any finish_setup field without module_codes binding (orphan) \u2014 must be FUTURE or removed"
+  ],
+  "orphan_fields_audit": [
+    "finish_setup.illuminated \u2014 UI gate only; maps to lighting_system_type indirectly",
+    "finish_setup.commercial_inputs \u2014 quote commercial layer, not product module (READONLY_EXPLANATORY)",
+    "finish_setup.artwork_complexity_decisions \u2014 artwork path, FUTURE_RESERVED_STEP_6 for emblem modules",
+    "finish_setup.emblem_lighting_mode \u2014 FUTURE electrica_logo OPEN QUESTION"
+  ],
+  "notes": [
+    "This contract is read-only. Does not mutate workspace payload.",
+    "Pricing, ProductDefinition builder, and Cost Engine are out of scope for Step 5.",
+    "Step 6 consumes field_bindings.product_definition_keys."
+  ]
+}

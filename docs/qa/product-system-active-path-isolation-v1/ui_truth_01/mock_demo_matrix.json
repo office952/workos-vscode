@@ -1,0 +1,33 @@
+{
+  "task": "UI-TRUTH-01",
+  "detection": {
+    "mock": {
+      "function": "isMockEnabled()",
+      "env": "VITE_ENABLE_MOCK_DATA === 'true'",
+      "coexist_with_backend": true,
+      "note": "Mock can be on while backend healthy — banner must show demo segment prominently"
+    },
+    "dev_auth_fallback": {
+      "function": "isDevAuthFallback()",
+      "env": "VITE_ENABLE_DEV_AUTH + no localStorage token + no VITE_DEV_GUARD_BYPASS",
+      "label": "Sesiune dev — not MOD DEMO"
+    }
+  },
+  "target_labels": {
+    "primary": "Mod demo",
+    "alternate": "Date demonstrative",
+    "detail": "Date demonstrative — nu reprezintă producție"
+  },
+  "visual_differentiation": {
+    "mock": "Distinct purple/violet or amber stripe — never emerald LIVE",
+    "local_live_backend": "Local mediu + health-driven backend segment — no DEMO label",
+    "coexistence": "When mock on: environment segment DEMO overrides LOCAL; backend segment still from health if fetched"
+  },
+  "forbidden": [
+    "LIVE / DB when mocks active",
+    "Implying DB confirmed in mock mode"
+  ],
+  "production_like_routes": {
+    "intake_orders_product_system": "Must show demo warning when mock on; never green operational all-clear"
+  }
+}

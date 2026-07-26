@@ -1,0 +1,134 @@
+﻿[
+  {
+    "file": "C:\\Users\\offic\\Desktop\\un-pliu.dxf",
+    "insunits": 4,
+    "entity_types": {
+      "SPLINE": 5
+    },
+    "layer_lengths_mm": {},
+    "layer_counts": {
+      "Layer 1": 5
+    },
+    "bbox_mm": null,
+    "heuristic": {
+      "cut_layers": [],
+      "v_groove_l1_layers": [],
+      "v_groove_l2_layers": [],
+      "cut_length_mm": null,
+      "v_groove_l1_mm": null,
+      "v_groove_l2_mm": null
+    },
+    "total_all_entities_length_mm": 0,
+    "entity_sample": [
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 256
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      }
+    ],
+    "entity_count": 5
+  },
+  {
+    "file": "C:\\Users\\offic\\Desktop\\2-pliuri-100x30.dxf",
+    "insunits": 4,
+    "entity_types": {
+      "SPLINE": 9
+    },
+    "layer_lengths_mm": {},
+    "layer_counts": {
+      "Layer 1": 9
+    },
+    "bbox_mm": null,
+    "heuristic": {
+      "cut_layers": [],
+      "v_groove_l1_layers": [],
+      "v_groove_l2_layers": [],
+      "cut_length_mm": null,
+      "v_groove_l1_mm": null,
+      "v_groove_l2_mm": null
+    },
+    "total_all_entities_length_mm": 0,
+    "entity_sample": [
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 242
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 1
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 242
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 242
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 242
+      },
+      {
+        "type": "SPLINE",
+        "layer": "Layer 1",
+        "length_mm": null,
+        "color": 250
+      }
+    ],
+    "entity_count": 9
+  }
+]

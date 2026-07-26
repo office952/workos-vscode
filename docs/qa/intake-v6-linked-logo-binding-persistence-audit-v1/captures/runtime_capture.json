@@ -1,0 +1,128 @@
+{
+  "read_only": true,
+  "workspace_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+  "workspace_record_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+  "workspace_code": "IV6-189D2F12",
+  "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "product_binding_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "read_model_version": "v1",
+  "fields": [
+    {
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "confirmation_rule": "Persisted selected layer refs require layer_role_setup.confirmation_status=complete plus stable layer_id and confirmation_state=confirmed.",
+      "blockers": [],
+      "ready_for_product_truth": true
+    },
+    {
+      "field_key": "finish.finish_target",
+      "runtime_source": "finish_setup.finish_target",
+      "product_truth_path": "components.finish.target",
+      "state": "blocked",
+      "confirmation_rule": "Explicit persisted finish_setup.finish_target and finish_setup.confirmed=true.",
+      "blockers": [
+        "FINISH_TARGET_MISSING"
+      ],
+      "ready_for_product_truth": false
+    },
+    {
+      "field_key": "finish.print_required",
+      "runtime_source": "finish_setup.artwork_finishes[].print_required",
+      "product_truth_path": "components.artwork.items[].printRequired",
+      "state": "blocked",
+      "confirmation_rule": "Every persisted artwork finish row must carry an explicit print_required value and row confirmation or finish_setup.confirmed=true.",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN"
+      ],
+      "ready_for_product_truth": false
+    },
+    {
+      "field_key": "finish.lamination_required",
+      "runtime_source": "finish_setup.artwork_finishes[].lamination_required",
+      "product_truth_path": "components.artwork.items[].laminationRequired",
+      "state": "blocked",
+      "confirmation_rule": "Every persisted artwork finish row must carry an explicit lamination_required value and row confirmation or finish_setup.confirmed=true.",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN"
+      ],
+      "ready_for_product_truth": false
+    },
+    {
+      "field_key": "mounting.mounting_scope",
+      "runtime_source": "finish_setup.mounting_scope",
+      "product_truth_path": "components.mounting.mountingScope",
+      "state": "missing",
+      "confirmation_rule": "Explicit persisted finish_setup.mounting_scope and finish_setup.confirmed=true; no fallback from mounting_system or support_type.",
+      "blockers": [
+        "MOUNTING_SCOPE_MISSING"
+      ],
+      "ready_for_product_truth": false
+    },
+    {
+      "field_key": "support.support_type",
+      "runtime_source": "finish_setup.support_type",
+      "product_truth_path": "components.support.supportType",
+      "state": "missing",
+      "confirmation_rule": "Explicit persisted finish_setup.support_type and finish_setup.confirmed=true; no fallback from support_required, mounting_system, mounting_scope, or SVG evidence.",
+      "blockers": [
+        "SUPPORT_TYPE_MISSING"
+      ],
+      "ready_for_product_truth": false
+    }
+  ],
+  "blockers": [
+    {
+      "field_key": "finish.finish_target",
+      "blockers": [
+        "FINISH_TARGET_MISSING"
+      ],
+      "state": "blocked"
+    },
+    {
+      "field_key": "finish.print_required",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN"
+      ],
+      "state": "blocked"
+    },
+    {
+      "field_key": "finish.lamination_required",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN"
+      ],
+      "state": "blocked"
+    },
+    {
+      "field_key": "mounting.mounting_scope",
+      "blockers": [
+        "MOUNTING_SCOPE_MISSING"
+      ],
+      "state": "missing"
+    },
+    {
+      "field_key": "support.support_type",
+      "blockers": [
+        "SUPPORT_TYPE_MISSING"
+      ],
+      "state": "missing"
+    }
+  ],
+  "downstream_write_intent": {
+    "pricing_write": false,
+    "quote_write": false,
+    "order_write": false,
+    "product_definition_write": false,
+    "product_aggregate_write": false,
+    "task_graph_write": false,
+    "execution_runtime_write": false,
+    "inventory_movement": false,
+    "db_write": false
+  },
+  "notes": [
+    "Minimal runtime capture read model only.",
+    "Fail-closed: missing or unconfirmed runtime inputs remain blocked.",
+    "No Product Truth, Pricing, Quote, Order, Execution, ProductAggregate, TaskGraph, or DB write behavior is invoked."
+  ]
+}

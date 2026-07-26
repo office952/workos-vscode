@@ -38,7 +38,7 @@ function MainRow({ label, value, testId }: { label: string; value: string; testI
 
   return (
 
-    <div className="flex justify-between gap-4 border-b border-[#2A3548]/60 py-2.5 text-[12px] last:border-b-0">
+    <div className="flex justify-between gap-4 border-b border-wo-border-strong/60 py-2.5 text-[12px] last:border-b-0">
 
       <dt className="text-slate-400">{label}</dt>
 
@@ -60,7 +60,7 @@ function DebugRow({ label, value, testId }: { label: string; value: string; test
 
   return (
 
-    <div className="flex justify-between gap-4 border-b border-[#2A3548]/40 py-2 text-[11px] last:border-b-0">
+    <div className="flex justify-between gap-4 border-b border-wo-border-strong/40 py-2 text-[11px] last:border-b-0">
 
       <dt className="text-slate-500">{label}</dt>
 
@@ -239,7 +239,7 @@ export default function IntakeV6EdgeCantReviewCard({
 
 
 
-      <dl className="rounded border border-[#2A3548] bg-[#0A0F1A]/60 px-3 py-1">
+      <dl className="rounded border border-wo-border-strong bg-wo-surface-inset/60 px-3 py-1">
 
         <MainRow
 
@@ -522,7 +522,7 @@ export default function IntakeV6EdgeCantReviewCard({
 
             {(model?.operations.length ?? 0) > 0 ? (
 
-              <div className="mt-3 border-t border-[#2A3548] pt-3" data-testid="intake-v6-edge-cant-review-ops">
+              <div className="mt-3 border-t border-wo-border-strong pt-3" data-testid="intake-v6-edge-cant-review-ops">
 
                 <h3 className="mb-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
 

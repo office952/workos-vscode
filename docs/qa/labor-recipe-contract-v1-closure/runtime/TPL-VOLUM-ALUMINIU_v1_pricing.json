@@ -1,0 +1,251 @@
+{
+  "schema_version": "1.1.1",
+  "template_code": "TPL-VOLUM-ALUMINIU_v1",
+  "template_name": "Volum aluminiu modular",
+  "template_version": null,
+  "lifecycle": "active",
+  "usage_mode": "linked_child",
+  "editability_policy": "read_only_v1",
+  "ownership_note_ro": "Cataloagele dețin tarifele reutilizabile. Template-ul deține rețeta. CPP calculează. EIC explică. Studio-ul doar compune și face lanțul vizibil.",
+  "labor_ownership_note_ro": "Tariful central de manoperă e în catalog. Rețeta (formulă, cantitate, minim, aplicabilitate) e pe template. Tariful lipsă blochează doar pregătirea comercială, nu configurația tehnică.",
+  "summary": {
+    "total_items": 1,
+    "materials": 0,
+    "machine_operations": 0,
+    "labor": 0,
+    "services": 0,
+    "commercial_lines": 1,
+    "resolved": 0,
+    "missing": 0,
+    "blocked": 0,
+    "warnings": 1,
+    "registry_confirmed": 0,
+    "registry_missing_price": 0
+  },
+  "recipe": [
+    {
+      "recipe_item_id": "TPL-VOLUM-ALUMINIU_v1::commercial_line::modelare_cant_aluminiu",
+      "recipe_kind": "commercial_line",
+      "operator_name": "Modelare cant aluminiu (component)",
+      "stable_code": "modelare_cant_aluminiu",
+      "catalog_code": null,
+      "quantity_keys": [
+        "letter_perimeter_m"
+      ],
+      "formula_owner": "volum_aluminiu_component_contract:IDENTITY_MAP",
+      "applicability": {
+        "parent_template": "TPL-VOLUMETRIC-LETTERS_v2",
+        "usage_mode": "component_only"
+      },
+      "rate_source": "parent_cpp_line",
+      "cost_or_rate": "commercial_documented",
+      "cost_label_ro": "Rată comercială (via Letters)",
+      "unit": "ml",
+      "current_value": null,
+      "currency": null,
+      "status": "warning",
+      "provenance": "TPL-VOLUM-ALUMINIU_v1 is component_only — commercial line owned by parent Letters path",
+      "cpp_line_code": "modelare_cant_aluminiu",
+      "cpp_pricing_rule_code": null,
+      "eic_rule_code": null,
+      "typed_catalog": null,
+      "machine_family": null,
+      "data_quality_flags": [],
+      "data_quality_message_ro": null,
+      "technical_ready": true,
+      "commercial_ready": false,
+      "blockers": [],
+      "warnings": [
+        "COMPONENT_ONLY_NO_STANDALONE_COMMERCIAL_ROOT"
+      ],
+      "editable": false,
+      "editability_reason_ro": "V1 este read-only — Studio compune, nu creează tarife.",
+      "source_links": {
+        "pricing_registry": "/inventory/pricing?template=TPL-VOLUMETRIC-LETTERS_v2"
+      },
+      "legacy": true,
+      "confidence": "medium"
+    }
+  ],
+  "labor_recipes": [
+    {
+      "labor_recipe_id": "TPL-VOLUM-ALUMINIU_v1::labor_recipe::RETURN_PROFILE_FACE_BONDING::RETURN_PROFILE_FACE_BONDING::return_profile_face_bonding",
+      "template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "operation_code": "RETURN_PROFILE_FACE_BONDING",
+      "catalog_code": "RETURN_PROFILE_FACE_BONDING",
+      "workcenter_declared": "WC_ASSEMBLY",
+      "operator_name": "Lipire cant profil pe față litere",
+      "labor_class": "MISSING_RATE",
+      "recipe_role": "assembly",
+      "quantity_keys": [
+        "return_depth_mm"
+      ],
+      "formula_id": "return_profile_face_bonding",
+      "formula_owner": "operations_json",
+      "formula_status": "QUANTITY_KEY_CONFIRMED",
+      "formula_status_label_ro": "Cantitate preluată din Product Truth",
+      "formula_source": "legacy_unregistered:return_profile_face_bonding",
+      "quantity_source": "return_depth_mm",
+      "owner_confirmation_required": false,
+      "unresolved_reason": null,
+      "evidence_level": "active",
+      "basis": "unknown",
+      "rate_basis": null,
+      "standard_time": null,
+      "multiplier": null,
+      "minimum": null,
+      "dependencies": {
+        "quote_priced": null,
+        "internal_only": false,
+        "component_id": null
+      },
+      "base_rate_source": "missing",
+      "internal_cost_rate": null,
+      "commercial_rate": null,
+      "commercial_rate_status": "unavailable",
+      "unit": null,
+      "currency": null,
+      "status": "missing",
+      "typed_catalog": "labor",
+      "data_quality_flags": [],
+      "data_quality_message_ro": null,
+      "cpp_line_code": null,
+      "eic_rule_code": null,
+      "technical_ready": true,
+      "commercial_ready": false,
+      "blockers": [
+        "MISSING_CATALOG_RATE"
+      ],
+      "warnings": [
+        "LEGACY_FORMULA_NAME_UNREGISTERED"
+      ],
+      "editable": false,
+      "editability_reason_ro": "V1 este read-only — tarif central în catalog; rețeta pe template.",
+      "source_links": {
+        "pricing_manopera": "/inventory/pricing?template=TPL-VOLUM-ALUMINIU_v1&catalog=manopera"
+      },
+      "provenance": "template_op:operations_json:RETURN_PROFILE_FACE_BONDING",
+      "legacy": true,
+      "confidence": "medium"
+    },
+    {
+      "labor_recipe_id": "TPL-VOLUM-ALUMINIU_v1::labor_recipe::PAINTING::PAINTING::return_painting_linear_meter",
+      "template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "operation_code": "PAINTING",
+      "catalog_code": "PAINTING",
+      "workcenter_declared": "WC_PAINT",
+      "operator_name": "Vopsire RAL — serviciu perimetru",
+      "labor_class": "MISSING_RATE",
+      "recipe_role": "finishing",
+      "quantity_keys": [
+        "return_depth_mm",
+        "return_finish_type"
+      ],
+      "formula_id": "return_painting_linear_meter",
+      "formula_owner": "operations_json",
+      "formula_status": "QUANTITY_KEY_CONFIRMED",
+      "formula_status_label_ro": "Cantitate preluată din Product Truth",
+      "formula_source": "legacy_unregistered:return_painting_linear_meter",
+      "quantity_source": "return_depth_mm,return_finish_type",
+      "owner_confirmation_required": false,
+      "unresolved_reason": null,
+      "evidence_level": "active",
+      "basis": "unknown",
+      "rate_basis": null,
+      "standard_time": null,
+      "multiplier": null,
+      "minimum": null,
+      "dependencies": {
+        "quote_priced": null,
+        "internal_only": false,
+        "component_id": null
+      },
+      "base_rate_source": "missing",
+      "internal_cost_rate": null,
+      "commercial_rate": null,
+      "commercial_rate_status": "unavailable",
+      "unit": null,
+      "currency": null,
+      "status": "missing",
+      "typed_catalog": "service",
+      "data_quality_flags": [],
+      "data_quality_message_ro": null,
+      "cpp_line_code": null,
+      "eic_rule_code": null,
+      "technical_ready": true,
+      "commercial_ready": false,
+      "blockers": [
+        "MISSING_CATALOG_RATE"
+      ],
+      "warnings": [
+        "LEGACY_FORMULA_NAME_UNREGISTERED"
+      ],
+      "editable": false,
+      "editability_reason_ro": "V1 este read-only — tarif central în catalog; rețeta pe template.",
+      "source_links": {
+        "pricing_manopera": "/inventory/pricing?template=TPL-VOLUM-ALUMINIU_v1&catalog=manopera"
+      },
+      "provenance": "template_op:operations_json:PAINTING",
+      "legacy": true,
+      "confidence": "medium"
+    }
+  ],
+  "labor_summary": {
+    "total": 2,
+    "technical_ready": 2,
+    "commercial_ready": 0,
+    "missing_rate": 2,
+    "warnings": 2
+  },
+  "cpp_preview": {
+    "available": true,
+    "status": "structural_catalog",
+    "note_ro": "Preview structural: liniile comerciale sunt listate din catalogul de reguli. Calculul cantitativ CPP necesită payload / workspace și nu este modificat aici.",
+    "line_codes": [
+      "modelare_cant_aluminiu"
+    ],
+    "blocked_line_codes": [],
+    "subtotal": null,
+    "currency": null
+  },
+  "eic_preview": {
+    "available": true,
+    "status": "structural_catalog",
+    "note_ro": "Proveniență EIC: regulile interne sunt expuse ca referință. Nu se recalculează CostEngine / EIC în acest endpoint.",
+    "provenance_notes": [
+      "Volum Aluminiu EIC resolves via parent Letters / separate-calc preview contracts."
+    ],
+    "rule_codes": []
+  },
+  "readiness": {
+    "technical_ready": true,
+    "commercial_ready": false,
+    "technical_notes_ro": [
+      "1 linii rețetă vizibile (catalog + reguli).",
+      "Manoperă: 2/2 rețete tehnic pregătite (formula/qty pe template)."
+    ],
+    "commercial_notes_ro": [
+      "2 rețete manoperă cu tarif central lipsă (blochează comercial, nu configurația tehnică)."
+    ],
+    "inventory_notes_ro": [
+      "Stocul neurmărit nu blochează prețuirea comercială.",
+      "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+      "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului."
+    ]
+  },
+  "acm_acceptance": {
+    "applies": false,
+    "shell_registry_confirmed": null,
+    "shell_registry_missing": null,
+    "treatment_commercial_lines_allowed": null,
+    "blockers": [],
+    "policy_ro": null
+  },
+  "blockers": [
+    "MISSING_CATALOG_RATE"
+  ],
+  "warnings": [
+    "COMPONENT_ONLY_NO_STANDALONE_COMMERCIAL_ROOT",
+    "LEGACY_FORMULA_NAME_UNREGISTERED"
+  ]
+}

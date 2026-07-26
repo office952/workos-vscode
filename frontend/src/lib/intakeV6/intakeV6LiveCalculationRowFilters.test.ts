@@ -37,8 +37,15 @@ describe("intakeV6LiveCalculationRowFilters", () => {
     expect(filterLiveCalcRows(sampleRows, "all")).toHaveLength(3);
   });
 
-  it("filters lighting and missing rates", () => {
-    expect(filterLiveCalcRows(sampleRows, "lighting").map((r) => r.groupKey)).toEqual(["led_modules"]);
+  it("filters final primary categories and missing rates", () => {
+    expect(filterLiveCalcRows(sampleRows, "materials").map((r) => r.groupKey)).toEqual([
+      "plexi_letters",
+      "led_modules",
+    ]);
+    expect(filterLiveCalcRows(sampleRows, "services_operations").map((r) => r.groupKey)).toEqual([
+      "edge_oracal_application",
+    ]);
+    expect(filterLiveCalcRows(sampleRows, "labor").map((r) => r.groupKey)).toEqual([]);
     expect(filterLiveCalcRows(sampleRows, "missing_rates").map((r) => r.groupKey)).toEqual([
       "edge_oracal_application",
     ]);
@@ -47,6 +54,9 @@ describe("intakeV6LiveCalculationRowFilters", () => {
   it("omits artwork filter and exposes Fără tarif only when missing rates exist", () => {
     const withMissing = resolveLiveCalcFilterOptions(sampleRows);
     expect(withMissing.map((o) => o.id)).not.toContain("artwork");
+    expect(withMissing.map((o) => o.id)).not.toContain("consumables");
+    expect(withMissing.map((o) => o.id)).not.toContain("lighting");
+    expect(withMissing.map((o) => o.id)).not.toContain("cant");
     expect(withMissing.some((o) => o.id === "missing_rates")).toBe(true);
 
     const pricedOnly = resolveLiveCalcFilterOptions([sampleRows[0]!]);
@@ -61,8 +71,9 @@ describe("intakeV6LiveCalculationRowFilters", () => {
     expect(totals.lineCount).toBe(2);
   });
 
-  it("classifies materials excluding known operation keys", () => {
+  it("classifies final primary categories", () => {
     expect(liveCalcRowMatchesFilter(sampleRows[0], "materials")).toBe(true);
-    expect(liveCalcRowMatchesFilter(sampleRows[1], "materials")).toBe(false);
+    expect(liveCalcRowMatchesFilter(sampleRows[1], "materials")).toBe(true);
+    expect(liveCalcRowMatchesFilter(sampleRows[2], "services_operations")).toBe(true);
   });
 });

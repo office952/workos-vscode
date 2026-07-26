@@ -1,0 +1,30 @@
+{
+  "task": "APP-AUTH-06C",
+  "raw_observations": 420,
+  "duplicate_observations": 404,
+  "unique_fingerprints": 16,
+  "unique_problem_groups": 2,
+  "explanation": {
+    "duplicate_sources": [
+      "20 HTTP requests per consumer per pilot phase (available + eligibility)",
+      "Each request re-emits identical parity events for stable fixture state",
+      "Two consumers may observe overlapping entity scopes",
+      "Eligibility and explicit_mapping comparators emit paired events per operation"
+    ],
+    "duplicate_math": {
+      "match_events": "100 raw = 5 unique × ~20 repeats",
+      "value_conflict": "40 raw = 1 unique × 40 repeats",
+      "operational_eligible_canonical_ineligible": "140 raw = 5 unique × 28 avg repeats",
+      "missing_required_competence": "140 raw = 5 unique × 28 avg repeats"
+    },
+    "fingerprint_grouping_sufficient": true,
+    "multiple_legitimate_fingerprints_per_operation": true,
+    "examples": ["led_assembly + led_wiring share montaj_led but are distinct task aliases", "eligibility + explicit_mapping domains for same operation"],
+    "future_in_memory_suppression": {
+      "needed": false,
+      "rationale": "Fingerprint dedup already collapses to 16; duplicates are expected batch noise in ephemeral logs",
+      "risk_if_suppressed": "Could hide state changes between requests if suppression keyed too broadly without persistence"
+    },
+    "persistence": "NOT_AUTHORIZED"
+  }
+}

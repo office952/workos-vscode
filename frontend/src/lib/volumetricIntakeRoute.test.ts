@@ -4,10 +4,12 @@ import {
   buildIntakeV6Path,
   findIntakeByRouteParam,
   hasIntakeStatusReadinessConflict,
+  isIntakeV6CapableTemplateCode,
   intakeEditUsesVolumetricWorkspace,
   intakePrimaryEditLabel,
   resolveIntakeEditPath,
   shouldUseVolumetricIntakePage,
+  TPL_VOLUMETRIC_LOGO_V1,
 } from "@/lib/volumetricIntakeRoute";
 import { TPL_VOLUMETRIC_LETTERS } from "@/lib/volumetricQuoteInput";
 
@@ -16,6 +18,21 @@ describe("volumetricIntakeRoute", () => {
     expect(
       shouldUseVolumetricIntakePage(TPL_VOLUMETRIC_LETTERS, "totem")
     ).toBe(true);
+  });
+
+  it("keeps confirmed TPL-VOLUMETRIC-LOGO_v1 on non-direct root routing", () => {
+    expect(isIntakeV6CapableTemplateCode(TPL_VOLUMETRIC_LOGO_V1)).toBe(false);
+    expect(
+      shouldUseVolumetricIntakePage(TPL_VOLUMETRIC_LOGO_V1, "totem")
+    ).toBe(false);
+    expect(
+      resolveIntakeEditPath({
+        id: "IR-LOGO",
+        confirmedTemplateCode: TPL_VOLUMETRIC_LOGO_V1,
+        productFamily: "litere_volumetrice",
+        workspaceId: "workspace-logo",
+      })
+    ).toBe("/intake-v6/workspace-logo/operator");
   });
 
   it("routes litere_volumetrice family before template confirmation", () => {
@@ -70,14 +87,14 @@ describe("volumetricIntakeRoute", () => {
     expect(buildIntakeV6Path("IR-MQ47AGDG")).toBe("/intake-v6/IR-MQ47AGDG/operator");
   });
 
-  it("routes non-volumetric edit to legacy intake path", () => {
+  it("routes request codes to Intake V6 even for non-volumetric families", () => {
     expect(
       resolveIntakeEditPath({
         id: "WI-3321",
         confirmedTemplateCode: null,
         productFamily: "Casete Luminoase",
       })
-    ).toBe("/intake/WI-3321");
+    ).toBe("/intake-v6/WI-3321/operator");
     expect(buildIntakeLegacyPath("WI-3321")).toBe("/intake/WI-3321");
   });
 
@@ -93,12 +110,26 @@ describe("volumetricIntakeRoute", () => {
     ).toBe("/intake-v6/IR-NEW/operator");
   });
 
-  it("uses Intake V6 primary label only for volumetric intakes", () => {
+  it("routes analyzer-first requests by ensured workspace id before template truth exists", () => {
+    expect(
+      resolveIntakeEditPath({
+        id: "IR-ANALYZER",
+        confirmedTemplateCode: null,
+        productFamily: "",
+        workspaceId: "workspace-analyzer-first",
+      })
+    ).toBe("/intake-v6/workspace-analyzer-first/operator");
+  });
+
+  it("uses Intake V6 primary label for all active intake edits", () => {
     expect(
       intakePrimaryEditLabel(TPL_VOLUMETRIC_LETTERS, "litere_volumetrice")
     ).toBe("Deschide Intake V6");
+    expect(
+      intakePrimaryEditLabel(TPL_VOLUMETRIC_LOGO_V1, "litere_volumetrice")
+    ).toBe("Deschide Intake V6");
     expect(intakePrimaryEditLabel(null, "Totemuri / Pyloni")).toBe(
-      "Instrumentează Comanda"
+      "Deschide Intake V6"
     );
   });
 });

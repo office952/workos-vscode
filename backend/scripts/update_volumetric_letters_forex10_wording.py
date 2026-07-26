@@ -23,7 +23,7 @@ TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS"
 MAT_BACK_CODE = "MAT-SPATE-PVC-LITERE"
 
 TARGET_DESCRIPTION = (
-    "Litere volumetrice 3D — față plexi/acrilic (opțional vinyl/oracal), "
+    "Litere volumetrice 3D — față plexiglas 3mm PMMA - opal (opțional vinyl/oracal), "
     "bordură profil aluminiu, spate Forex 10 mm. LED pe spate. "
     "Premontaj opțional: perete / structură metalică / panou ACM casetat "
     "(suport separat de spatele literei)."
@@ -35,7 +35,7 @@ TARGET_NOTES = (
     "illumination(none/frontlit/backlit/halo), mounting_type, "
     "paint_finish, indoor_outdoor. "
     "Straturi producție (ref. docs/production/volumetric-letters-production-layers.md): "
-    "față plexi/acrilic tăiat; opțional vinyl/print/oracal; șanfren față opțional/configurabil. "
+    "față plexiglas 3mm PMMA - opal tăiat; opțional vinyl/print/oracal; șanfren față opțional/configurabil. "
     "Bordură: profil aluminiu, adâncime configurabilă. "
     "Spate litere: Forex 10 mm (nu PVC/aluminiu generic); șanfren spate opțional/configurabil. "
     "LED: module montate pe spate Forex; cablaj + sursă în strat electric. "
@@ -44,7 +44,7 @@ TARGET_NOTES = (
 )
 
 COMPONENT_NAMES: dict[str, str] = {
-    "comp_face_litere": "Față litere — plexi/acrilic (CNC/laser)",
+    "comp_face_litere": "Față litere — plexiglas 3mm PMMA - opal (CNC/laser)",
     "comp_lateral_litere": "Laterale litere — profil aluminiu (bordură)",
     "comp_spate_litere": "Spate litere — Forex 10 mm",
     "comp_led_litere": "Iluminare LED — montaj pe spate Forex",
@@ -56,7 +56,7 @@ OPERATION_NAMES: dict[str, str] = {
 }
 
 MATERIAL_LABELS: dict[str, str] = {
-    "MAT-ACP-FATA-LITERE": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+    "MAT-ACP-FATA-LITERE": "Față plexiglas 3mm PMMA - opal; opțional vinyl/oracal/print",
     MAT_BACK_CODE: "Forex 10 mm spate litere (cod MAT-SPATE-PVC-LITERE)",
 }
 

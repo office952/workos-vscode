@@ -8,6 +8,7 @@ import { formatFaceBackPrepMoney } from "./intakeV4FaceBackPrepCostDraftDisplay"
 
 import type { IntakeV4LetterGroupFinish } from "./intakeV4LetterGroups";
 
+import { resolveIntakeV6StoredLayerDisplayLabel } from "./intakeV6LayerDisplayLabel";
 import { formatIntakeV6ReturnFinishLabel as formatIntakeV4ReturnFinishLabel } from "./intakeV6ReturnFinishOptions";
 
 
@@ -710,7 +711,7 @@ export function buildIntakeV4EdgeCantLayerBreakdown(args: {
 
 
 
-  for (const group of args.letterGroups) {
+  for (const [index, group] of args.letterGroups.entries()) {
 
     const cantActive = isIntakeV4ReturnFinishActive(group.return_finish_type);
 
@@ -726,7 +727,13 @@ export function buildIntakeV4EdgeCantLayerBreakdown(args: {
 
       key: group.group_key,
 
-      label: group.layer_name || group.group_key,
+      label: resolveIntakeV6StoredLayerDisplayLabel({
+        layerKey: group.group_key,
+        layerName: group.layer_name || group.group_key,
+        index,
+        report: args.report,
+        sourceFillColor: group.source_fill_color,
+      }),
 
       scope: "letters",
 
@@ -750,7 +757,7 @@ export function buildIntakeV4EdgeCantLayerBreakdown(args: {
 
 
 
-  for (const artwork of args.artworkFinishes) {
+  for (const [index, artwork] of args.artworkFinishes.entries()) {
 
     const cantActive = isIntakeV4ReturnFinishActive(artwork.return_finish_type);
 
@@ -770,7 +777,12 @@ export function buildIntakeV4EdgeCantLayerBreakdown(args: {
 
       key: artwork.layer_key,
 
-      label: artwork.layer_name || artwork.layer_key,
+      label: resolveIntakeV6StoredLayerDisplayLabel({
+        layerKey: artwork.layer_key,
+        layerName: artwork.layer_name || artwork.layer_key,
+        index,
+        report: args.report,
+      }),
 
       scope: "artwork",
 

@@ -1,0 +1,1828 @@
+{
+  "contract_version": "product_system_reference_complete_v1",
+  "name": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+  "overall_verdict": "PASS",
+  "freeze_readiness": "READY_FOR_DOCUMENTATION_HANDOFF",
+  "production_cost_authority": "EIC_production_cost",
+  "cpp_role": "reconciliation_only",
+  "accepted_build_chain": [
+    {
+      "build": "PRICING_FOUNDATION_V1",
+      "role": "catalog rate ownership"
+    },
+    {
+      "build": "TEMPLATE_PRICING_STUDIO_V1",
+      "role": "recipe composition surface"
+    },
+    {
+      "build": "LABOR_RECIPE_CONTRACT_V1",
+      "role": "labor/service physical drivers"
+    },
+    {
+      "build": "AI_OPERATIONAL_DEFAULTS_V1",
+      "role": "AI defaults with provenance"
+    },
+    {
+      "build": "TEMPLATE_ACTIVATION_V1",
+      "role": "publication/readiness honesty"
+    },
+    {
+      "build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "role": "EIC/CPP explainable breakdown",
+      "commit": "a243dd69"
+    },
+    {
+      "build": "MATERIAL_MARKET_PRICE_REGISTRY_V1",
+      "role": "purchase truth read-model",
+      "commit": "f67d56a7"
+    },
+    {
+      "build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "role": "finish-line contracts",
+      "commit": "8aac9eda"
+    },
+    {
+      "build": "ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1",
+      "role": "PSU selector closure",
+      "commit": "7bdd9f61"
+    }
+  ],
+  "completion_matrix": [
+    {
+      "axis": "Product System",
+      "required_verdict": "REFERENCE_COMPLETE",
+      "actual_verdict": "REFERENCE_COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "reference-complete + finish-line",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null
+    },
+    {
+      "axis": "Modularity",
+      "required_verdict": "ACCEPTED_WITH_LIMITS",
+      "actual_verdict": "MODULAR_WITH_GAPS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "MODULAR_WITH_GAPS",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda"
+    },
+    {
+      "axis": "Root ownership",
+      "required_verdict": "COMPLETE",
+      "actual_verdict": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "TPL-VOLUMETRIC-LETTERS_v2",
+      "test_proof": null,
+      "screenshot_proof": "docs/qa/product-system-reference-finish-line-v1/screenshots/",
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Child ownership",
+      "required_verdict": "COMPLETE",
+      "actual_verdict": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "TPL-VOLUM-ALUMINIU_v1",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": null
+    },
+    {
+      "axis": "Authoring",
+      "required_verdict": "REFERENCE_LIMITATION_ACCEPTED",
+      "actual_verdict": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+      "required_for_reference": true,
+      "complete": "accepted_limitation",
+      "limitation": "Option 2 — no add-child UI",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Form contract",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "USABLE_WITH_TEMPLATE_GAPS — Form Builder deferred",
+      "deferred_to_adv": true,
+      "runtime_proof": "fields=26",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "VL schema",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "form-field-ownership-map",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Product Definition",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "PARTIAL runtime UI; boundary frozen",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Product Truth",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "PARTIAL runtime UI; Analyzer cannot silent-write",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Quantities",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "quantity_keys on field map",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Formula ownership",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "no second calculator in breakdown",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Inventory",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "MATERIAL_MARKET_PRICE_REGISTRY_V1",
+      "accepted_commit": "f67d56a7"
+    },
+    {
+      "axis": "Material price truth",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "optional consumables unpriced",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Critical material coverage",
+      "required_verdict": "COMPLETE",
+      "actual_verdict": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "[]",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1",
+      "accepted_commit": "7bdd9f61"
+    },
+    {
+      "axis": "Operational-process boundary",
+      "required_verdict": "CONTRACT_FROZEN",
+      "actual_verdict": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "full process catalog UI deferred",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "OPERATIONAL_PROCESS_CONTRACT",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Labor/services",
+      "required_verdict": "COMPLETE_REFERENCE",
+      "actual_verdict": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": "LABOR_RECIPE_CONTRACT_V1",
+      "accepted_commit": null
+    },
+    {
+      "axis": "EIC",
+      "required_verdict": "COMPLETE_AND_RECONCILED",
+      "actual_verdict": "COMPLETE_AND_RECONCILED",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "internal_total=923.2; golden_lab=True",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "CPP",
+      "required_verdict": "RECONCILIATION_ONLY",
+      "actual_verdict": "RECONCILIATION_ONLY",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "commercial_total=1061.0; golden_lab=True",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Analyzer contract",
+      "required_verdict": "CONTRACT_FROZEN",
+      "actual_verdict": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "workflow_adv_analyzer_io_contract_v1",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Scalability",
+      "required_verdict": "ACCEPTED_WITH_LIMITS",
+      "actual_verdict": "SCALABLE_WITH_KNOWN_LIMITS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "SCALABLE_WITH_KNOWN_LIMITS",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "UI target distinction",
+      "required_verdict": "CONTRACT_FROZEN",
+      "actual_verdict": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "UI_MODE_DISTINCTION",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Freeze governance",
+      "required_verdict": "CONTRACT_FROZEN",
+      "actual_verdict": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "implementation deferred to Workflow-ADV",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "FREEZE_AND_VERSION_GOVERNANCE",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    },
+    {
+      "axis": "Documentation input",
+      "required_verdict": "READY",
+      "actual_verdict": "READY",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "documentation_handoff[25]",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": null,
+      "confidence": "high",
+      "accepted_build": null,
+      "accepted_commit": null
+    }
+  ],
+  "accepted_limitations": [
+    {
+      "id": "form_builder",
+      "text_ro": "Form Builder generic amânat la Workflow-ADV",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "add_child_ui",
+      "text_ro": "Add-child visual authoring Option 2 — API/seed only",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "optional_consumables",
+      "text_ro": "Consumabile opționale fără preț (adeziv/cabluri/laminare)",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "no"
+    },
+    {
+      "id": "logo_incomplete",
+      "text_ro": "Logo root incomplet ca traseu de referință",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "acm_treatments",
+      "text_ro": "Tratamente ACM opționale deferred",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "lab_ui",
+      "text_ro": "UI badge-heavy de laborator ≠ Platform UI țintă",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "global_freeze_impl",
+      "text_ro": "Implementarea globală FREEZE ON amânată — contract documentat",
+      "class": "documentation_only_gap",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "process_catalog_ui",
+      "text_ro": "UI catalog procese operaționale complete deferred",
+      "class": "accepted_reference_limitation",
+      "deferred_to_adv": "yes"
+    },
+    {
+      "id": "supplier_import",
+      "text_ro": "Supplier Import deferred / Workflow-ADV only",
+      "class": "deferred_workflow_adv",
+      "deferred_to_adv": "yes"
+    }
+  ],
+  "do_not_transfer": [
+    "VL specialized UI as universal Form Generator",
+    "Lab badge-heavy diagnostics as Platform operator UI",
+    "Generic PSU selector priced as SKU",
+    "Hardcoded template-code page copies as extension model",
+    "Analyzer → Product Truth without operator confirmation",
+    "CPP as offer completion authority",
+    "Invented material prices / Supplier Import stubs",
+    "Offer / Order / Execution / mobile paths as reference finish line",
+    "In-place mutation of frozen operational versions"
+  ],
+  "just_in_time_catalog_rule": {
+    "rule_id": "just_in_time_catalog_growth_v1",
+    "summary_ro": "Nu pre-creăm cataloage mari nefolosite. La un Product Template nou: identifică materiale/procese/manoperă/servicii necesare → verifică Inventory/Pricing → creează doar lipsa în catalogul canonic → apoi referă din Product System.",
+    "forbidden": [
+      "local_pseudo_resource_as_price_authority",
+      "invent_material_inside_template",
+      "invent_process_rate_inside_template"
+    ]
+  },
+  "operational_process_contract": {
+    "contract_id": "operational_process_catalog_boundary_v1",
+    "status": "CONTRACT_FROZEN",
+    "summary_ro": "Procesele operaționale (CNC, Laser, Print, Laminare, Modelare cant, Vopsire) sunt first-class — nu linii generice de preț. Product System referă procesul și furnizează quantity/formula; catalogul deține tariful și compatibilitățile.",
+    "required_categories": [
+      "CNC_mechanical",
+      "CNC_laser",
+      "Print",
+      "Lamination",
+      "Edge_return_forming",
+      "Painting",
+      "other_production_processes"
+    ],
+    "process_fields": [
+      "process_code",
+      "category",
+      "machine_workcenter",
+      "compatible_materials",
+      "compatible_thicknesses",
+      "input_unit",
+      "cost_unit",
+      "minimum",
+      "setup",
+      "active",
+      "source",
+      "version"
+    ],
+    "implementation_in_this_build": "boundary_only_no_new_catalog_ui"
+  },
+  "ui_mode_distinction": {
+    "contract_id": "lab_admin_operator_ui_distinction_v1",
+    "status": "CONTRACT_FROZEN",
+    "lab_ui": "diagnostics, readiness, warnings, badges — current WorkOS laboratory",
+    "platform_ui": "operator actions and valid operational choices — Workflow-ADV target",
+    "admin_ui": "versioning, freeze, audit",
+    "dev_ui": "diagnostics and experimental truth",
+    "do_not_transfer": "current badge-heavy Lab UI as final Platform UI"
+  },
+  "dev_mode_contract": {
+    "contract_id": "dev_mode_draft_version_v1",
+    "status": "CONTRACT_FROZEN",
+    "summary_ro": "DEV MODE deschide calea de dezvoltare pe un draft/versiune nouă (template, composition, materials, prices, processes, labor, services, Intake/Form, PD, PT, quantities, cost). Nu mută versiunea operațională înghețată.",
+    "forbidden": [
+      "mutate_frozen_operational_version_in_place"
+    ]
+  },
+  "freeze_governance_contract": {
+    "contract_id": "freeze_and_version_governance_v1",
+    "status": "CONTRACT_FROZEN",
+    "rule": "FREEZE ON = immutable accepted operational version",
+    "evolution_path": [
+      "Frozen v1",
+      "create DEV v2",
+      "validate",
+      "promote",
+      "FREEZE ON"
+    ],
+    "forbidden": [
+      "code_mutate_frozen",
+      "agent_mutate_frozen",
+      "seed_mutate_frozen",
+      "migration_mutate_frozen",
+      "automation_mutate_frozen",
+      "generic_admin_write_mutate_frozen"
+    ],
+    "owner_only": "controlled_unfreeze_or_dev_branch",
+    "implementation_in_this_build": "contract_documentation_only"
+  },
+  "live_proof": {
+    "finish_line_verdict": "PASS_WITH_WARNINGS",
+    "modularity_verdict": "MODULAR_WITH_GAPS",
+    "form_system_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+    "scalability_verdict": "SCALABLE_WITH_KNOWN_LIMITS",
+    "authoring_decision": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+    "field_count": 26,
+    "active_template_critical_codes": [],
+    "registry_critical_missing": [],
+    "psu_selector_ok": true,
+    "psu_material_role": "variant_selector",
+    "psu_raw_price": null,
+    "vl_internal_total": 923.2,
+    "vl_commercial_total": 1061.0,
+    "vl_eic_reconcile": true,
+    "vl_cpp_reconcile": true,
+    "concrete_psu_100w": true,
+    "analyzer_contract_version": "workflow_adv_analyzer_io_contract_v1",
+    "vl_fixture_ok": true
+  },
+  "documentation_handoff": [
+    {
+      "doc_id": "WORKFLOW_ADV_PRODUCT_SYSTEM_OVERVIEW",
+      "canonical_facts": [
+        "Lab stop = production cost / EIC",
+        "Current app = laboratory/reference, not Platform"
+      ],
+      "source_code": [
+        "docs/qa/product-system-reference-complete/"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "DOMAIN_MODEL",
+      "canonical_facts": [
+        "Product Template root/child/roles/usage_mode",
+        "No parallel ComponentTemplate entity required"
+      ],
+      "source_code": [
+        "backend/data/product_system_reference_finish_line_v1.py"
+      ],
+      "source_api": [
+        "GET .../reference-finish-line/contract"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "PRODUCT_TEMPLATE_AUTHORING",
+      "canonical_facts": [
+        "Option 2: edit links in UI; add-child via API/seed"
+      ],
+      "source_code": [
+        "frontend/.../TemplateCompositionAuthoringPanel.tsx"
+      ],
+      "source_api": [
+        "product_template_module_links API"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "CHILD_TEMPLATE_COMPOSITION",
+      "canonical_facts": [
+        "Volum Aluminiu owns cant truth; parent maps inputs"
+      ],
+      "source_code": [
+        "TPL-VOLUM-ALUMINIU_v1"
+      ],
+      "source_api": [
+        "POST .../price-breakdown"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": "a243dd69",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "FORM_SCHEMA_CONTRACT",
+      "canonical_facts": [
+        "26 VL fields with source/destination/affects/version"
+      ],
+      "source_code": [
+        "backend/data/intake_v6_vl_form_field_ownership_map_v1.py"
+      ],
+      "source_api": [
+        "GET .../form-field-ownership-map"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": "Implement Platform UI + Freeze subsystem + Form Builder"
+    },
+    {
+      "doc_id": "PRODUCT_DEFINITION_CONTRACT",
+      "canonical_facts": [
+        "PD = configuration intent; not confirmed Product Truth"
+      ],
+      "source_code": [
+        "WorkIntake / Intake V6"
+      ],
+      "source_api": [
+        "product definition preview APIs"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "PRODUCT_TRUTH_CONTRACT",
+      "canonical_facts": [
+        "PT = confirmed facts + provenance; Analyzer cannot silent-write"
+      ],
+      "source_code": [
+        "artwork_analysis_contract_v1"
+      ],
+      "source_api": [
+        "GET .../analyzer-io-contract"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "QUANTITY_AND_FORMULA_CONTRACT",
+      "canonical_facts": [
+        "quantity_keys + formula ownership per field map; no FE second calculator"
+      ],
+      "source_code": [
+        "VOLUMETRIC_FIELD_BINDINGS",
+        "CostEngine path"
+      ],
+      "source_api": [
+        "POST .../price-breakdown"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": "a243dd69",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "INVENTORY_AND_MATERIAL_CONTRACT",
+      "canonical_facts": [
+        "Inventory owns material identity; templates reference only"
+      ],
+      "source_code": [
+        "inventory_materials"
+      ],
+      "source_api": [
+        "GET .../material-market-prices"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "MATERIAL_MARKET_PRICE_REGISTRY_V1",
+      "accepted_commit": "f67d56a7",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "MATERIAL_PRICE_SOURCE_CONTRACT",
+      "canonical_facts": [
+        "No invented prices; OWNER_CONFIRMED / invoice / offer precedence"
+      ],
+      "source_code": [
+        "material_market_price_registry_service.py"
+      ],
+      "source_api": [
+        "GET /api/v1/pricing/material-market-prices"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "MATERIAL_MARKET_PRICE_REGISTRY_V1",
+      "accepted_commit": "f67d56a7",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "OPERATIONAL_PROCESS_CONTRACT",
+      "canonical_facts": [
+        "CNC_mechanical",
+        "CNC_laser",
+        "Print",
+        "Lamination",
+        "Edge_return_forming",
+        "Painting",
+        "other_production_processes"
+      ],
+      "source_code": [
+        "OPERATIONAL_PROCESS_CONTRACT freeze"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "LABOR_AND_SERVICE_RECIPE_CONTRACT",
+      "canonical_facts": [
+        "Physical drivers; AI defaults replaceable"
+      ],
+      "source_code": [
+        "AI_OPERATIONAL_DEFAULTS_V1",
+        "LABOR_RECIPE_CONTRACT_V1"
+      ],
+      "source_api": [
+        "template pricing recipe"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "LABOR_RECIPE_CONTRACT_V1",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "AI_OPERATIONAL_DEFAULTS_CONTRACT",
+      "canonical_facts": [
+        "AI provenance visible; not material price authority"
+      ],
+      "source_code": [
+        "ai_operational_defaults"
+      ],
+      "source_api": [
+        "template pricing / breakdown AI lines"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "AI_OPERATIONAL_DEFAULTS_V1",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "PRODUCTION_COST_BREAKDOWN_CONTRACT",
+      "canonical_facts": [
+        "EIC finish line; CPP reconciliation only"
+      ],
+      "source_code": [
+        "product_price_breakdown_service.py"
+      ],
+      "source_api": [
+        "POST .../templates/{code}/price-breakdown"
+      ],
+      "fixture": "vl_letters_demo_v1",
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": "a243dd69",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "READINESS_AND_LIFECYCLE",
+      "canonical_facts": [
+        "Scoped readiness; optional capability gates"
+      ],
+      "source_code": [
+        "product_readiness_service.py"
+      ],
+      "source_api": [
+        "template readiness panels"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "TEMPLATE_ACTIVATION_V1",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "ANALYZER_DESKTOP_INTEGRATION_CONTRACT",
+      "canonical_facts": [
+        "Observe/propose only; no parser in WorkOS; no price in Analyzer"
+      ],
+      "source_code": [
+        "workflow_adv_analyzer_io_contract_v1.py"
+      ],
+      "source_api": [
+        "GET .../analyzer-io-contract"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "REQUEST_TO_COST_FLOW",
+      "canonical_facts": [
+        "Intake→PD→PT→composition→qty→resources→EIC→breakdown"
+      ],
+      "source_code": [
+        "docs/qa/product-system-reference-finish-line-v1/"
+      ],
+      "source_api": [
+        "VL fixture vl_letters_demo_v1"
+      ],
+      "fixture": "vl_letters_demo_v1",
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "API_CONTRACTS",
+      "canonical_facts": [
+        "reference-finish-line/*",
+        "reference-complete",
+        "material-market-prices",
+        "price-breakdown"
+      ],
+      "source_code": [
+        "backend/routers/"
+      ],
+      "source_api": [
+        "/api/v1/..."
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "UI_INFORMATION_ARCHITECTURE",
+      "canonical_facts": [
+        "Lab vs Platform vs Admin vs Dev distinction frozen"
+      ],
+      "source_code": [
+        "UI_MODE_DISTINCTION"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": "Implement Platform UI + Freeze subsystem + Form Builder"
+    },
+    {
+      "doc_id": "TEMPLATE_EXAMPLES",
+      "canonical_facts": [
+        "VL root",
+        "Volum Aluminiu child",
+        "ACM shell secondary",
+        "Logo incomplete"
+      ],
+      "source_code": [
+        "docs/qa/*/screenshots"
+      ],
+      "source_api": [
+        "product-system/products/{code}"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": "a243dd69",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "TEST_FIXTURES",
+      "canonical_facts": [
+        "vl_letters_demo_v1",
+        "intake_v6 golden",
+        "PSU watt variants"
+      ],
+      "source_code": [
+        "backend/tests/",
+        "docs/qa/*/runtime"
+      ],
+      "source_api": [
+        "pytest targeted suites"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1",
+      "accepted_commit": "7bdd9f61",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "DEV_TO_IMPLEMENTATION_PROMOTION_CONTRACT",
+      "canonical_facts": [
+        "DEV draft → validate → promote → FREEZE ON"
+      ],
+      "source_code": [
+        "DEV_MODE_CONTRACT",
+        "FREEZE_GOVERNANCE_CONTRACT"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "FREEZE_AND_VERSION_GOVERNANCE",
+      "canonical_facts": [
+        "FREEZE ON immutable; owner-only unfreeze; no in-place mutate"
+      ],
+      "source_code": [
+        "FREEZE_GOVERNANCE_CONTRACT"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": "Implement Platform UI + Freeze subsystem + Form Builder"
+    },
+    {
+      "doc_id": "WORKFLOW_ADV_MIGRATION_AND_HANDOFF",
+      "canonical_facts": [
+        "Transfer contracts/extension points, not page collections"
+      ],
+      "source_code": [
+        "HANDOFF_DOCUMENTATION_INPUT_PACKAGE.md"
+      ],
+      "source_api": [
+        "GET .../reference-complete"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    },
+    {
+      "doc_id": "DEAD_AND_LEGACY_PATHS",
+      "canonical_facts": [
+        "Legacy VL aliases",
+        "do-not-transfer inventories",
+        "mockData leftovers"
+      ],
+      "source_code": [
+        "HARDCODING_AND_COUPLING_INVENTORIES.md"
+      ],
+      "source_api": [
+        "GET .../reference-finish-line/contract"
+      ],
+      "fixture": null,
+      "accepted_screenshot": null,
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "limitations": [
+        "Form Builder generic amânat la Workflow-ADV",
+        "Add-child visual authoring Option 2 — API/seed only",
+        "Consumabile opționale fără preț (adeziv/cabluri/laminare)"
+      ],
+      "do_not_transfer": [
+        "VL specialized UI as universal Form Generator",
+        "Lab badge-heavy diagnostics as Platform operator UI",
+        "Generic PSU selector priced as SKU",
+        "Hardcoded template-code page copies as extension model"
+      ],
+      "open_workflow_adv_decision": null
+    }
+  ],
+  "compound_engineering_map": [
+    {
+      "axis": "Product System",
+      "entity": "Product System",
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_COMPLETE",
+      "accepted_commit": null,
+      "current_status": "REFERENCE_COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "reference-complete + finish-line",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Modularity",
+      "entity": "Modularity",
+      "accepted_build": "PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1",
+      "accepted_commit": "8aac9eda",
+      "current_status": "MODULAR_WITH_GAPS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "MODULAR_WITH_GAPS",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Root ownership",
+      "entity": "Root ownership",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "TPL-VOLUMETRIC-LETTERS_v2",
+      "test_proof": null,
+      "screenshot_proof": "docs/qa/product-system-reference-finish-line-v1/screenshots/",
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Child ownership",
+      "entity": "Child ownership",
+      "accepted_build": "PRODUCT_PRICE_BREAKDOWN_V1",
+      "accepted_commit": null,
+      "current_status": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "TPL-VOLUM-ALUMINIU_v1",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Authoring",
+      "entity": "Authoring",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+      "required_for_reference": true,
+      "complete": "accepted_limitation",
+      "limitation": "Option 2 — no add-child UI",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Form contract",
+      "entity": "Form contract",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "USABLE_WITH_TEMPLATE_GAPS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "USABLE_WITH_TEMPLATE_GAPS — Form Builder deferred",
+      "deferred_to_adv": true,
+      "runtime_proof": "fields=26",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "VL schema",
+      "entity": "VL schema",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "form-field-ownership-map",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Product Definition",
+      "entity": "Product Definition",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "PARTIAL runtime UI; boundary frozen",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Product Truth",
+      "entity": "Product Truth",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "PARTIAL runtime UI; Analyzer cannot silent-write",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Quantities",
+      "entity": "Quantities",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "quantity_keys on field map",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Formula ownership",
+      "entity": "Formula ownership",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "no second calculator in breakdown",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Inventory",
+      "entity": "Inventory",
+      "accepted_build": "MATERIAL_MARKET_PRICE_REGISTRY_V1",
+      "accepted_commit": "f67d56a7",
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Material price truth",
+      "entity": "Material price truth",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "optional consumables unpriced",
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Critical material coverage",
+      "entity": "Critical material coverage",
+      "accepted_build": "ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1",
+      "accepted_commit": "7bdd9f61",
+      "current_status": "COMPLETE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "[]",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Operational-process boundary",
+      "entity": "Operational-process boundary",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "full process catalog UI deferred",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "OPERATIONAL_PROCESS_CONTRACT",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Labor/services",
+      "entity": "Labor/services",
+      "accepted_build": "LABOR_RECIPE_CONTRACT_V1",
+      "accepted_commit": null,
+      "current_status": "COMPLETE_REFERENCE",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "EIC",
+      "entity": "EIC",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "COMPLETE_AND_RECONCILED",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "internal_total=923.2; golden_lab=True",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "CPP",
+      "entity": "CPP",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "RECONCILIATION_ONLY",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "commercial_total=1061.0; golden_lab=True",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Analyzer contract",
+      "entity": "Analyzer contract",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": "workflow_adv_analyzer_io_contract_v1",
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Scalability",
+      "entity": "Scalability",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "SCALABLE_WITH_KNOWN_LIMITS",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "SCALABLE_WITH_KNOWN_LIMITS",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": null,
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "UI target distinction",
+      "entity": "UI target distinction",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "UI_MODE_DISTINCTION",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Freeze governance",
+      "entity": "Freeze governance",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "CONTRACT_FROZEN",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": "implementation deferred to Workflow-ADV",
+      "deferred_to_adv": true,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "FREEZE_AND_VERSION_GOVERNANCE",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    },
+    {
+      "axis": "Documentation input",
+      "entity": "Documentation input",
+      "accepted_build": null,
+      "accepted_commit": null,
+      "current_status": "READY",
+      "required_for_reference": true,
+      "complete": "yes",
+      "limitation": null,
+      "deferred_to_adv": false,
+      "runtime_proof": null,
+      "test_proof": null,
+      "screenshot_proof": null,
+      "documentation_input": "documentation_handoff[25]",
+      "freeze_input": null,
+      "blocker": null,
+      "final_action": "accept",
+      "confidence": "high"
+    }
+  ],
+  "executive_truth_ro": "Laboratorul Product System este închis formal la costul de producție (EIC). Contractele de modularitate, Form System, PD/PT, Analyzer, catalog just-in-time, procese operaționale și Freeze/DEV sunt înghețate ca referință. Limitările acceptate (Form Builder, add-child UI, Logo, ACM, Lab UI) nu blochează traseul VL request→cost. Urmează DOCUMENTATION_HANDOFF_COMPLETE — fără feature expansion.",
+  "warnings": [
+    "Form Builder generic amânat la Workflow-ADV",
+    "Add-child visual authoring Option 2 — API/seed only",
+    "Consumabile opționale fără preț (adeziv/cabluri/laminare)",
+    "Logo root incomplet ca traseu de referință",
+    "Tratamente ACM opționale deferred",
+    "UI badge-heavy de laborator ≠ Platform UI țintă",
+    "Implementarea globală FREEZE ON amânată — contract documentat",
+    "UI catalog procese operaționale complete deferred",
+    "Supplier Import deferred / Workflow-ADV only"
+  ]
+}

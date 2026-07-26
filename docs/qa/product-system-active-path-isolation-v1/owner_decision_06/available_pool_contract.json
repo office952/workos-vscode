@@ -1,0 +1,26 @@
+{
+  "task": "OWNER-DECISION-06",
+  "pools": {
+    "taskurile_mele": {
+      "includes": ["assigned to me", "claimed by me", "participating with active or recent session"],
+      "owner_status": "CONFIRMED"
+    },
+    "disponibile_pentru_mine": {
+      "includes": ["READY", "eligible", "no blocking conflict", "unclaimed or open for principal self-claim"],
+      "excludes": ["foreign exclusive lock incompatible with D6 target"],
+      "owner_status": "CONFIRMED",
+      "current_debt": "_has_active_session_by_other hides from available today"
+    },
+    "ajutor_solicitat": {
+      "includes": ["active task with open help request", "eligible for helper role"],
+      "owner_status": "CONFIRMED_TARGET",
+      "current": "NOT_IMPLEMENTED"
+    },
+    "in_lucru_in_zona_mea": {
+      "includes": ["optional read-only visibility by workcenter/zone"],
+      "implies_eligibility": false,
+      "owner_status": "CONFIRMED_OPTIONAL"
+    }
+  },
+  "ui_implementation": "DEFERRED — contract only"
+}

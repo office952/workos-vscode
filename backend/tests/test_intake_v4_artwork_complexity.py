@@ -15,7 +15,7 @@ def _payload_with_artwork_complexity(
 ) -> dict:
     return {
         "schema_version": "1.0.0",
-        "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS"},
+        "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS_v2"},
         "svg_analysis_json": {
             "schemaVersion": "1.11.0",
             "artworkComplexity": {
@@ -50,7 +50,7 @@ def _payload_with_artwork_complexity(
 
 
 class TestIntakeV4ArtworkComplexity:
-    def test_print_laminate_preview_rows_from_assessment(self):
+    def test_assessment_without_operator_decision_stays_manual_review(self):
         payload = _payload_with_artwork_complexity(
             [
                 {
@@ -68,14 +68,37 @@ class TestIntakeV4ArtworkComplexity:
             for row in result.material_rows
             if row.material_key.startswith("artwork_complexity_")
         ]
+        assert print_rows == []
+        op_keys = {row.key for row in result.operation_rows}
+        assert "artwork_complexity_raster_img1_print_vinyl_op" not in op_keys
+        assert "artwork_complexity_raster_img1_laminate_op" not in op_keys
+        assert any(w.code == "missing_external_image_asset" for w in result.warnings)
+
+    def test_operator_decision_print_laminate_enables_preview_rows(self):
+        payload = _payload_with_artwork_complexity(
+            [
+                {
+                    "artwork_id": "raster:img1",
+                    "recommended_application": "print_on_vinyl_laminated",
+                    "artwork_area_estimate_m2": 0.25,
+                    "source_layer_name": "maria",
+                }
+            ],
+            decisions=[
+                {
+                    "artwork_id": "raster:img1",
+                    "operator_application": "print_on_vinyl_laminated",
+                }
+            ],
+        )
+        result = build_intake_v4_material_breakdown("ws-art-operator", payload)
+        print_rows = [
+            row for row in result.material_rows if row.material_key.startswith("artwork_complexity_")
+        ]
         assert len(print_rows) == 2
-        assert any("Print față" in row.display_name for row in print_rows)
-        assert any("Laminare print" in row.display_name for row in print_rows)
-        assert all(row.estimated_cost is None or row.unit_price is None for row in print_rows)
         op_keys = {row.key for row in result.operation_rows}
         assert "artwork_complexity_raster_img1_print_vinyl_op" in op_keys
         assert "artwork_complexity_raster_img1_laminate_op" in op_keys
-        assert any(w.code == "missing_external_image_asset" for w in result.warnings)
 
     def test_operator_override_vinyl_cut_skips_print_rows(self):
         payload = _payload_with_artwork_complexity(
@@ -103,6 +126,10 @@ class TestIntakeV4ArtworkComplexity:
         assessment = {"artwork_id": "raster:img1", "recommended_application": "print_on_vinyl_laminated"}
         operator_map = {"raster:img1": "vinyl_cut"}
         assert effective_artwork_application(assessment, operator_map) == "vinyl_cut"
+
+    def test_effective_application_defaults_to_manual_review_without_operator_choice(self):
+        assessment = {"artwork_id": "raster:img1", "recommended_application": "print_on_vinyl_laminated"}
+        assert effective_artwork_application(assessment, {}) == "manual_review"
 
     def test_list_assessments_from_payload(self):
         payload = _payload_with_artwork_complexity(

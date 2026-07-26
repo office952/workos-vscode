@@ -1,0 +1,9 @@
+﻿{
+    "finish_identical":  true,
+    "pd_status_match":  true,
+    "pd_blockers_match":  true,
+    "agg_match":  true,
+    "fe_matches_8003":  true,
+    "no_MOUNTING_SCOPE_INACTIVE":  true,
+    "acm_included":  true
+}

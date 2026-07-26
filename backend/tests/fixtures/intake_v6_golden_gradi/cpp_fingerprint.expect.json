@@ -1,0 +1,92 @@
+{
+  "contract_version": "intake_v6_golden_cpp_v1",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "currency": "RON",
+  "lines": [
+    {
+      "code": "ambalare",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "set"
+    },
+    {
+      "code": "debitare_fata",
+      "quantity": 21.1675,
+      "unit_price": null,
+      "subtotal": 529.1875,
+      "unit": "ml"
+    },
+    {
+      "code": "debitare_spate",
+      "quantity": 1.2638,
+      "unit_price": null,
+      "subtotal": 25.276,
+      "unit": "m2"
+    },
+    {
+      "code": "finisaje_colantare_vopsire",
+      "quantity": 1.2638,
+      "unit_price": null,
+      "subtotal": 44.233,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_back_cnc::logo_instance_001",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_back_cnc::logo_instance_002",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_face_cnc::logo_instance_001",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_face_cnc::logo_instance_002",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_return_cant::logo_instance_001",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_return_cant::logo_instance_002",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "ml"
+    },
+    {
+      "code": "modelare_cant_aluminiu",
+      "quantity": 21.1675,
+      "unit_price": null,
+      "subtotal": 635.025,
+      "unit": "ml"
+    }
+  ],
+  "totals": {
+    "subtotal_net": null
+  },
+  "notes": [
+    "Captured from disposable golden payload against current commercial_rules_volumetric_v2.",
+    "Historical July probe totals may differ if dossier/template evolved; Build 1 freezes current HEAD behavior.",
+    "Intake is not money authority; dry-run must remain no-write."
+  ]
+}

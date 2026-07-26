@@ -1,0 +1,33 @@
+{
+  "listeners": {
+    "backend_8001": {
+      "health_docs": 200,
+      "pids_observed": [28380, 30500],
+      "note": "Two LISTENING entries on 127.0.0.1:8001 observed; health OK; no restart performed; no duplicate listener created by this diagnostic."
+    },
+    "frontend_3000": {
+      "health": 200,
+      "pid_observed": 1988
+    }
+  },
+  "flex_flag": "not re-verified this run; prior stack assumed FLEX_COLLAB_PHASE2_ENABLED on :8001",
+  "ids": {
+    "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+    "workspace_title": "GRADI-CURAT-E2E-DIAG-20260716085530",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "composition_type": "letters_plus_logo",
+    "quote_snapshot_id": null,
+    "order_id": null,
+    "execution_plan_id": null,
+    "task_ids": [],
+    "session_ids": [],
+    "stock_movement_ids": [],
+    "reconciliation_id": null
+  },
+  "runtime_writes": [
+    {"op": "POST /api/v1/intake-v6/workspaces", "status": 201, "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af"},
+    {"op": "PUT /api/v1/intake-v6/workspaces/{id}/analysis-bundle", "status": 200},
+    {"op": "PUT /api/v1/intake-v6/workspaces/{id}/product-composition-confirmation", "status": 200}
+  ],
+  "stopped_before": ["finish_setup", "quote snapshot", "order", "execution", "inventory"]
+}

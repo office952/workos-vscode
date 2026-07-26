@@ -1,0 +1,140 @@
+{
+  "url": "http://127.0.0.1:3001/intake-v6/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/operator",
+  "title": "erpWork OS",
+  "tabs": [
+    {
+      "id": "intake-v6-review-tab-finisaje",
+      "text": "FinisajeFață · cant · Vector Logo",
+      "selected": "false"
+    },
+    {
+      "id": "intake-v6-review-tab-iluminare",
+      "text": "IluminareLED · backing",
+      "selected": "false"
+    },
+    {
+      "id": "intake-v6-review-tab-montaj",
+      "text": "MontajȘablon · sistem",
+      "selected": "true"
+    }
+  ],
+  "cardCountApprox": 80,
+  "tallCards": [
+    {
+      "i": 46,
+      "testid": null,
+      "text": "Scope comercial montajFără pregătire/montajDoar pregătire pentru montajPregătire + montaj la locație",
+      "h": 1673.5
+    },
+    {
+      "i": 48,
+      "testid": "intake-v6-mounting-prep-section",
+      "text": "Pregătire și montajServiciile comerciale de pregătire/montaj sunt inactive — configurarea panoului A",
+      "h": 1506.875
+    },
+    {
+      "i": 50,
+      "testid": "intake-v6-mounting-solution-panel",
+      "text": "Configurație Panou ACP casetatComponentă de produs — independentă de scope-ul comercial de montaj.Pr",
+      "h": 1249.625
+    },
+    {
+      "i": 64,
+      "testid": "intake-v6-segmented-background-panel",
+      "text": "Posibil fundal format din mai multe panouriAm gasit mai multe fundaluri apropiate care pot forma un ",
+      "h": 324.375
+    }
+  ],
+  "badges": [
+    "Stare sistem: necesită verificare",
+    "· sursă: SVG confirmat"
+  ],
+  "blockers": [
+    {
+      "testid": "environment-banner-details-toggle",
+      "text": "Stare sistem: necesită verificare"
+    },
+    {
+      "testid": null,
+      "text": "Necesita confirmare"
+    },
+    {
+      "testid": null,
+      "text": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETA"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-live-missing-rates-banner",
+      "text": "1 tarif lipsă"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner",
+      "text": "1 problemă blochează ConfirmareaHandoff-ul către ofertă reală este blocat. — Confirmă rolurile layerelor/grupurilor și d"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-toggle",
+      "text": "1 problemă blochează Confirmarea"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-banner-title",
+      "text": "1 problemă blochează Confirmarea"
+    },
+    {
+      "testid": null,
+      "text": ""
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-compact-one",
+      "text": "Handoff-ul către ofertă reală este blocat. — Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte d"
+    },
+    {
+      "testid": "intake-v6-review-operator-blocker-diagnostic-link",
+      "text": "Vezi detalii tehnice și diagnostic"
+    },
+    {
+      "testid": null,
+      "text": "Owner gates (nu sunt defaults):"
+    },
+    {
+      "testid": null,
+      "text": "mounting_method_status: OWNER_GATE_REQUIREDcable_passage_status: OWNER_GATE_REQUIREDelectrical_interface_status: OWNER_G"
+    },
+    {
+      "testid": "intake-v6-segmented-background-panel",
+      "text": "Posibil fundal format din mai multe panouriAm gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Ver"
+    },
+    {
+      "testid": null,
+      "text": "Posibil fundal format din mai multe panouri"
+    },
+    {
+      "testid": "intake-v6-segmented-status",
+      "text": "Propus"
+    },
+    {
+      "testid": null,
+      "text": "panel_1"
+    },
+    {
+      "testid": null,
+      "text": "panel_2"
+    },
+    {
+      "testid": "intake-v6-live-estimate-unavailable",
+      "text": "Operatorul trebuie sa confirme compozitia produsului propusa de analyzer inainte de priced dry-run ready."
+    }
+  ],
+  "headings": [
+    "Calcul estimativ live",
+    "Șablon montaj",
+    "Montaj & template",
+    "Calcul estimativ live"
+  ]
+}

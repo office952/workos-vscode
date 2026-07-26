@@ -1,0 +1,498 @@
+{
+  "machines": [
+    {
+      "cod": "WA-ASSEMBLY-01",
+      "nume": "Masă lucru ansamblare 1",
+      "resource_kind": null,
+      "workcenter": "WC_ASSEMBLY",
+      "angajati_autorizati": [
+        5,
+        6
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "WA-ASSEMBLY-02",
+      "nume": "Masă lucru ansamblare 2",
+      "resource_kind": null,
+      "workcenter": "WC_ASSEMBLY",
+      "angajati_autorizati": [
+        5,
+        7
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-CNC-4020",
+      "nume": "CNC 4020",
+      "resource_kind": null,
+      "workcenter": "WC_CNC_ROUTING",
+      "angajati_autorizati": [
+        3,
+        7
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-STYRO-CUTTER",
+      "nume": "Utilaj debitare polistiren",
+      "resource_kind": null,
+      "workcenter": "WC_CNC_ROUTING",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-CUTTER-PLOTTER",
+      "nume": "Cutter Plotter",
+      "resource_kind": null,
+      "workcenter": "WC_CUT",
+      "angajati_autorizati": [
+        1,
+        2
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-LAMINATOR-XPRO",
+      "nume": "Laminator X-Pro",
+      "resource_kind": null,
+      "workcenter": "WC_LAMINATE",
+      "angajati_autorizati": [
+        1,
+        2
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-LASER-CNC",
+      "nume": "Laser CNC",
+      "resource_kind": null,
+      "workcenter": "WC_LASER_CUTTING",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-CNC-CANT-LITERE",
+      "nume": "CNC Cant Litere",
+      "resource_kind": null,
+      "workcenter": "WC_LETTER_FORMING",
+      "angajati_autorizati": [
+        3,
+        6
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-METAL-CUTTER-AUTO",
+      "nume": "Debitator metale cu masă automatizată",
+      "resource_kind": null,
+      "workcenter": "WC_METAL_FAB",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-WELD-ALU",
+      "nume": "Aparat sudură aluminiu",
+      "resource_kind": null,
+      "workcenter": "WC_METAL_FAB",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-WELD-STEEL",
+      "nume": "Aparat sudură oțel",
+      "resource_kind": null,
+      "workcenter": "WC_METAL_FAB",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "WA-WELD-TABLE",
+      "nume": "Masă pentru sudură",
+      "resource_kind": null,
+      "workcenter": "WC_METAL_FAB",
+      "angajati_autorizati": [],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-EPSON-60800",
+      "nume": "Imprimanta Epson 60800",
+      "resource_kind": null,
+      "workcenter": "WC_PRINT",
+      "angajati_autorizati": [
+        1,
+        2,
+        4
+      ],
+      "conflict": false
+    },
+    {
+      "cod": "MCH-RIGID-FILM-LAMINATOR",
+      "nume": "Laminator pentru aplicare folie pe plăci rigide",
+      "resource_kind": null,
+      "workcenter": "WC_VINYL_APPLICATION",
+      "angajati_autorizati": [
+        5
+      ],
+      "conflict": false
+    }
+  ],
+  "cnc_4020": {
+    "machine_code": "MCH-CNC-4020",
+    "machine_row": {
+      "id": 1,
+      "machine_code": "MCH-CNC-4020",
+      "name": "CNC 4020",
+      "description": "Masă 4000 x 2000 mm, preluare automată scule, ARTCAM",
+      "machine_type": "cnc_router",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "operational_status": "active",
+      "is_available": 1,
+      "manufacturer": null,
+      "model": null,
+      "year_acquired": null,
+      "capabilities": null,
+      "capacity_metadata": "{\"table_width_mm\": 4000, \"table_length_mm\": 2000, \"software\": \"ARTCAM\", \"auto_tool_change\": true}",
+      "is_active": 1,
+      "created_at": "2026-07-14 00:11:58.939875",
+      "updated_at": "2026-07-14 00:11:58.939875"
+    },
+    "operation_mapping": {
+      "operation_code": "cnc_cutting",
+      "required_skill_codes": [
+        "SK_CNC_OPERATOR"
+      ],
+      "allowed_workcenter_codes": [
+        "WC_CNC_ROUTING"
+      ],
+      "allowed_resource_codes": [
+        "MCH-CNC-4020"
+      ],
+      "authorization_mode": "hybrid",
+      "default_resource_code": "MCH-CNC-4020",
+      "product_system_aliases": [
+        "face_cnc_cut",
+        "back_cut",
+        "mounting_template_cnc_cut",
+        "cnc_routing",
+        "plexiglas_face_cut",
+        "volumetric_face_cut",
+        "forex_back_cut",
+        "volumetric_back_cut",
+        "plexi_cutting"
+      ],
+      "authorized_employee_ids": [
+        3,
+        7
+      ],
+      "notes": null
+    },
+    "eligible_employees": {
+      "operation_code": "cnc_cutting",
+      "resolved_operation_code": "cnc_cutting",
+      "authorization_mode": "hybrid",
+      "resolution": "direct",
+      "required_skill_codes": [
+        "SK_CNC_OPERATOR"
+      ],
+      "allowed_workcenter_codes": [
+        "WC_CNC_ROUTING"
+      ],
+      "allowed_resource_codes": [
+        "MCH-CNC-4020"
+      ],
+      "default_resource_code": "MCH-CNC-4020",
+      "authorized_employee_ids": [
+        3,
+        7
+      ],
+      "items": [
+        {
+          "id": 7,
+          "name": "Andrei Goghi",
+          "role": "Producție / CNC",
+          "department": "Producție",
+          "status": "active",
+          "employee_type": "productive",
+          "user_id": null,
+          "salary_amount": 8000.0,
+          "salary_currency": "RON",
+          "salary_period": "monthly",
+          "skill_codes": [
+            "SK_ASSEMBLY",
+            "SK_CNC_OPERATOR",
+            "SK_ELECTRICIAN",
+            "SK_FIELD_INSTALLER",
+            "SK_VINYL_APPLICATOR"
+          ],
+          "workcenter_codes": [
+            "WC_ASSEMBLY",
+            "WC_CNC_ROUTING",
+            "WC_FIELD_INSTALLATION",
+            "WC_LED_ASSEMBLY"
+          ],
+          "resource_codes": [
+            "MCH-CNC-4020",
+            "WA-ASSEMBLY-02"
+          ],
+          "eligibility": "authorized",
+          "skill_match": true,
+          "explicit_override": true
+        },
+        {
+          "id": 3,
+          "name": "Florin CNC",
+          "role": "Operator CNC",
+          "department": "CNC",
+          "status": "active",
+          "employee_type": "productive",
+          "user_id": null,
+          "salary_amount": 8000.0,
+          "salary_currency": "RON",
+          "salary_period": "monthly",
+          "skill_codes": [
+            "SK_CNC_OPERATOR",
+            "SK_CNC_PREP",
+            "SK_LETTER_CANT_OPERATOR"
+          ],
+          "workcenter_codes": [
+            "WC_CNC_ROUTING",
+            "WC_LETTER_FORMING"
+          ],
+          "resource_codes": [
+            "MCH-CNC-4020",
+            "MCH-CNC-CANT-LITERE"
+          ],
+          "eligibility": "authorized",
+          "skill_match": true,
+          "explicit_override": true
+        }
+      ],
+      "total": 2
+    },
+    "classification": "IDENTITY_ALIGNED_METADATA_PARTIAL",
+    "aligned": [
+      "machine_code",
+      "registry",
+      "utilaje",
+      "Florin CNC authorization"
+    ],
+    "gaps": [
+      "mock specs UI",
+      "machine_type text on tasks",
+      "capacity runtime not consumed"
+    ]
+  },
+  "employee_resource": [
+    {
+      "angajat": "Calin Cimpean",
+      "angajat_id": 1,
+      "resursa": "MCH-LAMINATOR-XPRO",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Calin Cimpean",
+      "angajat_id": 1,
+      "resursa": "MCH-CUTTER-PLOTTER",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Calin Cimpean",
+      "angajat_id": 1,
+      "resursa": "MCH-EPSON-60800",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Octavian Dumitru",
+      "angajat_id": 2,
+      "resursa": "MCH-LAMINATOR-XPRO",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Octavian Dumitru",
+      "angajat_id": 2,
+      "resursa": "MCH-CUTTER-PLOTTER",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Octavian Dumitru",
+      "angajat_id": 2,
+      "resursa": "MCH-EPSON-60800",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Florin CNC",
+      "angajat_id": 3,
+      "resursa": "MCH-CNC-CANT-LITERE",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Florin CNC",
+      "angajat_id": 3,
+      "resursa": "MCH-CNC-4020",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "WA-ASSEMBLY-01",
+      "registry": false,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "WA-ASSEMBLY-02",
+      "registry": false,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "WA-WELD-TABLE",
+      "registry": false,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "MCH-WELD-ALU",
+      "registry": false,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "MCH-EPSON-60800",
+      "registry": true,
+      "legacy": false,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Putaru Sandu",
+      "angajat_id": 4,
+      "resursa": "MCH-WELD-STEEL",
+      "registry": false,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": true,
+      "actiune_propusa": "Reconciliere Wave R3"
+    },
+    {
+      "angajat": "Vali Colantator",
+      "angajat_id": 5,
+      "resursa": "WA-ASSEMBLY-02",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Vali Colantator",
+      "angajat_id": 5,
+      "resursa": "MCH-RIGID-FILM-LAMINATOR",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Vali Colantator",
+      "angajat_id": 5,
+      "resursa": "WA-ASSEMBLY-01",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Costi Modelator",
+      "angajat_id": 6,
+      "resursa": "MCH-CNC-CANT-LITERE",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Costi Modelator",
+      "angajat_id": 6,
+      "resursa": "WA-ASSEMBLY-01",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Andrei Goghi",
+      "angajat_id": 7,
+      "resursa": "WA-ASSEMBLY-02",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    },
+    {
+      "angajat": "Andrei Goghi",
+      "angajat_id": 7,
+      "resursa": "MCH-CNC-4020",
+      "registry": true,
+      "legacy": true,
+      "ui": "registry panel + form CSV",
+      "conflict": false,
+      "actiune_propusa": "Păstrare"
+    }
+  ]
+}

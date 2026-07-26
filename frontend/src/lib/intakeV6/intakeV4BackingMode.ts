@@ -28,6 +28,26 @@ export function backingModeLabel(mode: IntakeV4BackingMode | string | null | und
   );
 }
 
+export function resolveLayerBackingMode(
+  layerBackingMode: unknown,
+  globalBackingMode: unknown,
+): IntakeV4BackingMode {
+  if (layerBackingMode != null && String(layerBackingMode).trim() !== "") {
+    return normalizeIntakeV4BackingMode(layerBackingMode);
+  }
+  return normalizeIntakeV4BackingMode(globalBackingMode);
+}
+
+export function layerFinishesHaveExplicitBacking(
+  letterGroups: Array<{ backing_mode?: IntakeV4BackingMode | null }>,
+  artworkFinishes: Array<{ backing_mode?: IntakeV4BackingMode | null }>,
+): boolean {
+  return (
+    letterGroups.some((group) => group.backing_mode != null) ||
+    artworkFinishes.some((row) => row.backing_mode != null)
+  );
+}
+
 export function normalizeEmblemLightingMode(raw: unknown): IntakeV4EmblemLightingMode {
   const token = String(raw ?? "area_lit").trim().toLowerCase();
   if (token === "excluded" || token === "area_lit") return token;

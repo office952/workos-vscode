@@ -36,7 +36,10 @@ export function formatQuoteHandoffBlocker(code: string): string {
 	}
 	if (code.startsWith("canonical_invalid_combination:")) {
 		const detail = code.slice("canonical_invalid_combination:".length).trim();
-		return `Combinație invalidă în configurația canonică: ${detail || "necunoscută"}.`;
+		if (detail === "MOUNTING_SCOPE_INACTIVE") {
+			return "Montajul comercial nu este activ — suportul de produs rămâne valid. Verifică doar opțiunile comerciale dacă oferta le include.";
+		}
+		return `Combinație invalidă în configurație: ${detail || "necunoscută"}.`;
 	}
 	if (code.startsWith("canonical_unresolved_warning:")) {
 		const detail = code.slice("canonical_unresolved_warning:".length).trim();
@@ -46,14 +49,14 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return "ProductDefinition preview nu a putut fi construit pentru acest workspace.";
 	}
 	if (code.startsWith("artwork_execution_undecided:")) {
-		const layerKey = code.split(":")[1] ?? "artwork";
-		return `Artwork execution undecided on ${layerKey}.`;
+		const layerKey = code.split(":")[1] ?? "vector-logo";
+		return `Vector Logo — execuție nedecisă pe ${layerKey}.`;
 	}
 	if (code === "unclassified_vector_artwork_requires_decision") {
-		return "Vector neclasificat detectat: confirmă ce reprezintă, metoda de producție și fișierul/grafica pentru producție.";
+		return "Perimetru vector nealocat — verifică Vector Logo în Finisaje.";
 	}
 	if (code === "artwork_only_requires_decision") {
-		return "Nu există straturi de litere volumetrice confirmate. Artwork/policromie necesită decizie operator. Template-ul curent este Litere volumetrice; fișierul încărcat pare artwork-only.";
+		return "Nu există straturi de litere volumetrice confirmate. Vector Logo/policromie necesită decizie operator. Template-ul curent este Litere volumetrice; fișierul încărcat pare doar Vector Logo.";
 	}
 	if (code === "operator_confirmation_missing") {
 		return "Operatorul trebuie să confirme finisajele și datele de ofertare pentru draft intern.";
@@ -70,9 +73,21 @@ export function formatQuoteHandoffBlocker(code: string): string {
 	if (code.startsWith("readiness_not_ready:")) {
 		const readiness = code.split(":")[1] ?? "unknown";
 		if (readiness === "layer_roles_incomplete") {
-			return "Product Truth incomplet: rolurile layerelor/grupurilor trebuie confirmate de operator.";
+			return "Confirmă rolul pentru toate straturile înainte de ofertare.";
 		}
-		return `Workspace readiness: ${readiness}.`;
+		if (readiness === "product_composition_not_confirmed") {
+			return "Confirmă compoziția produsului în Configurare.";
+		}
+		if (readiness === "finish_setup_incomplete") {
+			return "Finalizează finisajele în Configurare înainte de draft.";
+		}
+		if (readiness === "offer_scope_not_confirmed") {
+			return "Confirmă ce producem (produs complet sau componente selectate).";
+		}
+		return "Configurarea nu este gata pentru confirmare finală.";
+	}
+	if (code === "product_composition_not_confirmed") {
+		return "Confirmă compoziția produsului în Configurare.";
 	}
 	if (code === "finish_setup_not_confirmed") {
 		return "Finalizează și confirmă finisajele în Review înainte de draft quote.";
@@ -126,10 +141,22 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return "Preț comercial Forex sablon necesită aprobare owner.";
 	}
 	if (code.startsWith("AMBALARE_COMMERCIAL_RULE")) {
-		return "Regula comercială ambalare nu este definită de owner.";
+		return "Regula comercială ambalare nu este definită de owner (deferred — nonblocking).";
 	}
 	if (code.startsWith("MONTAJ_COMMERCIAL_RULE")) {
-		return "Regula comercială montaj nu este definită (opțional/viitor).";
+		return "Lipsește tariful comercial pentru montaj șantier (obligatoriu când instalarea este inclusă).";
+	}
+	if (code === "LOGO_PRINT_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru print logo volumetric (fail-closed până la configurare owner).";
+	}
+	if (code === "LOGO_LAMINATE_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru laminare logo volumetric (fail-closed până la configurare owner).";
+	}
+	if (code === "LOGO_APPLICATION_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru aplicare folie logo (fail-closed până la configurare owner).";
+	}
+	if (code === "V6_PRICED_DRY_RUN_COMMERCIAL_REVIEW_NOT_READY") {
+		return "CommercialPriceProposal este parțial — completează tarifele comerciale lipsă înainte de Confirmare.";
 	}
 	if (code === "PRICING_REVIEW_INCOMPLETE" || code === "PRICING_REVIEW_REQUIRED") {
 		return "Review preț necesar înainte de aprobare owner sau conversie.";
@@ -308,6 +335,8 @@ export type ReviewHandoffSurfacing = {
 	reasons: string[];
 	actions: string[];
 	badges?: IntakeV6OperatorStateBadge[];
+	/** Neutral next-step guidance (not a red/primary blocker). */
+	nextStepGuidance?: string | null;
 };
 
 function isProductTruthBlocker(code: string): boolean {
@@ -323,83 +352,166 @@ function isProductTruthBlocker(code: string): boolean {
 	);
 }
 
+/** Fatals that remain actionable on the current operator step. */
+export function filterStepScopedFatalBlockers(
+	fatalBlockers: string[],
+	currentStep: "layers" | "review" | "confirm" | undefined,
+): string[] {
+	const step = currentStep ?? "review";
+	if (step === "confirm") return fatalBlockers;
+	return fatalBlockers.filter((code) => code !== "operator_confirmation_missing");
+}
+
+export function isOnlyOperatorConfirmationBlocking(args: {
+	handoffAllowed: boolean;
+	fatalBlockers: string[];
+}): boolean {
+	if (args.handoffAllowed) return false;
+	const hasOperator = args.fatalBlockers.includes("operator_confirmation_missing");
+	if (!hasOperator) return false;
+	return args.fatalBlockers.every((code) => code === "operator_confirmation_missing");
+}
+
 export function buildReviewHandoffSurfacing(args: {
 	handoff: IntakeV6QuoteHandoffPreviewResponse | null | undefined;
 	handoffOptions?: QuoteHandoffUiOptions;
 	containsMissingPrices?: boolean;
 	allArtworkFinishesConfirmed?: boolean;
+	allArtworkProductConfigured?: boolean;
+	/** When 0, residual Vector Logo chrome is noise (no logo rows to decide). */
+	artworkFinishRowCount?: number;
+	currentStep?: "layers" | "review" | "confirm";
 }): ReviewHandoffSurfacing {
 	const handoffUi = resolveQuoteHandoffUiStatus(args.handoff, args.handoffOptions);
 	const reviewWarnings = args.handoff?.review_warnings ?? [];
 	const fatalBlockers = args.handoff?.fatal_blockers ?? args.handoff?.blockers ?? [];
-	const artworkNeedsDecision = hasArtworkNeedsDecisionWarning(reviewWarnings);
-	const vectorResidualWarning = hasUnclassifiedVectorArtworkWarning(reviewWarnings);
-	const artworkUnconfirmed = args.allArtworkFinishesConfirmed === false;
+	const step = args.currentStep ?? "review";
+	const artworkFinishRowCount = args.artworkFinishRowCount;
+	const suppressArtworkVectorFatals = artworkFinishRowCount === 0;
+	const stepScopedFatals = filterStepScopedFatalBlockers(fatalBlockers, step).filter((code) => {
+		if (!suppressArtworkVectorFatals) return true;
+		return !(
+			code === "unclassified_vector_artwork_requires_decision" ||
+			code.startsWith("artwork_execution_undecided:") ||
+			code === "artwork_only_requires_decision"
+		);
+	});
+	const reviewWarningsEffective = suppressArtworkVectorFatals
+		? reviewWarnings.filter(
+				(code) =>
+					code !== "unclassified_vector_artwork_requires_decision" &&
+					!code.startsWith("artwork_execution_undecided:") &&
+					code !== "artwork_only_requires_decision",
+			)
+		: reviewWarnings;
+	const artworkNeedsDecision = hasArtworkNeedsDecisionWarning(reviewWarningsEffective);
+	const vectorResidualWarning = hasUnclassifiedVectorArtworkWarning(reviewWarningsEffective);
+	const artworkConfigured =
+		args.allArtworkProductConfigured ??
+		(args.allArtworkFinishesConfirmed !== false && args.allArtworkFinishesConfirmed !== undefined
+			? args.allArtworkFinishesConfirmed
+			: true);
+	const artworkUnconfigured = args.allArtworkProductConfigured === false;
+	const surfaceResidualVector =
+		vectorResidualWarning &&
+		artworkConfigured &&
+		!artworkUnconfigured &&
+		(artworkFinishRowCount == null || artworkFinishRowCount > 0);
 	const operatorConfirmationMissing = fatalBlockers.includes("operator_confirmation_missing");
+	const onlyOperatorConfirmationPending = isOnlyOperatorConfirmationBlocking({
+		handoffAllowed: handoffUi.handoffAllowed,
+		fatalBlockers,
+	});
+	const showOperatorConfirmationOnStep = step === "confirm" && operatorConfirmationMissing;
 	const containsMissingPrices = args.containsMissingPrices === true;
-	const productTruthBlocked = fatalBlockers.some(isProductTruthBlocker);
+	const layerRolesBlocked = stepScopedFatals.some(
+		(code) =>
+			code === "layer_roles_incomplete" || code === "readiness_not_ready:layer_roles_incomplete",
+	);
+	const productTruthBlocked = stepScopedFatals.some(isProductTruthBlocker);
+	// Suppress only the loading flash (null handoff + loading) — permanent fetch failure still banners.
+	const suppressLoadingHandoffBanner =
+		Boolean(args.handoffOptions?.loading) && !args.handoff;
+	const handoffBlockedOnThisStep =
+		!suppressLoadingHandoffBanner &&
+		!handoffUi.handoffAllowed &&
+		!(onlyOperatorConfirmationPending && step !== "confirm");
 
 	const showBanner =
-		!handoffUi.handoffAllowed ||
-		artworkNeedsDecision ||
-		artworkUnconfirmed ||
+		handoffBlockedOnThisStep ||
+		artworkUnconfigured ||
+		surfaceResidualVector ||
+		(artworkNeedsDecision && !vectorResidualWarning) ||
 		containsMissingPrices ||
-		operatorConfirmationMissing;
+		showOperatorConfirmationOnStep;
 
-	const reasons: string[] = [];
-	if (fatalBlockers.some((code) => code === "layer_roles_incomplete" || code === "readiness_not_ready:layer_roles_incomplete")) {
-		reasons.push(
-			"Oferta rămâne blocată: rolurile layerelor/grupurilor trebuie confirmate de operator. Pricing Registry este pregătit; lipsește Product Truth confirmat.",
-		);
+	const nextStepGuidance =
+		!showBanner && onlyOperatorConfirmationPending && step !== "confirm"
+			? "Confirmarea finală se efectuează în Pasul 3."
+			: null;
+
+	// Paired reason/action — never prepend a generic Product Truth action onto an unrelated reason.
+	const pairs: Array<{ reason: string; action: string }> = [];
+	if (layerRolesBlocked) {
+		pairs.push({
+			reason:
+				"Oferta rămâne blocată: rolurile layerelor/grupurilor trebuie confirmate de operator. Pricing Registry este pregătit; lipsește Product Truth confirmat.",
+			action:
+				"Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.",
+		});
 	}
-	if (artworkUnconfirmed) {
-		reasons.push("Artwork/logo neconfirmat în Review: SUGGESTED nu este CONFIRMED, iar fallback/hydrated nu este confirmare operator.");
-	} else if (args.allArtworkFinishesConfirmed && vectorResidualWarning) {
-		reasons.push(
-			"Artwork confirmat, dar există vector rezidual neclasificat în SVG. Verifică stratul/sursa SVG.",
-		);
-	} else if (artworkNeedsDecision) {
-		reasons.push("Vector/artwork neclasificat sau neconfirmat.");
+	if (artworkUnconfigured) {
+		pairs.push({
+			reason: "Vector Logo necesită decizie de execuție sau date obligatorii lipsă.",
+			action: "Deschide Finisaje și completează execuția Vector Logo.",
+		});
+	} else if (surfaceResidualVector) {
+		pairs.push({
+			reason: "Perimetru vector nealocat — verifică Vector Logo în Finisaje.",
+			action: "Deschide Finisaje și confirmă execuția Vector Logo (sau ignore).",
+		});
+	} else if (artworkNeedsDecision && !vectorResidualWarning) {
+		pairs.push({
+			reason: "Vector Logo neconfirmat sau fără decizie de execuție.",
+			action: "Deschide Finisaje și rezolvă deciziile Vector Logo.",
+		});
 	}
-	if (operatorConfirmationMissing) {
-		reasons.push("Confirmarea operatorului pentru draft intern lipsește încă.");
+	if (showOperatorConfirmationOnStep) {
+		pairs.push({
+			reason:
+				"Confirmă finisajele și datele de ofertare pentru draft intern (checkbox-ul din Confirmare finală).",
+			action: "Bifează checkbox-ul de confirmare draft intern din Confirmare finală.",
+		});
 	}
 	if (containsMissingPrices) {
-		reasons.push("Calculul live conține linii fără tarif configurat.");
+		pairs.push({
+			reason: "Calculul live conține linii fără tarif configurat.",
+			action: "Verifică liniile cu tarif lipsă în Calcul live.",
+		});
 	}
-	if (!handoffUi.handoffAllowed && reasons.length === 0) {
-		reasons.push("Handoff-ul către ofertă reală este blocat.");
+	if (handoffBlockedOnThisStep && pairs.length === 0) {
+		pairs.push({
+			reason: "Handoff-ul către ofertă reală este blocat.",
+			action: productTruthBlocked
+				? "Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff."
+				: "Rezolvă blocajele din diagnosticul tehnic.",
+		});
 	}
 
-	const actions: string[] = [];
-	if (productTruthBlocked) {
-		actions.push("Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.");
-	}
-	if (artworkUnconfirmed) {
-		actions.push(
-			"Apasă Confirm artwork pentru fiecare logo după ce verifici execuția print/laminare/translucid.",
-		);
-	} else if (args.allArtworkFinishesConfirmed && vectorResidualWarning) {
-		actions.push("Verifică stratul/sursa SVG pentru vectorul rezidual neclasificat.");
-	} else if (artworkNeedsDecision) {
-		actions.push("Rezolvă deciziile artwork în Review.");
-	}
-	if (containsMissingPrices) {
-		actions.push("Verifică liniile cu tarif lipsă în Calcul live.");
-	}
-	if (operatorConfirmationMissing) {
-		actions.push("Confirmarea finală se face în pasul Confirmare.");
-	}
+	const reasons = pairs.map((pair) => pair.reason);
+	const actions = pairs.map((pair) => pair.action);
 
 	const badges: IntakeV6OperatorStateBadge[] = showBanner
-		? productTruthBlocked || artworkUnconfirmed || operatorConfirmationMissing
+		? layerRolesBlocked || artworkUnconfigured || showOperatorConfirmationOnStep
 			? ["BLOCKED", "NEEDS_CONFIRMATION"]
 			: containsMissingPrices
 				? ["WARNING", "NEEDS_FORM_INPUT"]
 				: ["WARNING"]
-		: ["READY"];
+		: onlyOperatorConfirmationPending && step !== "confirm"
+			? ["NEEDS_CONFIRMATION"]
+			: ["READY"];
 
-	return { showBanner, reasons, actions, badges };
+	return { showBanner, reasons, actions, badges, nextStepGuidance };
 }
 
 export function resolveReviewReadinessDisplay(
@@ -409,6 +521,18 @@ export function resolveReviewReadinessDisplay(
 ): { primary: string; secondary: string | null } {
 	const handoffUi = resolveQuoteHandoffUiStatus(handoff, options);
 	const workspaceReady = workspaceReadiness === "ready_for_quote_preview";
+	const fatalBlockers = handoff?.fatal_blockers ?? handoff?.blockers ?? [];
+	const onlyOperatorConfirmationPending = isOnlyOperatorConfirmationBlocking({
+		handoffAllowed: handoffUi.handoffAllowed,
+		fatalBlockers,
+	});
+
+	if (workspaceReady && onlyOperatorConfirmationPending) {
+		return {
+			primary: "Date tehnice pregătite pentru preview",
+			secondary: "Confirmarea finală se efectuează în Pasul 3.",
+		};
+	}
 
 	if (workspaceReady && !handoffUi.handoffAllowed) {
 		return {
@@ -421,7 +545,7 @@ export function resolveReviewReadinessDisplay(
 	if (workspaceReady && hasArtworkNeedsDecisionWarning(handoff?.review_warnings)) {
 		return {
 			primary: "Date tehnice pregătite pentru preview",
-			secondary: "Există atenționări artwork de rezolvat înainte de draft final.",
+			secondary: "Există atenționări Vector Logo de rezolvat înainte de draft final.",
 		};
 	}
 

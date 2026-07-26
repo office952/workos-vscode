@@ -18,6 +18,7 @@
     "test:e2e:commercial-spine-demo": "playwright test e2e/commercial-spine-demo.spec.ts",
     "test:e2e:commercial": "playwright test e2e/commercial-chain-live.spec.ts e2e/commercial-chain-warn-ack.spec.ts e2e/commercial-spine-demo.spec.ts --workers=1",
     "test:e2e:workintake-finish": "playwright test e2e/work-intake-v2-to-quote-finish-display.spec.ts",
+    "test:e2e:product-system-readonly-smoke": "playwright test e2e/product-system-readonly-smoke.spec.ts",
     "test:e2e:intake-v4-open": "playwright test e2e/intake-v4-svg-open-after-bootstrap.spec.ts",
     "test:e2e:intake-v4-pbl-complex": "playwright test e2e/intake-v4-pbl-complex-desktop.spec.ts",
     "validate:color-registry": "node scripts/validate-color-registry-import.mjs src/lib/colorRegistry/import/color-registry-import.template.csv",

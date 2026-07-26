@@ -1,0 +1,104 @@
+﻿{
+    "ports_closed":  [
+                         "3000",
+                         "8000",
+                         "8001",
+                         "8011"
+                     ],
+    "shutdown_actions":  [
+                             {
+                                 "port":  3000,
+                                 "pid":  9580,
+                                 "result":  "STOPPED"
+                             },
+                             {
+                                 "port":  8001,
+                                 "pid":  25672,
+                                 "result":  "STOPPED"
+                             },
+                             {
+                                 "port":  8001,
+                                 "pid":  31388,
+                                 "result":  "STOPPED"
+                             },
+                             {
+                                 "port":  8001,
+                                 "pid":  7676,
+                                 "result":  "STOPPED"
+                             },
+                             {
+                                 "port":  8000,
+                                 "pid":  4392,
+                                 "result":  "SKIP not running at stop time"
+                             },
+                             {
+                                 "port":  null,
+                                 "pid":  27508,
+                                 "result":  "STOPPED",
+                                 "note":  "python auxiliary"
+                             },
+                             {
+                                 "port":  null,
+                                 "pid":  30324,
+                                 "result":  "STOPPED",
+                                 "note":  "node auxiliary"
+                             },
+                             {
+                                 "port":  null,
+                                 "pid":  22924,
+                                 "result":  "STOPPED",
+                                 "note":  "node auxiliary"
+                             }
+                         ],
+    "recorded_at":  "2026-07-15T13:04:42.3325375+03:00",
+    "backup_id":  "workos_full_backup_20260715_125751_deb5d69",
+    "processes":  [
+                      {
+                          "port":  3000,
+                          "component":  "frontend-vite",
+                          "pid":  9580,
+                          "classification":  "CANONICAL",
+                          "command_line":  "node vite (frontend)",
+                          "worktree":  "C:\\w\\psiso"
+                      },
+                      {
+                          "port":  8001,
+                          "component":  "backend-uvicorn",
+                          "pid":  25672,
+                          "classification":  "CANONICAL",
+                          "command_line":  "python uvicorn main:app --port 8001",
+                          "worktree":  "C:\\w\\psiso"
+                      },
+                      {
+                          "port":  8001,
+                          "component":  "backend-worker",
+                          "pid":  31388,
+                          "classification":  "CANONICAL",
+                          "command_line":  "python uvicorn reloader worker",
+                          "worktree":  "C:\\w\\psiso"
+                      },
+                      {
+                          "port":  8001,
+                          "component":  "backend-uvicorn",
+                          "pid":  7676,
+                          "classification":  "CANONICAL",
+                          "command_line":  "python uvicorn",
+                          "worktree":  "C:\\w\\psiso"
+                      },
+                      {
+                          "port":  8000,
+                          "component":  "backend-uvicorn",
+                          "pid":  4392,
+                          "classification":  "GHOST",
+                          "note":  "Ghost listener on 8000; same dev.db risk via dev-backend.ps1 default",
+                          "worktree":  "NOT_PROVEN"
+                      },
+                      {
+                          "port":  8011,
+                          "pid":  null,
+                          "component":  "parity-pilot",
+                          "note":  "Not listening at inventory time",
+                          "classification":  "NOT_PROVEN"
+                      }
+                  ]
+}

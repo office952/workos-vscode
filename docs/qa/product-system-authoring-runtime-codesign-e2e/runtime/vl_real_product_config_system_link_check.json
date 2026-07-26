@@ -1,0 +1,103 @@
+{
+  "verdict": "BLOCKED",
+  "build_closure_status": "PASS_WITH_WARNINGS",
+  "template_publication_status": "BLOCKED",
+  "e2e_ready": false,
+  "write_performed": false,
+  "systems": [
+    {
+      "system": "catalog",
+      "status": "PASS",
+      "blocking": false,
+      "summary": "Catalog template TPL-VOLUMETRIC-LETTERS_v2 present and active."
+    },
+    {
+      "system": "components",
+      "status": "BLOCKED",
+      "blocking": true,
+      "summary": "13 findings"
+    },
+    {
+      "system": "intake",
+      "status": "PASS",
+      "blocking": false,
+      "summary": "Intake V6 modular form contract present."
+    },
+    {
+      "system": "product_truth",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "2 findings"
+    },
+    {
+      "system": "product_definition",
+      "status": "PASS",
+      "blocking": false,
+      "summary": "ProductDefinition preview built successfully (read-only)."
+    },
+    {
+      "system": "aggregate",
+      "status": "PASS",
+      "blocking": false,
+      "summary": "ProductAggregate built successfully (read-only)."
+    },
+    {
+      "system": "quantity",
+      "status": "PASS",
+      "blocking": false,
+      "summary": "Letters commercial measurement rules available for template."
+    },
+    {
+      "system": "cpp",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "CPP readiness not exercised by this check (no formula duplication)."
+    },
+    {
+      "system": "eic",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "EIC readiness not exercised by this check (no formula duplication)."
+    },
+    {
+      "system": "quote_snapshot",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "2 findings"
+    },
+    {
+      "system": "order_snapshot",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "Order Snapshot copy path not exercised (no writes / no order create)."
+    },
+    {
+      "system": "execution_preview",
+      "status": "NOT_TESTED",
+      "blocking": false,
+      "summary": "ExecutionPlan preview not exercised (no materialization)."
+    }
+  ],
+  "known_conflicts": [
+    "CANONICAL_CONTRACT_AUTHORITY",
+    "DOSSIER_METADATA_ONLY",
+    "PROCESS_GRAPH_MODULAR_RESOLVER",
+    "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+    "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+    "TEMPLATE_IDENTITY",
+    "TRIGGER_FIELD_MISMATCH",
+    "execution_catalog_bypass_not_exercised",
+    "not_tested_downstream",
+    "order_reread_risk_not_exercised",
+    "required_inactive_child",
+    "snapshot_live_race_not_exercised"
+  ],
+  "blocking_findings": [
+    {
+      "id": "components.required_inactive.TPL-VOLUM-ALUMINIU_v1",
+      "system": "components",
+      "status": "BLOCKED",
+      "msg": "Required child template TPL-VOLUM-ALUMINIU_v1 is inactive (known conflict for TPL-VOLUM-ALUMINIU_v1)."
+    }
+  ]
+}

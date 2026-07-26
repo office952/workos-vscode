@@ -1,0 +1,91 @@
+{
+  "task": "RUNTIME-CONFIG-03",
+  "captured_at": "2026-07-15",
+  "launchers": [
+    {
+      "launcher": "npm run dev:stack",
+      "file": "package.json → scripts/dev.ps1 → scripts/start-dev.ps1",
+      "backend_port": "8001 (via _workos-dev-contract.ps1)",
+      "frontend_port": "3000",
+      "proxy_target": "http://127.0.0.1:8001",
+      "used_in_proof": "code_aligned; runtime proof via split canonical launchers sharing contract",
+      "classification": "CANONICAL"
+    },
+    {
+      "launcher": ".\\scripts\\dev.ps1",
+      "file": "scripts/dev.ps1",
+      "backend_port": "8001",
+      "frontend_port": "3000",
+      "proxy_target": "http://127.0.0.1:8001",
+      "classification": "CANONICAL"
+    },
+    {
+      "launcher": "npm run dev:backend",
+      "file": "scripts/dev-backend.ps1",
+      "backend_port": "8001",
+      "frontend_port": "n/a",
+      "proxy_target": "n/a",
+      "used_in_proof": true,
+      "classification": "CANONICAL"
+    },
+    {
+      "launcher": "npm run dev:frontend",
+      "file": "scripts/dev-frontend.ps1",
+      "backend_port": "8001 env",
+      "frontend_port": "3000",
+      "proxy_target": "http://127.0.0.1:8001",
+      "used_in_proof": true,
+      "classification": "CANONICAL"
+    },
+    {
+      "launcher": "scripts/start-dev.ps1 (direct)",
+      "file": "scripts/start-dev.ps1",
+      "backend_port": "8001",
+      "frontend_port": "3000",
+      "proxy_target": "http://127.0.0.1:8001",
+      "classification": "CANONICAL"
+    },
+    {
+      "launcher": "./start_app.sh",
+      "file": "start_app.sh",
+      "backend_port": "8001 (BACKEND_PORT default)",
+      "frontend_port": "3000",
+      "proxy_target": "requires BACKEND_PORT in env for vite",
+      "classification": "ACTIVE_ALTERNATIVE"
+    },
+    {
+      "launcher": "frontend pnpm run dev",
+      "file": "frontend/package.json",
+      "backend_port": "8001 via vite default",
+      "frontend_port": "3000",
+      "proxy_target": "http://127.0.0.1:8001",
+      "classification": "ACTIVE_ALTERNATIVE"
+    },
+    {
+      "launcher": "restore test stack",
+      "file": "C:\\w\\wrt\\b01 (BACKUP-BASELINE-01B)",
+      "backend_port": "8021 explicit",
+      "frontend_port": "3021",
+      "proxy_target": "8021 explicit",
+      "classification": "RESTORE_ONLY"
+    },
+    {
+      "launcher": "parity pilot",
+      "file": "historical APP-AUTH-06",
+      "backend_port": "8011",
+      "frontend_port": "n/a",
+      "proxy_target": "n/a",
+      "classification": "TEST_ONLY"
+    },
+    {
+      "launcher": "legacy port 8000 default",
+      "file": "pre-RUNTIME-CONFIG-03 vite/start-dev",
+      "backend_port": "8000",
+      "frontend_port": "3000",
+      "classification": "LEGACY"
+    }
+  ],
+  "vscode_tasks": "NOT_PROVEN (no .vscode/tasks.json in worktree)",
+  "cursor_tasks": "NOT_PROVEN (no dedicated cursor task file)",
+  "docker_compose": "NOT_PROVEN (none found in repo root)"
+}

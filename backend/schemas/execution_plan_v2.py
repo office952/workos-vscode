@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry
+from schemas.execution_plan_v2_frozen_task_identity import FrozenTaskIdentity
 
 EXECUTION_PLAN_V2_SOURCE = "order_snapshot_v2"
 EXECUTION_PLAN_V2_PLAN_SOURCE = "order_snapshot_v2"
@@ -14,6 +15,14 @@ EXECUTION_PLAN_V2_PERSIST_STATUS = "not_persisted"
 EXECUTION_PLAN_V2_TASKS_JSON_PLAN_VERSION = "v2.preview_to_plan.1"
 PLANNING_MINUTES_WARNING = "PLANNING_MINUTES_SOURCE_REQUIRED"
 TOTAL_ESTIMATED_TIME_SOURCE_NOT_AVAILABLE = "not_available_in_v2_preview"
+# TE2E-028A — authorized provenance when minutes come from aggregate ops (template static).
+PLANNING_MINUTES_SOURCE_AGGREGATE_OPS = (
+    "product_aggregate_snapshot.operations.estimated_minutes"
+)
+# TE2E-028B — Aggregate-resolved formula duration (suffix :{formula_id}).
+PLANNING_MINUTES_SOURCE_AGGREGATE_FORMULA_PREFIX = (
+    "product_aggregate_snapshot.operations.estimated_minutes.formula"
+)
 READINESS_GATE_TASK_TYPE = "READINESS_GATE"
 READINESS_GATE_EXCLUDED_WARNING = "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
 
@@ -33,6 +42,7 @@ ExecutionPlanV2PreviewStatus = Literal[
     "blocked_legacy_order",
     "blocked_order_not_found",
     "blocked_missing_quote_snapshot_v2_id",
+    "blocked_missing_sold_scope",
 ]
 
 IGNORED_PRICING_SOURCES: list[str] = [
@@ -86,6 +96,7 @@ class PlannedTaskPreview(BaseModel):
     planning_minutes_source: str | None = None
     warnings: list[str] = Field(default_factory=list)
     provenance: list[str] = Field(default_factory=list)
+    frozen_identity: FrozenTaskIdentity | None = None
 
 
 class PlannedOperationPreview(BaseModel):

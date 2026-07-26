@@ -1,0 +1,13 @@
+{
+  "task": "UI-TRUTH-01A",
+  "types_file": "frontend/src/types/runtimeStatus.ts",
+  "snapshot": "RuntimeTruthSnapshot",
+  "segments": {
+    "backend": "RuntimeCheckState",
+    "database": "DatabaseTruthState + DatabaseTruthSource",
+    "environment": "EnvironmentTruthState",
+    "diagnostics": "authorized | available flags only",
+    "session": "SessionTruthState — defined for 01B, not in snapshot yet"
+  },
+  "forbidden_in_state": ["secrets", "jwt", "db_paths", "raw_diagnostics_payload", "connection_strings"]
+}

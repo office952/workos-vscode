@@ -6,7 +6,21 @@ import {
   type ReviewHeaderStatusModel,
 } from "./intakeV6ReviewHeaderStatus";
 
-export type WorkspaceHeaderStatusOverlay = Partial<BuildReviewHeaderStatusInput>;
+export type WorkspaceHeaderStatusOverlay = Partial<BuildReviewHeaderStatusInput> & {
+  secondaryWarnings?: readonly string[];
+  /**
+   * Authoritative attention inventory from Configurare sticky
+   * (presentation-only; shared with footer guidance counts).
+   */
+  attentionIssues?: ReadonlyArray<{
+    id: string;
+    severity: "blocker" | "warning";
+    message: string;
+    action?: string | null;
+    focusTarget?: string | null;
+    tabId?: "finisaje" | "iluminare" | "montaj" | "layers" | null;
+  }>;
+};
 
 export function buildWorkspaceHeaderStatus(
   state: IntakeV6WorkspaceState,
@@ -36,12 +50,13 @@ export function buildWorkspaceHeaderStatus(
     layersConfirmed,
     layersTotal,
     artworkTotal: overlay.artworkTotal ?? 0,
-    artworkConfirmed: overlay.artworkConfirmed ?? 0,
+    artworkConfigured: overlay.artworkConfigured ?? overlay.artworkConfirmed ?? 0,
     operatorConfirmationMissing: overlay.operatorConfirmationMissing,
     reviewWarnings: overlay.reviewWarnings,
     surfacing: overlay.surfacing ?? { showBanner: false, reasons: [], actions: [] },
     pendingSave: overlay.pendingSave,
     pendingConfirmationCount,
+    currentStep: state.currentStep,
     widthMm: overlay.widthMm,
     heightMm: overlay.heightMm,
     perimeterM: overlay.perimeterM,
@@ -64,6 +79,7 @@ export function shouldShowIntakeV6SmartBanner(
 ): boolean {
   if (state.phase === "loading" || state.analyzerStatus === "analyzing") return true;
   if (hasUnsavedAnalysis(state)) return true;
-  if (firstBlocker && state.currentStep !== "layers") return true;
+  // Review step uses the operator blocker banner under tabs — avoid duplicate handoff strip.
+  if (firstBlocker && state.currentStep !== "layers" && state.currentStep !== "review") return true;
   return false;
 }

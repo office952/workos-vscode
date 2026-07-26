@@ -106,7 +106,7 @@ Synthesis from the read-only **Material Naming & Alias Registry** audit (2026-06
 
 | Risk | Evidence in repo |
 |------|------------------|
-| **ACM / ACP / Dibond / Alucobond / Bond** | `MAT-ACP-3MM` vs `MAT-ACM-BOND-3MM` vs `MAT-ACM-BOND-PANEL` (generic alias row); names like „Panou ACM / Bond / Dibond 3 mm”; mock `MAT-001` „ACP / Dibond 3mm alb” |
+| **ACM / ACP / Dibond / Alucobond / Bond** | **Preferred/canonical:** `MAT-ACM-BOND-3MM`. `MAT-ACP-3MM` = legacy alias (not a second technical/pricing option; no destructive migration). `MAT-ACM-BOND-PANEL` = thickness resolver alias. Names like „Panou ACM / Bond / Dibond 3 mm”; mock `MAT-001` „ACP / Dibond 3mm alb” |
 | **Forex vs PVC expandat** | `MAT-SPATE-PVC-LITERE` (code PVC, name „Forex 10 mm”); category `forex`; mock `MAT-003` „PVC expandat 5mm alb” |
 | **Plexiglas vs PMMA / acril** | Seeds use „Plexiglas” only (`MAT-PLEXI-*`); templates/intake say „plexi/acrilic” — no PMMA in registry `name` |
 | **Oracal code namespace** | `MAT-ORACAL-651` (BUILD 4) vs `MAT_ORACAL_651` (Product 001 BOM, underscore codes) |
@@ -214,7 +214,7 @@ Work that can proceed **without** database migration:
 |--------|-------------|
 | **Naming convention** | This document + owner approval; new rows use canonical `name` pattern |
 | **Static alias map** | Implemented: `frontend/src/lib/materials/materialCanonicalTaxonomy.ts` + `materialCanonicalAnalysis.ts` (family/alias/brand/usage analysis; no DB) |
-| **Seed cleanup** | Planned dedup: `MAT-ACP-3MM` vs `MAT-ACM-BOND-3MM`; align Oracal code namespaces |
+| **Seed cleanup** | Prefer `MAT-ACM-BOND-3MM`; keep `MAT-ACP-3MM` as legacy alias (no delete). Align Oracal code namespaces |
 | **`source_notes`** | Record accepted aliases and cross-refs on existing rows |
 | **Subcategory policy** | Already groups synonyms in UI — extend with alias hints in recommended subcategory labels |
 | **Admin naming hints (non-blocking)** | Implemented in Material Price Registry edit drawer: `MaterialNamingHints` — alias/brand/usage warnings; does not block save |

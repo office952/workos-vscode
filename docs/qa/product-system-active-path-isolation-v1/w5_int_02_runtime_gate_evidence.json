@@ -1,0 +1,647 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "trusted_backend_pid": 26888,
+  "fixture": {
+    "order_id": 23099,
+    "snapshot_hash": 6038447723591789912,
+    "snapshot_code": "OSN2-INT02-GATE",
+    "preview_keys_one": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel"
+    ],
+    "preview_keys_two": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel"
+    ],
+    "mounting_tasks": [
+      {
+        "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+        "label": "Cut Acm Panel",
+        "canonical_task_type": "cnc_routing",
+        "source_module_code": "structura_suport",
+        "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::cut_acm_panel",
+        "source_operation_code": "CUT_ACM_PANEL",
+        "source_task_rule_code": "cut_acm_panel",
+        "sequence_index": 21,
+        "depends_on_task_keys": [
+          "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply"
+        ],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_CNC",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules",
+          "product_aggregate_snapshot.composition_graph.operations"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+          "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_role": "mounting_panel",
+          "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_module_code": "structura_suport",
+          "source_operation_code": "CUT_ACM_PANEL",
+          "source_task_rule_code": "cut_acm_panel",
+          "operation_scope": "COMPONENT_LOCAL",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": false,
+          "task_rule_origin": "composition_graph_operation",
+          "provenance": [
+            "origin=composition_graph_operation",
+            "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-INT02-GATE",
+            "snapshot_hash=int02gatehashint02gatehashint02ga"
+          ]
+        }
+      },
+      {
+        "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+        "label": "Mount Acm Panel",
+        "canonical_task_type": "installation_prep",
+        "source_module_code": "structura_suport",
+        "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::mount_acm_panel",
+        "source_operation_code": "MOUNT_ACM_PANEL",
+        "source_task_rule_code": "mount_acm_panel",
+        "sequence_index": 22,
+        "depends_on_task_keys": [
+          "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel"
+        ],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_CNC",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules",
+          "product_aggregate_snapshot.composition_graph.operations"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+          "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_role": "mounting_panel",
+          "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_module_code": "structura_suport",
+          "source_operation_code": "MOUNT_ACM_PANEL",
+          "source_task_rule_code": "mount_acm_panel",
+          "operation_scope": "COMPONENT_LOCAL",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": false,
+          "task_rule_origin": "composition_graph_operation",
+          "provenance": [
+            "origin=composition_graph_operation",
+            "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-INT02-GATE",
+            "snapshot_hash=int02gatehashint02gatehashint02ga"
+          ]
+        }
+      }
+    ],
+    "readiness_authority": "FROZEN_ORDER_SNAPSHOT_V2",
+    "legacy_line_items_present": true
+  },
+  "timestamp": "2026-07-15T00:43:55.782033+00:00",
+  "steps": {
+    "http_preview": {
+      "status_code": 200,
+      "task_keys": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+        "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+        "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel"
+      ]
+    },
+    "http_persist_first": {
+      "status_code": 201,
+      "body": {
+        "status": "persisted",
+        "persist_status": "persisted",
+        "execution_plan_id": 4,
+        "order_id": 23099,
+        "order_code": "ORD-W5INT02-GATE",
+        "quote_id": 23099,
+        "quote_snapshot_v2_id": 23099,
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "plan_source": "order_snapshot_v2",
+        "source_snapshot_code": "OSN2-INT02-GATE",
+        "source_content_hash": "int02gatehashint02gatehashint02ga",
+        "source_order_snapshot_version": "1.0.0",
+        "order_snapshot_hash": "52bae4b0614b2692dfa61abe81762e0f",
+        "preview_status": "partial_missing_planning_minutes",
+        "total_estimated_time_minutes": 0.0,
+        "total_estimated_time_source": "not_available_in_v2_preview",
+        "execution_plan_created": true,
+        "execution_tasks_created": false,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "blockers": [],
+        "provenance": [
+          {
+            "key": "order_snapshot_v2",
+            "source": "order_snapshot_v2",
+            "detail": "OrderSnapshotV2 frozen payload"
+          },
+          {
+            "key": "execution_plan_v2_preview_service",
+            "source": "execution_plan_v2_preview_service",
+            "detail": "Read-only preview \u2014 not persisted"
+          },
+          {
+            "key": "product_definition_snapshot",
+            "source": "product_definition_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          },
+          {
+            "key": "product_aggregate_snapshot",
+            "source": "product_aggregate_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          }
+        ],
+        "message": "ExecutionPlan V2 persisted from validated preview.",
+        "input_summary": {
+          "task_count": 13,
+          "operation_count": 13,
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "owner_decision_count": 4,
+          "sold_scope_mode": "full_product",
+          "sold_scope_filter_enabled": false,
+          "sold_runtime_modules_count": 0,
+          "material_count": 0
+        }
+      }
+    },
+    "http_persist_second": {
+      "status_code": 200,
+      "body": {
+        "status": "already_exists",
+        "persist_status": "already_exists",
+        "execution_plan_id": 4,
+        "order_id": 23099,
+        "order_code": "ORD-W5INT02-GATE",
+        "quote_id": 23099,
+        "quote_snapshot_v2_id": 23099,
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "plan_source": "order_snapshot_v2",
+        "source_snapshot_code": "OSN2-INT02-GATE",
+        "source_content_hash": "int02gatehashint02gatehashint02ga",
+        "source_order_snapshot_version": "1.0.0",
+        "order_snapshot_hash": "52bae4b0614b2692dfa61abe81762e0f",
+        "preview_status": "partial_missing_planning_minutes",
+        "total_estimated_time_minutes": 0.0,
+        "total_estimated_time_source": "not_available_in_v2_preview",
+        "execution_plan_created": false,
+        "execution_tasks_created": false,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "blockers": [],
+        "provenance": [
+          {
+            "key": "order_snapshot_v2",
+            "source": "order_snapshot_v2",
+            "detail": "OrderSnapshotV2 frozen payload"
+          },
+          {
+            "key": "execution_plan_v2_preview_service",
+            "source": "execution_plan_v2_preview_service",
+            "detail": "Read-only preview \u2014 not persisted"
+          },
+          {
+            "key": "product_definition_snapshot",
+            "source": "product_definition_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          },
+          {
+            "key": "product_aggregate_snapshot",
+            "source": "product_aggregate_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          }
+        ],
+        "message": "ExecutionPlan V2 already exists for this order \u2014 no duplicate row created.",
+        "input_summary": {
+          "task_count": 13,
+          "operation_count": 13,
+          "material_count": 0,
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        }
+      }
+    },
+    "http_materialize": {
+      "status_code": 201,
+      "body": {
+        "status": "materialized",
+        "order_id": 23099,
+        "execution_plan_id": 4,
+        "execution_tasks_created": true,
+        "operational_tasks_count": 13,
+        "operational_tasks_version": "v2.materialize.1",
+        "activation_hash": "9cbd4a14b8b8b7a09d6211a368a53519",
+        "activation_status": "materialized",
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "blockers": [],
+        "operational_tasks_preview": [
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "process_type": "file_preparation",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+            "process_type": "cnc_routing",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+            "process_type": "edge_bending",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+            "process_type": "volumetric_letter_assembly",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+            "process_type": "cnc_routing",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+            "process_type": "vinyl_cutting",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+            "process_type": "volumetric_letter_assembly",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+            "process_type": "led_assembly",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+            "process_type": "led_wiring",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+            "process_type": "cnc_routing",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+            "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+            "process_type": "vinyl_cutting",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+            "source_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+            "process_type": "cnc_routing",
+            "operational_status": "pending"
+          },
+          {
+            "task_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+            "source_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+            "process_type": "installation_prep",
+            "operational_status": "pending"
+          }
+        ],
+        "no_sessions_created": true,
+        "message": "Operational tasks materialized into V2 plan envelope."
+      }
+    },
+    "production_release_before": {
+      "status_code": 200,
+      "body": {
+        "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+        "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+        "order_id": 23099,
+        "blockers": [
+          {
+            "code": "INTERNAL_SABLON_FOREX_COST",
+            "label": "Cost \u0219ablon Forex \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+            "scope": "order",
+            "required_action": "resolve_owner_decision",
+            "acknowledgement_sufficient": false,
+            "requires_resolution": true,
+            "operational_status": "unresolved",
+            "frozen_classification": "production_blocking"
+          },
+          {
+            "code": "INTERNAL_MONTAJ_RULE",
+            "label": "Regul\u0103 montaj \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+            "scope": "order",
+            "required_action": "resolve_owner_decision",
+            "acknowledgement_sufficient": false,
+            "requires_resolution": true,
+            "operational_status": "unresolved",
+            "frozen_classification": "production_blocking"
+          },
+          {
+            "code": "INTERNAL_CONSUMABLES_RULE",
+            "label": "Regul\u0103 consumabile \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+            "scope": "order",
+            "required_action": "resolve_owner_decision",
+            "acknowledgement_sufficient": false,
+            "requires_resolution": true,
+            "operational_status": "unresolved",
+            "frozen_classification": "production_blocking"
+          }
+        ],
+        "frozen_decision_codes": [
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "nonblocking_decision_codes": [
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "message": "Produc\u021bia este blocat\u0103 de decizii owner nerezolvate."
+      }
+    },
+    "start_blocked": {
+      "status_code": 409,
+      "body": {
+        "detail": {
+          "code": "production_release_blocked",
+          "error": "production_release_blocked",
+          "message": "Produc\u021bia este blocat\u0103 de decizii owner nerezolvate.",
+          "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+          "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+          "blockers": [
+            {
+              "code": "INTERNAL_SABLON_FOREX_COST",
+              "label": "Cost \u0219ablon Forex \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            },
+            {
+              "code": "INTERNAL_MONTAJ_RULE",
+              "label": "Regul\u0103 montaj \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            },
+            {
+              "code": "INTERNAL_CONSUMABLES_RULE",
+              "label": "Regul\u0103 consumabile \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            }
+          ],
+          "frozen_decision_codes": [
+            "INTERNAL_SABLON_FOREX_COST",
+            "INTERNAL_MONTAJ_RULE",
+            "INTERNAL_CONSUMABLES_RULE",
+            "INTERNAL_AMBALARE_RULE"
+          ],
+          "nonblocking_decision_codes": [
+            "INTERNAL_AMBALARE_RULE"
+          ]
+        }
+      }
+    },
+    "resolve_one_blocker": {
+      "status_code": 200,
+      "body": {
+        "order_id": 23099,
+        "code": "INTERNAL_SABLON_FOREX_COST",
+        "operational_status": "resolved",
+        "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+        "idempotent": false,
+        "audit_event_id": "odr-b3e8ee434af9"
+      }
+    },
+    "start_after_partial_resolve": {
+      "status_code": 409,
+      "body": {
+        "detail": {
+          "code": "production_release_blocked",
+          "error": "production_release_blocked",
+          "message": "Produc\u021bia este blocat\u0103 de decizii owner nerezolvate.",
+          "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+          "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+          "blockers": [
+            {
+              "code": "INTERNAL_MONTAJ_RULE",
+              "label": "Regul\u0103 montaj \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            },
+            {
+              "code": "INTERNAL_CONSUMABLES_RULE",
+              "label": "Regul\u0103 consumabile \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            }
+          ],
+          "frozen_decision_codes": [
+            "INTERNAL_SABLON_FOREX_COST",
+            "INTERNAL_MONTAJ_RULE",
+            "INTERNAL_CONSUMABLES_RULE",
+            "INTERNAL_AMBALARE_RULE"
+          ],
+          "nonblocking_decision_codes": [
+            "INTERNAL_AMBALARE_RULE"
+          ]
+        }
+      }
+    },
+    "resolve_internal_montaj_rule": {
+      "status_code": 200,
+      "body": {
+        "order_id": 23099,
+        "code": "INTERNAL_MONTAJ_RULE",
+        "operational_status": "resolved",
+        "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+        "idempotent": false,
+        "audit_event_id": "odr-a39c21f8420f"
+      }
+    },
+    "resolve_internal_consumables_rule": {
+      "status_code": 200,
+      "body": {
+        "order_id": 23099,
+        "code": "INTERNAL_CONSUMABLES_RULE",
+        "operational_status": "resolved",
+        "release_status": "RELEASE_ALLOWED",
+        "idempotent": false,
+        "audit_event_id": "odr-2e83b6939e65"
+      }
+    },
+    "start_after_full_resolve": {
+      "status_code": 200,
+      "body": {
+        "id": 2,
+        "order_id": 23099,
+        "order_code": "ORD-W5INT02-GATE",
+        "tasks": [
+          {
+            "session_id": "ws-331588cd5b0f",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "started_at": "2026-07-15T00:43:56.372860+00:00",
+            "ended_at": null
+          }
+        ],
+        "materials": [],
+        "total_actual_time_minutes": 0.0
+      }
+    },
+    "start_retry_idempotent": {
+      "status_code": 409,
+      "body": {
+        "detail": {
+          "code": "task_not_ready",
+          "error": "task_not_ready",
+          "message": "Taskul nu este eligibil pentru start.",
+          "readiness_status": "in_progress",
+          "readiness_label": "\u00cen lucru",
+          "blocking_task_ids": [],
+          "readiness_reasons": [],
+          "blocking_reasons": []
+        }
+      }
+    },
+    "reality_get": {
+      "status_code": 200,
+      "body": {
+        "id": 2,
+        "order_id": 23099,
+        "order_code": "ORD-W5INT02-GATE",
+        "tasks": [
+          {
+            "session_id": "ws-331588cd5b0f",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "started_at": "2026-07-15T00:43:56.372860+00:00",
+            "ended_at": null
+          }
+        ],
+        "materials": [],
+        "total_actual_time_minutes": 0.0
+      }
+    }
+  },
+  "service_chain": {
+    "persist_two_status": "already_exists",
+    "materialize_status": "materialized",
+    "operational_tasks_count": 13
+  },
+  "final_state": {
+    "snapshot_hash": 6038447723591789912,
+    "snapshot_unchanged": true,
+    "resolutions_in_operational_store": true
+  },
+  "pass_checks": {
+    "preview_keys_stable": true,
+    "http_preview_ok": true,
+    "http_keys_match_service": true,
+    "readiness_frozen_authority": true,
+    "mounting_identity_present": true,
+    "persist_first_ok": true,
+    "persist_idempotent": true,
+    "materialize_ok": true,
+    "release_status_live": true,
+    "start_blocked_409": true,
+    "start_blocked_code": true,
+    "partial_resolve_still_blocked": true,
+    "multi_blocker_proven": true,
+    "start_allowed_after_resolve": true,
+    "start_retry_ok": true,
+    "reality_recorded": true,
+    "snapshot_unchanged": true,
+    "resolutions_operational": true,
+    "nonblocking_not_in_blockers": true
+  },
+  "pass": true
+}

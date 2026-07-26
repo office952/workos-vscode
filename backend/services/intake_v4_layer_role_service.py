@@ -4,10 +4,30 @@ from __future__ import annotations
 
 from typing import Any
 
-from schemas.intake_v4 import IntakeV4LayerRoleLayer, IntakeV4LayerRoleSetup
+from schemas.intake_v4 import (
+    IntakeV4LayerRoleLayer,
+    IntakeV4LayerRoleSetup,
+    IntakeV4SelectedLayerRef,
+)
 from services.intake_v3_geometry_path_perimeter_classification_service import (
     normalize_svg_layer_role,
 )
+
+
+# Persisted operator/canonical layer roles → derived selected_layer_refs.role values.
+# `logo` is a LEGACY_BRIDGE alias for older persisted payloads; UI uses `printed_artwork`.
+_SELECTED_LAYER_ROLE_MAP = {
+    "face": "vector_litere",
+    "printed_artwork": "vector_logo",
+    "logo": "vector_logo",
+}
+
+
+def _derived_role_for_persisted_layer_role(persisted_role: str | None) -> str | None:
+    token = str(persisted_role or "").strip().lower()
+    if not token:
+        return None
+    return _SELECTED_LAYER_ROLE_MAP.get(token)
 
 
 def _layer_key(layer: dict[str, Any]) -> str:
@@ -143,3 +163,85 @@ def apply_layer_role_updates(
         status = "missing"
 
     return setup.model_copy(update={"layers": merged_layers, "confirmation_status": status})
+
+
+def derive_selected_layer_refs_from_setup(
+    setup: IntakeV4LayerRoleSetup | None,
+) -> list[IntakeV4SelectedLayerRef]:
+    """Pure projection from canonical layer_role_setup to selected_layer_refs."""
+    if setup is None or not setup.layers:
+        return []
+
+    if setup.confirmation_status != "complete":
+        return []
+
+    refs: list[IntakeV4SelectedLayerRef] = []
+    seen_layer_ids: set[str] = set()
+    for layer in setup.layers:
+        if layer.confirmation_state != "confirmed":
+            continue
+        derived_role = _derived_role_for_persisted_layer_role(layer.confirmed_role)
+        if derived_role is None:
+            continue
+        layer_id = str(layer.layer_id or "").strip()
+        if not layer_id:
+            raise ValueError("SELECTED_LAYER_REFS_AMBIGUOUS")
+        if layer_id in seen_layer_ids:
+            raise ValueError("SELECTED_LAYER_REFS_AMBIGUOUS")
+        seen_layer_ids.add(layer_id)
+        refs.append(
+            IntakeV4SelectedLayerRef(
+                layer_id=layer_id,
+                role=derived_role,
+                source="operator_confirmed_layer_role",
+                confirmed=True,
+            )
+        )
+    return refs
+
+
+def selected_layer_refs_runtime_state(
+    setup: IntakeV4LayerRoleSetup | None,
+) -> dict[str, Any]:
+    if setup is None or not setup.layers:
+        return {"refs": [], "status": "missing", "blocker_code": "SELECTED_LAYER_REFS_MISSING"}
+
+    if setup.confirmation_status != "complete":
+        return {
+            "refs": [],
+            "status": "unconfirmed",
+            "blocker_code": "SELECTED_LAYER_REFS_UNCONFIRMED",
+        }
+
+    try:
+        refs = derive_selected_layer_refs_from_setup(setup)
+    except ValueError:
+        return {
+            "refs": [],
+            "status": "ambiguous",
+            "blocker_code": "SELECTED_LAYER_REFS_AMBIGUOUS",
+        }
+
+    if not refs:
+        return {
+            "refs": [],
+            "status": "confirmed",
+            "blocker_code": "SELECTED_LAYER_REFS_EMPTY",
+        }
+
+    return {"refs": refs, "status": "confirmed", "blocker_code": None}
+
+
+def sync_selected_layer_refs_on_payload(payload_raw: dict[str, Any], setup: IntakeV4LayerRoleSetup | None) -> None:
+    """Persist derived selected_layer_refs on the workspace payload dict (single write path)."""
+    runtime = selected_layer_refs_runtime_state(setup)
+    svg_runtime = payload_raw.get("svg") if isinstance(payload_raw.get("svg"), dict) else {}
+    if runtime["status"] == "confirmed":
+        svg_runtime["selected_layer_refs"] = [item.model_dump(mode="json") for item in runtime["refs"]]
+        payload_raw["svg"] = svg_runtime
+        return
+    svg_runtime.pop("selected_layer_refs", None)
+    if svg_runtime:
+        payload_raw["svg"] = svg_runtime
+    else:
+        payload_raw.pop("svg", None)

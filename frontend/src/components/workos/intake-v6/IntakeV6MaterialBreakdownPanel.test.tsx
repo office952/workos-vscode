@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import IntakeV6MaterialBreakdownPanel from "@/components/workos/intake-v6/IntakeV6MaterialBreakdownPanel";
 import type { IntakeV6MaterialBreakdownResponse } from "@/lib/intakeV6/intakeV6Api";
@@ -12,7 +12,7 @@ function breakdownWithOperations(): IntakeV6MaterialBreakdownResponse {
     material_rows: [
       {
         material_key: "plexiglas_face",
-        display_name: "Plexiglas 3 mm / față litere",
+        display_name: "plexiglas 3mm PMMA - opal",
         category: "material",
         quantity: 0.5834,
         unit: "m2",
@@ -28,9 +28,9 @@ function breakdownWithOperations(): IntakeV6MaterialBreakdownResponse {
     operation_rows: [
       {
         key: "cnc_face_cutting_plexiglas_3mm",
-        display_name: "Debitare CNC față Plexiglas 3 mm",
+        display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
         operation_type: "cutting",
-        material_name: "Plexiglas 3 mm",
+        material_name: "plexiglas 3mm PMMA - opal",
         thickness_mm: 3,
         quantity: 13.62,
         unit: "ml",
@@ -42,7 +42,7 @@ function breakdownWithOperations(): IntakeV6MaterialBreakdownResponse {
       },
       {
         key: "cnc_face_bevel_plexiglas_3mm",
-        display_name: "Șanfren CNC față Plexiglas 3 mm",
+        display_name: "Șanfren CNC față plexiglas 3mm PMMA - opal",
         operation_type: "bevel",
         quantity: 13.62,
         unit: "ml",
@@ -82,10 +82,10 @@ describe("IntakeV6MaterialBreakdownPanel CNC operations", () => {
   it("shows CNC operation rows separate from materials with missing rate label", () => {
     render(<IntakeV6MaterialBreakdownPanel breakdown={breakdownWithOperations()} loading={false} />);
     expect(screen.getByTestId("intake-v6-cnc-operation-rows")).toBeInTheDocument();
-    expect(screen.getByText("Debitare CNC față Plexiglas 3 mm")).toBeInTheDocument();
-    expect(screen.getByText("Șanfren CNC față Plexiglas 3 mm")).toBeInTheDocument();
+    expect(screen.getByText("Debitare CNC față plexiglas 3mm PMMA - opal")).toBeInTheDocument();
+    expect(screen.getByText("Șanfren CNC față plexiglas 3mm PMMA - opal")).toBeInTheDocument();
     expect(screen.getAllByText(/Preț operație neconfigurat/).length).toBeGreaterThan(0);
-    expect(screen.getByText("Plexiglas 3 mm / față litere")).toBeInTheDocument();
+    expect(screen.getByText("plexiglas 3mm PMMA - opal")).toBeInTheDocument();
   });
 
   it("shows edge cant operation rows separate from CNC", () => {

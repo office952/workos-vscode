@@ -1,0 +1,110 @@
+{
+  "domains": [
+    {
+      "domain": "Git repository",
+      "backed_up": "PASS",
+      "checksum": "PASS",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": ".git included; dirty worktree preserved"
+    },
+    {
+      "domain": "frontend source",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "Source copied; node_modules excluded by design"
+    },
+    {
+      "domain": "backend source",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": ".venv excluded by design"
+    },
+    {
+      "domain": "scripts",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": ""
+    },
+    {
+      "domain": "docs",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": ""
+    },
+    {
+      "domain": "DB",
+      "backed_up": "PASS",
+      "checksum": "PASS",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "sqlite3 backup API after writers stopped"
+    },
+    {
+      "domain": "schema",
+      "backed_up": "PASS",
+      "checksum": "PASS",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "database/schema.sql"
+    },
+    {
+      "domain": "runtime files",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "N/A",
+      "verified": "PASS",
+      "notes": "No uploads/storage dirs present; inventory recorded"
+    },
+    {
+      "domain": "config inventory",
+      "backed_up": "PASS",
+      "checksum": "N/A",
+      "restored": "N/A",
+      "verified": "PASS",
+      "notes": "No secrets in manifests"
+    },
+    {
+      "domain": "Git dirty patches",
+      "backed_up": "PASS",
+      "checksum": "PASS",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "diff_unstaged.patch + diff_staged.patch"
+    },
+    {
+      "domain": "backend startup",
+      "backed_up": "N/A",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "Isolated restore on :8021 (prior evidence)"
+    },
+    {
+      "domain": "frontend startup/build",
+      "backed_up": "N/A",
+      "checksum": "N/A",
+      "restored": "DEFERRED",
+      "verified": "NOT_EXECUTED_SAFE_DEFERRED",
+      "notes": "Deferred to BACKUP-BASELINE-01B"
+    },
+    {
+      "domain": "representative reads",
+      "backed_up": "N/A",
+      "checksum": "N/A",
+      "restored": "PASS",
+      "verified": "PASS",
+      "notes": "Health, employees, machines, orders on :8021 (prior evidence)"
+    }
+  ],
+  "backup_validation": "PARTIAL",
+  "verdict": "BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL"
+}

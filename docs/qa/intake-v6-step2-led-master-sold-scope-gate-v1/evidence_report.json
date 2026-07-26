@@ -1,0 +1,60 @@
+{
+  "task": "INTAKE_V6_STEP2_LED_MASTER_SOLD_SCOPE_GATE_V1",
+  "head_before": "6d5a74c",
+  "verdict": "PASS",
+  "direct_api_mutation": false,
+  "persisted_illuminated_preserved": true,
+  "extra_put_from_visibility_change": false,
+  "scenarios": [
+    {
+      "name": "ELECTRICAL-only",
+      "screenshot": "01_electrical_only_no_led_master_input.png",
+      "sold_modules": [
+        "ELECTRICAL"
+      ],
+      "led_master_visible": false,
+      "led_master_editable": false,
+      "readonly_message": true,
+      "electrical_visible": true,
+      "lighting_visible": false
+    },
+    {
+      "name": "LIGHTING-only",
+      "screenshot": "02_lighting_only_led_master_available.png",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "led_master_visible": true,
+      "led_master_editable": true,
+      "readonly_message": false,
+      "electrical_visible": false,
+      "lighting_visible": true
+    },
+    {
+      "name": "SYSTEM_LED",
+      "screenshot": "03_system_led_led_master_available.png",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "led_master_visible": true,
+      "led_master_editable": true,
+      "readonly_message": false,
+      "electrical_visible": true,
+      "lighting_visible": true
+    },
+    {
+      "name": "Re-enable LIGHTING",
+      "screenshot": "04_reenable_lighting_restores_state.png",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "led_master_visible": true,
+      "led_master_editable": true,
+      "readonly_message": false,
+      "electrical_visible": true,
+      "lighting_visible": true
+    }
+  ]
+}

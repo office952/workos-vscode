@@ -1,0 +1,87 @@
+[
+  {
+    "wave": "R0",
+    "name": "Freeze and observe",
+    "actions": [
+      "raport discrepanțe",
+      "fără switch sursă"
+    ]
+  },
+  {
+    "wave": "R1",
+    "name": "Identity reconciliation",
+    "actions": [
+      "employees.id",
+      "user_id",
+      "HR link"
+    ]
+  },
+  {
+    "wave": "R2",
+    "name": "Taxonomy",
+    "actions": [
+      "SK_COMMERCIAL_TECH",
+      "WC naming"
+    ]
+  },
+  {
+    "wave": "R3",
+    "name": "Competence and authorization",
+    "actions": [
+      "registry vs JSON",
+      "overrides Sandu"
+    ]
+  },
+  {
+    "wave": "R4",
+    "name": "Machine/resource",
+    "actions": [
+      "MCH-CNC-4020 parity",
+      "resource_kind"
+    ]
+  },
+  {
+    "wave": "R5",
+    "name": "Execution surfaces",
+    "actions": [
+      "tablet",
+      "shop-floor mock"
+    ]
+  },
+  {
+    "wave": "R6",
+    "name": "Read parity",
+    "actions": [
+      "adapters",
+      "drift metrics"
+    ]
+  },
+  {
+    "wave": "R7",
+    "name": "Write freeze",
+    "actions": [
+      "stop JSON writes"
+    ]
+  },
+  {
+    "wave": "R8",
+    "name": "Migration",
+    "actions": [
+      "one-time post owner"
+    ]
+  },
+  {
+    "wave": "R9",
+    "name": "Fallback disable",
+    "actions": [
+      "fail-closed"
+    ]
+  },
+  {
+    "wave": "R10",
+    "name": "Legacy removal",
+    "actions": [
+      "post proof"
+    ]
+  }
+]

@@ -1,0 +1,114 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "matrix": [
+    {
+      "module_ui": "OC",
+      "module_real": "Operational Core (conceptual)",
+      "authority": "Resurse, capabilități, constrângeri (documentat)",
+      "contract_in": "NONE_PROVEN",
+      "contract_out": "WI_CREATED (documentat only)",
+      "event": "MACHINE_DOWN (demo only on page)",
+      "snapshot": "NONE",
+      "health": "PARTIAL — mapped from database/version/seed checks when checks exposed; public health returns empty checks",
+      "classification": "UI_ONLY"
+    },
+    {
+      "module_ui": "WI",
+      "module_real": "Intake V6 / Work Intake legacy",
+      "authority": "Cerințe, specificații (Intake workspace)",
+      "contract_in": "OC→WI static",
+      "contract_out": "product_family payload static",
+      "event": "WI_READY_FOR_QUOTE — governance doc only; not emitted in backend grep",
+      "snapshot": "NONE on page",
+      "health": "DEFAULT_GREEN (no mapped checks)",
+      "classification": "LEGACY"
+    },
+    {
+      "module_ui": "PS",
+      "module_real": "Product System + Product Definition builder",
+      "authority": "Produs tehnic, componente, mini-module registry",
+      "contract_in": "Product Definition → aggregate graph",
+      "contract_out": "cost BOM preview adapters",
+      "event": "PRODUCT_RESOLVED — static reference only on page",
+      "snapshot": "ProductAggregate / dossier (runtime, not shown on page)",
+      "health": "DEFAULT_GREEN",
+      "classification": "CONFIRMED_CODE"
+    },
+    {
+      "module_ui": "CE",
+      "module_real": "CostEngine services + aggregate cost BOM",
+      "authority": "Cost intern, consum, timp estimat operational",
+      "contract_in": "product graph / BOM",
+      "contract_out": "commercial preview boundary",
+      "event": "COST_CALCULATED — static reference only",
+      "snapshot": "calculation result, not page snapshot card",
+      "health": "DEFAULT_GREEN",
+      "classification": "CONFIRMED_CODE"
+    },
+    {
+      "module_ui": "QT",
+      "module_real": "Quotes entity API + Oferta UI route",
+      "authority": "Adevăr comercial, quote_snapshot_v2",
+      "contract_in": "cost preview / CPP",
+      "contract_out": "order convert",
+      "event": "QUOTE_ACCEPTED — static reference; demo QT-2245 absent in DB",
+      "snapshot": "quote_snapshot_v2 REAL in DB",
+      "health": "DEFAULT_GREEN",
+      "classification": "MISNAMED"
+    },
+    {
+      "module_ui": "OR",
+      "module_real": "Orders / Comanda",
+      "authority": "snapshot_v2_json frozen order truth",
+      "contract_in": "quote acceptance",
+      "contract_out": "execution plan generation",
+      "event": "ORDER_LOCKED — static reference; real locked orders exist (e.g. ORD-W5T01-GATE)",
+      "snapshot": "order snapshot_v2 REAL",
+      "health": "PARTIAL — execution_anchor_order_14 check exists but anchor order 14 missing",
+      "classification": "CONFIRMED_RUNTIME"
+    },
+    {
+      "module_ui": "WO",
+      "module_real": "ExecutionPlan + orchestration services (not platform WorkOS)",
+      "authority": "Planificare, task batch, dependencies",
+      "contract_in": "order snapshot",
+      "contract_out": "execution reality / tasks",
+      "event": "WORK_SCHEDULED, JOB_RELEASED — static reference",
+      "snapshot": "ExecutionPlan row REAL",
+      "health": "PARTIAL — shares execution_anchor_order_14 mapping",
+      "classification": "MISNAMED"
+    },
+    {
+      "module_ui": "TK",
+      "module_real": "ExecutionReality tasks + operator/employee mobile projections",
+      "authority": "Stare operare atomica, nu business truth",
+      "contract_in": "plan materialization",
+      "contract_out": "attendance/effects read-only",
+      "event": "TASK_STARTED — gap type in operational_reality_review only",
+      "snapshot": "NONE on page",
+      "health": "PARTIAL — observation_thresholds mapped",
+      "classification": "PARTIAL"
+    }
+  ],
+  "displayed_flow_vs_canonical": [
+    {"position": 1, "displayed": "OC", "canonical": "Request/Intake entry", "aligned": false, "problem": "OC not a runtime module", "decision": "Demote or define OC authority"},
+    {"position": 2, "displayed": "WI", "canonical": "Intake / Request", "aligned": false, "problem": "Legacy WI label; canonical route /intake", "decision": "Rename to Intake"},
+    {"position": 3, "displayed": "ProductSystem", "canonical": "Product Definition → Product System", "aligned": false, "problem": "Product Definition step omitted", "decision": "Insert PD or merge label"},
+    {"position": 4, "displayed": "CostEngine", "canonical": "Cost", "aligned": true, "problem": "Naming OK", "decision": "Keep"},
+    {"position": 5, "displayed": "Quotes", "canonical": "Oferta", "aligned": false, "problem": "English legacy label in UI", "decision": "Align nav Oferte"},
+    {"position": 6, "displayed": "Orders", "canonical": "Comanda", "aligned": false, "problem": "English legacy label", "decision": "Align nav Comenzi"},
+    {"position": 7, "displayed": "WorkOS", "canonical": "Execution Plan / Orchestration", "aligned": false, "problem": "Collapses plan+reality+platform", "decision": "Split ExecutionPlan vs ExecutionReality"},
+    {"position": 8, "displayed": "Tasks", "canonical": "ExecutionReality", "aligned": false, "problem": "Tasks shown as terminal module not reality layer", "decision": "Reframe as projection"}
+  ],
+  "missing_from_chain": [
+    "Product Definition",
+    "Execution Plan (explicit)",
+    "ExecutionReality",
+    "Attendance",
+    "Employee/Resource authority",
+    "Offer distinct naming"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "vl_breakdown.json": {
+    "template": "TPL-VOLUMETRIC-LETTERS_v2",
+    "fixture": "vl_letters_demo_v1",
+    "lines": 42,
+    "groups": {
+      "machine": 10,
+      "commercial": 2,
+      "labor": 3,
+      "service": 2,
+      "material": 20,
+      "adjustment": 1,
+      "ai_decision": 4
+    },
+    "commercial_total": 1061.0,
+    "internal_total": 923.2,
+    "cpp_match": true,
+    "eic_match": true,
+    "cpp_status": "ready",
+    "eic_status": "blocked",
+    "acm_treatments_blocked": null,
+    "readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "warnings_n": 15,
+    "blockers_n": 2,
+    "has_qi": true
+  },
+  "acm_breakdown.json": {
+    "template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "fixture": "acm_shell_demo_v1",
+    "lines": 3,
+    "groups": {
+      "material": 1,
+      "ai_decision": 2
+    },
+    "commercial_total": null,
+    "internal_total": 5.0,
+    "cpp_match": true,
+    "eic_match": true,
+    "cpp_status": "blocked",
+    "eic_status": "blocked",
+    "acm_treatments_blocked": true,
+    "readiness": "ACTIVE_WITH_WARNINGS",
+    "warnings_n": 3,
+    "blockers_n": 2,
+    "has_qi": true
+  },
+  "logo_breakdown.json": {
+    "template": "TPL-VOLUMETRIC-LOGO_v1",
+    "fixture": "logo_demo_v1",
+    "lines": 4,
+    "groups": {
+      "ai_decision": 4
+    },
+    "commercial_total": null,
+    "internal_total": null,
+    "cpp_match": true,
+    "eic_match": true,
+    "cpp_status": null,
+    "eic_status": null,
+    "acm_treatments_blocked": null,
+    "readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "warnings_n": 2,
+    "blockers_n": 0,
+    "has_qi": true
+  },
+  "volum_aluminiu_breakdown.json": {
+    "template": "TPL-VOLUM-ALUMINIU_v1",
+    "fixture": "volum_aluminiu_demo_v1",
+    "lines": 3,
+    "groups": {
+      "machine": 2,
+      "ai_decision": 1
+    },
+    "commercial_total": 375.0,
+    "internal_total": 225.0,
+    "cpp_match": true,
+    "eic_match": true,
+    "cpp_status": null,
+    "eic_status": null,
+    "acm_treatments_blocked": null,
+    "readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "warnings_n": 4,
+    "blockers_n": 0,
+    "has_qi": true
+  }
+}

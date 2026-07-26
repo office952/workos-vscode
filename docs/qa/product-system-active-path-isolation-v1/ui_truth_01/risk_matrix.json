@@ -1,0 +1,52 @@
+{
+  "task": "UI-TRUTH-01",
+  "risks": [
+    {
+      "id": "R1",
+      "risk": "Public health cannot prove DB — operators may expect DB line",
+      "mitigation": "Always NECUNOSCUTA/neverificată unless authorized diagnostics; document in tooltip",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "R2",
+      "risk": "Split API path — auth uses direct :8001, health uses proxy",
+      "mitigation": "Banner uses same-origin only; do not infer backend from auth; record debt",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "R3",
+      "risk": "Module Chain and banner disagree during transition",
+      "mitigation": "Both use health.status; align labels; optional future hook share",
+      "severity": "LOW"
+    },
+    {
+      "id": "R4",
+      "risk": "Diagnostics leak in drill-down",
+      "mitigation": "Gate on 200 + permission; show only status labels; no details JSON in DOM",
+      "severity": "HIGH"
+    },
+    {
+      "id": "R5",
+      "risk": "Layout clutter with four segments",
+      "mitigation": "Compact dot-separated format; tooltip for full text",
+      "severity": "LOW"
+    },
+    {
+      "id": "R6",
+      "risk": "Stale green after backend dies",
+      "mitigation": "Poll + stale threshold + no auth fallback to green",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "R7",
+      "risk": "Scope creep into API client refactor",
+      "mitigation": "Forbidden scope enforced; same-origin health only",
+      "severity": "LOW"
+    }
+  ],
+  "backend_contract_debt": {
+    "item": "Public health redacts checks — DB not provable without diagnostics auth",
+    "planned_endpoint": "NO",
+    "follow_up": "Separate backend build if owner wants public DB ping"
+  }
+}

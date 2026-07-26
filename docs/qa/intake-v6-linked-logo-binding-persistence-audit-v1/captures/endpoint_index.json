@@ -1,0 +1,37 @@
+[
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/api/v1/intake-v6/workspaces/22ef834d-f2d0-453b-a7a7-118928c98a39",
+    "http": 200,
+    "writes": "NONE",
+    "artifact": "workspace.json"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/api/v1/intake-v6/workspaces/22ef834d-f2d0-453b-a7a7-118928c98a39/linked-template-segments",
+    "http": 200,
+    "writes": "NONE",
+    "artifact": "linked_segments.json"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/api/v1/intake-v6/workspaces/22ef834d-f2d0-453b-a7a7-118928c98a39/runtime-capture-read-model",
+    "http": 200,
+    "writes": "NONE",
+    "artifact": "runtime_capture.json"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/api/v1/intake-v6/workspaces/22ef834d-f2d0-453b-a7a7-118928c98a39/product-truth-promotion-planner",
+    "http": 200,
+    "writes": "NONE",
+    "artifact": "promotion_planner.json"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:8000/api/v1/intake-v6/workspaces/22ef834d-f2d0-453b-a7a7-118928c98a39/product-system-binding",
+    "http": 200,
+    "writes": "NONE",
+    "artifact": "product_system_binding.json"
+  }
+]

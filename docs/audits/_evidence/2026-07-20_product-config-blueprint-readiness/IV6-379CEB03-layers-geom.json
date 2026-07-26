@@ -1,0 +1,24 @@
+[
+    {
+        "id":  "pseudo:fill-c5c6c6",
+        "role":  "support_panel",
+        "bbox":  {
+
+                 },
+        "src":  "gravare-cnc-135gr",
+        "els":  "el-1,el-2",
+        "w":  1000.0002611142216,
+        "h":  350.0000460944898
+    },
+    {
+        "id":  "pseudo:fill-e31e24",
+        "role":  "face",
+        "bbox":  {
+
+                 },
+        "src":  "decupare-cnc-outside",
+        "els":  "el-3",
+        "w":  1439.6532132677405,
+        "h":  239.43919581920733
+    }
+]

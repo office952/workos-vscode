@@ -8,6 +8,10 @@ from schemas.intake_v6 import IntakeV6MaterialBreakdownResponse, IntakeV6Nesting
 from services.intake_v4_material_breakdown_service import (
     build_intake_v4_material_breakdown_with_registry,
 )
+from services.intake_v6_offer_scope_live_calc_service import (
+    filter_material_breakdown_by_offer_scope,
+    merge_workspace_offer_scope_into_quote_input,
+)
 from services.intake_v6_response_normalization import normalize_intake_v6_model
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 
@@ -26,6 +30,12 @@ async def get_material_breakdown_for_workspace(
     assert_v6_analysis_boundary_or_raise(payload)
     breakdown = normalize_intake_v6_model(
         await build_intake_v4_material_breakdown_with_registry(db, workspace_id, payload_raw)
+    )
+    quote_input = merge_workspace_offer_scope_into_quote_input(payload_raw, {})
+    breakdown = filter_material_breakdown_by_offer_scope(
+        breakdown,
+        payload_raw=payload_raw,
+        quote_input=quote_input,
     )
     if breakdown.nesting_preview is None:
         return breakdown

@@ -1,0 +1,9 @@
+{
+  "label": "01_incompatible_stale_8001",
+  "url": "http://127.0.0.1:3000/",
+  "banner": 1,
+  "title": "Backend local incompatibil",
+  "apiBase": "http://127.0.0.1:8001",
+  "writeErr": "Scriere blocata: backend local incompatibil. API=http://127.0.0.1:8001",
+  "shotPath": "C:\\w\\psiso\\docs\\qa\\local-api-truth-stale-backend-2026-07-19\\screenshots\\01_incompatible_stale_8001.png"
+}

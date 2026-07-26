@@ -1,0 +1,19 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "events": [
+    { "type": "TASK_CLAIMED", "payload": ["task_id", "employee_id", "assignment_source"], "compat": "extends assignment_updated_at pattern" },
+    { "type": "TASK_ASSIGNED", "payload": ["task_id", "employee_id", "by_user"] },
+    { "type": "TASK_REASSIGNED", "payload": ["task_id", "from", "to", "reason"] },
+    { "type": "PARTICIPANT_JOINED", "payload": ["task_id", "employee_id", "role", "join_reason"] },
+    { "type": "PARTICIPANT_LEFT", "payload": ["task_id", "employee_id"] },
+    { "type": "HELP_REQUESTED", "payload": ["help_request_id", "task_id", "requested_by"] },
+    { "type": "HELP_ACCEPTED", "payload": ["help_request_id", "employee_id"] },
+    { "type": "WORK_SESSION_STARTED", "payload": ["session_id", "task_id", "employee_id"] },
+    { "type": "WORK_SESSION_STOPPED", "payload": ["session_id", "employee_id", "duration"] },
+    { "type": "OPERATION_PROGRESS_UPDATED", "payload": ["task_id", "delta", "completed", "total", "by"] },
+    { "type": "OPERATION_COMPLETED", "payload": ["task_id", "by", "authority"] }
+  ],
+  "storage": "Append to execution_reality events_json or order-scoped operational event list",
+  "no_new_bus": true,
+  "ui": "Execution Detail timeline + operator audit strip"
+}

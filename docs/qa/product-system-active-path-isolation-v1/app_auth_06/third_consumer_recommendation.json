@@ -1,0 +1,31 @@
+{
+  "recommendation": "CONNECT_NEXT",
+  "candidate_id": "CONS-REGISTRY-CATALOG-API",
+  "surface": "GET /api/v1/operational-registry/catalog",
+  "rationale": [
+    "read-only backend surface",
+    "same registry contracts as wired consumers",
+    "controlled volume",
+    "no HR payload",
+    "no assignment or ExecutionReality mutation",
+    "P1 priority in APP-AUTH-03 inventory"
+  ],
+  "alternatives_deferred": [
+    {
+      "id": "CONS-EMPLOYEES-PAGE",
+      "verdict": "NEEDS_SEPARATE_AUDIT",
+      "reason": "frontend + HR display risk"
+    },
+    {
+      "id": "CONS-OPERATOR-TASKS",
+      "verdict": "NEEDS_SEPARATE_AUDIT",
+      "reason": "execution surface P8/P10"
+    },
+    {
+      "id": "CONS-SHOP-FLOOR",
+      "verdict": "DO_NOT_CONNECT",
+      "reason": "silent mockData fallback risk"
+    }
+  ],
+  "app_auth_07_stays_observe_only": true
+}

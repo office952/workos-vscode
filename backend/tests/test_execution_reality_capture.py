@@ -220,9 +220,9 @@ class RealityCaptureInvalidActionTest(unittest.TestCase):
                 "timestamp": "2026-01-01T10:00:00Z",
             },
         )
-        self.assertEqual(r.status_code, 422, r.text)
+        self.assertEqual(r.status_code, 404, r.text)
         body = r.json()["detail"]
-        self.assertEqual(body["code"], "task_id_invalid")
+        self.assertEqual(body["error"], "task_not_in_plan")
 
     def test_start_task_unknown_order_returns_order_not_found(self) -> None:
         r = self.client.post(
@@ -255,8 +255,10 @@ class RealityCaptureInvalidActionTest(unittest.TestCase):
                 "timestamp": "2026-01-01T10:05:00Z",
             },
         )
-        self.assertEqual(dup.status_code, 422, dup.text)
-        self.assertEqual(dup.json()["detail"]["code"], "task_already_started")
+        self.assertEqual(dup.status_code, 409, dup.text)
+        body = dup.json()["detail"]
+        self.assertEqual(body["code"], "task_not_ready")
+        self.assertEqual(body.get("readiness_status"), "in_progress")
 
     # ---- end-task input validation --------------------------------------
 

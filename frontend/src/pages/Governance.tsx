@@ -1,16 +1,45 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
-  boundaryLayers,
   agents,
   truthHierarchy,
-  gateLevels,
-  guardrails,
   uiTruthRules,
   moduleStatusFlows,
   systemEvents,
   invalidPatterns,
   productCatalog,
 } from "@/lib/governanceData";
+import {
+  HONESTY_SEPARATION_RULES,
+  GOVERNANCE_TAB_HONESTY,
+  type GovernanceTabHonestyMeta,
+} from "@/lib/truthPagesHonestyBaseline";
+import {
+  ACTIVE_SCOPE_OWNERSHIP,
+  ACTIVE_SCOPE_READINESS_LAW,
+  ACTIVE_SCOPE_SYSTEM,
+  CANONICAL_SPINE_LABELS_RO,
+  DEPENDENCY_BINDING_RULE_RO,
+  DEPENDENCY_CLASSES,
+  DOCUMENTATION_AUTHORITY_RULE_RO,
+  DOCUMENTATION_HIERARCHY,
+  FULL_TEMPLATE_COUPLING_DEFECT,
+  HYBRID_INTAKE_MODEL,
+  OFFICIAL_CURRENT_TRUTH_ROUTES,
+  PRESENT_BOUNDARIES,
+  PRESENT_GATES,
+  PRESENT_GUARDRAILS,
+  PRESENT_OWNERSHIP_ROWS,
+  SETTINGS_OWNERSHIP_ROWS,
+  SYSTEM_REGISTRATION_REQUIRED_FIELDS,
+  UNREGISTERED_SYSTEM_POLICY,
+  governanceStatusBadgeClass,
+  presentStatusBadgeClass,
+} from "@/lib/currentTruthControlCenter";
+import {
+  fetchDocumentationIndex,
+  type DocumentationIndexFetchResult,
+} from "@/api/documentationIndex";
+import { ImportantDocumentsSection } from "@/components/workos/ImportantDocumentsSection";
 import { SectionHeader } from "@/components/workos/SharedComponents";
 import {
   Shield,
@@ -38,18 +67,55 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
-type Tab = "boundaries" | "agents" | "truth" | "gates" | "guardrails" | "ui-rules" | "status-flows" | "products";
+type Tab =
+  | "ownership"
+  | "boundaries"
+  | "agents"
+  | "truth"
+  | "gates"
+  | "guardrails"
+  | "ui-rules"
+  | "status-flows"
+  | "products";
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "boundaries", label: "Boundary Map", icon: <Layers className="w-3.5 h-3.5" /> },
-  { id: "status-flows", label: "Status Flows", icon: <Activity className="w-3.5 h-3.5" /> },
-  { id: "agents", label: "Agent Authority", icon: <Users className="w-3.5 h-3.5" /> },
-  { id: "truth", label: "Source of Truth", icon: <Eye className="w-3.5 h-3.5" /> },
-  { id: "gates", label: "Ready for Quotes", icon: <Lock className="w-3.5 h-3.5" /> },
-  { id: "guardrails", label: "Guardrails", icon: <Shield className="w-3.5 h-3.5" /> },
-  { id: "products", label: "Product Catalog", icon: <Package className="w-3.5 h-3.5" /> },
-  { id: "ui-rules", label: "UI Truth Rules", icon: <BookOpen className="w-3.5 h-3.5" /> },
+  { id: "ownership", label: "Cine deține adevărul", icon: <Shield className="w-3.5 h-3.5" /> },
+  { id: "boundaries", label: "Harta limitelor", icon: <Layers className="w-3.5 h-3.5" /> },
+  { id: "status-flows", label: "Fluxuri de stare", icon: <Activity className="w-3.5 h-3.5" /> },
+  { id: "agents", label: "Autoritatea agenților", icon: <Users className="w-3.5 h-3.5" /> },
+  { id: "truth", label: "Surse de adevăr", icon: <Eye className="w-3.5 h-3.5" /> },
+  { id: "gates", label: "Owner gates", icon: <Lock className="w-3.5 h-3.5" /> },
+  { id: "guardrails", label: "Reguli de protecție", icon: <Shield className="w-3.5 h-3.5" /> },
+  { id: "products", label: "Catalog produse (referință)", icon: <Package className="w-3.5 h-3.5" /> },
+  { id: "ui-rules", label: "Reguli de adevăr UI", icon: <BookOpen className="w-3.5 h-3.5" /> },
 ];
+
+function TabHonestyBanner({ meta }: { meta: GovernanceTabHonestyMeta }) {
+  const tone =
+    meta.status === "HONESTY_BASELINE"
+      ? "border-blue-800/40 bg-blue-900/15 text-blue-200/95"
+      : meta.status === "STALE_HINT" || meta.status === "OWNER_REVIEW"
+        ? "border-amber-800/40 bg-amber-900/15 text-amber-200/95"
+        : "border-slate-600/50 bg-slate-800/40 text-slate-300";
+  return (
+    <div
+      className={`flex items-start gap-2 px-3 py-2 rounded-lg border text-[11px] leading-relaxed ${tone}`}
+      data-testid={`governance-tab-honesty-${meta.tabId}`}
+    >
+      <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0 opacity-80" />
+      <div>
+        <p className="font-semibold mb-0.5">
+          {meta.status} · read-only
+        </p>
+        <p>{meta.noteRo}</p>
+        <p className="mt-1 text-[10px] opacity-80 flex items-center gap-1">
+          <BookOpen className="w-3 h-3" />
+          Sursă: {meta.source}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // --- HIGHLIGHT HELPER ---
 function HighlightText({ text, query }: { text: string; query: string }) {
@@ -90,17 +156,17 @@ interface SearchResult {
 function buildSearchIndex(): SearchResult[] {
   const results: SearchResult[] = [];
 
-  // Boundaries
-  for (const layer of boundaryLayers) {
+  // Boundaries (present spine)
+  for (const layer of PRESENT_BOUNDARIES) {
     results.push({
       category: "Boundary Map",
       categoryIcon: <Layers className="w-3.5 h-3.5" />,
       tab: "boundaries",
-      title: `${layer.shortName} — ${layer.name}`,
-      subtitle: layer.role,
-      details: [layer.hardRule, ...layer.allowed, ...layer.forbidden],
+      title: `${layer.technicalAlias} — ${layer.nameRo}`,
+      subtitle: layer.truthControlledRo,
+      details: [layer.enforcementRo, ...layer.allowedRo, ...layer.forbiddenRo],
       severity: "critical",
-      module: layer.shortName,
+      module: layer.technicalAlias,
       itemType: "regulă",
     });
   }
@@ -135,31 +201,31 @@ function buildSearchIndex(): SearchResult[] {
     });
   }
 
-  // Gates
-  for (const level of gateLevels) {
+  // Owner gates (present policy)
+  for (const gate of PRESENT_GATES) {
     results.push({
-      category: "Ready for Quotes",
+      category: "Owner gates",
       categoryIcon: <Lock className="w-3.5 h-3.5" />,
       tab: "gates",
-      title: `Gate ${level.level}: ${level.name}`,
-      subtitle: level.verdicts.join(", "),
-      details: [level.rule],
+      title: gate.nameRo,
+      subtitle: gate.status,
+      details: [gate.blocksRo, gate.enforcementRo, gate.verificationRo],
       severity: "critical",
-      module: "Quotes",
+      module: "Owner",
       itemType: "gate",
     });
   }
 
-  // Guardrails
-  for (const g of guardrails) {
+  // Guardrails (present)
+  for (const g of PRESENT_GUARDRAILS) {
     results.push({
       category: "Guardrails",
       categoryIcon: <Shield className="w-3.5 h-3.5" />,
       tab: "guardrails",
-      title: `${g.id} — ${g.title}`,
-      subtitle: g.category,
-      details: [g.description],
-      severity: g.severity,
+      title: `${g.id} — ${g.titleRo}`,
+      subtitle: g.status,
+      details: [g.requirementRo, g.enforcementRo],
+      severity: g.status === "POLITICA OWNER" ? "info" : "warning",
       module: "System",
       itemType: "regulă",
     });
@@ -809,104 +875,72 @@ function SearchResultsView({
 
 // --- BOUNDARY MAP TAB ---
 function BoundaryMapView() {
-  const [expanded, setExpanded] = useState<string | null>(null);
-
   return (
-    <div className="space-y-4">
-      {/* Flow visualization */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6">
-        <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-4">Canonical Flow</p>
-        <div className="flex items-center gap-0 overflow-x-auto pb-2">
-          {boundaryLayers.map((layer, idx) => (
-            <div key={layer.id} className="flex items-center shrink-0">
-              <button
-                onClick={() => setExpanded(expanded === layer.id ? null : layer.id)}
-                className={`relative bg-gradient-to-b ${layer.color} border-t-2 ${layer.borderColor} border border-[#2A3548] rounded-lg px-5 py-4 min-w-[150px] hover:border-slate-500 transition-all duration-200 ${
-                  expanded === layer.id ? "ring-1 ring-blue-500/50" : ""
-                }`}
-              >
-                <p className="text-[14px] font-bold text-slate-100">{layer.shortName}</p>
-                <p className="text-[10px] text-slate-400 mt-1 leading-tight">{layer.role}</p>
-                <ChevronDown
-                  className={`w-3 h-3 text-slate-500 absolute bottom-1.5 right-1.5 transition-transform ${
-                    expanded === layer.id ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {idx < boundaryLayers.length - 1 && (
-                <div className="flex items-center px-2 shrink-0">
-                  <ArrowRight className="w-5 h-5 text-slate-600" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Expanded detail */}
-      {expanded && (() => {
-        const layer = boundaryLayers.find((l) => l.id === expanded);
-        if (!layer) return null;
-        return (
-          <div className={`bg-[#111827] border border-[#1E293B] border-l-2 ${layer.borderColor} rounded-lg p-5 animate-in fade-in duration-300`}>
-            <div className="flex items-center gap-2 mb-4">
-              <h3 className="text-[16px] font-bold text-slate-100">{layer.name}</h3>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${layer.borderColor.replace("border-", "bg-")}/20 ${layer.borderColor.replace("border-", "text-")}`}>
-                {layer.shortName}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Are voie
-                </p>
-                <ul className="space-y-1">
-                  {layer.allowed.map((item, i) => (
-                    <li key={i} className="text-[12px] text-slate-300 flex items-start gap-2">
-                      <span className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-[10px] text-red-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <Ban className="w-3 h-3" /> Interzis
-                </p>
-                <ul className="space-y-1">
-                  {layer.forbidden.map((item, i) => (
-                    <li key={i} className="text-[12px] text-slate-400 flex items-start gap-2">
-                      <span className="w-1 h-1 rounded-full bg-red-500 mt-1.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="bg-[#0D1321] border border-[#1E293B] rounded px-4 py-3">
-              <p className="text-[10px] text-amber-400 uppercase tracking-wide mb-1">Regula Dură</p>
-              <p className="text-[13px] text-slate-200 font-medium leading-relaxed">{layer.hardRule}</p>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Formula scurtă */}
+    <div className="space-y-4" data-testid="governance-panel-boundaries">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.boundaries} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-        <SectionHeader title="Formula Canonică" icon={<Zap className="w-4 h-4 text-amber-400" />} />
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-          {[
-            { label: "Templates", verb: "pregătește", color: "border-t-pink-500" },
-            { label: "Quotes", verb: "calculează", color: "border-t-amber-500" },
-            { label: "Orders", verb: "îngheață", color: "border-t-blue-500" },
-            { label: "WorkOS", verb: "execută", color: "border-t-emerald-500" },
-            { label: "OC", verb: "păzește adevărul", color: "border-t-cyan-500" },
-          ].map((item) => (
-            <div key={item.label} className={`bg-[#1A2236] border border-[#2A3548] border-t-2 ${item.color} rounded-lg p-3 text-center`}>
-              <p className="text-[13px] font-bold text-slate-200">{item.label}</p>
-              <p className="text-[11px] text-slate-400 mt-1">{item.verb}</p>
+        <SectionHeader title="Harta limitelor — spine activ" icon={<Layers className="w-4 h-4 text-blue-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3" data-testid="governance-canonical-spine">
+          Spine activ: {CANONICAL_SPINE_LABELS_RO.join(" → ")}
+        </p>
+        <div className="space-y-3">
+          {PRESENT_BOUNDARIES.map((layer) => (
+            <div
+              key={layer.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              data-testid={`boundary-${layer.id}`}
+            >
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h3 className="text-[14px] font-bold text-slate-100">{layer.nameRo}</h3>
+                <span className="text-[10px] text-slate-500">{layer.technicalAlias}</span>
+                <span
+                  className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(layer.status)}`}
+                >
+                  {layer.status}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mb-2">
+                <span className="text-slate-500">Proprietar:</span> {layer.owner}
+              </p>
+              <p className="text-[12px] text-slate-300 mb-3">{layer.truthControlledRo}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                  <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-1">Permis</p>
+                  <ul className="space-y-1">
+                    {layer.allowedRo.map((item) => (
+                      <li key={item} className="text-[11px] text-slate-300 flex items-start gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 mt-0.5 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-[10px] text-red-400 uppercase tracking-wide mb-1">Interzis</p>
+                  <ul className="space-y-1">
+                    {layer.forbiddenRo.map((item) => (
+                      <li key={item} className="text-[11px] text-slate-400 flex items-start gap-1.5">
+                        <Ban className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <dl className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px] text-slate-500">
+                <div>
+                  <dt className="uppercase">Aplicare</dt>
+                  <dd className="text-slate-300">{layer.enforcementRo}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase">Owner gate</dt>
+                  <dd className="text-slate-300">{layer.ownerGateRo}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase">Verificare</dt>
+                  <dd className="text-slate-300">{layer.verificationRo}</dd>
+                </div>
+              </dl>
             </div>
           ))}
         </div>
@@ -920,7 +954,8 @@ function AgentAuthorityView() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-agents">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.agents} />
       {/* Agent Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {agents.map((agent) => (
@@ -1053,13 +1088,19 @@ function AgentAuthorityView() {
 }
 
 // --- SOURCE OF TRUTH TAB ---
-function TruthHierarchyView() {
+function TruthHierarchyView({
+  docsResult,
+}: {
+  docsResult: DocumentationIndexFetchResult | null;
+}) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-truth">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.truth} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
         <SectionHeader title="Ierarhia Surselor de Adevăr" icon={<Eye className="w-4 h-4 text-blue-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
-          Când două surse se contrazic, sursa cu nivel mai mic câștigă. Adevărul se definește sus, se traduce mai jos, se verifică mai jos — nu se reinventează invers.
+          Când două surse se contrazic, sursa cu nivel mai mic câștigă. Runtime confirmă comportament — nu definește arhitectura.
+          UI-ul nu devine sursă de adevăr.
         </p>
 
         <div className="space-y-2">
@@ -1103,88 +1144,61 @@ function TruthHierarchyView() {
           Dacă codul și runtime-ul contrazic .md → QA Alignment investighează, Nucleu arbitrează dacă e nevoie.
         </p>
       </div>
+
+      <ImportantDocumentsSection docsResult={docsResult} />
     </div>
   );
 }
 
-// --- READY FOR QUOTES GATE TAB ---
+// --- OWNER GATES TAB ---
 function GateView() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-gates">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.gates} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
-        <SectionHeader title="Ready for Quotes — Gate Logic" icon={<Lock className="w-4 h-4 text-emerald-400" />} />
+        <SectionHeader title="Owner gates — politică prezentă" icon={<Lock className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
-          Ready for Quotes este un gate real de business care decide dacă un Template poate fi predat către Quotes. Nu este badge decorativ.
+          Gate-uri de aprobare owner. Statusul „Politică owner” înseamnă control de proces — nu motor RBAC în UI.
+          Modelul istoric de readiness Blueprint nu mai este prezentat ca gate activ.
         </p>
-
-        {/* Gate flow */}
         <div className="space-y-3">
-          {gateLevels.map((level, idx) => (
-            <div key={level.level} className="flex items-start gap-3">
-              {/* Step indicator */}
-              <div className="flex flex-col items-center w-10 shrink-0">
-                <div className={`w-8 h-8 rounded-lg border-2 ${level.color} flex items-center justify-center text-[12px] font-bold text-slate-200 bg-[#1A2236]`}>
-                  {level.level}
-                </div>
-                {idx < gateLevels.length - 1 && (
-                  <div className="w-px h-4 bg-slate-700 mt-1" />
-                )}
+          {PRESENT_GATES.map((gate) => (
+            <div
+              key={gate.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              data-testid={`owner-gate-${gate.id}`}
+            >
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <p className="text-[14px] font-bold text-slate-200">{gate.nameRo}</p>
+                <span
+                  className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(gate.status)}`}
+                >
+                  {gate.status}
+                </span>
               </div>
-
-              {/* Content */}
-              <div className={`bg-[#1A2236] border border-[#2A3548] border-l-2 ${level.color} rounded-lg p-4 flex-1`}>
-                <p className="text-[14px] font-bold text-slate-200 mb-2">{level.name}</p>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  {level.verdicts.map((v) => {
-                    const isPositive = v.includes("Ready") || v.includes("permis");
-                    const isNegative = v.includes("Not") || v.includes("Blocked") || v.includes("refuzat");
-                    return (
-                      <span
-                        key={v}
-                        className={`px-2 py-0.5 text-[11px] font-semibold rounded border ${
-                          isPositive
-                            ? "bg-emerald-900/30 text-emerald-400 border-emerald-700"
-                            : isNegative
-                            ? "bg-red-900/30 text-red-400 border-red-700"
-                            : "bg-amber-900/30 text-amber-400 border-amber-700"
-                        }`}
-                      >
-                        {v}
-                      </span>
-                    );
-                  })}
+              <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-slate-400">
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Blochează</dt>
+                  <dd className="text-slate-300">{gate.blocksRo}</dd>
                 </div>
-                <p className="text-[12px] text-slate-300 leading-relaxed">{level.rule}</p>
-              </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Aprobator</dt>
+                  <dd className="text-slate-300">{gate.approverRo}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Aplicare</dt>
+                  <dd>{gate.enforcementRo}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Verificare</dt>
+                  <dd>{gate.verificationRo}</dd>
+                </div>
+                <div className="md:col-span-2">
+                  <dt className="text-[10px] text-slate-500 uppercase">Fără aprobare</dt>
+                  <dd className="text-amber-200/90">{gate.withoutApprovalRo}</dd>
+                </div>
+              </dl>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Strict Rule */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-        <SectionHeader title="Regula Strictă" icon={<Shield className="w-4 h-4 text-red-400" />} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-[#1A2236] border border-emerald-800/30 rounded-lg p-3">
-            <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-2">✓ Required Components</p>
-            <p className="text-[12px] text-slate-300">Participă la verdictul final. Dacă unul este necalculabil, gate-ul cade.</p>
-          </div>
-          <div className="bg-[#1A2236] border border-amber-800/30 rounded-lg p-3">
-            <p className="text-[10px] text-amber-400 uppercase tracking-wide mb-2">⚠ Optional Components</p>
-            <p className="text-[12px] text-slate-300">Nu blochează gate-ul. Pot genera warning-uri. Trebuie să rămână vizibile.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* What's NOT accepted */}
-      <div className="bg-[#0D1321] border border-red-800/30 rounded-lg p-4">
-        <p className="text-[12px] text-red-400 font-semibold mb-2">🚫 Nu se acceptă</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {["Procent minim", "Majoritate", "Aproape gata", "Best available variant", "Completări în Quotes", "Override tacit"].map((item) => (
-            <span key={item} className="flex items-center gap-1.5 text-[11px] text-slate-400">
-              <XCircle className="w-3 h-3 text-red-500 shrink-0" />
-              {item}
-            </span>
           ))}
         </div>
       </div>
@@ -1194,57 +1208,36 @@ function GateView() {
 
 // --- GUARDRAILS TAB ---
 function GuardrailsView() {
-  const [filter, setFilter] = useState<string>("all");
-  const categories = ["all", ...Array.from(new Set(guardrails.map((g) => g.category)))];
-
-  const filtered = filter === "all" ? guardrails : guardrails.filter((g) => g.category === filter);
-
-  const severityIcon = {
-    critical: <XCircle className="w-4 h-4 text-red-400" />,
-    warning: <AlertTriangle className="w-4 h-4 text-amber-400" />,
-    info: <Info className="w-4 h-4 text-blue-400" />,
-  };
-
-  const severityBorder = {
-    critical: "border-l-red-500",
-    warning: "border-l-amber-500",
-    info: "border-l-blue-500",
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Filter */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors ${
-              filter === cat
-                ? "bg-blue-600/20 text-blue-400 border-blue-600/50"
-                : "bg-[#111827] text-slate-400 border-[#1E293B] hover:border-slate-500"
-            }`}
-          >
-            {cat === "all" ? "Toate" : cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Guardrails list */}
+    <div className="space-y-4" data-testid="governance-panel-guardrails">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.guardrails} />
       <div className="space-y-2">
-        {filtered.map((g) => (
-          <div key={g.id} className={`bg-[#111827] border border-[#1E293B] border-l-2 ${severityBorder[g.severity]} rounded-lg p-4`}>
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0">{severityIcon[g.severity]}</span>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono text-slate-600">{g.id}</span>
-                  <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">{g.category}</span>
-                </div>
-                <p className="text-[13px] font-semibold text-slate-200">{g.title}</p>
-                <p className="text-[12px] text-slate-400 mt-1 leading-relaxed">{g.description}</p>
-              </div>
+        {PRESENT_GUARDRAILS.map((g) => (
+          <div
+            key={g.id}
+            className="bg-[#111827] border border-[#1E293B] border-l-2 border-l-amber-500 rounded-lg p-4"
+            data-testid={`guardrail-${g.id}`}
+          >
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono text-slate-600">{g.id}</span>
+              <p className="text-[13px] font-semibold text-slate-200">{g.titleRo}</p>
+              <span
+                className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(g.status)}`}
+              >
+                {g.status}
+              </span>
             </div>
+            <p className="text-[12px] text-slate-300 mt-1 leading-relaxed">{g.requirementRo}</p>
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-[10px] text-slate-500">
+              <div>
+                <dt className="uppercase">Aplicare</dt>
+                <dd className="text-slate-400">{g.enforcementRo}</dd>
+              </div>
+              <div>
+                <dt className="uppercase">Owner gate</dt>
+                <dd className="text-slate-400">{g.ownerGateRo}</dd>
+              </div>
+            </dl>
           </div>
         ))}
       </div>
@@ -1255,7 +1248,8 @@ function GuardrailsView() {
 // --- UI TRUTH RULES TAB ---
 function UITruthRulesView() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-ui-rules">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY["ui-rules"]} />
       {uiTruthRules.map((rule) => (
         <div key={rule.id} className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
@@ -1308,18 +1302,38 @@ function StatusFlowsView() {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-status-flows">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY["status-flows"]} />
+      <p className="text-[11px] text-slate-500 px-1">
+        Tipuri distincte: stare modul (aici) ≠ stare pagină (B3) ≠ stare runtime (health) ≠ stare document ≠ stare Figma.
+        Conflicturile nu sunt migrate automat.
+      </p>
       {/* Module selector */}
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-2">
         {moduleStatusFlows.map((mod) => (
           <button
             key={mod.id}
             onClick={() => setSelectedModule(selectedModule === mod.id ? null : mod.id)}
+            data-testid={`status-flow-${mod.id}`}
+            data-truth-class={mod.truthClass}
             className={`bg-[#111827] border rounded-lg p-3 text-center transition-all hover:border-slate-500 ${
               selectedModule === mod.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B]"
-            }`}
+            } ${mod.truthClass === "LEGACY" ? "opacity-70" : ""}`}
           >
             <p className={`text-[14px] font-bold ${mod.color}`}>{mod.shortName}</p>
+            <p
+              className={`mt-1 text-[9px] font-semibold uppercase tracking-wide ${
+                mod.truthClass === "LEGACY"
+                  ? "text-slate-500"
+                  : mod.truthClass === "TARGET"
+                    ? "text-violet-400"
+                    : mod.truthClass === "BLOCKED"
+                      ? "text-red-400"
+                      : "text-emerald-500/80"
+              }`}
+            >
+              {mod.truthClass}
+            </p>
             <p className="text-[10px] text-slate-500 mt-0.5">{mod.statuses.length} statusuri</p>
             <p className="text-[10px] text-slate-600">{mod.transitions.length} tranzitii</p>
           </button>
@@ -1347,11 +1361,26 @@ function StatusFlowsView() {
         };
 
         return (
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3 mb-4">
+          <div
+            className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300"
+            data-testid={`status-flow-detail-${mod.id}`}
+          >
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               <h3 className={`text-[16px] font-bold ${mod.color}`}>{mod.name}</h3>
               <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded">Owner: {mod.owner}</span>
+              <span
+                className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 bg-slate-900 border border-slate-700 px-2 py-0.5 rounded"
+                data-testid={`status-flow-truth-class-${mod.id}`}
+              >
+                {mod.truthClass}
+              </span>
             </div>
+            <p
+              className="mb-4 text-[11px] text-slate-400 border border-slate-800 rounded-md px-3 py-2"
+              data-testid={`status-flow-honesty-${mod.id}`}
+            >
+              {mod.honestyNoteRo}
+            </p>
 
             {/* Status pills */}
             <div className="mb-4">
@@ -1444,13 +1473,18 @@ function ProductCatalogView() {
   const totalProducts = productCatalog.reduce((sum, cat) => sum + cat.products.length, 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-products">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.products} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
-        <div className="flex items-center justify-between mb-4">
-          <SectionHeader title="Nomenclator Produse — RC Publimedia" icon={<Package className="w-4 h-4 text-blue-400" />} />
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <SectionHeader title="Nomenclator local (referință)" icon={<Package className="w-4 h-4 text-blue-400" />} />
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-slate-400">{productCatalog.length} categorii</span>
-            <span className="text-[11px] text-slate-400">{totalProducts} produse</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+              REFERINȚĂ
+            </span>
+            <span className="text-[11px] text-slate-400">
+              {productCatalog.length} categorii / {totalProducts} rânduri (static)
+            </span>
           </div>
         </div>
 
@@ -1530,14 +1564,424 @@ function ProductCatalogView() {
   );
 }
 
+// --- HONESTY BASELINE (W0-B5) ---
+function OwnershipHonestyView({
+  docsResult,
+}: {
+  docsResult: DocumentationIndexFetchResult | null;
+}) {
+  const openQuestions = [
+    {
+      label: "OWNER REVIEW REQUIRED",
+      detail: "Termeni și ownership încă parțiale pe limite resursă (Utilaje / Angajați / Pontaj).",
+    },
+    {
+      label: "NOT VALIDATED",
+      detail: "Unele reguli din tab-urile legacy rămân referință locală — nu sunt revalidate prin index B2.",
+    },
+    {
+      label: "STALE",
+      detail: "Numărul vechi de documente „canonice” din UI a fost eliminat — nu era dovedit de indexul B2.",
+    },
+  ];
+
+  return (
+    <div className="space-y-4" data-testid="governance-ownership-baseline">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.ownership} />
+
+      <section
+        className="bg-[#111827] border border-blue-700/40 rounded-lg p-4 space-y-2"
+        data-testid="governance-official-truth"
+      >
+        <SectionHeader
+          title="Documentație curentă oficială"
+          icon={<BookOpen className="w-4 h-4 text-blue-400" />}
+        />
+        <p className="text-[12px] text-blue-100 font-semibold" data-testid="governance-official-routes">
+          Level 1 = {OFFICIAL_CURRENT_TRUTH_ROUTES.modules} + {OFFICIAL_CURRENT_TRUTH_ROUTES.governance}
+        </p>
+        <p className="text-[11px] text-slate-400" data-testid="governance-documentation-authority">
+          {DOCUMENTATION_AUTHORITY_RULE_RO}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2" data-testid="governance-doc-hierarchy">
+          {DOCUMENTATION_HIERARCHY.map((level) => (
+            <div
+              key={level.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+            >
+              <p className="text-slate-200 font-medium">
+                Level {level.level} — {level.labelRo}
+              </p>
+              <p className="text-slate-500">{level.surfacesRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-system-registration"
+      >
+        <SectionHeader
+          title="Legea înregistrării sistemelor"
+          icon={<Shield className="w-4 h-4 text-violet-400" />}
+        />
+        <p className="text-[11px] text-slate-400">
+          Un sistem este oficial numai dacă este înregistrat cu câmpurile obligatorii. Altfel:{" "}
+          <span className="text-amber-300 font-semibold" data-testid="unregistered-system-id">
+            {UNREGISTERED_SYSTEM_POLICY.id}
+          </span>
+          .
+        </p>
+        <p className="text-[11px] text-slate-500" data-testid="unregistered-system-may-not">
+          Nu poate: {UNREGISTERED_SYSTEM_POLICY.mayNotRo.join("; ")}.
+        </p>
+        <p className="text-[10px] text-slate-500" data-testid="system-registration-fields">
+          Câmpuri: {SYSTEM_REGISTRATION_REQUIRED_FIELDS.join(" · ")}
+        </p>
+        <div
+          className="bg-[#1A2236] border border-amber-700/40 rounded-md px-3 py-2 text-[11px]"
+          data-testid="governance-active-scope-registration"
+        >
+          <p className="font-semibold text-slate-100">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
+          <p className="text-amber-200 mt-1" data-testid="governance-active-scope-status">
+            Status: PARTIAL / PROVEN SLICE 1 · Owner: {ACTIVE_SCOPE_SYSTEM.owner}
+          </p>
+          <p className="text-slate-500 mt-1">{ACTIVE_SCOPE_SYSTEM.boundariesRo}</p>
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-active-scope-law"
+      >
+        <SectionHeader
+          title={ACTIVE_SCOPE_READINESS_LAW.titleRo}
+          icon={<Lock className="w-4 h-4 text-amber-400" />}
+        />
+        <p className="text-[12px] text-slate-200 font-medium" data-testid="readiness-law-binding">
+          {ACTIVE_SCOPE_READINESS_LAW.bindingRo}
+        </p>
+        <ul className="list-disc list-inside text-[11px] text-slate-400 space-y-0.5" data-testid="inactive-module-rules">
+          {ACTIVE_SCOPE_READINESS_LAW.inactiveMustNotRo.map((rule) => (
+            <li key={rule}>{rule}</li>
+          ))}
+        </ul>
+        <div className="space-y-1" data-testid="owner-law-lines">
+          {ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.map((line) => (
+            <p key={line} className="text-[11px] text-amber-200/90 font-mono">
+              {line}
+            </p>
+          ))}
+        </div>
+        <div className="space-y-1.5 mt-2" data-testid="active-scope-ownership-matrix">
+          {ACTIVE_SCOPE_OWNERSHIP.map((row) => (
+            <div
+              key={row.systemId}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              data-testid={`active-scope-owns-${row.systemId}`}
+            >
+              <p className="text-slate-200 font-medium">{row.systemId}</p>
+              <p className="text-emerald-300/90">Owns: {row.ownsRo}</p>
+              <p className="text-slate-500">Does not own: {row.doesNotOwnRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-dependency-classes"
+      >
+        <SectionHeader title="Clase de dependențe" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
+        <p className="text-[11px] text-amber-200/90" data-testid="dependency-binding-rule">
+          {DEPENDENCY_BINDING_RULE_RO}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {DEPENDENCY_CLASSES.map((cls) => (
+            <div
+              key={cls.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              data-testid={`dependency-class-${cls.id}`}
+            >
+              <p className="font-semibold text-slate-100">{cls.labelRo}</p>
+              <p className="text-slate-400 mt-1">{cls.definitionRo}</p>
+              <p className="text-slate-500 mt-1">Ex: {cls.exampleRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-hybrid-intake"
+      >
+        <SectionHeader title="Model Intake HYBRID" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
+        <p className="text-[11px] text-slate-300" data-testid="hybrid-model-status">
+          Approved: {HYBRID_INTAKE_MODEL.approvedModel} · UI={HYBRID_INTAKE_MODEL.uiStatus} · Downstream=
+          {HYBRID_INTAKE_MODEL.downstreamStatus}
+        </p>
+        <p className="text-[11px] text-slate-400">{HYBRID_INTAKE_MODEL.compileRuleRo}</p>
+        <div
+          className="border border-red-800/40 bg-red-900/15 rounded-md px-3 py-2 text-[11px]"
+          data-testid="governance-full-template-coupling"
+        >
+          <p className="font-semibold text-red-200">{FULL_TEMPLATE_COUPLING_DEFECT.id}</p>
+          <p className="text-slate-400 mt-1">{FULL_TEMPLATE_COUPLING_DEFECT.includesRo.join("; ")}</p>
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-ownership">
+        <SectionHeader title="Cine deține adevărul" icon={<Eye className="w-4 h-4 text-amber-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Matrice mică, doar domenii cu sursă. Nu inventăm ownership.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[12px]">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+                <th className="py-2 pr-3 font-medium">Domeniu</th>
+                <th className="py-2 pr-3 font-medium">Proprietar</th>
+                <th className="py-2 pr-3 font-medium">Semantică</th>
+                <th className="py-2 pr-3 font-medium">Scriere</th>
+                <th className="py-2 pr-3 font-medium">Citire</th>
+                <th className="py-2 pr-3 font-medium">Aplicare</th>
+                <th className="py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PRESENT_OWNERSHIP_ROWS.map((row) => (
+                <tr key={row.systemId} className="border-b border-[#1E293B]/60 align-top" data-testid={`ownership-${row.systemId}`}>
+                  <td className="py-2 pr-3">
+                    <p className="text-slate-200 font-medium">{row.domainRo}</p>
+                    <p className="text-[10px] text-slate-500">{row.technicalAlias}</p>
+                  </td>
+                  <td className="py-2 pr-3 text-slate-300">{row.owner}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.semanticOwnershipRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.writeAuthorityRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.readOnlyRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.enforcementRo}</td>
+                  <td className="py-2">
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded border ${presentStatusBadgeClass(row.status)}`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+        data-testid="governance-finish-mounting-ownership-layers"
+      >
+        <SectionHeader
+          title="Straturi ownership FINISH / MOUNTING"
+          icon={<Layers className="w-4 h-4 text-violet-400" />}
+        />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Contracte întâi. Activarea mai târziu. Current ≠ Target. Alias ≠ autoritate.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[11px]" data-testid="governance-ownership-layers">
+          {(
+            [
+              ["surface", "Surface FINISH — finisaje"],
+              ["template", "Șablon montaj — sablon_montaj"],
+              ["packaging", "Ambalare / logistică — ambalare_livrare_montaj"],
+              ["support", "Support — structura_suport"],
+              ["legacy", "Legacy alias — snapshoturi v1"],
+              ["sold", "Sold FINISH/MOUNTING — BLOCKED"],
+            ] as const
+          ).map(([id, label]) => (
+            <div
+              key={id}
+              className="rounded-md border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300 break-words"
+              data-testid={`governance-ownership-layer-${id}`}
+            >
+              {label}
+            </div>
+          ))}
+        </div>
+        <ul className="mt-3 space-y-1 text-[11px] text-emerald-300/90 break-all" data-testid="governance-ownership-v1-gates-approved">
+          <li>MOUNTING_MAP_NARROWING_OWNER_GATE — APPROVED</li>
+          <li>MINI_MODULE_SPLIT_OWNER_GATE — APPROVED</li>
+          <li>Writer snapshot: active_scope_snapshot/v2</li>
+        </ul>
+        <ul className="mt-2 space-y-1 text-[11px] text-red-300/90 break-all" data-testid="governance-ownership-v1-gates">
+          <li>SOLD_CHIP_ACTIVATION_OWNER_GATE — NOT APPROVED</li>
+          <li>PACKAGING_SOLD_CHIP — NOT PLANNED</li>
+          <li>FINISH SOLD ACTIVATION = BLOCKED</li>
+          <li>MOUNTING SOLD ACTIVATION = BLOCKED</li>
+        </ul>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-settings-ownership">
+        <SectionHeader title="Clasificare setări (Litere / Logo / ACM)" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Vizibilitate ownership — fără mutare setări în acest build. Conflictele rămân explicite.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[12px]">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+                <th className="py-2 pr-3 font-medium">Setare</th>
+                <th className="py-2 pr-3 font-medium">Categorie</th>
+                <th className="py-2 pr-3 font-medium">Owner actual</th>
+                <th className="py-2 pr-3 font-medium">Sursă runtime</th>
+                <th className="py-2 pr-3 font-medium">Consumer</th>
+                <th className="py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SETTINGS_OWNERSHIP_ROWS.map((row) => (
+                <tr
+                  key={row.setting}
+                  className="border-b border-[#1E293B]/60 align-top"
+                  data-testid={`settings-ownership-${row.setting}`}
+                >
+                  <td className="py-2 pr-3 text-slate-200 font-medium">{row.setting}</td>
+                  <td className="py-2 pr-3 text-slate-400">{row.category}</td>
+                  <td className="py-2 pr-3 text-slate-300 text-[11px]">{row.currentOwnerRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.runtimeSourceRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.consumerRo}</td>
+                  <td className="py-2 text-amber-300/90 text-[11px]">{row.statusRo}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-rules">
+        <SectionHeader title="Reguli de separare" icon={<Ban className="w-4 h-4 text-red-400" />} />
+        <div className="space-y-2 mt-2">
+          {HONESTY_SEPARATION_RULES.map((rule) => (
+            <div key={rule.ruleRo} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+              <p className="text-[13px] text-slate-200 mb-1">{rule.ruleRo}</p>
+              <div className="flex flex-wrap gap-2 text-[10px]">
+                <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+                  Status: {rule.status}
+                </span>
+                <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400 flex items-center gap-1">
+                  <BookOpen className="w-3 h-3" />
+                  {rule.source}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-owner-gates">
+        <SectionHeader title="Owner gates (rezumat)" icon={<Lock className="w-4 h-4 text-amber-400" />} />
+        <p className="text-[11px] text-slate-500 mb-2">
+          Listă read-only — detalii complete în tab-ul Owner gates. Nu este motor de aprobare.
+        </p>
+        <ul className="space-y-1.5">
+          {PRESENT_GATES.map((gate) => (
+            <li
+              key={gate.id}
+              className="flex items-start gap-2 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+              <span>
+                {gate.nameRo}
+                <span className="text-slate-500"> — {gate.status}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-doc-authority">
+        <SectionHeader title="Autoritate documente (index)" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
+        {docsResult === null && (
+          <p className="text-[12px] text-slate-400">Se încarcă indexul de documentație...</p>
+        )}
+        {docsResult?.state === "forbidden" && (
+          <p className="text-[12px] text-amber-300" data-testid="governance-docs-forbidden">
+            Indexul B2 necesită permisiunea <code className="text-amber-200">system.documentation_read</code>{" "}
+            (admin). Etichetele de onestitate de mai sus rămân vizibile; detalii tehnice index = restricționate.
+          </p>
+        )}
+        {docsResult?.state === "unavailable" && (
+          <p className="text-[12px] text-red-300" data-testid="governance-docs-unavailable">
+            Index documentație indisponibil: {docsResult.message}. Nu afișăm un număr canonic inventat.
+          </p>
+        )}
+        {docsResult?.state === "empty" && (
+          <p className="text-[12px] text-slate-400">Index gol — fără documente listate.</p>
+        )}
+        {docsResult?.state === "ok" && (
+          <div data-testid="governance-docs-ok">
+            <p className="text-[11px] text-slate-500 mb-2">
+              {docsResult.data.count} documente indexate (count din API — nu un badge „canonical” inventat).
+              Versiune: {docsResult.data.index_version}
+            </p>
+            <div className="space-y-1.5 max-h-64 overflow-y-auto">
+              {docsResult.data.items.slice(0, 12).map((doc) => (
+                <div
+                  key={doc.document_id}
+                  className="flex flex-wrap items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                >
+                  <span className="text-slate-200 font-medium">{doc.title || doc.document_id}</span>
+                  <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+                    {doc.authority}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded border border-amber-800/40 text-amber-300/90">
+                    {doc.status}
+                  </span>
+                  {doc.drift_status && doc.drift_status !== "ALIGNED" && (
+                    <span className="px-1.5 py-0.5 rounded border border-amber-800/40 text-amber-300">
+                      {doc.drift_status}
+                    </span>
+                  )}
+                  <span className="text-slate-500 ml-auto font-mono text-[10px]">{doc.technical_id}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-open-questions">
+        <SectionHeader title="Întrebări deschise / review" icon={<AlertTriangle className="w-4 h-4 text-amber-400" />} />
+        <div className="space-y-2 mt-2">
+          {openQuestions.map((q) => (
+            <div key={q.label} className="bg-amber-900/10 border border-amber-800/30 rounded-lg p-3">
+              <p className="text-[11px] font-semibold text-amber-300 mb-0.5">{q.label}</p>
+              <p className="text-[12px] text-slate-300">{q.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // --- MAIN PAGE ---
 const defaultFilters: SearchFilters = { severity: "all", module: "all", itemType: "all" };
 
 export default function Governance() {
-  const [activeTab, setActiveTab] = useState<Tab>("boundaries");
+  const [activeTab, setActiveTab] = useState<Tab>("ownership");
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
   const [showFilters, setShowFilters] = useState(false);
+  const [docsResult, setDocsResult] = useState<DocumentationIndexFetchResult | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDocumentationIndex().then((result) => {
+      if (!cancelled) setDocsResult(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const activeFilterCount = (filters.severity !== "all" ? 1 : 0) + (filters.module !== "all" ? 1 : 0) + (filters.itemType !== "all" ? 1 : 0);
   const searchResults = useMemo(() => filterResults(searchQuery, filters), [searchQuery, filters]);
@@ -1558,26 +2002,39 @@ export default function Governance() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case "boundaries": return <BoundaryMapView />;
-      case "status-flows": return <StatusFlowsView />;
-      case "agents": return <AgentAuthorityView />;
-      case "truth": return <TruthHierarchyView />;
-      case "gates": return <GateView />;
-      case "guardrails": return <GuardrailsView />;
-      case "products": return <ProductCatalogView />;
-      case "ui-rules": return <UITruthRulesView />;
+      case "ownership":
+        return <OwnershipHonestyView docsResult={docsResult} />;
+      case "boundaries":
+        return <BoundaryMapView />;
+      case "status-flows":
+        return <StatusFlowsView />;
+      case "agents":
+        return <AgentAuthorityView />;
+      case "truth":
+        return <TruthHierarchyView docsResult={docsResult} />;
+      case "gates":
+        return <GateView />;
+      case "guardrails":
+        return <GuardrailsView />;
+      case "products":
+        return <ProductCatalogView />;
+      case "ui-rules":
+        return <UITruthRulesView />;
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-page">
       {/* Header + Search */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Shield className="w-5 h-5 text-amber-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">System Governance</h1>
-          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
-            25 canonical docs
+          <h1 className="text-[18px] font-bold text-slate-100">Guvernanța sistemului</h1>
+          <span className="text-[11px] text-slate-500" data-testid="governance-alias">
+            System Governance
+          </span>
+          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 ml-1">
+            read-only
           </span>
         </div>
 
@@ -1631,10 +2088,14 @@ export default function Governance() {
         </div>
       </div>
 
-      <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
+      <div
+        className="flex items-start gap-2 px-3 py-2.5 bg-amber-900/15 border border-amber-800/40 rounded-lg"
+        data-testid="governance-honesty-banner"
+      >
         <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-        <p className="text-[11px] text-amber-300/90">
-          Pagină de guvernanță bazată pe definiții canonice locale (read-only). Nu reprezintă stare operațională live din backend.
+        <p className="text-[12px] text-amber-200/95 leading-relaxed">
+          Această pagină afișează reguli și responsabilități din surse controlate. Nu permite modificarea politicilor
+          și nu înlocuiește documentele aprobate.
         </p>
       </div>
 
@@ -1686,6 +2147,10 @@ export default function Governance() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              data-testid={`governance-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id

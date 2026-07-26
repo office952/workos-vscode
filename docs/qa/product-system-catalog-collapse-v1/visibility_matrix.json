@@ -1,0 +1,26 @@
+{
+  "task_id": "PRODUCT_SYSTEM_CATALOG_COLLAPSE_V1",
+  "operator_default": {
+    "visible": ["TPL-VOLUMETRIC-LETTERS_v2", "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"],
+    "hidden": [
+      "TPL-VOLUMETRIC-LOGO_v1",
+      "component-first-set",
+      "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "legacy-shared-modules",
+      "archived_experimental_parents"
+    ]
+  },
+  "advanced_governance": {
+    "visible_when_canViewAdvanced": [
+      "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "TPL-VOLUMETRIC-LOGO_v1"
+    ],
+    "section": "product-system-canonical-advanced-list",
+    "filters": ["internal", "deprecated", "experimental"]
+  },
+  "rbac": {
+    "permission": "view:governance",
+    "new_roles": false,
+    "new_permissions": false
+  }
+}

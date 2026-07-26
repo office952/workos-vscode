@@ -1,0 +1,291 @@
+[
+  {
+    "file": "un-pliu.dxf",
+    "insunits": 4,
+    "insunits_meaning": "mm",
+    "entity_count": 5,
+    "envelope_bbox_mm": {
+      "min_x": -1070.0,
+      "min_y": 1464.9435,
+      "max_x": 1130.0,
+      "max_y": 1964.9437,
+      "width": 2200.0,
+      "height": 500.0002
+    },
+    "by_color": {
+      "1": {
+        "count": 4,
+        "length_mm": 5400.0004,
+        "length_ml": 5.4
+      },
+      "256": {
+        "count": 1,
+        "length_mm": 5400.0004,
+        "length_ml": 5.4
+      }
+    },
+    "total_length_mm": 10800.0008,
+    "total_length_ml": 10.800001,
+    "entities": [
+      {
+        "i": 0,
+        "type": "SPLINE",
+        "color": 256,
+        "degree": 3,
+        "closed": true,
+        "length_mm": 5400.0004,
+        "bbox": {
+          "w": 2200.0,
+          "h": 500.0002,
+          "min_x": -1070.0,
+          "min_y": 1464.9435,
+          "max_x": 1130.0,
+          "max_y": 1964.9437
+        }
+      },
+      {
+        "i": 1,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 500.0002,
+        "bbox": {
+          "w": 0.0,
+          "h": 500.0002,
+          "min_x": -970.0003,
+          "min_y": 1464.9435,
+          "max_x": -970.0003,
+          "max_y": 1964.9437
+        }
+      },
+      {
+        "i": 2,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 500.0002,
+        "bbox": {
+          "w": 0.0,
+          "h": 500.0002,
+          "min_x": 1030.0003,
+          "min_y": 1464.9435,
+          "max_x": 1030.0003,
+          "max_y": 1964.9437
+        }
+      },
+      {
+        "i": 3,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2200.0,
+        "bbox": {
+          "w": 2200.0,
+          "h": 0.0,
+          "min_x": -1070.0,
+          "min_y": 1564.9431,
+          "max_x": 1130.0,
+          "max_y": 1564.9431
+        }
+      },
+      {
+        "i": 4,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2200.0,
+        "bbox": {
+          "w": 2200.0,
+          "h": 0.0,
+          "min_x": -1070.0,
+          "min_y": 1864.9441,
+          "max_x": 1130.0,
+          "max_y": 1864.9441
+        }
+      }
+    ]
+  },
+  {
+    "file": "2-pliuri-100x30.dxf",
+    "insunits": 4,
+    "insunits_meaning": "mm",
+    "entity_count": 9,
+    "envelope_bbox_mm": {
+      "min_x": -1130.0,
+      "min_y": 2092.4493,
+      "max_x": 1130.0,
+      "max_y": 2652.4495,
+      "width": 2260.0,
+      "height": 560.0002
+    },
+    "by_color": {
+      "1": {
+        "count": 4,
+        "length_mm": 5400.0004,
+        "length_ml": 5.4
+      },
+      "242": {
+        "count": 4,
+        "length_mm": 4600.0036,
+        "length_ml": 4.600004
+      },
+      "250": {
+        "count": 1,
+        "length_mm": 5499.411831,
+        "length_ml": 5.499412
+      }
+    },
+    "total_length_mm": 15499.415831,
+    "total_length_ml": 15.499416,
+    "entities": [
+      {
+        "i": 0,
+        "type": "SPLINE",
+        "color": 242,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 300.0012,
+        "bbox": {
+          "w": 0.0001,
+          "h": 300.001,
+          "min_x": 1100.0,
+          "min_y": 2222.4489,
+          "max_x": 1100.0001,
+          "max_y": 2522.4499
+        }
+      },
+      {
+        "i": 1,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 500.0002,
+        "bbox": {
+          "w": 0.0,
+          "h": 500.0002,
+          "min_x": -1000.0003,
+          "min_y": 2122.4493,
+          "max_x": -1000.0003,
+          "max_y": 2622.4495
+        }
+      },
+      {
+        "i": 2,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 500.0002,
+        "bbox": {
+          "w": 0.0,
+          "h": 500.0002,
+          "min_x": 1000.0003,
+          "min_y": 2122.4493,
+          "max_x": 1000.0003,
+          "max_y": 2622.4495
+        }
+      },
+      {
+        "i": 3,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2200.0,
+        "bbox": {
+          "w": 2200.0,
+          "h": 0.0,
+          "min_x": -1100.0,
+          "min_y": 2222.4489,
+          "max_x": 1100.0,
+          "max_y": 2222.4489
+        }
+      },
+      {
+        "i": 4,
+        "type": "SPLINE",
+        "color": 1,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2200.0,
+        "bbox": {
+          "w": 2200.0,
+          "h": 0.0,
+          "min_x": -1100.0,
+          "min_y": 2522.4499,
+          "max_x": 1100.0,
+          "max_y": 2522.4499
+        }
+      },
+      {
+        "i": 5,
+        "type": "SPLINE",
+        "color": 242,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2000.0006,
+        "bbox": {
+          "w": 2000.0006,
+          "h": 0.0,
+          "min_x": -1000.0003,
+          "min_y": 2622.4495,
+          "max_x": 1000.0003,
+          "max_y": 2622.4495
+        }
+      },
+      {
+        "i": 6,
+        "type": "SPLINE",
+        "color": 242,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 2000.0006,
+        "bbox": {
+          "w": 2000.0006,
+          "h": 0.0,
+          "min_x": -1000.0003,
+          "min_y": 2122.4493,
+          "max_x": 1000.0003,
+          "max_y": 2122.4493
+        }
+      },
+      {
+        "i": 7,
+        "type": "SPLINE",
+        "color": 242,
+        "degree": 3,
+        "closed": false,
+        "length_mm": 300.0012,
+        "bbox": {
+          "w": 0.0001,
+          "h": 300.001,
+          "min_x": -1100.0001,
+          "min_y": 2222.4489,
+          "max_x": -1100.0,
+          "max_y": 2522.4499
+        }
+      },
+      {
+        "i": 8,
+        "type": "SPLINE",
+        "color": 250,
+        "degree": 3,
+        "closed": true,
+        "length_mm": 5499.411831,
+        "bbox": {
+          "w": 2260.0,
+          "h": 560.0002,
+          "min_x": -1130.0,
+          "min_y": 2092.4493,
+          "max_x": 1130.0,
+          "max_y": 2652.4495
+        }
+      }
+    ]
+  }
+]

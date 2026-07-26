@@ -1,0 +1,12 @@
+{
+  "task": "APP-AUTH-06C",
+  "findings": [
+    {"finding": "Sandu registry vs legacy competence conflict", "scope": "employee_specific", "generalizable": false, "evidence": "Only E4 shows discrepante_skills=true in employee_reconciliation_matrix", "risk": "HIGH if unresolved before workforce migration"},
+    {"finding": "Hybrid explicit mapping eligibility without registry competence", "scope": "architecture_wide", "generalizable": true, "evidence": "authorization_mode hybrid on multiple registry operations; comparator explicit_mapping domain", "risk": "HIGH — any employee with explicit list could trigger same pattern"},
+    {"finding": "Multiple fingerprints per operation/domain pair", "scope": "operation_specific", "generalizable": true, "evidence": "eligibility + explicit_mapping comparators emit distinct fingerprints for same operation", "risk": "MEDIUM — inflates raw counts without multiplying problems"},
+    {"finding": "Aligned employees E1/E2 print probes", "scope": "fixture_specific", "generalizable": false, "evidence": "LOW risk employees; used as pilot control", "risk": "LOW"},
+    {"finding": "Sandu print probe alignment", "scope": "employee_specific", "generalizable": false, "evidence": "Single-operation alignment does not clear competence conflict", "risk": "MEDIUM — could be misread as global PASS"},
+    {"finding": "Pilot task alias vs registry operation_code crosswalk", "scope": "domain_wide", "generalizable": true, "evidence": "operational_catalog SUGGESTED_OPERATION_ALIASES", "risk": "LOW for interpretation; MEDIUM if owners compare unlike codes"},
+    {"finding": "Unprobed Sandu mappings (packaging, quality_control, welding)", "scope": "employee_specific", "generalizable": false, "evidence": "APP-AUTH-02 override inventory", "risk": "MEDIUM — likely same policy family but not runtime-proven in pilot"}
+  ]
+}

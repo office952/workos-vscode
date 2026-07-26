@@ -1,0 +1,32 @@
+{
+  "workspaceId": "9e3743be-ee44-41c5-9d93-0cb5803c5ff3",
+  "probes": {
+    "upload_method": "UI file input",
+    "file_name": "gradi-curat.svg",
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+    "layers_count": 6,
+    "colors_count": null,
+    "contours": null,
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "offer_scope": {
+      "contract_version": "offer_scope_contract/v1",
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE"
+      ]
+    },
+    "consumable_keys": [],
+    "aggregate_materials": [
+      "MAT-ACP-FATA-LITERE",
+      "MAT-ORACAL-651",
+      "MAT-VINYL-PRINT",
+      "MAT-VINYL-PRINT-LAMINATED"
+    ],
+    "cpp_codes": [
+      "debitare_fata"
+    ],
+    "pd_ok": true,
+    "debitare_fata_qty": 20.9727
+  }
+}

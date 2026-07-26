@@ -1,0 +1,17 @@
+{
+  "task": "UI-TRUTH-01A",
+  "normalizer": "normalizeHealthPayload",
+  "mappings": [
+    { "input": "status ok", "backend": "healthy", "database": "unknown", "checks": "{}" },
+    { "input": "status healthy", "backend": "healthy", "database": "unknown" },
+    { "input": "status warning", "backend": "warning", "database": "unknown" },
+    { "input": "status degraded", "backend": "warning", "database": "unknown" },
+    { "input": "status fail", "backend": "critical", "database": "unknown" },
+    { "input": "status critical", "backend": "critical", "database": "unknown" },
+    { "input": "fetch failure", "backend": "unavailable", "database": "unknown" },
+    { "input": "malformed payload", "backend": "unavailable", "errorKind": "MALFORMED_RESPONSE" },
+    { "input": "checks.database ok", "database": "confirmed", "source": "health" },
+    { "input": "checks.database warning", "database": "warning", "source": "health" },
+    { "input": "checks empty", "database": "unknown", "never": "confirmed" }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "contract_version": "simple_target_v1",
+  "employee_model": {
+    "post_principal": { "verdict": "DUPLICATES_EXISTING_MODEL", "note": "Exists as role/functie + registry — rename docs only" },
+    "skill_uri": { "verdict": "REQUIRED_NOW", "note": "EmployeeSkillAuthorization.skill_code canonical" },
+    "utilaje_permisa": { "verdict": "REQUIRED_NOW", "note": "resource authorizations + machines registry" },
+    "posturi_de_lucru_permisa": { "verdict": "REQUIRED_NOW", "note": "workcenter authorizations exist" }
+  },
+  "operation_model": {
+    "skill_principal": { "verdict": "REQUIRED_NOW", "note": "operation mapping required_skill_codes" },
+    "skill_uri_suport": { "verdict": "USEFUL_LATER", "note": "Only single skill set today" },
+    "post_sau_utilaj_necesar": { "verdict": "REQUIRED_NOW", "note": "machine_type + workcenter on plan task" },
+    "permite_paralelizare": { "verdict": "USEFUL_LATER", "note": "Not structured in Product System output" },
+    "unitate_progres": { "verdict": "REQUIRED_NOW", "note": "Missing — needed for 40 letters" },
+    "mod_colaborare": { "verdict": "USEFUL_LATER", "note": "Not in Product System" },
+    "minim_persoane": { "verdict": "PREMATURE", "note": "Only for real safety rules" },
+    "persoane_recomandate": { "verdict": "USEFUL_LATER", "note": "Display-only when present" },
+    "maxim_persoane_util": { "verdict": "PREMATURE", "note": "Runtime capacity calculation" }
+  },
+  "task_runtime_model": {
+    "status_ready": { "verdict": "DUPLICATES_EXISTING_MODEL", "note": "readiness_status=eligible" },
+    "eligibili": { "verdict": "REQUIRED_NOW", "note": "get_eligible_employees_for_operation exists" },
+    "operator_principal_optional": { "verdict": "REQUIRED_NOW", "note": "Conflicts with mandatory assign for mobile start — policy change" },
+    "participanti": { "verdict": "REQUIRED_NOW", "note": "Sessions partial — need first-class list" },
+    "cereri_ajutor": { "verdict": "REQUIRED_NOW", "note": "NOT_IMPLEMENTED" },
+    "sesiuni_individuale": { "verdict": "REQUIRED_NOW", "note": "Backend exists" },
+    "cantitate_totala": { "verdict": "REQUIRED_NOW", "note": "Missing" },
+    "cantitate_finalizata": { "verdict": "REQUIRED_NOW", "note": "Missing" },
+    "progres_operatie": { "verdict": "REQUIRED_NOW", "note": "Only task-count percent today" }
+  },
+  "wrong_layer_flags": [
+    "oameni_disponibili in Product System → WRONG_LAYER",
+    "assigned_employee_id in frozen snapshot → WRONG_LAYER if ever added"
+  ]
+}

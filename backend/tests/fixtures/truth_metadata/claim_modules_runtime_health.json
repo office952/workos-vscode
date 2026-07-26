@@ -1,0 +1,37 @@
+{
+  "fixture_class": "TEST_FIXTURE",
+  "canonicality": "NOT_CANONICAL_TRUTH",
+  "is_test_fixture": true,
+  "metadata_version": "workos_truth_metadata/v1",
+  "claim_id": "fixture.claim.modules.runtime_health_not_architecture",
+  "subject_type": "RUNTIME_CHECK",
+  "subject_id": "modules_public_health",
+  "claim_type": "RUNTIME_BEHAVIOR",
+  "claim_text": "GET /api/v1/system/health is runtime evidence for /modules; it does not prove approved architecture (TEST FIXTURE).",
+  "display_label_ro": "Health runtime pe Module Chain nu validează arhitectura",
+  "technical_alias": "Module Chain health ≠ architecture",
+  "translation_key": "truth.claim.modules.runtime_health",
+  "authority": {
+    "authority_type": "RUNTIME_EVIDENCE",
+    "authority_reference": "GET /api/v1/system/health",
+    "authority_rank": 20
+  },
+  "owner_type": "UNASSIGNED",
+  "owner_reference": null,
+  "status": "CURRENT_WITH_GUARDS",
+  "last_validated_at": "2026-07-16T12:00:00Z",
+  "validated_against": "runtime:fixture",
+  "evidence_refs": [
+    {
+      "evidence_id": "ev.fixture.modules.health",
+      "evidence_type": "RUNTIME",
+      "reference": "GET /api/v1/system/health",
+      "is_test_fixture": true
+    }
+  ],
+  "related_systems": ["module_chain"],
+  "related_pages": ["modules"],
+  "drift_status": "NOT_VALIDATED",
+  "owner_decision_required": false,
+  "visibility_class": "INTERNAL_TECHNICAL"
+}

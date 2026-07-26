@@ -16,7 +16,11 @@ from services.inventory_materials_admin_service import (
     get_inventory_material_by_code,
     patch_inventory_material_by_code,
 )
-from seeds.material_canonical_naming import canonical_name_for_code, source_notes_for_code
+from seeds.material_canonical_naming import (
+    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
+    canonical_name_for_code,
+    source_notes_for_code,
+)
 from services.volumetric_material_rate_resolver import (
     OWNER_CONFIRMED_PROFILE_LABOR_NOTES,
     PROFILE_DEPTH_MM_TO_VARIANT_CODE,
@@ -71,12 +75,12 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "currency": "EUR",
         "name": canonical_name_for_code(
             "MAT-ACP-FATA-LITERE",
-            "PMMA / plexiglas acrilic 3 mm — față litere",
+            LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
         ),
         "source_notes": source_notes_for_code(
             "MAT-ACP-FATA-LITERE",
             (
-                "Owner-confirmed purchase: Plexiglas 3 mm face = 16 EUR/mp (purchase, no markup). "
+                "Owner-confirmed purchase: plexiglas 3mm PMMA - opal = 16 EUR/mp (purchase, no markup). "
                 "Legacy code name references ACP; volumetric production uses plexi/acrylic face, "
                 "not ACM/Bond panel (15 EUR/mp is a separate premount material). "
                 "Waste: owner standard 20% — template formula_params may differ (e.g. waste_pct 0.15); "
@@ -88,7 +92,7 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "code": "MAT-SPATE-PVC-LITERE",
         "unit_cost": 16.0,
         "currency": "EUR",
-        "name": canonical_name_for_code("MAT-SPATE-PVC-LITERE", "PVC expandat 10 mm"),
+        "name": canonical_name_for_code("MAT-SPATE-PVC-LITERE", "Forex 10 mm"),
         "source_notes": source_notes_for_code(
             "MAT-SPATE-PVC-LITERE",
             (
@@ -102,10 +106,14 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "code": "MAT-LED-MODULE",
         "unit_cost": 0.5,
         "currency": "EUR",
-        "source_notes": (
-            "Owner-confirmed purchase: LED module = 0.5 EUR/buc (purchase, no markup). "
-            "TPL-VOLUMETRIC-LETTERS: count from letter_perimeter_m, module_length_mm=75, "
-            "module_gap_mm=25, pitch=100 mm (formula led_per_letter perimeter mode)."
+        "name": canonical_name_for_code("MAT-LED-MODULE", "Modul LED 12V"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-MODULE",
+            (
+                "Owner-confirmed purchase: LED module = 0.5 EUR/buc (purchase, no markup). "
+                "TPL-VOLUMETRIC-LETTERS: count from letter_perimeter_m, module_length_mm=75, "
+                "module_gap_mm=25, pitch=100 mm (formula led_per_letter perimeter mode)."
+            ),
         ),
     },
     {
@@ -150,10 +158,54 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         ),
     },
     {
+        "code": "MAT-VOPSEA-RAL-CANT-30MM",
+        "unit_cost": 2.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 30 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 30 mm = 2 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-60MM",
+        "unit_cost": 2.5,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 60 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 60 mm = 2.5 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-80MM",
+        "unit_cost": 3.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 80 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 80 mm = 3 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-100MM",
+        "unit_cost": 4.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 100 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 100 mm = 4 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
         "code": "MAT-ORACAL-651",
         "unit_cost": 9.0,
         "currency": "EUR",
-        "name": canonical_name_for_code("MAT-ORACAL-651", "Folie autocolantă PVC — Oracal 651"),
+        "name": canonical_name_for_code("MAT-ORACAL-651", "Oracal 651"),
         "source_notes": source_notes_for_code(
             "MAT-ORACAL-651",
             (
@@ -180,7 +232,7 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "currency": "EUR",
         "name": canonical_name_for_code(
             "MAT-VINYL-PRINT-LAMINATED",
-            "Folie autocolantă PVC — print + laminare față litere",
+            "Printat / Laminat",
         ),
         "source_notes": (
             "Owner-confirmed purchase: print + lamination combined = 10 EUR/mp excluding TVA. "
@@ -191,7 +243,7 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "code": "MAT-ORACAL-641",
         "unit_cost": 6.5,
         "currency": "EUR",
-        "name": "Folie autocolantă PVC — Oracal 641 Economy Cal",
+        "name": canonical_name_for_code("MAT-ORACAL-641", "Oracal 641"),
         "source_notes": (
             "Owner-confirmed purchase: Oracal 641 = 6.5 EUR/mp excluding TVA. "
             "Economy-tier vinyl for face finish. "
@@ -202,7 +254,7 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "code": "MAT-ORACAL-8500",
         "unit_cost": 20.0,
         "currency": "EUR",
-        "name": "Folie autocolantă PVC — Oracal 8500 Translucent Cal",
+        "name": canonical_name_for_code("MAT-ORACAL-8500", "Oracal 8500"),
         "source_notes": (
             "Owner-confirmed purchase: Oracal 8500 = 20.0 EUR/mp excluding TVA. "
             "Translucent vinyl for backlit letter face finish. "
@@ -213,9 +265,13 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         "code": "MAT-LED-STRIP",
         "unit_cost": 2.0,
         "currency": "EUR",
-        "source_notes": (
-            "Owner-confirmed purchase: Bandă LED 12V strip = 2.0 EUR/ml excluding TVA. "
-            "Quantity from finish_setup.total_led_strip_length_m when lighting_system_type=led_strip."
+        "name": canonical_name_for_code("MAT-LED-STRIP", "Bandă LED 12V"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-STRIP",
+            (
+                "Owner-confirmed purchase: Bandă LED 12V strip = 2.0 EUR/ml excluding TVA. "
+                "Quantity from finish_setup.total_led_strip_length_m when lighting_system_type=led_strip."
+            ),
         ),
     },
     {
@@ -312,32 +368,40 @@ OWNER_CONFIRMED_PSU_WATTAGE_PRICES: List[_PriceRow] = [
         "code": "MAT-LED-PSU-12V-60W",
         "unit_cost": 12.0,
         "currency": "EUR",
-        "source_notes": _psu_eur_source_notes(
-            watts=60, ron_reference=60.0, eur_value=12.0
+        "name": canonical_name_for_code("MAT-LED-PSU-12V-60W", "Sursă LED 12V 60W"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-PSU-12V-60W",
+            _psu_eur_source_notes(watts=60, ron_reference=60.0, eur_value=12.0),
         ),
     },
     {
         "code": "MAT-LED-PSU-12V-100W",
         "unit_cost": 16.0,
         "currency": "EUR",
-        "source_notes": _psu_eur_source_notes(
-            watts=100, ron_reference=80.0, eur_value=16.0
+        "name": canonical_name_for_code("MAT-LED-PSU-12V-100W", "Sursă LED 12V 100W"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-PSU-12V-100W",
+            _psu_eur_source_notes(watts=100, ron_reference=80.0, eur_value=16.0),
         ),
     },
     {
         "code": "MAT-LED-PSU-12V-160W",
         "unit_cost": 20.0,
         "currency": "EUR",
-        "source_notes": _psu_eur_source_notes(
-            watts=160, ron_reference=100.0, eur_value=20.0
+        "name": canonical_name_for_code("MAT-LED-PSU-12V-160W", "Sursă LED 12V 160W"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-PSU-12V-160W",
+            _psu_eur_source_notes(watts=160, ron_reference=100.0, eur_value=20.0),
         ),
     },
     {
         "code": "MAT-LED-PSU-12V-200W",
         "unit_cost": 40.0,
         "currency": "EUR",
-        "source_notes": _psu_eur_source_notes(
-            watts=200, ron_reference=200.0, eur_value=40.0
+        "name": canonical_name_for_code("MAT-LED-PSU-12V-200W", "Sursă LED 12V 200W"),
+        "source_notes": source_notes_for_code(
+            "MAT-LED-PSU-12V-200W",
+            _psu_eur_source_notes(watts=200, ron_reference=200.0, eur_value=40.0),
         ),
     },
 ]
@@ -378,6 +442,9 @@ def _already_applied(existing: Dict[str, Any], row: _PriceRow) -> bool:
         return False
     if str(existing.get("source_review_status") or "") != "accepted_override":
         return False
+    # Re-apply when owner display name lock differs from inventory row.
+    if row.get("name") and str(existing.get("name") or "") != str(row["name"]):
+        return False
     return True
 
 
@@ -389,6 +456,8 @@ def _estimated_already_applied(existing: Dict[str, Any], row: _PriceRow) -> bool
     if str(existing.get("currency") or "").upper() != str(row["currency"]).upper():
         return False
     if str(existing.get("source_review_status") or "") != "needs_review":
+        return False
+    if row.get("name") and str(existing.get("name") or "") != str(row["name"]):
         return False
     return True
 

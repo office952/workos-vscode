@@ -96,7 +96,7 @@ export default function IntakeV6ProductionHandoffPreviewPanel({
                     )}`
                   : formatIntakeV6Quantity(job.quantity, job.unit);
               return (
-              <li key={job.job_key} className="border-b border-[#2A3548]/60 py-1">
+              <li key={job.job_key} className="border-b border-wo-border-strong/60 py-1">
                 {job.display_name} — {quantityLabel}
                 {job.quantity_basis ? (
                   <span

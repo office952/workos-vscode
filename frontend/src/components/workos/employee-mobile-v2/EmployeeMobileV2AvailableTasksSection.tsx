@@ -1,16 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  mapEmployeeMobileStartFromAvailableError,
-  startEmployeeMobileTaskFromAvailable,
-  type EmployeeMobileTaskDTO,
-} from "@/api/employeeMobileTasks";
+import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import EmployeeMobileV2StatusIndicator from "@/components/workos/employee-mobile-v2/EmployeeMobileV2StatusIndicator";
 import {
   EmployeeMobileEmptyState,
   EmployeeMobileErrorState,
   EmployeeMobileLoadingState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
+import { useEmployeeMobileV2StartAction } from "@/hooks/useEmployeeMobileV2StartAction";
 import {
   emV2PrimaryButtonClass,
   emV2Surface,
@@ -20,27 +17,33 @@ import {
   partitionAvailableTasks,
   resolveAvailableTaskWaitingLabel,
 } from "@/lib/employeeMobileV2AvailableTasks";
+import {
+  resolveTaskComponentLine,
+  resolveTaskDisplayTitle,
+} from "@/lib/employeeMobileV2TaskTruth";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
+import { AVAILABLE_START_LABEL, START_PENDING_LABEL } from "@/lib/employeeMobileV2StartAction";
 import { cn } from "@/lib/utils";
 
 function AvailableTaskCard({
   task,
   mode,
-  startingId,
+  isPending,
   onStart,
   onPreview,
 }: {
   task: EmployeeMobileTaskDTO;
   mode: "startable" | "waiting";
-  startingId: string | null;
+  isPending: boolean;
   onStart: (task: EmployeeMobileTaskDTO) => void;
   onPreview: (task: EmployeeMobileTaskDTO) => void;
 }) {
   const presentation = resolveEmployeeMobileV2StatusPresentation(task);
+  const title = resolveTaskDisplayTitle(task);
+  const componentLine = resolveTaskComponentLine(task);
   const orderLine = [task.order_code || `Comandă ${task.order_id}`, task.client]
     .filter(Boolean)
     .join(" · ");
-  const isStarting = startingId === `${task.order_id}:${task.task_id}`;
   const waitingLabel = resolveAvailableTaskWaitingLabel(task);
 
   return (
@@ -51,8 +54,11 @@ function AvailableTaskCard({
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-medium text-slate-100 leading-snug line-clamp-2">
-            {task.title || task.task_id}
+            {title}
           </p>
+          {componentLine ? (
+            <p className="mt-0.5 text-[12px] text-slate-400 line-clamp-1">{componentLine}</p>
+          ) : null}
           {orderLine ? (
             <p className="mt-0.5 text-[12px] text-slate-500 line-clamp-2">{orderLine}</p>
           ) : null}
@@ -87,11 +93,11 @@ function AvailableTaskCard({
           <button
             type="button"
             className={cn(emV2PrimaryButtonClass(), "w-full")}
-            disabled={isStarting}
+            disabled={isPending}
             onClick={() => onStart(task)}
             data-testid={`employee-mobile-v2-available-start-${task.task_id}`}
           >
-            {isStarting ? "Se pornește…" : "Încep lucrul"}
+            {isPending ? START_PENDING_LABEL : AVAILABLE_START_LABEL}
           </button>
         </div>
       ) : null}
@@ -111,22 +117,18 @@ export default function EmployeeMobileV2AvailableTasksSection({
   onStarted: () => void | Promise<void>;
 }) {
   const navigate = useNavigate();
-  const [startingId, setStartingId] = useState<string | null>(null);
-  const [startError, setStartError] = useState<string | null>(null);
+  const { startTask, isPending, error: startError } = useEmployeeMobileV2StartAction();
 
   const { startable, waiting } = useMemo(() => partitionAvailableTasks(tasks), [tasks]);
 
   async function handleStart(task: EmployeeMobileTaskDTO) {
-    setStartingId(`${task.order_id}:${task.task_id}`);
-    setStartError(null);
     try {
-      await startEmployeeMobileTaskFromAvailable(task.task_id, task.order_id);
-      await onStarted();
-      navigate(buildEmployeeMobileV2TaskPath(task.task_id, task.order_id));
-    } catch (err) {
-      setStartError(mapEmployeeMobileStartFromAvailableError(err));
-    } finally {
-      setStartingId(null);
+      await startTask(task, async () => {
+        await onStarted();
+        navigate(buildEmployeeMobileV2TaskPath(task.task_id, task.order_id));
+      });
+    } catch {
+      // error surfaced via hook state
     }
   }
 
@@ -139,9 +141,9 @@ export default function EmployeeMobileV2AvailableTasksSection({
   return (
     <section className="mt-6" data-testid="employee-mobile-v2-available-tasks">
       <header className="mb-3">
-        <h2 className="text-[17px] font-semibold text-slate-100">Taskuri disponibile</h2>
+        <h2 className="text-[17px] font-semibold text-slate-100">Disponibile</h2>
         <p className="mt-1 text-[13px] text-slate-500 leading-snug">
-          Taskuri eligibile pentru rolul tău — începe doar cele pregătite acum.
+          Taskuri pe care le poți prelua — eligibilitatea vine din backend.
         </p>
       </header>
 
@@ -192,7 +194,7 @@ export default function EmployeeMobileV2AvailableTasksSection({
                     key={`start-${task.order_id}-${task.task_id}`}
                     task={task}
                     mode="startable"
-                    startingId={startingId}
+                    isPending={isPending(task)}
                     onStart={(t) => void handleStart(t)}
                     onPreview={handlePreview}
                   />
@@ -210,7 +212,7 @@ export default function EmployeeMobileV2AvailableTasksSection({
                     key={`wait-${task.order_id}-${task.task_id}`}
                     task={task}
                     mode="waiting"
-                    startingId={startingId}
+                    isPending={false}
                     onStart={() => {}}
                     onPreview={handlePreview}
                   />

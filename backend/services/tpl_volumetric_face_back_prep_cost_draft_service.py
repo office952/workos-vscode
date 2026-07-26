@@ -480,7 +480,7 @@ def build_tpl_volumetric_face_back_prep_cost_draft_v1(
         _material_row(
             component="FACE_PLEXI",
             material_key=MATERIAL_KEY_PLEXI_3MM,
-            material_label="Plexiglas 3 mm — față litere",
+            material_label="plexiglas 3mm PMMA - opal",
             registry_code=REGISTRY_PLEXI_FACE_CODE,
             thickness_mm=3.0,
             area_sqm=face_area,

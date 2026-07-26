@@ -57,10 +57,10 @@ def test_seed_logo_templates_and_aggregate_live():
     assert len(aggregate.modules.required) == 6
     assert [module.child_template_code for module in aggregate.modules.required] == [
         "TPL-VOLUMETRIC-LOGO-FACE_v1",
-        "TPL-VOLUMETRIC-LOGO-FINISH_v1",
         "TPL-VOLUMETRIC-LOGO-RETURN_v1",
         "TPL-VOLUMETRIC-LOGO-BACK_v1",
         "TPL-VOLUMETRIC-LOGO-LIGHTING_v1",
+        "TPL-VOLUMETRIC-LOGO-FINISH_v1",
         "TPL-VOLUMETRIC-LOGO-MOUNTING_v1",
     ]
     assert [component.component_id for component in aggregate.components] == [
@@ -71,15 +71,13 @@ def test_seed_logo_templates_and_aggregate_live():
         "comp_logo_lighting",
         "comp_logo_mounting",
     ]
-    assert product_definition is not None
-    assert product_definition.template_code == "TPL-VOLUMETRIC-LOGO_v1"
+    assert product_definition is None
 
 
-def test_logo_modular_form_contract_stays_ok_after_seed():
+def test_logo_modular_form_contract_remains_unavailable_until_offerable_build():
     contract = get_intake_v6_modular_form_contract_service().get_for_template("TPL-VOLUMETRIC-LOGO_v1")
 
-    assert contract is not None
-    assert contract.summary.active_module_count >= 6
+    assert contract is None
 
 
 def test_logo_only_assembly_preview_produces_volumetric_logo_component():

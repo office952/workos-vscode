@@ -1,0 +1,4 @@
+﻿vite build: PASS
+Command: cd frontend; npx.cmd --yes pnpm@8.10.0 exec vite build
+Result: build completed successfully; see frontend_build_result.txt for raw output.
+Warnings: Browserslist data is old; existing CSS minifier bracket warnings for generated Tailwind selectors; mixed dynamic/static import chunking warning; large chunk warning.

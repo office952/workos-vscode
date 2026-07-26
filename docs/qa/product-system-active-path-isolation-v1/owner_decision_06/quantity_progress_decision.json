@@ -1,0 +1,20 @@
+{
+  "task": "OWNER-DECISION-06",
+  "owner_choice": "MIXED",
+  "owner_status": "CONFIRMED",
+  "rules": {
+    "repetitive_operations": {
+      "fields": ["quantity_total", "quantity_completed", "progress_unit"],
+      "example": "40 litere — 17 finalizate — 23 ramase",
+      "required_when": "natural countable unit exists in Product System"
+    },
+    "non_quantitative_operations": {
+      "fields": ["status", "optional percent"],
+      "required_when": "no natural unit"
+    }
+  },
+  "not_all_operations_forced_to_quantity": true,
+  "progress_owner": "OPERATION",
+  "individual_contributions": "OPTIONAL_SEPARATE",
+  "current_gap": "Task boolean done + blueprint task-count percent only"
+}

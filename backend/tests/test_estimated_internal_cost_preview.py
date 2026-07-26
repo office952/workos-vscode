@@ -17,31 +17,12 @@ from services.estimated_internal_cost_service import (
     EstimatedInternalCostService,
     scan_hourly_contamination,
 )
+from tests.eic_patched_bom_builder import PatchedAggregateCostBomBuilder
+from tests.test_aggregate_cost_bom_adapter import INVENTORY_CATALOG, SAMPLE_RATES
 
 pytest_plugins = ["tests.test_product_aggregate_volumetric_v2"]
 
 TEMPLATE = "TPL-VOLUMETRIC-LETTERS_v2"
-
-SAMPLE_RATES = {
-    "MAT-SABLON-MONTAJ": 8.0,
-    "MAT-SABLON-HARTIE": 2.0,
-    "MAT-LED-MODULE": 0.5,
-    "MAT-LED-PSU-12V-100W": 45.0,
-    "MAT-PROFIL-LATERAL-LITERE-60MM": 3.0,
-    "MAT-ORACAL-651": 9.0,
-}
-
-INVENTORY_CATALOG = {
-    code: {"status": "active", "unit_cost": rate}
-    for code, rate in {
-        **SAMPLE_RATES,
-        "MAT-LED-PSU-12V-60W": 30.0,
-        "MAT-ACP-FATA-LITERE": 15.0,
-        "MAT-SPATE-PVC-LITERE": 8.0,
-        "MAT-ADEZIV-CANT-LITERE": 4.0,
-        "MAT-VOPSEA-RAL": 10.0,
-    }.items()
-}
 
 
 @pytest_asyncio.fixture
@@ -51,7 +32,14 @@ async def cpp_service(volumetric_v2_db):
 
 @pytest_asyncio.fixture
 async def eic_service(volumetric_v2_db):
-    service = EstimatedInternalCostService(volumetric_v2_db)
+    service = EstimatedInternalCostService(
+        volumetric_v2_db,
+        bom_builder=PatchedAggregateCostBomBuilder(
+            volumetric_v2_db,
+            material_rates=SAMPLE_RATES,
+            inventory_catalog=INVENTORY_CATALOG,
+        ),
+    )
 
     async def _patched_load():
         return SAMPLE_RATES, {"RON": "RON"}, {"WC_CNC_ROUTING": 120.0}, INVENTORY_CATALOG
@@ -141,7 +129,14 @@ async def test_missing_workcenter_hourly_not_in_total_or_commercial_block(
 
 @pytest.mark.asyncio
 async def test_missing_inventory_produces_internal_material_cost_missing(volumetric_v2_db):
-    service = EstimatedInternalCostService(volumetric_v2_db)
+    service = EstimatedInternalCostService(
+        volumetric_v2_db,
+        bom_builder=PatchedAggregateCostBomBuilder(
+            volumetric_v2_db,
+            material_rates={},
+            inventory_catalog={},
+        ),
+    )
 
     async def _empty():
         return {}, {}, {}, {}
@@ -319,7 +314,14 @@ def test_post_endpoint_returns_preview(eic_auth_client):
 async def test_workspace_id_payload(volumetric_v2_db):
     import json
 
-    service = EstimatedInternalCostService(volumetric_v2_db)
+    service = EstimatedInternalCostService(
+        volumetric_v2_db,
+        bom_builder=PatchedAggregateCostBomBuilder(
+            volumetric_v2_db,
+            material_rates=SAMPLE_RATES,
+            inventory_catalog=INVENTORY_CATALOG,
+        ),
+    )
 
     async def _patched():
         return SAMPLE_RATES, {}, {}, INVENTORY_CATALOG

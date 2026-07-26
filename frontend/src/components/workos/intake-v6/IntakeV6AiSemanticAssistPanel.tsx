@@ -77,7 +77,7 @@ export default function IntakeV6AiSemanticAssistPanel({
       </button>
 
       {open ? (
-        <div className="mt-3 space-y-3 border-t border-[#2A3548]/60 pt-3 text-[11px] text-slate-300">
+        <div className="mt-3 space-y-3 border-t border-wo-border-strong/60 pt-3 text-[11px] text-slate-300">
           <p data-testid="intake-v6-ai-not-connected">
             {preview.ai_not_called ? "AI not connected yet." : "AI connected."}
           </p>

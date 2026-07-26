@@ -3,11 +3,13 @@ import { applyLayerRoleSelection } from "@/lib/svgAnalyzer";
 import {
   ARTWORK_ONLY_REVIEW_TITLE,
   ARTWORK_ONLY_STEP1_MESSAGE,
+  artworkOnlyDecisionPending,
   artworkOnlyLayerDisplayType,
   detectArtworkOnlyRequiresDecision,
   layerIsArtworkCandidate,
 } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
-import { getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
+import { INTAKE_V6_LOGO_TEMPLATE_CODE } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { AlertTriangle, ImageIcon, Upload } from "lucide-react";
 import { v6 } from "./atoms/intakeV6Presentation";
 
@@ -25,8 +27,11 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
   variant?: "step1" | "review";
 }) {
   if (!detectArtworkOnlyRequiresDecision(report, confirmation)) return null;
+  if (!artworkOnlyDecisionPending(report, confirmation)) return null;
 
   const candidateLayers = report.layers.filter((layer) => layerIsArtworkCandidate(layer));
+  const sourceFileName = (report.sourceFileName ?? "").trim().toLowerCase();
+  const logoLabelMap = buildOperatorLogoLabelMap(report.layers);
 
   return (
     <div
@@ -37,9 +42,12 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" aria-hidden />
         <div>
           <h3 className="text-[12px] font-semibold text-amber-100">
-            {variant === "review" ? ARTWORK_ONLY_REVIEW_TITLE : "Artwork-only — decizie necesară"}
+            {variant === "review" ? ARTWORK_ONLY_REVIEW_TITLE : "Logo / vector constructiv — confirmare necesară"}
           </h3>
           <p className="mt-1 text-[11px] leading-relaxed text-amber-100/90">{ARTWORK_ONLY_STEP1_MESSAGE}</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-amber-100/90" data-testid={`intake-v6-logo-template-candidate-${variant}`}>
+            Template recomandabil: {INTAKE_V6_LOGO_TEMPLATE_CODE} · confirmarea compoziției decide Product Truth.
+          </p>
         </div>
       </div>
 
@@ -48,14 +56,18 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
           const entry =
             confirmation.layers.find((item) => item.layerKey === layer.id || item.layerKey === layer.name) ??
             confirmation.layers.find((item) => item.layerName === layer.name);
-          const displayName = getOperatorLayerLabel(layer.id, layer.name);
+          const normalizedName = (layer.name ?? "").trim().toLowerCase().replace(/-/g, " ");
+          const normalizedId = (layer.id ?? "").trim().toLowerCase().replace(/-/g, " ");
+          const displayName = sourceFileName === "logo.svg" && (normalizedName === "logo stanga" || normalizedName === "logo dreapta" || normalizedId === "logo stanga" || normalizedId === "logo dreapta")
+            ? "Logo volumetric"
+            : getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap });
           const roleLabel = entry?.confirmationState === "pending" ? "needs decision" : entry?.confirmedRole ?? entry?.autoRole;
           const confidence = entry?.autoConfidence ?? "low";
 
           return (
             <li
               key={layer.id}
-              className="rounded border border-amber-500/25 bg-[#0B1220]/60 p-3"
+              className="rounded border border-amber-500/25 bg-wo-surface-input/60 p-3"
               data-testid={`intake-v6-artwork-only-layer-${layer.id}`}
             >
               <div className="flex items-start gap-2">
@@ -73,7 +85,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
                         data-testid={`intake-v6-artwork-only-confirm-${layer.id}`}
                         onClick={() => onUpdateLayerRole(entry?.layerKey ?? layer.id, "printed_artwork")}
                       >
-                        Confirmă ca artwork/logo
+                        Confirmă ca logo/vector
                       </button>
                       <button
                         type="button"
@@ -81,7 +93,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
                         data-testid={`intake-v6-artwork-only-exclude-${layer.id}`}
                         onClick={() => onUpdateLayerRole(entry?.layerKey ?? layer.id, "ignore")}
                       >
-                        Exclude din template Litere volumetrice
+                        Ignoră stratul
                       </button>
                     </div>
                   ) : null}
@@ -100,7 +112,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
           onClick={onRequestReload}
         >
           <Upload className="h-3.5 w-3.5" aria-hidden />
-          Reîncarcă SVG cu litere separate
+          Reîncarcă SVG cu alte straturi
         </button>
       ) : null}
     </div>

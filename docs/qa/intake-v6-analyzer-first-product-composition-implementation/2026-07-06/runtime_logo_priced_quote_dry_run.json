@@ -1,0 +1,429 @@
+﻿{
+    "pricing_status":  "V6_PRICED_DRY_RUN_BLOCKED",
+    "workspace_id":  "0f08c338-c435-4e01-a243-7c19ff12ad44",
+    "workspace_code":  "IV6-AA060867",
+    "intake_code":  "IR-MR8BSL51",
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_composition_recommendation":  {
+                                               "status":  "needs_confirmation",
+                                               "composition_type":  "logo_only",
+                                               "source":  "analyzer_rules_v1",
+                                               "recommended_templates":  [
+                                                                             {
+                                                                                 "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                                 "role_in_composition":  "logo_vector_atipic",
+                                                                                 "reason":  "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+                                                                                 "source_layer_ids":  [
+                                                                                                          "logo-dreapta"
+                                                                                                      ],
+                                                                                 "confidence":  "high",
+                                                                                 "status":  "suggested"
+                                                                             }
+                                                                         ],
+                                               "composition_items":  [
+                                                                         {
+                                                                             "composition_item_id":  "logo",
+                                                                             "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                             "component_role":  "volumetric_logo",
+                                                                             "source_layer_ids":  [
+                                                                                                      "logo-dreapta"
+                                                                                                  ],
+                                                                             "source_group_ids":  [
+                                                                                                      "logo-dreapta"
+                                                                                                  ],
+                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                             "status":  "suggested"
+                                                                         }
+                                                                     ],
+                                               "shared_modules_policy":  {
+                                                                             "dedupe_common_operations":  true,
+                                                                             "graphic_verification_scope":  "assembly",
+                                                                             "file_preparation_scope":  "assembly",
+                                                                             "light_test_scope":  "assembly",
+                                                                             "packaging_scope":  "assembly"
+                                                                         },
+                                               "blockers":  [
+
+                                                            ],
+                                               "warnings":  [
+
+                                                            ],
+                                               "generated_at":  "2026-07-05T21:53:20.576422+00:00"
+                                           },
+    "product_composition_confirmed":  {
+                                          "confirmed":  true,
+                                          "confirmed_at":  "2026-07-05T21:53:11.658805+00:00",
+                                          "confirmed_by":  "dev@localhost",
+                                          "items":  [
+                                                        {
+                                                            "composition_item_id":  "logo",
+                                                            "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                            "component_role":  "volumetric_logo",
+                                                            "source_layer_ids":  [
+                                                                                     "logo-dreapta"
+                                                                                 ],
+                                                            "source_group_ids":  [
+                                                                                     "logo-dreapta"
+                                                                                 ],
+                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                            "status":  "suggested"
+                                                        }
+                                                    ],
+                                          "operator_note":  null,
+                                          "source":  "operator_confirmation_v1"
+                                      },
+    "composition_items":  [
+                              {
+                                  "composition_item_id":  "logo",
+                                  "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                  "component_role":  "volumetric_logo",
+                                  "source_layer_ids":  [
+                                                           "logo-dreapta"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "logo-dreapta"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              }
+                          ],
+    "pricing_source":  "intake_v6_backend_priced_dry_run",
+    "pricing_mode":  "dry_run",
+    "commercial_totals":  {
+                              "subtotal_net":  4299.06,
+                              "vat_rate":  21.0,
+                              "vat_amount":  902.8,
+                              "total_gross":  5201.86,
+                              "currency":  "RON"
+                          },
+    "commercial_line_items":  [
+                                  {
+                                      "code":  "debitare_fata",
+                                      "label":  "Debitare faÈÄ litere",
+                                      "module_code":  "debitare_fata",
+                                      "component_code":  "comp_face_litere",
+                                      "basis_type":  "ml",
+                                      "quantity":  4.7553,
+                                      "unit":  "ml",
+                                      "commercial_unit_price":  25.0,
+                                      "subtotal":  118.8825,
+                                      "pricing_rule_code":  "VOL_V2_FACE_CNC_ML",
+                                      "source":  "commercial_rules_volumetric_v2:face_perimeter_ml",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "modelare_cant_aluminiu",
+                                      "label":  "Modelare cant aluminiu",
+                                      "module_code":  "modelare_cant",
+                                      "component_code":  "comp_lateral_litere",
+                                      "basis_type":  "ml",
+                                      "quantity":  4.7553,
+                                      "unit":  "ml",
+                                      "commercial_unit_price":  30.0,
+                                      "subtotal":  142.659,
+                                      "pricing_rule_code":  "VOL_V2_RETURN_PROFILE_ML",
+                                      "source":  "commercial_rules_volumetric_v2:return_profile_ml",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Technical inputs: letter_perimeter_m, return_depth_mm â not minutes."
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "debitare_spate",
+                                      "label":  "Debitare spate litere",
+                                      "module_code":  "debitare_spate",
+                                      "component_code":  "comp_spate_litere",
+                                      "basis_type":  "m2",
+                                      "quantity":  2.2506,
+                                      "unit":  "m2",
+                                      "commercial_unit_price":  20.0,
+                                      "subtotal":  45.012,
+                                      "pricing_rule_code":  "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+                                      "source":  "commercial_rules_volumetric_v2:back_m2_dev_bridge",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Step 8 dev bridge: interim mÂ² basis until owner formalizes ml vs mÂ² in Pricing Registry."
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "sistem_led_module",
+                                      "label":  "Sistem LED â module",
+                                      "module_code":  "sistem_led",
+                                      "component_code":  "comp_led_litere",
+                                      "basis_type":  "piece",
+                                      "quantity":  228,
+                                      "unit":  "buc",
+                                      "commercial_unit_price":  5.0,
+                                      "subtotal":  1140.0,
+                                      "pricing_rule_code":  "VOL_V2_LED_MODULE_PIECE",
+                                      "source":  "commercial_rules_volumetric_v2:led_module_count",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "sursa_led",
+                                      "label":  "SursÄ LED (PSU)",
+                                      "module_code":  "sistem_led",
+                                      "component_code":  "comp_led_litere",
+                                      "basis_type":  "piece",
+                                      "quantity":  1.0,
+                                      "unit":  "buc",
+                                      "commercial_unit_price":  150.0,
+                                      "subtotal":  150.0,
+                                      "pricing_rule_code":  "VOL_V2_LED_PSU_PIECE",
+                                      "source":  "commercial_rules_volumetric_v2:psu_piece_dev_bridge",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Commercial sells one PSU unit; selected_psu_watts is reference only."
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "finisaje_colantare_vopsire",
+                                      "label":  "Finisaje â colantare / vopsire",
+                                      "module_code":  "finisaje",
+                                      "component_code":  "comp_finisaj_litere",
+                                      "basis_type":  "m2",
+                                      "quantity":  2.2506,
+                                      "unit":  "m2",
+                                      "commercial_unit_price":  35.0,
+                                      "subtotal":  78.771,
+                                      "pricing_rule_code":  "VOL_V2_FINISH_M2_OR_MINIMUM",
+                                      "source":  "commercial_rules_volumetric_v2:finish_area_m2",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Unconfirmed finish groups may require owner review before numeric pricing.",
+                                                       "Finish groups not confirmed â numeric commercial price deferred."
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "sablon_montaj_forex",
+                                      "label":  "Èablon montaj â Forex",
+                                      "module_code":  "finisaje",
+                                      "component_code":  "comp_finisaj_litere",
+                                      "basis_type":  "m2",
+                                      "quantity":  2.2506,
+                                      "unit":  "m2",
+                                      "commercial_unit_price":  15.0,
+                                      "subtotal":  33.759,
+                                      "pricing_rule_code":  "VOL_V2_SABLON_FOREX_DEV_BRIDGE",
+                                      "source":  "commercial_rules_volumetric_v2:sablon_forex_dev_bridge",
+                                      "owner_decision_required":  false,
+                                      "warnings":  [
+                                                       "Step 8 dev bridge: interim Forex sablon price until owner approves in 7I."
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "ambalare",
+                                      "label":  "Ambalare",
+                                      "module_code":  "finisaje",
+                                      "component_code":  "comp_finisaj_litere",
+                                      "basis_type":  "fixed",
+                                      "quantity":  null,
+                                      "unit":  "set",
+                                      "commercial_unit_price":  null,
+                                      "subtotal":  null,
+                                      "pricing_rule_code":  "VOL_V2_PACKAGING_PENDING",
+                                      "source":  "commercial_rules_volumetric_v2:packaging_rule_pending",
+                                      "owner_decision_required":  true,
+                                      "warnings":  [
+
+                                                   ]
+                                  },
+                                  {
+                                      "code":  "montaj",
+                                      "label":  "Montaj Èantier",
+                                      "module_code":  "finisaje",
+                                      "component_code":  null,
+                                      "basis_type":  "fixed",
+                                      "quantity":  null,
+                                      "unit":  "locatie",
+                                      "commercial_unit_price":  null,
+                                      "subtotal":  null,
+                                      "pricing_rule_code":  "VOL_V2_SITE_MOUNT_FUTURE",
+                                      "source":  "commercial_rules_volumetric_v2:site_mount_future_optional",
+                                      "owner_decision_required":  true,
+                                      "warnings":  [
+
+                                                   ]
+                                  }
+                              ],
+    "internal_cost_trace":  {
+                                "available":  true,
+                                "workspace_id":  "0f08c338-c435-4e01-a243-7c19ff12ad44",
+                                "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                "estimated_cost_total":  624.41,
+                                "material_cost_total":  624.41,
+                                "currency":  "EUR",
+                                "contains_estimates":  true,
+                                "contains_missing_prices":  false
+                            },
+    "pricing_input_trace":  {
+                                "workspace_id":  "0f08c338-c435-4e01-a243-7c19ff12ad44",
+                                "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                "is_ready_for_quote":  false,
+                                "adapter_status":  "blocked",
+                                "adapter_blockers":  [
+                                                         "UNCONFIRMED_LETTER_MODEL"
+                                                     ],
+                                "adapter_warnings":  [
+                                                         "FÄrÄ suport comun: sursele calculate se includ Ã®n colet la ambalare.",
+                                                         "PSU will be packed and handled at packaging/delivery stage.",
+                                                         "MaterialIntent conÈine estimÄri conceptuale â fÄrÄ mutaÈie inventory."
+                                                     ],
+                                "production_counts":  {
+                                                          "letter_count":  0,
+                                                          "real_letters_count":  0,
+                                                          "cut_contour_count":  0,
+                                                          "inner_hole_count":  0,
+                                                          "cutting_contours_count":  0,
+                                                          "material_piece_count":  0,
+                                                          "volumetric_piece_count":  1,
+                                                          "artwork_piece_count":  1
+                                                      },
+                                "finish_summary":  {
+                                                       "face_finish_type":  "vinyl",
+                                                       "face_vinyl_enabled":  true,
+                                                       "return_finish_type":  "raw_material",
+                                                       "return_depth_mm":  60.0,
+                                                       "return_wrapped":  false,
+                                                       "return_painted":  false
+                                                   },
+                                "quote_input_keys":  [
+                                                         "artwork_area_m2",
+                                                         "artwork_layer_count",
+                                                         "artwork_piece_count",
+                                                         "artwork_return_perimeter_ml",
+                                                         "back_bevel_enabled",
+                                                         "back_material",
+                                                         "backing_material",
+                                                         "backing_mode",
+                                                         "backing_present",
+                                                         "backing_thickness_mm",
+                                                         "bevel_perimeter_ml",
+                                                         "can_create_quote",
+                                                         "cnc_cutting_perimeter_ml",
+                                                         "cut_contour_count",
+                                                         "cutting_contours_count",
+                                                         "cutting_perimeter_ml",
+                                                         "depth_mm",
+                                                         "estimated_led_watts",
+                                                         "face_area_m2",
+                                                         "face_cutting_perimeter_ml",
+                                                         "face_finish_type",
+                                                         "face_vinyl_enabled",
+                                                         "face_vinyl_roll_width_mm",
+                                                         "geometry_calculation_quality",
+                                                         "height_mm",
+                                                         "illuminated",
+                                                         "inner_hole_count",
+                                                         "inner_holes_count",
+                                                         "intake_schema_version",
+                                                         "intake_source",
+                                                         "inventory_mutation_allowed",
+                                                         "led_module_count",
+                                                         "led_module_power_w",
+                                                         "led_perimeter_ml",
+                                                         "led_strip_power_w_per_ml",
+                                                         "letter_count",
+                                                         "letter_face_area_m2",
+                                                         "letter_perimeter_m",
+                                                         "letter_return_perimeter_ml",
+                                                         "light_color",
+                                                         "lighting_system_type",
+                                                         "material_piece_count",
+                                                         "module_wattage",
+                                                         "mounting_bar_profile",
+                                                         "mounting_system",
+                                                         "mounting_template_area_m2",
+                                                         "mounting_template_enabled",
+                                                         "mounting_template_material_type",
+                                                         "operation_flags",
+                                                         "psu_configuration",
+                                                         "readiness_status",
+                                                         "real_letters_count",
+                                                         "required_psu_watts",
+                                                         "return_depth_mm",
+                                                         "return_finish_type",
+                                                         "return_material_perimeter_ml",
+                                                         "return_painted",
+                                                         "return_wrapped",
+                                                         "selected_psu_watts",
+                                                         "support_mode",
+                                                         "template_code",
+                                                         "total_letter_perimeter_ml",
+                                                         "vector_file",
+                                                         "volumetric_piece_count",
+                                                         "width_mm"
+                                                     ]
+                            },
+    "commercial_proposal_trace":  {
+                                      "available":  true,
+                                      "source":  "commercial_price_proposal",
+                                      "status":  "ready",
+                                      "quote_ready_for_commercial_review":  true,
+                                      "subtotal_commercial":  1709.0835,
+                                      "provenance":  [
+                                                         {
+                                                             "key":  "product_definition",
+                                                             "source":  "product_definition_builder_service",
+                                                             "detail":  "read_only=true workspace_id=0f08c338-c435-4e01-a243-7c19ff12ad44"
+                                                         },
+                                                         {
+                                                             "key":  "commercial_rules",
+                                                             "source":  "commercial_rules_volumetric_v2",
+                                                             "detail":  "temporary_local_catalog_until_step_7i"
+                                                         },
+                                                         {
+                                                             "key":  "active_modules",
+                                                             "source":  "commercial_price_proposal_service",
+                                                             "detail":  "modules=debitare_fata,debitare_spate,finisaje,modelare_cant,sistem_led"
+                                                         },
+                                                         {
+                                                             "key":  "quote_input",
+                                                             "source":  "request_body",
+                                                             "detail":  "read_only_normalization_no_pricing_engine"
+                                                         }
+                                                     ],
+                                      "cost_plus_inputs":  {
+                                                               "commercial_inputs":  {
+                                                                                         "markup_percent":  35.0,
+                                                                                         "discount_percent":  0.0,
+                                                                                         "vat_percent":  21.0,
+                                                                                         "manual_adjustment_ron":  0.0
+                                                                                     },
+                                                               "internal_cost_total":  624.41,
+                                                               "internal_cost_currency":  "EUR",
+                                                               "eur_to_ron_rate":  5.1
+                                                           }
+                                  },
+    "warnings":  [
+                     "FÄrÄ suport comun: sursele calculate se includ Ã®n colet la ambalare.",
+                     "PSU will be packed and handled at packaging/delivery stage.",
+                     "MaterialIntent conÈine estimÄri conceptuale â fÄrÄ mutaÈie inventory.",
+                     "structura_suport correctly inactive for direct_wall mounting.",
+                     "Commercial packaging rule (fixed/set) not yet owner-defined.",
+                     "Site mounting commercial rule is future/optional â not in Step 7G numeric scope.",
+                     "official_v6_pricing_uses_cost_plus_from_material_breakdown"
+                 ],
+    "blockers":  [
+                     {
+                         "code":  "UNCONFIRMED_LETTER_MODEL",
+                         "message":  "V6 backend pricing input is not ready for dry-run."
+                     }
+                 ],
+    "can_write_quote_totals":  false,
+    "can_create_quote_snapshot":  false,
+    "dry_run_only":  true,
+    "persistence":  {
+                        "creates_quote":  false,
+                        "updates_quote":  false,
+                        "writes_quote_totals":  false,
+                        "creates_quote_snapshot":  false,
+                        "creates_order":  false
+                    }
+}

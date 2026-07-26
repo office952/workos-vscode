@@ -1,0 +1,94 @@
+{
+  "routes": [
+    {
+      "route": "/",
+      "shell": 200,
+      "api_requests": null,
+      "api_status": "N/A",
+      "data_loaded": "shell_only",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/intake",
+      "shell": 200,
+      "api_requests": "/api/v1/entities/intake_requests?limit=3",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/quotes",
+      "shell": 200,
+      "api_requests": "/api/v1/entities/quotes?limit=3",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/orders",
+      "shell": 200,
+      "api_requests": "/api/v1/entities/orders?limit=3",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/execution",
+      "shell": 200,
+      "api_requests": "/api/v1/execution/dashboard",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/product-system",
+      "shell": 200,
+      "api_requests": "/api/v1/entities/product-families?limit=3",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/employees",
+      "shell": 200,
+      "api_requests": "/api/v1/operational-registry/employees",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/utilaje",
+      "shell": 200,
+      "api_requests": "/api/v1/machines?limit=3",
+      "api_status": 200,
+      "data_loaded": "yes",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/modules",
+      "shell": 200,
+      "api_requests": null,
+      "api_status": "N/A",
+      "data_loaded": "shell_only",
+      "error": null,
+      "classification": "HEALTHY"
+    },
+    {
+      "route": "/governance",
+      "shell": 200,
+      "api_requests": null,
+      "api_status": "N/A",
+      "data_loaded": "shell_only",
+      "error": null,
+      "classification": "HEALTHY"
+    }
+  ]
+}

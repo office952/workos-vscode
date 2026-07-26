@@ -1,0 +1,15 @@
+{
+  "canonical_start_command": "npm run dev:stack",
+  "windows_alternative": ".\\scripts\\dev.ps1",
+  "split_commands": {
+    "backend": "npm run dev:backend",
+    "frontend": "npm run dev:frontend"
+  },
+  "manual_env_required": false,
+  "expected_urls": {
+    "frontend": "http://127.0.0.1:3000",
+    "backend": "http://127.0.0.1:8001",
+    "intake": "http://127.0.0.1:3000/intake"
+  },
+  "stop": "Ctrl+C when dev:stack streams frontend logs; or stop listeners on ports 3000 and 8001"
+}

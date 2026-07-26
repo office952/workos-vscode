@@ -106,9 +106,21 @@ function resolveSistemLedState(finish: Record<string, unknown> | null | undefine
   return "conditional_active";
 }
 
-function resolveFinisajeState(finish: Record<string, unknown> | null | undefined): ModuleActivationPreviewState {
-  const sablonEnabled = readBoolean(finish, "mounting_template_enabled");
-  if (sablonEnabled === true) return "conditional_active";
+function resolveFinisajeState(_finish: Record<string, unknown> | null | undefined): ModuleActivationPreviewState {
+  // Surface FINISH only — template is sablon_montaj.
+  return "always_on";
+}
+
+function resolveSablonMontajState(
+  finish: Record<string, unknown> | null | undefined,
+): ModuleActivationPreviewState {
+  return readBoolean(finish, "mounting_template_enabled") === true
+    ? "conditional_active"
+    : "inactive";
+}
+
+function resolveAmbalareState(): ModuleActivationPreviewState {
+  // Full Letters composition responsibility — always included in product structure preview.
   return "always_on";
 }
 
@@ -120,7 +132,7 @@ function operatorHintForState(
   if (state === "active") return "Detectat din selecțiile curente";
   if (state === "conditional_active") {
     if (module.module_code === "sistem_led") return "Iluminare configurată";
-    if (module.module_code === "finisaje") return "Șablon montaj activ";
+    if (module.module_code === "sablon_montaj") return "Șablon montaj activ";
     return "Activ când condițiile sunt îndeplinite";
   }
   if (state === "pending") {
@@ -154,6 +166,10 @@ function resolveModuleState(
       return resolveSistemLedState(finish);
     case "finisaje":
       return resolveFinisajeState(finish);
+    case "sablon_montaj":
+      return resolveSablonMontajState(finish);
+    case "ambalare_livrare_montaj":
+      return resolveAmbalareState();
     default:
       if (module.activation_kind === "always_on" || module.activation_kind === "required_module") {
         return input.analysisReady ? "always_on" : "pending";
@@ -199,7 +215,9 @@ const OPERATOR_LABELS: Record<string, string> = {
   modelare_cant: "Laterale / cant",
   debitare_spate: "Spate litere",
   sistem_led: "Iluminare LED",
-  finisaje: "Finisaje",
+  finisaje: "Finisaje suprafață",
+  sablon_montaj: "Șablon montaj",
+  ambalare_livrare_montaj: "Ambalare / logistică",
   structura_suport: "Structură metalică premontaj",
   geometry_svg: "Analiză SVG și geometrie",
 };
@@ -244,21 +262,22 @@ function operatorHintForProductLine(
 ): string {
   switch (moduleCode) {
     case "debitare_fata":
-      return state === "pending" ? "Completează finisajele feței" : "Pregătită din fișierul încărcat";
+      return state === "pending" ? "Verifica daca finisajul fetelor este corect." : "Pregătită din fișierul încărcat";
     case "modelare_cant":
-      return state === "pending" ? "Completează adâncimea cantului" : "Volum aluminiu / cant lateral";
+      return state === "pending" ? "Verifica latimea cantului." : "Volum aluminiu / cant lateral";
     case "debitare_spate":
-      return state === "pending" ? "Completează setările spatelui" : "Capac/spate pregătit";
+      return state === "pending" ? "Verifica daca varianta de confectionare a spatelui este corecta." : "Capac/spate pregătit";
     case "sistem_led":
       if (state === "inactive") return "Fără iluminare";
       if (state === "pending") return "LED în curs de completare";
       return "LED configurat";
-    case "finisaje": {
-      const sablon = readBoolean(finish, "mounting_template_enabled") === true;
-      const base = "Finisaje pe față/litere";
-      if (sablon) return `${base} · Șablon montaj activ`;
-      return base;
-    }
+    case "finisaje":
+      return "Finisaje pe față/litere (suprafață)";
+    case "sablon_montaj":
+      if (state === "inactive") return "Șablon montaj inactiv";
+      return "Șablon montaj activ";
+    case "ambalare_livrare_montaj":
+      return "Ambalare / logistică (compoziție)";
     case "structura_suport":
       if (state === "active" || state === "conditional_active") {
         return "Structură metalică pentru montaj cu bare";
@@ -299,6 +318,7 @@ function buildOperatorProductSummaryView(
     "debitare_spate",
     "sistem_led",
     "finisaje",
+    "ambalare_livrare_montaj",
   ] as const;
 
   const productReady: OperatorDisplayLine[] = [];
@@ -310,6 +330,7 @@ function buildOperatorProductSummaryView(
   }
 
   const structura = byCode.get("structura_suport");
+  const sablon = byCode.get("sablon_montaj");
   const mounting: OperatorDisplayLine[] = [];
   let mountingNotApplicableNote: string | null = null;
 
@@ -317,6 +338,9 @@ function buildOperatorProductSummaryView(
     mounting.push(toOperatorDisplayLine("structura_suport", structura.state, structura.missingFields, finish));
   } else if (structura?.state === "inactive") {
     mountingNotApplicableNote = "Structură metalică: nu se aplică pentru selecția curentă.";
+  }
+  if (sablon && (sablon.state === "active" || sablon.state === "conditional_active")) {
+    mounting.push(toOperatorDisplayLine("sablon_montaj", sablon.state, sablon.missingFields, finish));
   }
 
   const technical: OperatorDisplayLine[] = [];
@@ -337,6 +361,38 @@ function buildOperatorProductSummaryView(
     mountingNotApplicableNote,
     technical,
   };
+}
+
+const OPERATOR_ATTENTION_MESSAGES: Partial<Record<string, string>> = {
+  debitare_fata: "Verifica daca finisajul fetelor este corect.",
+  modelare_cant: "Verifica latimea cantului.",
+  debitare_spate: "Verifica daca varianta de confectionare a spatelui este corecta.",
+};
+
+export function resolveModuleActivationAttentionWarnings(
+  preview: ModuleActivationPreviewResult | null | undefined,
+): string[] {
+  if (!preview) return [];
+
+  const warnings: string[] = [];
+  const lines = [
+    ...preview.operatorView.productReady,
+    ...preview.operatorView.mounting,
+  ];
+
+  for (const line of lines) {
+    if (line.state !== "pending" && line.missingFields.length === 0) continue;
+    const message = OPERATOR_ATTENTION_MESSAGES[line.key];
+    if (message && !warnings.includes(message)) {
+      warnings.push(message);
+    }
+  }
+
+  if (preview.triggerMismatchNote && preview.structuraSuportDerived) {
+    warnings.push(preview.triggerMismatchNote);
+  }
+
+  return warnings;
 }
 
 export function buildModuleActivationPreview(

@@ -1,0 +1,339 @@
+{
+  "rail": {
+    "offerRail": "workbench",
+    "contract": "Legături Litere↔Bond7 linii",
+    "letters": "Litere275,22 EUR",
+    "bond": "Panou Alucobond86,77 EUR",
+    "detailsBtn": "Detalii linii (27)"
+  },
+  "sheet": {
+    "sheetOpen": true,
+    "summary": "Lista logică read-model · 30 rânduri (VL 17 + panou 6 + legături 7 · țintă VL 21) · material breakdown în detalii tehnice.",
+    "diag": "Neincluse / necesită configurare (2)Lipsa cantitate · 1Forex 10 mmcantitate lipsăcantitate lipsăfără gapLegacy · 1Consumabile producție — accesorii / conectoricantitate lipsăcantitate lipsăCOMMERCIAL_FORMULA_UNVERSIONED",
+    "categories": [
+      "Materiale · 12",
+      "Servicii / Operații · 14",
+      "Manoperă · 1"
+    ],
+    "rowCount": 27,
+    "commercialRows": [
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_face_material",
+        "text": "Material ACM față panou1 m215,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_return_strip_material",
+        "text": "Material ACM canturi / întoarceri0.4539 m26,81 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_fasteners",
+        "text": "Suruburi / prinderi standard ACM1 set5,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_cut",
+        "text": "Debitare panou ACM5.68 ml8,52 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_v_groove",
+        "text": "Frezare V-groove ACM10.48 ml31,44 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_boxed_assembly",
+        "text": "Asamblare suport ACM casetat1 m220,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_sablon_process",
+        "text": "Proces șablon pe Alucobond (material+cutter+transfer+aplicare)1.0004 m220,01 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_fasten_forex",
+        "text": "Prindere Forex pe bond (autoforante)1.0004 m28,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_electric_psu",
+        "text": "Electrică în carcasa bond + legare transformator1 buc35,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_cable_5m",
+        "text": "Cablu alimentare 5 m 220V (2×1.5) + atasare1 buc6,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_light_test",
+        "text": "Test lumină1 buc8,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_attach_body",
+        "text": "Prindere corp pe Forex (autoforante fine vopsite)1.0004 m212,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_pack",
+        "text": "Impachetare ansamblu Litere + Alucobond1.0004 m215,00 EUR"
+      }
+    ],
+    "acmRows": [
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_face_material",
+        "text": "Material ACM față panou1 m215,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_return_strip_material",
+        "text": "Material ACM canturi / întoarceri0.4539 m26,81 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_fasteners",
+        "text": "Suruburi / prinderi standard ACM1 set5,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_cut",
+        "text": "Debitare panou ACM5.68 ml8,52 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_v_groove",
+        "text": "Frezare V-groove ACM10.48 ml31,44 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_boxed_assembly",
+        "text": "Asamblare suport ACM casetat1 m220,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_sablon_process",
+        "text": "Proces șablon pe Alucobond (material+cutter+transfer+aplicare)1.0004 m220,01 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_fasten_forex",
+        "text": "Prindere Forex pe bond (autoforante)1.0004 m28,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_electric_psu",
+        "text": "Electrică în carcasa bond + legare transformator1 buc35,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_cable_5m",
+        "text": "Cablu alimentare 5 m 220V (2×1.5) + atasare1 buc6,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_light_test",
+        "text": "Test lumină1 buc8,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_attach_body",
+        "text": "Prindere corp pe Forex (autoforante fine vopsite)1.0004 m212,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_pack",
+        "text": "Impachetare ansamblu Litere + Alucobond1.0004 m215,00 EUR"
+      }
+    ],
+    "connRows": [
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_sablon_process",
+        "text": "Proces șablon pe Alucobond (material+cutter+transfer+aplicare)1.0004 m220,01 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_fasten_forex",
+        "text": "Prindere Forex pe bond (autoforante)1.0004 m28,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_electric_psu",
+        "text": "Electrică în carcasa bond + legare transformator1 buc35,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_cable_5m",
+        "text": "Cablu alimentare 5 m 220V (2×1.5) + atasare1 buc6,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_light_test",
+        "text": "Test lumină1 buc8,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_attach_body",
+        "text": "Prindere corp pe Forex (autoforante fine vopsite)1.0004 m212,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_pack",
+        "text": "Impachetare ansamblu Litere + Alucobond1.0004 m215,00 EUR"
+      }
+    ],
+    "allIds": [
+      "material.plexiglas_shared",
+      "material.face_oracal",
+      "material.return_profile",
+      "material.led_modules",
+      "material.led_psu",
+      "material.adhesive_cant",
+      "material.adhesive_led",
+      "material.wire_letters",
+      "material.wire_supply",
+      "commercial.acm_panel_face_material",
+      "commercial.acm_return_strip_material",
+      "commercial.acm_fasteners",
+      "service.cnc_face",
+      "service.cnc_face_bevel",
+      "service.cnc_back",
+      "service.application",
+      "commercial.acm_panel_cut",
+      "commercial.acm_v_groove",
+      "commercial.acm_boxed_assembly",
+      "commercial.letters_acm_conn_sablon_process",
+      "commercial.letters_acm_conn_fasten_forex",
+      "commercial.letters_acm_conn_electric_psu",
+      "commercial.letters_acm_conn_cable_5m",
+      "commercial.letters_acm_conn_light_test",
+      "commercial.letters_acm_conn_attach_body",
+      "commercial.letters_acm_conn_pack",
+      "labor.cant_glue"
+    ],
+    "rows": [
+      {
+        "id": "intake-v6-live-material-used-material.plexiglas_shared",
+        "text": "plexiglas 3mm PMMA - opal0.3298 m25,28 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.face_oracal",
+        "text": "Vinil fata Oracal 6510.4863 m23,16 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.return_profile",
+        "text": "Cant / volum12.4174 m44,70 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.led_modules",
+        "text": "Module LED29 buc17,40 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.led_psu",
+        "text": "Sursa LED 12V1 buc14,40 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.adhesive_cant",
+        "text": "Adeziv lipire cant pe fete litere24.8348 ml2,92 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.adhesive_led",
+        "text": "Adeziv suplimentar module LED5.8 ml0,68 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.wire_letters",
+        "text": "Cablu electric MYYUP 2 x 0.755 ml1,86 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-material.wire_supply",
+        "text": "Cablu electric MYYUP 2 x 1.5 alimentare 220V5 ml3,82 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_face_material",
+        "text": "Material ACM față panou1 m215,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_return_strip_material",
+        "text": "Material ACM canturi / întoarceri0.4539 m26,81 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_fasteners",
+        "text": "Suruburi / prinderi standard ACM1 set5,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-service.cnc_face",
+        "text": "Debitare CNC fata Plexiglas7.4175 ml11,13 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-service.cnc_face_bevel",
+        "text": "Canal plat ghidaj fata Plexiglas7.4175 ml11,13 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-service.cnc_back",
+        "text": "Debitare CNC spate Forex7.4175 ml33,38 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-service.application",
+        "text": "Serviciu aplicare0.3958 m21,19 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_panel_cut",
+        "text": "Debitare panou ACM5.68 ml8,52 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_v_groove",
+        "text": "Frezare V-groove ACM10.48 ml31,44 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.acm_boxed_assembly",
+        "text": "Asamblare suport ACM casetat1 m220,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_sablon_process",
+        "text": "Proces șablon pe Alucobond (material+cutter+transfer+aplicare)1.0004 m220,01 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_fasten_forex",
+        "text": "Prindere Forex pe bond (autoforante)1.0004 m28,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_electric_psu",
+        "text": "Electrică în carcasa bond + legare transformator1 buc35,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_cable_5m",
+        "text": "Cablu alimentare 5 m 220V (2×1.5) + atasare1 buc6,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_light_test",
+        "text": "Test lumină1 buc8,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_attach_body",
+        "text": "Prindere corp pe Forex (autoforante fine vopsite)1.0004 m212,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-commercial.letters_acm_conn_pack",
+        "text": "Impachetare ansamblu Litere + Alucobond1.0004 m215,00 EUR"
+      },
+      {
+        "id": "intake-v6-live-material-used-labor.cant_glue",
+        "text": "Lipire cant / volum12.4174 m86,92 EUR"
+      }
+    ]
+  },
+  "api": {
+    "core": 17,
+    "contract": 13,
+    "target": 21,
+    "rows": 30,
+    "warnings": [
+      "COMPOSITION_CONTRACT_LINES_SURFACED_FROM_DRY_RUN"
+    ],
+    "llCommercial": [
+      "commercial.acm_panel_cut",
+      "commercial.acm_v_groove",
+      "commercial.acm_panel_face_material",
+      "commercial.acm_return_strip_material",
+      "commercial.acm_boxed_assembly",
+      "commercial.acm_fasteners",
+      "commercial.letters_acm_conn_sablon_process",
+      "commercial.letters_acm_conn_fasten_forex",
+      "commercial.letters_acm_conn_electric_psu",
+      "commercial.letters_acm_conn_cable_5m",
+      "commercial.letters_acm_conn_light_test",
+      "commercial.letters_acm_conn_attach_body",
+      "commercial.letters_acm_conn_pack"
+    ],
+    "dryConn": [
+      "letters_acm_conn_sablon_process",
+      "letters_acm_conn_fasten_forex",
+      "letters_acm_conn_electric_psu",
+      "letters_acm_conn_cable_5m",
+      "letters_acm_conn_light_test",
+      "letters_acm_conn_attach_body",
+      "letters_acm_conn_pack"
+    ],
+    "dryAcm": [
+      "acm_panel_cut",
+      "acm_v_groove",
+      "acm_panel_face_material",
+      "acm_return_strip_material",
+      "acm_boxed_assembly",
+      "acm_fasteners"
+    ],
+    "applied": "letters"
+  }
+}

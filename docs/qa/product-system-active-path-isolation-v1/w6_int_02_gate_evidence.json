@@ -1,0 +1,242 @@
+{
+  "gate": "W6-INT-02",
+  "timestamp_utc": "2026-07-15T00:35:52.840676+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "blocked_order_id": 23150,
+  "allowed_order_id": 23099,
+  "runtime_ownership": {
+    "backend_port": 8001,
+    "frontend_port": 3000,
+    "backend_pid_note": "recorded at gate run via netstat"
+  },
+  "db_mutations": [
+    "reset_and_seed_blocked_fixture_23150",
+    "operational_resolutions_on_23150"
+  ],
+  "authority_trace": [
+    {
+      "transition": "frozen_plan_identity \u2192 task-truth",
+      "backend_source": "operator_task_truth/v1",
+      "frontend_consumer": "useOperatorTaskTruth / taskTruthByTaskId",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "2 tasks with roles ['root_product']"
+    },
+    {
+      "transition": "task-truth \u2192 component labels",
+      "backend_source": "identity.display_label / component_label",
+      "frontend_consumer": "OperatorTaskIdentityPresentation",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "display_label primary; deterministic_task_key diagnostic only"
+    },
+    {
+      "transition": "owner_decisions \u2192 release summary",
+      "backend_source": "production_release_status / owner_decisions_summary",
+      "frontend_consumer": "OperatorProductionReleaseSummary",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "['INTERNAL_SABLON_FOREX_COST', 'INTERNAL_MONTAJ_RULE', 'INTERNAL_CONSUMABLES_RULE']"
+    },
+    {
+      "transition": "role_capabilities \u2192 resolve control",
+      "backend_source": "role_capabilities.can_resolve_owner_decisions + item.can_resolve",
+      "frontend_consumer": "OperatorOwnerDecisionResolutionForm",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "True"
+    },
+    {
+      "transition": "resolve form \u2192 backend endpoint",
+      "backend_source": "POST owner-decisions/{code}/resolve",
+      "frontend_consumer": "executionOwnerDecisionRelease.resolveOwnerDecision",
+      "authority": "BACKEND",
+      "mutation": true,
+      "result": "readiness_snapshot.owner_decision_resolutions_v1 only"
+    },
+    {
+      "transition": "backend response \u2192 refresh",
+      "backend_source": "task-truth refetch",
+      "frontend_consumer": "refreshTaskTruth / useOperatorTaskTruth.refresh",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "RELEASE_ALLOWED"
+    },
+    {
+      "transition": "refresh \u2192 task startability",
+      "backend_source": "runtime.is_startable per task",
+      "frontend_consumer": "ExecutionDetail / OperatorView start guards",
+      "authority": "BACKEND",
+      "mutation": false,
+      "result": "startable=1"
+    }
+  ],
+  "checks": {
+    "initial_state": {
+      "snapshot_hash": "573a5a769e00b182",
+      "plan_meta": {
+        "plan_id": 3,
+        "task_count": 0
+      },
+      "identity": {
+        "contract_version": "operator_task_truth/v1",
+        "task_count": 2,
+        "roles_present": {
+          "root_product": {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+            "display_label": "Face CNC Cut",
+            "component_label": "Produs principal",
+            "identity_source": "frozen_task_identity/v1"
+          }
+        },
+        "logo_partial_identity": null,
+        "sample_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "startable_task_count": 0,
+        "tasks_with_production_release_blocked": 2,
+        "production_release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+        "production_release_blocked": true,
+        "role_capabilities": {
+          "can_resolve_owner_decisions": true,
+          "can_view_internal_cost": true,
+          "can_view_owner_decision_notes": true
+        }
+      },
+      "blockers": {
+        "blocking_count": 3,
+        "nonblocking_count": 1,
+        "unresolved_blocking_codes": [
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE"
+        ],
+        "nonblocking_codes": [
+          "INTERNAL_AMBALARE_RULE"
+        ]
+      },
+      "can_resolve_owner_decisions": true
+    },
+    "after_one_resolution": {
+      "resolve_status": 200,
+      "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+      "production_release_blocked": true,
+      "unresolved_blocking": [
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE"
+      ],
+      "resolved_item": {
+        "code": "INTERNAL_SABLON_FOREX_COST",
+        "label": "Cost \u0219ablon Forex \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+        "category": "production_blocking",
+        "blocking": true,
+        "frozen_status": "present",
+        "operational_status": "resolved",
+        "scope": "order",
+        "required_action": "resolve_owner_decision",
+        "acknowledgement_sufficient": false,
+        "requires_resolution": true,
+        "can_resolve": true,
+        "resolved_at": "2026-07-15T00:35:53.507461+00:00",
+        "resolved_by_user_name": "Dev Admin",
+        "has_resolution_note": true
+      },
+      "startable_task_count": 0
+    },
+    "idempotent_repeat": {
+      "status_code": 200,
+      "idempotent": true
+    },
+    "after_full_resolution": {
+      "production_release_blocked": false,
+      "production_release_status": "RELEASE_ALLOWED",
+      "unresolved_blocking": [],
+      "startable_task_count": 1,
+      "resolved_blocking_codes": [
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE"
+      ]
+    },
+    "allowed_order_23099": {
+      "production_release_blocked": false,
+      "production_release_status": "RELEASE_ALLOWED",
+      "task_count": 13,
+      "identity_probe": {
+        "contract_version": "operator_task_truth/v1",
+        "task_count": 13,
+        "roles_present": {
+          "root_product": {
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "display_label": "Vector Prep",
+            "component_label": "Produs principal",
+            "identity_source": "frozen_task_identity/v1"
+          },
+          "mounting_panel": {
+            "task_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+            "display_label": "Cut Acm Panel",
+            "component_label": "Panou montaj",
+            "identity_source": "frozen_task_identity/v1"
+          }
+        },
+        "logo_partial_identity": {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+          "logo_segment_key": "logo_instance_001",
+          "display_label": "Vinyl Application"
+        },
+        "sample_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "startable_task_count": 0,
+        "tasks_with_production_release_blocked": 0,
+        "production_release_status": "RELEASE_ALLOWED",
+        "production_release_blocked": false,
+        "role_capabilities": {
+          "can_resolve_owner_decisions": true,
+          "can_view_internal_cost": true,
+          "can_view_owner_decision_notes": true
+        }
+      }
+    },
+    "snapshot_immutability": {
+      "hash_before": "573a5a769e00b182",
+      "hash_after": "573a5a769e00b182",
+      "unchanged": true
+    },
+    "plan_stability": {
+      "before": {
+        "plan_id": 3,
+        "task_count": 0
+      },
+      "after": {
+        "plan_id": 3,
+        "task_count": 0
+      },
+      "unchanged": true
+    },
+    "operator_forbidden": {
+      "covered_by": "backend_pytest_test_unauthorized_resolution_rejected",
+      "expected": "403 for operator role on resolve endpoint"
+    },
+    "task_identity_preserved": {
+      "sample_task_id_before": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "sample_task_id_after": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "roles_before": [
+        "root_product"
+      ],
+      "roles_after": [
+        "root_product"
+      ],
+      "unchanged": true
+    }
+  },
+  "fixture_seed": {
+    "order_id": 23150,
+    "order_code": "ORD-W6T03-BLOCK-GATE",
+    "owner_codes": [
+      "INTERNAL_SABLON_FOREX_COST",
+      "INTERNAL_MONTAJ_RULE",
+      "INTERNAL_CONSUMABLES_RULE",
+      "INTERNAL_AMBALARE_RULE"
+    ],
+    "canonical_order_23099_touched": false
+  },
+  "passed": true,
+  "failed_checks": []
+}

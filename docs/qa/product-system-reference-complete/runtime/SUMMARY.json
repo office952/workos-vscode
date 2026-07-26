@@ -1,0 +1,38 @@
+{
+  "overall_verdict": "PASS",
+  "freeze_readiness": "READY_FOR_DOCUMENTATION_HANDOFF",
+  "live_proof": {
+    "finish_line_verdict": "PASS_WITH_WARNINGS",
+    "modularity_verdict": "MODULAR_WITH_GAPS",
+    "form_system_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+    "scalability_verdict": "SCALABLE_WITH_KNOWN_LIMITS",
+    "authoring_decision": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+    "field_count": 26,
+    "active_template_critical_codes": [],
+    "registry_critical_missing": [],
+    "psu_selector_ok": true,
+    "psu_material_role": "variant_selector",
+    "psu_raw_price": null,
+    "vl_internal_total": 923.2,
+    "vl_commercial_total": 1061.0,
+    "vl_eic_reconcile": true,
+    "vl_cpp_reconcile": true,
+    "concrete_psu_100w": true,
+    "analyzer_contract_version": "workflow_adv_analyzer_io_contract_v1",
+    "vl_fixture_ok": true
+  },
+  "matrix_axes": 23,
+  "documentation_docs": 25,
+  "accepted_limitations": [
+    "form_builder",
+    "add_child_ui",
+    "optional_consumables",
+    "logo_incomplete",
+    "acm_treatments",
+    "lab_ui",
+    "global_freeze_impl",
+    "process_catalog_ui",
+    "supplier_import"
+  ],
+  "do_not_transfer_count": 9
+}

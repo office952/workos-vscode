@@ -1,0 +1,14 @@
+{
+  "stopped": [
+    "stale/ghost listeners on 8001",
+    "restore test port 8021 if present"
+  ],
+  "started": [
+    "backend: worktree .venv uvicorn --port 8001 --reload",
+    "frontend: vite --port 3000 with BACKEND_PORT=8001"
+  ],
+  "parity_env_cleared": true,
+  "business_db_writes": 0,
+  "code_changed": false,
+  "runtime_restarted": true
+}

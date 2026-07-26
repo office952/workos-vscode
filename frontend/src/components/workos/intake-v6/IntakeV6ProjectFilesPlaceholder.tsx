@@ -14,7 +14,7 @@ export default function IntakeV6ProjectFilesPlaceholder() {
         {PROJECT_FILE_SLOTS.map((slot) => (
           <li
             key={slot.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded border border-[#2A3548] bg-[#0A0F1A]/50 px-3 py-2 text-[11px]"
+            className="flex flex-wrap items-center justify-between gap-2 rounded border border-wo-border-strong bg-wo-surface-inset/50 px-3 py-2 text-[11px]"
             data-testid={`intake-v6-project-file-slot-${slot.id}`}
           >
             <div>

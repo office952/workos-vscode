@@ -103,13 +103,14 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     render(<IntakeV6LetterGroupFinishesSection groups={groups} onChange={vi.fn()} />);
     expect(screen.getByTestId("intake-v6-letter-group-header-a")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-letter-group-swatch-a")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-layer-card-column-header")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-letter-group-face-summary-a")).toHaveClass("truncate");
     expect(screen.getByTestId("intake-v6-letter-group-cant-summary-a")).toHaveClass("truncate");
+    expect(screen.getByTestId("intake-v6-letter-group-spate-summary-a")).toHaveClass("truncate");
     expect(screen.getByTestId("intake-v6-letter-group-a")).toHaveAttribute(
       "data-layer-card-expanded",
       "false",
     );
+    expect(screen.queryByTestId("intake-v6-backing-mode-a")).not.toBeInTheDocument();
   });
 
   it("does not repeat cant helper text inside each layer card", () => {
@@ -124,9 +125,9 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
       { value: "none", label: "Fără finisaj — plexiglas brut" },
       { value: "oracal_641", label: "Oracal 641" },
       { value: "oracal_651", label: "Oracal 651" },
-      { value: "oracal_8500", label: "Oracal 8500 — translucid" },
+      { value: "oracal_8500", label: "Oracal 8500" },
       { value: "printed_vinyl", label: "Print pe vinyl" },
-      { value: "printed_laminated_vinyl", label: "Print + laminare pe vinyl" },
+      { value: "printed_laminated_vinyl", label: "Printat / Laminat" },
     ];
     render(
       <IntakeV6ReviewLetterGroupsSection
@@ -141,9 +142,40 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expect(labels).toContain("Fără finisaj — plexiglas brut");
     expect(labels).toContain("Oracal 641");
     expect(labels).toContain("Oracal 651");
-    expect(labels).toContain("Oracal 8500 — translucid");
+    expect(labels).toContain("Oracal 8500");
+    expect(labels).toContain("Printat / Laminat");
     expect(labels).not.toContain("Print pe vinyl");
-    expect(labels).not.toContain("Print + laminare pe vinyl");
+  });
+
+  it("lets letter groups select print and lamination", () => {
+    const onChange = vi.fn();
+    render(<IntakeV6ReviewLetterGroupsSection groups={groups} onChange={onChange} />);
+    expandLetterGroupCard("a");
+    fireEvent.change(screen.getByTestId("intake-v6-face-type-a"), {
+      target: { value: "print_laminate" },
+    });
+    const next = onChange.mock.calls.at(-1)![0] as IntakeV6LetterGroupFinish[];
+    expect(next[0]).toMatchObject({
+      group_key: "a",
+      face_finish_type: "print_laminate",
+      face_oracal_code: null,
+      face_vinyl_roll_width_mm: 1050,
+      confirmed: false,
+    });
+  });
+
+  it("uses print and lamination roll widths for letter groups", () => {
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={[{ ...groups[0]!, face_finish_type: "print_laminate", face_vinyl_roll_width_mm: 1050 }]}
+        onChange={vi.fn()}
+      />,
+    );
+    expandLetterGroupCard("a");
+    const select = screen.getByTestId("intake-v6-face-roll-width-a");
+    const values = Array.from(select.querySelectorAll("option")).map((option) => option.getAttribute("value"));
+    expect(values).toEqual(["", "1050", "1320", "1500"]);
+    expect(values).not.toContain("1000");
   });
 
   it("emits existing callback when letter face finish changes", () => {
@@ -197,6 +229,43 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expect(card).toHaveAttribute("data-layer-card-expanded", "true");
     expandLetterGroupCard("a");
     expect(card).toHaveAttribute("data-layer-card-expanded", "false");
+  });
+
+  it("renders forex backing row inside each vector litere card", () => {
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={groups}
+        onChange={vi.fn()}
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
+      />,
+    );
+    expandLetterGroupCard("a");
+    const letterCard = screen.getByTestId("intake-v6-letter-group-a");
+    expect(within(letterCard).getByTestId("intake-v6-review-backing-finish-integration-a")).toBeInTheDocument();
+    expect(within(letterCard).getByText("Finisaj spate")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-review-backing-finish-integration")).not.toBeInTheDocument();
+  });
+
+  it("patches per-layer backing mode on change", () => {
+    const onChange = vi.fn();
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={groups}
+        onChange={onChange}
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
+      />,
+    );
+    expandLetterGroupCard("a");
+    fireEvent.change(screen.getByTestId("intake-v6-backing-mode-a"), {
+      target: { value: "forex_10_with_bevel" },
+    });
+    const next = onChange.mock.calls.at(-1)![0] as IntakeV6LetterGroupFinish[];
+    expect(next[0]).toMatchObject({
+      group_key: "a",
+      backing_mode: "forex_10_with_bevel",
+    });
   });
 });
 

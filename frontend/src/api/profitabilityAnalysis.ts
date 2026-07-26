@@ -45,6 +45,19 @@ export interface ProfitabilityAnalysisResponse {
   warnings: string[];
   retroactive_change_allowed: boolean;
   write_back_performed: boolean;
+  known_actual_cost?: number | null;
+  known_actual_margin?: number | null;
+  known_actual_margin_percent?: number | null;
+  cost_coverage_status?:
+    | "COMPLETE"
+    | "PARTIAL"
+    | "INCOMPLETE"
+    | "NOT_AVAILABLE";
+  included_cost_components?: string[];
+  excluded_cost_components?: string[];
+  missing_actual_components?: string[];
+  material_valuation_method?: string | null;
+  profitability_wording?: string[];
 }
 
 export class ProfitabilityAnalysisNotFoundError extends Error {
@@ -100,4 +113,8 @@ export const PROFITABILITY_WARNING_LABELS: Record<string, string> = {
   actual_material_cost_missing: "Actual material cost missing",
   hr_labor_cost_missing: "HR labor cost missing",
   order_mutability_guard_batch_watch: "Batch order PUT not guarded",
+  material_cost_uses_catalog_unit_cost_at_read:
+    "Material cost uses inventory catalog unit_cost at read",
+  known_margin_materials_only_not_final_profit:
+    "Known margin is materials-only — not final profit",
 };

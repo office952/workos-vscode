@@ -1,0 +1,37 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "classification": "STATIC_DEMO",
+  "stream_title": "Event Stream — Cross-Module (Referință)",
+  "polling": false,
+  "websocket": false,
+  "refresh": "none — static array rendered once",
+  "event_count_displayed": 10,
+  "real_events_verified": 0,
+  "static_demo_events": 10,
+  "event_store": "ABSENT",
+  "outbox": "ABSENT",
+  "event_contracts": "PARTIAL — governanceData.systemEvents static list only",
+  "immutable_audit_trail": "NOT_PROVEN for page stream",
+  "events": [
+    {"type": "TASK_STARTED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND — gap type TASK_STARTED_NOT_COMPLETED only", "entity_demo": "TSK-0201/JOB-0042", "entity_real": "NOT_CORRELATED", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "OPERATION_COMPLETED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "OP-0039-1", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "OPERATION_BLOCKED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "OP-0041-2", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "MACHINE_DOWN", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "m_cnc2", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "JOB_RELEASED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "JOB-0048", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "ORDER_LOCKED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND as event code", "entity_demo": "ORD-1138", "entity_real": "ORD-1138 exact match 0; real locked ORD-W5T01-GATE exists", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "QUOTE_ACCEPTED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "QT-2245", "entity_real": "QT-2245 exact match 0", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "COST_CALCULATED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "CALC-889", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "PRODUCT_RESOLVED", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "PROD-445", "classification": "DOCUMENTATION_SAMPLE"},
+    {"type": "WI_READY_FOR_QUOTE", "source_page": "REFERENCE_EVENTS", "backend_emitter": "NOT_FOUND", "entity_demo": "WI-3320", "classification": "DOCUMENTATION_SAMPLE"}
+  ],
+  "timestamp_analysis": {
+    "displayed_range": "05:45–09:15",
+    "timezone": "local format only, no date",
+    "runtime_actual": false,
+    "verdict": "Demonstrative sample times, not live stream"
+  },
+  "real_runtime_events_observed_off_page": [
+    {"context": "ORD-W5T01-GATE execution plan", "proof": "GET /api/v1/execution/plan/29991 returns materialized tasks", "shown_on_modules_page": false}
+  ]
+}

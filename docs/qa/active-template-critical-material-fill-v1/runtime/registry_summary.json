@@ -1,0 +1,14 @@
+{
+  "critical_missing": [],
+  "summary": {
+    "total": 64,
+    "priced": 31,
+    "missing": 33,
+    "stale": 0,
+    "review_soon": 0,
+    "unknown_date": 34,
+    "with_supplier": 0,
+    "active_template_critical_missing": 0,
+    "temporary_ai_fallback": 0
+  }
+}

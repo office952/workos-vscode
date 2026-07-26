@@ -1,0 +1,42 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "scenario": "Asamblare 40 litere — volumetric letter assembly",
+  "inputs": {
+    "quantity": 40,
+    "employees_in_shop": 10,
+    "ready_tasks": "multiple",
+    "workcenters_available": 4,
+    "parallelizable": true
+  },
+  "current_application_flow": {
+    "becomes_ready": "Predecessors done + materials OK → readiness_status=eligible (operator view); unassigned until claim",
+    "who_sees": "Eligible employees via list_available_tasks; operator blueprint shows unassigned bucket",
+    "who_claims": "First eligible employee POST claim or start-from-available; concurrency lock prevents double assignee",
+    "two_people_join": "BACKEND_POSSIBLE via second start_task with role=helper — NOT via mobile available pool (blocked by _has_active_session_by_other)",
+    "four_more_join": "NO_PRODUCTIZED_PATH — would need operator execution API or direct reality start without mobile guards",
+    "three_leave": "end_task per session — task stays in_progress if others active",
+    "progress_persists": "NO_QUANTITY — only sessions/time; 17/40 letters NOT representable",
+    "who_completes_operation": "Last active session end OR all sessions completed — boolean task done",
+    "time_recording": "duration_minutes per session in execution_reality; attendance separate",
+    "breaks_in_current_model": [
+      "No quantity progress",
+      "No help-request join path",
+      "Available pool hides task when primary active",
+      "Single assignee on plan vs multi-session reality drift",
+      "Complete mobile action == session complete not contribution-only stop"
+    ]
+  },
+  "target_minimal_model": {
+    "task_ready": true,
+    "eligibili_N": "registry list",
+    "operator_principal_optional": true,
+    "participanti_activi_0_N": true,
+    "cantitate_totala_40": "MISSING",
+    "cantitate_finalizata_X": "MISSING",
+    "cerere_ajutor_optional": "MISSING",
+    "sesiune_per_participant": "PARTIAL exists",
+    "complete_operatie_separat": "MISSING"
+  },
+  "gap_summary": "Claim/assign works for solo start; collaboration requires new join semantics and quantity progress layer"
+}

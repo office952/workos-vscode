@@ -57,6 +57,20 @@ describe("intakeV6LedLighting", () => {
 		expect(at075.requiredPsuWatts).toBe(45.83);
 		expect(at075.psuConfiguration).toEqual([60]);
 	});
+
+	it("matches backend canonical policy for mixed PSU selection", () => {
+		const gradiCurat = proposeIntakeV6PsuConfiguration(207.36);
+		expect(gradiCurat.requiredPsuWatts).toBe(269.57);
+		expect(gradiCurat.psuConfiguration).toEqual([200, 100]);
+
+		const oneUnitEnough = proposeIntakeV6PsuConfiguration(107.69);
+		expect(oneUnitEnough.requiredPsuWatts).toBe(140);
+		expect(oneUnitEnough.psuConfiguration).toEqual([160]);
+
+		const justAboveTwoHundred = proposeIntakeV6PsuConfiguration(154);
+		expect(justAboveTwoHundred.requiredPsuWatts).toBe(200.2);
+		expect(justAboveTwoHundred.psuConfiguration).toEqual([160, 60]);
+	});
 });
 
 describe("syncIntakeV6FinishLighting wattage selection", () => {

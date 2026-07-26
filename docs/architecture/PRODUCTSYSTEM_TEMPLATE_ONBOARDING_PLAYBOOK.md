@@ -1,9 +1,11 @@
 # ProductSystem Template Onboarding Playbook
 
-**Versiune:** 2026-06-06 (finalizat)  
+**Versiune:** 2026-06-06 (finalizat; lifecycle gate 2026-07-17)  
 **Scop:** Ghid intern oficial pentru adăugarea unui template ProductSystem end-to-end în WorkOS.  
 **Audiență:** Cursor, agenți, developeri, owner.  
 **Referință matură:** `TPL-VOLUMETRIC-LETTERS` (Product 001) — primul template activ validat pe lanțul complet.
+
+> **Lifecycle gate (V1):** înainte de implementare/activare, rulează `template-lifecycle inspect <TEMPLATE_CODE>` (vezi `docs/architecture/WORKOS_TEMPLATE_LIFECYCLE_CONTROL_SYSTEM.md`). Product System rămâne authority; lifecycle e proiecție derivată.
 
 > **Regulă de aur:** Un template **nu este funcțional** doar pentru că apare în ProductSystem. Trebuie aliniat în întreg lanțul: **ProductSystem → Pricing Registry → CostEngine → QuoteWizard → Work Intake → Blueprint Dossier → Readiness → Production task rules → Tests → Smoke → Documentation**.
 

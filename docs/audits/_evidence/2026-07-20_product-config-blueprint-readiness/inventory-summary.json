@@ -1,0 +1,52 @@
+﻿{
+    "at":  "2026-07-20T00:53:37.1033961Z",
+    "mode":  "dry-run-read-only",
+    "scanned":  210,
+    "limits":  [
+                   "Scanned via GET /api/v1/intake-v6/workspaces?include_archived=true then per-id GET (local backend:8001 / backend/dev.db)",
+                   "P3 heuristic: artwork_finishes\u003e0 AND support_panel role AND no printed_artwork/logo confirmed role — may include residual finish rows even when logos absent by design",
+                   "Offer/Order/ExecutionPlan: commercial-spine quote_exists for P1/P2/CFG + P3 CONFIRMED sample; SQL quote_snapshots_v2.workspace_id + orders/execution_plan totals",
+                   "No remote/prod DB; local SQLite only"
+               ],
+    "counts":  {
+                   "P1_missing_segmented":  18,
+                   "P2_logo_as_support":  2,
+                   "P3_phantom_artwork_heuristic":  67,
+                   "P7_step_intent_mismatch":  0,
+                   "CFG_support_or_segmented_without_SUPPORT_CONTOUR_binding":  20,
+                   "CFG_segmented_without_SUPPORT_CONTOUR_binding":  2
+               },
+    "commercial":  {
+                       "quotes_total":  4,
+                       "quote_snapshots_v2_with_workspace":  3,
+                       "orders_total":  11,
+                       "execution_plans_total":  9,
+                       "p1_p2_cfg_with_quote":  0,
+                       "p3_confirmed_sample20_with_quote":  0,
+                       "snapshot_workspaces_clean":  [
+                                                         "IV6-195E885C",
+                                                         "IV6-FAB19077",
+                                                         "IV6-8BAF626E"
+                                                     ]
+                   },
+    "categories":  {
+                       "safe_auto_repair":  [
+                                                "Re-derive segmented PROPOSED from closedContourCandidates when support_panel confirmed and seg missing (no offer/order)",
+                                                "Strip phantom artwork_finishes when zero printed_artwork/logo roles and logo_presence false (no commercial downstream)"
+                                            ],
+                       "operator_review":  [
+                                               "P2 logo_as_support role corrections",
+                                               "CFG: support/segmented without SUPPORT_CONTOUR binding — re-associate Contur suport",
+                                               "Composition confirmation letters_plus_support",
+                                               "element_bindings letter-to-panel assignment"
+                                           ],
+                       "commercial_review":  [
+                                                 "Any future workspace with quote_exists=true and P1/P2/P3 — none in current local suspect set",
+                                                 "Frozen quote_snapshots_v2 / orders — do not rewrite truth into snapshots"
+                                             ],
+                       "locked_historical":  [
+                                                 "orders.status locked/in_production + execution_plan rows",
+                                                 "quote_snapshots_v2 frozen rows"
+                                             ]
+                   }
+}

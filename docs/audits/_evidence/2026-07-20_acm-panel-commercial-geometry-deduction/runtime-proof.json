@@ -1,0 +1,98 @@
+{
+  "build": "WORKOS_ACM_PANEL_COMMERCIAL_GEOMETRY_DEDUCTION_V1",
+  "golden_single_deduction": {
+    "cut": 5.4,
+    "v_l1": 5.4,
+    "v_l2": 0.0,
+    "v_total": 5.4,
+    "status": "commercial_deduced",
+    "source": "commercial_deduced"
+  },
+  "golden_double_deduction": {
+    "cut": 5.64,
+    "v_l1": 5.4,
+    "v_l2": 4.6,
+    "v_total": 10.0,
+    "status": "commercial_deduced"
+  },
+  "single_fold_no_dxf_merge": {
+    "status": "commercial_deduced",
+    "cut": 5.4,
+    "v": 5.4
+  },
+  "double_fold_no_dxf_merge": {
+    "status": "commercial_deduced",
+    "cut": 5.64,
+    "v": 10.0
+  },
+  "unequal_panels": {
+    "status": "commercial_deduced",
+    "cut": 8.36,
+    "expected_sum": 8.36,
+    "not_first_times_n": true,
+    "panel_count": 2
+  },
+  "ten_panels": {
+    "status": "commercial_deduced",
+    "panel_count": 10,
+    "cut": 31.8,
+    "expected": 31.8
+  },
+  "measured_override_filesystem": {
+    "status": "measured",
+    "source": "imported_dxf",
+    "cut": 5.499412,
+    "v": 10.000004
+  },
+  "stale_falls_to_deduction": {
+    "status": "commercial_deduced",
+    "source": "commercial_deduced_after_stale",
+    "cut": 5.64,
+    "v": 10.0,
+    "warnings": [
+      "quantity_source=commercial_deduction",
+      "cut_v_quantity_source=commercial_deduction",
+      "attachment_not_consumable",
+      "production_geometry_stale"
+    ]
+  },
+  "iv6_control_db2f86b7": {
+    "face": 0.7,
+    "cut": 7.176,
+    "v": 12.128,
+    "path_status": "commercial_deduced",
+    "path_source": "commercial_deduced",
+    "final": false,
+    "offer": false,
+    "exec": false
+  },
+  "iv6_measured_qa_13d39d32": {
+    "face": 0.6,
+    "cut": 5.499412,
+    "v": 10.000004,
+    "path_status": "measured",
+    "path_source": "imported_dxf",
+    "final": false,
+    "offer": false,
+    "exec": false
+  },
+  "writes": {
+    "offer": false,
+    "order": false,
+    "execution": false,
+    "note": "proof is read-only resolve/merge/dry-run \u2014 no Offer/Order/Execution APIs called"
+  },
+  "checks": {
+    "single_golden": true,
+    "double_golden": true,
+    "double_no_dxf_available": true,
+    "unequal_sum": true,
+    "ten_sum": true,
+    "measured_wins": true,
+    "stale_deduction": true,
+    "gates_blocked_control": true,
+    "gates_blocked_measured": true,
+    "control_has_cut_without_dxf": true
+  },
+  "ok": true
+}

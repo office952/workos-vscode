@@ -2,6 +2,11 @@ import { useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import { promoteIntakeV6VolumetricLettersV2Template } from "@/lib/intakeV6/intakeV6Api";
+import {
+  INTAKE_V6_STEP_ORDER,
+  INTAKE_V6_VISIBLE_STEP_COUNT,
+  intakeV6VisibleStepIndex,
+} from "@/lib/intakeV6/intakeV6OperatorProgressSteps";
 import IntakeV6ConfirmStep from "./steps/IntakeV6ConfirmStep";
 import IntakeV6SvgAnalyzerStep from "./steps/IntakeV6SvgAnalyzerStep";
 import IntakeV6ReviewStep from "./steps/IntakeV6ReviewStep";
@@ -11,18 +16,22 @@ import { IntakeV6WorkspaceHeaderStatusProvider } from "./IntakeV6WorkspaceHeader
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { v6 } from "./atoms/intakeV6Presentation";
 import type { IntakeV6StepId } from "@/lib/intakeV6/intakeV6Contracts";
-
-const STEP_ORDER: IntakeV6StepId[] = ["layers", "review", "confirm"];
+import {
+  AcmPanelDraftFlushProvider,
+  canContinueAfterAcmPanelFlush,
+  useAcmPanelDraftFlushBridge,
+} from "./acm-panel/AcmPanelDraftFlushContext";
 
 interface IntakeV6OperatorWorkspaceProps {
   hook: IntakeV6WorkspaceHook;
 }
 
-export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWorkspaceProps) {
+function IntakeV6OperatorWorkspaceInner({ hook }: IntakeV6OperatorWorkspaceProps) {
   const location = useLocation();
   const isIntakeV6 = location.pathname.startsWith("/intake-v6") || location.pathname.startsWith("/intake-v6-app");
   const [promoteStatus, setPromoteStatus] = useState<"idle" | "running" | "success" | "error">("idle");
   const [promoteMessage, setPromoteMessage] = useState<string | null>(null);
+  const { flushAcmPanelDrafts } = useAcmPanelDraftFlushBridge();
   const {
     state,
     trySetStep,
@@ -32,10 +41,18 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
     canContinueFromReview,
     firstBlocker,
   } = hook;
-  const stepIndex = STEP_ORDER.indexOf(state.currentStep);
+
+  const visibleStepIndex = intakeV6VisibleStepIndex(state.currentStep);
+  const stepIndex = INTAKE_V6_STEP_ORDER.indexOf(state.currentStep);
+
+  const flushReviewDraftsOrBlock = useCallback(() => {
+    if (state.currentStep !== "review") return true;
+    return canContinueAfterAcmPanelFlush(flushAcmPanelDrafts());
+  }, [flushAcmPanelDrafts, state.currentStep]);
 
   const goBack = () => {
-    if (stepIndex > 0) trySetStep(STEP_ORDER[stepIndex - 1]!);
+    if (!flushReviewDraftsOrBlock()) return;
+    if (stepIndex > 0) trySetStep(INTAKE_V6_STEP_ORDER[stepIndex - 1]!);
   };
 
   const goNext = () => {
@@ -44,6 +61,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
       return;
     }
     if (state.currentStep === "review" && canContinueFromReview) {
+      if (!flushReviewDraftsOrBlock()) return;
       trySetStep("confirm");
     }
   };
@@ -53,19 +71,23 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
       ? !canContinueFromAnalyzer
       : state.currentStep === "review"
         ? !canContinueFromReview
-        : stepIndex >= STEP_ORDER.length - 1;
+        : stepIndex >= INTAKE_V6_STEP_ORDER.length - 1;
 
   const nextLabel =
     state.currentStep === "layers"
       ? state.phase === "persisting"
         ? "Salvez..."
-        : "Continuă la Review"
+        : "Continuă la Configurare"
       : state.currentStep === "review"
         ? "Continuă la Confirmare"
         : "Flux complet";
 
   const footerBlocker =
-    state.currentStep === "review" && !canContinueFromReview ? firstBlocker : null;
+    state.currentStep === "layers" && !canContinueFromAnalyzer
+      ? firstBlocker
+      : state.currentStep === "review" && !canContinueFromReview
+        ? firstBlocker
+        : null;
 
   const promoteTemplateV2 = useCallback(async () => {
     setPromoteStatus("running");
@@ -82,11 +104,27 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
     }
   }, []);
 
+  const handleStepClick = useCallback(
+    (step: IntakeV6StepId) => {
+      if (state.currentStep === "review" && step !== "review") {
+        if (!flushReviewDraftsOrBlock()) return;
+      }
+      trySetStep(step);
+    },
+    [flushReviewDraftsOrBlock, state.currentStep, trySetStep],
+  );
+
   return (
     <IntakeV6WorkspaceHeaderStatusProvider
       defaultHandlers={{
-        onJumpToLayers: () => trySetStep("layers"),
-        onJumpToConfirm: () => trySetStep("confirm"),
+        onJumpToLayers: () => {
+          if (!flushReviewDraftsOrBlock()) return;
+          trySetStep("layers");
+        },
+        onJumpToConfirm: () => {
+          if (!flushReviewDraftsOrBlock()) return;
+          trySetStep("confirm");
+        },
       }}
     >
     <div className={v6.page} data-testid="intake-v6-operator-workspace">
@@ -97,7 +135,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
         promoteTemplateV2Status={promoteStatus}
         promoteTemplateV2Message={promoteMessage}
         canAccessStep={canAccessStep}
-        onStepClick={trySetStep}
+        onStepClick={handleStepClick}
       />
 
       <main
@@ -125,8 +163,8 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
 
       <IntakeV6OperatorWorkspaceFooter
         currentStep={state.currentStep}
-        stepIndex={stepIndex}
-        stepOrderLength={STEP_ORDER.length}
+        stepIndex={visibleStepIndex}
+        stepOrderLength={INTAKE_V6_VISIBLE_STEP_COUNT}
         footerBlocker={footerBlocker}
         nextDisabled={nextDisabled}
         nextLabel={nextLabel}
@@ -137,11 +175,17 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
         onNext={goNext}
         persisting={state.phase === "persisting"}
         workspaceState={state}
+        canContinueFromAnalyzer={canContinueFromAnalyzer}
       />
     </div>
     </IntakeV6WorkspaceHeaderStatusProvider>
   );
 }
 
-
-
+export default function IntakeV6OperatorWorkspace(props: IntakeV6OperatorWorkspaceProps) {
+  return (
+    <AcmPanelDraftFlushProvider>
+      <IntakeV6OperatorWorkspaceInner {...props} />
+    </AcmPanelDraftFlushProvider>
+  );
+}

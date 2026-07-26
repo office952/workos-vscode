@@ -21,7 +21,9 @@ export function resolveConfirmSubmitDisabledReason(args: {
   if (!args.handoffAllowed) {
     return args.firstBlocker ?? "Handoff blocat — verifică verdictul.";
   }
-  if (!args.isReadyForQuotePreview) return "Workspace-ul nu este gata pentru preview.";
+  if (!args.isReadyForQuotePreview) {
+    return args.firstBlocker ?? "Configurarea nu este gata pentru confirmare finală.";
+  }
   if (!args.operatorConfirmationComplete) {
     return "Bifează confirmarea operatorului pentru draft intern.";
   }
@@ -35,6 +37,7 @@ export function resolveConfirmSubmitDisabledReason(args: {
 }
 
 export function resolveConfirmChecklistProgress(args: {
+  compositionConfirmed: boolean;
   finishSetupComplete: boolean;
   operatorConfirmationComplete: boolean;
   confirmInternalDraft: boolean;
@@ -42,6 +45,7 @@ export function resolveConfirmChecklistProgress(args: {
   showDraftBoundaryItem: boolean;
 }): { done: number; total: number } {
   const items = [
+    args.compositionConfirmed,
     args.finishSetupComplete,
     args.operatorConfirmationComplete && args.confirmInternalDraft,
     args.showDraftBoundaryItem ? args.draftBoundaryAcknowledged : null,

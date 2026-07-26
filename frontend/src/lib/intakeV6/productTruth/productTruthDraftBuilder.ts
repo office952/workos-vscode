@@ -241,10 +241,14 @@ export function buildProductTruthDraft(input: ProductTruthDraftBuilderInput): Pr
   const oracalSeries = deriveOracalSeries(faceFinishType);
   const mountingSystem = stringOrNull(finish.mounting_system) ?? "direct_wall";
   const mountingSystemState = setupState(input, "mounting_system", finish.mounting_system == null);
-  const mountingScope = finish.mounting_scope ?? "to_be_decided";
-  const mountingScopeRef = setupRef("mounting_scope", finish.mounting_scope ? setupState(input, "mounting_scope") : "blocked", "Current Intake V6 form does not expose mounting commercial scope unless supplied by test/probe input.");
+  const mountingScope = finish.mounting_scope ?? null;
+  const mountingScopeRef = setupRef(
+    "mounting_scope",
+    finish.mounting_scope ? setupState(input, "mounting_scope") : "blocked",
+    "Commercial mounting scope from Intake V6 Montaj tab.",
+  );
   if (!finish.mounting_scope) {
-    blockers.push(makeIssue("MOUNTING_SCOPE_MISSING", "blocker", "mounting", ["commercial_proposal"], "Mounting scope is not a first-class Intake V6 field yet.", [mountingScopeRef]));
+    blockers.push(makeIssue("MOUNTING_SCOPE_MISSING", "blocker", "mounting", ["commercial_proposal"], "Mounting scope is not explicitly set.", [mountingScopeRef]));
   }
 
   const supportLayerEvidence = layers.some((item) => SUPPORT_LAYER_ROLES.has(item.confirmedRole.value ?? item.autoRole.value ?? ""));

@@ -1,0 +1,18 @@
+{
+  "status": 200,
+  "body": {
+    "service": "workos-backend",
+    "contract": "workos-frontend-local-compat/v1",
+    "api_version": "BUILD_25",
+    "release_label": "workos-staging-release-BUILD_25",
+    "git_commit": "bf2df42",
+    "environment": "staging",
+    "capabilities": [
+      "system.version",
+      "system.local_compatibility",
+      "intake_v6.workspaces",
+      "openapi.finish_setup_schema"
+    ],
+    "observed_at": "2026-07-19T07:40:00.319026+00:00"
+  }
+}

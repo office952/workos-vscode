@@ -1,0 +1,25 @@
+{
+  "task": "OWNER-DECISION-05",
+  "explicitly_blocked": [
+    "Application code changes",
+    "DB changes",
+    "Sandu employee record mutation",
+    "Competence registry writes",
+    "Authorization registry writes",
+    "Operation mapping changes",
+    "Eligibility behavior changes",
+    "Mobile/assignment result changes",
+    "Parity enforcement",
+    "Parity persistence",
+    "Third consumer connection",
+    "Source switch",
+    "Migration execution",
+    "Automatic legacy-to-registry sync",
+    "APP-AUTH-07",
+    "PROD-ARCH-01",
+    "MOBILE-INT-02",
+    "UI-TRUTH-01B–01E",
+    "Manager projection"
+  ],
+  "remains_observe_only": true
+}

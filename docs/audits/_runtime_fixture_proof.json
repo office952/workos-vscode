@@ -1,0 +1,102 @@
+{
+  "sha_before": "afce1e6f07ffb9db1ec328aa53898dc76e2b6c461429a5a5605de0b3430d85ba",
+  "sha_after": "afce1e6f07ffb9db1ec328aa53898dc76e2b6c461429a5a5605de0b3430d85ba",
+  "no_mutation": true,
+  "document": {
+    "widthMm": 20000.2,
+    "heightMm": 7000.18,
+    "viewBox": "0 0 2098.04014 734.32606",
+    "viewBoxWidth": 2098.04014,
+    "viewBoxHeight": 734.32606,
+    "scaleX": 9.53280140769852,
+    "scaleY": 9.532795281703608,
+    "mmPerViewBoxUnit": 9.532798344701064,
+    "boundingAreaSqm": 140.005000036,
+    "filledAreaSqm": 140.00023646150277,
+    "areaConfidence": "medium",
+    "areaEstimated": true
+  },
+  "closed_contour_count": 21,
+  "candidate_count": 21,
+  "unit_ambiguity": true,
+  "scale_correction": "viewbox_as_mm_corel_cm_guard",
+  "top": {
+    "contour_id": "cc_60db6024",
+    "element_id": "el-1",
+    "source_element_type": "polygon",
+    "source_index": 1,
+    "source_subpath_index": null,
+    "is_closed": true,
+    "closure_method": "polygon",
+    "geometry_hash": "60db6024",
+    "bbox": {
+      "x": 0.00925,
+      "y": 0.00925,
+      "width": 2098.02164,
+      "height": 734.30755
+    },
+    "width_mm": 2098.022,
+    "height_mm": 734.308,
+    "area_mm2": 1540593.13,
+    "perimeter_mm": 5664.658,
+    "centroid": {
+      "x": 1049.0201,
+      "y": 367.163
+    },
+    "orientation": "landscape",
+    "contains_count": 15,
+    "contained_area_ratio": 0.118,
+    "rectangularity_score": 0.7725,
+    "warnings": [],
+    "overlay_d": null,
+    "overlay_points": "0.00925,0.00925 2098.03089,0.00925 2098.03089,734.3168 0.00925,734.3168 ",
+    "confidence": 0.9,
+    "reasons": [
+      "candidat panou: probabil",
+      "contur închis",
+      "suprafață mare (84.9% din compoziție)",
+      "conține 15 elemente",
+      "rectangularitate 0.7725"
+    ],
+    "is_outer_candidate": true
+  },
+  "selection": {
+    "schema": "svg_support_selection_v1",
+    "status": "confirmed",
+    "role": "ALUCOBOND_CASED_PANEL",
+    "contour_id": "cc_60db6024",
+    "svg_support_element_id": "el-1",
+    "geometry_hash": "60db6024",
+    "svg_source_hash": "afce1e6f07ffb9db1ec328aa53898dc76e2b6c461429a5a5605de0b3430d85ba",
+    "panel_geometry": {
+      "width_mm": 2098.022,
+      "height_mm": 734.308,
+      "area_mm2": 1540593.13,
+      "perimeter_mm": 5664.658,
+      "geometry_hash": "60db6024"
+    },
+    "casing_profile": {
+      "fold_count": 2,
+      "l1_mm": 60,
+      "l2_mm": 25,
+      "finished_depth_mm": 60
+    },
+    "service_corner": "TOP_RIGHT",
+    "internal_frame_enabled": true,
+    "candidate_explanation": [
+      "candidat panou: probabil",
+      "contur închis",
+      "suprafață mare (84.9% din compoziție)",
+      "conține 15 elemente",
+      "rectangularitate 0.7725"
+    ],
+    "unit_ambiguity": true,
+    "confirmed_at": "2026-07-17T16:33:48.875Z"
+  },
+  "blank": {
+    "fold_sum_mm": 85,
+    "blank_width_mm": 2268.022,
+    "blank_height_mm": 904.308
+  },
+  "blockers": []
+}

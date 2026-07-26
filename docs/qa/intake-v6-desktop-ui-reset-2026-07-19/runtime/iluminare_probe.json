@@ -1,0 +1,29 @@
+{
+  "activeTab": "intake-v6-review-tab-iluminare",
+  "panelText": "IluminareTip iluminare și PSU — câmpuri generice + adapter iluminare specializat.Tip iluminare—Module LEDBandă LEDFără iluminarePSU selectat (W)—60100150200250300Iluminare și surseLED și surse pentru litere — separat de alimentarea 220V a carcasei.Iluminare și surseAlege sistemul LED; rezultatele calculate apar separat.LED activDecizii iluminareCuloare luminăWarm whiteNeutral whiteCool whitePutere modul0.75 W / modul1.00 W / modul1.44 W / modulIluminare emblemăEmblema luminoasa - calcul pe arieEmblema neluminoasaDecizii alimentareSursele pentru iluminarea literelor (nu alimentarea 220V a carcasei multi-panou).Rezultate calculatePerimetru litere: 6.646 mModule LED · Alb neutru · 0.75 W/modul · module total 27 bucPSU (+30%): 26.33 W · surse: 60WDetalii calcul LED",
+  "testids": [
+    "intake-v6-review-tab-iluminare",
+    "intake-v6-review-tab-montaj",
+    "intake-v6-review-tab-panel-iluminare",
+    "intake-contract-section-iluminare",
+    "intake-contract-section-iluminare-content",
+    "intake-contract-section-fields-iluminare",
+    "intake-contract-field-lighting_system_type",
+    "intake-contract-field-lighting_system_type-input",
+    "intake-contract-field-selected_psu_watts",
+    "intake-contract-field-selected_psu_watts-input",
+    "intake-v6-review-section-lighting",
+    "intake-v6-review-section-lighting-content",
+    "intake-v6-review-lighting-section",
+    "intake-v6-lighting-fields",
+    "intake-v6-lighting-subsection",
+    "intake-v6-light-color",
+    "intake-v6-led-module-wattage",
+    "intake-v6-emblem-lighting-mode",
+    "intake-v6-lighting-results",
+    "intake-v6-led-letters-perimeter",
+    "intake-v6-led-total-modules-inline",
+    "intake-v6-led-calculation-details",
+    "intake-v6-led-calculation-details-toggle"
+  ]
+}

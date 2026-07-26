@@ -1,17 +1,25 @@
 /**
- * Routing helpers for TPL-VOLUMETRIC-LETTERS dedicated intake shell.
+ * Routing helpers for templates handled by the dedicated Intake V6 shell.
  */
 
 import { isLitereVolumetriceFamily } from "@/lib/intakeProductSpec";
 import type { IntakeStatus } from "@/lib/mockData";
 import { isVolumetricLettersTemplateCode } from "@/lib/volumetricQuoteInput";
 
+export const TPL_VOLUMETRIC_LOGO_V1 = "TPL-VOLUMETRIC-LOGO_v1";
+
+export function isIntakeV6CapableTemplateCode(
+  templateCode: string | null | undefined
+): boolean {
+  return isVolumetricLettersTemplateCode(templateCode);
+}
+
 export function shouldUseVolumetricIntakePage(
   confirmedTemplateCode: string | null | undefined,
   productFamily: string | null | undefined
 ): boolean {
   const code = (confirmedTemplateCode ?? "").trim();
-  if (isVolumetricLettersTemplateCode(confirmedTemplateCode)) return true;
+  if (isIntakeV6CapableTemplateCode(confirmedTemplateCode)) return true;
   if (!code && isLitereVolumetriceFamily(productFamily)) return true;
   return false;
 }
@@ -60,13 +68,20 @@ export function resolveIntakeEditPath(input: {
   productFamily?: string | null;
   workspaceId?: string | null;
 }): string {
+  if (isIntakeRequestRouteKey(input.id)) {
+    return buildIntakeV6Path(input.workspaceId ?? input.id);
+  }
+  const confirmedTemplateCode = input.confirmedTemplateCode?.trim() ?? "";
   if (
     intakeEditUsesVolumetricWorkspace(
-      input.confirmedTemplateCode,
+      confirmedTemplateCode,
       input.productFamily ?? null
     )
   ) {
     return buildIntakeV6Path(input.workspaceId ?? input.id);
+  }
+  if (input.workspaceId?.trim() && !confirmedTemplateCode) {
+    return buildIntakeV6Path(input.workspaceId);
   }
   return buildIntakeLegacyPath(input.id);
 }
@@ -77,7 +92,7 @@ export function intakePrimaryEditLabel(
 ): string {
   return intakeEditUsesVolumetricWorkspace(confirmedTemplateCode, productFamily)
     ? "Deschide Intake V6"
-    : "Instrumentează Comanda";
+    : "Deschide Intake V6";
 }
 
 /** Stored status is ahead of what computed readiness / template / spec allow. */

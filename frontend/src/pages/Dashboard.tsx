@@ -37,7 +37,7 @@ function StatusHeader({
   onRefresh: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between px-4 py-2.5 bg-[#111827] border border-[#1E293B] rounded-lg">
+    <div className="flex items-center justify-between px-4 py-2.5 bg-wo-surface-raised border border-wo-border-subtle rounded-lg">
       <div className="flex items-center gap-3">
         {source === "db" ? (
           <div className="flex items-center gap-2">
@@ -45,7 +45,9 @@ function StatusHeader({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
             </span>
-            <span className="text-sm text-green-400 font-medium">Live</span>
+            <span className="text-sm text-green-400 font-medium" data-testid="dashboard-data-source">
+              Date disponibile
+            </span>
             <Database className="w-3.5 h-3.5 text-green-400/60" />
           </div>
         ) : source === "mock" ? (
@@ -57,13 +59,13 @@ function StatusHeader({
         ) : (
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-slate-500 animate-pulse" />
-            <span className="text-sm text-slate-400">Conectare...</span>
+            <span className="text-sm text-wo-text-muted">Conectare...</span>
           </div>
         )}
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-xs text-slate-500 font-mono">
+        <span className="text-xs text-wo-text-muted font-mono">
           {lastUpdate.toLocaleTimeString("ro-RO", {
             hour: "2-digit",
             minute: "2-digit",
@@ -72,10 +74,10 @@ function StatusHeader({
         <button
           onClick={onRefresh}
           disabled={loading}
-          className="p-1.5 rounded-md hover:bg-[#1E293B] transition-colors disabled:opacity-50"
+          className="p-1.5 rounded-md hover:bg-wo-hover transition-colors disabled:opacity-50"
         >
           <RefreshCw
-            className={`w-4 h-4 text-slate-400 ${loading ? "animate-spin" : ""}`}
+            className={`w-4 h-4 text-wo-text-muted ${loading ? "animate-spin" : ""}`}
           />
         </button>
       </div>
@@ -103,20 +105,20 @@ function KPICardLarge({
 }) {
   const statusStyles = {
     good: {
-      border: "border-[#1E293B]",
-      bg: "bg-[#111827]",
-      value: "text-white",
+      border: "border-wo-border-subtle",
+      bg: "bg-wo-surface-raised",
+      value: "text-wo-text-primary",
       iconColor: "text-green-400",
     },
     warning: {
       border: "border-amber-900/40",
-      bg: "bg-[#111827]",
+      bg: "bg-wo-surface-raised",
       value: "text-amber-300",
       iconColor: "text-amber-400",
     },
     critical: {
       border: "border-red-900/40",
-      bg: "bg-[#111827]",
+      bg: "bg-wo-surface-raised",
       value: "text-red-300",
       iconColor: "text-red-400",
     },
@@ -135,7 +137,7 @@ function KPICardLarge({
         ? status === "critical" || status === "warning"
           ? "text-green-400"
           : "text-red-400"
-        : "text-slate-500";
+        : "text-wo-text-muted";
 
   return (
     <div
@@ -157,7 +159,7 @@ function KPICardLarge({
         {value}
         {unit && <span className="text-lg ml-0.5 opacity-60">{unit}</span>}
       </p>
-      <p className="text-xs text-slate-400 mt-1.5 font-medium">{label}</p>
+      <p className="text-xs text-wo-text-muted mt-1.5 font-medium">{label}</p>
     </div>
   );
 }
@@ -183,16 +185,16 @@ function SummaryBar({
   ];
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-slate-100">
+        <h3 className="text-sm font-semibold text-wo-text-primary">
           Sumar Producție
         </h3>
-        <span className="text-xs text-slate-500">{total} job-uri total</span>
+        <span className="text-xs text-wo-text-muted">{total} job-uri total</span>
       </div>
 
       {/* Progress bar */}
-      <div className="h-2.5 rounded-full bg-[#1E293B] overflow-hidden flex mb-3">
+      <div className="h-2.5 rounded-full bg-wo-border-subtle overflow-hidden flex mb-3">
         {segments.map(
           (seg) =>
             seg.count > 0 && (
@@ -210,9 +212,9 @@ function SummaryBar({
         {segments.map((seg) => (
           <div key={seg.label} className="flex items-center gap-1.5">
             <span className={`w-2.5 h-2.5 rounded-sm ${seg.color}`} />
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-wo-text-muted">
               {seg.label}:{" "}
-              <span className="text-slate-200 font-medium">{seg.count}</span>
+              <span className="text-wo-text-primary font-medium">{seg.count}</span>
             </span>
           </div>
         ))}
@@ -280,10 +282,10 @@ function RiskCard({
         )}
       </div>
 
-      <p className="text-sm text-slate-100 font-medium truncate">
+      <p className="text-sm text-wo-text-primary font-medium truncate">
         {job.client}
       </p>
-      <p className="text-xs text-slate-500 truncate mt-0.5">{job.product}</p>
+      <p className="text-xs text-wo-text-muted truncate mt-0.5">{job.product}</p>
 
       {job.riskReason && (
         <p className="text-xs text-red-300/70 mt-1.5 italic">
@@ -292,7 +294,7 @@ function RiskCard({
       )}
 
       <div className="flex items-center gap-2 mt-2.5">
-        <div className="flex-1 bg-[#1E293B] rounded-full h-1.5 overflow-hidden">
+        <div className="flex-1 bg-wo-border-subtle rounded-full h-1.5 overflow-hidden">
           <div
             className={`h-1.5 rounded-full transition-all duration-700 ${
               job.progress >= 60
@@ -304,17 +306,17 @@ function RiskCard({
             style={{ width: `${job.progress}%` }}
           />
         </div>
-        <span className="text-xs text-slate-400 font-mono w-8 text-right">
+        <span className="text-xs text-wo-text-muted font-mono w-8 text-right">
           {job.progress}%
         </span>
       </div>
 
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[11px] text-slate-500">
+        <span className="text-[11px] text-wo-text-muted">
           {job.currentOperation !== "—" ? job.currentOperation : "În așteptare"}
         </span>
         <span
-          className={`text-[11px] ${job.isLate ? "text-red-400 font-medium" : "text-slate-500"}`}
+          className={`text-[11px] ${job.isLate ? "text-red-400 font-medium" : "text-wo-text-muted"}`}
         >
           {job.promisedAt}
         </span>
@@ -347,16 +349,16 @@ function ActiveJobRow({
   };
 
   return (
-    <div className="flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-[#1E293B]/50 transition-colors group">
+    <div className="flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-wo-hover transition-colors group">
       <span
         className={`w-1.5 h-8 rounded-full shrink-0 ${priorityColors[job.priority as keyof typeof priorityColors] || "bg-slate-500"}`}
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs text-blue-300">{job.id}</span>
-          <span className="text-sm text-slate-200 truncate">{job.client}</span>
+          <span className="text-sm text-wo-text-primary truncate">{job.client}</span>
         </div>
-        <p className="text-xs text-slate-500 truncate mt-0.5">
+        <p className="text-xs text-wo-text-muted truncate mt-0.5">
           {job.currentOperation !== "—"
             ? `${job.currentOperation} · ${job.currentWorkcenter}`
             : job.product}
@@ -364,14 +366,14 @@ function ActiveJobRow({
       </div>
       <div className="flex items-center gap-2 shrink-0">
         <div className="w-20">
-          <div className="w-full bg-[#1E293B] rounded-full h-1.5 overflow-hidden">
+          <div className="w-full bg-wo-border-subtle rounded-full h-1.5 overflow-hidden">
             <div
               className="bg-blue-500 h-1.5 rounded-full transition-all duration-700"
               style={{ width: `${job.progress}%` }}
             />
           </div>
         </div>
-        <span className="text-xs text-slate-300 font-mono w-8 text-right font-medium">
+        <span className="text-xs text-wo-text-secondary font-mono w-8 text-right font-medium">
           {job.progress}%
         </span>
       </div>
@@ -402,7 +404,7 @@ function AlertItemSimple({
 
   return (
     <div className={`border-l-2 rounded-r-md px-3 py-2 ${style}`}>
-      <p className="text-xs text-slate-200 leading-relaxed">
+      <p className="text-xs text-wo-text-primary leading-relaxed">
         {alert.message}
       </p>
     </div>
@@ -428,12 +430,12 @@ function CapacityItem({
       ? "text-red-400"
       : load >= 75
         ? "text-amber-400"
-        : "text-slate-300";
+        : "text-wo-text-secondary";
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-slate-400 w-20 truncate">{name}</span>
-      <div className="flex-1 bg-[#1E293B] rounded-full h-2 overflow-hidden">
+      <span className="text-xs text-wo-text-muted w-20 truncate">{name}</span>
+      <div className="flex-1 bg-wo-border-subtle rounded-full h-2 overflow-hidden">
         <div
           className={`h-2 rounded-full transition-all duration-700 ${barColor}`}
           style={{ width: `${load}%` }}
@@ -517,7 +519,7 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[11px] text-slate-500 font-medium mr-1">Acțiuni rapide:</span>
+        <span className="text-[11px] text-wo-text-muted font-medium mr-1">Acțiuni rapide:</span>
         <button
           onClick={() => navigate("/intake")}
           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-blue-600/20 border border-blue-700/40 text-blue-300 hover:bg-blue-600/30 hover:border-blue-600/60 transition-colors"
@@ -597,11 +599,11 @@ export default function Dashboard() {
         {/* LEFT: Risk + Active Jobs */}
         <div className="lg:col-span-2 space-y-4">
           {/* Delivery Risk */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-semibold text-slate-100">
+                <h3 className="text-sm font-semibold text-wo-text-primary">
                   Riscuri Livrare
                 </h3>
                 {riskyJobs.length > 0 && (
@@ -634,7 +636,7 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-8">
                 <CheckCircle2 className="w-8 h-8 text-green-500/40 mx-auto mb-2" />
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-wo-text-muted">
                   Niciun risc de livrare detectat
                 </p>
               </div>
@@ -642,10 +644,10 @@ export default function Dashboard() {
           </div>
 
           {/* Active Jobs */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
               <Activity className="w-4 h-4 text-blue-400" />
-              <h3 className="text-sm font-semibold text-slate-100">
+              <h3 className="text-sm font-semibold text-wo-text-primary">
                 Job-uri Active
               </h3>
               <span className="text-xs bg-blue-500/15 text-blue-400 px-1.5 py-0.5 rounded-full font-medium">
@@ -660,7 +662,7 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-500 text-center py-6">
+              <p className="text-sm text-wo-text-muted text-center py-6">
                 Niciun job activ
               </p>
             )}
@@ -670,10 +672,10 @@ export default function Dashboard() {
         {/* RIGHT: Alerts + Capacity */}
         <div className="space-y-4">
           {/* Alerts */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-red-400" />
-              <h3 className="text-sm font-semibold text-slate-100">Alerte</h3>
+              <h3 className="text-sm font-semibold text-wo-text-primary">Alerte</h3>
               {activeAlerts.length > 0 && (
                 <span className="text-xs bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-full font-medium">
                   {activeAlerts.length}
@@ -690,16 +692,16 @@ export default function Dashboard() {
             ) : (
               <div className="text-center py-6">
                 <CheckCircle2 className="w-6 h-6 text-green-500/40 mx-auto mb-1.5" />
-                <p className="text-xs text-slate-500">Nicio alertă activă</p>
+                <p className="text-xs text-wo-text-muted">Nicio alertă activă</p>
               </div>
             )}
           </div>
 
           {/* Capacity */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
               <Gauge className="w-4 h-4 text-blue-400" />
-              <h3 className="text-sm font-semibold text-slate-100">
+              <h3 className="text-sm font-semibold text-wo-text-primary">
                 Capacitate Azi
               </h3>
             </div>

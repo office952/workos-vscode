@@ -1,0 +1,173 @@
+{
+  "contract_version": "intake_v6_golden_cpp_live_historical_v1",
+  "workspace_id": "4888fddb-5d9f-46cb-9bcc-5dd3ed1263b1",
+  "dry_run_only": true,
+  "can_write_quote_totals": false,
+  "totals": {
+    "subtotal_net": null,
+    "vat_rate": 21.0,
+    "vat_amount": null,
+    "total_gross": null,
+    "currency": "RON"
+  },
+  "lines": [
+    {
+      "code": "ambalare",
+      "quantity": null,
+      "unit_price": null,
+      "subtotal": null,
+      "unit": "set"
+    },
+    {
+      "code": "debitare_fata",
+      "quantity": 20.9727,
+      "unit_price": null,
+      "subtotal": 524.3175,
+      "unit": "ml"
+    },
+    {
+      "code": "debitare_spate",
+      "quantity": 1.2638,
+      "unit_price": null,
+      "subtotal": 25.276,
+      "unit": "m2"
+    },
+    {
+      "code": "finisaje_colantare_vopsire",
+      "quantity": 1.2638,
+      "unit_price": null,
+      "subtotal": 44.233,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_application::logo_instance_001",
+      "quantity": 0.4002298565185999,
+      "unit_price": null,
+      "subtotal": 10.0057,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_application::logo_instance_002",
+      "quantity": 0.4002298565186002,
+      "unit_price": null,
+      "subtotal": 10.0057,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_back_cnc::logo_instance_001",
+      "quantity": 0.4002298565185999,
+      "unit_price": null,
+      "subtotal": 8.0046,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_back_cnc::logo_instance_002",
+      "quantity": 0.4002298565186002,
+      "unit_price": null,
+      "subtotal": 8.0046,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_face_cnc::logo_instance_001",
+      "quantity": 2.4455,
+      "unit_price": null,
+      "subtotal": 61.1375,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_face_cnc::logo_instance_002",
+      "quantity": 2.4455,
+      "unit_price": null,
+      "subtotal": 61.1375,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_laminate::logo_instance_001",
+      "quantity": 0.4002298565185999,
+      "unit_price": null,
+      "subtotal": 10.0057,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_laminate::logo_instance_002",
+      "quantity": 0.4002298565186002,
+      "unit_price": null,
+      "subtotal": 10.0057,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_led_modules::logo_instance_001",
+      "quantity": 30.0,
+      "unit_price": null,
+      "subtotal": 150.0,
+      "unit": "buc"
+    },
+    {
+      "code": "logo_led_modules::logo_instance_002",
+      "quantity": 30.0,
+      "unit_price": null,
+      "subtotal": 150.0,
+      "unit": "buc"
+    },
+    {
+      "code": "logo_print::logo_instance_001",
+      "quantity": 0.4002298565185999,
+      "unit_price": null,
+      "subtotal": 17.0098,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_print::logo_instance_002",
+      "quantity": 0.4002298565186002,
+      "unit_price": null,
+      "subtotal": 17.0098,
+      "unit": "m2"
+    },
+    {
+      "code": "logo_return_cant::logo_instance_001",
+      "quantity": 2.4455,
+      "unit_price": null,
+      "subtotal": 73.365,
+      "unit": "ml"
+    },
+    {
+      "code": "logo_return_cant::logo_instance_002",
+      "quantity": 2.4455,
+      "unit_price": null,
+      "subtotal": 73.365,
+      "unit": "ml"
+    },
+    {
+      "code": "modelare_cant_aluminiu",
+      "quantity": 20.9727,
+      "unit_price": null,
+      "subtotal": 629.181,
+      "unit": "ml"
+    },
+    {
+      "code": "sablon_montaj_forex",
+      "quantity": 3.0523,
+      "unit_price": null,
+      "subtotal": 45.7845,
+      "unit": "m2"
+    },
+    {
+      "code": "sistem_led_module",
+      "quantity": 84.0,
+      "unit_price": null,
+      "subtotal": 420.0,
+      "unit": "buc"
+    },
+    {
+      "code": "sursa_led",
+      "quantity": 1.0,
+      "unit_price": null,
+      "subtotal": 150.0,
+      "unit": "buc"
+    }
+  ],
+  "notes": [
+    "Read-only historical workspace capture at Build 1.",
+    "Perimeter qty 20.9727 differs from analysis-fixture rebuild 21.1675 \u2014 do not mutate historical WS; treat as drift guard."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "task": "OWNER-DECISION-07",
+  "model": "MIXED",
+  "flex_01": "READ_ONLY_SEMANTICS_ONLY — no progress writes",
+  "status_progress": {
+    "initial": "reuse existing task/execution status and blueprint task-count where applicable",
+    "persistence": "existing paths sufficient for FLEX-01"
+  },
+  "quantity_progress": {
+    "flex_06": "BLOCKED until separate persistence + concurrency decision",
+    "required_fields": ["quantity_total", "quantity_completed", "progress_unit", "version_or_audit"],
+    "forbidden": "unguarded JSON blob increments"
+  },
+  "owner_reserve": "Quantity progress not auto-authorized in JSON from arch plan"
+}

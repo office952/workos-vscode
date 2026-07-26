@@ -199,6 +199,47 @@ export interface IntakeV4FinishSetup {
   mounting_template_material_type?: "forex" | "paper" | null;
   mounting_system?: "direct_wall" | "steel_bars" | "aluminum_bars" | "acm_panel" | null;
   mounting_bar_profile?: string | null;
+  mounting_scope?:
+    | "none"
+    | "preparation_only"
+    | "preparation_and_site_installation"
+    | "no_mounting"
+    | "mounting_included"
+    | "mounting_external"
+    | "to_be_decided"
+    | null;
+  site_installation_included?: boolean | null;
+  mounting_solution?: {
+    kind?: string;
+    template_code: string | null;
+    configuration?: Record<string, unknown>;
+  } | null;
+  /** Technical wall fixing system — independent of commercial mounting_scope. */
+  mounting_fixing_system?: Record<string, unknown> | null;
+  /** Operator-confirmed SVG closed-contour support selection (Alucobond panel etc.). */
+  svg_support_selection?: Record<string, unknown> | null;
+  /** Unified Product System component bindings (letters / logo / support). */
+  svg_component_bindings?: Record<string, unknown>[] | null;
+  /**
+   * Multi-panel ACM/ACP assembly (nested under SUPPORT envelope).
+   * Analyzer may write PROPOSED; only CONFIRMED is ProductDefinition authority.
+   */
+  segmented_background?: Record<string, unknown> | null;
+  /**
+   * Component-owned AcmPanel instance (geometry, authority, production_geometry DXF binding).
+   * Must round-trip through Review hydrate/persist — omission autosaves wipe measured attachments.
+   */
+  acm_panel_instance?: Record<string, unknown> | null;
+  /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
+  mains_cable_length_m?: number | null;
+  power_supply_service_corner?:
+    | "TOP_LEFT"
+    | "TOP_RIGHT"
+    | "BOTTOM_LEFT"
+    | "BOTTOM_RIGHT"
+    | "MANUAL_CONFIRMED"
+    | null;
+  service_screw_finish?: "NATURAL" | "PAINTED_TO_MATCH_CANT" | null;
   emblem_lighting_mode?: "excluded" | "area_lit" | "needs_decision";
   letter_led_module_count?: number | null;
   emblem_led_module_count?: number | null;
@@ -1161,6 +1202,8 @@ export interface IntakeV4QuoteHandoffPreviewResponse {
   operator_confirmation_complete: boolean;
   fatal_blockers: string[];
   review_warnings: string[];
+  /** Aggregate info traces — visible technical diagnostics; do not gate accept/convert/production. */
+  diagnostic_warnings?: string[];
   client_send_allowed: boolean;
   accept_allowed: boolean;
   convert_to_order_allowed: boolean;

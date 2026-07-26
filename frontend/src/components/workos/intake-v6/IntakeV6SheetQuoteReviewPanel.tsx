@@ -62,7 +62,7 @@ export default function IntakeV6SheetQuoteReviewPanel({
   }
 
   return (
-    <div className="mt-4 space-y-3 border-t border-[#2A3548] pt-4" data-testid="intake-v6-sheet-quote-review">
+    <div className="mt-4 space-y-3 border-t border-wo-border-strong pt-4" data-testid="intake-v6-sheet-quote-review">
       <div>
         <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-400">
           Material quote review — estimare internă (nu preț final)
@@ -125,7 +125,7 @@ export default function IntakeV6SheetQuoteReviewPanel({
       ) : null}
 
       <p
-        className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 text-[11px] text-slate-300"
+        className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 text-[11px] text-slate-300"
         data-testid="intake-v6-sheet-quote-applied-readable"
       >
         Aplicat în ofertă finală: {appliedToQuote ? "Da" : "Nu"}
@@ -136,7 +136,7 @@ export default function IntakeV6SheetQuoteReviewPanel({
         testId="intake-v6-sheet-quote-technical"
       >
         <div
-          className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 text-[11px] text-slate-300"
+          className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-sheet-quote-main-summary"
         >
           <p className="font-semibold uppercase tracking-wide text-slate-400">Material review intern</p>
@@ -220,7 +220,7 @@ export default function IntakeV6SheetQuoteReviewPanel({
       {workspaceId ? (
         <button
           type="button"
-          className="rounded border border-[#2A3548] bg-[#0A0F1A]/60 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300 hover:bg-[#141B29]"
+          className="rounded border border-wo-border-strong bg-wo-surface-inset/60 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300 hover:bg-wo-surface-raised"
           data-testid="intake-v6-copy-material-review-summary"
           onClick={() => void handleCopyMaterialReviewSummary()}
         >

@@ -1,0 +1,269 @@
+﻿{
+    "current_step":  null,
+    "bindings_support":  [
+
+                         ],
+    "mounting_solution":  {
+                              "kind":  "product_system_template",
+                              "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                              "configuration":  {
+                                                    "panel_width_mm":  1000.0,
+                                                    "panel_height_mm":  350.0,
+                                                    "acm_thickness_mm":  3,
+                                                    "return_depth_mm":  60.0,
+                                                    "rear_lip_mm":  25.0,
+                                                    "fold_sides":  "all",
+                                                    "v_groove_angle_deg":  135.0,
+                                                    "frame_clearance_mm":  0.0,
+                                                    "fold_count":  2,
+                                                    "finished_depth_mm":  60,
+                                                    "svg_support_element_id":  "el-1",
+                                                    "geometry_hash":  "7af1352f",
+                                                    "contour_id":  "cc_7af1352f",
+                                                    "panel_area_mm2":  350000.137,
+                                                    "panel_perimeter_mm":  2700.001,
+                                                    "internal_frame_enabled":  false,
+                                                    "internal_frame":  {
+                                                                           "enabled":  false,
+                                                                           "material_code":  null,
+                                                                           "profile_code":  null,
+                                                                           "panel_outer_width_mm":  null,
+                                                                           "panel_outer_height_mm":  null,
+                                                                           "panel_material_thickness_mm":  null,
+                                                                           "total_fit_allowance_mm":  2.0,
+                                                                           "frame_outer_width_mm":  null,
+                                                                           "frame_outer_height_mm":  null,
+                                                                           "crossbar_rule_code":  "MATERIAL_SPACING_V1",
+                                                                           "max_crossbar_spacing_mm":  null,
+                                                                           "crossbar_orientation":  null,
+                                                                           "suggested_crossbar_count":  null,
+                                                                           "confirmed_crossbar_count":  null,
+                                                                           "override_reason":  null,
+                                                                           "structural_review_required":  false,
+                                                                           "confirmation_status":  "NOT_APPLICABLE",
+                                                                           "quantity_status":  "NOT_APPLICABLE",
+                                                                           "blockers":  [
+
+                                                                                        ],
+                                                                           "provenance":  {
+                                                                                              "resource_registry_version":  "structural_resource_options/v1"
+                                                                                          }
+                                                                       },
+                                                    "field_authority":  {
+                                                                            "panel_geometry":  "detected",
+                                                                            "fold_count":  "catalog_default",
+                                                                            "l1_mm":  "catalog_default",
+                                                                            "l2_mm":  "catalog_default",
+                                                                            "finished_depth_mm":  "catalog_default",
+                                                                            "acm_thickness_mm":  "catalog_default",
+                                                                            "internal_frame":  "catalog_default",
+                                                                            "service_corner":  "catalog_default"
+                                                                        },
+                                                    "field_class":  {
+                                                                        "panel_geometry":  "critical",
+                                                                        "contour_association":  "critical",
+                                                                        "fold_count":  "critical",
+                                                                        "l1_mm":  "critical",
+                                                                        "l2_mm":  "critical",
+                                                                        "acm_thickness_mm":  "critical",
+                                                                        "finished_depth_mm":  "critical",
+                                                                        "internal_frame":  "optional",
+                                                                        "service_corner":  "optional",
+                                                                        "detection_message":  "informational"
+                                                                    },
+                                                    "technical_configuration_status":  "proposed",
+                                                    "acm_panel_instance":  {
+                                                                               "schema":  "acm_panel_component_instance_v1",
+                                                                               "component_instance_id":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                               "component_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                                                               "intake_geometry_role_adapter":  "SUPPORT_CONTOUR",
+                                                                               "role_status":  "confirmed",
+                                                                               "association_status":  "proposed",
+                                                                               "technical_configuration_status":  "proposed",
+                                                                               "composition_status":  "unconfirmed",
+                                                                               "capabilities":  {
+                                                                                                    "active":  [
+                                                                                                                   "boxed_returns",
+                                                                                                                   "rear_lip",
+                                                                                                                   "segmented_panels"
+                                                                                                               ],
+                                                                                                    "inactive":  [
+                                                                                                                     "internal_frame",
+                                                                                                                     "graphic_cutouts",
+                                                                                                                     "illuminated_cutouts",
+                                                                                                                     "plexiglass_inserts",
+                                                                                                                     "led_system",
+                                                                                                                     "rear_closure",
+                                                                                                                     "totem_face",
+                                                                                                                     "direct_letter_mounting",
+                                                                                                                     "wall_mounting",
+                                                                                                                     "structure_mounting"
+                                                                                                                 ]
+                                                                                                },
+                                                                               "geometry":  {
+                                                                                                "contour_id":  "cc_7af1352f",
+                                                                                                "element_id":  "el-1",
+                                                                                                "geometry_hash":  "7af1352f",
+                                                                                                "width_mm":  1000,
+                                                                                                "height_mm":  350,
+                                                                                                "area_mm2":  350000.137,
+                                                                                                "perimeter_mm":  2700.001,
+                                                                                                "bbox":  {
+                                                                                                             "x":  0.00584,
+                                                                                                             "y":  0.00584,
+                                                                                                             "width":  66.23178,
+                                                                                                             "height":  23.18112
+                                                                                                         },
+                                                                                                "panels":  [
+                                                                                                               {
+                                                                                                                   "panel_id":  "panel_1",
+                                                                                                                   "order":  1,
+                                                                                                                   "width_mm":  1000,
+                                                                                                                   "height_mm":  350,
+                                                                                                                   "position":  {
+                                                                                                                                    "x_mm":  0,
+                                                                                                                                    "y_mm":  0
+                                                                                                                                },
+                                                                                                                   "contour_element_id":  "el-1"
+                                                                                                               },
+                                                                                                               {
+                                                                                                                   "panel_id":  "panel_2",
+                                                                                                                   "order":  2,
+                                                                                                                   "width_mm":  1000,
+                                                                                                                   "height_mm":  350,
+                                                                                                                   "position":  {
+                                                                                                                                    "x_mm":  1000,
+                                                                                                                                    "y_mm":  0
+                                                                                                                                },
+                                                                                                                   "contour_element_id":  "el-2"
+                                                                                                               }
+                                                                                                           ],
+                                                                                                "joints":  [
+                                                                                                               {
+                                                                                                                   "joint_id":  "joint_panel_1_panel_2",
+                                                                                                                   "left_panel_id":  "panel_1",
+                                                                                                                   "right_panel_id":  "panel_2",
+                                                                                                                   "orientation":  "VERTICAL"
+                                                                                                               }
+                                                                                                           ]
+                                                                                            },
+                                                                               "configuration":  {
+                                                                                                     "acm_thickness_mm":  3,
+                                                                                                     "fold_count":  2,
+                                                                                                     "l1_mm":  60,
+                                                                                                     "l2_mm":  25,
+                                                                                                     "finished_depth_mm":  60,
+                                                                                                     "internal_frame_enabled":  false,
+                                                                                                     "service_corner":  null,
+                                                                                                     "field_authority":  {
+                                                                                                                             "panel_geometry":  "detected",
+                                                                                                                             "fold_count":  "catalog_default",
+                                                                                                                             "l1_mm":  "catalog_default",
+                                                                                                                             "l2_mm":  "catalog_default",
+                                                                                                                             "finished_depth_mm":  "catalog_default",
+                                                                                                                             "acm_thickness_mm":  "catalog_default",
+                                                                                                                             "internal_frame":  "catalog_default",
+                                                                                                                             "service_corner":  "catalog_default"
+                                                                                                                         },
+                                                                                                     "field_class":  {
+                                                                                                                         "panel_geometry":  "critical",
+                                                                                                                         "contour_association":  "critical",
+                                                                                                                         "fold_count":  "critical",
+                                                                                                                         "l1_mm":  "critical",
+                                                                                                                         "l2_mm":  "critical",
+                                                                                                                         "acm_thickness_mm":  "critical",
+                                                                                                                         "finished_depth_mm":  "critical",
+                                                                                                                         "internal_frame":  "optional",
+                                                                                                                         "service_corner":  "optional",
+                                                                                                                         "detection_message":  "informational"
+                                                                                                                     }
+                                                                                                 },
+                                                                               "relations":  [
+                                                                                                 {
+                                                                                                     "relation_id":  "rel_belongs_panel_1_0",
+                                                                                                     "from_component_ref":  "panel_1",
+                                                                                                     "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                                     "relation_type":  "belongs_to_assembly",
+                                                                                                     "status":  "proposed",
+                                                                                                     "provenance":  "segmented_panels_proposal"
+                                                                                                 },
+                                                                                                 {
+                                                                                                     "relation_id":  "rel_belongs_panel_2_1",
+                                                                                                     "from_component_ref":  "panel_2",
+                                                                                                     "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                                     "relation_type":  "belongs_to_assembly",
+                                                                                                     "status":  "proposed",
+                                                                                                     "provenance":  "segmented_panels_proposal"
+                                                                                                 },
+                                                                                                 {
+                                                                                                     "relation_id":  "rel_place_pseudo:fill-e31e24",
+                                                                                                     "from_component_ref":  "pseudo:fill-e31e24",
+                                                                                                     "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                                     "relation_type":  "positioned_on",
+                                                                                                     "status":  "unknown",
+                                                                                                     "provenance":  "geometry_insufficient_for_panel_assignment"
+                                                                                                 }
+                                                                                             ],
+                                                                               "svg_source_hash":  "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc",
+                                                                               "updated_at":  "2026-07-20T01:23:44.785Z"
+                                                                           },
+                                                    "component_relations":  [
+                                                                                {
+                                                                                    "relation_id":  "rel_belongs_panel_1_0",
+                                                                                    "from_component_ref":  "panel_1",
+                                                                                    "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                    "relation_type":  "belongs_to_assembly",
+                                                                                    "status":  "proposed",
+                                                                                    "provenance":  "segmented_panels_proposal"
+                                                                                },
+                                                                                {
+                                                                                    "relation_id":  "rel_belongs_panel_2_1",
+                                                                                    "from_component_ref":  "panel_2",
+                                                                                    "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                    "relation_type":  "belongs_to_assembly",
+                                                                                    "status":  "proposed",
+                                                                                    "provenance":  "segmented_panels_proposal"
+                                                                                },
+                                                                                {
+                                                                                    "relation_id":  "rel_place_pseudo:fill-e31e24",
+                                                                                    "from_component_ref":  "pseudo:fill-e31e24",
+                                                                                    "to_component_ref":  "acm_cc_7af1352f_ff5c35da170d",
+                                                                                    "relation_type":  "positioned_on",
+                                                                                    "status":  "unknown",
+                                                                                    "provenance":  "geometry_insufficient_for_panel_assignment"
+                                                                                }
+                                                                            ]
+                                                }
+                          },
+    "workspace_code":  "IV6-DB2F86B7",
+    "acm_panel_domain_action":  "upsert",
+    "instance":  {
+                     "capabilities":  null,
+                     "id":  null,
+                     "component_key":  null,
+                     "technical_configuration_status":  null,
+                     "provenance":  null,
+                     "association_status":  null,
+                     "composition_status":  null,
+                     "readiness":  null,
+                     "role_status":  null,
+                     "configuration":  null,
+                     "label":  null,
+                     "template_code":  null,
+                     "geometry":  null,
+                     "field_authority":  null,
+                     "relations":  null
+                 },
+    "workspace_id":  "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+    "segmented":  {
+                      "provenance":  null,
+                      "status":  "PROPOSED",
+                      "panel_count":  2
+                  },
+    "support_selection":  {
+                              "status":  "proposed",
+                              "authority":  null,
+                              "acm_panel_instance_id":  null,
+                              "contour_id":  "cc_7af1352f"
+                          }
+}

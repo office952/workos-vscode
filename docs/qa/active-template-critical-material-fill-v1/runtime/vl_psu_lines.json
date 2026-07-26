@@ -1,0 +1,26 @@
+[
+  {
+    "source_id": "VOL_V2_LED_PSU_PIECE",
+    "display_name": "Sursă LED (PSU)",
+    "internal_cost": null,
+    "material_source_type": null
+  },
+  {
+    "source_id": "MAT-LED-PSU-12V-100W",
+    "display_name": "MAT-LED-PSU-12V-100W",
+    "internal_cost": 16.0,
+    "material_source_type": "OWNER_CONFIRMED"
+  },
+  {
+    "source_id": "INT_VOL_V2_PSU_PIECE",
+    "display_name": "Sursă LED — cost intern piece",
+    "internal_cost": 45.0,
+    "material_source_type": null
+  },
+  {
+    "source_id": "AI_ELEC_PER_PSU",
+    "display_name": "Electric — per sursă alimentare",
+    "internal_cost": null,
+    "material_source_type": null
+  }
+]

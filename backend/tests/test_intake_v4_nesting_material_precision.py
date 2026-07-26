@@ -265,6 +265,128 @@ class TestRollNestingVinylEstimate:
         assert estimate.area_sqm == 0.51
 
 
+class TestAcmSupportExcludedFromVlSheets:
+    def test_support_panel_does_not_enter_face_or_backing_split(self):
+        nesting = {
+            "sheets": [
+                {
+                    "configId": "sheet_3000x1500",
+                    "sheetsUsed": 1,
+                    "usedSheetAreaSqm": 4.5,
+                    "placedItemsCount": 2,
+                    "unplacedItemsCount": 0,
+                    "placements": [
+                        {
+                            "partId": "letter-face",
+                            "sourceLayerName": "Litere",
+                            "placedWidthMm": 700,
+                            "placedHeightMm": 470,
+                        },
+                        {
+                            "partId": "acm-bond",
+                            "sourceLayerName": "Alucobond",
+                            "placedWidthMm": 2000,
+                            "placedHeightMm": 500,
+                        },
+                    ],
+                }
+            ]
+        }
+        analysis = {
+            "parts": {
+                "items": [
+                    {
+                        "id": "letter-face",
+                        "source": {"layerId": "Litere", "layerName": "Litere"},
+                    },
+                    {
+                        "id": "acm-bond",
+                        "source": {"layerId": "Alucobond", "layerName": "Alucobond"},
+                    },
+                ]
+            }
+        }
+        roles = {
+            "layers": [
+                {
+                    "layer_key": "Litere",
+                    "layer_name": "Litere",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                },
+                {
+                    "layer_key": "Alucobond",
+                    "layer_name": "Alucobond",
+                    "confirmed_role": "support_panel",
+                    "confirmation_state": "confirmed",
+                },
+            ]
+        }
+        split = compute_sheet_nesting_material_split(
+            nesting,
+            analysis,
+            roles,
+            face_area=0.33,
+            backing_area=None,
+        )
+        assert split.mode == "single_face"
+        assert split.face_area_sqm == round((700 * 470) / 1_000_000, 4)
+        assert split.face_area_sqm < 1.0
+        assert split.backing_area_sqm is None
+
+    def test_prorated_fallback_caps_full_sheet_to_letter_geometry(self):
+        # Only ACM support placements → excluded → total_pl=0 → prorated fallback path.
+        nesting = {
+            "sheets": [
+                {
+                    "configId": "sheet_3000x1500",
+                    "sheetsUsed": 1,
+                    "usedSheetAreaSqm": 4.5,
+                    "placedItemsCount": 1,
+                    "unplacedItemsCount": 0,
+                    "placements": [
+                        {
+                            "partId": "acm-only",
+                            "sourceLayerName": "Alucobond",
+                            "placedWidthMm": 2000,
+                            "placedHeightMm": 500,
+                        }
+                    ],
+                }
+            ]
+        }
+        analysis = {
+            "parts": {
+                "items": [
+                    {
+                        "id": "acm-only",
+                        "source": {"layerId": "Alucobond", "layerName": "Alucobond"},
+                    }
+                ]
+            }
+        }
+        roles = {
+            "layers": [
+                {
+                    "layer_key": "Alucobond",
+                    "layer_name": "Alucobond",
+                    "confirmed_role": "support_panel",
+                    "confirmation_state": "confirmed",
+                }
+            ]
+        }
+        split = compute_sheet_nesting_material_split(
+            nesting,
+            analysis,
+            roles,
+            face_area=0.3298,
+            backing_area=None,
+        )
+        assert split.mode == "prorated_fallback"
+        assert split.face_area_sqm == 0.3298
+        assert split.face_area_sqm != 4.5
+
+
 class TestSheetNestingQuantityFloor:
     def test_raises_face_quantity_when_placement_footprint_below_eligible_area(self):
         nesting = {

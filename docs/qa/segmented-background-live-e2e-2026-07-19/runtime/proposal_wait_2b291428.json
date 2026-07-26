@@ -1,0 +1,58 @@
+{
+  "assigned": true,
+  "proposal": null,
+  "finishPutCount": 2,
+  "finishResponses": [
+    {
+      "status": 200,
+      "hasSeg": false
+    },
+    {
+      "status": 200,
+      "hasSeg": false
+    }
+  ],
+  "finishPutsHadSegmented": true,
+  "lastFinishKeys": [
+    "face_finish_type",
+    "face_vinyl_roll_width_mm",
+    "finish_target",
+    "return_finish_type",
+    "volum_aluminum_module_template_code",
+    "return_oracal_code",
+    "return_oracal_name",
+    "return_depth_mm",
+    "illuminated",
+    "lighting_system_type",
+    "light_color",
+    "led_module_power_w",
+    "led_strip_power_w_per_ml",
+    "led_module_count",
+    "letter_led_strip_length_m",
+    "emblem_led_strip_length_m",
+    "total_led_strip_length_m",
+    "estimated_led_watts",
+    "required_psu_watts",
+    "selected_psu_watts",
+    "psu_configuration",
+    "psu_allocation_status",
+    "letter_group_finishes",
+    "artwork_finishes",
+    "artwork_complexity_decisions",
+    "backing_mode",
+    "back_bevel_enabled",
+    "mounting_template_enabled",
+    "mounting_template_area_m2",
+    "mounting_template_material_type",
+    "mounting_scope",
+    "site_installation_included",
+    "mounting_solution",
+    "mounting_system",
+    "mounting_bar_profile",
+    "support_type",
+    "mains_cable_length_m",
+    "power_supply_service_corner",
+    "service_screw_finish",
+    "emblem_lighting_mode"
+  ]
+}

@@ -1,0 +1,526 @@
+{
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "mode": "runtime_dry_run",
+  "verdict": "PARTIAL",
+  "e2e_ready": false,
+  "write_performed": false,
+  "no_write": true,
+  "dry_run": true,
+  "workspace_id": "47ad1143-6446-4510-ba3b-c12dc531e0e8",
+  "checked_at": "2026-07-21T12:01:52.301587+00:00",
+  "build_closure_status": "PASS_WITH_WARNINGS",
+  "template_publication_status": "NOT_READY",
+  "systems": [
+    {
+      "system": "catalog",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false
+    },
+    {
+      "system": "intake",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "product_truth",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "product_definition",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "aggregate",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "quantity",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "cpp",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "eic",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "quote_snapshot",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "order_snapshot",
+      "status": "PASS",
+      "blocking": false
+    },
+    {
+      "system": "execution_preview",
+      "status": "PASS",
+      "blocking": false
+    }
+  ],
+  "findings": [
+    {
+      "check_id": "catalog.template_present",
+      "system": "catalog",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Catalog template TPL-VOLUMETRIC-LETTERS_v2 present and active.",
+      "evidence": {
+        "family_id": "litere_volumetrice",
+        "family_name": "Litere volumetrice luminoase",
+        "active": true
+      }
+    },
+    {
+      "check_id": "components.module_links_present",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Aggregate/module links: 5 required, 1 optional.",
+      "evidence": {
+        "required": [
+          "TPL-VOLUM-ALUMINIU_v1",
+          "TPL-VOLUMETRIC-FACE_v1",
+          "TPL-VOLUMETRIC-BACK_v1",
+          "TPL-VOLUMETRIC-LED_v1",
+          "TPL-VOLUMETRIC-FINISH_v1"
+        ],
+        "optional": [
+          "TPL-METAL-PREMOUNT-STRUCTURE_v1"
+        ]
+      }
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUM-ALUMINIU_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUM-ALUMINIU_v1 is active.",
+      "evidence": {}
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-FACE_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-FACE_v1 is active.",
+      "evidence": {}
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-BACK_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-BACK_v1 is active.",
+      "evidence": {}
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-LED_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-LED_v1 is active.",
+      "evidence": {}
+    },
+    {
+      "check_id": "components.required_active.TPL-VOLUMETRIC-FINISH_v1",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Required child TPL-VOLUMETRIC-FINISH_v1 is active.",
+      "evidence": {}
+    },
+    {
+      "check_id": "components.aggregate_warning.TRIGGER_FIELD_MISMATCH",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+      "evidence": {
+        "conflict_code": "TRIGGER_FIELD_MISMATCH",
+        "details": {
+          "module_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+          "link_trigger_field": "metal_support_required",
+          "intake_field_candidate": "mounting_system"
+        }
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.DOSSIER_METADATA_ONLY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Blueprint dossier is metadata for BOM/ops; task_rules_json is consumed into task_contract for ExecutionPlan V2.",
+      "evidence": {
+        "conflict_code": "DOSSIER_METADATA_ONLY",
+        "details": {
+          "template_id": 1,
+          "dossier_id": 1,
+          "dossier_status": "approved",
+          "task_rules_count": 3,
+          "authority": "canonical_template_contract"
+        }
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.CANONICAL_CONTRACT_AUTHORITY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "ProductAggregate compiled from canonical template/component contracts.",
+      "evidence": {
+        "conflict_code": "CANONICAL_CONTRACT_AUTHORITY",
+        "details": {
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        }
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.TEMPLATE_IDENTITY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "Template identity resolution trace.",
+      "evidence": {
+        "conflict_code": "TEMPLATE_IDENTITY",
+        "details": {
+          "requested_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "canonical_template_code": "TPL-VOLUMETRIC-LETTERS_V2",
+          "resolution_type": "canonical",
+          "legacy_alias_used": false,
+          "resolution_source": "template_architecture_scope:canonical"
+        }
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "default_illuminated_true_template_only",
+      "evidence": {
+        "conflict_code": "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+        "details": {}
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "default_screw_finish_NATURAL",
+      "evidence": {
+        "conflict_code": "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+        "details": {}
+      }
+    },
+    {
+      "check_id": "components.aggregate_warning.PROCESS_GRAPH_MODULAR_RESOLVER",
+      "system": "components",
+      "status": "PASS_WITH_WARNINGS",
+      "blocking": false,
+      "message": "task_contract compiled from modular product process resolver (not dossier list).",
+      "evidence": {
+        "conflict_code": "PROCESS_GRAPH_MODULAR_RESOLVER",
+        "details": {
+          "process_graph_source": "modular_resolver",
+          "process_graph_hash": "2961b1ad2c566b8c8a365e62a323c1a57542f1326f8eff6e76e95d4193c92e95",
+          "contract_version": "product_process/volumetric_letters/v1",
+          "process_count": 19,
+          "edge_count": 25,
+          "config_source": "legacy_finish_setup_fallback",
+          "support_source": "legacy_finish_setup_fallback",
+          "cable_source": null,
+          "corner_source": null,
+          "screw_source": "legacy_finish_setup_fallback",
+          "cant_source": "legacy_finish_setup_fallback",
+          "mains_cable_length_m": null,
+          "power_supply_service_corner": null,
+          "service_screw_finish": "NATURAL",
+          "support_type": "none",
+          "cant_finish": "standard"
+        }
+      }
+    },
+    {
+      "check_id": "components.volum_aluminiu.separate_calc_contract",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu separate-calc contract present (confirmed perimeter required; parent publication is a separate GO).",
+      "evidence": {
+        "conflict_code": "volum_aluminiu_contract_completeness",
+        "preview_endpoint": "/api/v1/product-system/templates/TPL-VOLUM-ALUMINIU_v1/separate-calculation-preview",
+        "publication_remains_blocked": true,
+        "activation_forbidden_in_this_build": false,
+        "depth_options": [],
+        "allowed_depth_mm": [
+          30,
+          60,
+          80,
+          100
+        ],
+        "depth_aligned": true,
+        "canonical_perimeter_unit": "m",
+        "commercial_basis": "ml"
+      }
+    },
+    {
+      "check_id": "components.volum_aluminiu.identity_convergence",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu dual-id closed via explicit IDENTITY_MAP (BOM owner + pricing stub alias → modelare_cant once).",
+      "evidence": {
+        "conflict_code": "volum_aluminiu_identity_convergence",
+        "identity": {
+          "schema": "volum_aluminiu_identity_convergence_v1",
+          "status": "PASS",
+          "canonical": {
+            "template_code": "TPL-VOLUM-ALUMINIU_v1",
+            "bom_component_id": "comp_volum_aluminiu_module",
+            "aggregate_module_code": "modelare_cant"
+          },
+          "aliases": {
+            "pricing_component_code": "comp_lateral_litere",
+            "pt_role": "return_cant",
+            "produced_roles": [
+              "sidewall",
+              "side_wall",
+              "return_profile",
+              "lateral_cant"
+            ],
+            "process_aliases": [
+              "RETURN-CANT",
+              "RETURN_CANT",
+              "CANT"
+            ],
+            "aspirational_template_code": "TPL-COMP-LETTER-RETURN-CANT_v1",
+            "aspirational_component_id": "comp_letter_return_cant_v1",
+            "admin_label": "Cant / volum din aluminiu"
+          },
+          "used_by": [
+            "product_truth.components.return_cant",
+            "Aggregate modelare_cant (CHILD_TEMPLATE + dossier aliases)",
+            "CPP modelare_cant_aluminiu / comp_lateral_litere stub",
+            "EIC INT_VOL_V2_RETURN_ML",
+            "separate-calculation-preview",
+            "readiness identity_convergence finding"
+          ],
+          "lookup_policy": "id_or_code_only_via_IDENTITY_MAP",
+          "name_based_lookup": false,
+          "double_counting_policy": "aggregate_keys_once_by_modelare_cant",
+          "publication_remains_blocked": true,
+          "activation_forbidden_in_this_build": false
+        },
+        "bom_maps_to_module": true,
+        "pricing_stub_maps_to_module": true,
+        "publication_remains_blocked": true,
+        "activation_forbidden_in_this_build": false
+      }
+    },
+    {
+      "check_id": "components.volum_aluminiu.geometry_convergence",
+      "system": "components",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Volum Aluminiu product-total prefers confirmed Product Truth perimeter; quote_geometry is controlled compatibility bridge or demoted legacy fallback; divergence fail-closed. Parent publication is a separate GO.",
+      "evidence": {
+        "conflict_code": "volum_aluminiu_geometry_convergence",
+        "canonical_perimeter_unit": "m",
+        "commercial_basis_synonym": "ml",
+        "quote_geometry_roles": [
+          "compatibility_bridge",
+          "legacy_fallback"
+        ],
+        "product_total_resolver": "resolve_product_total_perimeter_authority",
+        "bridge_applicator": "apply_confirmed_perimeter_quote_geometry_bridge",
+        "publication_remains_blocked": true,
+        "activation_forbidden_in_this_build": false,
+        "auto_activate": false
+      }
+    },
+    {
+      "check_id": "intake.form_contract_present",
+      "system": "intake",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Intake V6 modular form contract present.",
+      "evidence": {}
+    },
+    {
+      "check_id": "product_truth.confirm_helpers",
+      "system": "product_truth",
+      "status": "PASS",
+      "blocking": false,
+      "message": "ConfirmJobProductTruth freeze helpers available (commercial_freeze_allowed).",
+      "evidence": {
+        "helpers": [
+          "commercial_freeze_allowed",
+          "assert_commercial_freeze_allowed",
+          "get_job_revision_metadata",
+          "get_pinned_typed_bags"
+        ]
+      }
+    },
+    {
+      "check_id": "product_truth.freeze_allowed",
+      "system": "product_truth",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Commercial freeze allowed — confirmed job revision with pinned bags.",
+      "evidence": {
+        "revision": 1,
+        "pinned_bag_keys": [
+          "acm_panel_instance",
+          "component_placements",
+          "letter_group_instances"
+        ]
+      }
+    },
+    {
+      "check_id": "product_truth.acm_canonical",
+      "system": "product_truth",
+      "status": "PASS",
+      "blocking": false,
+      "message": "ACM canonical instance present; nested mirrors aligned or absent.",
+      "evidence": {}
+    },
+    {
+      "check_id": "product_definition.preview_ok",
+      "system": "product_definition",
+      "status": "PASS",
+      "blocking": false,
+      "message": "ProductDefinition preview built successfully (read-only).",
+      "evidence": {}
+    },
+    {
+      "check_id": "aggregate.build_ok",
+      "system": "aggregate",
+      "status": "PASS",
+      "blocking": false,
+      "message": "ProductAggregate built successfully (read-only).",
+      "evidence": {
+        "required_modules": [],
+        "warning_codes": [
+          "TRIGGER_FIELD_MISMATCH",
+          "DOSSIER_METADATA_ONLY",
+          "CANONICAL_CONTRACT_AUTHORITY",
+          "TEMPLATE_IDENTITY",
+          "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+          "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+          "PROCESS_GRAPH_MODULAR_RESOLVER",
+          "EXPLICIT_COMPOSITION_GRAPH_APPLIED",
+          "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL"
+        ]
+      }
+    },
+    {
+      "check_id": "quantity.instances_present",
+      "system": "quantity",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Runtime dry-run: 1 letter_group_instances present (formulas not re-run).",
+      "evidence": {
+        "letter_group_count": 1
+      }
+    },
+    {
+      "check_id": "cpp.runtime_ml_preview_aligned",
+      "system": "cpp",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Runtime dry-run: separate-calc CPP ml qty aligns with confirmed perimeter / product-total (no formula duplication).",
+      "evidence": {
+        "quantity_m": 12.5,
+        "basis_type": "ml",
+        "commercial_line_code": "modelare_cant_aluminiu",
+        "persist": false
+      }
+    },
+    {
+      "check_id": "eic.runtime_ml_internal_aligned",
+      "system": "eic",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Runtime dry-run: EIC INT_VOL_V2_RETURN_ML shares confirmed ml qty (no formula duplication).",
+      "evidence": {
+        "rule_code": "INT_VOL_V2_RETURN_ML",
+        "quantity_m": 12.5,
+        "persist": false
+      }
+    },
+    {
+      "check_id": "quote_snapshot.freeze_gate_helper",
+      "system": "quote_snapshot",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Snapshot freeze gate inspects commercial_freeze_allowed / assert_commercial_freeze_allowed.",
+      "evidence": {
+        "helpers": [
+          "commercial_freeze_allowed",
+          "assert_commercial_freeze_allowed"
+        ]
+      }
+    },
+    {
+      "check_id": "quote_snapshot.freeze_allowed",
+      "system": "quote_snapshot",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Freeze gate would allow Snapshot V2 (confirmed non-stale job revision).",
+      "evidence": {}
+    },
+    {
+      "check_id": "order_snapshot.runtime_provenance_pass_through",
+      "system": "order_snapshot",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Runtime dry-run: Order Snapshot provenance copies Product Truth revision/hash with no_live_workspace_reread (no order create).",
+      "evidence": {
+        "product_truth_revision": 1,
+        "no_live_workspace_reread": true,
+        "order_created": false
+      }
+    },
+    {
+      "check_id": "execution_preview.runtime_frozen_preview",
+      "system": "execution_preview",
+      "status": "PASS",
+      "blocking": false,
+      "message": "Runtime dry-run: Execution preview from frozen snapshot (no write / no materialization / no live recompile).",
+      "evidence": {
+        "no_write": true,
+        "no_materialization": true,
+        "no_live_recompile": true,
+        "source_authority": "frozen_snapshot_v2"
+      }
+    }
+  ],
+  "known_conflicts": [
+    "CANONICAL_CONTRACT_AUTHORITY",
+    "DOSSIER_METADATA_ONLY",
+    "PROCESS_GRAPH_MODULAR_RESOLVER",
+    "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+    "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+    "TEMPLATE_IDENTITY",
+    "TRIGGER_FIELD_MISMATCH",
+    "volum_aluminiu_contract_completeness",
+    "volum_aluminiu_geometry_convergence",
+    "volum_aluminiu_identity_convergence"
+  ]
+}

@@ -13,10 +13,12 @@ export type EmployeeMobileTaskStatus =
   | "done";
 
 export interface EmployeeMobileTaskDTO {
+  contract_version?: string;
   task_id: string;
   order_id: number;
   order_code?: string;
   title?: string;
+  display_label?: string;
   description?: string;
   instructions?: string;
   status: EmployeeMobileTaskStatus;
@@ -35,6 +37,39 @@ export interface EmployeeMobileTaskDTO {
   completed_at?: string | null;
   blocked_at?: string | null;
   blocked_reason?: string | null;
+  deterministic_task_key?: string | null;
+  component_label?: string | null;
+  component_role?: string | null;
+  operation_label?: string | null;
+  logo_segment_label?: string | null;
+  identity_source?: "frozen_task_identity/v1" | "legacy_plan_task" | "not_proven" | string;
+  identity_classification?: string | null;
+  execution_plan_id?: number | null;
+  legacy_mode?: boolean;
+  legacy_fallback_active?: boolean;
+  task_identity_version?: string | null;
+  readiness_authority?: string | null;
+  release_authority?: string | null;
+  execution_source?: string | null;
+  production_release_blocked?: boolean;
+  production_blocker_summary?: string | null;
+  is_assigned_to_current_employee?: boolean;
+  is_available_for_claim?: boolean;
+  can_claim?: boolean;
+  can_start?: boolean;
+  can_start_from_available?: boolean;
+  can_complete?: boolean;
+  /** Phase 3 collaboration capabilities — backend truth only. */
+  visible_as_principal?: boolean;
+  visible_as_helper?: boolean;
+  can_view_help?: boolean;
+  can_accept_help?: boolean;
+  can_start_helper_work?: boolean;
+  can_stop_own_session?: boolean;
+  can_complete_operation?: boolean;
+  can_request_help?: boolean;
+  can_cancel_help?: boolean;
+  assignment_source?: string | null;
   documents?: Array<{
     id?: string;
     name?: string;
@@ -65,6 +100,7 @@ export interface EmployeeMobileTaskDTO {
   blocking_task_ids?: string[];
   blocking_tasks?: Array<{ task_id: string; name: string }>;
   dependency_warning?: string | null;
+  material_warning?: string | null;
   active_helper_count?: number;
   preparation_domain?: string | null;
   eligibility_reason?: string | null;
@@ -73,6 +109,34 @@ export interface EmployeeMobileTaskDTO {
   preview_only?: boolean;
   /** Plan order index for sorting available tasks (from backend). */
   plan_sequence?: number;
+}
+
+export interface EmployeeMobileTaskTruthResponse {
+  contract_version: string;
+  employee_id: number;
+  employee_display_name?: string;
+  generated_at: string;
+  source?: string;
+  legacy_mode?: boolean;
+  summary?: {
+    total_tasks: number;
+    assigned_count: number;
+    available_count: number;
+    startable_count: number;
+    blocked_count: number;
+  };
+  capabilities?: {
+    can_claim_available?: boolean;
+    can_resolve_owner_decisions?: boolean;
+    can_view_internal_cost?: boolean;
+  };
+  tasks: EmployeeMobileTaskDTO[];
+}
+
+export async function fetchEmployeeMobileTaskTruth(): Promise<EmployeeMobileTaskTruthResponse> {
+  const response = await fetch(`${base()}/truth`, { credentials: "include" });
+  if (!response.ok) await parseError(response);
+  return response.json();
 }
 
 export interface EmployeeMobileClaimResult {

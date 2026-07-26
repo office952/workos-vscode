@@ -1,0 +1,22 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "employee_mobile_v2": {
+    "route": "/employee-mobile-v2",
+    "sections": [
+      { "name": "Taskurile mele", "data": "truth assigned + participating", "actions": ["start", "stop own", "pause", "request help", "progress view"] },
+      { "name": "Disponibile", "pool": "principal_claim", "actions": ["start-from-available", "claim secondary"] },
+      { "name": "Ajutor solicitat", "pool": "helper_join", "actions": ["accept help", "join", "start session"] },
+      { "name": "Detaliu task", "visible": ["principal", "helpers active", "progress 17/40", "help status"], "actions": ["complete operation if authority"] }
+    ],
+    "badges": ["PRINCIPAL", "HELPER", "Ajutor cerut", "17/40 litere"]
+  },
+  "operator": {
+    "route": "/operator",
+    "sections": ["READY pool", "eligibili", "principal", "helpers", "active sessions", "progress", "help requests", "manual assign"]
+  },
+  "execution_detail": {
+    "route": "/execution/:order_id",
+    "sections": ["frozen requirement", "current principal", "participants table", "sessions", "progress", "event timeline", "complete CTA manager only"]
+  },
+  "implementation": "DEFERRED — plan only"
+}

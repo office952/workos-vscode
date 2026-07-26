@@ -1,0 +1,27 @@
+{
+  "task": "OWNER-DECISION-04",
+  "proven": [
+    "Observation integration works behind feature flags on approved consumers",
+    "Trusted backend remains ALL_FALSE while pilot runs isolated",
+    "Operational responses remain invariant (hash and status)",
+    "Fingerprints are deterministic across repeated requests",
+    "Known registry/legacy drift for Sandu is visible",
+    "Explicit mapping without registry competence is visible and classifiable",
+    "Adapter error isolation prevents operational request failure",
+    "Confidentiality contract respected in pilot logs",
+    "Runtime cleanup closes isolated pilot without contaminating trusted backend",
+    "Zero DB writes and zero operational mutation during pilot"
+  ],
+  "not_proven": [
+    "Canonical registry is the correct long-term source of truth",
+    "Migration safety or readiness",
+    "Enforcement or blocking safety",
+    "Production performance under parity instrumentation",
+    "Manager-facing usability of observations",
+    "Complete consumer coverage across 18 inventoried surfaces",
+    "Absence of all false positives in untested scenarios",
+    "Readiness for source switch",
+    "Controlled latency improvement or regression magnitude",
+    "That catalog consumer would add non-circular observation value"
+  ]
+}

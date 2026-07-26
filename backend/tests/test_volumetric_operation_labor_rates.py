@@ -13,6 +13,8 @@ from seeds.seed_build4_templates import _volumetric_letters_components  # noqa: 
 from seeds.seed_volumetric_workcenter_rates import (  # noqa: E402
     RETURN_PROFILE_FACE_BONDING_CODE,
     RETURN_PROFILE_MACHINE_FORMING_CODE,
+    RETURN_CANT_RAL_PAINT_LABOR_CODE,
+    RETURN_CANT_VINYL_APPLICATION_LABOR_CODE,
     OWNER_VOLUMETRIC_LABOR_WORKCENTERS,
 )
 from services.cost_engine_service import (  # noqa: E402
@@ -87,10 +89,16 @@ class TestVolumetricLaborWorkcenterSeed(unittest.TestCase):
         by_code = {r["code"]: r for r in OWNER_VOLUMETRIC_LABOR_WORKCENTERS}
         forming = by_code[RETURN_PROFILE_MACHINE_FORMING_CODE]
         bonding = by_code[RETURN_PROFILE_FACE_BONDING_CODE]
+        cant_vinyl = by_code[RETURN_CANT_VINYL_APPLICATION_LABOR_CODE]
+        cant_paint = by_code[RETURN_CANT_RAL_PAINT_LABOR_CODE]
         self.assertEqual(forming["rate_per_linear_meter"], 5.0)
         self.assertEqual(bonding["rate_per_linear_meter"], 5.0)
         self.assertEqual(forming["currency"], "EUR")
         self.assertEqual(forming["rate_basis"], "per_linear_meter")
+        self.assertEqual(cant_vinyl["rate_per_linear_meter"], 1.0)
+        self.assertEqual(cant_vinyl["rate_basis"], "per_linear_meter")
+        self.assertEqual(cant_paint["rate_per_linear_meter"], 1.0)
+        self.assertEqual(cant_paint["rate_basis"], "per_linear_meter")
 
 
 class TestVolumetricReturnLaborCosting(unittest.TestCase):

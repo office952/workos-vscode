@@ -3,9 +3,21 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any
+from typing import Any, Literal, Mapping
 
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
+from services.intake_v4_backing_mode_service import (
+    finish_has_explicit_layer_backing_modes,
+    resolve_backing_mode_from_finish,
+)
+from services.mounting_scope_service import hydrate_mounting_scope_fields, is_mounting_preparation_active
+from services.mounting_solution_service import (
+    ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES,
+    hydrate_mounting_solution_fields,
+    is_installation_template_solution,
+    is_mounting_template_fields_complete,
+    read_mounting_solution,
+)
 
 INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
 
@@ -48,6 +60,19 @@ _FACE_PRINT_LAMINATE = frozenset(
 _PRINT_ARTWORK_EXECUTION = frozenset(
     {"print_laminate", "print_translucent", "printed_vinyl", "printed_laminated_vinyl", "printed_vinyl_on_face"}
 )
+_LAMINATION_ARTWORK_EXECUTION = frozenset(
+    {"print_laminate", "print_on_vinyl_laminated", "printed_laminated_vinyl"}
+)
+_NON_PRINT_ARTWORK_EXECUTION = frozenset(
+    {
+        "vinyl_cut",
+        "cut_vinyl",
+        "ignore",
+        "none_raw_plexi",
+        "translucent_vinyl",
+    }
+)
+_FINISH_TARGET_VALUES = frozenset({"face", "cant", "artwork", "back", "all"})
 
 
 def _token(value: str | None, default: str) -> str:
@@ -85,6 +110,135 @@ def face_finish_is_print_laminate(face_finish: str) -> bool:
 
 def artwork_print_execution(execution_type: str | None) -> bool:
     return _token(execution_type, "needs_decision") in _PRINT_ARTWORK_EXECUTION
+
+
+def _is_finish_type_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized not in {"none", "no_finish"}
+
+
+def _is_return_finish_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized not in {
+        "none",
+        "no_return",
+        "without_return",
+        "unspecified",
+    }
+
+
+def _is_backing_mode_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized != "none"
+
+
+def _artwork_row_has_decisive_execution(row: IntakeV4ArtworkFinish) -> bool:
+    execution = str(row.execution_type or "needs_decision").strip().lower()
+    return execution not in {"", "needs_decision", "ignore"}
+
+
+def derive_artwork_print_required_from_execution(execution_type: str | None) -> bool | None:
+    """Map operator execution_type to canonical row-level print_required at persist."""
+    token = str(execution_type or "").strip().lower()
+    if not token or token == "needs_decision":
+        return None
+    if token in _PRINT_ARTWORK_EXECUTION or token in {"print", "print_on_vinyl_laminated"}:
+        return True
+    if token in _NON_PRINT_ARTWORK_EXECUTION:
+        return False
+    return None
+
+
+def derive_artwork_lamination_required_from_execution(execution_type: str | None) -> bool | None:
+    """Map operator execution_type to canonical row-level lamination_required at persist."""
+    token = str(execution_type or "").strip().lower()
+    if not token or token == "needs_decision":
+        return None
+    if token in _LAMINATION_ARTWORK_EXECUTION:
+        return True
+    if token in _NON_PRINT_ARTWORK_EXECUTION or token in {
+        "print",
+        "print_translucent",
+        "printed_vinyl",
+        "printed_vinyl_on_face",
+    }:
+        return False
+    return None
+
+
+def hydrate_artwork_finish_boolean_fields(
+    artwork: list[IntakeV4ArtworkFinish],
+) -> list[IntakeV4ArtworkFinish]:
+    """Persist explicit booleans from operator execution_type; clear stale values when undecided."""
+    hydrated: list[IntakeV4ArtworkFinish] = []
+    for row in artwork:
+        derived_print = derive_artwork_print_required_from_execution(row.execution_type)
+        derived_lamination = derive_artwork_lamination_required_from_execution(row.execution_type)
+        hydrated.append(
+            row.model_copy(
+                update={
+                    "print_required": derived_print,
+                    "lamination_required": derived_lamination,
+                }
+            )
+        )
+    return hydrated
+
+
+def derive_finish_target_from_zones(setup: Mapping[str, Any]) -> str | None:
+    """Derive finish_target from active finish zones implied by operator layer selections."""
+    groups = setup.get("letter_group_finishes") if isinstance(setup.get("letter_group_finishes"), list) else []
+    artwork = setup.get("artwork_finishes") if isinstance(setup.get("artwork_finishes"), list) else []
+
+    face_active = _is_finish_type_active(setup.get("face_finish_type"))
+    cant_active = _is_return_finish_active(setup.get("return_finish_type"))
+    back_active = _is_backing_mode_active(setup.get("backing_mode"))
+
+    for group in groups:
+        if not isinstance(group, Mapping):
+            continue
+        if _is_finish_type_active(group.get("face_finish_type")):
+            face_active = True
+        if _is_return_finish_active(group.get("return_finish_type")):
+            cant_active = True
+        if _is_backing_mode_active(group.get("backing_mode")):
+            back_active = True
+
+    artwork_active = False
+    for row in artwork:
+        if not isinstance(row, Mapping):
+            continue
+        if _is_return_finish_active(row.get("return_finish_type")):
+            cant_active = True
+        if _is_backing_mode_active(row.get("backing_mode")):
+            back_active = True
+        execution = str(row.get("execution_type") or "needs_decision").strip().lower()
+        if execution not in {"", "needs_decision", "ignore"}:
+            artwork_active = True
+
+    zones: list[str] = []
+    if face_active:
+        zones.append("face")
+    if cant_active:
+        zones.append("cant")
+    if artwork_active:
+        zones.append("artwork")
+    if back_active:
+        zones.append("back")
+
+    if not zones:
+        return None
+    if len(zones) == 1:
+        return zones[0]
+    return "all"
+
+
+def hydrate_finish_target_fields(setup: Mapping[str, Any]) -> dict[str, Any]:
+    """Persist finish_target from active finish zones when operator setup implies a target."""
+    derived = derive_finish_target_from_zones(setup)
+    if derived in _FINISH_TARGET_VALUES:
+        return {"finish_target": derived}
+    return {"finish_target": None}
 
 
 def any_letter_group_face_vinyl_required(
@@ -188,24 +342,120 @@ def _dominant_token(values: list[str | None], fallback: str | None) -> str | Non
     return Counter(cleaned).most_common(1)[0][0]
 
 
+def dump_intake_v4_finish_setup_for_persist(setup: IntakeV4FinishSetup) -> dict[str, Any]:
+    """JSON dict for workspace persist — omit trimmed global backing mirror keys."""
+    dumped = setup.model_dump(mode="json")
+    finish_dict = setup.model_dump(mode="json")
+    if finish_has_explicit_layer_backing_modes(finish_dict):
+        dumped.pop("backing_mode", None)
+        dumped.pop("back_bevel_enabled", None)
+    return dumped
+
+
+def strip_global_backing_mirror_from_finish_dict(finish: dict[str, Any] | None) -> None:
+    """In-place removal of legacy global backing mirror when per-layer backing exists."""
+    if not isinstance(finish, dict):
+        return
+    if finish_has_explicit_layer_backing_modes(finish):
+        finish.pop("backing_mode", None)
+        finish.pop("back_bevel_enabled", None)
+
+
+def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, Any]) -> IntakeV4FinishSetup:
+    """Apply normalize updates; allow explicit null for trimmed global mirror fields."""
+    if not updates:
+        return setup
+    filtered: dict[str, Any] = {}
+    for key, value in updates.items():
+        if value is not None or key in {
+            "backing_mode",
+            "back_bevel_enabled",
+            "mounting_system",
+            "mounting_bar_profile",
+            "mounting_solution",
+            "finish_target",
+            "svg_support_selection",
+            "svg_component_bindings",
+            "mounting_fixing_system",
+            "acp_electrical_configuration",
+        }:
+            filtered[key] = value
+    return setup.model_copy(update=filtered)
+
+
+def _trim_global_backing_mirror_from_layers(
+    setup: IntakeV4FinishSetup,
+    groups: list[IntakeV4LetterGroupFinish],
+    artwork: list[IntakeV4ArtworkFinish],
+    updates: dict[str, Any],
+) -> None:
+    """Per-layer backing is authoritative — hydrate missing rows, drop global mirror."""
+    finish_dict = setup.model_dump(mode="json")
+    if not finish_has_explicit_layer_backing_modes(finish_dict):
+        return
+
+    global_mode = resolve_backing_mode_from_finish(finish_dict) or "forex_10_no_bevel"
+
+    if groups:
+        updates["letter_group_finishes"] = [
+            group.model_copy(update={"backing_mode": global_mode})
+            if group.backing_mode is None
+            else group
+            for group in groups
+        ]
+    if artwork:
+        updates["artwork_finishes"] = [
+            row.model_copy(update={"backing_mode": global_mode})
+            if row.backing_mode is None
+            else row
+            for row in artwork
+        ]
+
+    updates["backing_mode"] = None
+    updates["back_bevel_enabled"] = None
+
+
 def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4FinishSetup:
     """Sync job-level finish fields from per-layer truth when groups/artwork exist."""
     groups = list(setup.letter_group_finishes or [])
     artwork = list(setup.artwork_finishes or [])
     updates: dict[str, Any] = {}
 
-    if setup.backing_mode == "forex_10_with_bevel":
-        updates["back_bevel_enabled"] = True
-    elif setup.backing_mode in {"none", "forex_10_no_bevel"}:
-        updates["back_bevel_enabled"] = False
+    finish_dict = setup.model_dump(mode="json")
+    has_explicit_layer_backing = finish_has_explicit_layer_backing_modes(finish_dict)
+
+    if not has_explicit_layer_backing or not (groups or artwork):
+        if setup.backing_mode == "forex_10_with_bevel":
+            updates["back_bevel_enabled"] = True
+        elif setup.backing_mode in {"none", "forex_10_no_bevel"}:
+            updates["back_bevel_enabled"] = False
 
     if setup.selected_psu_watts is None and setup.psu_configuration:
         psu_values = [int(w) for w in setup.psu_configuration if isinstance(w, int) and w > 0]
         if psu_values:
             updates["selected_psu_watts"] = max(psu_values)
 
-    if not groups and not artwork:
-        return setup.model_copy(update=updates) if updates else setup
+    updates.update(hydrate_mounting_scope_fields(setup.model_dump(mode="json")))
+    updates.update(hydrate_mounting_solution_fields(setup.model_dump(mode="json")))
+    from services.mounting_fixing_system_service import normalize_mounting_fixing_system
+
+    if setup.mounting_fixing_system is not None:
+        updates["mounting_fixing_system"] = normalize_mounting_fixing_system(
+            setup.mounting_fixing_system
+        )
+
+    from services.svg_component_binding_persistence import persist_normalized_bindings_on_finish
+
+    # Normalize bindings + shell electrical whenever finish payload includes them.
+    finish_for_modules = {**setup.model_dump(mode="json"), **updates}
+    if finish_for_modules.get("svg_component_bindings") is not None or finish_for_modules.get(
+        "acp_electrical_configuration"
+    ) is not None:
+        normalized_finish = persist_normalized_bindings_on_finish(finish_for_modules)
+        updates["svg_component_bindings"] = normalized_finish.get("svg_component_bindings")
+        updates["acp_electrical_configuration"] = normalized_finish.get(
+            "acp_electrical_configuration"
+        )
 
     if groups:
         updates["face_finish_type"] = _dominant_token(
@@ -228,7 +478,266 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
         if depths:
             updates["return_depth_mm"] = max(float(d) for d in depths)
 
-    return setup.model_copy(update={k: v for k, v in updates.items() if v is not None})
+    if artwork:
+        updates["artwork_finishes"] = hydrate_artwork_finish_boolean_fields(artwork)
+
+    merged_setup = _apply_finish_setup_updates(setup, updates)
+    updates.update(hydrate_finish_target_fields(merged_setup.model_dump(mode="json")))
+
+    _trim_global_backing_mirror_from_layers(
+        merged_setup,
+        list(merged_setup.letter_group_finishes or []),
+        list(merged_setup.artwork_finishes or []),
+        updates,
+    )
+
+    merged_setup = _apply_finish_setup_updates(merged_setup, updates)
+    from services.return_cant_finish_truth_service import normalize_return_cant_finish_setup
+
+    return normalize_return_cant_finish_setup(merged_setup)
+
+
+ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
+MountingScopeValue = Literal[
+    "none",
+    "preparation_only",
+    "preparation_and_site_installation",
+    "no_mounting",
+    "mounting_included",
+    "mounting_external",
+    "to_be_decided",
+]
+
+_ARTWORK_RUNTIME_BLOCKER_BY_FIELD: dict[ArtworkRuntimeBooleanField, str] = {
+    "print_required": "PRINT_REQUIRED_UNKNOWN",
+    "lamination_required": "LAMINATION_REQUIRED_UNKNOWN",
+}
+
+
+def artwork_finish_runtime_boolean_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+    field_name: ArtworkRuntimeBooleanField,
+) -> dict[str, Any]:
+    blocker_code = _ARTWORK_RUNTIME_BLOCKER_BY_FIELD[field_name]
+    source_path = f"finish_setup.artwork_finishes[].{field_name}"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": blocker_code,
+            "rows": [],
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    artwork_rows = list(normalized_setup.artwork_finishes or [])
+    if not artwork_rows:
+        # Letters-only / letters+ACM with no artwork rows: print/lamination are N/A,
+        # not an unknown that blocks dry-run / ofertare.
+        return {
+            "status": "not_applicable",
+            "blocker_code": None,
+            "rows": [],
+            "source_path": source_path,
+        }
+
+    persisted_rows: list[dict[str, Any]] = []
+    setup_confirmed = normalized_setup.confirmed is True
+    for row in artwork_rows:
+        value = getattr(row, field_name, None)
+        if value is None:
+            return {
+                "status": "missing",
+                "blocker_code": blocker_code,
+                "rows": persisted_rows,
+                "source_path": source_path,
+            }
+
+        row_confirmed = row.confirmed is True or setup_confirmed
+        persisted_rows.append(
+            {
+                "layer_key": row.layer_key,
+                "value": value,
+                "confirmed": row_confirmed,
+            }
+        )
+        if not row_confirmed:
+            return {
+                "status": "unconfirmed",
+                "blocker_code": blocker_code,
+                "rows": persisted_rows,
+                "source_path": source_path,
+            }
+
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "rows": persisted_rows,
+        "source_path": source_path,
+    }
+
+
+def mounting_scope_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    source_path = "finish_setup.mounting_scope"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    mounting_scope = getattr(normalized_setup, "mounting_scope", None)
+    if not mounting_scope:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": mounting_scope,
+            "source_path": source_path,
+        }
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": mounting_scope,
+        "source_path": source_path,
+    }
+
+
+def mounting_solution_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Canonical mounting truth — legacy mounting_system/support_type do not satisfy this gate."""
+    source_path = "finish_setup.mounting_solution"
+    finish_dict: dict[str, Any] | None
+    if setup is None:
+        finish_dict = None
+    elif isinstance(setup, dict):
+        finish_dict = setup
+    else:
+        finish_dict = setup.model_dump(mode="json")
+
+    if not is_mounting_preparation_active(finish_dict):
+        return {
+            "status": "not_required",
+            "blocker_code": None,
+            "value": None,
+            "source_path": source_path,
+        }
+
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    solution = read_mounting_solution(normalized_setup.model_dump(mode="json"))
+    if not solution:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    if is_installation_template_solution(solution):
+        finish_map = normalized_setup.model_dump(mode="json")
+        if not is_mounting_template_fields_complete(finish_map):
+            return {
+                "status": "incomplete",
+                "blocker_code": "MOUNTING_SOLUTION_MISSING",
+                "value": solution,
+                "source_path": source_path,
+            }
+        return {
+            "status": "confirmed",
+            "blocker_code": None,
+            "value": solution,
+            "source_path": source_path,
+        }
+
+    template_code = str(solution.get("template_code") or "").strip()
+    if template_code not in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
+        return {
+            "status": "blocked",
+            "blocker_code": "MOUNTING_SOLUTION_INVALID",
+            "value": solution,
+            "source_path": source_path,
+        }
+
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": solution,
+        "source_path": source_path,
+    }
+
+
+def support_type_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    source_path = "finish_setup.support_type"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    support_type = str(getattr(normalized_setup, "support_type", "") or "").strip()
+    if not support_type:
+        return {
+            "status": "missing",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": support_type,
+            "source_path": source_path,
+        }
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": support_type,
+        "source_path": source_path,
+    }
 
 
 _RETURN_ORACAL = frozenset({"oracal_wrapped", "colantat", "oracal"})

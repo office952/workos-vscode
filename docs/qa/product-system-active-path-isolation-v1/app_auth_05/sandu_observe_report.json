@@ -1,0 +1,15 @@
+{
+  "task": "APP-AUTH-05",
+  "employee_id": 4,
+  "employee_name": "Putaru Sandu",
+  "mode": "observe_only",
+  "mutations_performed": false,
+  "reconciliation_status": "confirmation_required",
+  "runtime_proof": {
+    "sandu_observed": true,
+    "source": "in_process_flags_on_probe"
+  },
+  "persistence": false,
+  "automatic_validation": false,
+  "verdict": "PASS"
+}

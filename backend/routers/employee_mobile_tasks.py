@@ -14,12 +14,15 @@ from services.employee_mobile_order_blueprint_service import get_employee_my_ord
 from services.employee_mobile_production_documents_service import (
     download_order_work_file_for_employee,
 )
+from schemas.employee_mobile_task_truth import EmployeeMobileTaskTruthResponse
+from services.employee_mobile_task_truth_service import build_employee_mobile_task_truth
 from services.employee_mobile_tasks_service import (
     block_my_task,
     claim_my_task,
     complete_my_task,
     get_employee_mobile_task,
     list_available_tasks,
+    list_help_opportunity_tasks,
     list_my_tasks,
     pause_my_task,
     resume_my_task,
@@ -27,6 +30,25 @@ from services.employee_mobile_tasks_service import (
     start_my_task,
     unblock_my_task,
 )
+from services.execution_task_membership_service import (
+    join_helper_membership,
+    leave_helper_membership,
+)
+from schemas.execution_task_membership import MembershipActionResponse
+from schemas.execution_task_help import (
+    HelpActionResponse,
+    HelpRequestCreateBody,
+    HelpRequestListResponse,
+)
+from services.execution_task_help_service import (
+    accept_help_request,
+    cancel_help_request,
+    close_help_request,
+    create_help_request,
+    decline_help_request,
+    list_help_requests_for_task,
+)
+from services.helper_work_session_service import start_helper_session, stop_helper_session
 from services.task_clarification_request_service import create_clarification_request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -154,6 +176,15 @@ class EmployeeMobileOrderBlueprintTask(BaseModel):
     is_current: bool
     is_eligible_for_me: bool = False
     can_assist: bool = False
+    visible_as_principal: bool = False
+    visible_as_helper: bool = False
+    can_view_help: bool = False
+    can_accept_help: bool = False
+    can_start_helper_work: bool = False
+    can_stop_own_session: bool = False
+    can_complete_operation: bool = False
+    can_request_help: bool = False
+    can_cancel_help: bool = False
     eligibility_reason: str = ""
     active_helper_count: int = 0
     stage_label: str
@@ -181,6 +212,20 @@ class EmployeeMobileOrderBlueprintResponse(BaseModel):
     summary: EmployeeMobileOrderBlueprintSummary
     current_task_id: Optional[str] = None
     tasks: List[EmployeeMobileOrderBlueprintTask]
+
+
+@router.get("/tasks/truth", response_model=EmployeeMobileTaskTruthResponse)
+async def get_my_tasks_truth(
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Canonical employee-safe task truth projection (employee_mobile_task_truth/v1)."""
+    return await build_employee_mobile_task_truth(
+        db,
+        employee_id=ctx.employee.id,
+        employee_name=str(ctx.employee.name or ""),
+        category="all",
+    )
 
 
 @router.get("/tasks", response_model=List[EmployeeMobileTaskResponse])
@@ -398,6 +443,192 @@ async def resume_task(
     return await resume_my_task(
         db,
         order_id=body.order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/join",
+    response_model=MembershipActionResponse,
+)
+async def employee_collaboration_join(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> MembershipActionResponse:
+    """Self HELPER membership join — does not start a session or claim the task."""
+    return await join_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+        joined_by_employee_id=ctx.employee.id,
+        join_source="self_join",
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    response_model=MembershipActionResponse,
+)
+async def employee_collaboration_leave(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> MembershipActionResponse:
+    """Close own HELPER membership — does not stop sessions."""
+    return await leave_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+    )
+
+
+@router.get("/tasks/help-opportunities", response_model=List[EmployeeMobileTaskResponse])
+async def employee_help_opportunities(
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Ajutor pool — OPEN help + eligibility; does not authorize session start."""
+    rows = await list_help_opportunity_tasks(db, ctx.employee.id)
+    return rows
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    response_model=HelpActionResponse,
+)
+async def employee_create_help_request(
+    order_id: int,
+    task_id: str,
+    body: HelpRequestCreateBody,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpActionResponse:
+    return await create_help_request(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        requested_by_employee_id=ctx.employee.id,
+        body=body,
+    )
+
+
+@router.get(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    response_model=HelpRequestListResponse,
+)
+async def employee_list_help_requests(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpRequestListResponse:
+    return await list_help_requests_for_task(db, order_id=order_id, task_id=task_id)
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept",
+    response_model=HelpActionResponse,
+)
+async def employee_accept_help(
+    order_id: int,
+    help_request_id: int,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpActionResponse:
+    return await accept_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        employee_id=ctx.employee.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline",
+    response_model=HelpActionResponse,
+)
+async def employee_decline_help(
+    order_id: int,
+    help_request_id: int,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpActionResponse:
+    return await decline_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        employee_id=ctx.employee.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel",
+    response_model=HelpActionResponse,
+)
+async def employee_cancel_help(
+    order_id: int,
+    help_request_id: int,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpActionResponse:
+    return await cancel_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        actor_employee_id=ctx.employee.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/close",
+    response_model=HelpActionResponse,
+)
+async def employee_close_help(
+    order_id: int,
+    help_request_id: int,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> HelpActionResponse:
+    return await close_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        actor_employee_id=ctx.employee.id,
+    )
+
+
+@router.post("/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start")
+async def employee_helper_session_start(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return await start_helper_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+        employee_name=ctx.employee.name,
+    )
+
+
+@router.post("/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop")
+async def employee_helper_session_stop(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return await stop_helper_session(
+        db,
+        order_id=order_id,
         task_id=task_id,
         employee_id=ctx.employee.id,
     )

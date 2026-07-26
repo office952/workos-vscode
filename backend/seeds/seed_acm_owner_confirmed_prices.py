@@ -29,6 +29,19 @@ class _PriceRow(TypedDict, total=False):
 
 OWNER_CONFIRMED_ACM_PRICES: List[_PriceRow] = [
     {
+        "code": "MAT-SURUBURI-GEN",
+        "unit_cost": 5.0,
+        "currency": "EUR",
+        "name": canonical_name_for_code("MAT-SURUBURI-GEN", "Suruburi / prinderi generale"),
+        "source_notes": source_notes_for_code(
+            "MAT-SURUBURI-GEN",
+            (
+                "Owner-confirmed: 5 EUR / standard assembly set / ACM boxed product. "
+                "Self-drilling screws, rivets, washers — not wall anchors or site hardware."
+            ),
+        ),
+    },
+    {
         "code": "MAT-ACM-BOND-3MM",
         "unit_cost": 15.0,
         "currency": "EUR",

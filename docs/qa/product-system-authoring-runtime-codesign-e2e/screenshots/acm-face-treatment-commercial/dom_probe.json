@@ -1,0 +1,52 @@
+{
+  "url": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "title": "erpWork OS",
+  "text": "WorkOS\n\nOPERAȚIUNI\n\nControl Tower\nShop Floor\nOperator\nAtelier Tablet\n\nCOMERCIAL\n\nClienți\nWork Intake\nOferte\nComenzi\nExecuție\nDocumente\n\nRESURSE\n\nInventar & OC\nPricing\nProduct System\nColaboratori\nUtilaje\nRapoarte\n\nPERSONAL\n\nAngajați operaționali\nEvidență internă HR\nPontaj\nPlăți angajați\nAvansuri / Datorii\n\nSISTEM\n\nHarta sistemelor\nGuvernanța sistemului\nSetări\nWorkOS BUILD_25\nSTAGING\n/workspace/app\nStare sistem: necesită verificare\nDA\nProduct System\nProduct System\n\nCatalog admin · identitate → lifecycle → compoziție → readiness → publicare\n\nPricing Registry\nProducts\nÎN DEZVOLTARE\nComponents\nResources\nOperations\nDependencies\nValidation\nAdvanced\nProducts\nLive DB\n\nCatalog de design · inspectare readonly · setul component-first Letters rămâne inactiv\n\nCatalog produse\n\nProduse operationale canonice — un singur catalog, fara bucket-uri legacy.\n\n14\nCauta produse\nToate operaționale\nPregătit pentru ofertă\nBlocat (pregătire)\nDe sine stătător\nCopil legat\nIntern\nDepreciat\nExperimental\nPRODUSE OPERATIONALE\n\nTemplate-uri active expuse operatorului.\n\nLitere volumetrice\n\nLitere volumetrice\n\nTPL-VOLUMETRIC-LETTERS_v2\n\nRădăcină folosită azi\nDe sine stătător\nBlocat (pregătire)\n2 blocaje\n\nPanouri ACP / ",
+  "hasLogin": 0,
+  "tabs": [
+    {
+      "t": "product-system-template-detail-tab-overview",
+      "text": "Prezentare"
+    },
+    {
+      "t": "product-system-template-detail-tab-composition",
+      "text": "Compoziție"
+    },
+    {
+      "t": "product-system-template-detail-tab-contracts",
+      "text": "Contracte"
+    },
+    {
+      "t": "product-system-template-detail-tab-dossier",
+      "text": "Dosar tehnic"
+    },
+    {
+      "t": "product-system-template-detail-tab-readiness",
+      "text": "Pregătire E2E"
+    },
+    {
+      "t": "product-system-template-detail-tab-publication",
+      "text": "Publicare"
+    },
+    {
+      "t": "product-system-template-detail-tab-runtime-preview",
+      "text": "Previzualizare runtime"
+    },
+    {
+      "t": "product-system-template-detail-tab-components",
+      "text": ""
+    },
+    {
+      "t": "product-system-template-detail-tab-relationships",
+      "text": ""
+    },
+    {
+      "t": "product-system-template-detail-tab-materials",
+      "text": ""
+    },
+    {
+      "t": "product-system-template-detail-tab-guards",
+      "text": ""
+    }
+  ]
+}

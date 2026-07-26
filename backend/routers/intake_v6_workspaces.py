@@ -33,8 +33,12 @@ from schemas.intake_v6 import (
     IntakeV6OrderBoundTaskReadinessResponse,
     IntakeV6OfferHandoffRequest,
     IntakeV6OwnerApprovalRequest,
+    IntakeV6ProductTruthWriterDryRunRequest,
+    IntakeV6ProductTruthWriterPromoteRequest,
     IntakeV6PricedQuoteWriteRequest,
     IntakeV6PricingInputPreviewResponse,
+    IntakeV6OfferScopeSaveRequest,
+    IntakeV6ProductCompositionConfirmationRequest,
     IntakeV6ProductionHandoffPreviewResponse,
     IntakeV6ProductSystemBindingResponse,
     IntakeV6QuoteHandoffPreviewResponse,
@@ -72,10 +76,21 @@ from services.intake_v6_quote_to_order_service import (
     persist_v6_owner_approval,
 )
 from services.intake_v6_template_option_contract_service import get_template_form_contract_for_workspace
+from schemas.product_truth_job_confirm import (
+    ConfirmJobProductTruthRequest,
+    ConfirmJobProductTruthResponse,
+    JobProductTruthStatusResponse,
+)
 from services.intake_v6_workspace_service import (
+    confirm_job_product_truth_for_workspace,
     create_draft_quote_for_intake_v6_workspace,
     create_intake_v6_workspace,
     ensure_intake_v6_workspace_for_intake_request,
+    get_form_system_runtime_capture_read_model_for_workspace,
+    get_job_product_truth_status_for_workspace,
+    get_product_truth_writer_dry_run_for_workspace,
+    promote_product_truth_for_workspace,
+    get_product_truth_promotion_planner_for_workspace,
     get_ai_informational_assist_candidate_for_workspace,
     get_ai_semantic_classification_candidate_for_workspace,
     get_intake_v6_workspace,
@@ -92,8 +107,18 @@ from services.intake_v6_workspace_service import (
     save_finish_setup_for_intake_v6_workspace,
     save_internal_draft_quote_confirmation_for_workspace,
     save_layer_roles_for_intake_v6_workspace,
+    save_offer_scope_for_intake_v6_workspace,
+    save_product_composition_confirmation_for_workspace,
     save_sheet_footprint_override_for_intake_v6_workspace,
     upload_svg_to_intake_v6_workspace,
+)
+from services.gradi_logical_list_read_model_service import get_gradi_logical_list_read_model
+from services.form_system_contract_backbone_service import build_form_system_contract_map
+from services.linked_template_runtime_segment_extraction_service import (
+    extract_linked_template_segments_from_workspace_payload,
+)
+from services.letter_group_finish_readiness_service import (
+    build_letter_group_finish_readiness_from_workspace_payload,
 )
 from services.tpl_volumetric_face_back_prep_cost_draft_service import (
     get_tpl_volumetric_face_back_prep_cost_draft_for_workspace,
@@ -178,6 +203,8 @@ async def ensure_workspace_for_intake_request_v6(
         request.intake_request_code,
         current_user,
         offer_method=request.offer_method,
+        analyzer_mode=request.analyzer_mode,
+        template_hint_code=request.template_hint_code,
         selected_template_code=request.selected_template_code,
         source=request.source,
     )
@@ -199,6 +226,68 @@ async def get_workspace_v6(
     return await get_intake_v6_workspace(db, workspace_id)
 
 
+@router.get("/workspaces/{workspace_id}/runtime-capture-read-model")
+async def get_runtime_capture_read_model_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_form_system_runtime_capture_read_model_for_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/product-truth-promotion-planner")
+async def get_product_truth_promotion_planner_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_product_truth_promotion_planner_for_workspace(db, workspace_id)
+
+
+@router.post("/workspaces/{workspace_id}/product-truth-writer/dry-run")
+async def post_product_truth_writer_dry_run_v6(
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterDryRunRequest,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_product_truth_writer_dry_run_for_workspace(db, workspace_id, request)
+
+
+@router.post("/workspaces/{workspace_id}/product-truth-writer/promote")
+async def post_product_truth_writer_promote_v6(
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterPromoteRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    return await promote_product_truth_for_workspace(db, workspace_id, request, current_user)
+
+
+@router.post(
+    "/workspaces/{workspace_id}/product-truth/confirm-job",
+    response_model=ConfirmJobProductTruthResponse,
+)
+async def post_confirm_job_product_truth_v6(
+    workspace_id: str,
+    request: ConfirmJobProductTruthRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    """ConfirmJobProductTruth — pin typed bags + revision/hash (no PI/CI tables)."""
+    return await confirm_job_product_truth_for_workspace(db, workspace_id, request, current_user)
+
+
+@router.get(
+    "/workspaces/{workspace_id}/product-truth/job-status",
+    response_model=JobProductTruthStatusResponse,
+)
+async def get_job_product_truth_status_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    _ = current_user
+    return await get_job_product_truth_status_for_workspace(db, workspace_id)
+
+
 @router.post("/workspaces/{workspace_id}/svg", response_model=IntakeV6SvgUploadResponse)
 async def upload_workspace_svg_v6(
     workspace_id: str,
@@ -215,6 +304,51 @@ async def upload_workspace_svg_v6(
         raw_bytes=raw_bytes,
         current_user=current_user,
     )
+
+
+@router.post("/workspaces/{workspace_id}/acm-panel/production-geometry/dxf")
+async def upload_acm_panel_production_geometry_dxf(
+    workspace_id: str,
+    file: UploadFile = File(...),
+    component_instance_id: str = Query(...),
+    panel_id: str | None = Query(None),
+    geometry_role: str = Query("production_geometry"),
+    bind: bool = Query(True),
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    """Upload production DXF under V6 workspace namespace; bind to AcmPanel instance when bind=true.
+
+    Write endpoint. Does not unlock Offer/Execution. Not Work Intake work-file ownership.
+    """
+    from services.acm_production_geometry_attachment import upload_and_optionally_bind_production_dxf
+
+    raw_bytes = await file.read()
+    return await upload_and_optionally_bind_production_dxf(
+        db,
+        workspace_id,
+        raw_bytes=raw_bytes,
+        filename=file.filename or "upload.dxf",
+        content_type=file.content_type,
+        component_instance_id=component_instance_id,
+        panel_id=panel_id,
+        geometry_role=geometry_role,
+        bind=bind,
+        uploaded_by=current_user.email or current_user.name or str(current_user.id),
+        current_user=current_user,
+    )
+
+
+@router.get("/workspaces/{workspace_id}/acm-panel/production-geometry/{attachment_id}/download")
+async def download_acm_panel_production_geometry_dxf(
+    workspace_id: str,
+    attachment_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    from services.acm_production_geometry_attachment import download_production_dxf
+
+    return await download_production_dxf(db, workspace_id, attachment_id)
 
 
 @router.put("/workspaces/{workspace_id}/analysis-bundle", response_model=IntakeV6WorkspaceResponse)
@@ -245,6 +379,42 @@ async def update_finish_setup_v6(
     current_user: UserResponse = Depends(get_current_user),
 ) -> IntakeV6WorkspaceResponse:
     return await save_finish_setup_for_intake_v6_workspace(db, workspace_id, request, current_user)
+
+
+@router.put("/workspaces/{workspace_id}/offer-scope", response_model=IntakeV6WorkspaceResponse)
+async def update_offer_scope_v6(
+    workspace_id: str,
+    request: IntakeV6OfferScopeSaveRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> IntakeV6WorkspaceResponse:
+    return await save_offer_scope_for_intake_v6_workspace(
+        db,
+        workspace_id,
+        mode=request.mode,
+        sold_modules=[str(code) for code in request.sold_modules],
+        confirmed=request.confirmed,
+        operator_note=request.operator_note,
+        dependency_confirmation_codes=[str(code) for code in request.dependency_confirmation_codes],
+        current_user=current_user,
+    )
+
+
+@router.put("/workspaces/{workspace_id}/product-composition-confirmation", response_model=IntakeV6WorkspaceResponse)
+async def update_product_composition_confirmation_v6(
+    workspace_id: str,
+    request: IntakeV6ProductCompositionConfirmationRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> IntakeV6WorkspaceResponse:
+    return await save_product_composition_confirmation_for_workspace(
+        db,
+        workspace_id,
+        confirmed=request.confirmed,
+        items=request.items,
+        operator_note=request.operator_note,
+        current_user=current_user,
+    )
 
 
 @router.put(
@@ -284,6 +454,58 @@ async def get_product_system_binding_v6(
     db: AsyncSession = Depends(get_db),
 ) -> IntakeV6ProductSystemBindingResponse:
     return await get_product_system_binding_for_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/linked-template-segments")
+async def get_linked_template_segments_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    root_template_code = workspace.template_code
+    backbone = build_form_system_contract_map(root_template_code)
+    linked_template_composition = backbone.get("linked_template_composition", {})
+    runtime_segments = extract_linked_template_segments_from_workspace_payload(
+        root_template_code=root_template_code,
+        workspace_payload=payload,
+        linked_template_composition=linked_template_composition,
+    )
+    return {
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": root_template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "linked_template_composition": linked_template_composition,
+        "linked_template_runtime_segments": runtime_segments,
+        "downstream_write_intent": backbone.get("downstream_write_intent", {}),
+        "read_only": True,
+    }
+
+
+@router.get("/workspaces/{workspace_id}/letter-group-finish-readiness")
+async def get_letter_group_finish_readiness_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    readiness = build_letter_group_finish_readiness_from_workspace_payload(
+        payload=payload,
+        root_template_code=workspace.template_code,
+    )
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        **readiness,
+    }
 
 
 @router.get(
@@ -337,6 +559,14 @@ async def get_material_breakdown_v6(
     db: AsyncSession = Depends(get_db),
 ) -> IntakeV6MaterialBreakdownResponse:
     return await get_material_breakdown_for_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/logical-list-read-model")
+async def get_logical_list_read_model_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_gradi_logical_list_read_model(db, workspace_id)
 
 
 @router.get(

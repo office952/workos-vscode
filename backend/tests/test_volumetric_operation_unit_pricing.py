@@ -1,4 +1,4 @@
-﻿"""TPL-VOLUMETRIC-LETTERS â€” owner-defined unit-based operation pricing."""
+"""TPL-VOLUMETRIC-LETTERS — owner-defined unit-based operation pricing."""
 
 from __future__ import annotations
 

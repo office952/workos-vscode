@@ -137,7 +137,7 @@ export default function IntakeV6OperatorWorkspaceFileDrop({
           className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center border-2 border-dashed border-sky-400/70 bg-sky-500/10 backdrop-blur-[1px]"
           data-testid="intake-v6-operator-workspace-file-drop-overlay"
         >
-          <div className="rounded-lg border border-sky-400/40 bg-[#0A0F1A]/90 px-6 py-4 text-center shadow-lg">
+          <div className="rounded-lg border border-sky-400/40 bg-wo-surface-inset/90 px-6 py-4 text-center shadow-lg">
             <p className="text-[13px] font-semibold text-sky-100">Trage fisierul SVG aici</p>
             <p className="mt-1 text-[10px] text-sky-200/80">
               Analiza imediata (ca SVG Analyzer), apoi salvare in workspace V6.
@@ -147,7 +147,7 @@ export default function IntakeV6OperatorWorkspaceFileDrop({
       ) : null}
       {notice ? (
         <p
-          className="pointer-events-none absolute bottom-16 right-3 z-20 max-w-sm rounded-md border border-sky-500/30 bg-[#0A0F1A]/95 px-3 py-2 text-[10px] text-sky-100"
+          className="pointer-events-none absolute bottom-16 right-3 z-20 max-w-sm rounded-md border border-sky-500/30 bg-wo-surface-inset/95 px-3 py-2 text-[10px] text-sky-100"
           data-testid="intake-v6-operator-workspace-file-drop-notice"
         >
           {notice}
@@ -155,7 +155,7 @@ export default function IntakeV6OperatorWorkspaceFileDrop({
       ) : null}
       {importing ? (
         <p
-          className="pointer-events-none absolute bottom-16 left-3 z-20 rounded-md border border-slate-600/40 bg-[#0A0F1A]/95 px-3 py-2 text-[10px] text-slate-200"
+          className="pointer-events-none absolute bottom-16 left-3 z-20 rounded-md border border-slate-600/40 bg-wo-surface-inset/95 px-3 py-2 text-[10px] text-slate-200"
           data-testid="intake-v6-operator-workspace-file-drop-importing"
         >
           Procesez SVG...

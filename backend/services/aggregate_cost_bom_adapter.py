@@ -30,8 +30,18 @@ from schemas.aggregate_cost_bom import (
     SubcontractableOperation,
 )
 from schemas.mini_module_registry import MiniModuleContract
-from schemas.product_aggregate import ProductAggregate, ProductAggregateMaterial, ProductAggregateOperation
+from schemas.product_aggregate import (
+    ProductAggregate,
+    ProductAggregateComponent,
+    ProductAggregateMaterial,
+    ProductAggregateOperation,
+)
 from schemas.product_definition import ProductDefinitionPreview
+from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
+from services.logo_artwork_cost_ownership import (
+    include_material_in_composed_aggregate,
+    include_operation_in_composed_aggregate,
+)
 from services.aggregate_cost_externalization_hooks import (
     MODULE_FUTURE_EXTERNALIZATION,
     OPERATION_EXTERNALIZATION_HOOKS,
@@ -51,6 +61,10 @@ from services.volumetric_material_rate_resolver import (
     TEMPLATE_PROFILE_CODE,
     TEMPLATE_PSU_CODE,
 )
+from services.acm_bond_material_rate_resolver import (
+    ACM_THICKNESS_MM_TO_VARIANT_CODE,
+    TEMPLATE_ACM_BOND_CODE,
+)
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1", "comp_flat_legacy"})
@@ -64,6 +78,8 @@ ALWAYS_COSTABLE_MODULES = frozenset(
         "debitare_spate",
         "sistem_led",
         "finisaje",
+        "sablon_montaj",
+        "ambalare_livrare_montaj",
         "structura_suport",
     }
 )
@@ -74,7 +90,9 @@ MODULE_GEOMETRY_KEYS: dict[str, list[str]] = {
     "modelare_cant": ["return_depth_mm", "letter_perimeter_m"],
     "debitare_spate": ["backing_mode", "letter_face_area_m2"],
     "sistem_led": ["lighting_system_type", "selected_psu_watts", "led_module_count"],
-    "finisaje": ["mounting_system"],
+    "finisaje": ["face_finish_type"],
+    "sablon_montaj": ["mounting_template_enabled"],
+    "ambalare_livrare_montaj": ["packaging_required"],
     "structura_suport": ["mounting_system"],
 }
 
@@ -89,12 +107,50 @@ CRITICAL_GEOMETRY_FOR_READY = frozenset(
     }
 )
 
+WARNING_LINKED_SEGMENT_FINISH_PARTIAL = "LINKED_SEGMENT_FINISH_PARTIAL"
+SEGMENT_NAMESPACE_SEP = "::"
+
+
+def _text(value: Any) -> str:
+    return str(value or "").strip()
+
+
+def _is_namespaced_segment_ref(value: str | None) -> bool:
+    return SEGMENT_NAMESPACE_SEP in _text(value)
+
+
+def _is_aggregate_linked_logo_component(comp: ProductAggregateComponent) -> bool:
+    if not _is_namespaced_segment_ref(comp.component_id):
+        return False
+    return _text(comp.source_template_code) == VOLUMETRIC_LOGO_TEMPLATE_CODE
+
+
+def _is_aggregate_linked_logo_material(mat: ProductAggregateMaterial) -> bool:
+    if _text(mat.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return _is_namespaced_segment_ref(mat.component_ref)
+
+
+def _is_aggregate_linked_logo_operation(op: ProductAggregateOperation) -> bool:
+    if _text(op.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return _is_namespaced_segment_ref(op.component_ref)
+
+
+def _aggregate_has_partial_linked_logo(aggregate: ProductAggregate) -> bool:
+    if any(w.code == WARNING_LINKED_SEGMENT_FINISH_PARTIAL for w in aggregate.warnings):
+        return True
+    return any(
+        _is_aggregate_linked_logo_component(comp) and comp.status == "partial"
+        for comp in aggregate.components
+    )
+
 
 def _module_is_cost_active(state: str) -> bool:
     return state in ("always_on", "active", "conditional_active")
 
 
-def _structural_active_modules(
+def _legacy_structural_active_modules(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None = None,
 ) -> set[str]:
@@ -113,8 +169,16 @@ def _structural_active_modules(
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):
@@ -142,7 +206,11 @@ def _structural_active_modules(
                 merged_finish[key] = quote_input[key]
 
         mounting = merged_finish.get("mounting_system")
-        if mounting:
+        from services.mounting_solution_service import is_structura_suport_active
+
+        if is_structura_suport_active(merged_finish):
+            active.add("structura_suport")
+        elif mounting:
             if mounting in BAR_MOUNTING:
                 active.add("structura_suport")
             else:
@@ -159,11 +227,37 @@ def _structural_active_modules(
     return active
 
 
-def _active_module_codes(
+def _structural_active_modules(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None = None,
 ) -> set[str]:
-    return _structural_active_modules(pd, quote_input)
+    from services.offer_scope_resolver_service import resolve_pricing_active_modules
+
+    payload = dict(quote_input) if quote_input else {}
+    return resolve_pricing_active_modules(
+        pd=pd,
+        payload=payload,
+        quote_input=quote_input,
+        legacy_fn=_legacy_structural_active_modules,
+    )
+
+
+def _active_module_codes(
+    pd: ProductDefinitionPreview,
+    quote_input: dict[str, Any] | None = None,
+    aggregate: ProductAggregate | None = None,
+) -> tuple[set[str], Any | None]:
+    if aggregate is not None and aggregate.composition_graph is not None:
+        from services.product_aggregate_graph_cost_projection_service import resolve_cost_active_modules
+
+        active, projection = resolve_cost_active_modules(
+            pd=pd,
+            aggregate=aggregate,
+            quote_input=quote_input,
+        )
+        if projection is not None:
+            return active, projection
+    return _structural_active_modules(pd, quote_input), None
 
 
 def _inactive_module_codes(pd: ProductDefinitionPreview) -> set[str]:
@@ -181,25 +275,28 @@ def _canonical_and_quote_input(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None,
 ) -> dict[str, Any]:
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
     merged = dict(pd.canonical_values)
     if not quote_input:
         return merged
+    coalesced = merge_acm_boxed_mounting_derived_fields(quote_input)
     merged.update(
         {
             k: v
-            for k, v in quote_input.items()
+            for k, v in coalesced.items()
             if v is not None and v != "" and not isinstance(v, dict)
         }
     )
-    finish = quote_input.get("finish_setup") if isinstance(quote_input.get("finish_setup"), dict) else {}
+    finish = coalesced.get("finish_setup") if isinstance(coalesced.get("finish_setup"), dict) else {}
     for key, value in finish.items():
         if value is not None and value != "":
             merged[key] = value
-    geometry = quote_input.get("quote_geometry") if isinstance(quote_input.get("quote_geometry"), dict) else {}
+    geometry = coalesced.get("quote_geometry") if isinstance(coalesced.get("quote_geometry"), dict) else {}
     for key, value in geometry.items():
         if value is not None and value != "":
             merged[key] = value
-    client = quote_input.get("client") if isinstance(quote_input.get("client"), dict) else {}
+    client = coalesced.get("client") if isinstance(coalesced.get("client"), dict) else {}
     for key, value in client.items():
         if value is not None and value != "":
             merged[key] = value
@@ -237,41 +334,128 @@ def _resolve_material_code(
             return material_code, ["return_depth_mm"], "unsupported_return_depth_mm"
         return variant, ["return_depth_mm"], None
 
+    if material_code == TEMPLATE_ACM_BOND_CODE:
+        thickness_raw = values.get("acm_thickness_mm")
+        if thickness_raw is None or thickness_raw == "":
+            return material_code, ["acm_thickness_mm"], "missing_acm_thickness_mm"
+        try:
+            thickness = int(round(float(thickness_raw)))
+        except (TypeError, ValueError):
+            return material_code, ["acm_thickness_mm"], "unsupported_acm_thickness_mm"
+        variant = ACM_THICKNESS_MM_TO_VARIANT_CODE.get(thickness)
+        if not variant:
+            return material_code, ["acm_thickness_mm"], "unsupported_acm_thickness_mm"
+        return variant, ["acm_thickness_mm"], None
+
     return material_code, [], None
 
 
-def _material_module_active(mat: ProductAggregateMaterial, active_modules: set[str]) -> bool:
-    if mat.mini_module_code:
-        return mat.mini_module_code in active_modules
-    if mat.component_ref:
+def _sold_led_subscopes_from_quote(quote_input: dict[str, Any] | None) -> frozenset | None:
+    if not quote_input:
+        return None
+    from services.offer_scope_led_subscope_service import resolve_sold_led_subscopes
+
+    return resolve_sold_led_subscopes(quote_input, quote_input)
+
+
+def _mount_consumer_from_quote(quote_input: dict[str, Any] | None):
+    if not quote_input:
+        return None
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+
+    return resolve_lighting_mount_consumers(quote_input, quote_input)
+
+
+def _material_module_active(
+    mat: ProductAggregateMaterial,
+    active_modules: set[str],
+    sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
+) -> bool:
+    from services.offer_scope_led_subscope_service import (
+        aggregate_material_led_subscope,
+        led_consumer_row_allowed,
+        led_runtime_module_bucket,
+    )
+
+    if _is_aggregate_linked_logo_material(mat):
+        return True
+    effective_mini = led_runtime_module_bucket(mat.mini_module_code)
+    if effective_mini:
+        if effective_mini not in active_modules:
+            return False
+    elif mat.component_ref:
         mod = DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref)
-        if mod:
-            return mod in active_modules
-    if mat.provenance == "linked_module" and mat.source_template_code:
+        if mod and mod not in active_modules:
+            return False
+    elif mat.provenance == "linked_module" and mat.source_template_code:
         if "PREMOUNT" in mat.source_template_code and "structura_suport" not in active_modules:
             return False
         if "VOLUM-ALUMINIU" in mat.source_template_code:
             return "modelare_cant" in active_modules
-    if mat.provenance == "parent":
+    elif mat.provenance == "parent":
         mod = DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
-        return mod in active_modules if mod else True
+        if mod and mod not in active_modules:
+            return False
+    elif mat.mini_module_code and mat.mini_module_code not in active_modules:
+        return False
+
+    if sold_led_subscopes is not None:
+        sub = aggregate_material_led_subscope(mat.material_code)
+        if sub is not None and not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led_subscopes,
+            material_key=str(mat.material_code or ""),
+            mount_decision=mount_decision,
+        ):
+            return False
     return True
 
 
-def _operation_module_active(op: ProductAggregateOperation, active_modules: set[str]) -> bool:
-    if op.mini_module_code:
-        return op.mini_module_code in active_modules
-    if op.operation_code in GEOMETRY_GATE_OPERATIONS:
-        return "geometry_svg" in active_modules
-    if op.provenance == "linked_module" and op.source_template_code:
+def _operation_module_active(
+    op: ProductAggregateOperation,
+    active_modules: set[str],
+    sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
+) -> bool:
+    from services.offer_scope_led_subscope_service import (
+        led_consumer_row_allowed,
+        led_runtime_module_bucket,
+        operation_led_subscope,
+    )
+
+    if _is_aggregate_linked_logo_operation(op):
+        return True
+    effective_mini = led_runtime_module_bucket(op.mini_module_code)
+    if effective_mini:
+        if effective_mini not in active_modules:
+            return False
+    elif op.operation_code in GEOMETRY_GATE_OPERATIONS:
+        if "geometry_svg" not in active_modules:
+            return False
+    elif op.provenance == "linked_module" and op.source_template_code:
         if "PREMOUNT" in (op.source_template_code or ""):
-            return "structura_suport" in active_modules
-        if "VOLUM-ALUMINIU" in (op.source_template_code or ""):
-            return "modelare_cant" in active_modules
-    if op.component_ref:
+            if "structura_suport" not in active_modules:
+                return False
+        elif "VOLUM-ALUMINIU" in (op.source_template_code or ""):
+            if "modelare_cant" not in active_modules:
+                return False
+    elif op.component_ref:
         mod = DOSSIER_COMPONENT_TO_MODULE.get(op.component_ref)
-        if mod:
-            return mod in active_modules
+        if mod and mod not in active_modules:
+            return False
+    elif op.mini_module_code and op.mini_module_code not in active_modules:
+        return False
+
+    if sold_led_subscopes is not None:
+        sub = operation_led_subscope(op.operation_code)
+        if sub is not None and not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led_subscopes,
+            operation_code=op.operation_code,
+            mount_decision=mount_decision,
+        ):
+            return False
     return True
 
 
@@ -288,11 +472,22 @@ def _check_material_pricing(
     return "available", float(rate)
 
 
-def _check_workcenter_pricing(workcenter: str | None, workcenter_rates: dict[str, float]) -> str:
+def _check_workcenter_pricing(workcenter: str | None, workcenter_rates: dict[str, Any]) -> str:
     if not workcenter:
         return "missing"
     rate = workcenter_rates.get(workcenter)
-    if rate is None or rate <= 0:
+    if rate is None:
+        return "missing"
+    if isinstance(rate, dict):
+        basis = str(rate.get("rate_basis") or "per_hour")
+        if basis == "per_hour":
+            value = rate.get("rate_per_hour")
+        else:
+            value = rate.get("rate_per_linear_meter")
+        if value is None or float(value) <= 0:
+            return "missing"
+        return "available"
+    if float(rate) <= 0:
         return "missing"
     return "available"
 
@@ -372,6 +567,12 @@ def _classify_material_inventory(
                 "Profile material requires return_depth_mm variant selection.",
                 None,
             )
+        if mat.material_code == TEMPLATE_ACM_BOND_CODE:
+            return (
+                "USED_BY_ACTIVE_TEMPLATE",
+                "ACM bond panel requires acm_thickness_mm variant selection.",
+                None,
+            )
     in_inventory = _inventory_has_code(resolved, inventory_catalog) or _inventory_has_code(
         mat.material_code, inventory_catalog
     )
@@ -400,6 +601,8 @@ def _build_inventory_alignment(
     costable_materials: list[CostBomCostableMaterial],
     missing_pricing: list[CostBomMissingPricing],
     values: dict[str, Any],
+    sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
 ) -> tuple[
     list[InventoryUsageEntry],
     list[str],
@@ -422,7 +625,7 @@ def _build_inventory_alignment(
 
     for mat in aggregate.materials:
         mod = _material_module_code(mat)
-        module_active = _material_module_active(mat, active_modules)
+        module_active = _material_module_active(mat, active_modules, sold_led_subscopes, mount_decision)
         resolved, _, variant_err = _resolve_material_code(mat.material_code, values)
         availability, _ = _check_material_pricing(resolved, material_rates, variant_err)
         classification, notes, owner_step = _classify_material_inventory(
@@ -800,7 +1003,9 @@ class AggregateCostBomAdapter:
         inventory_catalog = inventory_catalog or {}
         values = _canonical_and_quote_input(pd, quote_input)
 
-        active_modules = _active_module_codes(pd, quote_input)
+        active_modules, graph_cost_projection = _active_module_codes(pd, quote_input, aggregate)
+        sold_led_subscopes = _sold_led_subscopes_from_quote(quote_input)
+        mount_decision = _mount_consumer_from_quote(quote_input)
         inactive_modules_set = _inactive_module_codes(pd)
 
         active_module_refs: list[CostBomModuleRef] = []
@@ -886,10 +1091,15 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(comp.component_id)
+            if _is_aggregate_linked_logo_component(comp):
+                mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(
+                    comp.component_id.split(SEGMENT_NAMESPACE_SEP, 1)[0]
+                )
+            else:
+                mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(comp.component_id)
             if mod in GATE_ONLY_MODULES or mod in FUTURE_MODULES:
                 continue
-            if mod and mod not in active_modules:
+            if not _is_aggregate_linked_logo_component(comp) and mod and mod not in active_modules:
                 continue
             costable_components.append(
                 CostBomCostableComponent(
@@ -916,7 +1126,26 @@ class AggregateCostBomAdapter:
 
         costable_materials: list[CostBomCostableMaterial] = []
         for mat in aggregate.materials:
-            if not _material_module_active(mat, active_modules):
+            if not include_material_in_composed_aggregate(
+                material_code=mat.material_code,
+                component_ref=mat.component_ref,
+                provenance=mat.provenance,
+                status=mat.status,
+                source_template_code=mat.source_template_code,
+            ):
+                skipped.append(
+                    CostBomSkippedItem(
+                        item_type="material",
+                        item_key=mat.material_code,
+                        reason="non_canonical_logo_owner",
+                        detail=(
+                            "Excluded — mapping_only or non-canonical linked-logo ownership "
+                            f"({mat.component_ref or 'unknown'})."
+                        ),
+                    )
+                )
+                continue
+            if not _material_module_active(mat, active_modules, sold_led_subscopes, mount_decision):
                 mod = mat.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
                 skipped.append(
                     CostBomSkippedItem(
@@ -980,6 +1209,25 @@ class AggregateCostBomAdapter:
 
         costable_operations: list[CostBomCostableOperation] = []
         for op in aggregate.operations:
+            if not include_operation_in_composed_aggregate(
+                operation_code=op.operation_code,
+                component_ref=op.component_ref,
+                provenance=op.provenance,
+                status=op.status,
+                source_template_code=op.source_template_code,
+            ):
+                skipped.append(
+                    CostBomSkippedItem(
+                        item_type="operation",
+                        item_key=op.operation_code,
+                        reason="non_canonical_logo_owner",
+                        detail=(
+                            "Excluded — mapping_only or non-canonical linked-logo ownership "
+                            f"({op.component_ref or 'unknown'})."
+                        ),
+                    )
+                )
+                continue
             if op.operation_code in GEOMETRY_GATE_OPERATIONS or op.mini_module_code in GATE_ONLY_MODULES:
                 skipped.append(
                     CostBomSkippedItem(
@@ -1000,7 +1248,7 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            if not _operation_module_active(op, active_modules):
+            if not _operation_module_active(op, active_modules, sold_led_subscopes, mount_decision):
                 skipped.append(
                     CostBomSkippedItem(
                         item_type="operation",
@@ -1081,6 +1329,8 @@ class AggregateCostBomAdapter:
             costable_materials=costable_materials,
             missing_pricing=missing_pricing,
             values=values,
+            sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
         )
 
         (
@@ -1101,10 +1351,24 @@ class AggregateCostBomAdapter:
         )
 
         pricing_blockers = inventory_pricing_blockers + external_pricing_blockers
-        if pricing_blockers and bom_status == "ready":
+        if _aggregate_has_partial_linked_logo(aggregate):
+            bom_status = "partial"
+        elif pricing_blockers and bom_status == "ready":
             bom_status = "blocked"
         elif missing_inventory_materials and bom_status == "ready":
             bom_status = "blocked"
+
+        if graph_cost_projection is not None:
+            provenance_graph = CostBomProvenanceEntry(
+                key="graph_cost_projection",
+                source="product_aggregate_graph_cost_projection_service",
+                detail=(
+                    f"authority={graph_cost_projection.structural_authority} "
+                    f"modules={','.join(graph_cost_projection.active_mini_module_codes)}"
+                ),
+            )
+        else:
+            provenance_graph = None
 
         provenance = [
             CostBomProvenanceEntry(
@@ -1131,6 +1395,13 @@ class AggregateCostBomAdapter:
                 detail="Step 7B.1 inventory alignment + externalization readiness hooks (read-only).",
             ),
         ]
+        if provenance_graph is not None:
+            provenance.insert(1, provenance_graph)
+        if graph_cost_projection is not None and graph_cost_projection.compatibility_note:
+            warnings.append(graph_cost_projection.compatibility_note)
+        for blocker in graph_cost_projection.blockers if graph_cost_projection else []:
+            if blocker.startswith("UPSTREAM_TRUTH_MISSING:"):
+                warnings.append(blocker)
 
         legacy_note = (
             "Parent template row has minimal BOM (components_json=[]). "
@@ -1176,6 +1447,7 @@ class AggregateCostBomAdapter:
             reseller_requirements=reseller_requirements,
             subcontractable_operations=subcontractable_operations,
             cost_line_classification=cost_line_classification,
+            graph_cost_projection=graph_cost_projection,
         )
 
     def _resolve_bom_status(
@@ -1227,7 +1499,10 @@ class AggregateCostBomBuilderService:
         pd = await pd_builder.build_preview(template_code, workspace_id=workspace_id)
         if pd is None:
             return None
-        aggregate = await aggregate_svc.build(template_code)
+        if workspace_id:
+            aggregate = await aggregate_svc.build_for_workspace(template_code, workspace_id)
+        else:
+            aggregate = await aggregate_svc.build(template_code)
         if aggregate is None:
             return None
 

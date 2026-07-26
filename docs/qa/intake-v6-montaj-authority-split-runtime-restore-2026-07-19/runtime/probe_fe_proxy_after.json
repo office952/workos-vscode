@@ -1,0 +1,37 @@
+﻿{
+    "label":  "fe_proxy_3000",
+    "base":  "http://127.0.0.1:3000",
+    "finish":  {
+                   "workspace_code":  "IV6-EA145E74",
+                   "updated_at":  "2026-07-19T15:37:15.857960",
+                   "mounting_scope":  "none",
+                   "mounting_solution":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                   "mounting_template_enabled":  true,
+                   "corner":  null,
+                   "seg":  "CONFIRMED",
+                   "ecm":  "DRAFT"
+               },
+    "pd":  {
+               "solution_status":  "confirmed",
+               "blockers":  [
+
+                            ],
+               "compatibility_status":  "compatible",
+               "acm":  [
+                           {
+                               "code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                               "included":  true
+                           }
+                       ]
+           },
+    "agg":  {
+                "conflicts":  [
+
+                              ]
+            },
+    "pricing":  {
+                    "has_consumabile_label":  true,
+                    "has_old_accesorii_montaj":  false,
+                    "endpoint":  "logical-list-read-model"
+                }
+}

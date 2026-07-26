@@ -1,0 +1,98 @@
+{
+  "task": "UI-TRUTH-01",
+  "files": [
+    {
+      "file": "frontend/src/hooks/useRuntimeHealth.ts",
+      "planned_change": "CREATE — same-origin health fetch, poll, timeout, abort, stale tracking",
+      "reason": "Authoritative backend segment truth",
+      "risk": "LOW",
+      "test": "useRuntimeHealth.test.ts"
+    },
+    {
+      "file": "frontend/src/types/runtimeStatus.ts",
+      "planned_change": "CREATE — segment enums and mapping helpers",
+      "reason": "Finite state model",
+      "risk": "LOW",
+      "test": "unit tests for mappers"
+    },
+    {
+      "file": "frontend/src/components/workos/EnvironmentBanner.tsx",
+      "planned_change": "MODIFY — replace auth-as-health with RuntimeStatusSummary segments",
+      "reason": "Core UI truth fix",
+      "risk": "MEDIUM",
+      "test": "EnvironmentBanner.test.tsx"
+    },
+    {
+      "file": "frontend/src/components/workos/RuntimeStatusSummary.tsx",
+      "planned_change": "CREATE — compact Romanian segment strip",
+      "reason": "Separated truths rendering",
+      "risk": "LOW",
+      "test": "EnvironmentBanner.test.tsx"
+    },
+    {
+      "file": "frontend/src/components/workos/RuntimeStatusDetails.tsx",
+      "planned_change": "CREATE — tooltip/drill-down panel (authorized diagnostics gate)",
+      "reason": "Non-invasive details without secrets",
+      "risk": "MEDIUM",
+      "test": "component tests mock 403"
+    },
+    {
+      "file": "frontend/src/contexts/AuthContext.tsx",
+      "planned_change": "READ ONLY in 01A — consume authState; optional EXPIRAT detection in 01C",
+      "reason": "Session segment source",
+      "risk": "LOW",
+      "test": "existing auth tests unchanged"
+    },
+    {
+      "file": "frontend/src/lib/mockGuard.ts",
+      "planned_change": "READ ONLY — mock/demo detection",
+      "reason": "Demo segment",
+      "risk": "LOW",
+      "test": "banner mock scenario"
+    },
+    {
+      "file": "frontend/src/lib/config.ts",
+      "planned_change": "NO CHANGE — document split path debt only",
+      "reason": "Out of scope API client refactor",
+      "risk": "NONE",
+      "test": "n/a"
+    },
+    {
+      "file": "frontend/src/App.tsx",
+      "planned_change": "MINIMAL — mount unchanged; optional provider if hook needs context",
+      "reason": "Shell placement",
+      "risk": "LOW",
+      "test": "app shell integration test"
+    },
+    {
+      "file": "frontend/src/hooks/useModuleChainData.ts",
+      "planned_change": "DEFER — optional later dedupe to useRuntimeHealth",
+      "reason": "Avoid scope creep in plan phase",
+      "risk": "NONE",
+      "test": "n/a"
+    },
+    {
+      "file": "frontend/src/pages/ModuleChain.tsx",
+      "planned_change": "NO CHANGE in UI-TRUTH-01",
+      "reason": "Separate page health badges",
+      "risk": "NONE",
+      "test": "regression manual"
+    },
+    {
+      "file": "backend/routers/system.py",
+      "planned_change": "NO CHANGE",
+      "reason": "Existing contracts sufficient with NECUNOSCUTA fallback",
+      "risk": "NONE",
+      "test": "existing pytest"
+    },
+    {
+      "file": "backend/services/system_health_service.py",
+      "planned_change": "NO CHANGE",
+      "reason": "Public redaction intentional",
+      "risk": "NONE",
+      "test": "test_system_health.py"
+    }
+  ],
+  "frontend_files_planned_count": 6,
+  "backend_changes_planned": "NO"
+}

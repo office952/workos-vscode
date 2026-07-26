@@ -203,9 +203,15 @@ async def list_eligible_employees_for_operation(
     db: AsyncSession = Depends(get_db),
 ) -> Dict[str, Any]:
     svc = OperationalRegistryService(db)
-    return await svc.get_eligible_employees_for_operation(
+    result = await svc.get_eligible_employees_for_operation(
         operation_code, machine_type=machine_type
     )
+    from services.parity_observe.eligibility_endpoint import observe_eligible_employees_endpoint
+
+    await observe_eligible_employees_endpoint(
+        db, operation_code, result, machine_type=machine_type
+    )
+    return result
 
 
 @router.get("/operation-mappings/{operation_code}/resolve")

@@ -1,0 +1,268 @@
+{
+  "started_at": "2026-07-17T11:01:04.461Z",
+  "build": "BUILD2_FULL_PRODUCT_REPRODUCTION",
+  "svg": {
+    "path": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
+    "size": 27173,
+    "hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "runtime": {
+    "frontend": {
+      "status": 200,
+      "ok": true
+    },
+    "form_contract": {
+      "status": 200,
+      "ok": true
+    },
+    "historical_cpp": {
+      "status": 200,
+      "ok": true
+    }
+  },
+  "steps": [
+    {
+      "step": "runtime_frontend",
+      "at": "2026-07-17T11:01:04.473Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "runtime_form_contract",
+      "at": "2026-07-17T11:01:04.479Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "runtime_historical_cpp",
+      "at": "2026-07-17T11:01:05.104Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "01_operator",
+      "at": "2026-07-17T11:01:09.148Z",
+      "url": "http://127.0.0.1:3000/intake-v6/ce44f3f2-1018-4b8c-9011-92a1c402daaf/operator",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\01_operator.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "01_workspace",
+      "at": "2026-07-17T11:01:18.764Z",
+      "workspaceId": "ce44f3f2-1018-4b8c-9011-92a1c402daaf",
+      "url": "http://127.0.0.1:3000/intake-v6/ce44f3f2-1018-4b8c-9011-92a1c402daaf/operator",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\01_workspace.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "02_upload",
+      "at": "2026-07-17T11:01:22.919Z",
+      "file": "gradi-curat.svg",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\02_upload.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "03_analyzer",
+      "at": "2026-07-17T11:01:23.001Z",
+      "hasLayersHint": true,
+      "textSample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app DA Staging · Backend cu avertisment · Baza de date confirmată — Ultima verificare: 14:01:05 — stare agregată b",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\03_analyzer.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "04_layers_approved",
+      "at": "2026-07-17T11:01:23.949Z",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\04_layers.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "review",
+      "at": "2026-07-17T11:01:26.711Z",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\05_components.png",
+      "url": "http://127.0.0.1:3000/intake-v6/ce44f3f2-1018-4b8c-9011-92a1c402daaf/operator",
+      "verdict": "OK"
+    },
+    {
+      "step": "06_composed_form",
+      "at": "2026-07-17T11:01:28.792Z",
+      "compositionAuthority": "true",
+      "subsetActivation": "false",
+      "tabsAuthority": "contract",
+      "tabIds": [
+        "finisaje",
+        "iluminare",
+        "montaj"
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\06_composed_form.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "07_live_change",
+      "at": "2026-07-17T11:01:31.460Z",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\07_live_change.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "08_save",
+      "at": "2026-07-17T11:01:31.510Z",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\08_save.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "09_return",
+      "at": "2026-07-17T11:01:36.895Z",
+      "url": "http://127.0.0.1:3000/intake-v6/ce44f3f2-1018-4b8c-9011-92a1c402daaf/operator",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\09_return.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "10_hard_refresh",
+      "at": "2026-07-17T11:01:40.493Z",
+      "authorityAfterRefresh": "contract",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\10_hard_refresh.png",
+      "verdict": "OK"
+    },
+    {
+      "step": "11_pd",
+      "at": "2026-07-17T11:01:40.586Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "11_aggregate",
+      "at": "2026-07-17T11:01:40.793Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "11_cpp",
+      "at": "2026-07-17T11:01:41.818Z",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "step": "responsive_desktop",
+      "at": "2026-07-17T11:01:42.277Z",
+      "noHScroll": true,
+      "verdict": "OK"
+    },
+    {
+      "step": "responsive_laptop",
+      "at": "2026-07-17T11:01:42.740Z",
+      "noHScroll": true,
+      "verdict": "OK"
+    },
+    {
+      "step": "responsive_tablet",
+      "at": "2026-07-17T11:01:43.195Z",
+      "noHScroll": true,
+      "verdict": "OK"
+    }
+  ],
+  "workspace": {
+    "id": "ce44f3f2-1018-4b8c-9011-92a1c402daaf",
+    "url": "http://127.0.0.1:3000/intake-v6/ce44f3f2-1018-4b8c-9011-92a1c402daaf/operator"
+  },
+  "composition": {
+    "api": {
+      "composition_authority": true,
+      "contract_version": "1.3.0-full-product-composition",
+      "ui_tab_ids": [
+        "finisaje",
+        "iluminare",
+        "montaj"
+      ],
+      "subset_activation_enabled": false,
+      "section_keys": [
+        "finisaje_fields",
+        "iluminare",
+        "montaj_template",
+        "montaj_system",
+        "geometry_svg",
+        "packaging_logistics",
+        "interface_face_cant"
+      ]
+    },
+    "ui": {
+      "compositionAuthority": "true",
+      "subsetActivation": "false",
+      "sectionKeys": "finisaje_fields,iluminare,montaj_template,montaj_system,geometry_svg,packaging_logistics,interface_face_cant",
+      "tabsAuthority": "contract",
+      "tabIds": [
+        "finisaje",
+        "iluminare",
+        "montaj"
+      ]
+    }
+  },
+  "responsive": [
+    {
+      "name": "desktop",
+      "w": 1440,
+      "h": 900,
+      "noHScroll": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\responsive_desktop.png"
+    },
+    {
+      "name": "laptop",
+      "w": 1280,
+      "h": 800,
+      "noHScroll": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\responsive_laptop.png"
+    },
+    {
+      "name": "tablet",
+      "w": 768,
+      "h": 1024,
+      "noHScroll": true,
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build2_full_product\\responsive_tablet.png"
+    }
+  ],
+  "parity": {
+    "historical_debitare_fata_qty": 20.9727,
+    "historical_dry_run_only": true,
+    "pd": {
+      "status": 200,
+      "selected_modules": [
+        "modelare_cant",
+        "debitare_fata",
+        "debitare_spate",
+        "sistem_led",
+        "finisaje",
+        "sablon_montaj",
+        "ambalare_livrare_montaj",
+        "geometry_svg"
+      ],
+      "material_count": 0,
+      "has_adhesive": false,
+      "geometry": {
+        "vector_file": "gradi-curat.svg",
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "letter_count": 19,
+        "letter_perimeter_m": 20.9727,
+        "letter_face_area_m2": 1.2638
+      }
+    },
+    "aggregate": {
+      "status": 200,
+      "selected_modules": [],
+      "material_count": 19,
+      "has_adhesive": true,
+      "geometry": null
+    },
+    "cpp": {
+      "status": 200,
+      "selected_modules": [],
+      "material_count": 0,
+      "has_adhesive": false,
+      "dry_run_only": true,
+      "can_write": false,
+      "debitare_fata": 20.9727,
+      "geometry": null
+    }
+  },
+  "errors": [],
+  "verdict": "BUILD2_FULL_PRODUCT_REPRODUCTION_COMPLETE_WITH_GUARDS",
+  "finished_at": "2026-07-17T11:01:43.195Z"
+}

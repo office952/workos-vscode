@@ -13,6 +13,7 @@ import type { IntakeV4QuoteGeometry } from "./intakeV4QuoteGeometry";
 import { readQuoteGeometryFromPayload } from "./intakeV4QuoteGeometry";
 import { SVG_ARTWORK_EXECUTION_OPTIONS } from "@/lib/svgArtworkContracts";
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
+import { resolveIntakeV6StoredLayerDisplayLabel } from "./intakeV6LayerDisplayLabel";
 import { formatIntakeV6ReturnFinishLabel as formatIntakeV4ReturnFinishLabel } from "./intakeV6ReturnFinishOptions";
 import {
   buildIntakeV4EdgeCantLayerBreakdown,
@@ -125,7 +126,7 @@ function faceFinishLabel(
 ): string {
   const token = String(code ?? "").trim().toLowerCase();
   if (!token || token === "none") return "Fără finisaj — plexiglas brut";
-  if (token === "oracal_8500") return "Oracal 8500 translucent";
+  if (token === "oracal_8500") return "Oracal 8500";
   if (token === "oracal_651") {
     const color = oracalName || oracalCode;
     return color ? `Oracal 651 ${color}` : "Oracal 651";
@@ -137,7 +138,7 @@ function faceFinishLabel(
   if (token === "ral_spray") return "RAL spray";
   if (token === "policromie") return "Policromie";
   if (token === "colored_plexiglas") return "plexiglas colorat";
-  if (token === "print_laminate") return "Print + laminare";
+  if (token === "print_laminate" || token === "printed_laminated_vinyl") return "Printat / Laminat";
   if (token === "print_translucent") return "print translucid";
   if (token === "printed_vinyl_on_face") return "vinil printat pe față";
   return code ?? "—";
@@ -176,7 +177,7 @@ function resolveLetterFaceLabel(finish: IntakeV4FinishSetup): string {
   } else {
     finishPart = faceFinishLabel(finish.face_finish_type);
   }
-  return `Plexiglas 3 mm / față litere · ${finishPart}`;
+  return `plexiglas 3mm PMMA - opal · ${finishPart}`;
 }
 
 function resolveBackingForexLabel(
@@ -337,6 +338,8 @@ export function buildIntakeV4ConfirmSummary(args: {
   materialBreakdown: IntakeV4MaterialBreakdownResponse | null;
   nestingPreview: IntakeV4NestingPreviewResponse | null;
   handoffBlockers?: string[] | null;
+  /** Presentation-only — maps stored layer names for Confirmare UI */
+  analyzerReport?: SvgAnalysisCoreReport | null;
 }): IntakeV4ConfirmSummaryViewModel {
   const finish = readFinishSetup(args.payload);
   const geometry = readQuoteGeometryFromPayload(args.payload);
@@ -357,9 +360,15 @@ export function buildIntakeV4ConfirmSummary(args: {
           fallbackDepthMm: finish.return_depth_mm ?? null,
         });
 
-  const artworkRows = (finish.artwork_finishes ?? []).map((row) => ({
+  const analyzerReport = args.analyzerReport ?? null;
+  const artworkRows = (finish.artwork_finishes ?? []).map((row, index) => ({
     layerKey: row.layer_key,
-    layerName: row.layer_name ?? row.layer_key,
+    layerName: resolveIntakeV6StoredLayerDisplayLabel({
+      layerKey: row.layer_key,
+      layerName: row.layer_name ?? row.layer_key,
+      index,
+      report: analyzerReport,
+    }),
     executionLabel: artworkExecutionLabel(row.execution_type),
     printTransparencyLabel: printTransparencyLabel(row.print_transparency),
     returnLabel: formatIntakeV4ReturnFinishLabel({
@@ -370,9 +379,15 @@ export function buildIntakeV4ConfirmSummary(args: {
     returnDepthMm: row.return_depth_mm ?? finish.return_depth_mm ?? null,
     areaM2: row.estimated_area_m2 ?? null,
   }));
-  const letterRows = (finish.letter_group_finishes ?? []).map((group) => ({
+  const letterRows = (finish.letter_group_finishes ?? []).map((group, index) => ({
     groupKey: group.group_key,
-    layerName: group.layer_name ?? group.group_key,
+    layerName: resolveIntakeV6StoredLayerDisplayLabel({
+      layerKey: group.group_key,
+      layerName: group.layer_name ?? group.group_key,
+      index,
+      report: analyzerReport,
+      sourceFillColor: group.source_fill_color,
+    }),
     faceLabel: faceFinishLabel(
       group.face_finish_type ?? finish.face_finish_type,
       group.face_oracal_code,

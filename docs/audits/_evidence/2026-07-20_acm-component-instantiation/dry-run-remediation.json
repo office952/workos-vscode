@@ -1,0 +1,135 @@
+﻿{
+    "at":  "2026-07-20T01:24:35.3133390Z",
+    "mode":  "dry-run-read-only",
+    "scanned":  216,
+    "cfg_support_without_binding":  20,
+    "cfg_segmented_without_binding":  2,
+    "cfg_binding_without_instance":  51,
+    "p1":  18,
+    "suspects_with_quote":  0,
+    "safe_auto_repair_candidates":  "P1 propose segmented + upsert ACM instance when support role confirmed and no quote",
+    "operator_review":  "CFG with ambiguous roles; composition confirm; technical confirm",
+    "note":  "No historical writes. New forward path writes AcmPanel instance atomically.",
+    "sample":  [
+                   {
+                       "code":  "IV6-B30B4A20",
+                       "flags":  "P1_missing_segmented,CFG_support_without_SUPPORT_CONTOUR_binding",
+                       "seg":  null,
+                       "supportBinding":  0,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-D9CAA894",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-379CEB03",
+                       "flags":  "CFG_support_without_SUPPORT_CONTOUR_binding,CFG_segmented_without_SUPPORT_CONTOUR_binding",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  0,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-3A52D29C",
+                       "flags":  "P1_missing_segmented,CFG_support_without_SUPPORT_CONTOUR_binding",
+                       "seg":  null,
+                       "supportBinding":  0,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-87B98425",
+                       "flags":  "P1_missing_segmented,CFG_support_without_SUPPORT_CONTOUR_binding",
+                       "seg":  null,
+                       "supportBinding":  0,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-EA145E74",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "CONFIRMED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-E04715E6",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-EC600B5E",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-45B6C558",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-4D2FECD5",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-85225DB5",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-D076A1CA",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "CONFIRMED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-7461915E",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-2448AC7D",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   },
+                   {
+                       "code":  "IV6-900EC326",
+                       "flags":  "CFG_binding_without_acm_instance",
+                       "seg":  "PROPOSED",
+                       "supportBinding":  1,
+                       "hasInstance":  false,
+                       "quote":  false
+                   }
+               ]
+}

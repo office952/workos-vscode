@@ -1,0 +1,1050 @@
+[
+  {
+    "operation_code": "assembly",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "assembly",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "assembly",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "assembly",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cant_modelare",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_LETTER_CANT_OPERATOR",
+      "SK_LETTER_MODELING"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cant_modelare",
+    "employee_id": 3,
+    "employee_name": "Florin CNC",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_LETTER_CANT_OPERATOR",
+      "SK_LETTER_MODELING"
+    ],
+    "employee_skills": [
+      "SK_CNC_OPERATOR",
+      "SK_CNC_PREP",
+      "SK_LETTER_CANT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cnc_cutting",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_CNC_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cnc_cutting",
+    "employee_id": 3,
+    "employee_name": "Florin CNC",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_CNC_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CNC_OPERATOR",
+      "SK_CNC_PREP",
+      "SK_LETTER_CANT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "colantare",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_VINYL_APPLICATOR"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "colantare",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_VINYL_APPLICATOR"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "colantare",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_VINYL_APPLICATOR"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "colantare",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_VINYL_APPLICATOR"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cutter_plotter",
+    "employee_id": 1,
+    "employee_name": "Calin Cimpean",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_CUTTER_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "cutter_plotter",
+    "employee_id": 2,
+    "employee_name": "Octavian Dumitru",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_CUTTER_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "field_installation",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_FIELD_INSTALLER"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "field_installation",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_FIELD_INSTALLER"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "field_installation",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_FIELD_INSTALLER"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "field_installation",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_FIELD_INSTALLER"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "laminare",
+    "employee_id": 1,
+    "employee_name": "Calin Cimpean",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_LAMINATOR_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "laminare",
+    "employee_id": 2,
+    "employee_name": "Octavian Dumitru",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_LAMINATOR_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "montaj_led",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ELECTRICIAN"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "montaj_led",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ELECTRICIAN"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "montaj_led",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ELECTRICIAN"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "montaj_led",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ELECTRICIAN"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "packaging",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "packaging",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "packaging",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "packaging",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "prepress",
+    "employee_id": 1,
+    "employee_name": "Calin Cimpean",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_GRAPHIC_DESIGN",
+      "SK_QUOTING"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "prepress",
+    "employee_id": 8,
+    "employee_name": "Chirila Cristian",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_GRAPHIC_DESIGN",
+      "SK_QUOTING"
+    ],
+    "employee_skills": [
+      "SK_COMMERCIAL_TECH",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "prepress",
+    "employee_id": 2,
+    "employee_name": "Octavian Dumitru",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_GRAPHIC_DESIGN",
+      "SK_QUOTING"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print",
+    "employee_id": 1,
+    "employee_name": "Calin Cimpean",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": false,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "NARROWING_ONLY",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print",
+    "employee_id": 2,
+    "employee_name": "Octavian Dumitru",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": false,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "NARROWING_ONLY",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print_roll",
+    "employee_id": 1,
+    "employee_name": "Calin Cimpean",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print_roll",
+    "employee_id": 2,
+    "employee_name": "Octavian Dumitru",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "print_roll",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": false,
+    "required_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "NARROWING_ONLY",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "quality_control",
+    "employee_id": 7,
+    "employee_name": "Andrei Goghi",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "quality_control",
+    "employee_id": 6,
+    "employee_name": "Costi Modelator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "quality_control",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "quality_control",
+    "employee_id": 5,
+    "employee_name": "Vali Colantator",
+    "registry_competence_match": true,
+    "legacy_competence_match": null,
+    "authorization_match": true,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_ASSEMBLY"
+    ],
+    "employee_skills": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+    "tasks_assigned_sample": []
+  },
+  {
+    "operation_code": "welding",
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "registry_competence_match": false,
+    "legacy_competence_match": null,
+    "authorization_match": false,
+    "explicit_override": true,
+    "required_skills": [
+      "SK_LOCKSMITH"
+    ],
+    "employee_skills": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "source": "operation_employee_authorizations + hybrid mode",
+    "reason": null,
+    "approver": null,
+    "valid_from": null,
+    "valid_until": null,
+    "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+    "tasks_assigned_sample": []
+  }
+]

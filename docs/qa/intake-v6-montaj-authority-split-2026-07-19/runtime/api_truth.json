@@ -1,0 +1,31 @@
+{
+  "finish": {
+    "mounting_scope": "none",
+    "mounting_solution": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "mounting_template_enabled": true,
+    "power_supply_service_corner": null,
+    "segmented_status": "CONFIRMED",
+    "ecm_status": "DRAFT"
+  },
+  "pd": {
+    "status": "confirmed",
+    "blockers": [],
+    "nodes": [
+      {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "included_in_graph": true
+      },
+      {
+        "template_code": "TPL-VOLUM-ALUMINIU_v1",
+        "included_in_graph": true
+      },
+      {
+        "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "included_in_graph": true
+      }
+    ]
+  },
+  "aggregate": {
+    "conflicts": []
+  }
+}

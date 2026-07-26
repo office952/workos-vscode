@@ -33,6 +33,11 @@ export function normalizeIntakeV4LedModuleWattage(value: number | null | undefin
   return DEFAULT_INTAKE_V4_LED_MODULE_WATTAGE;
 }
 
+/**
+ * Display-only LED estimate for Intake UI previews.
+ * Commercial quantity authority is backend Quantity Builder
+ * (`build_volumetric_letters_commercial_quantities`). Do not use this for CPP/EIC/freeze.
+ */
 export function computeIntakeV4LedModuleCount(letterPerimeterM: number | null | undefined): number | null {
   if (letterPerimeterM == null || !Number.isFinite(letterPerimeterM) || letterPerimeterM <= 0) {
     return null;

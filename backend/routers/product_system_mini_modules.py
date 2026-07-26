@@ -13,6 +13,7 @@ from services.mini_module_registry_service import (
     MiniModuleRegistryService,
     get_mini_module_registry_service,
 )
+from services.template_architecture_scope import require_canonical_template_code
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,20 @@ async def list_mini_modules() -> MiniModuleRegistryResponse:
 @router.get("/mini-modules/by-template/{template_code}", response_model=MiniModuleRegistryResponse)
 async def get_mini_modules_by_template(template_code: str) -> MiniModuleRegistryResponse:
     """Return mini-modules applicable to a product template_code."""
-    return _service().get_by_template(template_code)
+    identity = require_canonical_template_code(template_code)
+    if identity.resolution_type == "rejected_alias":
+        raise HTTPException(
+            status_code=422,
+            detail=_error_envelope(
+                "template_identity_not_canonical",
+                requested_template_code=identity.requested_template_code,
+                canonical_template_code=identity.canonical_template_code,
+                resolution_type=identity.resolution_type,
+                legacy_alias_used=identity.legacy_alias_used,
+                resolution_source=identity.resolution_source,
+            ),
+        )
+    return _service().get_by_template(identity.canonical_template_code)
 
 
 @router.get("/mini-modules/{module_code}", response_model=MiniModuleContract)

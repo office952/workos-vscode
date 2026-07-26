@@ -1,0 +1,150 @@
+{
+  "scenario_a_completed_match": {
+    "order_id": 92402,
+    "plan_hint": 8,
+    "summary": {
+      "matched_count": 1,
+      "partial_count": 0,
+      "missing_actual_count": 17,
+      "variance_count": 0,
+      "operations_total": 18
+    },
+    "matched_ops": [
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "task_name": "PregÄƒtire vector / font",
+        "planned_status": "planned",
+        "actual_status": "done",
+        "planned_minutes": {
+          "value": 0.0,
+          "presence": "present",
+          "unit": "min",
+          "source": null,
+          "note": null
+        },
+        "actual_minutes": {
+          "value": 0.0,
+          "presence": "zero",
+          "unit": "min",
+          "source": "sessions",
+          "note": null
+        },
+        "variance_minutes": {
+          "value": 0.0,
+          "presence": "present",
+          "unit": "min",
+          "source": null,
+          "note": null
+        },
+        "planned_quantity": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "actual_quantity": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "quantity_variance": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "reconciliation_state": "matched",
+        "completeness": "zero"
+      }
+    ],
+    "note": "Build1 RO regression — do not mutate"
+  },
+  "scenario_b_partial_missing": {
+    "order_id": 92402,
+    "summary": {
+      "matched_count": 1,
+      "partial_count": 0,
+      "missing_actual_count": 17,
+      "variance_count": 0,
+      "operations_total": 18
+    },
+    "missing_actual_count": 17,
+    "sample_missing": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+    ],
+    "honesty": "missing actual minutes presence=not_captured value=null"
+  },
+  "scenario_c_variance": {
+    "order_id": 92403,
+    "ir": "IR-W7T02-1784238040",
+    "workspace": "5caafdf0-f3d2-49fe-8513-637cbe1e7b73",
+    "quote": 4,
+    "snapshot": "QSN2-2026-0003",
+    "plan_id": 9,
+    "summary": {
+      "matched_count": 0,
+      "partial_count": 0,
+      "missing_actual_count": 17,
+      "variance_count": 1,
+      "operations_total": 18
+    },
+    "variance_ops": [
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "task_name": "PregÄƒtire vector / font",
+        "planned_status": "planned",
+        "actual_status": "done",
+        "planned_minutes": {
+          "value": 0.0,
+          "presence": "present",
+          "unit": "min",
+          "source": null,
+          "note": null
+        },
+        "actual_minutes": {
+          "value": 75.0,
+          "presence": "present",
+          "unit": "min",
+          "source": "sessions",
+          "note": null
+        },
+        "variance_minutes": {
+          "value": 75.0,
+          "presence": "present",
+          "unit": "min",
+          "source": null,
+          "note": null
+        },
+        "planned_quantity": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "actual_quantity": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "quantity_variance": {
+          "value": null,
+          "presence": "not_captured",
+          "unit": null,
+          "source": null,
+          "note": "produced_quantity_field_absent_in_runtime"
+        },
+        "reconciliation_state": "variance",
+        "completeness": "present"
+      }
+    ]
+  }
+}

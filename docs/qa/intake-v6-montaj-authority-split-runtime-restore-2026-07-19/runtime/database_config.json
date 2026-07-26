@@ -1,0 +1,9 @@
+﻿{
+    "configured_DATABASE_URL_shape":  "sqlite+aiosqlite:///./dev.db",
+    "working_directory":  "C:\\w\\psiso\\backend",
+    "resolved_file":  "C:\\w\\psiso\\backend\\dev.db",
+    "file_exists":  true,
+    "file_length":  27320320,
+    "same_workspace_updated_at_8003_8013":  true,
+    "discrepancy_was_code_not_data":  true
+}

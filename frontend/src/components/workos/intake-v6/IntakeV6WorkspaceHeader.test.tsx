@@ -38,9 +38,7 @@ describe("IntakeV6Header workspace shell", () => {
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-DEMO");
     expect(screen.getByTestId("intake-v6-header-template")).toHaveTextContent("Litere volumetrice");
-    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Review");
-    expect(screen.getByTestId("intake-v6-workspace-status-badge")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-workspace-status-label")).toHaveTextContent("Totul OK");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Configurare");
 
     expect(screen.queryByText("SVG ready")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-status-bar")).not.toBeInTheDocument();
@@ -48,18 +46,38 @@ describe("IntakeV6Header workspace shell", () => {
     expect(screen.getByTestId("intake-v6-progress")).toBeInTheDocument();
   });
 
-  it("shows status details in popover with svg file and layer counts", () => {
+  it("shows logo-only candidate as primary context when commercial root is not offerable", () => {
+    render(
+      <IntakeV6WorkspaceHeaderStatusProvider>
+        <IntakeV6Header
+          state={baseState({
+            workspace: {
+              ...baseState().workspace!,
+              readiness_status: "logo_only_candidate_not_offerable",
+            },
+          })}
+        />
+      </IntakeV6WorkspaceHeaderStatusProvider>,
+    );
+
+    expect(screen.getByTestId("intake-v6-header-template")).toHaveTextContent("Logo-only candidate");
+    expect(screen.getByTestId("intake-v6-header-logo-only-guard")).toHaveTextContent(
+      /TPL-VOLUMETRIC-LOGO_v1 candidate\/read-only/i,
+    );
+    expect(screen.getByTestId("intake-v6-header-logo-only-guard")).toHaveTextContent(
+      /root comercial neofertabil/i,
+    );
+  });
+
+  it("keeps progress navigation visible with svg file in state", () => {
     render(
       <IntakeV6WorkspaceHeaderStatusProvider>
         <IntakeV6Header state={baseState()} />
       </IntakeV6WorkspaceHeaderStatusProvider>,
     );
 
-    fireEvent.click(screen.getByTestId("intake-v6-workspace-status-badge"));
-    expect(screen.getByTestId("intake-v6-workspace-status-details")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-workspace-status-detail-svg")).toHaveTextContent(/logo\.svg/);
-    expect(screen.getByTestId("intake-v6-workspace-status-detail-layers")).toHaveTextContent(
-      "2/2 confirmate",
-    );
+    expect(screen.getByTestId("intake-v6-progress-step-layers")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-progress-step-review")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-progress-step-confirm")).toBeInTheDocument();
   });
 });

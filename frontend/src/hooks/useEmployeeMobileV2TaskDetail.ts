@@ -3,44 +3,44 @@ import {
   fetchEmployeeMobileTaskByOrder,
   type EmployeeMobileTaskDTO,
 } from "@/api/employeeMobileTasks";
-import { useEmployeeMobileV2AvailableTasks } from "@/hooks/useEmployeeMobileV2AvailableTasks";
-import { useEmployeeMobileV2Tasks } from "@/hooks/useEmployeeMobileV2Tasks";
+import { useEmployeeMobileV2TaskTruthContext } from "@/contexts/EmployeeMobileV2TaskTruthContext";
 import {
   EMPLOYEE_MOBILE_TASK_NOT_ACCESSIBLE_MESSAGE,
   resolveEmployeeMobileV2Task,
 } from "@/lib/resolveEmployeeMobileV2Task";
+import { findTruthTaskById } from "@/lib/employeeMobileV2TaskTruth";
+import { mapMobileTaskErrorMessage } from "@/lib/employeeMobileV2TaskErrors";
 
 export function useEmployeeMobileV2TaskDetail(
   taskId: string | undefined,
   orderId: number | null,
 ) {
   const {
-    tasks: myTasks,
-    loading: myLoading,
-    error: myError,
-    reload: reloadMy,
-  } = useEmployeeMobileV2Tasks();
-  const {
-    tasks: availableTasks,
-    loading: availableLoading,
-    error: availableError,
-    reload: reloadAvailable,
-  } = useEmployeeMobileV2AvailableTasks();
+    view,
+    loading: truthLoading,
+    error: truthError,
+    reload: reloadTruth,
+  } = useEmployeeMobileV2TaskTruthContext();
+
+  const myTasks = view?.assignedTasks ?? [];
+  const availableTasks = view?.availableTasks ?? [];
 
   const [fetchedTask, setFetchedTask] = useState<EmployeeMobileTaskDTO | null>(null);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const listResolved = useMemo(
-    () =>
-      resolveEmployeeMobileV2Task({
-        taskId,
-        orderId,
-        myTasks,
-        availableTasks,
-      }),
-    [taskId, orderId, myTasks, availableTasks],
-  );
+  const listResolved = useMemo(() => {
+    if (view && taskId && orderId != null) {
+      const fromTruth = findTruthTaskById(view, taskId, orderId);
+      if (fromTruth) return fromTruth;
+    }
+    return resolveEmployeeMobileV2Task({
+      taskId,
+      orderId,
+      myTasks,
+      availableTasks,
+    });
+  }, [view, taskId, orderId, myTasks, availableTasks]);
 
   const loadFromEndpoint = useCallback(async () => {
     if (!taskId || orderId == null) {
@@ -55,7 +55,7 @@ export function useEmployeeMobileV2TaskDetail(
       setFetchedTask(row);
     } catch (err) {
       setFetchedTask(null);
-      const message = err instanceof Error ? err.message : "Nu am putut încărca taskul.";
+      const message = mapMobileTaskErrorMessage(err);
       setFetchError(message || EMPLOYEE_MOBILE_TASK_NOT_ACCESSIBLE_MESSAGE);
     } finally {
       setFetchLoading(false);
@@ -63,26 +63,34 @@ export function useEmployeeMobileV2TaskDetail(
   }, [orderId, taskId]);
 
   useEffect(() => {
-    if (!taskId || orderId == null || myLoading || availableLoading) {
+    if (!taskId || orderId == null || truthLoading) {
       return;
     }
     void loadFromEndpoint();
-  }, [taskId, orderId, myLoading, availableLoading, loadFromEndpoint]);
+  }, [taskId, orderId, truthLoading, loadFromEndpoint]);
 
   const task =
     orderId != null && fetchedTask
       ? fetchedTask
       : listResolved ?? fetchedTask;
-  const loading =
-    myLoading || availableLoading || (orderId != null && taskId ? fetchLoading : false);
-  const error = myError || availableError || fetchError;
+  const loading = truthLoading || (orderId != null && taskId ? fetchLoading : false);
+  const error = truthError || fetchError;
 
-  const reload = useCallback(async () => {
-    await Promise.all([reloadMy(), reloadAvailable()]);
+  const reload = useCallback(async (options?: { background?: boolean }) => {
+    await reloadTruth(options);
     if (taskId && orderId != null) {
-      await loadFromEndpoint();
+      if (options?.background) {
+        try {
+          const row = await fetchEmployeeMobileTaskByOrder(orderId, taskId);
+          setFetchedTask(row);
+        } catch {
+          // preserve action feedback on background refresh failure
+        }
+      } else {
+        await loadFromEndpoint();
+      }
     }
-  }, [reloadMy, reloadAvailable, taskId, orderId, loadFromEndpoint]);
+  }, [reloadTruth, taskId, orderId, loadFromEndpoint]);
 
   return {
     task,

@@ -1,0 +1,75 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "relationship": "DUPLICATE with PARTIAL_OVERLAP",
+  "shared_source_file": false,
+  "rows": [
+    {
+      "concept": "canonical flow",
+      "governance": "Templates→Quotes→Orders→WorkOS→OC",
+      "modules": "OC→WI→PS→CE→QT→OR→WO→TK",
+      "real_source": "MODULE-INT canonical",
+      "conflict": "CONTRADICTED",
+      "recommended_owner": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "concept": "module identity",
+      "governance": "5 boundary layers",
+      "modules": "8 module nodes",
+      "real_source": "codebase modules",
+      "conflict": "CONTRADICTED",
+      "recommended_owner": "Shared versioned registry"
+    },
+    {
+      "concept": "Golden Rule",
+      "governance": "Formula canonica Quotes calculează",
+      "modules": "Quotes nu calculează cost",
+      "real_source": "CostEngine",
+      "conflict": "CONTRADICTED",
+      "recommended_owner": "CostEngine"
+    },
+    {
+      "concept": "handoffs",
+      "governance": "Not on Boundary tab",
+      "modules": "CONTRACT_HANDOFFS static",
+      "real_source": "API contracts",
+      "conflict": "DUPLICATE",
+      "recommended_owner": "Contract services"
+    },
+    {
+      "concept": "events",
+      "governance": "systemEvents static",
+      "modules": "REFERENCE_EVENTS static",
+      "real_source": "None live on either page",
+      "conflict": "DUPLICATE",
+      "recommended_owner": "Event bus TBD"
+    },
+    {
+      "concept": "guardrails",
+      "governance": "guardrails array",
+      "modules": "Golden rules text",
+      "real_source": "Tests scattered",
+      "conflict": "DUPLICATE",
+      "recommended_owner": "Policy registry"
+    },
+    {
+      "concept": "health",
+      "governance": "None",
+      "modules": "GET /api/v1/system/health",
+      "real_source": "backend",
+      "conflict": "NOT_ON_GOV",
+      "recommended_owner": "Modules only"
+    },
+    {
+      "concept": "terminology",
+      "governance": "Templates, Quotes",
+      "modules": "PS, CE, QT",
+      "real_source": "Mixed EN/RO",
+      "conflict": "CONTRADICTED",
+      "recommended_owner": "Terminology map"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "task": "APP-AUTH-06C",
+  "reconciled_at": "2026-07-15",
+  "starting_head": "b123173",
+  "session_ledger": "docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md",
+  "sources": [
+    {
+      "evidence_source": "APP-AUTH-02 discrepancy inventory + owner_decision_package",
+      "relevant_facts": "Sandu employee_id=4; registry SK_PRINT_OPERATOR only; legacy SK_ASSEMBLY/ELECTRICIAN/FIELD_INSTALLER/LOCKSMITH/VINYL_APPLICATOR; 9 operation overrides; 7 additive mappings without registry competence; montaj_led hybrid bypass documented",
+      "current": "ACCEPTED",
+      "conflicts": "None with pilot — pilot uses product task aliases; APP-AUTH-02 uses registry operation_code; mapped via operational_catalog SUGGESTED_OPERATION_ALIASES",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-02B available projection closure",
+      "relevant_facts": "ORDER_LOCAL_FAIL_CLOSED confirmed; corrupt V2 snapshot isolation; available projection not Sandu-specific defect on :8001",
+      "current": "COMPLETE @ 328416b/59449bc",
+      "conflicts": "None — parity pilot did not re-open projection defect",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-02C external HTTP runtime closure",
+      "relevant_facts": "JWT env injection; external authenticated HTTP PASS on :8001",
+      "current": "COMPLETE @ 6acadc0",
+      "conflicts": "None",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-03 parity inventory",
+      "relevant_facts": "18 primary consumers; 2 connected target; Sandu confirmation flow 7-step observe-only; feature flags ALL_FALSE default",
+      "current": "PLAN COMPLETE",
+      "conflicts": "APP-AUTH-05 reported 14 unwired — corrected to 16 in APP-AUTH-06/OWNER-DECISION-04",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-04 contracts and comparators",
+      "relevant_facts": "12 domains; pure comparators for competence/authorization/explicit_mapping/eligibility; isolated backend/parity package",
+      "current": "GATE I1 PASS",
+      "conflicts": "None",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-05 integration @ 6aedb3d",
+      "relevant_facts": "2 consumers wired observe-only; response invariance PASS; Sandu observed in-process; zero mutations",
+      "current": "COMPLETE",
+      "conflicts": "Consumer count reporting ambiguity — resolved in OWNER-DECISION-04",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-05 docs @ 64aba64",
+      "relevant_facts": "Gate I2 evidence; enabled consumers matrix",
+      "current": "COMPLETE",
+      "conflicts": "None",
+      "used": true
+    },
+    {
+      "evidence_source": "APP-AUTH-06 pilot @ 738965a/0b5997f",
+      "relevant_facts": "420 raw observations; 16 unique fingerprints; 404 duplicates; 0 false positives; pilot :8011 isolated; trusted :8001 unchanged",
+      "current": "COMPLETE",
+      "conflicts": "None",
+      "used": true
+    },
+    {
+      "evidence_source": "OWNER-DECISION-04 @ deb5d69",
+      "relevant_facts": "P1-P10 confirmed; 11 unique discrepancy patterns; preliminary owner categories for all 16 fingerprints",
+      "current": "CONFIRMED",
+      "conflicts": "P10 sequence included UI-TRUTH before 06C — UI-TRUTH-01A complete; 01B-01E paused; 06C now active per session ledger",
+      "used": true
+    },
+    {
+      "evidence_source": "Session ledger @ b123173",
+      "relevant_facts": "Roadmap realigned; parity observe-only frozen at 2 consumers; next = APP-AUTH-06C",
+      "current": "COMPLETE",
+      "conflicts": "None",
+      "used": true
+    },
+    {
+      "evidence_source": "operational_catalog SUGGESTED_OPERATION_ALIASES",
+      "relevant_facts": "Maps pilot task types to registry operation_code for Sandu crosswalk",
+      "current": "CODE REFERENCE READ-ONLY",
+      "conflicts": "installation_prep not in alias dict — seed maps it under field_installation product_system_aliases",
+      "used": true
+    }
+  ],
+  "reconciliation_verdict": "EVIDENCE_CHAIN_CONSISTENT_NO_BLOCKING_CONFLICTS"
+}

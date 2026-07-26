@@ -1,0 +1,154 @@
+{
+  "task": "PRODUCT_SYSTEM_MOUNTING_SOLUTION_INTAKE_REFERENCE_V1",
+  "closeout_task": "PRODUCT_SYSTEM_MOUNTING_SOLUTION_RUNTIME_QA_CLOSEOUT_V1",
+  "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T13:55:54.962Z",
+  "head": "f6dbb84",
+  "backend_pid": 30992,
+  "frontend_pid": 4300,
+  "backend_startup_command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-backend.ps1",
+  "schema_freshness": {
+    "openapi_ok": true,
+    "mounting_solution": true
+  },
+  "finish_put_events": [
+    {
+      "status": 200,
+      "request_mounting_solution": null,
+      "response_mounting_solution": null
+    },
+    {
+      "status": 200,
+      "request_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      },
+      "response_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      }
+    },
+    {
+      "status": 200,
+      "request_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      },
+      "response_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      }
+    },
+    {
+      "status": 200,
+      "request_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      },
+      "response_mounting_solution": {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+          "bar_count": 3,
+          "mounting_bar_profile": "30x30x1.5",
+          "bar_material": "aluminum"
+        }
+      }
+    }
+  ],
+  "finish_put_count": 4,
+  "finish_put_200_count": 4,
+  "last_put_status": 200,
+  "last_response_mounting_solution": {
+    "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    "configuration": {
+      "bar_count": 3,
+      "mounting_bar_profile": "30x30x1.5",
+      "bar_material": "aluminum"
+    }
+  },
+  "reload_preserved": true,
+  "scope_none_child_inactive": true,
+  "historical_selection_preserved": true,
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s IntakeV6OperatorWorkspaceApp IntakeV6ReviewStep IntakeV6ReviewStep \n    at IntakeV6ReviewStep (http://127.0.0.1:3000/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx?t=1783941129306:278:46)\n    at main\n    at div\n    at IntakeV6WorkspaceHeaderStatusProvider (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6WorkspaceHeaderStatusContext.tsx:30:57)\n    at IntakeV6OperatorWorkspace (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspace.tsx?t=1783941129306:34:53)\n    at div\n    at IntakeV6OperatorWorkspaceFileDrop (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspaceFileDrop.tsx:24:61)\n    at div\n    at IntakeV6OperatorWorkspaceApp (http://127.0.0.1:3000/src/pages/IntakeV6OperatorWorkspaceApp.tsx?t=1783941129306:29:29)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:354:22)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Outlet (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:1410:34)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:1656:36)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthProvider (http://127.0.0.1:3000/src/contexts/AuthContext.tsx:96:32)\n    at Router (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4544:15)\n    at BrowserRouter (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:5290:5)\n    at Provider (http://127.0.0.1:3000/node_modules/.vite/deps/chunk-JZTXFAN2.js?v=0304d1ab:56:15)\n    at TooltipProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0304d1ab:52:5)\n    at QueryClientProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=0304d1ab:3168:3)\n    at App",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s IntakeV6OperatorWorkspaceApp IntakeV6ReviewStep IntakeV6ReviewStep \n    at IntakeV6ReviewStep (http://127.0.0.1:3000/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx?t=1783941129306:278:46)\n    at main\n    at div\n    at IntakeV6WorkspaceHeaderStatusProvider (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6WorkspaceHeaderStatusContext.tsx:30:57)\n    at IntakeV6OperatorWorkspace (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspace.tsx?t=1783941129306:34:53)\n    at div\n    at IntakeV6OperatorWorkspaceFileDrop (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspaceFileDrop.tsx:24:61)\n    at div\n    at IntakeV6OperatorWorkspaceApp (http://127.0.0.1:3000/src/pages/IntakeV6OperatorWorkspaceApp.tsx?t=1783941129306:29:29)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:354:22)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Outlet (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:1410:34)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3000/src/App.tsx?t=1783941129306:1656:36)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthProvider (http://127.0.0.1:3000/src/contexts/AuthContext.tsx:96:32)\n    at Router (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4544:15)\n    at BrowserRouter (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:5290:5)\n    at Provider (http://127.0.0.1:3000/node_modules/.vite/deps/chunk-JZTXFAN2.js?v=0304d1ab:56:15)\n    at TooltipProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0304d1ab:52:5)\n    at QueryClientProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=0304d1ab:3168:3)\n    at App"
+  ],
+  "network_errors": [
+    "404 GET http://127.0.0.1:8000/api/v1/intake-v6/workspaces/b00a3a0c-5a3d-4d0b-a95e-582bb542dde1/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+    "404 GET http://127.0.0.1:8000/api/v1/intake-v6/workspaces/b00a3a0c-5a3d-4d0b-a95e-582bb542dde1/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+    "404 GET http://127.0.0.1:8000/api/v1/intake-v6/workspaces/b00a3a0c-5a3d-4d0b-a95e-582bb542dde1/volumetric-face-back-prep/cost-draft?shanfren_forex=false"
+  ],
+  "scenarios": [
+    {
+      "name": "metal_solution_selected",
+      "screenshot": "01_metal_solution_selected.png",
+      "mounting_scope": "preparation_only",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": true,
+      "template_identity_visible": true,
+      "selector_disabled": false,
+      "bar_material": "aluminum",
+      "mounting_bar_profile": "30x30x1.5",
+      "bar_count": "3"
+    },
+    {
+      "name": "linked_child_preview",
+      "screenshot": "02_linked_child_preview.png",
+      "mounting_scope": "preparation_only",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": true,
+      "template_identity_visible": true,
+      "bar_material": "aluminum",
+      "mounting_bar_profile": "30x30x1.5",
+      "bar_count": "3"
+    },
+    {
+      "name": "reload_preserved",
+      "screenshot": "03_reload_preserved.png",
+      "mounting_scope": "preparation_only",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": true,
+      "template_identity_visible": true,
+      "selector_disabled": false,
+      "bar_material": "aluminum",
+      "mounting_bar_profile": "30x30x1.5",
+      "bar_count": "3"
+    },
+    {
+      "name": "scope_none_child_inactive",
+      "screenshot": "04_scope_none_child_inactive.png",
+      "mounting_scope": "none",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": false,
+      "template_identity_visible": true,
+      "selector_disabled": true,
+      "bar_material": "aluminum",
+      "mounting_bar_profile": "30x30x1.5",
+      "bar_count": "3"
+    }
+  ]
+}

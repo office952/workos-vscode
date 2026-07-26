@@ -16,6 +16,7 @@ from sqlalchemy import select
 
 from core.database import db_manager
 import models  # noqa: F401
+from data.commercial_rules_volumetric_v2 import SITE_INSTALLATION_STANDARD_EUR
 from models.product_templates import Product_templates
 from models.workcenter_rates import Workcenter_rates
 from seeds.seed_build4_templates import (
@@ -30,6 +31,8 @@ TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS"
 
 RETURN_PROFILE_MACHINE_FORMING_CODE = "RETURN_PROFILE_MACHINE_FORMING"
 RETURN_PROFILE_FACE_BONDING_CODE = "RETURN_PROFILE_FACE_BONDING"
+RETURN_CANT_VINYL_APPLICATION_LABOR_CODE = "RETURN_CANT_VINYL_APPLICATION_LABOR"
+RETURN_CANT_RAL_PAINT_LABOR_CODE = "RETURN_CANT_RAL_PAINT_LABOR"
 
 TVA_RATE_NOTE = (
     "Owner-defined quote pricing rate. Stored excluding TVA; "
@@ -184,6 +187,19 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
         ),
     },
     {
+        "code": RETURN_CANT_RAL_PAINT_LABOR_CODE,
+        "label": "Manopera vopsit RAL pe cant",
+        "rate_basis": "per_linear_meter",
+        "rate_per_linear_meter": 1.0,
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed: return_cant RAL paint labor = 1 EUR/ml excluding TVA. "
+            "Dedicated return_cant paint_application labor row; do not replace with generic PAINTING. "
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
         "code": "VINYL_APPLICATION",
         "label": "Aplicare autocolant / Oracal (legacy)",
         "rate_basis": "per_square_meter",
@@ -211,6 +227,19 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
         ),
     },
     {
+        "code": RETURN_CANT_VINYL_APPLICATION_LABOR_CODE,
+        "label": "Aplicare folie autocolanta pe cant",
+        "rate_basis": "per_linear_meter",
+        "rate_per_linear_meter": 1.0,
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed: return_cant vinyl application labor = 1 EUR/ml excluding TVA. "
+            "Dedicated return_cant vinyl_application labor row; do not replace with FACE_VINYL_APPLICATION_LABOR or VINYL_APPLICATION. "
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
         "code": "PACKAGING",
         "label": "Ambalare litere volumetrice",
         "rate_basis": "per_square_meter",
@@ -220,6 +249,25 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
         "notes": (
             "Owner-defined: 10 EUR/mp (excluding TVA). "
             "TPL-VOLUMETRIC-LETTERS operation packaging_letters; quantity from letter_face_area_m2. "
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
+        "code": "SITE_INSTALLATION_STANDARD",
+        "label": "Montaj standard la locatie",
+        "rate_basis": "per_piece",
+        "rate_per_linear_meter": float(SITE_INSTALLATION_STANDARD_EUR),
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed commercial tariff SITE_INSTALLATION_STANDARD: "
+            "200 EUR + TVA fixed once per job / installation location "
+            "(not per letter, not per logo). Includes standard crew, up to one normal working day, "
+            "ladder-accessible mounting, standard fixings/consumables, simple electrical to an "
+            "existing supply point, and travel within Bucharest. Excludes nacelle/scaffold/crane, "
+            "permits, night/weekend, complex/new electrical, facade repair, existing-sign removal, "
+            "special access fees, and work beyond one day. Travel outside Bucharest is priced "
+            "separately in a later phase — do not auto-add distance lines. "
             + TVA_RATE_NOTE
         ),
     },

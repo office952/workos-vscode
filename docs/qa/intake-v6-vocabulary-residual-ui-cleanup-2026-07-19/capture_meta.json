@@ -1,0 +1,141 @@
+{
+  "workspace": {
+    "id": "b20e5268-4dd0-461d-bdfb-e531ad778bc6",
+    "workspace_code": "IV6-FA316576",
+    "title": "vocab-cleanup-1784447571906",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "status": "collecting_data",
+    "payload": {
+      "schema_version": "1.0.0",
+      "client": {
+        "client_name": null,
+        "job_title": null,
+        "width_mm": null,
+        "height_mm": null
+      },
+      "product_binding": {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "template_id": 8,
+        "template_label": "Litere volumetrice",
+        "product_family": "litere_volumetrice",
+        "product_family_name": "Litere volumetrice",
+        "bound_at": "2026-07-19T07:52:51.925516Z"
+      },
+      "intake_request_code": null,
+      "offer_method": null,
+      "analyzer_mode": "analyzer_first",
+      "template_hint_code": null,
+      "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "source": null,
+      "work_intake_context": {
+        "offer_method": null,
+        "analyzer_mode": "analyzer_first",
+        "template_hint_code": null,
+        "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "source": null,
+        "selected_template_is_initial": true,
+        "product_truth_final_decided_later": true
+      },
+      "svg_source": null,
+      "svg": null,
+      "svg_source_text": null,
+      "svg_analysis_json": null,
+      "path_geometry_summary": null,
+      "quote_geometry": null,
+      "layer_role_setup": null,
+      "layer_role_review": null,
+      "product_composition_recommendation": null,
+      "product_composition_confirmed": null,
+      "product_truth": null,
+      "terminology_mode": null,
+      "finish_setup": null,
+      "offer_scope": null,
+      "offer_scope_confirmed": null,
+      "offer_scope_dependency_validation": null,
+      "sheet_quote_override": null
+    },
+    "readiness_status": "missing_svg",
+    "created_at": "2026-07-19T07:52:51.925516",
+    "updated_at": "2026-07-19T07:52:51.925516"
+  },
+  "notes": [
+    {
+      "file": "01_page2_tab_labels.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "svg": "litere-cu-fundal-acm-segmentat.svg",
+      "tab": "review",
+      "expected": "Finisaje / Iluminare și surse / Montaj",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/01_page2_tab_labels.png"
+    },
+    {
+      "file": "02_iluminare_si_surse.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "tab": "iluminare",
+      "expected": "Iluminare și surse / Alimentare LED",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/02_iluminare_si_surse.png"
+    },
+    {
+      "file": "03_fundal_si_carcasa.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "tab": "montaj",
+      "section": "fundal",
+      "expected": "Fundal și carcasă cluster visible",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/03_fundal_si_carcasa.png"
+    },
+    {
+      "file": "08_owner_decision_primary.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "section": "acp-modules",
+      "expected": "ACP modules may be absent on this fixture path",
+      "note": "fallback full montaj page",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/08_owner_decision_primary.png"
+    },
+    {
+      "file": "09_sticky_blocker_summary.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "section": "blocker-banner",
+      "expected": "sticky actionable blockers",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/09_sticky_blocker_summary.png"
+    },
+    {
+      "file": "10_segmented_confirmed_or_proposal.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "section": "segmented",
+      "expected": "proposal or confirmed RO labels",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/10_segmented_confirmed_or_proposal.png"
+    },
+    {
+      "file": "11_electrical_panel.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "section": "electrical",
+      "expected": "RO supply labels",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/11_electrical_panel.png"
+    },
+    {
+      "file": "12_final_confirmation_footer.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "section": "footer",
+      "expected": "Continuă / Confirmare state",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/12_final_confirmation_footer.png"
+    },
+    {
+      "file": "13_full_montaj_page.png",
+      "url": "http://127.0.0.1:3001/intake-v6/b20e5268-4dd0-461d-bdfb-e531ad778bc6/operator",
+      "workspace": "IV6-FA316576",
+      "tab": "montaj",
+      "expected": "full Montaj composition",
+      "path": "C:/w/psiso/docs/qa/intake-v6-vocabulary-residual-ui-cleanup-2026-07-19/screenshots/13_full_montaj_page.png"
+    }
+  ],
+  "ownerGateInPrimary": false,
+  "ui": "http://127.0.0.1:3001",
+  "backend": "http://127.0.0.1:8003"
+}

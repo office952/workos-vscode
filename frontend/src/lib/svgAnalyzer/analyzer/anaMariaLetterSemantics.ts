@@ -51,5 +51,6 @@ export function isLetterLayerId(idOrName: string): boolean {
 
 export function isLogoLayerId(idOrName: string): boolean {
   const token = normalizeLayerIdToken(idOrName)
+  if (/^logo_instance_\d{3}$/.test(token)) return true
   return ANA_MARIA_LOGO_LAYER_IDS.includes(token as typeof ANA_MARIA_LOGO_LAYER_IDS[number])
 }

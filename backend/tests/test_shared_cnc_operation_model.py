@@ -35,8 +35,8 @@ class TestVolumetricLettersCncRows:
         assert "cnc_face_bevel_plexiglas_3mm" in keys
         cut = next(r for r in rows if r.key == "cnc_face_cutting_plexiglas_3mm")
         bevel = next(r for r in rows if r.key == "cnc_face_bevel_plexiglas_3mm")
-        assert cut.display_name == "Debitare CNC față Plexiglas 3 mm"
-        assert bevel.display_name == "Șanfren CNC față Plexiglas 3 mm"
+        assert cut.display_name == "Debitare CNC față plexiglas 3mm PMMA - opal"
+        assert bevel.display_name == "Șanfren CNC față plexiglas 3mm PMMA - opal"
         assert cut.quantity == pytest.approx(PBL_FACE_ML, rel=1e-4)
         assert bevel.quantity == pytest.approx(PBL_FACE_ML, rel=1e-4)
         assert cut.passes == 1
@@ -47,18 +47,18 @@ class TestVolumetricLettersCncRows:
     def test_plexiglas_label_explicit(self, pbl_geometry):
         rows = build_volumetric_letters_cnc_operation_rows(pbl_geometry, backing_mode="none")
         cut = next(r for r in rows if r.key == "cnc_face_cutting_plexiglas_3mm")
-        assert cut.material_name == "Plexiglas 3 mm"
+        assert cut.material_name == "plexiglas 3mm PMMA - opal"
         assert cut.thickness_mm == 3.0
 
-    def test_forex_backing_five_passes_owner_override(self, pbl_geometry):
+    def test_forex_backing_three_passes_without_bevel(self, pbl_geometry):
         rows = build_volumetric_letters_cnc_operation_rows(
             pbl_geometry,
             backing_mode="forex_10_no_bevel",
         )
         back = next(r for r in rows if r.key == "cnc_backing_cutting_forex_10mm")
-        assert back.passes == FOREX_10MM_CUTTING_PASSES_OWNER == 5
+        assert back.passes == FOREX_10MM_CUTTING_PASSES_OWNER == 3
         assert back.owner_pass_override is True
-        assert back.operation_equivalent_quantity == pytest.approx(PBL_FACE_ML * 5, rel=1e-4)
+        assert back.operation_equivalent_quantity == pytest.approx(PBL_FACE_ML * 3, rel=1e-4)
         assert "cnc_backing_bevel_forex_10mm" not in [r.key for r in rows]
 
     def test_backing_bevel_only_when_selected(self, pbl_geometry):
@@ -67,6 +67,9 @@ class TestVolumetricLettersCncRows:
             backing_mode="forex_10_with_bevel",
         )
         assert "cnc_backing_bevel_forex_10mm" in [r.key for r in with_bevel]
+        bevel = next(r for r in with_bevel if r.key == "cnc_backing_bevel_forex_10mm")
+        assert bevel.passes == 2
+        assert bevel.operation_equivalent_quantity == pytest.approx(PBL_FACE_ML * 2, rel=1e-4)
 
     def test_face_cutting_production_resource_binding(self, pbl_geometry):
         rows = build_volumetric_letters_cnc_operation_rows(pbl_geometry, backing_mode="none")
@@ -124,7 +127,7 @@ class TestCuttingServiceContract:
             perimeter_ml=10.0,
             thickness_mm=3.0,
             material_family="plexiglas",
-            material_name="Plexiglas 3 mm",
+            material_name="plexiglas 3mm PMMA - opal",
         )
         assert len(rows) >= 1
         assert any("nu se consumă stoc intern" in w for w in warnings)

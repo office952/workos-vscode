@@ -1,0 +1,15 @@
+{
+  "task": "OWNER-DECISION-06",
+  "status": "PAUSED",
+  "blocks_general_contract": false,
+  "app_auth_06g": "DEFERRED until PROD-FLEX-ARCH-01 and implementation GO",
+  "data_changes": "FORBIDDEN in this gate",
+  "owner_notes": {
+    "SK_PRINT_OPERATOR": "test data per owner — not production competence truth",
+    "welding_mounting": "real competences confirmed by owner — correction in separate task",
+    "model_to_apply_later": "post principal, competente, utilaje permise, posturi de lucru permise"
+  },
+  "named_findings": "See named_employee_runtime_finding.json — no operational if-Sandu rules",
+  "parity_observe": "sandu.py employee_id=4 observe-only when flags enabled",
+  "owner_status": "CONFIRMED"
+}

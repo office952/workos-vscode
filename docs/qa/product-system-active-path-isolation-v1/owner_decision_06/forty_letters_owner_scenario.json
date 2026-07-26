@@ -1,0 +1,22 @@
+{
+  "task": "OWNER-DECISION-06",
+  "scenario": "Asamblare 40 litere",
+  "owner_status": "CONFIRMED",
+  "model": {
+    "ready": true,
+    "when": "dependencies and materials complete",
+    "eligible_employees": "N from registry",
+    "principal_operator": "optional",
+    "participants": "0..N dynamic",
+    "start": "may begin with 1 employee",
+    "help": "additional eligible coworkers may join",
+    "exit": "participants may leave for other READY tasks",
+    "progress": { "total": 40, "completed": "X", "remaining": "40-X", "unit": "litera" },
+    "complete": "only when operation progress satisfied — not when one helper finishes"
+  },
+  "explicitly_not_confirmed": [
+    "fixed team of 2, 4, 6, or 10 required",
+    "recommended headcount blocking start"
+  ],
+  "current_application_gap": "claim/solo works; quantity and help/join missing"
+}

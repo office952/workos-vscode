@@ -1,0 +1,263 @@
+{
+  "read_only": true,
+  "workspace_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+  "workspace_record_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+  "workspace_code": "IV6-189D2F12",
+  "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "product_binding_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "planner_version": "v1",
+  "eligible_entries": [
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:pseudo:maria",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:pseudo:maria"
+    },
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:pseudo:soare",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:pseudo:soare"
+    },
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:pseudo:ana",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:pseudo:ana"
+    },
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:pseudo:gradinita",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:pseudo:gradinita"
+    },
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:logo-stanga",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:logo-stanga"
+    },
+    {
+      "entry_key": "svg.selected_layer_refs[]:layer_id:logo-dreapta",
+      "field_key": "svg.selected_layer_refs[]",
+      "runtime_source": "svg.selected_layer_refs[]",
+      "product_truth_path": "svg.selected_layer_refs[]",
+      "state": "confirmed",
+      "value_status": "explicit_confirmed",
+      "promotion_allowed": true,
+      "reason": "Selected layer ref is confirmed and carries a stable layer_id, so it is eligible for Product Truth promotion.",
+      "blockers": [],
+      "identity_key": "layer_id:logo-dreapta"
+    }
+  ],
+  "blocked_entries": [
+    {
+      "entry_key": "finish.finish_target",
+      "field_key": "finish.finish_target",
+      "runtime_source": "finish_setup.finish_target",
+      "product_truth_path": "components.finish.target",
+      "state": "blocked",
+      "value_status": "missing",
+      "promotion_allowed": false,
+      "reason": "Field value is missing, so it cannot be promoted.",
+      "blockers": [
+        "FINISH_TARGET_MISSING"
+      ]
+    },
+    {
+      "entry_key": "finish.print_required:layer_key:logo-stanga",
+      "field_key": "finish.print_required",
+      "runtime_source": "finish_setup.artwork_finishes[].print_required",
+      "product_truth_path": "components.artwork.items[].printRequired",
+      "state": "suggested",
+      "value_status": "derived_evidence_only",
+      "promotion_allowed": false,
+      "reason": "Artwork boolean is missing and only encoded execution_type evidence exists; derived evidence is not canonical truth.",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "identity_key": "layer_key:logo-stanga"
+    },
+    {
+      "entry_key": "finish.print_required:layer_key:logo-dreapta",
+      "field_key": "finish.print_required",
+      "runtime_source": "finish_setup.artwork_finishes[].print_required",
+      "product_truth_path": "components.artwork.items[].printRequired",
+      "state": "suggested",
+      "value_status": "derived_evidence_only",
+      "promotion_allowed": false,
+      "reason": "Artwork boolean is missing and only encoded execution_type evidence exists; derived evidence is not canonical truth.",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "identity_key": "layer_key:logo-dreapta"
+    },
+    {
+      "entry_key": "finish.lamination_required:layer_key:logo-stanga",
+      "field_key": "finish.lamination_required",
+      "runtime_source": "finish_setup.artwork_finishes[].lamination_required",
+      "product_truth_path": "components.artwork.items[].laminationRequired",
+      "state": "suggested",
+      "value_status": "derived_evidence_only",
+      "promotion_allowed": false,
+      "reason": "Artwork boolean is missing and only encoded execution_type evidence exists; derived evidence is not canonical truth.",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "identity_key": "layer_key:logo-stanga"
+    },
+    {
+      "entry_key": "finish.lamination_required:layer_key:logo-dreapta",
+      "field_key": "finish.lamination_required",
+      "runtime_source": "finish_setup.artwork_finishes[].lamination_required",
+      "product_truth_path": "components.artwork.items[].laminationRequired",
+      "state": "suggested",
+      "value_status": "derived_evidence_only",
+      "promotion_allowed": false,
+      "reason": "Artwork boolean is missing and only encoded execution_type evidence exists; derived evidence is not canonical truth.",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "identity_key": "layer_key:logo-dreapta"
+    },
+    {
+      "entry_key": "mounting.mounting_scope",
+      "field_key": "mounting.mounting_scope",
+      "runtime_source": "finish_setup.mounting_scope",
+      "product_truth_path": "components.mounting.mountingScope",
+      "state": "missing",
+      "value_status": "missing",
+      "promotion_allowed": false,
+      "reason": "Field value is missing, so it cannot be promoted.",
+      "blockers": [
+        "MOUNTING_SCOPE_MISSING"
+      ]
+    },
+    {
+      "entry_key": "support.support_type",
+      "field_key": "support.support_type",
+      "runtime_source": "finish_setup.support_type",
+      "product_truth_path": "components.support.supportType",
+      "state": "suggested",
+      "value_status": "evidence_only",
+      "promotion_allowed": false,
+      "reason": "Support type must be explicitly persisted and confirmed; mounting/support/SVG evidence cannot be promoted as canonical support truth.",
+      "blockers": [
+        "SUPPORT_TYPE_MISSING"
+      ]
+    }
+  ],
+  "blockers": [
+    {
+      "field_key": "finish.finish_target",
+      "identity_key": null,
+      "blockers": [
+        "FINISH_TARGET_MISSING"
+      ],
+      "state": "blocked"
+    },
+    {
+      "field_key": "finish.print_required",
+      "identity_key": "layer_key:logo-stanga",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "state": "suggested"
+    },
+    {
+      "field_key": "finish.print_required",
+      "identity_key": "layer_key:logo-dreapta",
+      "blockers": [
+        "PRINT_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "state": "suggested"
+    },
+    {
+      "field_key": "finish.lamination_required",
+      "identity_key": "layer_key:logo-stanga",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "state": "suggested"
+    },
+    {
+      "field_key": "finish.lamination_required",
+      "identity_key": "layer_key:logo-dreapta",
+      "blockers": [
+        "LAMINATION_REQUIRED_UNKNOWN",
+        "ARTWORK_BOOLEAN_EXPLICIT_VALUE_MISSING"
+      ],
+      "state": "suggested"
+    },
+    {
+      "field_key": "mounting.mounting_scope",
+      "identity_key": null,
+      "blockers": [
+        "MOUNTING_SCOPE_MISSING"
+      ],
+      "state": "missing"
+    },
+    {
+      "field_key": "support.support_type",
+      "identity_key": null,
+      "blockers": [
+        "SUPPORT_TYPE_MISSING"
+      ],
+      "state": "suggested"
+    }
+  ],
+  "downstream_write_intent": {
+    "product_truth_write": false,
+    "pricing_write": false,
+    "quote_write": false,
+    "order_write": false,
+    "product_definition_write": false,
+    "product_aggregate_write": false,
+    "task_graph_write": false,
+    "execution_runtime_write": false,
+    "inventory_movement": false,
+    "db_write": false
+  },
+  "notes": [
+    "Read-only Product Truth promotion planner only.",
+    "Only confirmed runtime capture entries with stable canonical identity are eligible.",
+    "No Product Truth, Pricing, Quote, Order, Execution, ProductAggregate, TaskGraph, or DB write behavior is invoked."
+  ]
+}

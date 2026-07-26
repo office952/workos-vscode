@@ -19,4 +19,20 @@ describe("pseudoLayerExpansionGuard", () => {
     const doc = parseSvg(source, "ana-maria-gradinita-fara-layere.svg", source.length);
     expect(shouldPreserveExistingLayerStructure(doc)).toBe(false);
   });
+
+  it("preserves Remus named Alucobond + Litere Corel layers", () => {
+    const remus = join(
+      process.cwd(),
+      "..",
+      "docs",
+      "worklog",
+      "realignment",
+      "audit_assets",
+      "remus_acm_letters_svg_v1",
+      "test-bond-litere.svg",
+    );
+    const source = readFileSync(remus, "utf8");
+    const doc = parseSvg(source, "test-bond-litere.svg", source.length);
+    expect(shouldPreserveExistingLayerStructure(doc)).toBe(true);
+  });
 });

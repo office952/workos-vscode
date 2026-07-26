@@ -58,9 +58,11 @@ export const VOLUME_FINISH_OPTIONS: { value: VolumeFinish; label: string }[] = [
 
 export const VOLUMETRIC_COMPONENT_PRODUCTION_HINTS: Record<string, string> = {
   comp_face_litere:
-    "Vizual față (plexi): opțional colantare Oracal 651 sau 8500 — la final, după premontaj pe suport sau înainte de montaj pe perete dacă nu există suport. Contract operațional curent: colantarea feței rămâne după asamblare (și după uscarea vopsirii cantului, dacă există).",
+    "Vizual față (plexiglas 3mm PMMA - opal): finisaj opțional Oracal 8500 / 641 / 651 sau Printat/Laminat — la final, după premontaj pe suport sau înainte de montaj pe perete dacă nu există suport. Contract operațional curent: finisaj față după asamblare (și după uscarea vopsirii cantului, dacă există).",
   comp_lateral_litere:
     "Volum aluminiu: Oracal 651 înainte de modelare la mașină; sau vopsire doar după lipirea pe vizual față (cu șanfren față). Contract operațional curent: cant colantat înainte de formare, cant vopsit după asamblare.",
+  comp_led_litere:
+    "Sistem LED: Modul LED 12V pe spate Forex (standard); Bandă LED 12V alternativă; surse 12V pe clasă 60/100/160/200 W. Fără suport comun: sursele în colet.",
   comp_finisaj_litere:
     "Asamblare + QC; colantarea față 651/8500 și montajul final se aliniază cu tipul de montaj (premontaj / perete). Contract operațional curent: la no shared support, sursele LED sunt ambalate în colet (fără task separat de montaj sursă pe suport).",
 };
@@ -117,7 +119,7 @@ export function getVolumeFinishProductionNote(volumeFinish: VolumeFinish | undef
 
 export const VOLUMETRIC_PRODUCTION_RULES: readonly { title: string; body: string }[] = [
   {
-    title: "Vizual față (plexi)",
+    title: "Vizual față (plexiglas 3mm PMMA - opal)",
     body:
       "Opțional colantare Oracal 651 sau 8500 translucid. Proces la final: după premontaj pe suport sau înainte de montaj pe perete dacă nu există premontaj.",
   },

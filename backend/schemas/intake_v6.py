@@ -37,8 +37,10 @@ from schemas.intake_v4 import (
     IntakeV4NestingPreviewResponse,
     IntakeV4OrderBoundTaskReadinessResponse,
     IntakeV4OwnerApprovalRequest,
+    IntakeV4OfferScopeSaveRequest,
     IntakeV4PricingInputPreviewResponse,
     IntakeV4ProductBinding,
+    IntakeV4ProductCompositionConfirmationRequest,
     IntakeV4ProductionHandoffPreviewResponse,
     IntakeV4ProductSystemBindingResponse,
     IntakeV4QuoteHandoffPreviewResponse,
@@ -89,6 +91,8 @@ IntakeV6NestingPreviewResponse = IntakeV4NestingPreviewResponse
 IntakeV6OwnerApprovalRequest = IntakeV4OwnerApprovalRequest
 IntakeV6PricingInputPreviewResponse = IntakeV4PricingInputPreviewResponse
 IntakeV6ProductBinding = IntakeV4ProductBinding
+IntakeV6ProductCompositionConfirmationRequest = IntakeV4ProductCompositionConfirmationRequest
+IntakeV6OfferScopeSaveRequest = IntakeV4OfferScopeSaveRequest
 IntakeV6ProductionHandoffPreviewResponse = IntakeV4ProductionHandoffPreviewResponse
 IntakeV6ProductSystemBindingResponse = IntakeV4ProductSystemBindingResponse
 IntakeV6QuoteHandoffPreviewResponse = IntakeV4QuoteHandoffPreviewResponse
@@ -148,7 +152,11 @@ class IntakeV6TemplateFormContractResponse(BaseModel):
     alignment_status: Literal["aligned", "partial", "blocked"] = "partial"
     template_active: bool = False
     dossier_status: str | None = None
-    dossier_source: Literal["product_blueprint_dossier", "static_contract_fallback"] = "static_contract_fallback"
+    dossier_source: Literal[
+        "product_blueprint_dossier",
+        "static_contract_fallback",
+        "canonical_template_contract",
+    ] = "static_contract_fallback"
     ui_must_not_invent_final_options: bool = True
     variant_fields: list[dict[str, Any]] = Field(default_factory=list)
     canonical_rows: list[dict[str, Any]] = Field(default_factory=list)
@@ -169,6 +177,8 @@ class IntakeV6CommercialSpineStateResponse(BaseModel):
     pricing_review: dict[str, Any] = Field(default_factory=dict)
     owner_approval: dict[str, Any] = Field(default_factory=dict)
     snapshot_v2: dict[str, Any] = Field(default_factory=dict)
+    snapshot_authoritative_offer: dict[str, Any] | None = None
+    pricing_review_read_model: dict[str, Any] | None = None
     quote_accepted: bool = False
     quote_commercial_totals: dict[str, Any] = Field(default_factory=dict)
     v6_order_conversion: dict[str, Any] = Field(default_factory=dict)
@@ -202,3 +212,27 @@ class IntakeV6QuoteSnapshotV2CreateRequest(BaseModel):
     operator_confirmation: bool = True
     expected_grand_total: float | None = None
     expected_pricing_hash: str | None = None
+
+
+class IntakeV6ProductTruthWriterDryRunRequest(BaseModel):
+    dry_run_only: Literal[True]
+    expected_workspace_code: str | None = None
+    expected_root_template_code: str
+    expected_product_binding_template_code: str
+    planner_version: str
+    planner_hash: str | None = None
+    payload_hash_basis: str | None = None
+    actor: dict[str, Any] = Field(default_factory=dict)
+    requested_entry_keys: list[str] | None = None
+
+
+class IntakeV6ProductTruthWriterPromoteRequest(BaseModel):
+    promotion_confirmed: Literal[True]
+    expected_workspace_code: str | None = None
+    expected_root_template_code: str
+    expected_product_binding_template_code: str
+    planner_version: str
+    planner_hash: str | None = None
+    payload_hash_basis: str | None = None
+    actor: dict[str, Any] = Field(default_factory=dict)
+    requested_entry_keys: list[str] | None = None
