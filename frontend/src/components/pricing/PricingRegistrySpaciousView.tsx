@@ -347,10 +347,10 @@ export function PricingRegistrySpaciousView({
               key={key}
               type="button"
               onClick={() => onMainViewChange(key)}
-              className={`px-3 py-1.5 text-[12px] font-medium rounded-full border transition-all ${
+              className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition-all ${
                 mainView === key
-                  ? "bg-blue-600/20 text-blue-300 border-blue-600/50"
-                  : "bg-transparent text-muted-foreground border-wo-border-strong hover:border-slate-500 hover:text-muted-foreground"
+                  ? "border border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600/50 dark:bg-blue-600/20 dark:text-blue-300"
+                  : "border border-wo-border-strong bg-transparent text-wo-text-secondary hover:bg-wo-hover hover:text-wo-text-primary"
               }`}
             >
               {meta.label}
@@ -363,7 +363,7 @@ export function PricingRegistrySpaciousView({
       {/* Typed catalog views — Pricing Foundation V1 */}
       {(mainView === "coverage" || mainView === "all" || mainView === "verify") && (
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground mr-1">Catalog:</span>
+          <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary">Catalog:</span>
           {(
             [
               { key: "all" as const, label: "Toate tipurile" },
@@ -376,10 +376,11 @@ export function PricingRegistrySpaciousView({
               key={tab.key}
               type="button"
               onClick={() => setTypedCatalogView(tab.key)}
-              className={`px-2.5 py-1 text-[11px] font-medium rounded-md border transition-all ${
+              data-testid={`pricing-catalog-filter-${tab.key}`}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
                 typedCatalogView === tab.key
-                  ? "bg-cyan-900/30 text-cyan-200 border-cyan-700/50"
-                  : "bg-transparent text-muted-foreground border-wo-border-strong hover:border-slate-500 hover:text-muted-foreground"
+                  ? "border border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-700/50 dark:bg-cyan-900/30 dark:text-cyan-200"
+                  : "border border-wo-border-strong bg-transparent text-wo-text-secondary hover:bg-wo-hover hover:text-wo-text-primary"
               }`}
             >
               {tab.label}
@@ -436,7 +437,7 @@ export function PricingRegistrySpaciousView({
                     placeholder="Caută cod, nume…"
                     value={stackSearch}
                     onChange={(e) => onStackSearchChange(e.target.value)}
-                    className="pl-8 pr-3 py-1.5 text-[12px] bg-wo-surface-inset border border-wo-border-strong rounded-lg text-foreground w-[200px] focus:outline-none focus:border-blue-600/50"
+                    className="w-[200px] rounded-lg border border-wo-border-strong bg-wo-surface-inset py-1.5 pl-8 pr-3 text-[12px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-blue-600/50 focus:outline-none"
                   />
                 </div>
               )}
@@ -601,10 +602,10 @@ function TemplateZone({
                 type="button"
                 onClick={() => onSelectTemplate(code)}
                 title="Recent"
-                className={`px-2 py-0.5 rounded-full text-[10px] border transition-colors ${
+                className={`rounded-full border px-2 py-0.5 text-[10px] transition-colors ${
                   code === selectedTemplate
-                    ? "text-blue-300 border-blue-700/40 bg-blue-900/25"
-                    : "text-muted-foreground border-wo-border-strong hover:text-blue-300"
+                    ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-700/40 dark:bg-blue-900/25 dark:text-blue-300"
+                    : "border-wo-border-strong text-wo-text-secondary hover:border-blue-300 hover:text-blue-700 dark:hover:text-blue-300"
                 }`}
               >
                 {code}
@@ -614,13 +615,13 @@ function TemplateZone({
       )}
 
       {problemBanner && (
-        <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg bg-red-900/15 border border-red-800/30 text-[12px] text-red-200">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-[12px] text-red-800 dark:border-red-800/40 dark:bg-red-900/25 dark:text-red-200">
           <span>{problemBanner}.</span>
           {firstProblem && (
             <button
               type="button"
               onClick={() => onGoToProblem(firstProblem)}
-              className="text-blue-400 font-semibold hover:underline whitespace-nowrap"
+              className="whitespace-nowrap font-semibold text-blue-700 hover:underline dark:text-blue-300"
             >
               Mergi la problemă
             </button>
@@ -646,7 +647,7 @@ function TemplateZone({
                 placeholder="Caută template_code, nume, familie…"
                 value={pickerSearch}
                 onChange={(e) => onPickerSearchChange(e.target.value)}
-                className="w-full mt-2 px-3 py-2 text-[13px] bg-card border border-wo-border-strong rounded-lg text-foreground focus:outline-none focus:border-blue-600/50"
+                className="mt-2 w-full rounded-lg border border-wo-border-strong bg-card px-3 py-2 text-[13px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-blue-600/50 focus:outline-none"
                 autoFocus
               />
             </div>

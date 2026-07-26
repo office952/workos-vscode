@@ -83,7 +83,7 @@ export function AlertBanner({
             {title}
           </p>
         )}
-        <div className={cn("text-muted-foreground", compact ? "text-xs" : "text-sm", title && "mt-0.5")}>
+        <div className={cn("text-wo-text-secondary", compact ? "text-xs" : "text-sm", title && "mt-0.5")}>
           {children}
         </div>
       </div>

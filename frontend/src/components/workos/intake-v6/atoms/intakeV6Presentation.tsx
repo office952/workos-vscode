@@ -24,18 +24,18 @@ export const v6 = {
 	sectionTitle: "text-[14px] font-semibold leading-snug text-wo-text-secondary",
 	zoneTitle: "text-[12px] font-semibold text-wo-text-muted",
 	sectionDesc: "mt-0.5 text-[11px] leading-relaxed text-wo-text-dim",
-	label: "mb-1 block text-[12px] font-medium text-wo-text-dim",
-	metricLabel: "text-[11px] font-medium text-wo-text-dim",
-	helper: "text-[11px] text-wo-text-dim",
+	label: "mb-1 block text-[12px] font-medium text-wo-text-secondary",
+	metricLabel: "text-[11px] font-medium text-wo-text-secondary",
+	helper: "text-[11px] text-wo-text-muted",
 	metricValue: "text-[15px] font-semibold leading-tight text-wo-text-primary",
 	input:
-		"w-full rounded border border-wo-border-strong bg-wo-surface-input px-3 py-2 text-[12px] text-wo-text-secondary outline-none focus:border-blue-500/50",
+		"w-full rounded border border-wo-border-strong bg-wo-surface-input px-3 py-2 text-[12px] text-wo-text-primary outline-none placeholder:text-wo-text-muted focus:border-blue-500/50 disabled:cursor-not-allowed disabled:bg-wo-surface-inset disabled:text-wo-text-muted disabled:opacity-70",
 	btnPrimary:
-		"rounded-md bg-sky-500/15 px-4 py-2 text-[12px] font-bold text-sky-700 border border-sky-500/30 hover:bg-sky-500/25 dark:text-sky-300",
+		"rounded-md border border-sky-500/30 bg-sky-500/15 px-4 py-2 text-[12px] font-bold text-sky-800 hover:bg-sky-500/25 disabled:cursor-not-allowed disabled:border-wo-border-strong disabled:bg-wo-surface-inset disabled:text-wo-text-muted disabled:opacity-80 dark:text-sky-300",
 	btnConfirm:
-		"rounded-md bg-gradient-to-b from-emerald-500 to-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white shadow-[0_4px_14px_rgba(16,185,129,0.35)] border border-emerald-400/40 hover:from-emerald-400 hover:to-emerald-500 disabled:cursor-not-allowed disabled:border-emerald-800/30 disabled:from-emerald-900/40 disabled:to-emerald-900/60 disabled:text-emerald-200/40 disabled:shadow-none",
+		"rounded-md border border-emerald-400/40 bg-gradient-to-b from-emerald-500 to-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white shadow-[0_4px_14px_rgba(16,185,129,0.35)] hover:from-emerald-400 hover:to-emerald-500 disabled:cursor-not-allowed disabled:border-wo-border-strong disabled:bg-wo-surface-inset disabled:from-transparent disabled:to-transparent disabled:text-wo-text-muted disabled:shadow-none disabled:opacity-90",
 	btnGhost:
-		"rounded-md border border-wo-border-strong bg-wo-hover px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-sky-500/30",
+		"rounded-md border border-wo-border-strong bg-wo-hover px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-sky-500/30 disabled:cursor-not-allowed disabled:text-wo-text-muted disabled:opacity-70",
 } as const;
 
 /**

@@ -501,7 +501,7 @@ export default function IntakeV6OfferScopePanel({
       ) : null}
 
       <div
-        className="mt-2 space-y-0.5 rounded border border-slate-700/50 bg-slate-950/30 px-2 py-1.5 text-[10px] text-slate-400"
+        className="mt-2 space-y-0.5 rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[10px] text-wo-text-secondary"
         data-testid="intake-v6-offer-scope-summary"
       >
         <p data-testid="intake-v6-offer-scope-summary-mode">

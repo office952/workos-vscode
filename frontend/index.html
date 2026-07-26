@@ -37,10 +37,16 @@
             // Match ThemeProvider defaultTheme="light"
             resolved = "light";
           }
-          document.documentElement.classList.remove("light", "dark");
-          document.documentElement.classList.add(resolved);
+          var root = document.documentElement;
+          root.classList.remove("light", "dark");
+          root.classList.add(resolved);
+          root.setAttribute("data-theme", resolved);
+          root.style.colorScheme = resolved;
         } catch (e) {
-          document.documentElement.classList.add("light");
+          var fallback = document.documentElement;
+          fallback.classList.add("light");
+          fallback.setAttribute("data-theme", "light");
+          fallback.style.colorScheme = "light";
         }
       })();
     </script>
