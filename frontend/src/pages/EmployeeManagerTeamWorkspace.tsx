@@ -132,7 +132,7 @@ export default function EmployeeManagerTeamWorkspace() {
       </div>
 
       <div
-        className="flex gap-2 border-b border-[#1E293B] pb-2"
+        className="flex gap-2 border-b border-wo-border-subtle pb-2"
         role="tablist"
         data-testid="employee-manager-team-tabs"
       >
@@ -174,7 +174,7 @@ export default function EmployeeManagerTeamWorkspace() {
               Lună
               <input
                 type="month"
-                className="ml-2 rounded border border-[#1E293B] bg-[#0A1020] px-2 py-1 text-[11px] text-slate-200"
+                className="ml-2 rounded border border-wo-border-subtle bg-[#0A1020] px-2 py-1 text-[11px] text-slate-200"
                 defaultValue={`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`}
                 onChange={(e) => {
                   const [y, m] = e.target.value.split("-").map(Number);
@@ -212,7 +212,7 @@ export default function EmployeeManagerTeamWorkspace() {
               {attendanceRows.map((row) => (
                 <li
                   key={row.id}
-                  className="rounded-lg border border-[#1E293B] bg-[#111827] p-3 space-y-1"
+                  className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-3 space-y-1"
                   data-testid={`employee-manager-team-attendance-row-${row.id}`}
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -239,7 +239,7 @@ export default function EmployeeManagerTeamWorkspace() {
             <label className="text-[11px] text-slate-400">
               Status
               <select
-                className="ml-2 rounded border border-[#1E293B] bg-[#0A1020] px-2 py-1 text-[11px] text-slate-200"
+                className="ml-2 rounded border border-wo-border-subtle bg-[#0A1020] px-2 py-1 text-[11px] text-slate-200"
                 value={requestStatus}
                 onChange={(e) => setRequestStatus(e.target.value)}
                 data-testid="employee-manager-team-requests-status"
@@ -285,7 +285,7 @@ export default function EmployeeManagerTeamWorkspace() {
               {requestRows.map((row) => (
                 <li
                   key={row.id}
-                  className="rounded-lg border border-[#1E293B] bg-[#111827] p-3 space-y-1"
+                  className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-3 space-y-1"
                   data-testid={`employee-manager-team-request-row-${row.id}`}
                 >
                   <div className="flex items-center justify-between gap-2">

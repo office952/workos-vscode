@@ -287,7 +287,7 @@ function buildProposedValues(form: FormValues): InventorySheetRemediationRequest
 
 function JsonBlock({ data }: { data: Record<string, unknown> }) {
   return (
-    <pre className="text-[11px] text-slate-300 bg-[#0B1220] border border-[#1E293B] rounded p-2 overflow-x-auto">
+    <pre className="text-[11px] text-slate-300 bg-wo-surface-input border border-wo-border-subtle rounded p-2 overflow-x-auto">
       {JSON.stringify(data, null, 2)}
     </pre>
   );
@@ -924,7 +924,7 @@ export default function InventorySheetQualityPanel() {
             void fetchPlan();
             void fetchAuditTrail();
           }}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-slate-300 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] text-slate-300 border border-wo-border-strong rounded hover:bg-wo-hover"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Refresh
@@ -950,29 +950,29 @@ export default function InventorySheetQualityPanel() {
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2">
           <p className="text-[10px] uppercase text-slate-500">Total checked</p>
           <p className="text-[18px] font-semibold text-slate-100">{auditResponse?.summary.total_records_checked ?? "-"}</p>
         </div>
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2">
           <p className="text-[10px] uppercase text-slate-500">Valid</p>
           <p className="text-[18px] font-semibold text-emerald-400">{auditResponse?.summary.valid_count ?? "-"}</p>
         </div>
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2">
           <p className="text-[10px] uppercase text-slate-500">Invalid</p>
           <p className="text-[18px] font-semibold text-red-400">{auditResponse?.summary.invalid_count ?? "-"}</p>
         </div>
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2">
           <p className="text-[10px] uppercase text-slate-500">Not applicable</p>
           <p className="text-[18px] font-semibold text-slate-300">{auditResponse?.summary.not_applicable_count ?? "-"}</p>
         </div>
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2">
           <p className="text-[10px] uppercase text-slate-500">Would block</p>
           <p className="text-[18px] font-semibold text-amber-400">{auditResponse?.summary.would_block_intake_assist_count ?? "-"}</p>
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-3">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-3">
         <div className="flex items-center gap-2 flex-wrap">
           <select
             value={urlState.sqStatus}
@@ -981,7 +981,7 @@ export default function InventorySheetQualityPanel() {
                 status: event.target.value as InventorySheetAuditStatus,
               })
             }
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="all">status: all</option>
             <option value="valid">status: valid</option>
@@ -996,7 +996,7 @@ export default function InventorySheetQualityPanel() {
                 issueCode: event.target.value as InventorySheetAuditIssueCode | "",
               })
             }
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="">issue_code: all</option>
             {ISSUE_CODES.map((issueCode) => (
@@ -1013,7 +1013,7 @@ export default function InventorySheetQualityPanel() {
                 wouldBlock: event.target.value as "all" | "true" | "false",
               })
             }
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="all">would_block: all</option>
             <option value="true">would_block: true</option>
@@ -1038,25 +1038,25 @@ export default function InventorySheetQualityPanel() {
 
           <button
             onClick={clearAuditFilters}
-            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-wo-border-strong rounded hover:bg-wo-hover"
           >
             Reset audit filters
           </button>
 
           <button
             onClick={clearAllSheetQualityFilters}
-            className="px-2.5 py-1.5 text-[12px] text-slate-200 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+            className="px-2.5 py-1.5 text-[12px] text-slate-200 border border-wo-border-strong rounded hover:bg-wo-hover"
           >
             Reset all Sheet Quality filters
           </button>
         </div>
 
-        <div className="text-[11px] text-slate-400 bg-[#0D1321] border border-[#1E293B] rounded p-2">
+        <div className="text-[11px] text-slate-400 bg-wo-surface-inset border border-wo-border-subtle rounded p-2">
           <p>Exports use current filters.</p>
           <p>{hasAuditExportFilters ? "Audit export: filtered." : "No filters active for this export."}</p>
         </div>
 
-        <div className="bg-[#0D1321] border border-[#1E293B] rounded p-2 space-y-2">
+        <div className="bg-wo-surface-inset border border-wo-border-subtle rounded p-2 space-y-2">
           <p className="text-[11px] uppercase tracking-wide text-slate-500">Active audit filters</p>
           {auditActiveFilterChips.length === 0 ? (
             <p className="text-[12px] text-slate-500">No audit filters active.</p>
@@ -1102,7 +1102,7 @@ export default function InventorySheetQualityPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-[12px]">
               <thead>
-                <tr className="text-left text-slate-500 border-b border-[#1E293B]">
+                <tr className="text-left text-slate-500 border-b border-wo-border-subtle">
                   <th className="px-2 py-2">Material</th>
                   <th className="px-2 py-2">Code</th>
                   <th className="px-2 py-2">Category</th>
@@ -1122,8 +1122,8 @@ export default function InventorySheetQualityPanel() {
                     <tr
                       key={`${item.material_id}-${item.issue_code || "none"}`}
                       onClick={() => handleAuditItemSelect(item)}
-                      className={`border-b border-[#1E293B]/60 cursor-pointer ${
-                        isSelected ? "bg-blue-900/20" : "hover:bg-[#1A2236]/60"
+                      className={`border-b border-wo-border-subtle/60 cursor-pointer ${
+                        isSelected ? "bg-blue-900/20" : "hover:bg-wo-hover/60"
                       }`}
                     >
                       <td className="px-2 py-2 text-slate-200">{item.material_name || "-"}</td>
@@ -1144,7 +1144,7 @@ export default function InventorySheetQualityPanel() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-3">
           <h3 className="text-[13px] font-semibold text-slate-100">Remediation plan</h3>
 
           {planLoading && (
@@ -1206,7 +1206,7 @@ export default function InventorySheetQualityPanel() {
 
               <button
                 onClick={() => void handleCopyLink()}
-                className="inline-flex items-center gap-1 px-2 py-1 text-[11px] text-slate-300 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+                className="inline-flex items-center gap-1 px-2 py-1 text-[11px] text-slate-300 border border-wo-border-strong rounded hover:bg-wo-hover"
               >
                 <Copy className="w-3 h-3" />
                 Copy remediation link
@@ -1238,7 +1238,7 @@ export default function InventorySheetQualityPanel() {
           )}
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-3">
           <h3 className="text-[13px] font-semibold text-slate-100">Single-material remediation</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -1247,70 +1247,70 @@ export default function InventorySheetQualityPanel() {
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_format_type: event.target.value }))}
               placeholder="sheet_format_type"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.sheet_unit}
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_unit: event.target.value }))}
               placeholder="sheet_unit"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.sheet_width}
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_width: event.target.value }))}
               placeholder="sheet_width (ex: 3050)"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.sheet_height}
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_height: event.target.value }))}
               placeholder="sheet_height (ex: 2050)"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.sheet_thickness}
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_thickness: event.target.value }))}
               placeholder="sheet_thickness"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.sheet_thickness_unit}
               onChange={(event) => setFormValues((prev) => ({ ...prev, sheet_thickness_unit: event.target.value }))}
               placeholder="sheet_thickness_unit"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.usable_width}
               onChange={(event) => setFormValues((prev) => ({ ...prev, usable_width: event.target.value }))}
               placeholder="usable_width"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.usable_height}
               onChange={(event) => setFormValues((prev) => ({ ...prev, usable_height: event.target.value }))}
               placeholder="usable_height"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.format_source}
               onChange={(event) => setFormValues((prev) => ({ ...prev, format_source: event.target.value }))}
               placeholder="format_source"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
             <input
               value={formValues.format_notes}
               onChange={(event) => setFormValues((prev) => ({ ...prev, format_notes: event.target.value }))}
               placeholder="format_notes"
               disabled={disableRemediationForm}
-              className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+              className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
             />
           </div>
 
@@ -1329,7 +1329,7 @@ export default function InventorySheetQualityPanel() {
             onChange={(event) => setReason(event.target.value)}
             placeholder="reason (required)"
             disabled={disableRemediationForm}
-            className="w-full bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200 min-h-[68px]"
+            className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200 min-h-[68px]"
           />
 
           <label className="flex items-center gap-2 text-[12px] text-slate-300">
@@ -1387,7 +1387,7 @@ export default function InventorySheetQualityPanel() {
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-3">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-3">
         <h3 className="text-[13px] font-semibold text-slate-100">Remediation audit trail (read-only)</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2">
@@ -1395,13 +1395,13 @@ export default function InventorySheetQualityPanel() {
             value={trailMaterialDraft}
             onChange={(event) => setTrailMaterialDraft(event.target.value)}
             placeholder="trail material_id"
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           />
 
           <select
             value={trailIssueDraft}
             onChange={(event) => setTrailIssueDraft(event.target.value as InventorySheetAuditIssueCode | "")}
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="">trail issue_code: all</option>
             {ISSUE_CODES.map((issueCode) => (
@@ -1415,7 +1415,7 @@ export default function InventorySheetQualityPanel() {
             value={trailChangedByDraft}
             onChange={(event) => setTrailChangedByDraft(event.target.value)}
             placeholder="trail changed_by"
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           />
 
           <select
@@ -1423,7 +1423,7 @@ export default function InventorySheetQualityPanel() {
             onChange={(event) =>
               setTrailOpStatusDraft(event.target.value as InventorySheetRemediationOperationStatus | "")
             }
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           >
             <option value="">trail operation_status: all</option>
             <option value="applied">applied</option>
@@ -1434,14 +1434,14 @@ export default function InventorySheetQualityPanel() {
             value={trailDateFromDraft}
             onChange={(event) => setTrailDateFromDraft(event.target.value)}
             type="datetime-local"
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           />
 
           <input
             value={trailDateToDraft}
             onChange={(event) => setTrailDateToDraft(event.target.value)}
             type="datetime-local"
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1.5 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1.5 text-[12px] text-slate-200"
           />
 
           <button
@@ -1467,7 +1467,7 @@ export default function InventorySheetQualityPanel() {
 
           <button
             onClick={clearTrailDateRange}
-            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-wo-border-strong rounded hover:bg-wo-hover"
           >
             Clear date range
           </button>
@@ -1490,18 +1490,18 @@ export default function InventorySheetQualityPanel() {
 
           <button
             onClick={clearTrailFilters}
-            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-[#2A3548] rounded hover:bg-[#1A2236]"
+            className="px-2.5 py-1.5 text-[12px] text-slate-300 border border-wo-border-strong rounded hover:bg-wo-hover"
           >
             Reset trail filters
           </button>
         </div>
 
-        <div className="text-[11px] text-slate-400 bg-[#0D1321] border border-[#1E293B] rounded p-2">
+        <div className="text-[11px] text-slate-400 bg-wo-surface-inset border border-wo-border-subtle rounded p-2">
           <p>Exports use current filters.</p>
           <p>{hasTrailExportFilters ? "Trail export: filtered." : "No filters active for this export."}</p>
         </div>
 
-        <div className="bg-[#0D1321] border border-[#1E293B] rounded p-2 space-y-2">
+        <div className="bg-wo-surface-inset border border-wo-border-subtle rounded p-2 space-y-2">
           <p className="text-[11px] uppercase tracking-wide text-slate-500">Active trail filters</p>
           {trailActiveFilterChips.length === 0 ? (
             <p className="text-[12px] text-slate-500">No audit trail filters active.</p>
@@ -1527,7 +1527,7 @@ export default function InventorySheetQualityPanel() {
           <select
             value={urlState.trailLimit}
             onChange={(event) => handleTrailLimitChange(Number(event.target.value))}
-            className="bg-[#0D1321] border border-[#1E293B] rounded px-2 py-1 text-[12px] text-slate-200"
+            className="bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-1 text-[12px] text-slate-200"
           >
             {TRAIL_LIMIT_OPTIONS.map((limit) => (
               <option key={limit} value={limit}>
@@ -1539,14 +1539,14 @@ export default function InventorySheetQualityPanel() {
           <button
             onClick={goToPrevPage}
             disabled={!canPrevPage}
-            className="px-2.5 py-1 text-[12px] text-slate-300 border border-[#2A3548] rounded disabled:opacity-50"
+            className="px-2.5 py-1 text-[12px] text-slate-300 border border-wo-border-strong rounded disabled:opacity-50"
           >
             Previous
           </button>
           <button
             onClick={goToNextPage}
             disabled={!canNextPage}
-            className="px-2.5 py-1 text-[12px] text-slate-300 border border-[#2A3548] rounded disabled:opacity-50"
+            className="px-2.5 py-1 text-[12px] text-slate-300 border border-wo-border-strong rounded disabled:opacity-50"
           >
             Next
           </button>
@@ -1578,7 +1578,7 @@ export default function InventorySheetQualityPanel() {
           <div className="overflow-x-auto">
             <table className="w-full text-[12px]">
               <thead>
-                <tr className="text-left text-slate-500 border-b border-[#1E293B]">
+                <tr className="text-left text-slate-500 border-b border-wo-border-subtle">
                   <th className="px-2 py-2">changed_at</th>
                   <th className="px-2 py-2">material_id</th>
                   <th className="px-2 py-2">issue_code</th>
@@ -1594,7 +1594,7 @@ export default function InventorySheetQualityPanel() {
                   return (
                     <Fragment key={event.audit_event_id}>
                       <tr
-                        className="border-b border-[#1E293B]/60 hover:bg-[#1A2236]/50 cursor-pointer"
+                        className="border-b border-wo-border-subtle/60 hover:bg-wo-surface-raised/50 cursor-pointer"
                         onClick={() => setExpandedAuditEventId(expanded ? null : event.audit_event_id)}
                       >
                         <td className="px-2 py-2 text-slate-300">{event.changed_at}</td>
@@ -1606,7 +1606,7 @@ export default function InventorySheetQualityPanel() {
                         <td className="px-2 py-2 font-mono text-slate-400">{event.audit_event_id}</td>
                       </tr>
                       {expanded && (
-                        <tr className="border-b border-[#1E293B]/60 bg-[#0D1321]">
+                        <tr className="border-b border-wo-border-subtle/60 bg-wo-surface-inset">
                           <td className="px-2 py-2" colSpan={7}>
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
                               <div>

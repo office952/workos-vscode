@@ -314,7 +314,7 @@ export default function ClientWorkspace() {
       </button>
 
       {/* CLIENT HEADER */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4">
         <div className="flex items-start justify-between gap-4">
           {/* Left: Client identity */}
           <div className="flex items-start gap-3">
@@ -365,15 +365,15 @@ export default function ClientWorkspace() {
 
           {/* Right: KPI indicators */}
           <div className="flex items-center gap-2">
-            <div className="text-center px-3 py-1.5 rounded-lg bg-[#0D1321] border border-[#1E293B]">
+            <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
               <p className="text-[15px] font-bold text-blue-400">{kpis.activeIntakes}</p>
               <p className="text-[9px] text-slate-600 uppercase tracking-wide">Cereri</p>
             </div>
-            <div className="text-center px-3 py-1.5 rounded-lg bg-[#0D1321] border border-[#1E293B]">
+            <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
               <p className="text-[15px] font-bold text-purple-400">{kpis.openQuotes}</p>
               <p className="text-[9px] text-slate-600 uppercase tracking-wide">Oferte</p>
             </div>
-            <div className="text-center px-3 py-1.5 rounded-lg bg-[#0D1321] border border-[#1E293B]">
+            <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
               <p className="text-[15px] font-bold text-emerald-400">{kpis.activeOrders}</p>
               <p className="text-[9px] text-slate-600 uppercase tracking-wide">Comenzi</p>
             </div>
@@ -384,7 +384,7 @@ export default function ClientWorkspace() {
               </div>
             )}
             {kpis.totalRevenue > 0 && (
-              <div className="text-center px-3 py-1.5 rounded-lg bg-[#0D1321] border border-[#1E293B]">
+              <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
                 <p className="text-[13px] font-bold text-slate-200">{formatCurrency(kpis.totalRevenue)}</p>
                 <p className="text-[9px] text-slate-600 uppercase tracking-wide">RON Total</p>
               </div>
@@ -393,7 +393,7 @@ export default function ClientWorkspace() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#1E293B]">
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-wo-border-subtle">
           <button
             onClick={() => navigate("/intake")}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-blue-700/50 bg-blue-900/20 text-blue-300 hover:bg-blue-900/40 transition-colors"
@@ -409,7 +409,7 @@ export default function ClientWorkspace() {
       </div>
 
       {/* TABS */}
-      <div className="flex items-center gap-0.5 border-b border-[#1E293B]">
+      <div className="flex items-center gap-0.5 border-b border-wo-border-subtle">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -596,7 +596,7 @@ function OverviewTab({
 
   return (
     <div className="space-y-3">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-blue-400" />
           Identificare fiscală
@@ -640,7 +640,7 @@ function OverviewTab({
 
       {/* Alerts / Missing Data */}
       {alerts.length > 0 && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
           <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1.5">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
             Alerte & Date Lipsă
@@ -662,7 +662,7 @@ function OverviewTab({
 
       <div className="grid grid-cols-2 gap-3">
         {/* Work in Progress */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
             <Activity className="w-4 h-4 text-blue-400" />
             Work in Progress
@@ -717,7 +717,7 @@ function OverviewTab({
               </div>
             ))}
             {blockedIntakes.length > 0 && (
-              <div className="mt-2 pt-2 border-t border-[#1E293B]">
+              <div className="mt-2 pt-2 border-t border-wo-border-subtle">
                 <p className="text-[10px] text-red-500 uppercase font-semibold mb-1">Blocate</p>
                 {blockedIntakes.map((i) => (
                   <div
@@ -744,7 +744,7 @@ function OverviewTab({
         </div>
 
         {/* Commercial Status */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             Status Comercial
@@ -784,7 +784,7 @@ function OverviewTab({
         </div>
 
         {/* Next Actions */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
             <ArrowRightCircle className="w-4 h-4 text-amber-400" />
             Acțiuni Următoare
@@ -818,7 +818,7 @@ function OverviewTab({
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
             <Clock className="w-4 h-4 text-slate-400" />
             Activitate Recentă
@@ -869,7 +869,7 @@ function CereriTab({ intakes, quotes, navigate }: { intakes: IntakeRequest[]; qu
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 bg-[#111827] rounded-lg px-3 py-1.5 border border-[#1E293B] w-64">
+        <div className="flex items-center gap-2 bg-wo-surface-raised rounded-lg px-3 py-1.5 border border-wo-border-subtle w-64">
           <input
             type="text"
             placeholder="Caută cerere..."
@@ -897,7 +897,7 @@ function CereriTab({ intakes, quotes, navigate }: { intakes: IntakeRequest[]; qu
             return (
               <div
                 key={intake.id}
-                className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 hover:border-blue-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-blue-600/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -966,7 +966,7 @@ function OferteTab({ quotes, orders, navigate }: { quotes: Quote[]; orders: Orde
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 bg-[#111827] rounded-lg px-3 py-1.5 border border-[#1E293B] w-64">
+        <div className="flex items-center gap-2 bg-wo-surface-raised rounded-lg px-3 py-1.5 border border-wo-border-subtle w-64">
           <input
             type="text"
             placeholder="Caută ofertă..."
@@ -988,7 +988,7 @@ function OferteTab({ quotes, orders, navigate }: { quotes: Quote[]; orders: Orde
             return (
               <div
                 key={quote.id}
-                className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 hover:border-purple-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-purple-600/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -1047,7 +1047,7 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 bg-[#111827] rounded-lg px-3 py-1.5 border border-[#1E293B] w-64">
+      <div className="flex items-center gap-2 bg-wo-surface-raised rounded-lg px-3 py-1.5 border border-wo-border-subtle w-64">
         <input
           type="text"
           placeholder="Caută comandă..."
@@ -1067,7 +1067,7 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
             return (
               <div
                 key={order.id}
-                className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 hover:border-emerald-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-emerald-600/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -1125,7 +1125,7 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
 // ============================================================
 function FacturiTab() {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
       <Receipt className="w-8 h-8 text-slate-700 mx-auto mb-3" />
       <p className="text-[13px] text-slate-400 font-medium">Nu există facturi asociate acestui client.</p>
       <p className="text-[11px] text-slate-600 mt-1">Modulul de facturare nu este implementat în această versiune.</p>
@@ -1141,7 +1141,7 @@ function FacturiTab() {
 // ============================================================
 function DocumenteTab() {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
       <FolderOpen className="w-8 h-8 text-slate-700 mx-auto mb-3" />
       <p className="text-[13px] text-slate-400 font-medium">Nu există documente atașate acestui client.</p>
       <p className="text-[11px] text-slate-600 mt-1">Upload/download de fișiere și contracte nu este implementat.</p>
@@ -1158,7 +1158,7 @@ function DocumenteTab() {
 // ============================================================
 function NoteTab() {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
       <MessageSquare className="w-8 h-8 text-slate-700 mx-auto mb-3" />
       <p className="text-[13px] text-slate-400 font-medium">Nu există note interne pentru acest client.</p>
       <p className="text-[11px] text-slate-600 mt-1">Adăugarea de note necesită flow backend.</p>
@@ -1341,13 +1341,13 @@ function TimelineTab({
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg overflow-hidden">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg overflow-hidden">
       {events.map((event, idx) => (
         <div
           key={idx}
           onClick={() => event.route && navigate(event.route)}
           className={`flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800/30 cursor-pointer transition-colors ${
-            idx < events.length - 1 ? "border-b border-[#1E293B]/50" : ""
+            idx < events.length - 1 ? "border-b border-wo-border-subtle/50" : ""
           }`}
         >
           <div className="shrink-0">{event.icon}</div>
@@ -1370,7 +1370,7 @@ function TimelineTab({
 // ============================================================
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
       <p className="text-[12px] text-slate-500">{message}</p>
     </div>
   );

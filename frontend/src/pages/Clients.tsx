@@ -304,7 +304,7 @@ export default function Clients() {
         </div>
       )}
 
-      <div className="flex items-center gap-2 bg-[#111827] rounded-lg px-3 py-2 border border-[#1E293B] w-full max-w-md">
+      <div className="flex items-center gap-2 bg-wo-surface-raised rounded-lg px-3 py-2 border border-wo-border-subtle w-full max-w-md">
         <Search className="w-4 h-4 text-slate-500" />
         <input
           type="text"
@@ -325,7 +325,7 @@ export default function Clients() {
             <div
               key={client.entityId ? `entity-${client.entityId}` : client.name}
               onClick={() => navigate(`/clients/${encodeURIComponent(client.name)}`)}
-              className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 hover:border-blue-600/40 hover:bg-[#131B2E] cursor-pointer transition-all group"
+              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 hover:border-blue-600/40 hover:bg-wo-surface-raised cursor-pointer transition-all group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">

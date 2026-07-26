@@ -26,7 +26,7 @@ export default function TerrainRequirementPanel({
   return (
     <div className="space-y-2" data-testid="terrain-na-panel">
       <div
-        className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex items-center gap-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex items-center gap-2"
         data-testid="terrain-na"
       >
         <MapPin className="w-4 h-4 text-slate-500 shrink-0" />

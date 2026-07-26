@@ -104,7 +104,7 @@ export default function VolumetricLetterExpandedPreview({
 
   return (
     <section
-      className="rounded-md border border-[#2A3548] bg-[#0A0F1A]/40 p-3 space-y-3"
+      className="rounded-md border border-wo-border-strong bg-wo-surface-inset/40 p-3 space-y-3"
       data-testid={testId}
       data-template={config.templateCode}
     >
@@ -124,7 +124,7 @@ export default function VolumetricLetterExpandedPreview({
 
       {!hideControls && (
         <div className="flex flex-wrap gap-2" data-testid={`${testId}-controls`}>
-          <div className="inline-flex rounded border border-[#1E293B] overflow-hidden">
+          <div className="inline-flex rounded border border-wo-border-subtle overflow-hidden">
             <button
               type="button"
               className={`px-2.5 py-1 text-[10px] uppercase tracking-wide ${
@@ -152,7 +152,7 @@ export default function VolumetricLetterExpandedPreview({
           </div>
           <button
             type="button"
-            className={`px-2.5 py-1 text-[10px] uppercase tracking-wide rounded border border-[#1E293B] ${
+            className={`px-2.5 py-1 text-[10px] uppercase tracking-wide rounded border border-wo-border-subtle ${
               showLabels ? "bg-slate-700 text-slate-100" : "text-slate-400 hover:text-slate-200"
             }`}
             onClick={() => setShowLabels(!showLabels)}
@@ -164,7 +164,7 @@ export default function VolumetricLetterExpandedPreview({
       )}
 
       <div
-        className="relative rounded border border-[#1E293B]/80 bg-[#0F172A]/50 p-3"
+        className="relative rounded border border-wo-border-subtle/80 bg-wo-surface-inset/50 p-3"
         data-testid={`${testId}-canvas`}
       >
         <div className="absolute top-2 right-2 z-10 flex flex-wrap gap-1 justify-end max-w-[70%]">

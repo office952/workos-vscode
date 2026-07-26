@@ -224,7 +224,7 @@ export function EnvironmentBannerView({
       {detailsOpen ? (
         <div
           id="runtime-status-details-panel"
-          className="absolute right-0 top-[calc(100%+6px)] z-50 w-[min(440px,calc(100vw-2rem))] rounded-md border border-slate-700 bg-[#0D1321] p-3 text-[11px] text-slate-200 shadow-xl"
+          className="absolute right-0 top-[calc(100%+6px)] z-50 w-[min(440px,calc(100vw-2rem))] rounded-md border border-slate-700 bg-wo-surface-inset p-3 text-[11px] text-slate-200 shadow-xl"
           data-testid="environment-banner-details-panel"
         >
           <div className="mb-2 flex flex-wrap items-center gap-2 border-b border-slate-700/70 pb-2">

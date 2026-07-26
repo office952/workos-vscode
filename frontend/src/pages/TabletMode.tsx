@@ -130,7 +130,7 @@ export function TabletStationSelector() {
   const demoTasks = useMemo(() => generateDemoTasks(), []);
 
   return (
-    <div className="min-h-screen bg-[#0A0F1C] p-6">
+    <div className="min-h-screen bg-wo-surface-inset p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
@@ -159,8 +159,8 @@ export function TabletStationSelector() {
             <button
               key={station.id}
               onClick={() => navigate(`/tablet/${station.id}`)}
-              className={`bg-[#111827] border-2 rounded-2xl p-6 text-left transition-all hover:scale-[1.02] hover:shadow-lg ${
-                hasUrgent ? "border-red-700/50 hover:border-red-600/70" : "border-[#1E293B] hover:border-blue-700/50"
+              className={`bg-wo-surface-raised border-2 rounded-2xl p-6 text-left transition-all hover:scale-[1.02] hover:shadow-lg ${
+                hasUrgent ? "border-red-700/50 hover:border-red-600/70" : "border-wo-border-subtle hover:border-blue-700/50"
               }`}
             >
               {/* Station icon + name */}
@@ -261,7 +261,7 @@ export function TabletStationQueue() {
 
   if (!station) {
     return (
-      <div className="min-h-screen bg-[#0A0F1C] p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-wo-surface-inset p-6 flex items-center justify-center">
         <p className="text-slate-400 text-lg">Stație necunoscută.</p>
       </div>
     );
@@ -272,10 +272,10 @@ export function TabletStationQueue() {
   const completedTasks = stationTasks.filter((t) => t.status === "finalizat" || t.status === "predat");
 
   return (
-    <div className="min-h-screen bg-[#0A0F1C] p-6">
+    <div className="min-h-screen bg-wo-surface-inset p-6">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => navigate("/tablet")} className="p-3 rounded-xl bg-[#1E293B] hover:bg-[#2A3548] transition-colors">
+        <button onClick={() => navigate("/tablet")} className="p-3 rounded-xl bg-wo-hover hover:bg-wo-hover transition-colors">
           <ArrowLeft className="w-6 h-6 text-slate-300" />
         </button>
         <div className="flex items-center gap-3">
@@ -320,7 +320,7 @@ export function TabletStationQueue() {
               <Clock className="w-4 h-4" /> Coadă ({queueTasks.length})
             </h2>
             {queueTasks.length === 0 ? (
-              <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-8 text-center">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-8 text-center">
                 <p className="text-[14px] text-slate-500">Nu există taskuri în coadă pentru această stație.</p>
               </div>
             ) : (
@@ -350,7 +350,7 @@ export function TabletStationQueue() {
         {/* RIGHT: Operator Selector + Help Requests */}
         <div className="space-y-5">
           {/* Operator Selector */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <Users className="w-4 h-4 text-cyan-400" /> Operator activ
             </h3>
@@ -419,7 +419,7 @@ export function TabletStationQueue() {
           </div>
 
           {/* Help Requests */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <HelpCircle className="w-4 h-4 text-purple-400" /> Cereri ajutor
               {stationHelpRequests.length > 0 && (
@@ -440,14 +440,14 @@ export function TabletStationQueue() {
           </div>
 
           {/* Auto-routing explanation */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <Info className="w-4 h-4 text-blue-400" /> Routing taskuri
             </h3>
             <p className="text-[11px] text-slate-500 mb-2">De ce sunt taskurile în această stație:</p>
             <div className="space-y-1.5">
               {stationTasks.slice(0, 4).map((t) => (
-                <div key={t.id} className="text-[11px] text-slate-400 bg-[#0D1321] px-3 py-1.5 rounded">
+                <div key={t.id} className="text-[11px] text-slate-400 bg-wo-surface-inset px-3 py-1.5 rounded">
                   {t.routingExplanation}
                 </div>
               ))}
@@ -477,7 +477,7 @@ function TaskCard({
 
   if (compact) {
     return (
-      <button onClick={onOpen} className="w-full bg-[#111827] border border-[#1E293B] rounded-xl px-4 py-3 text-left hover:border-slate-600 transition-colors flex items-center gap-3">
+      <button onClick={onOpen} className="w-full bg-wo-surface-raised border border-wo-border-subtle rounded-xl px-4 py-3 text-left hover:border-slate-600 transition-colors flex items-center gap-3">
         <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold text-slate-400 truncate">{task.operationName}</p>
@@ -491,11 +491,11 @@ function TaskCard({
   return (
     <button
       onClick={onOpen}
-      className={`w-full bg-[#111827] border-2 rounded-xl px-5 py-4 text-left transition-all hover:scale-[1.01] ${
+      className={`w-full bg-wo-surface-raised border-2 rounded-xl px-5 py-4 text-left transition-all hover:scale-[1.01] ${
         task.status === "blocat" ? "border-red-700/50" :
         task.status === "in_lucru" ? "border-emerald-700/50" :
         task.priority === "urgent" ? "border-amber-700/40" :
-        "border-[#1E293B] hover:border-blue-700/40"
+        "border-wo-border-subtle hover:border-blue-700/40"
       }`}
     >
       <div className="flex items-start justify-between mb-2">
@@ -568,8 +568,8 @@ function RegistryEmployeeRow({
         selected
           ? "bg-blue-900/30 border-2 border-blue-500"
           : canSelect
-            ? "bg-[#0D1321] border-2 border-transparent hover:border-blue-700/40"
-            : "bg-[#0D1321] border-2 border-transparent opacity-50 cursor-not-allowed"
+            ? "bg-wo-surface-inset border-2 border-transparent hover:border-blue-700/40"
+            : "bg-wo-surface-inset border-2 border-transparent opacity-50 cursor-not-allowed"
       }`}
     >
       <div className="flex-1 min-w-0">
@@ -611,8 +611,8 @@ function OperatorRow({ operator, eligible, selected, onSelect, stationName }: {
       title={!eligible ? `Operatorul nu are skill pentru ${stationName}.` : undefined}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
         selected ? "bg-blue-900/30 border-2 border-blue-500" :
-        eligible ? "bg-[#0D1321] border-2 border-transparent hover:border-blue-700/40" :
-        "bg-[#0D1321] border-2 border-transparent opacity-50 cursor-not-allowed"
+        eligible ? "bg-wo-surface-inset border-2 border-transparent hover:border-blue-700/40" :
+        "bg-wo-surface-inset border-2 border-transparent opacity-50 cursor-not-allowed"
       }`}
     >
       <div className={`w-3 h-3 rounded-full ${statusColors[operator.status]}`} />
@@ -633,8 +633,8 @@ function OperatorRow({ operator, eligible, selected, onSelect, stationName }: {
 // ============================================================
 function HelpRequestCard({ request }: { request: HelpRequest }) {
   return (
-    <div className={`bg-[#0D1321] border rounded-xl px-4 py-3 ${
-      request.priority === "urgent" ? "border-red-700/50" : "border-[#1E293B]"
+    <div className={`bg-wo-surface-inset border rounded-xl px-4 py-3 ${
+      request.priority === "urgent" ? "border-red-700/50" : "border-wo-border-subtle"
     }`}>
       <div className="flex items-center justify-between mb-1">
         <span className="text-[12px] font-semibold text-slate-200">{request.operatorName}</span>
@@ -742,7 +742,7 @@ export function TabletTaskDetail() {
 
   if (!station || !task) {
     return (
-      <div className="min-h-screen bg-[#0A0F1C] p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-wo-surface-inset p-6 flex items-center justify-center">
         <p className="text-slate-400 text-lg">Task negăsit.</p>
       </div>
     );
@@ -760,10 +760,10 @@ export function TabletTaskDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0F1C] p-6">
+    <div className="min-h-screen bg-wo-surface-inset p-6">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => navigate(`/tablet/${stationId}`)} className="p-3 rounded-xl bg-[#1E293B] hover:bg-[#2A3548] transition-colors">
+        <button onClick={() => navigate(`/tablet/${stationId}`)} className="p-3 rounded-xl bg-wo-hover hover:bg-wo-hover transition-colors">
           <ArrowLeft className="w-6 h-6 text-slate-300" />
         </button>
         <div className="flex-1">
@@ -799,11 +799,11 @@ export function TabletTaskDetail() {
         {/* LEFT COLUMN */}
         <div className="space-y-5">
           {/* Reference Image */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <Image className="w-4 h-4 text-blue-400" /> Referință vizuală
             </h3>
-            <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl h-48 flex items-center justify-center">
+            <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl h-48 flex items-center justify-center">
               <div className="text-center">
                 <Image className="w-12 h-12 text-slate-700 mx-auto mb-2" />
                 <p className="text-[13px] text-slate-600">Fără imagine atașată.</p>
@@ -813,7 +813,7 @@ export function TabletTaskDetail() {
           </div>
 
           {/* Quick Details */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <Info className="w-4 h-4 text-cyan-400" /> Detalii rapide
             </h3>
@@ -848,7 +848,7 @@ export function TabletTaskDetail() {
 
           {/* Lăcătușerie special details */}
           {task.metalDetails && (
-            <div className="bg-[#111827] border border-orange-800/30 rounded-xl p-5">
+            <div className="bg-wo-surface-raised border border-orange-800/30 rounded-xl p-5">
               <h3 className="text-[14px] font-semibold text-orange-300 mb-3 flex items-center gap-2">
                 <Wrench className="w-4 h-4" /> Detalii structură metalică
               </h3>
@@ -870,7 +870,7 @@ export function TabletTaskDetail() {
         {/* RIGHT COLUMN */}
         <div className="space-y-5">
           {/* Attachments */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <Paperclip className="w-4 h-4 text-slate-400" /> Atașamente
             </h3>
@@ -879,7 +879,7 @@ export function TabletTaskDetail() {
             ) : (
               <div className="space-y-2">
                 {task.attachments.map((att, idx) => (
-                  <div key={idx} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#0D1321] border border-[#1E293B]">
+                  <div key={idx} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
                     <Paperclip className="w-4 h-4 text-slate-500 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] text-slate-300 truncate">{att.name}</p>
@@ -902,7 +902,7 @@ export function TabletTaskDetail() {
           </div>
 
           {/* Checklist */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
               <ClipboardCheck className="w-4 h-4 text-emerald-400" /> Checklist — {station.name}
             </h3>
@@ -912,7 +912,7 @@ export function TabletTaskDetail() {
                   key={idx}
                   onClick={() => toggleCheck(idx)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                    checkedItems.has(idx) ? "bg-emerald-900/20 border border-emerald-700/30" : "bg-[#0D1321] border border-[#1E293B] hover:border-slate-600"
+                    checkedItems.has(idx) ? "bg-emerald-900/20 border border-emerald-700/30" : "bg-wo-surface-inset border border-wo-border-subtle hover:border-slate-600"
                   }`}
                 >
                   <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 ${
@@ -933,7 +933,7 @@ export function TabletTaskDetail() {
 
           {/* Employee selector (live) */}
           {isLive && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
               <h3 className="text-[14px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
                 <Users className="w-4 h-4 text-cyan-400" /> Angajat pentru Start
               </h3>
@@ -960,7 +960,7 @@ export function TabletTaskDetail() {
           )}
 
           {/* Actions */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-5">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-5">
             <h3 className="text-[14px] font-semibold text-slate-200 mb-4">Acțiuni</h3>
             {actionError && (
               <p className="text-[11px] text-red-400 mb-3 flex items-center gap-1">
@@ -1050,7 +1050,7 @@ export function TabletTaskDetail() {
           </div>
 
           {/* Routing */}
-          <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl px-5 py-3">
+          <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl px-5 py-3">
             <p className="text-[11px] text-slate-500 flex items-center gap-2">
               <ChevronRight className="w-3 h-3" />
               {task.routingExplanation}
@@ -1132,7 +1132,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-2xl w-full max-w-lg p-6">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-2xl w-full max-w-lg p-6">
         {submitted ? (
           <div className="text-center py-8">
             <CheckCircle2 className="w-16 h-16 text-purple-400 mx-auto mb-4" />
@@ -1171,7 +1171,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
                       className={`px-4 py-3 rounded-xl text-[13px] font-medium text-left transition-colors ${
                         reason === r.value
                           ? "bg-purple-900/30 border-2 border-purple-500 text-purple-200"
-                          : "bg-[#0D1321] border-2 border-[#1E293B] text-slate-300 hover:border-purple-700/40"
+                          : "bg-wo-surface-inset border-2 border-wo-border-subtle text-slate-300 hover:border-purple-700/40"
                       }`}
                     >
                       {r.label}
@@ -1187,7 +1187,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
                   <button
                     onClick={() => setPriority("normal")}
                     className={`flex-1 px-4 py-3 rounded-xl text-[14px] font-semibold transition-colors ${
-                      priority === "normal" ? "bg-blue-900/30 border-2 border-blue-500 text-blue-200" : "bg-[#0D1321] border-2 border-[#1E293B] text-slate-300"
+                      priority === "normal" ? "bg-blue-900/30 border-2 border-blue-500 text-blue-200" : "bg-wo-surface-inset border-2 border-wo-border-subtle text-slate-300"
                     }`}
                   >
                     Normal
@@ -1195,7 +1195,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
                   <button
                     onClick={() => setPriority("urgent")}
                     className={`flex-1 px-4 py-3 rounded-xl text-[14px] font-semibold transition-colors ${
-                      priority === "urgent" ? "bg-red-900/30 border-2 border-red-500 text-red-200" : "bg-[#0D1321] border-2 border-[#1E293B] text-slate-300"
+                      priority === "urgent" ? "bg-red-900/30 border-2 border-red-500 text-red-200" : "bg-wo-surface-inset border-2 border-wo-border-subtle text-slate-300"
                     }`}
                   >
                     Urgent
@@ -1210,7 +1210,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
                   value={observation}
                   onChange={(e) => setObservation(e.target.value)}
                   placeholder="Descrie pe scurt ce ai nevoie..."
-                  className="w-full bg-[#0D1321] border border-[#1E293B] rounded-xl px-4 py-3 text-[14px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-purple-600 resize-none h-24"
+                  className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded-xl px-4 py-3 text-[14px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-purple-600 resize-none h-24"
                 />
               </div>
 

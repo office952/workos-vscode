@@ -165,7 +165,7 @@ export default function OutputBlocksPreview() {
       {/* Form */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Left: Configuration */}
-        <div className="space-y-4 rounded-lg border border-[#1E293B] bg-[#111827] p-4">
+        <div className="space-y-4 rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-4">
           <h2 className="text-sm font-semibold text-slate-200">Configurare Preview</h2>
 
           {/* Template ID */}
@@ -176,7 +176,7 @@ export default function OutputBlocksPreview() {
               value={templateId}
               onChange={(e) => setTemplateId(e.target.value)}
               placeholder="ex: 1"
-              className="w-full px-3 py-1.5 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[12px] outline-none focus:border-purple-500"
+              className="w-full px-3 py-1.5 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[12px] outline-none focus:border-purple-500"
             />
           </div>
 
@@ -186,7 +186,7 @@ export default function OutputBlocksPreview() {
             <select
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              className="w-full px-3 py-1.5 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[12px] outline-none focus:border-purple-500"
+              className="w-full px-3 py-1.5 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[12px] outline-none focus:border-purple-500"
             >
               {DOCUMENT_TYPES.map((dt) => (
                 <option key={dt} value={dt}>{dt}</option>
@@ -200,7 +200,7 @@ export default function OutputBlocksPreview() {
             <select
               value={audience}
               onChange={(e) => setAudience(e.target.value)}
-              className="w-full px-3 py-1.5 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[12px] outline-none focus:border-purple-500"
+              className="w-full px-3 py-1.5 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[12px] outline-none focus:border-purple-500"
             >
               {AUDIENCES.map((a) => (
                 <option key={a} value={a}>{a}</option>
@@ -221,7 +221,7 @@ export default function OutputBlocksPreview() {
                   className={`px-2 py-0.5 rounded text-[10px] border transition-colors ${
                     selectedBlockTypes.includes(bt)
                       ? "border-purple-500 bg-purple-900/30 text-purple-300"
-                      : "border-[#2A3548] bg-[#0D1321] text-slate-400 hover:border-slate-600"
+                      : "border-wo-border-strong bg-wo-surface-inset text-slate-400 hover:border-slate-600"
                   }`}
                 >
                   {bt.replace(/_/g, " ")}
@@ -231,7 +231,7 @@ export default function OutputBlocksPreview() {
           </div>
 
           {/* Quote Context */}
-          <div className="space-y-2 pt-2 border-t border-[#1E293B]">
+          <div className="space-y-2 pt-2 border-t border-wo-border-subtle">
             <h3 className="text-[11px] font-semibold text-slate-300">Context Preview (optional)</h3>
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -240,7 +240,7 @@ export default function OutputBlocksPreview() {
                   type="text"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                  className="w-full px-2 py-1 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[11px] outline-none"
+                  className="w-full px-2 py-1 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[11px] outline-none"
                 />
               </div>
               <div>
@@ -249,7 +249,7 @@ export default function OutputBlocksPreview() {
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full px-2 py-1 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[11px] outline-none"
+                  className="w-full px-2 py-1 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[11px] outline-none"
                 />
               </div>
               <div>
@@ -259,7 +259,7 @@ export default function OutputBlocksPreview() {
                   value={widthMm}
                   onChange={(e) => setWidthMm(e.target.value)}
                   placeholder="1000"
-                  className="w-full px-2 py-1 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[11px] outline-none"
+                  className="w-full px-2 py-1 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[11px] outline-none"
                 />
               </div>
               <div>
@@ -269,7 +269,7 @@ export default function OutputBlocksPreview() {
                   value={heightMm}
                   onChange={(e) => setHeightMm(e.target.value)}
                   placeholder="500"
-                  className="w-full px-2 py-1 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[11px] outline-none"
+                  className="w-full px-2 py-1 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[11px] outline-none"
                 />
               </div>
               <div>
@@ -279,7 +279,7 @@ export default function OutputBlocksPreview() {
                   value={depthMm}
                   onChange={(e) => setDepthMm(e.target.value)}
                   placeholder="80"
-                  className="w-full px-2 py-1 rounded border border-[#2A3548] bg-[#0D1321] text-slate-200 text-[11px] outline-none"
+                  className="w-full px-2 py-1 rounded border border-wo-border-strong bg-wo-surface-inset text-slate-200 text-[11px] outline-none"
                 />
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function OutputBlocksPreview() {
         </div>
 
         {/* Right: Results */}
-        <div className="space-y-3 rounded-lg border border-[#1E293B] bg-[#111827] p-4">
+        <div className="space-y-3 rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-4">
           <h2 className="text-sm font-semibold text-slate-200">Rezultat Preview</h2>
 
           {/* Error */}
@@ -399,9 +399,9 @@ export default function OutputBlocksPreview() {
               )}
 
               {/* Trace */}
-              <div className="pt-2 border-t border-[#1E293B]">
+              <div className="pt-2 border-t border-wo-border-subtle">
                 <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Trace</p>
-                <pre className="text-[9px] text-slate-500 bg-[#0A0F1C] rounded p-2 overflow-x-auto">
+                <pre className="text-[9px] text-slate-500 bg-wo-surface-inset rounded p-2 overflow-x-auto">
                   {JSON.stringify(result.trace, null, 2)}
                 </pre>
               </div>
@@ -417,7 +417,7 @@ function RenderedBlockCard({ block }: { block: RenderedBlock }) {
   const [showVars, setShowVars] = useState(false);
 
   return (
-    <div className="rounded border border-[#2A3548] bg-[#0D1321] p-3 space-y-2">
+    <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-3 space-y-2">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ function RenderedBlockCard({ block }: { block: RenderedBlock }) {
       </div>
 
       {/* Rendered text */}
-      <div className="rounded bg-[#0A0F1C] p-2">
+      <div className="rounded bg-wo-surface-inset p-2">
         <p className="text-[11px] text-slate-300 whitespace-pre-wrap leading-relaxed">
           {block.rendered_text || <span className="italic text-slate-600">— empty —</span>}
         </p>
@@ -480,7 +480,7 @@ function RenderedBlockCard({ block }: { block: RenderedBlock }) {
           {showVars && (
             <div className="mt-1 space-y-0.5">
               {block.variables_used.map((v, i) => (
-                <div key={i} className="flex items-center gap-2 text-[9px] px-2 py-0.5 rounded bg-[#0A0F1C]">
+                <div key={i} className="flex items-center gap-2 text-[9px] px-2 py-0.5 rounded bg-wo-surface-inset">
                   <span className="text-slate-400 font-mono">{v.name}</span>
                   <span className="text-slate-600">←</span>
                   <span className="text-slate-500 font-mono">{v.source_field}</span>

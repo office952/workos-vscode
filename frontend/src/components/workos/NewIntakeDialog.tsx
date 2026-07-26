@@ -314,8 +314,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#0D1321] border border-[#2A3548] rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-[#2A3548]">
+      <div className="bg-wo-surface-inset border border-wo-border-strong rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-wo-border-strong">
           <div className="flex items-center gap-2">
             <Plus className="w-4 h-4 text-emerald-400" />
             <h2 className="text-[14px] font-bold text-slate-100">Cerere Nouă</h2>
@@ -351,7 +351,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                     className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                       selectedOfferMethod === method.id
                         ? "bg-blue-600/15 border-blue-500/50"
-                        : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                        : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
                     } ${method.enabled ? "" : "opacity-50 cursor-not-allowed"}`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -386,7 +386,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   {loadingTemplates ? (
                     <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile candidate...</p>
                   ) : visibleTemplates.length === 0 ? (
-                    <p className="text-[11px] text-slate-500 p-4 text-center border border-[#2A3548] rounded-lg bg-[#1A2236]">
+                    <p className="text-[11px] text-slate-500 p-4 text-center border border-wo-border-strong rounded-lg bg-wo-surface-raised">
                       Nu există template-uri candidate disponibile.
                     </p>
                   ) : (
@@ -396,7 +396,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                         selectedTemplateCode === null
                           ? "bg-blue-600/15 border-blue-500/50"
-                          : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                          : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
                       }`}
                       data-testid="analyzer-first-no-template-hint"
                     >
@@ -425,7 +425,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                           className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                             selectedTemplateCode === template.template_code
                               ? "bg-blue-600/15 border-blue-500/50"
-                              : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                              : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
@@ -490,7 +490,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                     className={`flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-lg border transition-colors ${
                       mode === m.v
                         ? "bg-blue-600/20 text-blue-300 border-blue-500/50"
-                        : "bg-[#1A2236] text-slate-400 border-[#2A3548] hover:border-slate-500"
+                        : "bg-wo-surface-raised text-slate-400 border-wo-border-strong hover:border-slate-500"
                     }`}
                   >
                     {m.icon}
@@ -501,7 +501,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
 
               {mode === "existing" && (
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 focus-within:border-blue-500/50">
+                  <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 focus-within:border-blue-500/50">
                     <Search className="w-4 h-4 text-slate-500" />
                     <input
                       id="new-intake-client-search"
@@ -513,7 +513,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       className="bg-transparent text-[12px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
                     />
                   </div>
-                  <div className="max-h-60 overflow-y-auto border border-[#2A3548] rounded-lg bg-[#1A2236]">
+                  <div className="max-h-60 overflow-y-auto border border-wo-border-strong rounded-lg bg-wo-surface-raised">
                     {loadingClients ? (
                       <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă clienții...</p>
                     ) : filteredClients.length === 0 ? (
@@ -530,7 +530,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                           <li key={c.id}>
                             <button
                               onClick={() => setSelectedClient(c)}
-                              className={`w-full text-left px-3 py-2 border-b border-[#2A3548] last:border-b-0 transition-colors ${
+                              className={`w-full text-left px-3 py-2 border-b border-wo-border-strong last:border-b-0 transition-colors ${
                                 selectedClient?.id === c.id
                                   ? "bg-blue-600/15"
                                   : "hover:bg-slate-800/40"
@@ -572,7 +572,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       value={newClient.name}
                       onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
                       placeholder="SC Exemplu SRL sau Ion Popescu"
-                      className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
                     />
                   </div>
                   {mode === "new_fiscal" && (
@@ -589,7 +589,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.cui}
                         onChange={(e) => setNewClient({ ...newClient, cui: e.target.value })}
                         placeholder="RO12345678"
-                        className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
                       />
                     </div>
                   )}
@@ -607,7 +607,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.contact_person}
                         onChange={(e) => setNewClient({ ...newClient, contact_person: e.target.value })}
                         placeholder="Numele persoanei"
-                        className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
                       />
                     </div>
                     <div>
@@ -623,14 +623,14 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.phone}
                         onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
                         placeholder="07xx xxx xxx"
-                        className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
                       />
                     </div>
                   </div>
                 </div>
               )}
               <div className="space-y-5 pt-2">
-              <div className="flex items-center justify-between gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5">
+              <div className="flex items-center justify-between gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5">
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide">Template Product System</p>
                   <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "Analyzer-first"}</p>
@@ -661,7 +661,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       aria-label="Canal"
                       value={intake.channel}
                       onChange={(e) => setIntake({ ...intake, channel: e.target.value })}
-                      className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
                     >
                       {CHANNELS.map((c) => (
                         <option key={c.value} value={c.value}>
@@ -685,7 +685,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       onChange={(e) =>
                         setIntake({ ...intake, priority: e.target.value as IntakeRequestEntity["priority"] })
                       }
-                      className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
                     >
                       {PRIORITIES.map((p) => (
                         <option key={p.value} value={p.value}>
@@ -707,7 +707,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       aria-label="Tip livrare"
                       value={intake.delivery_type}
                       onChange={(e) => setIntake({ ...intake, delivery_type: e.target.value })}
-                      className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
                     >
                       {INTAKE_DELIVERY_OPTIONS.map((d) => (
                         <option key={d.value} value={d.value}>
@@ -730,7 +730,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       onChange={(e) => setIntake({ ...intake, description: e.target.value })}
                       placeholder="Ex: Litere volumetrice pentru fațadă, 12 caractere, montaj inclus..."
                       rows={3}
-                      className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50 resize-none"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50 resize-none"
                     />
                   </div>
                 </div>
@@ -747,7 +747,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           )}
         </div>
 
-        <div className="flex items-center justify-between px-5 py-3 border-t border-[#2A3548] bg-[#0A0F1C]">
+        <div className="flex items-center justify-between px-5 py-3 border-t border-wo-border-strong bg-wo-surface-inset">
           <button
             onClick={step === "details" ? () => setStep("template") : step === "template" ? () => setStep("method") : onClose}
             className="text-[12px] font-semibold text-slate-400 hover:text-slate-200 transition-colors"

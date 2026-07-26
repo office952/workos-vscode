@@ -66,7 +66,7 @@ export default function EmployeeAdminOperationalSummary({
 
   return (
     <section
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-3"
       data-testid="employee-admin-operational-summary"
     >
       <div className="flex items-start justify-between gap-2">
@@ -80,7 +80,7 @@ export default function EmployeeAdminOperationalSummary({
           type="button"
           onClick={() => void load()}
           disabled={loading}
-          className="inline-flex items-center gap-1 px-2 py-1 text-[10px] text-slate-400 border border-[#243044] rounded-md hover:text-slate-200 disabled:opacity-50"
+          className="inline-flex items-center gap-1 px-2 py-1 text-[10px] text-slate-400 border border-wo-border-strong rounded-md hover:text-slate-200 disabled:opacity-50"
           data-testid="employee-admin-operational-refresh"
         >
           <RefreshCw className="w-3 h-3" aria-hidden />
@@ -103,7 +103,7 @@ export default function EmployeeAdminOperationalSummary({
       {!loading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div
-            className="rounded-lg border border-[#243044] bg-[#0A1020]/60 p-3 space-y-1"
+            className="rounded-lg border border-wo-border-strong bg-[#0A1020]/60 p-3 space-y-1"
             data-testid="employee-admin-operational-requests"
           >
             <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
@@ -118,7 +118,7 @@ export default function EmployeeAdminOperationalSummary({
             </p>
           </div>
           <div
-            className="rounded-lg border border-[#243044] bg-[#0A1020]/60 p-3 space-y-1"
+            className="rounded-lg border border-wo-border-strong bg-[#0A1020]/60 p-3 space-y-1"
             data-testid="employee-admin-operational-attendance"
           >
             <div className="flex items-center gap-1.5 text-[11px] text-slate-300">

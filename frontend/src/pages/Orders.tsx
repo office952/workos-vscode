@@ -285,19 +285,19 @@ export default function Orders() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">Total Comenzi</p>
           <p className="text-[20px] font-bold text-slate-100 mt-1">{orders.length}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">În Execuție</p>
           <p className="text-[20px] font-bold text-emerald-400 mt-1">{inExecCount}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-purple-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-purple-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">Finalizate</p>
           <p className="text-[20px] font-bold text-purple-400 mt-1">{completedCount}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">Valoare Totală</p>
           <p className="text-[16px] font-bold text-amber-400 mt-1">{formatCurrency(totalRevenue)}</p>
           <p className="text-[10px] text-slate-500">RON</p>
@@ -315,7 +315,7 @@ export default function Orders() {
               key={s}
               onClick={() => setFilterStatus(s === "all" ? "all" : s as OrderStatus)}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-                filterStatus === s ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+                filterStatus === s ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
               }`}
             >
               {label} ({count})
@@ -329,7 +329,7 @@ export default function Orders() {
         <div className="lg:col-span-2 space-y-2">
           {isOrdersEmpty ? (
             <div
-              className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center"
+              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center"
               data-testid="orders-empty-state"
             >
               <ClipboardList className="w-10 h-10 text-slate-600 mx-auto mb-3" />
@@ -364,8 +364,8 @@ export default function Orders() {
               <div
                 key={order.id}
                 onClick={() => selectOrder(order)}
-                className={`bg-[#111827] border rounded-lg p-4 cursor-pointer transition-all ${
-                  selectedOrder?.id === order.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B] hover:border-slate-500"
+                className={`bg-wo-surface-raised border rounded-lg p-4 cursor-pointer transition-all ${
+                  selectedOrder?.id === order.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle hover:border-slate-500"
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -406,7 +406,7 @@ export default function Orders() {
           {selectedOrder ? (
             <>
               <div
-                className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
                 data-testid="order-detail-selected"
               >
                 <div className="flex items-center justify-between mb-2">
@@ -457,7 +457,7 @@ export default function Orders() {
                 </div>
 
                 {selectedOrder.notes && (
-                  <div className="mt-3 bg-[#1A2236] rounded-lg p-3">
+                  <div className="mt-3 bg-wo-surface-raised rounded-lg p-3">
                     <p className="text-[12px] text-slate-300">{selectedOrder.notes}</p>
                   </div>
                 )}
@@ -468,7 +468,7 @@ export default function Orders() {
                 canUseLiveOrders &&
                 orderDbId && (
                   <div
-                    className="bg-[#111827] border border-emerald-900/40 rounded-lg p-4 space-y-3"
+                    className="bg-wo-surface-raised border border-emerald-900/40 rounded-lg p-4 space-y-3"
                     data-testid="order-execution-dispatch-panel"
                   >
                     <SectionHeader title="Taskuri producție" icon={<Activity className="w-4 h-4" />} />
@@ -533,9 +533,9 @@ export default function Orders() {
 
               {/* Linked Job */}
               {linkedJob && (
-                <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                   <SectionHeader title="Job Execuție" icon={<Package className="w-4 h-4" />} />
-                  <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                  <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[12px] font-mono text-blue-400">{linkedJob.id}</span>
                       <JobStatusBadge status={linkedJob.status} />
@@ -659,7 +659,7 @@ export default function Orders() {
               />
 
               {/* Snapshot Law */}
-              <div className="bg-[#0D1321] border border-purple-800/30 rounded-lg p-4">
+              <div className="bg-wo-surface-inset border border-purple-800/30 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Lock className="w-4 h-4 text-purple-400" />
                   <p className="text-[12px] text-purple-400 font-semibold">Regulă Snapshot</p>
@@ -768,7 +768,7 @@ export default function Orders() {
             </>
           ) : isOrdersEmpty ? (
             <div
-              className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center"
+              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center"
               data-testid="orders-empty-detail-panel"
             >
               <p className="text-[12px] text-slate-400 leading-relaxed">
@@ -777,7 +777,7 @@ export default function Orders() {
               </p>
             </div>
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
               <ClipboardList className="w-8 h-8 text-slate-600 mx-auto mb-2" />
               <p className="text-[13px] text-slate-500">Selectează o comandă pentru detalii</p>
               <p className="text-[11px] text-slate-600 mt-1">

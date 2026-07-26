@@ -31,9 +31,9 @@ export default function RecalibrationModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-xl shadow-2xl w-full max-w-md mx-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl shadow-2xl w-full max-w-md mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-wo-border-subtle">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-400" />
             <h3 className="text-[15px] font-bold text-slate-100">Recalibrare Stoc</h3>
@@ -106,7 +106,7 @@ export default function RecalibrationModal({
                   value={manualValue}
                   onChange={(e) => setManualValue(e.target.value)}
                   placeholder={`ex: 5.5 ${unit}`}
-                  className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2.5 text-[14px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                  className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2.5 text-[14px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
                   autoFocus
                 />
               </label>

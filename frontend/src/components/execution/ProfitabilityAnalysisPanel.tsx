@@ -74,10 +74,10 @@ export function ProfitabilityAnalysisPanel({
 
   return (
     <section
-      className="bg-[#1A2236] border border-[#2A3548] rounded-lg"
+      className="bg-wo-surface-raised border border-wo-border-strong rounded-lg"
       data-testid="profitability-analysis-panel"
     >
-      <header className="flex items-center justify-between px-4 py-3 border-b border-[#2A3548]">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
         <div className="flex items-center gap-2">
           <BarChart3 className="w-4 h-4 text-violet-400" />
           <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
@@ -118,7 +118,7 @@ export function ProfitabilityAnalysisPanel({
             </p>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-[11px]">
-              <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+              <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                 <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                   Accepted revenue
                 </p>
@@ -132,7 +132,7 @@ export function ProfitabilityAnalysisPanel({
                   )}
                 </p>
               </div>
-              <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+              <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                 <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                   Estimated internal cost
                 </p>
@@ -146,7 +146,7 @@ export function ProfitabilityAnalysisPanel({
                   )}
                 </p>
               </div>
-              <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+              <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                 <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                   Estimated margin
                 </p>
@@ -164,7 +164,7 @@ export function ProfitabilityAnalysisPanel({
                   </span>
                 </p>
               </div>
-              <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+              <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                 <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                   Actual cost
                 </p>
@@ -195,7 +195,7 @@ export function ProfitabilityAnalysisPanel({
 
             {data.has_execution_reality && (
               <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                     Actual labor minutes
                   </p>
@@ -203,7 +203,7 @@ export function ProfitabilityAnalysisPanel({
                     {fmtMinutes(data.actual_labor_minutes)}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                     Known material cost
                   </p>
@@ -220,7 +220,7 @@ export function ProfitabilityAnalysisPanel({
                         )}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                     Known margin (partial)
                   </p>
@@ -237,7 +237,7 @@ export function ProfitabilityAnalysisPanel({
                         )}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px] tracking-wide">
                     Cost coverage
                   </p>

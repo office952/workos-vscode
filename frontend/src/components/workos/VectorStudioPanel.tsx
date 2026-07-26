@@ -15,7 +15,7 @@ import {
 } from "@/lib/vectorStudioPreview";
 
 function fieldClass() {
-  return "w-full bg-[#0A0F1A] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
+  return "w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
 }
 
 function labelClass() {
@@ -70,7 +70,7 @@ export function VectorStudioPanel({
     !showLiveLayerRows && (spec.vector_detected_layers_summary?.length ?? 0) > 0;
 
   return (
-    <div className="md:col-span-2 space-y-4 rounded-xl border border-[#1E293B] bg-[#0A0F1A]/60 p-4">
+    <div className="md:col-span-2 space-y-4 rounded-xl border border-wo-border-subtle bg-wo-surface-inset/60 p-4">
       <div className="flex items-center gap-2">
         <Layers className="w-4 h-4 text-purple-400" />
         <h4 className="text-[13px] font-bold text-slate-200">Vector Studio</h4>
@@ -130,10 +130,10 @@ export function VectorStudioPanel({
       </div>
 
       {/* Preview */}
-      <div className="rounded-lg border border-[#1E293B] bg-[#05080f] p-3">
+      <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset p-3">
         <p className="text-[11px] text-slate-400 font-semibold mb-2">Previzualizare vector</p>
         {isSvg && previewUrl ? (
-          <div className="flex items-center justify-center min-h-[140px] max-h-[220px] overflow-hidden rounded-md bg-[#0A0F1A] border border-[#1E293B]">
+          <div className="flex items-center justify-center min-h-[140px] max-h-[220px] overflow-hidden rounded-md bg-wo-surface-inset border border-wo-border-subtle">
             <img
               src={previewUrl}
               alt="Previzualizare SVG"
@@ -204,7 +204,7 @@ export function VectorStudioPanel({
 
       {/* Saved mappings when no live analysis rows */}
       {info.savedMappingsCount > 0 && !showLiveLayerRows && (
-        <div className="rounded-lg border border-[#1E293B] bg-[#05080f] p-3 space-y-1">
+        <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset p-3 space-y-1">
           <p className="text-[11px] text-slate-400 font-semibold">Mapări salvate în specificație</p>
           <ul className="text-[10px] text-emerald-400/90 space-y-0.5">
             {info.savedMappingsList.map((line) => (
@@ -261,7 +261,7 @@ export function VectorStudioPanel({
             return (
               <div
                 key={layer.svg_layer_id}
-                className="rounded-lg border border-[#1E293B] bg-[#0A0F1A] p-3 space-y-2"
+                className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset p-3 space-y-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-[11px] text-slate-200 font-mono">
@@ -309,7 +309,7 @@ export function VectorStudioPanel({
           {spec.vector_detected_layers_summary!.map((row) => (
             <div
               key={row.layer_name}
-              className="rounded-lg border border-[#1E293B] bg-[#0A0F1A] p-3 space-y-1"
+              className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset p-3 space-y-1"
             >
               <span className="text-[11px] text-slate-200 font-mono">{row.layer_name}</span>
               <p className="text-[10px] text-slate-500">
@@ -325,7 +325,7 @@ export function VectorStudioPanel({
       )}
 
       {/* Manual review */}
-      <div className="rounded-lg border border-[#1E293B] p-3 space-y-2">
+      <div className="rounded-lg border border-wo-border-subtle p-3 space-y-2">
         <p className="text-[11px] text-slate-400 font-semibold">Review manual vector</p>
         <label className="flex items-center gap-2 text-[12px] text-slate-300 cursor-pointer">
           <input
@@ -374,7 +374,7 @@ function InfoCard({
   highlight?: "ok" | "warn";
 }) {
   return (
-    <div className="rounded-md border border-[#1E293B] bg-[#05080f] px-2 py-1.5">
+    <div className="rounded-md border border-wo-border-subtle bg-wo-surface-inset px-2 py-1.5">
       <p className="text-slate-500">{label}</p>
       <p
         className={

@@ -63,7 +63,7 @@ function ScenarioCard({
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-3"
       data-testid={`demo-scenario-${expectedRequiresAck ? "warn" : "ready"}`}
     >
       <div>
@@ -97,7 +97,7 @@ function ScenarioCard({
         ) : null}
       </div>
 
-      <div className="bg-[#0B111E] border border-[#1E293B] rounded px-3 py-2 space-y-1.5">
+      <div className="bg-[#0B111E] border border-wo-border-subtle rounded px-3 py-2 space-y-1.5">
         <MetricRow label="Quote" value={scenario.quoteCode} />
         <MetricRow label="readiness_overlay" value="null" />
         {scenario.quoteStatus && <MetricRow label="quote_status" value={scenario.quoteStatus} />}
@@ -170,11 +170,11 @@ function ScenarioCard({
       </div>
 
       {expectedRequiresAck ? (
-        <p className="text-[10px] text-amber-300/90 border-t border-[#1E293B] pt-2">
+        <p className="text-[10px] text-amber-300/90 border-t border-wo-border-subtle pt-2">
           Next: open quote → check acknowledgement control → convert → order → execution plan 201.
         </p>
       ) : (
-        <p className="text-[10px] text-slate-500 border-t border-[#1E293B] pt-2">
+        <p className="text-[10px] text-slate-500 border-t border-wo-border-subtle pt-2">
           Next: open quote → convert when priced/accepted → order → execution plan 201.
         </p>
       )}
@@ -233,7 +233,7 @@ export default function CommercialSpineDemo() {
         </p>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2" data-testid="demo-proof-summary">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2" data-testid="demo-proof-summary">
         <h2 className="text-[13px] font-semibold text-slate-200">Current proof summary</h2>
         <ul className="text-[11px] text-slate-400 space-y-1 list-disc list-inside">
           <li>
@@ -252,12 +252,12 @@ export default function CommercialSpineDemo() {
         </ul>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2" data-testid="demo-command-panel">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2" data-testid="demo-command-panel">
         <div className="flex items-center gap-2">
           <Database className="w-4 h-4 text-blue-400" />
           <h2 className="text-[13px] font-semibold text-slate-200">Setup</h2>
         </div>
-        <pre className="text-[10px] font-mono text-slate-400 bg-[#0B111E] border border-[#1E293B] rounded p-3 overflow-x-auto whitespace-pre-wrap">
+        <pre className="text-[10px] font-mono text-slate-400 bg-[#0B111E] border border-wo-border-subtle rounded p-3 overflow-x-auto whitespace-pre-wrap">
 {`# Set DATABASE_URL to your local dev.db (see docs/demo/COMMERCIAL_SPINE_DEMO.md)
 $env:APP_ENV='development'
 cd backend
@@ -309,7 +309,7 @@ npm run test:e2e:commercial`}
       )}
 
       <div
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2"
         data-testid="demo-caveat-panel"
       >
         <h2 className="text-[13px] font-semibold text-slate-200">Caveats</h2>
@@ -322,7 +322,7 @@ npm run test:e2e:commercial`}
         </ul>
       </div>
 
-      <div className="text-[10px] text-slate-600 border-t border-[#1E293B] pt-3">
+      <div className="text-[10px] text-slate-600 border-t border-wo-border-subtle pt-3">
         Proven in commits 43635cf, 717b4d7, bedc25f, 821bd37 (demo). Does not prove other
         templates or public sales readiness.
       </div>

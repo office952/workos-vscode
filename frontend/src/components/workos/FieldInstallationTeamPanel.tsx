@@ -350,7 +350,7 @@ export default function FieldInstallationTeamPanel({
                       void handleStatusChange(e.target.value as FieldInstallationTeamStatus)
                     }
                     disabled={actionLoading === "status"}
-                    className="mt-1 w-full bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                    className="mt-1 w-full bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200"
                   >
                     {TEAM_STATUS_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -372,7 +372,7 @@ export default function FieldInstallationTeamPanel({
                     value={siteAddress}
                     onChange={(e) => setSiteAddress(e.target.value)}
                     placeholder="Adresa montaj la beneficiar"
-                    className="mt-1 w-full bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                    className="mt-1 w-full bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200"
                   />
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default function FieldInstallationTeamPanel({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
-                  className="mt-1 w-full bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200 resize-none"
+                  className="mt-1 w-full bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200 resize-none"
                   placeholder="Acces, utilaje necesare, restricții teren..."
                 />
               </div>
@@ -419,7 +419,7 @@ export default function FieldInstallationTeamPanel({
                       return (
                         <div
                           key={member.employee_id}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#111827] border border-[#1E293B]"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-wo-surface-raised border border-wo-border-subtle"
                         >
                           <div className="flex-1 min-w-0">
                             <p className="text-[13px] font-semibold text-slate-200">
@@ -448,7 +448,7 @@ export default function FieldInstallationTeamPanel({
                 )}
               </div>
 
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-2">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-2">
                 <p className="text-[11px] text-slate-400 font-semibold">Adaugă angajat din registry</p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
@@ -464,7 +464,7 @@ export default function FieldInstallationTeamPanel({
                         if (suggested) setSelectedRole(suggested);
                       }
                     }}
-                    className="flex-1 bg-[#0D1321] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                    className="flex-1 bg-wo-surface-inset border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200"
                   >
                     <option value="">Selectează angajat...</option>
                     {availableEmployees.map((emp) => {
@@ -483,7 +483,7 @@ export default function FieldInstallationTeamPanel({
                     name="field-team-member-role"
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="bg-[#0D1321] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                    className="bg-wo-surface-inset border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200"
                   >
                     {ROLE_OPTIONS.map((r) => (
                       <option key={r.value} value={r.value}>
@@ -524,7 +524,7 @@ export default function FieldInstallationTeamPanel({
                 )}
               </div>
 
-              <div className="bg-[#111827] border border-emerald-800/30 rounded-lg p-4 space-y-3">
+              <div className="bg-wo-surface-raised border border-emerald-800/30 rounded-lg p-4 space-y-3">
                 <h4 className="text-[12px] font-semibold text-emerald-300">Raportare montaj teren</h4>
                 {team.reporting_ready && (
                   <p className="text-[11px] text-slate-400">
@@ -569,7 +569,7 @@ export default function FieldInstallationTeamPanel({
                     value={clientObservations}
                     onChange={(e) => setClientObservations(e.target.value)}
                     rows={2}
-                    className="mt-1 w-full bg-[#0D1321] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200 resize-none"
+                    className="mt-1 w-full bg-wo-surface-inset border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200 resize-none"
                   />
                 </div>
 
@@ -587,7 +587,7 @@ export default function FieldInstallationTeamPanel({
                       value={photoUrl}
                       onChange={(e) => setPhotoUrl(e.target.value)}
                       placeholder="https://..."
-                      className="flex-1 bg-[#0D1321] border border-[#1E293B] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                      className="flex-1 bg-wo-surface-inset border border-wo-border-subtle rounded-lg px-3 py-2 text-[13px] text-slate-200"
                     />
                     <button
                       onClick={() => void handleSaveReportingDraft()}

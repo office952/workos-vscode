@@ -28,7 +28,7 @@ export default function QuoteCommercialActionPanel({
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-3"
       data-testid={testId}
     >
       <div className="flex items-start justify-between gap-3">
@@ -81,7 +81,7 @@ export default function QuoteCommercialActionPanel({
         ) : null}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#1E293B] text-[11px]">
+      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-wo-border-subtle text-[11px]">
         <div>
           <span className="text-slate-500">Total fără TVA</span>
           <p className="text-slate-200 font-medium">

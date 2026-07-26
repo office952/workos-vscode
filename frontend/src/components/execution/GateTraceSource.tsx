@@ -17,7 +17,7 @@ export function GateTraceSourcePanel({ traceSource }: GateTraceSourcePanelProps)
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="border border-[#2A3548] rounded-md">
+    <div className="border border-wo-border-strong rounded-md">
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
@@ -36,18 +36,18 @@ export function GateTraceSourcePanel({ traceSource }: GateTraceSourcePanelProps)
       </button>
 
       {expanded && (
-        <div className="px-3 pb-3 space-y-2 text-[11px] border-t border-[#2A3548] pt-2">
+        <div className="px-3 pb-3 space-y-2 text-[11px] border-t border-wo-border-strong pt-2">
           {/* Order info */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
+            <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-[#1F2A44]">
               <p className="text-slate-500 text-[9px] uppercase">Order ID</p>
               <p className="text-slate-300 font-mono">{traceSource.order.id}</p>
             </div>
-            <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
+            <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-[#1F2A44]">
               <p className="text-slate-500 text-[9px] uppercase">Order Code</p>
               <p className="text-slate-300 font-mono">{traceSource.order.code}</p>
             </div>
-            <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
+            <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-[#1F2A44]">
               <p className="text-slate-500 text-[9px] uppercase">Snapshot</p>
               <p className="text-slate-300 font-mono">
                 v{traceSource.order.snapshot_version ?? "—"}
@@ -56,7 +56,7 @@ export function GateTraceSourcePanel({ traceSource }: GateTraceSourcePanelProps)
           </div>
 
           {/* Product */}
-          <div className="bg-[#0D1321] rounded px-2 py-1.5 border border-[#1F2A44]">
+          <div className="bg-wo-surface-inset rounded px-2 py-1.5 border border-[#1F2A44]">
             <p className="text-slate-500 text-[9px] uppercase">Product</p>
             <p className="text-slate-300 font-mono">
               {traceSource.product.product_id ?? "null"}{" "}
@@ -78,7 +78,7 @@ export function GateTraceSourcePanel({ traceSource }: GateTraceSourcePanelProps)
                 {traceSource.registries_consulted.map((r, idx) => (
                   <div
                     key={`${r.name}-${idx}`}
-                    className="flex items-center gap-2 bg-[#0D1321] rounded px-2 py-1 border border-[#1F2A44]"
+                    className="flex items-center gap-2 bg-wo-surface-inset rounded px-2 py-1 border border-[#1F2A44]"
                   >
                     <span className="text-emerald-400 font-mono text-[10px]">
                       {r.name}

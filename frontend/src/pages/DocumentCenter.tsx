@@ -360,8 +360,8 @@ export default function DocumentCenter() {
       </div>
 
       {/* COMMAND BAR */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 bg-[#0D1321] rounded-md px-3 py-1.5 border border-[#1E293B] w-56">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 bg-wo-surface-inset rounded-md px-3 py-1.5 border border-wo-border-subtle w-56">
           <Search className="w-3.5 h-3.5 text-slate-500" />
           <input
             type="text"
@@ -374,7 +374,7 @@ export default function DocumentCenter() {
         <select
           value={filterClient}
           onChange={(e) => setFilterClient(e.target.value)}
-          className="bg-[#0D1321] border border-[#1E293B] rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
+          className="bg-wo-surface-inset border border-wo-border-subtle rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
         >
           <option value="all">Toți clienții</option>
           {clients.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -382,7 +382,7 @@ export default function DocumentCenter() {
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="bg-[#0D1321] border border-[#1E293B] rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
+          className="bg-wo-surface-inset border border-wo-border-subtle rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
         >
           <option value="all">Toate tipurile</option>
           {Object.entries(docTypeLabels).map(([key, val]) => (
@@ -392,7 +392,7 @@ export default function DocumentCenter() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#0D1321] border border-[#1E293B] rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
+          className="bg-wo-surface-inset border border-wo-border-subtle rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
         >
           <option value="all">Toate statusurile</option>
           {Object.entries(docStatusConfig).map(([key, val]) => (
@@ -402,7 +402,7 @@ export default function DocumentCenter() {
         <select
           value={filterLinkedTo}
           onChange={(e) => setFilterLinkedTo(e.target.value)}
-          className="bg-[#0D1321] border border-[#1E293B] rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
+          className="bg-wo-surface-inset border border-wo-border-subtle rounded-md px-2 py-1.5 text-[11px] text-slate-300 outline-none"
         >
           <option value="all">Legat de: toate</option>
           <option value="oferta">Ofertă</option>
@@ -421,14 +421,14 @@ export default function DocumentCenter() {
         {/* TABLE */}
         <div className="flex-1 min-w-0">
           {filtered.length === 0 ? (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
               <FileText className="w-8 h-8 text-slate-700 mx-auto mb-2" />
               <p className="text-[12px] text-slate-500">Nu există documente care să corespundă filtrelor.</p>
             </div>
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg overflow-hidden">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg overflow-hidden">
               {/* Table header */}
-              <div className="grid grid-cols-[140px_1fr_130px_90px_80px_80px_100px] gap-2 px-4 py-2 border-b border-[#1E293B] text-[9px] font-bold uppercase tracking-wider text-slate-600">
+              <div className="grid grid-cols-[140px_1fr_130px_90px_80px_80px_100px] gap-2 px-4 py-2 border-b border-wo-border-subtle text-[9px] font-bold uppercase tracking-wider text-slate-600">
                 <span>Cod / Tip</span>
                 <span>Client</span>
                 <span>Legat de</span>
@@ -441,7 +441,7 @@ export default function DocumentCenter() {
               {filtered.map((doc) => (
                 <div
                   key={doc.id}
-                  className={`grid grid-cols-[140px_1fr_130px_90px_80px_80px_100px] gap-2 px-4 py-2.5 border-b border-[#1E293B]/50 hover:bg-slate-800/30 transition-colors ${
+                  className={`grid grid-cols-[140px_1fr_130px_90px_80px_80px_100px] gap-2 px-4 py-2.5 border-b border-wo-border-subtle/50 hover:bg-slate-800/30 transition-colors ${
                     selectedDoc?.id === doc.id ? "bg-blue-900/10 border-l-2 border-l-blue-500" : ""
                   }`}
                 >
@@ -506,7 +506,7 @@ export default function DocumentCenter() {
               stages={lifecycle}
             />
           ) : selectedDoc && !lifecycle ? (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
               <h3 className="text-[11px] font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-emerald-400" />
                 Lifecycle Documente
@@ -516,7 +516,7 @@ export default function DocumentCenter() {
               </p>
             </div>
           ) : orders.length > 0 ? (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
               <h3 className="text-[11px] font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-emerald-400" />
                 Lifecycle Documente
@@ -527,7 +527,7 @@ export default function DocumentCenter() {
                   const stages = getLifecycleForOrder(o, documents);
                   const completedCount = stages.filter((s) => s.status === "semnat" || s.status === "trimis").length;
                   return (
-                    <div key={o.id} className="flex items-center gap-2 px-2 py-1.5 rounded bg-[#0D1321]">
+                    <div key={o.id} className="flex items-center gap-2 px-2 py-1.5 rounded bg-wo-surface-inset">
                       <ClipboardList className="w-3 h-3 text-emerald-400 shrink-0" />
                       <span className="text-[10px] font-mono text-emerald-400">{o.id}</span>
                       <span className="text-[9px] text-slate-600 truncate flex-1">{o.productSummary}</span>
@@ -569,7 +569,7 @@ function RowAction({ icon, label, reason }: { icon: React.ReactNode; label: stri
 // ============================================================
 function KpiCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2.5 text-center">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2.5 text-center">
       <p className={`text-[18px] font-bold ${color}`}>{value}</p>
       <p className="text-[9px] text-slate-600 uppercase tracking-wide mt-0.5">{label}</p>
     </div>
@@ -578,7 +578,7 @@ function KpiCard({ label, value, color }: { label: string; value: number; color:
 
 function KpiCardComingSoon({ label }: { label: string }) {
   return (
-    <div className="bg-[#111827] border border-slate-700/30 rounded-lg px-3 py-2.5 text-center" title="Detecție documente lipsă în pregătire">
+    <div className="bg-wo-surface-raised border border-slate-700/30 rounded-lg px-3 py-2.5 text-center" title="Detecție documente lipsă în pregătire">
       <div className="flex items-center justify-center gap-1">
         <AlertCircle className="w-3.5 h-3.5 text-slate-600" />
       </div>
@@ -596,7 +596,7 @@ function LifecyclePanel({ title, subtitle, stages }: { title: string; subtitle: 
   const total = stages.length;
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
       <div className="flex items-center justify-between mb-1">
         <h3 className="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
           <Activity className="w-3.5 h-3.5 text-emerald-400" />
@@ -618,7 +618,7 @@ function LifecyclePanel({ title, subtitle, stages }: { title: string; subtitle: 
         {stages.map((stage, idx) => {
           const style = lifecycleStatusStyles[stage.status];
           return (
-            <div key={idx} className="flex items-center justify-between px-2 py-1.5 rounded bg-[#0D1321]">
+            <div key={idx} className="flex items-center justify-between px-2 py-1.5 rounded bg-wo-surface-inset">
               <div className="flex items-center gap-2">
                 <span className="text-[9px] text-slate-700 w-3">{idx + 1}.</span>
                 <span className="text-[11px] text-slate-400">{stage.label}</span>
@@ -639,7 +639,7 @@ function LifecyclePanel({ title, subtitle, stages }: { title: string; subtitle: 
 // ============================================================
 function DetailDrawer({ doc, navigate, onClose }: { doc: MockDocument; navigate: ReturnType<typeof useNavigate>; onClose: () => void }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-[13px] font-semibold text-slate-200 flex items-center gap-2">
           {docTypeLabels[doc.type]?.icon}
@@ -666,7 +666,7 @@ function DetailDrawer({ doc, navigate, onClose }: { doc: MockDocument; navigate:
       </div>
 
       {/* Linked entity */}
-      <div className="border-t border-[#1E293B] pt-3 mb-3">
+      <div className="border-t border-wo-border-subtle pt-3 mb-3">
         <p className="text-[10px] text-slate-600 uppercase font-semibold mb-1.5">Entitate legată</p>
         {doc.linkedEntity.route ? (
           <button
@@ -682,13 +682,13 @@ function DetailDrawer({ doc, navigate, onClose }: { doc: MockDocument; navigate:
       </div>
 
       {/* Istoric acțiuni */}
-      <div className="border-t border-[#1E293B] pt-3 mb-3">
+      <div className="border-t border-wo-border-subtle pt-3 mb-3">
         <p className="text-[10px] text-slate-600 uppercase font-semibold mb-1.5">Istoric acțiuni</p>
         <p className="text-[10px] text-slate-600 italic">Indisponibil — necesită flow backend pentru tracking acțiuni.</p>
       </div>
 
       {/* Cross-links */}
-      <div className="border-t border-[#1E293B] pt-3 mb-3">
+      <div className="border-t border-wo-border-subtle pt-3 mb-3">
         <p className="text-[10px] text-slate-600 uppercase font-semibold mb-1.5">Navigare</p>
         <div className="space-y-1">
           <CrossLink label="Client Workspace" route={`/clients/${encodeURIComponent(doc.client)}`} navigate={navigate} icon={<Users className="w-3 h-3" />} />
@@ -701,7 +701,7 @@ function DetailDrawer({ doc, navigate, onClose }: { doc: MockDocument; navigate:
       </div>
 
       {/* Actions */}
-      <div className="border-t border-[#1E293B] pt-3">
+      <div className="border-t border-wo-border-subtle pt-3">
         <p className="text-[10px] text-slate-600 uppercase font-semibold mb-1.5">Acțiuni disponibile</p>
         <div className="flex flex-wrap gap-1.5">
           <DisabledActionBtn label="Vezi PDF" reason="Necesită flow backend — vizualizare PDF indisponibilă" icon={<Eye className="w-2.5 h-2.5" />} />
@@ -716,7 +716,7 @@ function DetailDrawer({ doc, navigate, onClose }: { doc: MockDocument; navigate:
       </div>
 
       {/* Notes */}
-      <div className="border-t border-[#1E293B] pt-3 mt-3">
+      <div className="border-t border-wo-border-subtle pt-3 mt-3">
         <p className="text-[10px] text-slate-600 uppercase font-semibold mb-1">Note interne</p>
         <p className="text-[10px] text-slate-600 italic">Indisponibil — adăugarea de note necesită flow backend.</p>
       </div>

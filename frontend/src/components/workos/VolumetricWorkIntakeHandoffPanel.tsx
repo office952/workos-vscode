@@ -151,7 +151,7 @@ export default function VolumetricWorkIntakeHandoffPanel({
       </dl>
 
       <div
-        className="rounded-md border border-[#2A3548] bg-[#0A0F1A]/50 p-3 space-y-2"
+        className="rounded-md border border-wo-border-strong bg-wo-surface-inset/50 p-3 space-y-2"
         data-testid="volumetric-handoff-psu-plan"
       >
         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -188,7 +188,7 @@ export default function VolumetricWorkIntakeHandoffPanel({
         </div>
         {psuConfig.length > 1 && compatiblePsu != null && (
           <p
-            className="text-[10px] text-amber-300/80 border-t border-[#1E293B]/80 pt-2"
+            className="text-[10px] text-amber-300/80 border-t border-wo-border-subtle/80 pt-2"
             data-testid="volumetric-handoff-psu-costengine-note"
           >
             Notă internă: pricing folosește momentan valoarea compatibilă selected_psu_watts (

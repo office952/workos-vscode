@@ -19,7 +19,7 @@ export default function TemplateConfirmationPanel({
   return (
     <div
       id={INTAKE_SECTION_IDS.template}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 scroll-mt-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 scroll-mt-4"
       data-testid="volumetric-template-step"
     >
       {confirmed ? (

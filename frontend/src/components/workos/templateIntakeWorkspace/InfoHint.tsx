@@ -31,7 +31,7 @@ export default function InfoHint({ label, children, className }: InfoHintProps) 
         </TooltipTrigger>
         <TooltipContent
           side="top"
-          className="max-w-xs text-[11px] leading-relaxed bg-[#1a2332] border-[#2A3548] text-slate-300"
+          className="max-w-xs text-[11px] leading-relaxed bg-[#1a2332] border-wo-border-strong text-slate-300"
         >
           {children}
         </TooltipContent>

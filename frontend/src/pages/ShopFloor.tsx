@@ -129,8 +129,8 @@ export default function ShopFloor() {
           return (
             <div
               key={wc.id}
-              className={`bg-[#111827] border rounded-lg p-3 transition-all duration-500 ${
-                hasBlocked ? "border-red-800/50 shadow-red-900/10 shadow-lg" : "border-[#1E293B]"
+              className={`bg-wo-surface-raised border rounded-lg p-3 transition-all duration-500 ${
+                hasBlocked ? "border-red-800/50 shadow-red-900/10 shadow-lg" : "border-wo-border-subtle"
               }`}
             >
               {/* WC Header */}
@@ -169,7 +169,7 @@ export default function ShopFloor() {
 
               {/* Queue Preview */}
               {totalQueue > 0 && (
-                <div className="mt-3 pt-2 border-t border-[#1E293B]">
+                <div className="mt-3 pt-2 border-t border-wo-border-subtle">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Queue</p>
                   <div className="space-y-1">
                     {jobs
@@ -197,7 +197,7 @@ export default function ShopFloor() {
       {/* Bottom: Blocked + Machine State */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Blocked Jobs Board */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader title="Blocked Jobs" count={blockedJobs.length} icon={<AlertTriangle className="w-4 h-4 text-red-400" />} />
           {blockedJobs.length === 0 ? (
             <div className="flex items-center justify-center py-6 text-[12px] text-emerald-500/70">
@@ -208,7 +208,7 @@ export default function ShopFloor() {
           ) : (
             <div className="space-y-2">
               {blockedJobs.map((job) => (
-                <div key={job.id} className="bg-[#1A2236] border border-red-900/30 rounded-lg px-3 py-2 transition-all duration-500">
+                <div key={job.id} className="bg-wo-surface-raised border border-red-900/30 rounded-lg px-3 py-2 transition-all duration-500">
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-[12px] text-red-400">{job.id}</span>
                     <PriorityBadge priority={job.priority} />
@@ -229,12 +229,12 @@ export default function ShopFloor() {
         </div>
 
         {/* Machine State Summary */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader title="Machine State" count={machines.length} icon={<Factory className="w-4 h-4" />} />
           <div className="overflow-x-auto">
             <table className="w-full text-[12px]">
               <thead>
-                <tr className="text-slate-500 text-left border-b border-[#1E293B]">
+                <tr className="text-slate-500 text-left border-b border-wo-border-subtle">
                   <th className="pb-2 font-medium">Machine</th>
                   <th className="pb-2 font-medium">Status</th>
                   <th className="pb-2 font-medium">Job</th>
@@ -253,7 +253,7 @@ export default function ShopFloor() {
                     changeover: "text-amber-400",
                   };
                   return (
-                    <tr key={m.id} className="border-b border-[#1E293B]/50 hover:bg-[#1A2236]/50 transition-colors duration-300">
+                    <tr key={m.id} className="border-b border-wo-border-subtle/50 hover:bg-wo-surface-raised/50 transition-colors duration-300">
                       <td className="py-1.5 text-slate-300">{m.name}</td>
                       <td className={`py-1.5 font-semibold transition-colors duration-500 ${statusColor[m.status] || "text-slate-500"}`}>
                         <span className="flex items-center gap-1.5">

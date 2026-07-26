@@ -223,7 +223,7 @@ function CandidateModuleProdusProductComposerCard({
   return (
     <ReadonlyCardShell
       testId={testId}
-      className="border-purple-800/40 bg-wo-surface-raised hover:border-purple-600/40 hover:bg-[#131B2E]"
+      className="border-purple-800/40 bg-wo-surface-raised hover:border-purple-600/40 hover:bg-wo-surface-raised"
     >
       <div className="flex min-h-[5rem] items-start gap-3">
         <TemplateIcon templateCode={model.composerTemplateCode} compact={variant === "compact"} />

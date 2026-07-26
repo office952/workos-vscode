@@ -153,7 +153,7 @@ export function ClientFiscalVerifyPanel({
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
       data-testid="client-fiscal-verify-panel"
     >
       <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
@@ -162,7 +162,7 @@ export function ClientFiscalVerifyPanel({
       </h3>
 
       <div className="flex items-center gap-3 mb-3">
-        <div className="flex items-center gap-2 bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-blue-500/50">
+        <div className="flex items-center gap-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-blue-500/50">
           <Search className="w-4 h-4 text-slate-500 shrink-0" />
           <input
             type="text"
@@ -203,7 +203,7 @@ export function ClientFiscalVerifyPanel({
       )}
 
       {preview && (
-        <div className="bg-[#0D1321] border border-emerald-800/30 rounded-lg p-4 space-y-3">
+        <div className="bg-wo-surface-inset border border-emerald-800/30 rounded-lg p-4 space-y-3">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <p className="text-[12px] text-emerald-400 font-semibold">Preview date fiscale</p>
@@ -235,7 +235,7 @@ export function ClientFiscalVerifyPanel({
             </div>
           </div>
 
-          <div className="text-[11px] text-slate-400 border-t border-[#2A3548] pt-3">
+          <div className="text-[11px] text-slate-400 border-t border-wo-border-strong pt-3">
             {matchStatus === "loading" && "Verific client existent după CUI..."}
             {matchStatus === "single" && "Client existent confirmat după CUI."}
             {matchStatus === "none" && "Niciun client existent cu acest CUI — actualizarea se aplică clientului curent."}

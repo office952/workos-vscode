@@ -64,10 +64,10 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
 
   return (
     <section
-      className="bg-[#1A2236] border border-[#2A3548] rounded-lg"
+      className="bg-wo-surface-raised border border-wo-border-strong rounded-lg"
       data-testid="post-job-truth-panel"
     >
-      <header className="flex items-center justify-between px-4 py-3 border-b border-[#2A3548]">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
         <div className="flex items-center gap-2">
           <ClipboardList className="w-4 h-4 text-emerald-400" />
           <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
@@ -111,7 +111,7 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
                 Plan and actual stay separate. Missing is never shown as 0.
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-[11px]">
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px]">Revenue</p>
                   <p className="mt-1 text-slate-200 font-semibold tabular-nums">
                     {formatPresenceValue(data.baseline.revenue_net, {
@@ -120,7 +120,7 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
                     })}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px]">
                     Closed labor min
                   </p>
@@ -132,7 +132,7 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
                   </p>
                   <PresenceBadge presence={data.labor.completeness} />
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px]">
                     Known material cost
                   </p>
@@ -146,7 +146,7 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
                     })}
                   </p>
                 </div>
-                <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+                <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
                   <p className="text-slate-500 uppercase text-[10px]">
                     Known margin (partial)
                   </p>

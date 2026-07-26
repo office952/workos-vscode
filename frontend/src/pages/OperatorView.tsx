@@ -306,7 +306,7 @@ export default function OperatorView() {
 
       {/* Employee selector — canonical registry, no salary */}
       {isWired && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <Users className="w-4 h-4 text-cyan-400" />
             <h2 className="text-[13px] font-semibold text-slate-200">Angajat activ (registry)</h2>
@@ -326,7 +326,7 @@ export default function OperatorView() {
                 onChange={(e) =>
                   setSelectedEmployeeId(e.target.value ? Number(e.target.value) : null)
                 }
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[13px] text-slate-200"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-slate-200"
               >
                 <option value="">— Selectează angajat —</option>
                 {registryEmployees.map((emp) => (
@@ -434,7 +434,7 @@ export default function OperatorView() {
 
       {/* Current Task — Big Card */}
       {currentTask ? (
-        <div className="bg-[#111827] border-2 border-emerald-700/50 rounded-xl p-5">
+        <div className="bg-wo-surface-raised border-2 border-emerald-700/50 rounded-xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
@@ -463,7 +463,7 @@ export default function OperatorView() {
               </div>
 
               {/* Machine */}
-              <div className="flex items-center gap-2 mt-4 bg-[#1A2236] rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 mt-4 bg-wo-surface-raised rounded-lg px-3 py-2">
                 <Wrench className="w-4 h-4 text-slate-500" />
                 <span className="text-[12px] text-slate-300">{currentTask.machineName}</span>
               </div>
@@ -489,7 +489,7 @@ export default function OperatorView() {
               {/* Instructions */}
               <div className="mt-4">
                 <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-1">Instrucțiuni</p>
-                <p className="text-[12px] text-slate-300 leading-relaxed bg-[#1A2236] rounded-lg px-3 py-2">
+                <p className="text-[12px] text-slate-300 leading-relaxed bg-wo-surface-raised rounded-lg px-3 py-2">
                   {currentTask.instructions}
                 </p>
               </div>
@@ -497,7 +497,7 @@ export default function OperatorView() {
 
             <div>
               {/* Time */}
-              <div className="bg-[#1A2236] rounded-lg p-4">
+              <div className="bg-wo-surface-raised rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Clock className="w-4 h-4 text-slate-500" />
                   <span className="text-[11px] text-slate-500 uppercase tracking-wide">Timp</span>
@@ -563,7 +563,7 @@ export default function OperatorView() {
               />
             </div>
           ) : null}
-          <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[#2A3548]">
+          <div className="flex items-center gap-3 mt-5 pt-4 border-t border-wo-border-strong">
             {/* Show Pause only when task is in_progress (not paused/blocked) */}
             {currentTask.status === "in_progress" && (
               <button
@@ -698,7 +698,7 @@ export default function OperatorView() {
           )}
         </div>
       ) : (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-8 text-center">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-8 text-center">
           <p className="text-slate-500 text-[14px]">Niciun task activ. Selectează din lista de mai jos.</p>
         </div>
       )}
@@ -723,13 +723,13 @@ export default function OperatorView() {
       )}
 
       {/* Next Tasks */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <SectionHeader title="Next Tasks" count={nextTasks.length} icon={<ChevronRight className="w-4 h-4" />} />
         <div className="space-y-2">
           {nextTasks.map((task, idx) => (
             <div
               key={task.id}
-              className="flex items-center gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5 hover:border-blue-700/50 transition-colors cursor-pointer"
+              className="flex items-center gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5 hover:border-blue-700/50 transition-colors cursor-pointer"
             >
               <span className="text-[12px] font-mono text-slate-600 w-5">{idx + 1}</span>
               <div className="flex-1 min-w-0">
@@ -788,7 +788,7 @@ export default function OperatorView() {
 
       {/* Task Timeline */}
       {firstJobId && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader title={`Task Timeline — ${firstJobId}`} icon={<Zap className="w-4 h-4" />} />
           <div className="relative pl-6">
             {tasks
@@ -807,7 +807,7 @@ export default function OperatorView() {
                   <div key={task.id} className="relative pb-4">
                     {/* Line */}
                     {idx < arr.length - 1 && (
-                      <div className="absolute left-[-16px] top-3 w-px h-full bg-[#2A3548]" />
+                      <div className="absolute left-[-16px] top-3 w-px h-full bg-wo-hover" />
                     )}
                     {/* Dot */}
                     <div className={`absolute left-[-20px] top-1 w-3 h-3 rounded-full ${dotColor}`} />

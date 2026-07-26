@@ -85,7 +85,7 @@ function SystemCard({
 }) {
   return (
     <div
-      className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-3 min-w-[220px] max-w-[280px] flex-1"
+      className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-3 min-w-[220px] max-w-[280px] flex-1"
       data-testid={`${testIdPrefix}-${system.id}`}
     >
       <div className="flex items-start justify-between gap-2 mb-1">
@@ -208,7 +208,7 @@ export default function ModuleChain() {
       </div>
 
       <div
-        className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-lg p-1 overflow-x-auto"
+        className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-1 overflow-x-auto"
         data-testid="module-chain-tabs"
         role="tablist"
         aria-label="Harta sistemelor — secțiuni"
@@ -234,7 +234,7 @@ export default function ModuleChain() {
 
       {activeTab === "system_map" && (
         <section
-          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-4"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-4"
           data-testid="module-chain-architecture"
           role="tabpanel"
         >
@@ -244,7 +244,7 @@ export default function ModuleChain() {
               {DOCUMENTATION_HIERARCHY.map((level) => (
                 <div
                   key={level.id}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                  className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
                   data-testid={`doc-hierarchy-level-${level.level}`}
                 >
                   <p className="font-semibold text-slate-100">
@@ -332,7 +332,7 @@ export default function ModuleChain() {
               {ACTIVE_SCOPE_HANDOFFS.map((h) => (
                 <div
                   key={h.id}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                  className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
                   data-testid={`active-scope-handoff-${h.id}`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -368,7 +368,7 @@ export default function ModuleChain() {
             {MODULE_INDEPENDENCE_PRODUCT_STATUS.map((product) => (
               <div
                 key={product.id}
-                className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
                 data-testid={`module-independence-${product.id}`}
               >
                 <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -421,7 +421,7 @@ export default function ModuleChain() {
               </div>
             ))}
             <div
-              className="bg-[#1A2236] border border-amber-800/40 rounded-lg p-3 text-[11px]"
+              className="bg-wo-surface-raised border border-amber-800/40 rounded-lg p-3 text-[11px]"
               data-testid="settings-ownership-conflict"
             >
               <p className="font-semibold text-amber-100">
@@ -431,7 +431,7 @@ export default function ModuleChain() {
               <p className="text-slate-500 mt-1">{SETTINGS_OWNERSHIP_TRUTH.noteRo}</p>
             </div>
             <div
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px] space-y-2"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px] space-y-2"
               data-testid="finish-mounting-ownership-modules"
             >
               <p className="font-semibold text-slate-100">FINISH / MOUNTING — ownership V1</p>
@@ -467,7 +467,7 @@ export default function ModuleChain() {
               </ul>
             </div>
             <div
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="false-generic-module-flags"
             >
               <p className="font-semibold text-slate-100 mb-1">Module false-generic (scope real)</p>
@@ -478,7 +478,7 @@ export default function ModuleChain() {
               </ul>
             </div>
             <div
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="supporting-surface-classifications"
             >
               <p className="font-semibold text-slate-100 mb-1">Suprafețe suport (nu Level-1 spine)</p>
@@ -489,7 +489,7 @@ export default function ModuleChain() {
               </ul>
             </div>
             <div
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="hybrid-intake-model"
             >
               <p className="font-semibold text-slate-100">Intake entry = HYBRID</p>
@@ -498,7 +498,7 @@ export default function ModuleChain() {
               <p className="text-amber-200/90 mt-1">{HYBRID_INTAKE_MODEL.noteRo}</p>
             </div>
             <div
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="unregistered-system-policy"
             >
               <p className="font-semibold text-slate-100">{UNREGISTERED_SYSTEM_POLICY.id}</p>
@@ -528,7 +528,7 @@ export default function ModuleChain() {
             ))}
           </div>
 
-          <div className="border-t border-[#1E293B] pt-4 space-y-3" data-testid="canonical-concept-map">
+          <div className="border-t border-wo-border-subtle pt-4 space-y-3" data-testid="canonical-concept-map">
             <SectionHeader title="Vocabular Product System (distinct)" icon={<BookOpen className="w-4 h-4 text-violet-400" />} />
             <p className="text-[11px] text-slate-500">
               Familie ≠ Product Template ≠ Module produs ≠ Mini-modul operațional ≠ Capability. Scope stabilizare doar Litere + Logo + ACM.
@@ -537,7 +537,7 @@ export default function ModuleChain() {
               {CANONICAL_CONCEPTS.map((concept) => (
                 <div
                   key={concept.id}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+                  className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3"
                   data-testid={`concept-node-${concept.id}`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
@@ -564,13 +564,13 @@ export default function ModuleChain() {
             </div>
           </div>
 
-          <div className="border-t border-[#1E293B] pt-4 space-y-2" data-testid="stabilization-scope">
+          <div className="border-t border-wo-border-subtle pt-4 space-y-2" data-testid="stabilization-scope">
             <p className="text-[11px] font-semibold text-slate-400">Scope stabilizare activ</p>
             <div className="space-y-2">
               {STABILIZATION_PRODUCTS.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                  className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
                   data-testid={`stabilization-${product.id}`}
                 >
                   <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -592,7 +592,7 @@ export default function ModuleChain() {
           </div>
 
           <div
-            className="border-t border-[#1E293B] pt-3 flex flex-wrap gap-3 text-[11px]"
+            className="border-t border-wo-border-subtle pt-3 flex flex-wrap gap-3 text-[11px]"
             data-testid="canonical-route-links"
           >
             <Link to={CANONICAL_ROUTES.inventory} className="text-blue-400 hover:text-blue-300 inline-flex items-center gap-1">
@@ -617,7 +617,7 @@ export default function ModuleChain() {
 
       {activeTab === "handoffs" && (
         <section className="space-y-4" data-testid="module-chain-handoffs" role="tabpanel">
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <SectionHeader
               title="Contracte și transferuri active"
               icon={<ArrowRight className="w-4 h-4" />}
@@ -629,7 +629,7 @@ export default function ModuleChain() {
               {PRESENT_HANDOFFS.map((h) => (
                 <div
                   key={h.id}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+                  className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3"
                   data-testid={`handoff-${h.producerId}-${h.consumerId}`}
                 >
                   <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -668,7 +668,7 @@ export default function ModuleChain() {
 
       {activeTab === "runtime" && (
         <section
-          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
           data-testid="module-chain-runtime"
           role="tabpanel"
         >
@@ -689,17 +689,17 @@ export default function ModuleChain() {
             className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 text-[11px]"
             data-testid="module-chain-runtime-distinctions"
           >
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">Backend</p>
               <p className="text-slate-200">{runtimeBadge.label}</p>
             </div>
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">DB</p>
               <p className="text-slate-200">
                 {dbVerified ? "DB verificată (check mapat)" : "DB neverificată"}
               </p>
             </div>
-            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">Checks publice</p>
               <p className="text-slate-200">{checksCount === 0 ? "Goale / redacted" : `${checksCount} check-uri`}</p>
             </div>
@@ -734,7 +734,7 @@ export default function ModuleChain() {
 
       {activeTab === "evidence" && (
         <section
-          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
           data-testid="module-chain-evidence"
           role="tabpanel"
         >
@@ -747,7 +747,7 @@ export default function ModuleChain() {
             {PRESENT_EVIDENCE.map((ev) => (
               <div
                 key={ev.id}
-                className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
                 data-testid={`evidence-${ev.id}`}
               >
                 <div className="flex flex-wrap items-center gap-2 mb-1">

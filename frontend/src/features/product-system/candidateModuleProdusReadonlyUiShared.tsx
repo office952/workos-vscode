@@ -45,7 +45,7 @@ export function CandidateModuleProdusStatusStrip({
   return (
     <div
       data-testid={`${testIdPrefix}-status-strip`}
-      className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-xl border border-cyan-900/50 bg-[#0A0F1A]/95 px-3 py-2.5 text-xs font-semibold backdrop-blur-sm"
+      className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-xl border border-cyan-900/50 bg-wo-surface-inset/95 px-3 py-2.5 text-xs font-semibold backdrop-blur-sm"
     >
       <span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2.5 py-1 text-cyan-200">INACTIVE</span>
       <span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2.5 py-1 text-cyan-200">CANDIDATE</span>

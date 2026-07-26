@@ -124,7 +124,7 @@ export function ImportantDocumentsSection({
 
   return (
     <section
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
       data-testid="governance-important-documents"
     >
       <SectionHeader title="Documente importante" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
@@ -180,7 +180,7 @@ export function ImportantDocumentsSection({
           {docsResult.data.items.map((doc) => (
             <div
               key={doc.document_id}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3"
               data-testid={`important-doc-${doc.document_id}`}
             >
               <div className="flex flex-wrap items-start gap-2 mb-1.5">
@@ -240,8 +240,8 @@ export function ImportantDocumentsSection({
           aria-modal="true"
           aria-label="Document read-only"
         >
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-xl">
-            <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#1E293B]">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-xl">
+            <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-wo-border-subtle">
               <div>
                 <p className="text-[13px] font-semibold text-slate-100">Citire read-only</p>
                 <p className="text-[10px] text-slate-500 font-mono">{openId}</p>
@@ -274,7 +274,7 @@ export function ImportantDocumentsSection({
                 </pre>
               )}
             </div>
-            <div className="px-4 py-2 border-t border-[#1E293B] text-[10px] text-slate-600">
+            <div className="px-4 py-2 border-t border-wo-border-subtle text-[10px] text-slate-600">
               Fără editare · fără upload · lookup doar după document_id
             </div>
           </div>

@@ -197,12 +197,12 @@ export default function OperationalRealityReview() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-4 py-3">
         <Filter className="w-4 h-4 text-slate-500" />
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value as SeverityFilter)}
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1"
         >
           <option value="all">Severitate: toate</option>
           <option value="critical">Critical</option>
@@ -212,7 +212,7 @@ export default function OperationalRealityReview() {
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1"
         >
           <option value="all">Categorie: toate</option>
           <option value="atelier">Atelier</option>
@@ -224,8 +224,8 @@ export default function OperationalRealityReview() {
         </span>
       </div>
 
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg overflow-hidden">
-        <div className="px-4 py-3 border-b border-[#2A3548] flex items-center gap-2">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg overflow-hidden">
+        <div className="px-4 py-3 border-b border-wo-border-strong flex items-center gap-2">
           <Activity className="w-4 h-4 text-blue-400" />
           <h2 className="text-[13px] font-semibold text-slate-200">Lipsuri detectate</h2>
         </div>
@@ -240,7 +240,7 @@ export default function OperationalRealityReview() {
           </p>
         )}
 
-        <ul className="divide-y divide-[#2A3548]">
+        <ul className="divide-y divide-wo-border-strong">
           {filteredGaps.map((gap, idx) => (
             <li key={`${gap.gap_type}-${gap.order_id}-${gap.task_id}-${idx}`} className="px-4 py-3">
               <div className="flex flex-wrap items-start gap-2">
@@ -270,17 +270,17 @@ export default function OperationalRealityReview() {
 
       {summary && (
         <div className="grid grid-cols-3 gap-3 text-[11px]">
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2">
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2">
             <p className="text-slate-500 flex items-center gap-1">
               <Info className="w-3 h-3" /> Info: {summary.gaps_by_severity.info}
             </p>
           </div>
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2">
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2">
             <p className="text-amber-400 flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" /> Warning: {summary.gaps_by_severity.warning}
             </p>
           </div>
-          <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2">
+          <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2">
             <p className="text-red-400 flex items-center gap-1">
               <ShieldAlert className="w-3 h-3" /> Critical: {summary.gaps_by_severity.critical}
             </p>
@@ -310,7 +310,7 @@ function SummaryCard({
           : "text-slate-200";
 
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-4 py-3">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-4 py-3">
       <p className="text-[11px] text-slate-400 uppercase tracking-wide">{label}</p>
       <p className={`text-[20px] font-bold mt-1 ${valueCls}`}>{value}</p>
     </div>

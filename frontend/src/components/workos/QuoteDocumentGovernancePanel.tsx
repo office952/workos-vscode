@@ -87,7 +87,7 @@ export default function QuoteDocumentGovernancePanel({
   if (!visible || !quoteId) return null;
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="quote-document-governance-panel">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="quote-document-governance-panel">
       <div className="flex items-center gap-2 mb-2">
         <ShieldCheck className="w-4 h-4 text-blue-400" />
         <p className="text-[12px] font-semibold text-blue-300">Document Governance (read-only)</p>
@@ -108,21 +108,21 @@ export default function QuoteDocumentGovernancePanel({
 
       {!loading && !error && guard && eligibility && (
         <div className="mt-3 space-y-2 text-[11px]">
-          <div className="flex items-center justify-between rounded border border-[#2A3548] bg-[#1A2236] px-2.5 py-2">
+          <div className="flex items-center justify-between rounded border border-wo-border-strong bg-wo-surface-raised px-2.5 py-2">
             <span className="text-slate-400">Quote acceptance guard</span>
             <span className={`rounded border px-2 py-0.5 font-semibold ${badgeClassForStatus(guard.overall_status)}`}>
               {guardStatusLabel[guard.overall_status] ?? guard.overall_status}
             </span>
           </div>
 
-          <div className="flex items-center justify-between rounded border border-[#2A3548] bg-[#1A2236] px-2.5 py-2">
+          <div className="flex items-center justify-between rounded border border-wo-border-strong bg-wo-surface-raised px-2.5 py-2">
             <span className="text-slate-400">Output snapshot eligibility</span>
             <span className={`rounded border px-2 py-0.5 font-semibold ${badgeClassForStatus(eligibility.eligibility_status)}`}>
               {eligibilityLabel[eligibility.eligibility_status] ?? eligibility.eligibility_status}
             </span>
           </div>
 
-          <div className="rounded border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300">
+          <div className="rounded border border-wo-border-strong bg-wo-surface-raised px-2.5 py-2 text-slate-300">
             <p>
               Snapshot aprobat: {eligibility.approved_snapshot_code ?? "neatașat"}
             </p>

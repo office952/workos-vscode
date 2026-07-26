@@ -19,12 +19,12 @@ import {
   splitMaterialsForPickerGroups,
 } from "@/features/product-system/materialRegistryDisplay";
 
-/** Hover/focus row — lighter than popover #0f172a, same blue family as app panels. */
+/** Hover/focus row — semantic hover wash, same family as app panels. */
 const PICKER_ITEM =
-  "data-[selected=true]:!bg-[#1e293b] data-[selected=true]:!text-wo-text-primary aria-selected:!bg-[#1e293b] aria-selected:!text-wo-text-primary";
+  "data-[selected=true]:!bg-wo-hover data-[selected=true]:!text-wo-text-primary aria-selected:!bg-wo-hover aria-selected:!text-wo-text-primary";
 
 const PICKER_COMMAND =
-  "[&_[cmdk-group-heading]]:text-wo-text-muted [&_[cmdk-input]]:bg-[#0d1321] [&_[cmdk-input]]:text-wo-text-primary";
+  "[&_[cmdk-group-heading]]:text-wo-text-muted [&_[cmdk-input]]:bg-wo-surface-inset [&_[cmdk-input]]:text-wo-text-primary";
 
 type MaterialRegistryPickerProps = {
   materials: InventoryMaterialEntity[];
@@ -104,7 +104,7 @@ export function MaterialRegistryPicker({
           disabled={disabled}
           className={cn(
             "flex-[2] h-auto min-h-9 justify-between gap-2 px-2 py-1.5",
-            "bg-wo-surface-inset border-[#334155] hover:bg-wo-surface-raised hover:border-emerald-600/40",
+            "bg-wo-surface-inset border-wo-border-strong hover:bg-wo-surface-raised hover:border-emerald-600/40",
             "text-left font-normal",
             className
           )}
@@ -124,12 +124,12 @@ export function MaterialRegistryPicker({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[min(calc(100vw-2rem),22rem)] p-0 bg-[#0f172a] border-[#334155] text-wo-text-primary shadow-xl"
+        className="w-[min(calc(100vw-2rem),22rem)] p-0 bg-wo-surface-inset border-wo-border-strong text-wo-text-primary shadow-xl"
       >
-        <Command className={cn("bg-[#0f172a] text-wo-text-primary", PICKER_COMMAND)}>
+        <Command className={cn("bg-wo-surface-inset text-wo-text-primary", PICKER_COMMAND)}>
           <CommandInput
             placeholder="Caută cod sau nume…"
-            className="h-9 text-[12px] border-[#334155] placeholder:text-wo-text-muted"
+            className="h-9 text-[12px] border-wo-border-strong placeholder:text-wo-text-muted"
           />
           <CommandList className="max-h-[min(50vh,280px)]">
             <CommandGroup>

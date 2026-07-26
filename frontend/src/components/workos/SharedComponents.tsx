@@ -86,7 +86,7 @@ const severityConfig: Record<AlertSeverity, { icon: React.ReactNode; className: 
 export function AlertItem({ alert }: { alert: { id: string; severity: AlertSeverity; message: string; triggeredAt: string; code: string } }) {
   const cfg = severityConfig[alert.severity];
   return (
-    <div className={`flex items-start gap-2 px-3 py-2 bg-[#111827] border-l-2 ${cfg.borderClass} rounded-r`}>
+    <div className={`flex items-start gap-2 px-3 py-2 bg-wo-surface-raised border-l-2 ${cfg.borderClass} rounded-r`}>
       <span className={`mt-0.5 ${cfg.className}`}>{cfg.icon}</span>
       <div className="flex-1 min-w-0">
         <p className="text-[12px] text-slate-200 leading-tight">{alert.message}</p>
@@ -117,7 +117,7 @@ export function KPICard({
   const TrendIcon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Minus;
 
   return (
-    <div className={`bg-[#1A2236] border border-[#2A3548] border-t-2 ${statusBorder} rounded-lg px-4 py-3`}>
+    <div className={`bg-wo-surface-raised border border-wo-border-strong border-t-2 ${statusBorder} rounded-lg px-4 py-3`}>
       <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wide">{label}</p>
       <div className="flex items-end gap-2 mt-1">
         <span className="text-2xl font-bold text-slate-100">{value}</span>
@@ -157,7 +157,7 @@ export function MachineCard({
   const dotColor = statusColors[machine.status] || "bg-slate-500";
 
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
       <div className="flex items-center gap-2 mb-2">
         <span className={`w-2 h-2 rounded-full ${dotColor} animate-pulse`} />
         <span className="text-[12px] font-semibold text-slate-200 truncate">{machine.name}</span>
@@ -233,7 +233,7 @@ export function ModuleNodeCard({
 
   return (
     <div className="flex items-center">
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4 w-[180px] hover:border-blue-600/50 transition-colors">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4 w-[180px] hover:border-blue-600/50 transition-colors">
         <div className="flex items-center gap-2 mb-2">
           <span className={`w-2.5 h-2.5 rounded-full ${statusDot}`} />
           <span className="text-[14px] font-bold text-slate-100">{node.shortName}</span>

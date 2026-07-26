@@ -262,7 +262,7 @@ function DossierScopeMetaBar({
       ].map((chip) => (
         <span
           key={chip.label}
-          className="px-2 py-1 text-[10px] font-semibold text-slate-500 bg-[#111827] border border-[#1E293B] rounded-md"
+          className="px-2 py-1 text-[10px] font-semibold text-slate-500 bg-wo-surface-raised border border-wo-border-subtle rounded-md"
         >
           {chip.label}
         </span>
@@ -286,7 +286,7 @@ function DossierTemplateFocusPanel({
   const statusCfg = dossier ? STATUS_CONFIG[dossier.status as DossierStatus] : null;
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-6 space-y-4">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-6 space-y-4">
       <div>
         <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-1">
           Șablon selectat
@@ -313,7 +313,7 @@ function DossierTemplateFocusPanel({
         </div>
       ) : null}
 
-      <div className="border-t border-[#1E293B] pt-4 space-y-2">
+      <div className="border-t border-wo-border-subtle pt-4 space-y-2">
         <p className="text-[10px] text-slate-500 uppercase tracking-wide font-bold">Status dossier</p>
         {dossier && statusCfg ? (
           <p className={`text-[12px] font-semibold ${statusCfg.color}`}>
@@ -414,7 +414,7 @@ function TemplateRow({
       className={`rounded-xl border p-3 transition-all duration-200 cursor-pointer ${
         selected
           ? "border-purple-500/50 ring-2 ring-purple-500/20 bg-purple-900/10"
-          : "border-[#1E293B] bg-[#111827] hover:border-slate-500 hover:bg-[#131B2E]"
+          : "border-wo-border-subtle bg-wo-surface-raised hover:border-slate-500 hover:bg-wo-surface-raised"
       }`}
       onClick={onSelect}
     >
@@ -537,7 +537,7 @@ function SectionNav({
   completionStates: Record<string, { status: SectionCompletionState }>;
 }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-2 space-y-0.5">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-2 space-y-0.5">
       <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold px-2 py-1">
         Navigare Secțiuni
       </p>
@@ -615,7 +615,7 @@ function SectionCard({
         ? "border-slate-700/30 bg-slate-800/20 opacity-50"
         : jsonInfo.type === "invalid"
         ? "border-red-700/30 bg-red-900/10"
-        : "border-[#1E293B] bg-[#111827]"
+        : "border-wo-border-subtle bg-wo-surface-raised"
     }`}>
       <div className="flex items-center gap-2 mb-1">
         <span className="text-sm">{section.emoji}</span>
@@ -690,7 +690,7 @@ function CompletionProgress({ dossier, localCompletionState }: {
           {complete}/{total} secțiuni complete ({pctComplete}%)
         </span>
       </div>
-      <div className="h-2 bg-[#1E293B] rounded-full overflow-hidden flex">
+      <div className="h-2 bg-wo-hover rounded-full overflow-hidden flex">
         {pctComplete > 0 && <div className="bg-emerald-500 h-full transition-all duration-500" style={{ width: `${pctComplete}%` }} />}
         {pctInProgress > 0 && <div className="bg-amber-500 h-full transition-all duration-500" style={{ width: `${pctInProgress}%` }} />}
         {pctBlocked > 0 && <div className="bg-red-500 h-full transition-all duration-500" style={{ width: `${pctBlocked}%` }} />}
@@ -725,7 +725,7 @@ function DossierContractOverview({
         });
 
         return (
-          <div key={group.key} className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+          <div key={group.key} className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] font-bold text-slate-200">{group.title}</p>
@@ -773,7 +773,7 @@ function TemplateModuleLinksPanel({
   if (links.length === 0) return null;
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3 space-y-3">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3 space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[10px] font-bold text-slate-300 uppercase tracking-wide">Module atașabile</p>
@@ -813,7 +813,7 @@ function TemplateModuleLinksPanel({
                   {link.active ? "ACTIV" : "INACTIV"}
                 </span>
               </div>
-              <div className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 px-2 py-1.5">
+              <div className="rounded-md border border-wo-border-strong/60 bg-wo-surface-raised/40 px-2 py-1.5">
                 <p className="text-[9px] text-slate-500 uppercase font-bold">Trigger</p>
                 <p className="text-[10px] text-slate-300 font-mono">{link.trigger_field} = {formatModuleLinkValue(triggerValue)}</p>
               </div>
@@ -869,7 +869,7 @@ function StatusTransitionBar({
   const currentCfg = STATUS_CONFIG[current];
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-purple-400" />
@@ -943,7 +943,7 @@ function MetadataPanel({ dossier, templateCode }: { dossier: BlueprintDossierEnt
   ];
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
       <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold mb-2">Metadate Dossier</p>
       <div className="grid grid-cols-3 gap-x-4 gap-y-1.5">
         {items.map((it) => (
@@ -1126,7 +1126,7 @@ function DossierEditor({
   return (
     <div className="space-y-4">
       {/* Header bar with save controls */}
-      <div className="flex items-center justify-between bg-[#111827] border border-[#1E293B] rounded-xl px-4 py-3 sticky top-0 z-10">
+      <div className="flex items-center justify-between bg-wo-surface-raised border border-wo-border-subtle rounded-xl px-4 py-3 sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-purple-400" />
           <div>
@@ -1252,7 +1252,7 @@ function DossierEditor({
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
             <p className="text-[10px] font-bold text-slate-300 uppercase tracking-wide">Afișaj selectiv</p>
@@ -1302,7 +1302,7 @@ function DossierEditor({
 
       {/* Ownership fields */}
       {!readOnly && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
           <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold mb-2">Proprietate & Revizuire</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -1312,7 +1312,7 @@ function DossierEditor({
                 value={ownerRole}
                 onChange={(e) => { setOwnerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: product_manager"
-                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
             <div>
@@ -1322,7 +1322,7 @@ function DossierEditor({
                 value={reviewerRole}
                 onChange={(e) => { setReviewerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: tech_lead"
-                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
           </div>
@@ -1347,7 +1347,7 @@ function DossierEditor({
           {/* Section cards summary */}
           <div className="space-y-3">
             {visibleGroups.map((group) => (
-              <div key={group.key} className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 p-3">
+              <div key={group.key} className="rounded-md border border-wo-border-strong/60 bg-wo-surface-raised/40 p-3">
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div>
                     <p className="text-[11px] font-bold text-slate-200">{group.title}</p>
@@ -1695,7 +1695,7 @@ function DossierEditor({
 
       {/* Sticky footer — Salvează → Validează → Verifică → Publică (template authority, not dossier SoT) */}
       <div
-        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-3"
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-4 py-3"
         data-testid="blueprint-dossier-sticky-publish-footer"
         role="region"
         aria-label="Comenzi Dossier: salvează, validează, verifică, publică"
@@ -1788,7 +1788,7 @@ function CreateDossierPanel({
   const isActive = isActiveTemplateForQuote(template);
 
   return (
-    <div className="bg-[#111827] border border-purple-500/30 rounded-xl p-6 space-y-4">
+    <div className="bg-wo-surface-raised border border-purple-500/30 rounded-xl p-6 space-y-4">
       <div className="flex items-center gap-3">
         <Plus className="w-5 h-5 text-purple-400" />
         <h3 className="text-[14px] font-bold text-slate-100">Creează dossier tehnic</h3>
@@ -2336,7 +2336,7 @@ export default function BlueprintDossierStudio() {
         <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-4">
           {/* Left: Template list */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-xl px-3 py-2.5 focus-within:border-purple-500/50">
+            <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-xl px-3 py-2.5 focus-within:border-purple-500/50">
               <Search className="w-4 h-4 text-slate-500" />
               <input
                 type="text"
@@ -2347,7 +2347,7 @@ export default function BlueprintDossierStudio() {
               />
             </div>
 
-            <div className="flex gap-1 bg-[#111827] p-1 rounded-lg border border-[#1E293B]">
+            <div className="flex gap-1 bg-wo-surface-raised p-1 rounded-lg border border-wo-border-subtle">
               <button
                 type="button"
                 onClick={() => setListTab("active")}
@@ -2379,7 +2379,7 @@ export default function BlueprintDossierStudio() {
             </div>
 
             {filteredTemplates.length === 0 ? (
-              <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-6 text-center">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-6 text-center">
                 <Package className="w-8 h-8 text-slate-600 mx-auto mb-2" />
                 <p className="text-[12px] text-slate-500">
                   {search.trim() ? "Niciun șablon găsit pentru căutarea curentă." : "Nu există șabloane încă. Creează unul din ProductSystem."}
@@ -2430,7 +2430,7 @@ export default function BlueprintDossierStudio() {
               />
             ) : selectedDossier ? (
               <div className="space-y-4">
-                <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-4 space-y-2">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <p className="text-[12px] font-bold text-slate-200">Readiness Authority (Backend)</p>
                     {readiness ? (
@@ -2496,7 +2496,7 @@ export default function BlueprintDossierStudio() {
                 }}
               />
             ) : (
-              <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-12 text-center">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-12 text-center">
                 <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Eye className="w-8 h-8 text-purple-400" />
                 </div>

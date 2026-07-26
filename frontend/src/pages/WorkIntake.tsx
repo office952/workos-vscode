@@ -73,8 +73,8 @@ function IntakeStatusBadge({ status }: { status: IntakeStatus }) {
 function PipelineCard({ status, count, active }: { status: IntakeStatus; count: number; active: boolean }) {
   const cfg = statusConfig[status];
   return (
-    <div className={`bg-[#1A2236] border rounded-lg p-3 transition-all cursor-pointer ${
-      active ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#2A3548] hover:border-slate-500"
+    <div className={`bg-wo-surface-raised border rounded-lg p-3 transition-all cursor-pointer ${
+      active ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-strong hover:border-slate-500"
     }`}>
       <div className="flex items-center gap-2 mb-1">
         <span className={`${cfg.cls.includes("text-blue") ? "text-blue-400" : cfg.cls.includes("text-emerald") ? "text-emerald-400" : cfg.cls.includes("text-amber") ? "text-amber-400" : cfg.cls.includes("text-red") ? "text-red-400" : "text-slate-400"}`}>
@@ -251,7 +251,7 @@ export default function WorkIntake() {
 
       {/* Search + Filter */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
+        <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
           <Search className="w-4 h-4 text-slate-500" />
           <input
             id="work-intake-search"
@@ -298,8 +298,8 @@ export default function WorkIntake() {
                   setDraftQuoteError(null);
                 }
               }}
-              className={`bg-[#111827] border rounded-lg p-3 cursor-pointer transition-all ${
-                selectedRequest?.id === req.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B] hover:border-slate-500"
+              className={`bg-wo-surface-raised border rounded-lg p-3 cursor-pointer transition-all ${
+                selectedRequest?.id === req.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle hover:border-slate-500"
               }`}
               data-testid={`work-intake-row-${req.id}`}
             >
@@ -331,14 +331,14 @@ export default function WorkIntake() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center text-slate-500 text-[13px]">
               Nicio cerere găsită.
             </div>
           )}
 
           {filtered.length > 0 && (
             <div
-              className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#1E293B]/80"
+              className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-wo-border-subtle/80"
               data-testid="work-intake-pagination"
             >
               <p className="text-[11px] text-slate-500" data-testid="work-intake-pagination-range">
@@ -353,7 +353,7 @@ export default function WorkIntake() {
                   data-testid="work-intake-pagination-prev"
                   disabled={listPagination.page <= 1}
                   onClick={() => setListPage((p) => Math.max(1, p - 1))}
-                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-[#2A3548] text-slate-300 hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-wo-border-strong text-slate-300 hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Anterior
                 </button>
@@ -364,7 +364,7 @@ export default function WorkIntake() {
                   onClick={() =>
                     setListPage((p) => Math.min(listPagination.totalPages, p + 1))
                   }
-                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-[#2A3548] text-slate-300 hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-wo-border-strong text-slate-300 hover:border-slate-500 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Următor
                 </button>
@@ -380,7 +380,7 @@ export default function WorkIntake() {
         >
           {selectedRequest ? (
             <>
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[12px] font-mono text-blue-400">{selectedRequest.id}</span>
                   <IntakeStatusBadge status={selectedRequest.status} />
@@ -422,7 +422,7 @@ export default function WorkIntake() {
                 </div>
 
                 {/* Delivery Type Selector */}
-                <div className="mt-4 bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                <div className="mt-4 bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Truck className="w-3.5 h-3.5 text-blue-400" />
                     <p className="text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
@@ -451,7 +451,7 @@ export default function WorkIntake() {
                           className={`inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-semibold rounded-lg border transition-colors cursor-pointer ${
                             isActive
                               ? "bg-blue-600/20 text-blue-300 border-blue-500/50 ring-1 ring-blue-500/30"
-                              : "bg-[#0D1321] text-slate-500 border-[#2A3548] hover:border-slate-500 hover:text-slate-400"
+                              : "bg-wo-surface-inset text-slate-500 border-wo-border-strong hover:border-slate-500 hover:text-slate-400"
                           }`}
                         >
                           {isActive && <CheckCircle2 className="w-3 h-3" />}
@@ -463,7 +463,7 @@ export default function WorkIntake() {
                 </div>
 
                 {selectedRequest.notes && (
-                  <div className="mt-3 bg-[#1A2236] rounded-lg p-3">
+                  <div className="mt-3 bg-wo-surface-raised rounded-lg p-3">
                     <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
                       <MessageSquare className="w-3 h-3" /> Note
                     </p>
@@ -473,7 +473,7 @@ export default function WorkIntake() {
               </div>
 
               {/* Timeline */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <SectionHeader title="Timeline" icon={<Clock className="w-4 h-4" />} />
                 <div className="relative pl-6 space-y-3">
                   <div className="relative">
@@ -481,7 +481,7 @@ export default function WorkIntake() {
                     <p className="text-[11px] text-slate-300">Creat</p>
                     <p className="text-[10px] text-slate-500">{new Date(selectedRequest.createdAt).toLocaleString("ro-RO")}</p>
                   </div>
-                  <div className="absolute left-[-16px] top-3 w-px h-[calc(100%-12px)] bg-[#2A3548]" />
+                  <div className="absolute left-[-16px] top-3 w-px h-[calc(100%-12px)] bg-wo-hover" />
                   <div className="relative">
                     <div className="absolute left-[-20px] top-1 w-3 h-3 rounded-full bg-blue-500" />
                     <p className="text-[11px] text-slate-300">Ultima actualizare</p>
@@ -491,7 +491,7 @@ export default function WorkIntake() {
               </div>
 
               {/* Actions */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <SectionHeader title="Acțiuni" icon={<ArrowRight className="w-4 h-4" />} />
                 <div className="space-y-2">
                   {/* Primary action: open dedicated instrumentation page */}
@@ -553,7 +553,7 @@ export default function WorkIntake() {
                             <CheckCircle2 className="w-3.5 h-3.5" /> Marchează Gata pt. Ofertă
                           </button>
                           {!canSendToQuote && (
-                            <div className="hidden group-hover:block absolute z-20 bottom-full left-0 right-0 mb-2 bg-[#1A2236] border border-red-800/40 rounded-lg p-3 shadow-xl">
+                            <div className="hidden group-hover:block absolute z-20 bottom-full left-0 right-0 mb-2 bg-wo-surface-raised border border-red-800/40 rounded-lg p-3 shadow-xl">
                               <div className="flex items-center gap-1.5 mb-2">
                                 <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                                 <p className="text-[11px] text-red-300 font-semibold">
@@ -659,7 +659,7 @@ export default function WorkIntake() {
               </div>
             </>
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
               <Inbox className="w-8 h-8 text-slate-600 mx-auto mb-2" />
               <p className="text-[13px] text-slate-500">Selectează o cerere pentru detalii</p>
             </div>

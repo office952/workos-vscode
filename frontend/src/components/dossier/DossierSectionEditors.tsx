@@ -178,7 +178,7 @@ export function DossierSectionEditorShell({
   // Deferred
   if (deferred) {
     return (
-      <div className="rounded-xl border border-[#1E293B] bg-[#111827] opacity-50 cursor-not-allowed" id={`section-${sectionKey}`}>
+      <div className="rounded-xl border border-wo-border-subtle bg-wo-surface-raised opacity-50 cursor-not-allowed" id={`section-${sectionKey}`}>
         <div className="px-4 py-3 flex items-center gap-3">
           <span className="text-lg shrink-0">{emoji}</span>
           <div className="flex-1 min-w-0">
@@ -196,9 +196,9 @@ export function DossierSectionEditorShell({
   }
 
   return (
-    <div className="rounded-xl border border-[#1E293B] bg-[#0D1321] overflow-hidden" id={`section-${sectionKey}`}>
+    <div className="rounded-xl border border-wo-border-subtle bg-wo-surface-inset overflow-hidden" id={`section-${sectionKey}`}>
       {/* Header */}
-      <div className="px-4 py-3 flex items-center gap-3 border-b border-[#1E293B]">
+      <div className="px-4 py-3 flex items-center gap-3 border-b border-wo-border-subtle">
         <span className="text-lg shrink-0">{emoji}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -223,13 +223,13 @@ export function DossierSectionEditorShell({
 
       {/* Safety label */}
       {safetyLabel && (
-        <div className="px-4 py-1.5 bg-slate-800/30 border-b border-[#1E293B]">
+        <div className="px-4 py-1.5 bg-slate-800/30 border-b border-wo-border-subtle">
           <span className="text-[9px] text-slate-500 italic">{safetyLabel}</span>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="px-4 pt-3 flex items-center gap-1 border-b border-[#1E293B] pb-0">
+      <div className="px-4 pt-3 flex items-center gap-1 border-b border-wo-border-subtle pb-0">
         <button
           onClick={() => setActiveTab("structured")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-t-lg text-[10px] font-bold transition-all border-b-2 ${
@@ -315,9 +315,9 @@ export function DossierSectionEditorShell({
               rows={8}
               spellCheck={false}
               placeholder={readOnly ? "— read-only —" : '[\n  { "key": "value" }\n]'}
-              className={`w-full bg-[#0A0F1A] border rounded-lg px-3 py-2 text-[11px] text-slate-200 font-mono outline-none resize-y min-h-[120px] ${
-                readOnly ? "opacity-60 cursor-not-allowed border-[#2A3548]" :
-                jsonError ? "border-red-500/50 focus:border-red-500" : "border-[#2A3548] focus:border-purple-500/50"
+              className={`w-full bg-wo-surface-inset border rounded-lg px-3 py-2 text-[11px] text-slate-200 font-mono outline-none resize-y min-h-[120px] ${
+                readOnly ? "opacity-60 cursor-not-allowed border-wo-border-strong" :
+                jsonError ? "border-red-500/50 focus:border-red-500" : "border-wo-border-strong focus:border-purple-500/50"
               }`}
             />
             {jsonError && !readOnly && (
@@ -459,7 +459,7 @@ function GenericListEditor({
         const primaryValue = String(item[primaryField?.key] || `${itemLabel} ${idx + 1}`);
 
         return (
-          <div key={idx} className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden">
+          <div key={idx} className="border border-wo-border-subtle rounded-lg bg-wo-surface-raised overflow-hidden">
             {/* Item header */}
             <div
               className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-slate-800/30 transition-colors"
@@ -480,7 +480,7 @@ function GenericListEditor({
             </div>
             {/* Item fields */}
             {isExpanded && (
-              <div className="px-3 pb-3 pt-1 space-y-2 border-t border-[#1E293B]">
+              <div className="px-3 pb-3 pt-1 space-y-2 border-t border-wo-border-subtle">
                 {fields.map((field) => (
                   <FieldEditor
                     key={field.key}
@@ -547,7 +547,7 @@ function FieldEditor({
           value={String(value || "")}
           onChange={(e) => onChange(e.target.value)}
           disabled={readOnly}
-          className="flex-1 bg-[#0A0F1A] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200 outline-none disabled:opacity-50"
+          className="flex-1 bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200 outline-none disabled:opacity-50"
         >
           <option value="">— selectează —</option>
           {field.options.map((opt) => (
@@ -569,7 +569,7 @@ function FieldEditor({
           readOnly={readOnly}
           min={0}
           placeholder={field.placeholder || "0"}
-          className="flex-1 bg-[#0A0F1A] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200 font-mono outline-none read-only:opacity-50"
+          className="flex-1 bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200 font-mono outline-none read-only:opacity-50"
         />
       </div>
     );
@@ -604,7 +604,7 @@ function FieldEditor({
                 }
               }}
               placeholder={field.placeholder || "Adaugă + Enter"}
-              className="flex-1 bg-[#0A0F1A] border border-[#2A3548] rounded px-2 py-1 text-[10px] text-slate-200 outline-none"
+              className="flex-1 bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-1 text-[10px] text-slate-200 outline-none"
             />
             <button
               onClick={() => { if (tagInputVal.trim()) { onChange([...tags, tagInputVal.trim()]); setTagInputVal(""); } }}
@@ -628,7 +628,7 @@ function FieldEditor({
         onChange={(e) => onChange(e.target.value)}
         readOnly={readOnly}
         placeholder={field.placeholder || ""}
-        className="flex-1 bg-[#0A0F1A] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200 outline-none read-only:opacity-50"
+        className="flex-1 bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200 outline-none read-only:opacity-50"
       />
     </div>
   );
@@ -853,7 +853,7 @@ export function CostEngineMappingEditor({ value, onChange, readOnly }: Structure
         const items = Array.isArray(parsed[cat]) ? (parsed[cat] as Record<string, unknown>[]) : [];
         const isExpanded = expandedCat === cat;
         return (
-          <div key={cat} className="border border-[#1E293B] rounded-lg bg-[#111827] overflow-hidden">
+          <div key={cat} className="border border-wo-border-subtle rounded-lg bg-wo-surface-raised overflow-hidden">
             <button
               onClick={() => setExpandedCat(isExpanded ? null : cat)}
               className="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-800/30 transition-colors text-left"
@@ -863,7 +863,7 @@ export function CostEngineMappingEditor({ value, onChange, readOnly }: Structure
               <span className="text-[9px] text-slate-600">{items.length} items</span>
             </button>
             {isExpanded && (
-              <div className="px-3 pb-3 border-t border-[#1E293B]">
+              <div className="px-3 pb-3 border-t border-wo-border-subtle">
                 <GenericListEditor
                   items={items}
                   onItemsChange={(newItems) => updateCategory(cat, newItems)}
@@ -1112,7 +1112,7 @@ export function CompletionStateEditor({ value, onChange, readOnly, sectionKeys }
           const currentStatus = parsed[key]?.status || "not_started";
           const cfg = SECTION_STATE_CONFIG[currentStatus];
           return (
-            <div key={key} className="flex items-center gap-2 px-2 py-1.5 bg-[#111827] border border-[#1E293B] rounded-lg">
+            <div key={key} className="flex items-center gap-2 px-2 py-1.5 bg-wo-surface-raised border border-wo-border-subtle rounded-lg">
               <span className="text-[10px] text-slate-400 font-mono flex-1 truncate">{key}</span>
               <div className="flex items-center gap-1">
                 {COMPLETION_STATUSES.map((st) => {
@@ -1192,7 +1192,7 @@ export function DossierValidationSummary({
   });
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3 space-y-2">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3 space-y-2">
       <div className="flex items-center gap-2 mb-1">
         <span className="text-[10px] text-slate-500 uppercase tracking-wide font-bold">JSON & Progres Editorial</span>
         {dossierStatus === "approved" && (
@@ -1258,7 +1258,7 @@ export function DossierValidationSummary({
       )}
 
       {/* Safety note */}
-      <div className="text-[8px] text-slate-600 pt-1 border-t border-[#1E293B]">
+      <div className="text-[8px] text-slate-600 pt-1 border-t border-wo-border-subtle">
         Acesta nu este readiness score. Materialele, operațiile și prețurile sunt autoritate în Product Template + Pricing Registry.
       </div>
     </div>

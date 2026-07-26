@@ -366,7 +366,7 @@ function FilterChips({
   onFilterChange: (filters: SearchFilters) => void;
 }) {
   return (
-    <div className="space-y-2.5 bg-[#111827] border border-[#1E293B] rounded-lg p-3">
+    <div className="space-y-2.5 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
       {/* Severity row */}
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[10px] text-slate-500 uppercase tracking-wide w-16 shrink-0">Severitate</span>
@@ -379,7 +379,7 @@ function FilterChips({
                 ? opt.id === "all"
                   ? "bg-blue-600/20 text-blue-400 border-blue-600/50"
                   : opt.color
-                : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+                : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
             }`}
           >
             {opt.icon}
@@ -396,7 +396,7 @@ function FilterChips({
           className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
             filters.module === "all"
               ? "bg-blue-600/20 text-blue-400 border-blue-600/50"
-              : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+              : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
           }`}
         >
           Toate
@@ -408,7 +408,7 @@ function FilterChips({
             className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
               filters.module === mod
                 ? "bg-cyan-600/20 text-cyan-400 border-cyan-600/50"
-                : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+                : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
             }`}
           >
             {mod}
@@ -426,7 +426,7 @@ function FilterChips({
             className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
               filters.itemType === opt.id
                 ? "bg-purple-600/20 text-purple-400 border-purple-600/50"
-                : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+                : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
             }`}
           >
             {opt.icon}
@@ -567,9 +567,9 @@ function ExportPreviewModal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-[#0D1321] border border-[#1E293B] rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+      <div className="relative bg-wo-surface-inset border border-wo-border-subtle rounded-xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-wo-border-subtle">
           <div className="flex items-center gap-3">
             <Download className="w-4.5 h-4.5 text-blue-400" />
             <div>
@@ -588,7 +588,7 @@ function ExportPreviewModal({
         </div>
 
         {/* Column Selector */}
-        <div className="px-5 py-3 border-b border-[#1E293B] bg-[#111827]/50">
+        <div className="px-5 py-3 border-b border-wo-border-subtle bg-wo-surface-raised/50">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] text-slate-500 uppercase tracking-wide shrink-0">Coloane:</span>
             <button
@@ -596,12 +596,12 @@ function ExportPreviewModal({
               className={`px-2 py-0.5 text-[10px] font-medium rounded border transition-all ${
                 selectedColumns.size === allExportColumns.length
                   ? "bg-blue-600/20 text-blue-400 border-blue-600/50"
-                  : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+                  : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
               }`}
             >
               {selectedColumns.size === allExportColumns.length ? "Deselectează toate" : "Selectează toate"}
             </button>
-            <div className="w-px h-4 bg-[#2A3548]" />
+            <div className="w-px h-4 bg-wo-hover" />
             {allExportColumns.map((col) => (
               <button
                 key={col.key}
@@ -609,7 +609,7 @@ function ExportPreviewModal({
                 className={`flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded border transition-all ${
                   selectedColumns.has(col.key)
                     ? "bg-emerald-600/15 text-emerald-400 border-emerald-600/40"
-                    : "bg-transparent text-slate-600 border-[#2A3548] hover:border-slate-500 line-through"
+                    : "bg-transparent text-slate-600 border-wo-border-strong hover:border-slate-500 line-through"
                 }`}
               >
                 <span className={`w-2.5 h-2.5 rounded-sm border flex items-center justify-center ${
@@ -636,17 +636,17 @@ function ExportPreviewModal({
             </span>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-[#1E293B]">
+          <div className="overflow-x-auto rounded-lg border border-wo-border-subtle">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[#111827]">
-                  <th className="px-3 py-2 text-[10px] text-slate-500 font-semibold uppercase tracking-wide border-b border-[#1E293B] w-8">
+                <tr className="bg-wo-surface-raised">
+                  <th className="px-3 py-2 text-[10px] text-slate-500 font-semibold uppercase tracking-wide border-b border-wo-border-subtle w-8">
                     #
                   </th>
                   {activeColumns.map((col) => (
                     <th
                       key={col.key}
-                      className="px-3 py-2 text-[10px] text-slate-500 font-semibold uppercase tracking-wide border-b border-[#1E293B] whitespace-nowrap"
+                      className="px-3 py-2 text-[10px] text-slate-500 font-semibold uppercase tracking-wide border-b border-wo-border-subtle whitespace-nowrap"
                     >
                       {col.label}
                     </th>
@@ -657,15 +657,15 @@ function ExportPreviewModal({
                 {previewRows.map((row, idx) => (
                   <tr
                     key={idx}
-                    className={`${idx % 2 === 0 ? "bg-[#0D1321]" : "bg-[#111827]/40"} hover:bg-[#1A2236] transition-colors`}
+                    className={`${idx % 2 === 0 ? "bg-wo-surface-inset" : "bg-wo-surface-raised/40"} hover:bg-wo-hover transition-colors`}
                   >
-                    <td className="px-3 py-2 text-[11px] text-slate-600 font-mono border-b border-[#1E293B]/50">
+                    <td className="px-3 py-2 text-[11px] text-slate-600 font-mono border-b border-wo-border-subtle/50">
                       {idx + 1}
                     </td>
                     {activeColumns.map((col) => (
                       <td
                         key={col.key}
-                        className="px-3 py-2 text-[11px] text-slate-300 border-b border-[#1E293B]/50 max-w-[200px] truncate"
+                        className="px-3 py-2 text-[11px] text-slate-300 border-b border-wo-border-subtle/50 max-w-[200px] truncate"
                         title={row[col.key]}
                       >
                         {col.key === "severity" && row[col.key] !== "none" ? (
@@ -695,14 +695,14 @@ function ExportPreviewModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#1E293B] bg-[#111827]/50">
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-wo-border-subtle bg-wo-surface-raised/50">
           <p className="text-[11px] text-slate-500">
             {rows.length} rânduri × {activeColumns.length} coloane
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3 py-1.5 text-[12px] font-medium text-slate-400 hover:text-slate-200 rounded-lg border border-[#2A3548] hover:border-slate-500 transition-all"
+              className="px-3 py-1.5 text-[12px] font-medium text-slate-400 hover:text-slate-200 rounded-lg border border-wo-border-strong hover:border-slate-500 transition-all"
             >
               Anulează
             </button>
@@ -739,7 +739,7 @@ function ExportButton({ results }: { results: Map<string, SearchResult[]> }) {
     <>
       <button
         onClick={() => setShowPreview(true)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-[#2A3548] bg-[#111827] text-slate-300 hover:border-slate-500 hover:text-slate-100 transition-all"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-wo-border-strong bg-wo-surface-raised text-slate-300 hover:border-slate-500 hover:text-slate-100 transition-all"
       >
         <Download className="w-3.5 h-3.5" />
         Export
@@ -806,7 +806,7 @@ function SearchResultsView({
       {Array.from(results.entries()).map(([category, items]) => (
         <div key={category} className="space-y-2">
           {/* Category header */}
-          <div className="flex items-center gap-2 sticky top-0 bg-[#0A0F1C] py-1 z-10">
+          <div className="flex items-center gap-2 sticky top-0 bg-wo-surface-inset py-1 z-10">
             <span className="text-slate-400">{items[0]?.categoryIcon}</span>
             <h3 className="text-[13px] font-semibold text-slate-200">{category}</h3>
             <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">
@@ -826,7 +826,7 @@ function SearchResultsView({
               <button
                 key={idx}
                 onClick={() => onNavigate(item.tab)}
-                className="w-full text-left bg-[#111827] border border-[#1E293B] rounded-lg p-3 hover:border-slate-500 transition-colors group"
+                className="w-full text-left bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 hover:border-slate-500 transition-colors group"
               >
                 <div className="flex items-center gap-2 mb-1">
                   <p className="text-[13px] font-medium text-slate-200 group-hover:text-blue-300 transition-colors flex-1">
@@ -878,7 +878,7 @@ function BoundaryMapView() {
   return (
     <div className="space-y-4" data-testid="governance-panel-boundaries">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.boundaries} />
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <SectionHeader title="Harta limitelor — spine activ" icon={<Layers className="w-4 h-4 text-blue-400" />} />
         <p className="text-[11px] text-slate-500 mb-3" data-testid="governance-canonical-spine">
           Spine activ: {CANONICAL_SPINE_LABELS_RO.join(" → ")}
@@ -887,7 +887,7 @@ function BoundaryMapView() {
           {PRESENT_BOUNDARIES.map((layer) => (
             <div
               key={layer.id}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4"
               data-testid={`boundary-${layer.id}`}
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -962,8 +962,8 @@ function AgentAuthorityView() {
           <button
             key={agent.id}
             onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
-            className={`bg-[#111827] border rounded-lg p-4 text-left transition-all duration-200 hover:border-slate-500 ${
-              selectedAgent === agent.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B]"
+            className={`bg-wo-surface-raised border rounded-lg p-4 text-left transition-all duration-200 hover:border-slate-500 ${
+              selectedAgent === agent.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
@@ -996,7 +996,7 @@ function AgentAuthorityView() {
         const agent = agents.find((a) => a.id === selectedAgent);
         if (!agent) return null;
         return (
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 animate-in fade-in duration-300">
             <div className="flex items-center gap-3 mb-3">
               <span className="text-[24px]">{agent.icon}</span>
               <div>
@@ -1075,7 +1075,7 @@ function AgentAuthorityView() {
       })()}
 
       {/* Authority Rule */}
-      <div className="bg-[#0D1321] border border-amber-800/30 rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-amber-800/30 rounded-lg p-4">
         <p className="text-[12px] text-amber-400 font-semibold mb-1">⚖️ Regula de autoritate</p>
         <p className="text-[12px] text-slate-300 leading-relaxed">
           Niciun agent nu are voie să își extindă teritoriul prin presupuneri. Nucleu arbitrează, Contracte păzesc handoff-urile,
@@ -1096,7 +1096,7 @@ function TruthHierarchyView({
   return (
     <div className="space-y-4" data-testid="governance-panel-truth">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.truth} />
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
         <SectionHeader title="Ierarhia Surselor de Adevăr" icon={<Eye className="w-4 h-4 text-blue-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
           Când două surse se contrazic, sursa cu nivel mai mic câștigă. Runtime confirmă comportament — nu definește arhitectura.
@@ -1115,7 +1115,7 @@ function TruthHierarchyView({
               </div>
 
               {/* Content */}
-              <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 flex-1 group-hover:border-slate-500 transition-colors">
+              <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 flex-1 group-hover:border-slate-500 transition-colors">
                 <div className="flex items-center gap-2 mb-1">
                   <p className="text-[13px] font-bold text-slate-200">{source.name}</p>
                   <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">{source.role}</span>
@@ -1137,7 +1137,7 @@ function TruthHierarchyView({
       </div>
 
       {/* Conflict Resolution */}
-      <div className="bg-[#0D1321] border border-blue-800/30 rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-blue-800/30 rounded-lg p-4">
         <p className="text-[12px] text-blue-400 font-semibold mb-2">🔀 Regula de conflict</p>
         <p className="text-[12px] text-slate-300 leading-relaxed">
           Dacă UI din Figma spune ceva, dar .md spune altceva → .md câștigă. Dacă Atoms implementează ceva care contrazice Figma sau .md → Figma / .md câștigă.
@@ -1155,7 +1155,7 @@ function GateView() {
   return (
     <div className="space-y-4" data-testid="governance-panel-gates">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.gates} />
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
         <SectionHeader title="Owner gates — politică prezentă" icon={<Lock className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
           Gate-uri de aprobare owner. Statusul „Politică owner” înseamnă control de proces — nu motor RBAC în UI.
@@ -1165,7 +1165,7 @@ function GateView() {
           {PRESENT_GATES.map((gate) => (
             <div
               key={gate.id}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4"
               data-testid={`owner-gate-${gate.id}`}
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -1215,7 +1215,7 @@ function GuardrailsView() {
         {PRESENT_GUARDRAILS.map((g) => (
           <div
             key={g.id}
-            className="bg-[#111827] border border-[#1E293B] border-l-2 border-l-amber-500 rounded-lg p-4"
+            className="bg-wo-surface-raised border border-wo-border-subtle border-l-2 border-l-amber-500 rounded-lg p-4"
             data-testid={`guardrail-${g.id}`}
           >
             <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -1251,7 +1251,7 @@ function UITruthRulesView() {
     <div className="space-y-4" data-testid="governance-panel-ui-rules">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY["ui-rules"]} />
       {uiTruthRules.map((rule) => (
-        <div key={rule.id} className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div key={rule.id} className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-[10px] font-mono text-slate-600">{rule.id}</span>
             <span className="text-[10px] text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded">{rule.area}</span>
@@ -1286,7 +1286,7 @@ function UITruthRulesView() {
       ))}
 
       {/* Principle */}
-      <div className="bg-[#0D1321] border border-purple-800/30 rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-purple-800/30 rounded-lg p-4">
         <p className="text-[12px] text-purple-400 font-semibold mb-1">🎯 Principiul de bază</p>
         <p className="text-[12px] text-slate-300 leading-relaxed">
           UI-ul reflectă adevărul sistemului. UI-ul nu inventează statusuri canonice, nu compensează boundary-uri neclare,
@@ -1316,8 +1316,8 @@ function StatusFlowsView() {
             onClick={() => setSelectedModule(selectedModule === mod.id ? null : mod.id)}
             data-testid={`status-flow-${mod.id}`}
             data-truth-class={mod.truthClass}
-            className={`bg-[#111827] border rounded-lg p-3 text-center transition-all hover:border-slate-500 ${
-              selectedModule === mod.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B]"
+            className={`bg-wo-surface-raised border rounded-lg p-3 text-center transition-all hover:border-slate-500 ${
+              selectedModule === mod.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle"
             } ${mod.truthClass === "LEGACY" ? "opacity-70" : ""}`}
           >
             <p className={`text-[14px] font-bold ${mod.color}`}>{mod.shortName}</p>
@@ -1362,7 +1362,7 @@ function StatusFlowsView() {
 
         return (
           <div
-            className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300"
+            className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 animate-in fade-in duration-300"
             data-testid={`status-flow-detail-${mod.id}`}
           >
             <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -1387,7 +1387,7 @@ function StatusFlowsView() {
               <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Statusuri canonice</p>
               <div className="flex flex-wrap gap-2">
                 {mod.statuses.map((s) => (
-                  <span key={s} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#1A2236] border border-[#2A3548] rounded-md">
+                  <span key={s} className="flex items-center gap-1.5 px-2.5 py-1 bg-wo-surface-raised border border-wo-border-strong rounded-md">
                     <span className={`w-2 h-2 rounded-full ${statusColors[s] || "bg-slate-500"}`} />
                     <span className="text-[12px] text-slate-200 font-mono">{s}</span>
                   </span>
@@ -1400,7 +1400,7 @@ function StatusFlowsView() {
               <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Tranzitii</p>
               <div className="space-y-1.5">
                 {mod.transitions.map((t, idx) => (
-                  <div key={idx} className="flex items-center gap-2 py-1.5 px-3 bg-[#1A2236] border border-[#2A3548] rounded">
+                  <div key={idx} className="flex items-center gap-2 py-1.5 px-3 bg-wo-surface-raised border border-wo-border-strong rounded">
                     <span className="flex items-center gap-1.5">
                       <span className={`w-2 h-2 rounded-full ${t.from === "*" || t.from === "sent/priced" ? "bg-slate-400" : statusColors[t.from] || "bg-slate-500"}`} />
                       <span className="text-[12px] text-slate-300 font-mono w-28">{t.from}</span>
@@ -1420,11 +1420,11 @@ function StatusFlowsView() {
       })()}
 
       {/* System Events */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <SectionHeader title="Evenimente Cross-Module" count={systemEvents.length} icon={<Zap className="w-4 h-4 text-amber-400" />} />
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
           {systemEvents.map((evt) => (
-            <div key={evt.event} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+            <div key={evt.event} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
               <p className="text-[12px] font-mono font-bold text-emerald-400">{evt.event}</p>
               <p className="text-[10px] text-slate-500 mt-0.5">Source: {evt.source}</p>
               <p className="text-[11px] text-slate-400 mt-1">{evt.description}</p>
@@ -1434,7 +1434,7 @@ function StatusFlowsView() {
       </div>
 
       {/* Invalid Patterns */}
-      <div className="bg-[#0D1321] border border-red-800/30 rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-red-800/30 rounded-lg p-4">
         <p className="text-[12px] text-red-400 font-semibold mb-2">🚫 Pattern-uri invalide</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {invalidPatterns.map((p, i) => (
@@ -1447,7 +1447,7 @@ function StatusFlowsView() {
       </div>
 
       {/* Golden Rules */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <SectionHeader title="Reguli Critice Status" icon={<Shield className="w-4 h-4 text-amber-400" />} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
@@ -1456,7 +1456,7 @@ function StatusFlowsView() {
             "Status ≠ UI state",
             "Fiecare tranzitie trebuie sa fie logata (audit)",
           ].map((rule, i) => (
-            <div key={i} className="flex items-start gap-2 bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+            <div key={i} className="flex items-start gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
               <span className="text-amber-400 mt-0.5 shrink-0 text-[12px] font-bold">{i + 1}.</span>
               <p className="text-[12px] text-slate-300">{rule}</p>
             </div>
@@ -1475,7 +1475,7 @@ function ProductCatalogView() {
   return (
     <div className="space-y-4" data-testid="governance-panel-products">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.products} />
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <SectionHeader title="Nomenclator local (referință)" icon={<Package className="w-4 h-4 text-blue-400" />} />
           <div className="flex items-center gap-3">
@@ -1493,8 +1493,8 @@ function ProductCatalogView() {
             <button
               key={cat.id}
               onClick={() => setExpandedCat(expandedCat === cat.id ? null : cat.id)}
-              className={`bg-[#1A2236] border rounded-lg p-4 text-left transition-all hover:border-slate-500 ${
-                expandedCat === cat.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#2A3548]"
+              className={`bg-wo-surface-raised border rounded-lg p-4 text-left transition-all hover:border-slate-500 ${
+                expandedCat === cat.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-strong"
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -1507,7 +1507,7 @@ function ProductCatalogView() {
               {expandedCat === cat.id && (
                 <div className="mt-3 space-y-1.5 animate-in fade-in duration-200">
                   {cat.products.map((prod) => (
-                    <div key={prod.code} className="flex items-center justify-between py-1 border-t border-[#2A3548]/50">
+                    <div key={prod.code} className="flex items-center justify-between py-1 border-t border-wo-border-strong/50">
                       <span className="text-[11px] text-slate-300">{prod.name}</span>
                       <span className="text-[10px] font-mono text-slate-500">{prod.code}</span>
                     </div>
@@ -1520,7 +1520,7 @@ function ProductCatalogView() {
       </div>
 
       {/* Product System Rules */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <SectionHeader title="Regula ProductSystem" icon={<Shield className="w-4 h-4 text-pink-400" />} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="bg-emerald-900/10 border border-emerald-800/30 rounded-lg p-3">
@@ -1549,12 +1549,12 @@ function ProductCatalogView() {
       </div>
 
       {/* Code Structure */}
-      <div className="bg-[#0D1321] border border-blue-800/30 rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-blue-800/30 rounded-lg p-4">
         <p className="text-[12px] text-blue-400 font-semibold mb-2">📋 Structura Cod Produs</p>
         <p className="text-[12px] text-slate-300 mb-2">Format: <span className="font-mono text-blue-300">[CATEGORIE]-[TIP]-[VARIANTA]</span></p>
         <div className="flex flex-wrap gap-2">
           {["CL-SIMPLU-STD", "LV-FRONTAL-LED", "TOTEM-ILUMINAT-STD", "PRINT-AUTO-LAMINAT", "CNC-PVC-DEBITARE"].map((code) => (
-            <span key={code} className="text-[11px] font-mono text-slate-300 bg-[#111827] border border-[#1E293B] px-2 py-1 rounded">
+            <span key={code} className="text-[11px] font-mono text-slate-300 bg-wo-surface-raised border border-wo-border-subtle px-2 py-1 rounded">
               {code}
             </span>
           ))}
@@ -1590,7 +1590,7 @@ function OwnershipHonestyView({
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.ownership} />
 
       <section
-        className="bg-[#111827] border border-blue-700/40 rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-blue-700/40 rounded-lg p-4 space-y-2"
         data-testid="governance-official-truth"
       >
         <SectionHeader
@@ -1607,7 +1607,7 @@ function OwnershipHonestyView({
           {DOCUMENTATION_HIERARCHY.map((level) => (
             <div
               key={level.id}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
             >
               <p className="text-slate-200 font-medium">
                 Level {level.level} — {level.labelRo}
@@ -1619,7 +1619,7 @@ function OwnershipHonestyView({
       </section>
 
       <section
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2"
         data-testid="governance-system-registration"
       >
         <SectionHeader
@@ -1640,7 +1640,7 @@ function OwnershipHonestyView({
           Câmpuri: {SYSTEM_REGISTRATION_REQUIRED_FIELDS.join(" · ")}
         </p>
         <div
-          className="bg-[#1A2236] border border-amber-700/40 rounded-md px-3 py-2 text-[11px]"
+          className="bg-wo-surface-raised border border-amber-700/40 rounded-md px-3 py-2 text-[11px]"
           data-testid="governance-active-scope-registration"
         >
           <p className="font-semibold text-slate-100">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
@@ -1652,7 +1652,7 @@ function OwnershipHonestyView({
       </section>
 
       <section
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2"
         data-testid="governance-active-scope-law"
       >
         <SectionHeader
@@ -1678,7 +1678,7 @@ function OwnershipHonestyView({
           {ACTIVE_SCOPE_OWNERSHIP.map((row) => (
             <div
               key={row.systemId}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
               data-testid={`active-scope-owns-${row.systemId}`}
             >
               <p className="text-slate-200 font-medium">{row.systemId}</p>
@@ -1690,7 +1690,7 @@ function OwnershipHonestyView({
       </section>
 
       <section
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2"
         data-testid="governance-dependency-classes"
       >
         <SectionHeader title="Clase de dependențe" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
@@ -1701,7 +1701,7 @@ function OwnershipHonestyView({
           {DEPENDENCY_CLASSES.map((cls) => (
             <div
               key={cls.id}
-              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
               data-testid={`dependency-class-${cls.id}`}
             >
               <p className="font-semibold text-slate-100">{cls.labelRo}</p>
@@ -1713,7 +1713,7 @@ function OwnershipHonestyView({
       </section>
 
       <section
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-2"
         data-testid="governance-hybrid-intake"
       >
         <SectionHeader title="Model Intake HYBRID" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
@@ -1731,7 +1731,7 @@ function OwnershipHonestyView({
         </div>
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-ownership">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-ownership">
         <SectionHeader title="Cine deține adevărul" icon={<Eye className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-3">
           Matrice mică, doar domenii cu sursă. Nu inventăm ownership.
@@ -1739,7 +1739,7 @@ function OwnershipHonestyView({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[12px]">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-wo-border-subtle">
                 <th className="py-2 pr-3 font-medium">Domeniu</th>
                 <th className="py-2 pr-3 font-medium">Proprietar</th>
                 <th className="py-2 pr-3 font-medium">Semantică</th>
@@ -1751,7 +1751,7 @@ function OwnershipHonestyView({
             </thead>
             <tbody>
               {PRESENT_OWNERSHIP_ROWS.map((row) => (
-                <tr key={row.systemId} className="border-b border-[#1E293B]/60 align-top" data-testid={`ownership-${row.systemId}`}>
+                <tr key={row.systemId} className="border-b border-wo-border-subtle/60 align-top" data-testid={`ownership-${row.systemId}`}>
                   <td className="py-2 pr-3">
                     <p className="text-slate-200 font-medium">{row.domainRo}</p>
                     <p className="text-[10px] text-slate-500">{row.technicalAlias}</p>
@@ -1776,7 +1776,7 @@ function OwnershipHonestyView({
       </section>
 
       <section
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
         data-testid="governance-finish-mounting-ownership-layers"
       >
         <SectionHeader
@@ -1799,7 +1799,7 @@ function OwnershipHonestyView({
           ).map(([id, label]) => (
             <div
               key={id}
-              className="rounded-md border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300 break-words"
+              className="rounded-md border border-wo-border-strong bg-wo-surface-raised px-2.5 py-2 text-slate-300 break-words"
               data-testid={`governance-ownership-layer-${id}`}
             >
               {label}
@@ -1819,7 +1819,7 @@ function OwnershipHonestyView({
         </ul>
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-settings-ownership">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-settings-ownership">
         <SectionHeader title="Clasificare setări (Litere / Logo / ACM)" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
         <p className="text-[11px] text-slate-500 mb-3">
           Vizibilitate ownership — fără mutare setări în acest build. Conflictele rămân explicite.
@@ -1827,7 +1827,7 @@ function OwnershipHonestyView({
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[12px]">
             <thead>
-              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-wo-border-subtle">
                 <th className="py-2 pr-3 font-medium">Setare</th>
                 <th className="py-2 pr-3 font-medium">Categorie</th>
                 <th className="py-2 pr-3 font-medium">Owner actual</th>
@@ -1840,7 +1840,7 @@ function OwnershipHonestyView({
               {SETTINGS_OWNERSHIP_ROWS.map((row) => (
                 <tr
                   key={row.setting}
-                  className="border-b border-[#1E293B]/60 align-top"
+                  className="border-b border-wo-border-subtle/60 align-top"
                   data-testid={`settings-ownership-${row.setting}`}
                 >
                   <td className="py-2 pr-3 text-slate-200 font-medium">{row.setting}</td>
@@ -1856,11 +1856,11 @@ function OwnershipHonestyView({
         </div>
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-rules">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-rules">
         <SectionHeader title="Reguli de separare" icon={<Ban className="w-4 h-4 text-red-400" />} />
         <div className="space-y-2 mt-2">
           {HONESTY_SEPARATION_RULES.map((rule) => (
-            <div key={rule.ruleRo} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+            <div key={rule.ruleRo} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
               <p className="text-[13px] text-slate-200 mb-1">{rule.ruleRo}</p>
               <div className="flex flex-wrap gap-2 text-[10px]">
                 <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
@@ -1876,7 +1876,7 @@ function OwnershipHonestyView({
         </div>
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-owner-gates">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-owner-gates">
         <SectionHeader title="Owner gates (rezumat)" icon={<Lock className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-2">
           Listă read-only — detalii complete în tab-ul Owner gates. Nu este motor de aprobare.
@@ -1885,7 +1885,7 @@ function OwnershipHonestyView({
           {PRESENT_GATES.map((gate) => (
             <li
               key={gate.id}
-              className="flex items-start gap-2 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2"
+              className="flex items-start gap-2 text-[12px] text-slate-300 bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2"
             >
               <Lock className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
               <span>
@@ -1897,7 +1897,7 @@ function OwnershipHonestyView({
         </ul>
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-doc-authority">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-doc-authority">
         <SectionHeader title="Autoritate documente (index)" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
         {docsResult === null && (
           <p className="text-[12px] text-slate-400">Se încarcă indexul de documentație...</p>
@@ -1926,7 +1926,7 @@ function OwnershipHonestyView({
               {docsResult.data.items.slice(0, 12).map((doc) => (
                 <div
                   key={doc.document_id}
-                  className="flex flex-wrap items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                  className="flex flex-wrap items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
                 >
                   <span className="text-slate-200 font-medium">{doc.title || doc.document_id}</span>
                   <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
@@ -1948,7 +1948,7 @@ function OwnershipHonestyView({
         )}
       </section>
 
-      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-open-questions">
+      <section className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4" data-testid="governance-open-questions">
         <SectionHeader title="Întrebări deschise / review" icon={<AlertTriangle className="w-4 h-4 text-amber-400" />} />
         <div className="space-y-2 mt-2">
           {openQuestions.map((q) => (
@@ -2040,7 +2040,7 @@ export default function Governance() {
 
         {/* Search Bar */}
         <div className="relative flex-1 max-w-md">
-          <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/30 transition-all">
+          <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/30 transition-all">
             <Search className="w-4 h-4 text-slate-500 shrink-0" />
             <input
               type="text"
@@ -2143,7 +2143,7 @@ export default function Governance() {
 
       {/* Tab Bar — hidden during search */}
       {!isSearching && (
-        <div className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-lg p-1 overflow-x-auto">
+        <div className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-1 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}

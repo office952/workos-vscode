@@ -79,7 +79,7 @@ export default function FlatMaterialNestingSummary({ summary }: Props) {
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
       data-testid="flat-material-nesting-summary"
     >
       <div className="flex items-center gap-2 mb-3">
@@ -91,7 +91,7 @@ export default function FlatMaterialNestingSummary({ summary }: Props) {
         {sheets.map((entry) => (
           <div
             key={entry.role}
-            className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+            className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3"
             data-testid={`flat-nesting-sheet-${entry.role}`}
           >
             <p className="text-[12px] font-medium text-slate-200">{entry.label}</p>
@@ -125,7 +125,7 @@ export default function FlatMaterialNestingSummary({ summary }: Props) {
         {rolls.map((entry) => (
           <div
             key={entry.role}
-            className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+            className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3"
             data-testid={`flat-nesting-roll-${entry.role}`}
           >
             <p className="text-[12px] font-medium text-slate-200">{entry.label}</p>

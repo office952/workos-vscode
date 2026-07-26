@@ -20,7 +20,7 @@ const REFRESH_MS = 15_000;
 
 function SummaryChip({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-lg border border-[#243044] bg-[#0A1020]/60 px-2.5 py-1.5 text-center min-w-[72px]">
+    <div className="rounded-lg border border-wo-border-strong bg-[#0A1020]/60 px-2.5 py-1.5 text-center min-w-[72px]">
       <div className="text-[14px] font-semibold text-slate-100">{value}</div>
       <div className="text-[10px] text-slate-500">{label}</div>
     </div>
@@ -59,7 +59,7 @@ function PreparationGroupSection({
         {tasks.map((task) => (
           <li
             key={task.task_id}
-            className="rounded-lg border border-[#243044] bg-[#0A1020]/50 px-3 py-2 text-[11px] text-slate-300"
+            className="rounded-lg border border-wo-border-strong bg-[#0A1020]/50 px-3 py-2 text-[11px] text-slate-300"
           >
             <span className="font-medium text-slate-100">{task.name}</span>
             {" · "}
@@ -172,7 +172,7 @@ export default function OperatorProductionBlueprintPanel({
 
   return (
     <section
-      className="rounded-xl border border-[#243044] bg-[#0A1020]/40 p-4 space-y-3"
+      className="rounded-xl border border-wo-border-strong bg-[#0A1020]/40 p-4 space-y-3"
       data-testid="operator-production-blueprint-panel"
     >
       <div className="flex items-start justify-between gap-3">
@@ -187,7 +187,7 @@ export default function OperatorProductionBlueprintPanel({
             type="button"
             onClick={() => void load()}
             disabled={loading || selectedOrderId == null}
-            className="inline-flex items-center gap-1 rounded border border-[#243044] px-2 py-1 text-[11px] text-slate-300 hover:bg-[#121826] disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded border border-wo-border-strong px-2 py-1 text-[11px] text-slate-300 hover:bg-[#121826] disabled:opacity-50"
             data-testid="operator-blueprint-refresh"
           >
             {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
@@ -211,7 +211,7 @@ export default function OperatorProductionBlueprintPanel({
           id="operator-blueprint-order"
           value={selectedOrderId ?? ""}
           onChange={(e) => setSelectedOrderId(Number(e.target.value))}
-          className="rounded border border-[#243044] bg-[#0A1020] px-2 py-1 text-[12px] text-slate-200"
+          className="rounded border border-wo-border-strong bg-[#0A1020] px-2 py-1 text-[12px] text-slate-200"
           data-testid="operator-blueprint-order-select"
         >
           {sortedOrderIds.map((id) => (
@@ -270,7 +270,7 @@ export default function OperatorProductionBlueprintPanel({
 
           {blueprint.production_planning_summary ? (
             <div
-              className="rounded-lg border border-[#243044] bg-[#0A1020]/50 p-3 space-y-2"
+              className="rounded-lg border border-wo-border-strong bg-[#0A1020]/50 p-3 space-y-2"
               data-testid="operator-blueprint-production-control"
             >
               <h3 className="text-[12px] font-semibold text-slate-300">Control producție</h3>
@@ -330,7 +330,7 @@ export default function OperatorProductionBlueprintPanel({
                   return (
                     <li
                       key={item.code}
-                      className="rounded-lg border border-[#243044] bg-[#0A1020]/60 px-3 py-2 text-[11px] text-slate-300"
+                      className="rounded-lg border border-wo-border-strong bg-[#0A1020]/60 px-3 py-2 text-[11px] text-slate-300"
                       data-testid={`operator-procurement-item-${item.code}`}
                     >
                       <p className="font-medium text-slate-100">
@@ -346,7 +346,7 @@ export default function OperatorProductionBlueprintPanel({
                               [item.code]: { ...draft, status: e.target.value },
                             }))
                           }
-                          className="rounded border border-[#243044] bg-[#0A1020] px-2 py-1 text-[11px]"
+                          className="rounded border border-wo-border-strong bg-[#0A1020] px-2 py-1 text-[11px]"
                           data-testid={`operator-procurement-status-${item.code}`}
                         >
                           <option value="not_checked">Neverificat</option>
@@ -368,7 +368,7 @@ export default function OperatorProductionBlueprintPanel({
                               [item.code]: { ...draft, note: e.target.value },
                             }))
                           }
-                          className="min-w-[160px] flex-1 rounded border border-[#243044] bg-[#0A1020] px-2 py-1 text-[11px]"
+                          className="min-w-[160px] flex-1 rounded border border-wo-border-strong bg-[#0A1020] px-2 py-1 text-[11px]"
                           data-testid={`operator-procurement-note-${item.code}`}
                         />
                         <button
@@ -390,7 +390,7 @@ export default function OperatorProductionBlueprintPanel({
 
           {blueprint.preparation_ownership ? (
             <div
-              className="rounded-lg border border-[#243044] bg-[#0A1020]/50 p-3 space-y-3"
+              className="rounded-lg border border-wo-border-strong bg-[#0A1020]/50 p-3 space-y-3"
               data-testid="operator-blueprint-preparation-ownership"
             >
               <h3 className="text-[12px] font-semibold text-slate-200">
@@ -423,7 +423,7 @@ export default function OperatorProductionBlueprintPanel({
                 </div>
               </div>
               {blueprint.preparation_ownership.mounting_template.material_type !== "none" ? (
-                <div className="text-[11px] text-slate-400 border-t border-[#243044] pt-2">
+                <div className="text-[11px] text-slate-400 border-t border-wo-border-strong pt-2">
                   <p className="text-slate-500 uppercase text-[9px] tracking-wide mb-1">
                     Șablon montaj
                   </p>
@@ -503,7 +503,7 @@ export default function OperatorProductionBlueprintPanel({
                 return (
                 <li
                   key={task.task_id}
-                  className="rounded-lg border border-[#243044] bg-[#0A1020]/60 px-3 py-2.5"
+                  className="rounded-lg border border-wo-border-strong bg-[#0A1020]/60 px-3 py-2.5"
                   data-testid={`operator-blueprint-task-${task.task_id}`}
                 >
                   <div className="flex items-start justify-between gap-2">
