@@ -118,19 +118,19 @@ export default function LettersVolumeAluminumStructureDetailPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[#2A3548] bg-[#111827] px-3 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:border-sky-500/40 hover:text-sky-100"
+          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-sky-500/40 hover:text-sky-100"
           data-testid="letters-volume-structure-detail-back"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
           Structură
         </Link>
-        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-wo-text-muted">
           Litere · pas 2 / 5
         </span>
       </header>
 
       <section
-        className="relative overflow-hidden rounded-2xl border border-sky-500/35 bg-[#111827]"
+        className="relative overflow-hidden rounded-2xl border border-sky-500/35 bg-wo-surface-raised"
         data-testid="letters-volume-structure-detail-hero"
       >
         <div
@@ -185,10 +185,10 @@ export default function LettersVolumeAluminumStructureDetailPage() {
               Material
             </p>
           </div>
-          <p className="mt-4 text-[16px] font-semibold leading-snug text-slate-100">
+          <p className="mt-4 text-[16px] font-semibold leading-snug text-wo-text-primary">
             {LETTERS_VOLUME_ALUMINUM_FAMILY_LABEL_RO}
           </p>
-          <p className="mt-2 text-[12px] text-slate-400">
+          <p className="mt-2 text-[12px] text-wo-text-muted">
             {LETTERS_VOLUME_ALUMINUM_THICKNESS_NOTE_RO}
           </p>
           <p className="mt-2 inline-flex w-fit rounded-md border border-sky-800/40 bg-sky-950/30 px-2 py-1 font-mono text-[10px] text-sky-200/70">
@@ -222,7 +222,7 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                 className="rounded-xl border border-sky-500/25 bg-sky-500/[0.07] px-3 py-3"
                 data-testid={`letters-volume-structure-detail-width-${entry.id}`}
               >
-                <p className="text-[13px] font-semibold text-slate-100">
+                <p className="text-[13px] font-semibold text-wo-text-primary">
                   {LETTERS_VOLUME_ALUMINUM_FAMILY_LABEL_RO} {entry.labelRo}
                 </p>
                 <p className="mt-1 font-mono text-[9px] text-sky-200/60">{entry.materialCode}</p>
@@ -260,14 +260,14 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                   <span className="font-mono text-[18px] font-bold tabular-nums text-sky-300/90">
                     {index + 1}
                   </span>
-                  <span className="text-[13px] font-semibold text-slate-100">{step.labelRo}</span>
+                  <span className="text-[13px] font-semibold text-wo-text-primary">{step.labelRo}</span>
                 </p>
-                <p className="mt-1 text-[10px] leading-snug text-slate-500">{step.meaningRo}</p>
+                <p className="mt-1 text-[10px] leading-snug text-wo-text-muted">{step.meaningRo}</p>
               </div>
             ))}
           </div>
           {cantFinishes.length > 0 ? (
-            <p className="mt-3 text-[10px] leading-snug text-slate-500">
+            <p className="mt-3 text-[10px] leading-snug text-wo-text-muted">
               Finisaj cant: {cantFinishes.map((chip) => chip.labelRo).join(" · ")}
             </p>
           ) : null}
@@ -285,13 +285,13 @@ export default function LettersVolumeAluminumStructureDetailPage() {
           <h2 className="text-[12px] font-bold uppercase tracking-[0.16em] text-sky-300/90">
             Cum calculăm
           </h2>
-          <span className="text-[11px] text-slate-500">metodă owner · fără preț duplicat</span>
+          <span className="text-[11px] text-wo-text-muted">metodă owner · fără preț duplicat</span>
         </div>
         <div className="grid gap-5 xl:grid-cols-2">
           {LETTERS_VOLUME_CALC_CARDS.map((card) => (
             <article
               key={card.id}
-              className="relative overflow-hidden rounded-2xl border border-sky-500/40 bg-[#111827]"
+              className="relative overflow-hidden rounded-2xl border border-sky-500/40 bg-wo-surface-raised"
               data-testid={`letters-volume-structure-detail-calc-${card.id}`}
               data-importance={card.importance}
             >
@@ -323,7 +323,7 @@ export default function LettersVolumeAluminumStructureDetailPage() {
 
                 <ol className="mt-5 space-y-2.5">
                   {card.stepsRo.map((step, index) => (
-                    <li key={step} className="flex gap-3 text-[13px] leading-relaxed text-slate-300">
+                    <li key={step} className="flex gap-3 text-[13px] leading-relaxed text-wo-text-secondary">
                       <span className="font-mono text-[12px] font-bold tabular-nums text-sky-300/85">
                         {index + 1}.
                       </span>
@@ -334,24 +334,24 @@ export default function LettersVolumeAluminumStructureDetailPage() {
 
                 <div className="mt-5 grid flex-1 gap-3 sm:grid-cols-2">
                   <div className={`${PS_SURFACE_INSET} px-3.5 py-3`}>
-                    <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-wo-text-muted">
                       Ieșiri
                     </p>
                     <ul className="mt-2 space-y-1.5">
                       {card.outputsRo.map((line) => (
-                        <li key={line} className="text-[11px] leading-snug text-slate-400">
+                        <li key={line} className="text-[11px] leading-snug text-wo-text-muted">
                           {line}
                         </li>
                       ))}
                     </ul>
                   </div>
                   <div className={`${PS_SURFACE_INSET} px-3.5 py-3`}>
-                    <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-wo-text-muted">
                       Nu așa
                     </p>
                     <ul className="mt-2 space-y-1.5">
                       {card.notThisRo.map((line) => (
-                        <li key={line} className="text-[11px] leading-snug text-slate-400">
+                        <li key={line} className="text-[11px] leading-snug text-wo-text-muted">
                           {line}
                         </li>
                       ))}
@@ -360,7 +360,7 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                 </div>
 
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-sky-500/20 pt-4">
-                  <p className="max-w-md text-[12px] leading-relaxed text-slate-400">
+                  <p className="max-w-md text-[12px] leading-relaxed text-wo-text-muted">
                     {card.priceNoteRo}
                   </p>
                   <PricingVerifyLink
@@ -379,12 +379,12 @@ export default function LettersVolumeAluminumStructureDetailPage() {
         className={`${PS_SURFACE_PANEL} overflow-hidden`}
         data-testid="letters-volume-structure-detail-document"
       >
-        <div className="flex flex-wrap items-center gap-2 border-b border-[#1E293B] px-6 py-4">
+        <div className="flex flex-wrap items-center gap-2 border-b border-wo-border-subtle px-6 py-4">
           <BookOpen className="h-4 w-4 text-sky-300" aria-hidden />
-          <h2 className="text-[12px] font-bold uppercase tracking-[0.14em] text-slate-200">
+          <h2 className="text-[12px] font-bold uppercase tracking-[0.14em] text-wo-text-primary">
             Document componentă
           </h2>
-          <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500">
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.12em] text-wo-text-muted">
             explicativ · direcțional
           </span>
         </div>
@@ -396,16 +396,16 @@ export default function LettersVolumeAluminumStructureDetailPage() {
           {LETTERS_VOLUME_DOC_SECTIONS.map((section, index) => (
             <li
               key={section.id}
-              className="rounded-xl border border-[#1E293B] bg-[#0B1220]/35 px-5 py-5"
+              className="rounded-xl border border-wo-border-subtle bg-wo-surface-inset px-5 py-5"
               data-testid={`letters-volume-structure-detail-doc-${section.id}`}
             >
               <div className="flex items-baseline gap-2.5">
                 <span className="font-mono text-[12px] font-bold tabular-nums text-sky-400/80">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="text-[14px] font-semibold text-slate-100">{section.titleRo}</h3>
+                <h3 className="text-[14px] font-semibold text-wo-text-primary">{section.titleRo}</h3>
               </div>
-              <p className="mt-3 max-w-prose text-[13px] leading-relaxed text-slate-400">
+              <p className="mt-3 max-w-prose text-[13px] leading-relaxed text-wo-text-muted">
                 {section.bodyRo}
               </p>
               {section.id === "material" ? (
@@ -413,12 +413,12 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                   {LETTERS_VOLUME_ALUMINUM_WIDTHS.map((entry) => (
                     <li
                       key={entry.materialCode}
-                      className={`${PS_SURFACE_INSET} flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-[12px] leading-snug text-slate-300`}
+                      className={`${PS_SURFACE_INSET} flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-[12px] leading-snug text-wo-text-secondary`}
                     >
                       <span>
                         {LETTERS_VOLUME_ALUMINUM_FAMILY_LABEL_RO} {entry.labelRo}
-                        <span className="mx-1.5 text-slate-600">·</span>
-                        <span className="font-mono text-[10px] text-slate-500">
+                        <span className="mx-1.5 text-wo-text-dim">·</span>
+                        <span className="font-mono text-[10px] text-wo-text-muted">
                           {entry.materialCode}
                         </span>
                       </span>
@@ -438,7 +438,7 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                     .map((bullet) => (
                       <li
                         key={bullet}
-                        className={`${PS_SURFACE_INSET} px-3 py-2 text-[12px] leading-snug text-slate-300`}
+                        className={`${PS_SURFACE_INSET} px-3 py-2 text-[12px] leading-snug text-wo-text-secondary`}
                       >
                         {bullet}
                       </li>
@@ -449,7 +449,7 @@ export default function LettersVolumeAluminumStructureDetailPage() {
                   {section.bulletsRo.map((bullet) => (
                     <li
                       key={bullet}
-                      className={`${PS_SURFACE_INSET} px-3 py-2 text-[12px] leading-snug text-slate-300`}
+                      className={`${PS_SURFACE_INSET} px-3 py-2 text-[12px] leading-snug text-wo-text-secondary`}
                     >
                       {bullet}
                     </li>
@@ -461,18 +461,18 @@ export default function LettersVolumeAluminumStructureDetailPage() {
         </ol>
 
         <div
-          className="border-t border-[#1E293B] bg-[#0B1220]/40 px-6 py-4"
+          className="border-t border-wo-border-subtle bg-wo-surface-inset px-6 py-4"
           data-testid="letters-volume-structure-detail-doc-sources"
         >
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-wo-text-muted">
             Surse owner / lock
           </p>
           <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
             {LETTERS_VOLUME_DOC_SOURCES.map((source) => (
-              <li key={source.path} className="text-[11px] leading-snug text-slate-500">
-                <span className="text-slate-400">{source.labelRo}</span>
+              <li key={source.path} className="text-[11px] leading-snug text-wo-text-muted">
+                <span className="text-wo-text-muted">{source.labelRo}</span>
                 <span className="mx-1.5 text-slate-700">·</span>
-                <span className="font-mono text-[10px] text-slate-600">{source.path}</span>
+                <span className="font-mono text-[10px] text-wo-text-dim">{source.path}</span>
               </li>
             ))}
           </ul>

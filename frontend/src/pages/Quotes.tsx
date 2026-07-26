@@ -190,7 +190,7 @@ function GuardedQuoteSourceBadges({ quote }: { quote: Quote }) {
         Intake V3
       </span>
       {quote.status === "draft" ? (
-        <span className="rounded border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[10px] text-slate-300">
+        <span className="rounded border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[10px] text-wo-text-secondary">
           Draft
         </span>
       ) : null}
@@ -229,7 +229,7 @@ function GuardedQuoteSourceBadges({ quote }: { quote: Quote }) {
           <span className="rounded border border-blue-700/50 bg-blue-950/40 px-1.5 py-0.5 text-[10px] text-blue-200">
             Production readiness audit
           </span>
-          <span className="rounded border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[10px] text-slate-300">
+          <span className="rounded border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[10px] text-wo-text-secondary">
             Production not started
           </span>
         </>
@@ -252,8 +252,8 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
   return (
     <div
       onClick={onClick}
-      className={`bg-[#111827] border rounded-lg p-4 cursor-pointer transition-all ${
-        isSelected ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B] hover:border-slate-500"
+      className={`bg-wo-surface-raised border rounded-lg p-4 cursor-pointer transition-all ${
+        isSelected ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle hover:border-slate-500"
       }`}
     >
       <div className="flex items-center justify-between mb-2">
@@ -265,23 +265,23 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
             snapshot={quote.volumetricReadiness}
             testId={`quote-readiness-chip-${quote.id}`}
           />
-          <span className="text-[10px] text-slate-500">v{quote.version}</span>
+          <span className="text-[10px] text-wo-text-muted">v{quote.version}</span>
         </div>
         <span
-          className={`text-[16px] font-bold ${isUnpricedIntakeV6Quote(quote) ? "text-amber-300" : "text-slate-100"}`}
+          className={`text-[16px] font-bold ${isUnpricedIntakeV6Quote(quote) ? "text-amber-300" : "text-wo-text-primary"}`}
           data-testid={isUnpricedIntakeV6Quote(quote) ? `quote-v6-unpriced-total-${quote.id}` : undefined}
         >
           {formatV6QuoteTotalLabel(quote, formatQuoteMoney(quote.grandTotal, currency))}
         </span>
       </div>
-      <p className="text-[13px] font-semibold text-slate-200">{quote.client}</p>
+      <p className="text-[13px] font-semibold text-wo-text-primary">{quote.client}</p>
       {quote.intakeId ? (
         <p className="text-[10px] text-blue-400/80 font-mono mt-0.5">
           Cerere sursă: {quote.intakeId}
         </p>
       ) : null}
-      <p className="text-[11px] text-slate-400 mt-0.5">{quote.contactPerson}</p>
-      <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
+      <p className="text-[11px] text-wo-text-muted mt-0.5">{quote.contactPerson}</p>
+      <div className="flex items-center gap-4 mt-2 text-[10px] text-wo-text-muted">
         <span>{quote.lineItems.length} linii</span>
         <span className="flex items-center gap-0.5">
           <Percent className="w-3 h-3" />{" "}
@@ -704,7 +704,7 @@ export default function Quotes() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-          <p className="text-[12px] text-slate-500">Încărcare oferte...</p>
+          <p className="text-[12px] text-wo-text-muted">Încărcare oferte...</p>
         </div>
       </div>
     );
@@ -750,9 +750,9 @@ export default function Quotes() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <FileText className="w-5 h-5 text-amber-400" />
-        <h1 className="text-[18px] font-bold text-slate-100">Oferte</h1>
+        <h1 className="text-[18px] font-bold text-wo-text-primary">Oferte</h1>
         <SourceBadge source={quotesSource} />
-        <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
+        <span className="text-[10px] text-wo-text-muted bg-slate-800 px-2 py-0.5 rounded-full ml-1">
           {quotes.length} oferte
         </span>
         <div className="ml-auto">
@@ -826,20 +826,20 @@ export default function Quotes() {
 
       {/* Summary KPIs */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">Valoare Totală</p>
-          <p className="text-[20px] font-bold text-slate-100 mt-1">{formatAmount(totalValue)}</p>
-          <p className="text-[10px] text-slate-500">{kpiCurrency.label}</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Valoare Totală</p>
+          <p className="text-[20px] font-bold text-wo-text-primary mt-1">{formatAmount(totalValue)}</p>
+          <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">Acceptate</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Acceptate</p>
           <p className="text-[20px] font-bold text-emerald-400 mt-1">{formatAmount(acceptedValue)}</p>
-          <p className="text-[10px] text-slate-500">{kpiCurrency.label}</p>
+          <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">În Pipeline</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">În Pipeline</p>
           <p className="text-[20px] font-bold text-amber-400 mt-1">{formatAmount(pendingValue)}</p>
-          <p className="text-[10px] text-slate-500">{kpiCurrency.label}</p>
+          <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
       </div>
 
@@ -855,7 +855,7 @@ export default function Quotes() {
           value={searchQuery}
           onChange={(event) => setSearchQuery(event.target.value)}
           placeholder="Caută după cod ofertă, client sau cod cerere..."
-          className="w-full max-w-md px-3 py-2 text-[12px] rounded-lg border border-[#2A3548] bg-[#111827] text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500/50"
+          className="w-full max-w-md px-3 py-2 text-[12px] rounded-lg border border-wo-border-strong bg-wo-surface-raised text-wo-text-primary placeholder:text-wo-text-muted focus:outline-none focus:border-blue-500/50"
         />
       </div>
 
@@ -864,7 +864,7 @@ export default function Quotes() {
         <button
           onClick={() => setFilterStatus("all")}
           className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-            filterStatus === "all" ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+            filterStatus === "all" ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
           }`}
         >
           Toate ({quotes.length})
@@ -874,7 +874,7 @@ export default function Quotes() {
             key={s.status}
             onClick={() => setFilterStatus(filterStatus === s.status ? "all" : s.status)}
             className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-              filterStatus === s.status ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500"
+              filterStatus === s.status ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
             }`}
           >
             {statusConfig[s.status].label} ({s.count})
@@ -900,7 +900,7 @@ export default function Quotes() {
           {selectedQuote ? (
             <>
               {/* Quote Header */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[12px] font-mono text-blue-400">{selectedQuote.id}</span>
                   <QuoteStatusBadge
@@ -908,8 +908,8 @@ export default function Quotes() {
                     testId="quote-readiness-state"
                   />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-100">{selectedQuote.client}</h3>
-                <p className="text-[12px] text-slate-400 mt-0.5">{selectedQuote.contactPerson}</p>
+                <h3 className="text-[16px] font-bold text-wo-text-primary">{selectedQuote.client}</h3>
+                <p className="text-[12px] text-wo-text-muted mt-0.5">{selectedQuote.contactPerson}</p>
                 {intakeV6WorkspaceId ? (
                   <p className="text-[11px] mt-1">
                     <Link
@@ -921,14 +921,14 @@ export default function Quotes() {
                     </Link>
                   </p>
                 ) : null}
-                <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-500">
+                <div className="flex items-center gap-3 mt-2 text-[10px] text-wo-text-muted">
                   <span>Versiune {selectedQuote.version}</span>
                   <span>Creat: {new Date(selectedQuote.createdAt).toLocaleDateString("ro-RO")}</span>
                   <span>Valid: {selectedQuote.validUntil}</span>
                 </div>
                 {showIntakeV6CommercialSpine && intakeV6HumanNote ? (
                   <p
-                    className="mt-3 text-[11px] leading-relaxed text-slate-400 border-t border-[#1E293B] pt-3"
+                    className="mt-3 text-[11px] leading-relaxed text-wo-text-muted border-t border-wo-border-subtle pt-3"
                     data-testid="quote-v6-human-note"
                   >
                     {intakeV6HumanNote}
@@ -937,7 +937,7 @@ export default function Quotes() {
 
                 {(selectedQuote.acceptedSnapshotV2Id || selectedQuote.snapshotV2Code) && (
                   <div
-                    className="mt-4 bg-[#0D1321] border border-cyan-800/30 rounded-lg p-3"
+                    className="mt-4 bg-wo-surface-inset border border-cyan-800/30 rounded-lg p-3"
                     data-testid="quote-v2-snapshot-summary"
                   >
                     <div className="flex items-center gap-2 mb-3">
@@ -946,44 +946,44 @@ export default function Quotes() {
                     </div>
                     <div className="space-y-2 text-[11px]">
                       <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Accepted snapshot</span>
-                        <span className="text-slate-200 font-mono">
+                        <span className="text-wo-text-muted">Accepted snapshot</span>
+                        <span className="text-wo-text-primary font-mono">
                           {selectedQuote.acceptedSnapshotV2Id != null
                             ? `#${selectedQuote.acceptedSnapshotV2Id}`
                             : "—"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Snapshot code</span>
-                        <span className="text-slate-200 font-mono">
+                        <span className="text-wo-text-muted">Snapshot code</span>
+                        <span className="text-wo-text-primary font-mono">
                           {selectedQuote.snapshotV2Code ?? "—"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Snapshot readiness</span>
-                        <span className="text-slate-200">
+                        <span className="text-wo-text-muted">Snapshot readiness</span>
+                        <span className="text-wo-text-primary">
                           {selectedQuote.snapshotV2Readiness ?? "—"}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-[#121B2C] px-2 py-1.5 rounded">
-                          <p className="text-slate-400">Commercial frozen</p>
-                          <p className="text-slate-100 font-semibold">
+                          <p className="text-wo-text-muted">Commercial frozen</p>
+                          <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2CommercialTotal != null
                               ? formatQuoteMoney(selectedQuote.snapshotV2CommercialTotal, selectedCurrency)
                               : "—"}
                           </p>
                         </div>
                         <div className="bg-[#121B2C] px-2 py-1.5 rounded">
-                          <p className="text-slate-400">Internal estimate</p>
-                          <p className="text-slate-100 font-semibold">
+                          <p className="text-wo-text-muted">Internal estimate</p>
+                          <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2InternalTotal != null
                               ? formatQuoteMoney(selectedQuote.snapshotV2InternalTotal, selectedCurrency)
                               : "—"}
                           </p>
                         </div>
                       </div>
-                      <p className="text-[10px] text-slate-500">
+                      <p className="text-[10px] text-wo-text-muted">
                         Read-only truth. This card reflects the frozen V2 snapshot used for acceptance/conversion, not legacy pricing shortcuts.
                       </p>
                     </div>
@@ -1003,7 +1003,7 @@ export default function Quotes() {
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/30 text-blue-300 border border-blue-700/30">
                           Ofertă client (Snapshot V2)
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-900/40 text-slate-300 border border-slate-700/40">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-900/40 text-wo-text-secondary border border-slate-700/40">
                           Cost intern / registries upstream
                         </span>
                       </div>
@@ -1047,7 +1047,7 @@ export default function Quotes() {
               ) : null}
 
               {intakeV6WorkspaceId ? (
-                <div className="bg-[#111827] border border-cyan-900/40 rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-cyan-900/40 rounded-lg p-4">
                   <button
                     onClick={() => setExpandedTechnicalBreakdown((current) => !current)}
                     className="flex items-center justify-between w-full mb-3"
@@ -1058,32 +1058,32 @@ export default function Quotes() {
                       count={technicalBreakdownRowCount || undefined}
                       icon={<Package className="w-4 h-4" />}
                     />
-                    {expandedTechnicalBreakdown ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    {expandedTechnicalBreakdown ? <ChevronUp className="w-4 h-4 text-wo-text-muted" /> : <ChevronDown className="w-4 h-4 text-wo-text-muted" />}
                   </button>
-                  <p className="text-[10px] text-slate-500 mt-2 mb-3">
+                  <p className="text-[10px] text-wo-text-muted mt-2 mb-3">
                     Canal Cost intern estimativ (live Intake V6) — separat de Oferta client înghețată. Nu modifica
                     Pricing Registry aici în fluxul de ofertare.
                   </p>
                   {technicalBreakdownLoading ? (
-                    <p className="text-[12px] text-slate-400">Încărcare breakdown tehnic V6...</p>
+                    <p className="text-[12px] text-wo-text-muted">Încărcare breakdown tehnic V6...</p>
                   ) : technicalBreakdownError ? (
                     <p className="text-[12px] text-amber-300">{technicalBreakdownError}</p>
                   ) : technicalBreakdown ? (
                     <>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                          <p className="text-[10px] uppercase tracking-wide text-slate-500">Cost intern estimativ</p>
-                          <p className="text-[14px] font-semibold text-slate-100 mt-1">
+                        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+                          <p className="text-[10px] uppercase tracking-wide text-wo-text-muted">Cost intern estimativ</p>
+                          <p className="text-[14px] font-semibold text-wo-text-primary mt-1">
                             {formatQuoteMoney(technicalBreakdown.totals?.estimated_cost_total ?? 0, technicalBreakdownCurrency)}
                           </p>
                         </div>
-                        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                          <p className="text-[10px] uppercase tracking-wide text-slate-500">Rânduri tehnice</p>
-                          <p className="text-[14px] font-semibold text-slate-100 mt-1">{technicalBreakdownRowCount}</p>
+                        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+                          <p className="text-[10px] uppercase tracking-wide text-wo-text-muted">Rânduri tehnice</p>
+                          <p className="text-[14px] font-semibold text-wo-text-primary mt-1">{technicalBreakdownRowCount}</p>
                         </div>
-                        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                          <p className="text-[10px] uppercase tracking-wide text-slate-500">Avertizări</p>
-                          <p className="text-[14px] font-semibold text-slate-100 mt-1">{technicalBreakdown.warnings?.length ?? 0}</p>
+                        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+                          <p className="text-[10px] uppercase tracking-wide text-wo-text-muted">Avertizări</p>
+                          <p className="text-[14px] font-semibold text-wo-text-primary mt-1">{technicalBreakdown.warnings?.length ?? 0}</p>
                         </div>
                       </div>
 
@@ -1091,16 +1091,16 @@ export default function Quotes() {
                         <div className="space-y-4">
                           {technicalBreakdown.material_rows.length > 0 ? (
                             <div>
-                              <p className="text-[11px] font-semibold text-slate-200 mb-2">Materiale</p>
+                              <p className="text-[11px] font-semibold text-wo-text-primary mb-2">Materiale</p>
                               <div className="space-y-2">
                                 {technicalBreakdown.material_rows.map((row) => (
-                                  <div key={row.material_key} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                                  <div key={row.material_key} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                                     <div className="flex items-start justify-between gap-3">
                                       <div>
-                                        <p className="text-[12px] text-slate-100 font-medium">{row.display_name}</p>
-                                        <p className="text-[10px] text-slate-500 mt-1">{row.quantity} {row.unit}</p>
+                                        <p className="text-[12px] text-wo-text-primary font-medium">{row.display_name}</p>
+                                        <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}</p>
                                       </div>
-                                      <span className="text-[12px] font-semibold text-slate-200">
+                                      <span className="text-[12px] font-semibold text-wo-text-primary">
                                         {formatQuoteMoney(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
                                       </span>
                                     </div>
@@ -1112,16 +1112,16 @@ export default function Quotes() {
 
                           {technicalBreakdown.consumable_rows.length > 0 ? (
                             <div>
-                              <p className="text-[11px] font-semibold text-slate-200 mb-2">Consumabile</p>
+                              <p className="text-[11px] font-semibold text-wo-text-primary mb-2">Consumabile</p>
                               <div className="space-y-2">
                                 {technicalBreakdown.consumable_rows.map((row) => (
-                                  <div key={row.material_key} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                                  <div key={row.material_key} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                                     <div className="flex items-start justify-between gap-3">
                                       <div>
-                                        <p className="text-[12px] text-slate-100 font-medium">{row.display_name}</p>
-                                        <p className="text-[10px] text-slate-500 mt-1">{row.quantity} {row.unit}</p>
+                                        <p className="text-[12px] text-wo-text-primary font-medium">{row.display_name}</p>
+                                        <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}</p>
                                       </div>
-                                      <span className="text-[12px] font-semibold text-slate-200">
+                                      <span className="text-[12px] font-semibold text-wo-text-primary">
                                         {formatQuoteMoney(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
                                       </span>
                                     </div>
@@ -1133,16 +1133,16 @@ export default function Quotes() {
 
                           {technicalBreakdown.operation_rows.length > 0 ? (
                             <div>
-                              <p className="text-[11px] font-semibold text-slate-200 mb-2">Operațiuni</p>
+                              <p className="text-[11px] font-semibold text-wo-text-primary mb-2">Operațiuni</p>
                               <div className="space-y-2">
                                 {technicalBreakdown.operation_rows.map((row) => (
-                                  <div key={row.key} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                                  <div key={row.key} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                                     <div className="flex items-start justify-between gap-3">
                                       <div>
-                                        <p className="text-[12px] text-slate-100 font-medium">{row.display_name}</p>
-                                        <p className="text-[10px] text-slate-500 mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
+                                        <p className="text-[12px] text-wo-text-primary font-medium">{row.display_name}</p>
+                                        <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
                                       </div>
-                                      <span className="text-[12px] font-semibold text-slate-200">
+                                      <span className="text-[12px] font-semibold text-wo-text-primary">
                                         {formatQuoteMoney(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
                                       </span>
                                     </div>
@@ -1154,16 +1154,16 @@ export default function Quotes() {
 
                           {technicalBreakdown.edge_cant_operation_rows.length > 0 ? (
                             <div>
-                              <p className="text-[11px] font-semibold text-slate-200 mb-2">Operațiuni muchii</p>
+                              <p className="text-[11px] font-semibold text-wo-text-primary mb-2">Operațiuni muchii</p>
                               <div className="space-y-2">
                                 {technicalBreakdown.edge_cant_operation_rows.map((row) => (
-                                  <div key={row.key} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                                  <div key={row.key} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                                     <div className="flex items-start justify-between gap-3">
                                       <div>
-                                        <p className="text-[12px] text-slate-100 font-medium">{row.display_name}</p>
-                                        <p className="text-[10px] text-slate-500 mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
+                                        <p className="text-[12px] text-wo-text-primary font-medium">{row.display_name}</p>
+                                        <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
                                       </div>
-                                      <span className="text-[12px] font-semibold text-slate-200">
+                                      <span className="text-[12px] font-semibold text-wo-text-primary">
                                         {formatQuoteMoney(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
                                       </span>
                                     </div>
@@ -1189,7 +1189,7 @@ export default function Quotes() {
                       ) : null}
                     </>
                   ) : (
-                    <p className="text-[12px] text-slate-400">Nu există încă breakdown tehnic V6 disponibil pentru această ofertă.</p>
+                    <p className="text-[12px] text-wo-text-muted">Nu există încă breakdown tehnic V6 disponibil pentru această ofertă.</p>
                   )}
                 </div>
               ) : null}
@@ -1205,7 +1205,7 @@ export default function Quotes() {
                 never recomputes cost.
               */}
               {selectedQuote.componentBreakdown && selectedQuote.componentBreakdown.length > 0 ? (
-                <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                   <button
                     onClick={() => setExpandedLineItems(!expandedLineItems)}
                     className="flex items-center justify-between w-full mb-3"
@@ -1216,34 +1216,34 @@ export default function Quotes() {
                       count={selectedQuote.componentBreakdown.length}
                       icon={<Layers className="w-4 h-4" />}
                     />
-                    {expandedLineItems ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    {expandedLineItems ? <ChevronUp className="w-4 h-4 text-wo-text-muted" /> : <ChevronDown className="w-4 h-4 text-wo-text-muted" />}
                   </button>
                   {expandedLineItems && (
                     <ComponentBreakdownTable components={selectedQuote.componentBreakdown} />
                   )}
                 </div>
               ) : (
-                <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                   <button
                     onClick={() => setExpandedLineItems(!expandedLineItems)}
                     className="flex items-center justify-between w-full mb-3"
                     aria-expanded={expandedLineItems}
                   >
                     <SectionHeader title="Linii comerciale ofertă" count={selectedQuote.lineItems.length} icon={<FileText className="w-4 h-4" />} />
-                    {expandedLineItems ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
+                    {expandedLineItems ? <ChevronUp className="w-4 h-4 text-wo-text-muted" /> : <ChevronDown className="w-4 h-4 text-wo-text-muted" />}
                   </button>
                   {expandedLineItems && (
                     <div className="space-y-2">
                       {selectedQuote.lineItems.map((item, idx) => (
-                        <div key={idx} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                          <p className="text-[12px] text-slate-200 font-medium">{item.description}</p>
+                        <div key={idx} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+                          <p className="text-[12px] text-wo-text-primary font-medium">{item.description}</p>
                           <div className="flex items-center justify-between mt-1.5">
-                            <span className="text-[10px] font-mono text-slate-500">{item.productCode}</span>
+                            <span className="text-[10px] font-mono text-wo-text-muted">{item.productCode}</span>
                             <div className="flex items-center gap-3 text-[11px]">
-                              <span className="text-slate-500">
+                              <span className="text-wo-text-muted">
                                 {item.quantity} × {formatQuoteMoney(item.unitPrice, selectedCurrency)}
                               </span>
-                              <span className="text-slate-200 font-semibold">
+                              <span className="text-wo-text-primary font-semibold">
                                 {formatQuoteMoney(item.total, selectedCurrency)}
                               </span>
                             </div>
@@ -1274,9 +1274,9 @@ export default function Quotes() {
 
               {/* Pricing Summary */}
               {(!showIntakeV6CommercialSpine || showV6CompactTotals) && (
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <SectionHeader title="Ofertă client — totaluri afișate" icon={<DollarSign className="w-4 h-4" />} />
-                <p className="text-[10px] text-slate-500 mt-2 mb-3">
+                <p className="text-[10px] text-wo-text-muted mt-2 mb-3">
                   {isUnpricedIntakeV6Quote(selectedQuote)
                     ? "Draft V6 nepretuit: totalurile de mai jos sunt placeholder 0 RON până când bridge-ul V6 scrie totalurile backend oficiale."
                     : selectedQuote.acceptedSnapshotV2Id != null
@@ -1285,8 +1285,8 @@ export default function Quotes() {
                 </p>
                 <div className="space-y-2 text-[12px]">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Subtotal</span>
-                    <span className="text-slate-200">
+                    <span className="text-wo-text-muted">Subtotal</span>
+                    <span className="text-wo-text-primary">
                       {isUnpricedIntakeV6Quote(selectedQuote)
                         ? "Nepretuit (draft V6)"
                         : formatQuoteMoney(selectedQuote.subtotal, selectedCurrency)}
@@ -1299,23 +1299,23 @@ export default function Quotes() {
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Total fără TVA</span>
-                    <span className="text-slate-200">
+                    <span className="text-wo-text-muted">Total fără TVA</span>
+                    <span className="text-wo-text-primary">
                       {formatQuoteMoney(selectedQuote.totalBeforeVAT, selectedCurrency)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">
+                    <span className="text-wo-text-muted">
                       {selectedQuote.vatPct != null ? `TVA (${selectedQuote.vatPct}%)` : "TVA"}
                     </span>
-                    <span className="text-slate-200">
+                    <span className="text-wo-text-primary">
                       {formatQuoteMoney(selectedQuote.vat, selectedCurrency)}
                     </span>
                   </div>
-                  <div className="flex justify-between pt-2 border-t border-[#2A3548]">
-                    <span className="text-slate-100 font-bold">Total</span>
+                  <div className="flex justify-between pt-2 border-t border-wo-border-strong">
+                    <span className="text-wo-text-primary font-bold">Total</span>
                     <span
-                      className={`font-bold text-[14px] ${isUnpricedIntakeV6Quote(selectedQuote) ? "text-amber-300" : "text-slate-100"}`}
+                      className={`font-bold text-[14px] ${isUnpricedIntakeV6Quote(selectedQuote) ? "text-amber-300" : "text-wo-text-primary"}`}
                       data-testid={isUnpricedIntakeV6Quote(selectedQuote) ? "quote-v6-detail-unpriced-total" : undefined}
                     >
                       {isUnpricedIntakeV6Quote(selectedQuote)
@@ -1324,7 +1324,7 @@ export default function Quotes() {
                     </span>
                   </div>
                   <div className="flex justify-between pt-1">
-                    <span className="text-slate-500 flex items-center gap-1">
+                    <span className="text-wo-text-muted flex items-center gap-1">
                       <TrendingUp className="w-3 h-3" />{" "}
                       {showIntakeV6CommercialSpine ? "Adaos comercial" : "Marjă"}
                     </span>
@@ -1343,7 +1343,7 @@ export default function Quotes() {
                     </span>
                   </div>
                   {showIntakeV6CommercialSpine ? (
-                    <p className="text-[10px] text-slate-500 pt-1" data-testid="quote-v6-adaos-vs-marja-hint">
+                    <p className="text-[10px] text-wo-text-muted pt-1" data-testid="quote-v6-adaos-vs-marja-hint">
                       Adaos = majorare pe baza comercială. Nu este marjă internă pe cost.
                     </p>
                   ) : null}
@@ -1353,9 +1353,9 @@ export default function Quotes() {
 
               {/* Notes */}
               {selectedQuote.notes && !hideV6RawNotes && (
-                <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                   <SectionHeader title="Note" icon={<MessageSquare className="w-4 h-4" />} />
-                  <p className="text-[12px] text-slate-300">{selectedQuote.notes}</p>
+                  <p className="text-[12px] text-wo-text-secondary">{selectedQuote.notes}</p>
                 </div>
               )}
 
@@ -1447,7 +1447,7 @@ export default function Quotes() {
 
               {isTerminalClosedQuoteStatus(selectedQuote.status) && (
                 <div
-                  className="bg-[#111827] border border-red-900/40 rounded-lg p-4"
+                  className="bg-wo-surface-raised border border-red-900/40 rounded-lg p-4"
                   data-testid="quote-terminal-policy"
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -1456,7 +1456,7 @@ export default function Quotes() {
                       Ofertă terminală
                     </p>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-wo-text-muted">
                     {terminalClosedQuoteMessage(selectedQuote.status)}
                   </p>
                 </div>
@@ -1464,7 +1464,7 @@ export default function Quotes() {
 
               {/* Actions */}
               {!showIntakeV6CommercialSpine && (
-                <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                   <SectionHeader title="Acțiuni" icon={<ArrowRight className="w-4 h-4" />} />
                   <div className="space-y-2">
                     {!isTerminalClosedQuoteStatus(selectedQuote.status) &&
@@ -1493,7 +1493,7 @@ export default function Quotes() {
                           data-testid="quote-reject-action"
                           onClick={() => handleQuoteAction("reject")}
                           disabled={actionLoading || !canMutateQuotes}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-60 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-60 text-wo-text-primary rounded-lg text-[12px] font-semibold transition-colors"
                         >
                           Respinge Oferta
                         </button>
@@ -1501,7 +1501,7 @@ export default function Quotes() {
                           data-testid="quote-expire-action"
                           onClick={() => handleQuoteAction("expire")}
                           disabled={actionLoading || !canMutateQuotes}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-slate-300 rounded-lg text-[12px] font-semibold transition-colors"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-60 text-wo-text-secondary rounded-lg text-[12px] font-semibold transition-colors"
                         >
                           Marchează Expirată
                         </button>
@@ -1543,7 +1543,7 @@ export default function Quotes() {
                       <button
                         onClick={() => setSendDialogQuote(selectedQuote)}
                         disabled={!canMutateQuotes}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-medium transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-wo-text-primary rounded-lg text-[12px] font-medium transition-colors"
                       >
                         <Send className="w-3.5 h-3.5" /> Retrimite / Descarcă PDF
                       </button>
@@ -1564,7 +1564,7 @@ export default function Quotes() {
                       </p>
                     )}
                     {actionLoading && (
-                      <p className="text-[10px] text-slate-500 text-center">Se procesează...</p>
+                      <p className="text-[10px] text-wo-text-muted text-center">Se procesează...</p>
                     )}
                   </div>
                 </div>
@@ -1631,10 +1631,10 @@ export default function Quotes() {
               )}
             </>
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
-              <FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[13px] text-slate-500">Selectează o ofertă pentru detalii</p>
-              <p className="text-[11px] text-slate-600 mt-1">Alege o ofertă din lista din stânga pentru a vedea detaliile și acțiunile disponibile.</p>
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
+              <FileText className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+              <p className="text-[13px] text-wo-text-muted">Selectează o ofertă pentru detalii</p>
+              <p className="text-[11px] text-wo-text-dim mt-1">Alege o ofertă din lista din stânga pentru a vedea detaliile și acțiunile disponibile.</p>
             </div>
           )}
         </div>

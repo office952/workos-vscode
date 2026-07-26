@@ -49,16 +49,16 @@ export function OwnerReadonlyVolumetricProofPanel({ templateCode, workspaceId }:
         <span className="rounded border border-emerald-700/60 px-1.5 py-0.5 text-[10px] text-emerald-300">
           NO WRITE
         </span>
-        <span className="rounded border border-slate-600 px-1.5 py-0.5 text-[10px] text-slate-300">
+        <span className="rounded border border-slate-600 px-1.5 py-0.5 text-[10px] text-wo-text-secondary">
           existing task_rules
         </span>
       </div>
-      <p className="mb-3 text-[10px] leading-relaxed text-slate-400">
+      <p className="mb-3 text-[10px] leading-relaxed text-wo-text-muted">
         Intake → ProductDefinition → modular resolver → Aggregate task_rules → live materials → Build 4C
         preview. Resolver is not a task engine.
       </p>
 
-      {loading ? <p className="text-[11px] text-slate-400">Se încarcă proof…</p> : null}
+      {loading ? <p className="text-[11px] text-wo-text-muted">Se încarcă proof…</p> : null}
       {error ? (
         <p className="text-[11px] text-amber-200" data-testid="owner-readonly-proof-error">
           {error}
@@ -67,7 +67,7 @@ export function OwnerReadonlyVolumetricProofPanel({ templateCode, workspaceId }:
 
       {proof ? (
         <div className="grid gap-2 text-[11px] text-slate-200 sm:grid-cols-2" data-testid="owner-readonly-proof-body">
-          <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/70 p-2">
+          <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-2">
             <p className="mb-1 font-semibold text-slate-100">1. Intake / PD</p>
             <p>cable: {proof.intake_selection.mains_cable_length_m ?? "—"} m</p>
             <p>cant: {proof.intake_selection.return_finish_type ?? "—"}</p>
@@ -76,19 +76,19 @@ export function OwnerReadonlyVolumetricProofPanel({ templateCode, workspaceId }:
               PD keys: {Object.keys(proof.product_definition.canonical_values).join(", ") || "—"}
             </p>
           </div>
-          <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/70 p-2">
+          <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-2">
             <p className="mb-1 font-semibold text-slate-100">2. Process → task_rules</p>
             <p>source: {proof.process_graph.process_graph_source ?? "—"}</p>
             <p>
               processes: {proof.process_graph.process_count} · edges: {proof.process_graph.edge_count}
             </p>
             <p>rules: {proof.task_rules_projection.rule_count}</p>
-            <p className="mt-1 max-h-16 overflow-auto text-[10px] text-slate-400">
+            <p className="mt-1 max-h-16 overflow-auto text-[10px] text-wo-text-muted">
               {proof.task_rules_projection.task_names.slice(0, 10).join(" → ")}
               {proof.task_rules_projection.task_names.length > 10 ? " …" : ""}
             </p>
           </div>
-          <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/70 p-2">
+          <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-2">
             <p className="mb-1 font-semibold text-slate-100">3. Live materials</p>
             <p>
               wire_supply qty: {proof.live_materials.wire_supply.quantity ?? "—"}{" "}
@@ -100,14 +100,14 @@ export function OwnerReadonlyVolumetricProofPanel({ templateCode, workspaceId }:
               {proof.live_materials.cable_channel_commercial_guarded ? "GUARDED" : "n/a"}
             </p>
           </div>
-          <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/70 p-2">
+          <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-2">
             <p className="mb-1 font-semibold text-slate-100">4. Build 4C preview</p>
             <p>candidates: {proof.execution_preview_4c.candidate_count}</p>
             <p>process edges: {proof.execution_preview_4c.process_depends_on_edges}</p>
             <p>sequence fallback: {proof.execution_preview_4c.sequence_fallback_edges}</p>
             <p>no_write: {String(proof.execution_preview_4c.no_write)}</p>
           </div>
-          <div className="sm:col-span-2 rounded border border-[#2A3548] bg-[#0A0F1A]/70 p-2">
+          <div className="sm:col-span-2 rounded border border-wo-border-strong bg-wo-surface-inset p-2">
             <p className="mb-1 font-semibold text-slate-100">
               Chain: {proof.chain_ok ? "OK" : "WITH GUARDS"}
             </p>

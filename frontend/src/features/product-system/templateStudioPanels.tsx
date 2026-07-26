@@ -94,13 +94,13 @@ export function TemplateEditorCommandBar({
   const saveEnabled = canSave && !readOnly;
 
   return (
-    <header className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 bg-[#111827] border-b border-[#1E293B] shrink-0">
+    <header className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 bg-wo-surface-raised border-b border-wo-border-subtle shrink-0">
       {onBackToLibrary ? (
         <button
           type="button"
           onClick={onBackToLibrary}
           disabled={saving}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-semibold text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-600 rounded-lg transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-semibold text-wo-text-muted hover:text-wo-text-primary border border-transparent hover:border-slate-600 rounded-lg transition-colors shrink-0"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Înapoi la șabloane
@@ -109,9 +109,9 @@ export function TemplateEditorCommandBar({
       <div className="flex items-center gap-2.5 min-w-0 flex-1 basis-[200px]">
         <Package className="w-5 h-5 text-purple-400 shrink-0" />
         <div className="min-w-0">
-          <h2 className="text-[14px] font-bold text-slate-100 font-mono truncate">{codeLabel}</h2>
+          <h2 className="text-[14px] font-bold text-wo-text-primary font-mono truncate">{codeLabel}</h2>
           {displayName ? (
-            <p className="text-[12px] text-slate-300 truncate">{displayName}</p>
+            <p className="text-[12px] text-wo-text-secondary truncate">{displayName}</p>
           ) : null}
         </div>
         <StatusBadge
@@ -122,7 +122,7 @@ export function TemplateEditorCommandBar({
         />
       </div>
 
-      <p className="text-[10px] text-slate-500 shrink-0 hidden lg:block">{metricsLine}</p>
+      <p className="text-[10px] text-wo-text-muted shrink-0 hidden lg:block">{metricsLine}</p>
 
       <div
         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border shrink-0 ${
@@ -146,7 +146,7 @@ export function TemplateEditorCommandBar({
             type="button"
             onClick={onChangeTemplate}
             disabled={saving}
-            className="flex items-center gap-1.5 px-3 py-2 bg-[#0D1321] hover:bg-slate-800 text-slate-300 border border-[#1E293B] hover:border-slate-600 rounded-lg text-[11px] font-semibold transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-2 bg-wo-surface-inset hover:bg-slate-800 text-wo-text-secondary border border-wo-border-subtle hover:border-slate-600 rounded-lg text-[11px] font-semibold transition-colors disabled:opacity-50"
           >
             <ChevronsUpDown className="w-3.5 h-3.5" /> {changeTemplateLabel}
           </button>
@@ -163,7 +163,7 @@ export function TemplateEditorCommandBar({
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="flex items-center gap-1.5 px-3 py-2 bg-transparent hover:bg-slate-800 text-slate-400 hover:text-slate-200 rounded-lg text-[12px] font-medium transition-colors disabled:opacity-50 border border-transparent hover:border-slate-700"
+          className="flex items-center gap-1.5 px-3 py-2 bg-transparent hover:bg-slate-800 text-wo-text-muted hover:text-wo-text-primary rounded-lg text-[12px] font-medium transition-colors disabled:opacity-50 border border-transparent hover:border-slate-700"
         >
           <X className="w-3.5 h-3.5" /> Anulează
         </button>
@@ -175,7 +175,7 @@ export function TemplateEditorCommandBar({
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12px] font-bold transition-colors ${
               saveEnabled && !saving
                 ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30"
-                : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                : "bg-slate-700/60 text-wo-text-muted cursor-not-allowed"
             }`}
           >
             <Save className="w-3.5 h-3.5" /> {saving ? "Salvare..." : "Salvează"}
@@ -183,7 +183,7 @@ export function TemplateEditorCommandBar({
         ) : null}
       </div>
 
-      <p className="w-full text-[10px] text-slate-500 lg:hidden">{metricsLine}</p>
+      <p className="w-full text-[10px] text-wo-text-muted lg:hidden">{metricsLine}</p>
     </header>
   );
 }
@@ -230,7 +230,7 @@ export function TemplateConstructionStageRow({
               </span>
             </button>
             {i < stages.length - 1 ? (
-              <ChevronRight className="w-3.5 h-3.5 mx-0.5 shrink-0 text-slate-600" />
+              <ChevronRight className="w-3.5 h-3.5 mx-0.5 shrink-0 text-wo-text-dim" />
             ) : null}
           </div>
         );
@@ -247,7 +247,7 @@ export function TemplateConstructionStageRow({
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase tracking-wide font-bold mb-2 hover:text-slate-400 transition-colors"
+        className="flex items-center gap-1.5 text-[10px] text-wo-text-muted uppercase tracking-wide font-bold mb-2 hover:text-wo-text-muted transition-colors"
       >
         <ChevronDown
           className={`w-3.5 h-3.5 transition-transform ${expanded ? "rotate-0" : "-rotate-90"}`}
@@ -319,31 +319,31 @@ export function ComponentDetailInsightPanel({
   const internalMinutesLabel = formatInternalComponentMinutes(totalMinutes);
 
   return (
-    <aside className="w-full h-full flex flex-col min-h-0 bg-[#0D1321] overflow-y-auto scrollbar-thin">
+    <aside className="w-full h-full flex flex-col min-h-0 bg-wo-surface-inset overflow-y-auto scrollbar-thin">
       {selectedComponent === null || selectedIndex === null ? (
         <section className="p-6 flex flex-col items-center justify-center text-center min-h-[200px]">
           <LayersPlaceholder />
-          <p className="text-[12px] text-slate-400 mt-3 leading-relaxed max-w-[220px]">
+          <p className="text-[12px] text-wo-text-muted mt-3 leading-relaxed max-w-[220px]">
             Selectează o componentă pentru materiale, operații și validare.
           </p>
         </section>
       ) : (
         <>
-          <section className="p-4 border-b border-[#1E293B]">
+          <section className="p-4 border-b border-wo-border-subtle">
             <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-1">
               #{selectedIndex + 1} · {typeDisplayLabel}
             </p>
-            <h3 className="text-[14px] font-bold text-slate-100 leading-snug">
+            <h3 className="text-[14px] font-bold text-wo-text-primary leading-snug">
               {formatComponentDisplayName(selectedComponent.name) || "Fără nume"}
             </h3>
-            <p className="text-[10px] text-slate-500 font-mono mt-1">
+            <p className="text-[10px] text-wo-text-muted font-mono mt-1">
               {selectedComponent.component_id}
             </p>
             {internalMinutesLabel ? (
               <button
                 type="button"
                 onClick={() => setCalibrationExpanded((v) => !v)}
-                className="text-[9px] text-slate-600 mt-2 hover:text-slate-500 transition-colors text-left"
+                className="text-[9px] text-wo-text-dim mt-2 hover:text-wo-text-muted transition-colors text-left"
                 title={CALIBRATION_DURATION_TOOLTIP}
               >
                 {internalMinutesLabel}
@@ -351,16 +351,16 @@ export function ComponentDetailInsightPanel({
               </button>
             ) : null}
             {calibrationExpanded && internalMinutesLabel ? (
-              <p className="text-[9px] text-slate-600 mt-1 leading-relaxed">{CALIBRATION_DURATION_TOOLTIP}</p>
+              <p className="text-[9px] text-wo-text-dim mt-1 leading-relaxed">{CALIBRATION_DURATION_TOOLTIP}</p>
             ) : null}
           </section>
 
-          <section className="p-4 border-b border-[#1E293B]">
-            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+          <section className="p-4 border-b border-wo-border-subtle">
+            <h4 className="text-[10px] font-bold text-wo-text-muted uppercase tracking-wide mb-2 flex items-center gap-1">
               <Box className="w-3 h-3" /> Materiale ({selectedComponent.materials.length})
             </h4>
             {selectedComponent.materials.length === 0 ? (
-              <p className="text-[11px] text-slate-500 italic">Niciun material definit.</p>
+              <p className="text-[11px] text-wo-text-muted italic">Niciun material definit.</p>
             ) : (
               <ul className="space-y-1.5">
                 {selectedComponent.materials.map((m, i) => {
@@ -368,13 +368,13 @@ export function ComponentDetailInsightPanel({
                   return (
                     <li
                       key={m.materialCode + "_" + i}
-                      className="text-[11px] px-2 py-1.5 rounded-lg border border-[#1E293B] bg-[#111827]"
+                      className="text-[11px] px-2 py-1.5 rounded-lg border border-wo-border-subtle bg-wo-surface-raised"
                     >
                       <p className="font-mono text-emerald-300/90 text-[10px]">
                         {m.materialCode || "—"}
                       </p>
-                      <p className="text-slate-300 truncate">{m.name || "—"}</p>
-                      <p className="text-[9px] text-slate-500 mt-0.5">
+                      <p className="text-wo-text-secondary truncate">{m.name || "—"}</p>
+                      <p className="text-[9px] text-wo-text-muted mt-0.5">
                         {formatMaterialQuantityLabel(m)}
                         {!inRegistry && m.materialCode ? (
                           <span className="text-red-400 ml-1">· lipsă din registru</span>
@@ -390,23 +390,23 @@ export function ComponentDetailInsightPanel({
             )}
           </section>
 
-          <section className="p-4 border-b border-[#1E293B]">
-            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
+          <section className="p-4 border-b border-wo-border-subtle">
+            <h4 className="text-[10px] font-bold text-wo-text-muted uppercase tracking-wide mb-2 flex items-center gap-1">
               <Cog className="w-3 h-3" /> Operații ({selectedComponent.operations.length})
             </h4>
             {selectedComponent.operations.length === 0 ? (
-              <p className="text-[11px] text-slate-500 italic">Nicio operație definită.</p>
+              <p className="text-[11px] text-wo-text-muted italic">Nicio operație definită.</p>
             ) : (
               <ul className="space-y-1.5">
                 {selectedComponent.operations.map((op, i) => (
                   <li
                     key={op.code + "_" + i}
-                    className="text-[11px] px-2 py-1.5 rounded-lg border border-[#1E293B] bg-[#111827]"
+                    className="text-[11px] px-2 py-1.5 rounded-lg border border-wo-border-subtle bg-wo-surface-raised"
                   >
                     <p className="font-mono text-blue-300/90 text-[10px]">{op.code || "—"}</p>
-                    <p className="text-slate-300">{op.name || "—"}</p>
+                    <p className="text-wo-text-secondary">{op.name || "—"}</p>
                     <p
-                      className="text-[9px] text-slate-600 mt-0.5"
+                      className="text-[9px] text-wo-text-dim mt-0.5"
                       title={CALIBRATION_DURATION_TOOLTIP}
                     >
                       {formatOperationCalibrationLabel(op)}
@@ -418,8 +418,8 @@ export function ComponentDetailInsightPanel({
             )}
           </section>
 
-          <section className="p-4 border-b border-[#1E293B]">
-            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-2">
+          <section className="p-4 border-b border-wo-border-subtle">
+            <h4 className="text-[10px] font-bold text-wo-text-muted uppercase tracking-wide mb-2">
               Validare componentă
             </h4>
             <ul className="space-y-1">
@@ -443,11 +443,11 @@ export function ComponentDetailInsightPanel({
         </>
       )}
 
-      <section className="p-4 border-b border-[#1E293B]">
+      <section className="p-4 border-b border-wo-border-subtle">
         <button
           type="button"
           onClick={() => setValidationExpanded((v) => !v)}
-          className="w-full flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wide hover:text-slate-300 transition-colors"
+          className="w-full flex items-center justify-between text-[10px] font-bold text-wo-text-muted uppercase tracking-wide hover:text-wo-text-secondary transition-colors"
         >
           <span>Detalii validare șablon</span>
           <span className="flex items-center gap-1.5 normal-case font-semibold">
@@ -492,7 +492,7 @@ export function ComponentDetailInsightPanel({
         <button
           type="button"
           onClick={() => setPreviewExpanded((v) => !v)}
-          className="w-full flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wide hover:text-slate-400 transition-colors mb-2"
+          className="w-full flex items-center justify-between text-[10px] font-bold text-wo-text-muted uppercase tracking-wide hover:text-wo-text-muted transition-colors mb-2"
         >
           <span>Previzualizare orientativă</span>
           <ChevronDown
@@ -503,7 +503,7 @@ export function ComponentDetailInsightPanel({
           <div className="opacity-90 scale-[0.92] origin-top">{preview}</div>
         ) : null}
         {!previewExpanded && selectedComponent ? (
-          <p className="text-[9px] text-slate-600 italic">
+          <p className="text-[9px] text-wo-text-dim italic">
             Stratificare vizuală — nu e randare tehnică ({templateCode})
           </p>
         ) : null}
@@ -515,7 +515,7 @@ export function ComponentDetailInsightPanel({
 function LayersPlaceholder() {
   return (
     <svg
-      className="w-10 h-10 text-slate-600"
+      className="w-10 h-10 text-wo-text-dim"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

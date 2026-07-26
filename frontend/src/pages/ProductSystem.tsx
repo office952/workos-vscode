@@ -359,7 +359,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!routing) {
     if (!opCode.trim()) return null;
     return (
-      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
+      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-wo-text-dim border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
         âš  Routing lipsă
       </span>
     );
@@ -389,7 +389,7 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
     >
       {children}
       {show && (
-        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] text-slate-200 whitespace-nowrap pointer-events-none">
+        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] text-wo-text-primary whitespace-nowrap pointer-events-none">
           {text}
           <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-2 h-2 bg-slate-800 border-r border-b border-slate-600 rotate-45" />
         </div>
@@ -621,9 +621,9 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
 
   if (components.length === 0) {
     return (
-      <div className="text-center py-8 px-3 border border-dashed border-[#2A3548] rounded-lg bg-[#0D1321]/60">
-        <Package className="w-10 h-10 text-slate-600 mx-auto mb-2" />
-        <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+      <div className="text-center py-8 px-3 border border-dashed border-wo-border-strong rounded-lg bg-wo-surface-inset">
+        <Package className="w-10 h-10 text-wo-text-dim mx-auto mb-2" />
+        <p className="text-[11px] text-wo-text-muted font-medium leading-relaxed">
           Previzualizare indisponibilă — șablonul nu are componente definite.
         </p>
       </div>
@@ -709,7 +709,7 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
         </defs>
       </svg>
 
-      <p className="text-[9px] text-slate-600 text-center mt-2 italic">
+      <p className="text-[9px] text-wo-text-dim text-center mt-2 italic">
         Stratificare orientativă (tipuri principale)
       </p>
     </div>
@@ -733,24 +733,24 @@ function ProductPreviewPanel({
       className={
         compact
           ? "flex flex-col gap-3"
-          : "bg-[#111827] border border-[#1E293B] rounded-xl p-4 flex flex-col gap-3"
+          : "bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4 flex flex-col gap-3"
       }
     >
       {!compact && (
         <div className="space-y-1">
-          <h3 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
+          <h3 className="text-[11px] font-bold text-wo-text-primary uppercase tracking-wide">
             Previzualizare orientativă
           </h3>
-          <p className="text-[10px] text-slate-500 leading-relaxed">
+          <p className="text-[10px] text-wo-text-muted leading-relaxed">
             Vizualizare orientativă Â· date din șablon
           </p>
-          <p className="text-[9px] text-slate-600 italic">
+          <p className="text-[9px] text-wo-text-dim italic">
             Nu reprezintă randare tehnică finală
           </p>
         </div>
       )}
       {compact && (
-        <p className="text-[9px] text-slate-600 italic leading-relaxed">
+        <p className="text-[9px] text-wo-text-dim italic leading-relaxed">
           Vizualizare orientativă Â· nu e randare tehnică finală
         </p>
       )}
@@ -758,8 +758,8 @@ function ProductPreviewPanel({
       <ProductIllustration components={draft.components} />
 
       {hasComponents && (
-        <div className="space-y-1.5 pt-1 border-t border-[#1E293B]">
-          <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold">
+        <div className="space-y-1.5 pt-1 border-t border-wo-border-subtle">
+          <p className="text-[9px] text-wo-text-dim uppercase tracking-wide font-bold">
             Etape / componente
           </p>
           <ol className="space-y-1 max-h-[200px] overflow-y-auto scrollbar-thin pr-0.5">
@@ -785,10 +785,10 @@ function ProductPreviewPanel({
                     <p className={`text-[9px] font-bold uppercase tracking-wide ${cfg.color}`}>
                       {index + 1}. {typeLabel}
                     </p>
-                    <p className="text-[10px] text-slate-300 truncate">
+                    <p className="text-[10px] text-wo-text-secondary truncate">
                       {formatComponentDisplayName(c.name) || "Fără denumire"}
                     </p>
-                    <p className="text-[8px] text-slate-500 mt-0.5">
+                    <p className="text-[8px] text-wo-text-muted mt-0.5">
                       {opCount} op. Â· {matCount} mat.
                     </p>
                   </div>
@@ -892,7 +892,7 @@ function MaterialRegistryStatusReadonly({
   const sourceNotes = formatMaterialSourceNotes(registryRow);
 
   return (
-    <div className="mx-2 mb-1.5 px-2 py-1.5 rounded border border-[#1E293B] bg-[#0A0F1C]/60">
+    <div className="mx-2 mb-1.5 px-2 py-1.5 rounded border border-wo-border-subtle bg-wo-surface-inset">
       <div className="flex flex-wrap items-center gap-1 mb-1">
         {badges.map((b) => (
           <StatusBadge
@@ -906,11 +906,11 @@ function MaterialRegistryStatusReadonly({
         ))}
       </div>
       {hasMaterialSourceNotes(registryRow) && sourceNotes ? (
-        <div className="mt-1 border-t border-[#1E293B]/80 pt-1">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+        <div className="mt-1 border-t border-wo-border-subtle pt-1">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Note sursă (referință, nu alias runtime)
           </p>
-          <p className="text-[9px] text-slate-400 leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
+          <p className="text-[9px] text-wo-text-muted leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
             {sourceNotes}
           </p>
         </div>
@@ -943,36 +943,36 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
           </span>
         )}
         {row.calculation_type ? (
-          <span className="text-[9px] text-slate-500 font-mono">{row.calculation_type}</span>
+          <span className="text-[9px] text-wo-text-muted font-mono">{row.calculation_type}</span>
         ) : null}
       </div>
       {(row.formula_id || "").trim() ? (
-        <p className="text-[10px] text-slate-300 font-mono mb-1">
+        <p className="text-[10px] text-wo-text-secondary font-mono mb-1">
           Formula: <span className="text-cyan-300">{(row.formula_id || "").trim()}</span>
         </p>
       ) : null}
       {paramsText ? (
         <div className="mb-1">
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Parametri formulă
           </p>
-          <pre className="text-[9px] text-slate-400 font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
+          <pre className="text-[9px] text-wo-text-muted font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-wo-surface-inset rounded px-2 py-1 border border-wo-border-subtle">
             {paramsText}
           </pre>
         </div>
       ) : null}
       {quoteInputs.length > 0 ? (
-        <p className="text-[9px] text-slate-400 mb-1">
+        <p className="text-[9px] text-wo-text-muted mb-1">
           Input ofertă:{" "}
           <span className="text-amber-300/90 font-mono">{quoteInputs.join(", ")}</span>
         </p>
       ) : null}
       {extrasText ? (
         <div>
-          <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
+          <p className="text-[9px] text-wo-text-muted uppercase tracking-wide font-bold mb-0.5">
             Metadate păstrate din șablon
           </p>
-          <pre className="text-[9px] text-slate-500 font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
+          <pre className="text-[9px] text-wo-text-muted font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-wo-surface-inset rounded px-2 py-1 border border-wo-border-subtle">
             {extrasText}
           </pre>
         </div>
@@ -1100,7 +1100,7 @@ function CollapsibleComponentCard({
           ? "border-purple-500/50 bg-purple-500/[0.06] ring-1 ring-purple-500/25"
           : expanded
           ? `${cfg.borderColor} ${cfg.bgColor}`
-          : "border-[#1E293B] bg-[#111827] hover:border-slate-600"
+          : "border-wo-border-subtle bg-wo-surface-raised hover:border-slate-600"
       }`}
     >
       {/* Collapsed header — always visible */}
@@ -1116,7 +1116,7 @@ function CollapsibleComponentCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-slate-500">#{index + 1}</span>
+            <span className="text-[10px] font-mono text-wo-text-muted">#{index + 1}</span>
             <span className={`text-[11px] font-bold ${cfg.color} uppercase tracking-wide`}>
               {typeDisplayLabel}
             </span>
@@ -1126,8 +1126,8 @@ function CollapsibleComponentCard({
               </span>
             )}
           </div>
-          <p className="text-[13px] font-semibold text-slate-200 truncate mt-0.5">
-            {displayName || <span className="text-slate-500 italic">Fără nume</span>}
+          <p className="text-[13px] font-semibold text-wo-text-primary truncate mt-0.5">
+            {displayName || <span className="text-wo-text-muted italic">Fără nume</span>}
           </p>
         </div>
 
@@ -1153,7 +1153,7 @@ function CollapsibleComponentCard({
             className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
               expanded
                 ? "bg-purple-500/15 border-purple-500/40 text-purple-300"
-                : "bg-[#0D1321] border-[#2A3548] text-slate-500 hover:text-slate-300 hover:border-slate-600"
+                : "bg-wo-surface-inset border-wo-border-strong text-wo-text-muted hover:text-wo-text-secondary hover:border-slate-600"
             }`}
           >
             <ChevronDown
@@ -1165,7 +1165,7 @@ function CollapsibleComponentCard({
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-[#1E293B]">
+        <div className="px-4 pb-4 space-y-4 border-t border-wo-border-subtle">
           {isVolumetricLettersTemplate(templateCode) ? (
             <>
               <VolumetricComponentProductionHint componentId={component.component_id} />
@@ -1175,10 +1175,10 @@ function CollapsibleComponentCard({
           {/* Component identity fields */}
           <div className="grid grid-cols-3 gap-3 pt-3">
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 ID Componentă
                 <Tooltip text="Identificator unic intern (ex: comp_1, cadru_principal)">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <input
@@ -1186,20 +1186,20 @@ function CollapsibleComponentCard({
                 value={component.component_id}
                 onChange={(e) => patch({ component_id: e.target.value.trim() })}
                 placeholder="comp_1"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary font-mono outline-none focus:border-purple-500/50"
               />
             </div>
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 Tip Componentă
                 <Tooltip text="Categoria componentei — determină fluxul de producție">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <select
                 value={component.type}
                 onChange={(e) => patch({ type: e.target.value as ProductComponentType })}
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-purple-500/50"
               >
                 {PRODUCT_COMPONENT_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -1214,10 +1214,10 @@ function CollapsibleComponentCard({
               </select>
             </div>
             <div>
-              <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+              <label className="flex items-center gap-1 text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">
                 Nume Componentă
                 <Tooltip text="Denumirea descriptivă (ex: Cadru metalic sudat 2x1m)">
-                  <Info className="w-3 h-3 text-slate-600 cursor-help" />
+                  <Info className="w-3 h-3 text-wo-text-dim cursor-help" />
                 </Tooltip>
               </label>
               <input
@@ -1225,7 +1225,7 @@ function CollapsibleComponentCard({
                 value={component.name}
                 onChange={(e) => patch({ name: e.target.value })}
                 placeholder="ex: Cadru metalic sudat"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-purple-500/50"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-purple-500/50"
               />
             </div>
           </div>
@@ -1247,27 +1247,27 @@ function CollapsibleComponentCard({
             </div>
           )}
 
-          <div className="px-3 py-2.5 rounded-lg border border-[#2A3548] bg-[#0D1321]/80 space-y-1.5">
-            <p className="text-[10px] text-slate-400 leading-relaxed">
+          <div className="px-3 py-2.5 rounded-lg border border-wo-border-strong bg-wo-surface-inset space-y-1.5">
+            <p className="text-[10px] text-wo-text-muted leading-relaxed">
               Câmpurile dinamice sunt afișate informativ. Editarea formulelor se va trata într-un pas separat.
             </p>
-            <p className="text-[10px] text-slate-300 leading-relaxed">
+            <p className="text-[10px] text-wo-text-secondary leading-relaxed">
               Parametrii configurabili ai produsului — text, font, înălțime, adâncime, tip iluminare, RAL,
               montaj — nu se editează aici ca reguli de șablon. Ei trebuie colectați în Intake / Dossier /
               Ofertă și folosiți de formulele dinamice.
             </p>
-            <p className="text-[10px] text-slate-500 italic leading-relaxed">
+            <p className="text-[10px] text-wo-text-muted italic leading-relaxed">
               Șablonul definește structura produsului; valorile concrete vin din cererea clientului și
               ofertare.
             </p>
           </div>
 
           {/* OPERATIONS */}
-          <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+          <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl p-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Cog className="w-4 h-4 text-blue-400" />
-                <span className="text-[12px] font-bold text-slate-200">
+                <span className="text-[12px] font-bold text-wo-text-primary">
                   Operații de Producție
                 </span>
                 <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-full font-bold">
@@ -1299,13 +1299,13 @@ function CollapsibleComponentCard({
                         invalid
                           ? "bg-red-900/10 border border-red-800/20"
                           : dynamicMeta
-                            ? "bg-[#111827] border border-cyan-800/30"
-                            : "bg-[#111827] border border-[#1E293B]"
+                            ? "bg-wo-surface-raised border border-cyan-800/30"
+                            : "bg-wo-surface-raised border border-wo-border-subtle"
                       }`}
                     >
                       <div className="flex items-center gap-2 p-2">
-                        <GripVertical className="w-3 h-3 text-slate-600 shrink-0" />
-                        <span className="text-[10px] text-slate-500 font-mono w-6 text-center shrink-0">
+                        <GripVertical className="w-3 h-3 text-wo-text-dim shrink-0" />
+                        <span className="text-[10px] text-wo-text-muted font-mono w-6 text-center shrink-0">
                           {op.sequence}
                         </span>
                         {dynamicMeta ? (
@@ -1321,14 +1321,14 @@ function CollapsibleComponentCard({
                           value={op.code}
                           onChange={(e) => updateOp(i, { ...op, code: e.target.value })}
                           placeholder="CNC_CUT"
-                          className="flex-1 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                          className="flex-1 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono outline-none focus:border-blue-500/50"
                         />
                         <input
                           type="text"
                           value={op.name}
                           onChange={(e) => updateOp(i, { ...op, name: e.target.value })}
                           placeholder="Debitare CNC"
-                          className="flex-[2] bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 outline-none focus:border-blue-500/50"
+                          className="flex-[2] bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary outline-none focus:border-blue-500/50"
                         />
                         <Tooltip text="Centrul de lucru (ex: CNC, Sudură, Vopsitorie)">
                           <input
@@ -1336,13 +1336,13 @@ function CollapsibleComponentCard({
                             value={op.workcenter}
                             onChange={(e) => updateOp(i, { ...op, workcenter: e.target.value })}
                             placeholder="CNC"
-                            className="w-20 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
+                            className="w-20 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono outline-none focus:border-blue-500/50"
                           />
                         </Tooltip>
                         <OperationRoutingBadge opCode={op.code} />
                         <Tooltip text={CALIBRATION_DURATION_TOOLTIP}>
                           <div className="flex flex-col items-end w-24 shrink-0">
-                            <span className="text-[8px] text-slate-600 uppercase tracking-wide">
+                            <span className="text-[8px] text-wo-text-dim uppercase tracking-wide">
                               calibrare
                             </span>
                             <div className="flex items-center gap-1 w-full">
@@ -1356,18 +1356,18 @@ function CollapsibleComponentCard({
                                     estimatedMinutes: Number(e.target.value) || 0,
                                   })
                                 }
-                                className="w-full bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono text-right outline-none focus:border-blue-500/50"
+                                className="w-full bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono text-right outline-none focus:border-blue-500/50"
                               />
-                              <span className="text-[9px] text-slate-600">min</span>
+                              <span className="text-[9px] text-wo-text-dim">min</span>
                             </div>
-                            <span className="text-[8px] text-slate-600 mt-0.5 truncate max-w-full">
+                            <span className="text-[8px] text-wo-text-dim mt-0.5 truncate max-w-full">
                               {formatOperationCalibrationLabel(op)}
                             </span>
                           </div>
                         </Tooltip>
                         <button
                           onClick={() => removeOp(i)}
-                          className="p-1 text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                          className="p-1 text-wo-text-dim hover:text-red-400 transition-colors shrink-0"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1381,11 +1381,11 @@ function CollapsibleComponentCard({
           </div>
 
           {/* MATERIALS */}
-          <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+          <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-xl p-3">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Box className="w-4 h-4 text-emerald-400" />
-                <span className="text-[12px] font-bold text-slate-200">
+                <span className="text-[12px] font-bold text-wo-text-primary">
                   Materiale Necesare
                 </span>
                 <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full font-bold">
@@ -1397,7 +1397,7 @@ function CollapsibleComponentCard({
                 disabled={materialsRegistryEmpty}
                 className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
                   materialsRegistryEmpty
-                    ? "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                    ? "bg-slate-700/60 text-wo-text-muted cursor-not-allowed"
                     : "bg-emerald-600 hover:bg-emerald-500 text-white"
                 }`}
               >
@@ -1432,8 +1432,8 @@ function CollapsibleComponentCard({
                         invalid
                           ? "bg-red-900/10 border border-red-800/20"
                           : dynamicMeta
-                            ? "bg-[#111827] border border-violet-800/30"
-                            : "bg-[#111827] border border-[#1E293B]"
+                            ? "bg-wo-surface-raised border border-violet-800/30"
+                            : "bg-wo-surface-raised border border-wo-border-subtle"
                       }`}
                     >
                       <div className="flex items-center gap-2 p-2">
@@ -1456,7 +1456,7 @@ function CollapsibleComponentCard({
                           className="flex-[2] min-w-[140px]"
                         />
                         <span
-                          className="flex-[2] text-[11px] text-slate-400 truncate hidden sm:block"
+                          className="flex-[2] text-[11px] text-wo-text-muted truncate hidden sm:block"
                           title={row ? row.name : m.name}
                         >
                           {row
@@ -1478,15 +1478,15 @@ function CollapsibleComponentCard({
                             min="0"
                             value={m.quantity}
                             onChange={(e) => updateMatQty(i, Number(e.target.value) || 0)}
-                            className="w-16 bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 font-mono text-right outline-none focus:border-emerald-500/50"
+                            className="w-16 bg-transparent border-b border-wo-border-strong px-1 py-1 text-[11px] text-wo-text-primary font-mono text-right outline-none focus:border-emerald-500/50"
                           />
                         </Tooltip>
-                        <span className="text-[10px] text-slate-500 font-mono w-10">
+                        <span className="text-[10px] text-wo-text-muted font-mono w-10">
                           {row ? row.unit : m.unit || "—"}
                         </span>
                         <button
                           onClick={() => removeMat(i)}
-                          className="p-1 text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                          className="p-1 text-wo-text-dim hover:text-red-400 transition-colors shrink-0"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -2224,7 +2224,7 @@ function ownershipFieldStateClass(sourceState: string) {
   if (sourceState.includes("dependency")) {
     return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
   }
-  return "border-slate-700 bg-slate-900 text-slate-300";
+  return "border-slate-700 bg-slate-900 text-wo-text-secondary";
 }
 
 function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceStatus"]) {
@@ -2235,13 +2235,13 @@ function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceSt
     case "separate finish component":
       return "border-amber-700/30 bg-amber-950/20 text-amber-200";
     case "parent aggregate only":
-      return "border-slate-700 bg-slate-900 text-slate-300";
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
     case "operation registry missing":
     case "component-owned source missing":
     case "blocked":
       return "border-red-700/30 bg-red-950/20 text-red-200";
     default:
-      return "border-slate-700 bg-slate-900 text-slate-300";
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
   }
 }
 
@@ -2255,7 +2255,7 @@ function returnCantTruthSourceClass(sourceType: ReturnCantTruthContainerFieldAud
       return "border-amber-700/40 bg-amber-900/20 text-amber-300";
     case "root geometry context":
     case "parent aggregate support":
-      return "border-slate-700 bg-slate-900 text-slate-300";
+      return "border-slate-700 bg-slate-900 text-wo-text-secondary";
     case "legacy alias":
       return "border-fuchsia-700/40 bg-fuchsia-950/20 text-fuchsia-200";
     case "component template / registry":
@@ -2282,7 +2282,7 @@ function ReturnCantTruthContainerPanel() {
         </div>
         <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
           <span className="rounded border border-fuchsia-700/40 bg-fuchsia-950/30 px-1.5 py-0.5 text-fuchsia-200">target: {model.targetContainerPath}</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">status: {model.readiness.toUpperCase()}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">status: {model.readiness.toUpperCase()}</span>
         </div>
       </div>
 
@@ -2294,12 +2294,12 @@ function ReturnCantTruthContainerPanel() {
         Legacy alias still present: `{model.legacyAliasPaths.join(", ")}` is diagnostic/compatibility language only. Canonical target remains `{model.targetContainerPath}`.
       </div>
 
-      <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300" data-testid="product-system-return-cant-aggregate-boundary">
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 text-[10px] text-wo-text-secondary" data-testid="product-system-return-cant-aggregate-boundary">
         {model.productAggregateBoundaryNote}
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
           <span>Field</span>
           <span>Source type</span>
           <span>Current source</span>
@@ -2310,13 +2310,13 @@ function ReturnCantTruthContainerPanel() {
             <div key={field.key} data-testid={`product-system-return-cant-truth-field-${field.key}`} className="px-3 py-2 text-[10px]">
               <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2">
                 <div>
-                  <p className="font-bold text-slate-100">{field.label}</p>
-                  <p className="mt-0.5 text-[9px] text-slate-500">{field.note}</p>
+                  <p className="font-bold text-wo-text-primary">{field.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{field.note}</p>
                 </div>
                 <div>
                   <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantTruthSourceClass(field.sourceType)}`}>{displayModuleSourceTypeLabel(field.sourceType)}</span>
                 </div>
-                <p className="font-mono text-slate-300">{field.currentSource}</p>
+                <p className="font-mono text-wo-text-secondary">{field.currentSource}</p>
                 <p className="font-mono text-cyan-200/85">{field.targetPath}</p>
               </div>
             </div>
@@ -2367,15 +2367,15 @@ function CompositionReadModelTable({
             {PRODUCT_TEMPLATE_COMPOSES_HELP} {equalModulesHintRo()}
           </p>
         </div>
-        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">Overall status: PARTIAL</span>
+        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-wo-text-secondary">Overall status: PARTIAL</span>
       </div>
 
-      <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300" data-testid={`${testId}-aggregate-boundary`}>
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 text-[10px] text-wo-text-secondary" data-testid={`${testId}-aggregate-boundary`}>
         ProductAggregate is derived read model. If a row compensates for missing component truth, treat it as support/diagnostic output, not as the primary truth source.
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
           <span>Module</span>
           <span>Module / id</span>
           <span>Current source</span>
@@ -2388,30 +2388,30 @@ function CompositionReadModelTable({
             <div key={entry.key} data-testid={`${testId}-${entry.key}`} className="px-3 py-2 text-[10px]">
               <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2">
                 <div>
-                  <p className="font-bold text-slate-100">{entry.label}</p>
-                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.componentType === "structural" ? "Module produs (structural)" : "Module produs (functional)"}</p>
+                  <p className="font-bold text-wo-text-primary">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{entry.componentType === "structural" ? "Module produs (structural)" : "Module produs (functional)"}</p>
                 </div>
                 <div>
                   <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
-                  <p className="mt-0.5 font-mono text-[9px] text-slate-500">{entry.componentId}</p>
+                  <p className="mt-0.5 font-mono text-[9px] text-wo-text-muted">{entry.componentId}</p>
                 </div>
                 <div>
                   <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionWiringClass(entry.currentWiring)}`}>{entry.currentWiring}</span>
-                  <p className="mt-1 text-[9px] text-slate-400">source: {displayModuleSourceTypeLabel(entry.currentSourceType)}</p>
+                  <p className="mt-1 text-[9px] text-wo-text-muted">source: {displayModuleSourceTypeLabel(entry.currentSourceType)}</p>
                 </div>
                 <div>
                   <p className="font-mono text-cyan-200/85">{entry.productTruthTarget}</p>
-                  <p className="mt-0.5 text-slate-400">geometry: {entry.geometryDependency}</p>
-                  <p className="mt-0.5 text-slate-400">material: {entry.materialSource}</p>
-                  <p className="mt-0.5 text-slate-400">operation: {entry.operationSource}</p>
+                  <p className="mt-0.5 text-wo-text-muted">geometry: {entry.geometryDependency}</p>
+                  <p className="mt-0.5 text-wo-text-muted">material: {entry.materialSource}</p>
+                  <p className="mt-0.5 text-wo-text-muted">operation: {entry.operationSource}</p>
                 </div>
                 <div>
                   <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionReadinessClass(entry.calculationReadiness)}`}>{entry.calculationReadiness}</span>
-                  <p className="mt-1 text-[9px] text-slate-400">required: {entry.requiredInLetters ? "yes" : "conditional"}</p>
+                  <p className="mt-1 text-[9px] text-wo-text-muted">required: {entry.requiredInLetters ? "yes" : "conditional"}</p>
                 </div>
                 <div>
                   <p className="font-mono text-amber-200/85">{entry.blockers.join(", ")}</p>
-                  <p className="mt-0.5 text-slate-400">{entry.recommendation}</p>
+                  <p className="mt-0.5 text-wo-text-muted">{entry.recommendation}</p>
                 </div>
               </div>
             </div>
@@ -2448,17 +2448,17 @@ function ReturnCantSeparateCalculationSourcePaths({
       </div>
 
       <div className="mt-2 grid gap-2 md:grid-cols-3">
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">We can read now</p>
-          <p className="mt-1 text-[10px] text-slate-200">Depth gate, finish token, component operations, component material variants, and workcenter hints.</p>
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">We can read now</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">Depth gate, finish token, component operations, component material variants, and workcenter hints.</p>
         </div>
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Still parent aggregate only</p>
-          <p className="mt-1 text-[10px] text-slate-200">`quote_geometry.letter_perimeter_m`, linked aggregate operation traces, and global review setup hydration.</p>
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">Still parent aggregate only</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">`quote_geometry.letter_perimeter_m`, linked aggregate operation traces, and global review setup hydration.</p>
         </div>
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">{MUST_OWN_ON_MODULE_LABEL}</p>
-          <p className="mt-1 text-[10px] text-slate-200">`material_profile`, `perimeter_source`, `layer_group_ids`, and `confirmation_state`.</p>
+        <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">{MUST_OWN_ON_MODULE_LABEL}</p>
+          <p className="mt-1 text-[10px] text-wo-text-primary">`material_profile`, `perimeter_source`, `layer_group_ids`, and `confirmation_state`.</p>
         </div>
       </div>
 
@@ -2468,8 +2468,8 @@ function ReturnCantSeparateCalculationSourcePaths({
         </div>
       ) : null}
 
-      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
           <span>Source key</span>
           <span>Canonical target</span>
           <span>Current source path</span>
@@ -2481,15 +2481,15 @@ function ReturnCantSeparateCalculationSourcePaths({
             <div key={entry.key} data-testid={`product-system-return-cant-source-${entry.key}`} className="px-3 py-2 text-[10px]">
               <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2">
                 <div>
-                  <p className="font-bold text-slate-100">{entry.label}</p>
-                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.currentSource}</p>
+                  <p className="font-bold text-wo-text-primary">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-wo-text-muted">{entry.currentSource}</p>
                 </div>
                 <p className="font-mono text-cyan-200/85">{entry.canonicalTarget}</p>
-                <p className="font-mono text-slate-300">{entry.currentSourcePath}</p>
+                <p className="font-mono text-wo-text-secondary">{entry.currentSourcePath}</p>
                 <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantSourceStatusClass(entry.sourceStatus)}`}>{entry.sourceStatus}</span>
                 <p className="font-mono text-amber-200/85">{entry.blocker}</p>
               </div>
-              <p className="mt-1 text-[10px] text-slate-400">{entry.note}</p>
+              <p className="mt-1 text-[10px] text-wo-text-muted">{entry.note}</p>
             </div>
           ))}
         </div>
@@ -2544,10 +2544,10 @@ function ComponentCalculationOwnershipPanel({
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200">Read-only</span>
           <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200" data-testid="product-system-ownership-composer-badge">Product Template = composer</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No component root</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No component quote</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No promote</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No mutation call</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component root</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component quote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No promote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No mutation call</span>
           <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">Profile {profileLabel}</span>
         </div>
       </div>
@@ -2595,9 +2595,9 @@ function ComponentCalculationOwnershipPanel({
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
-                  <p className="text-[12px] font-bold text-slate-100">{audit.label}</p>
+                  <p className="text-[12px] font-bold text-wo-text-primary">{audit.label}</p>
                   <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{moduleCode}</p>
-                  <p className="mt-0.5 text-[10px] text-slate-500">{MODULE_PRODUS_BOUNDARY_LABEL}</p>
+                  <p className="mt-0.5 text-[10px] text-wo-text-muted">{MODULE_PRODUS_BOUNDARY_LABEL}</p>
                 </div>
                 <span
                   className={`rounded border px-2 py-0.5 text-[9px] font-bold ${ownershipStatusClass(audit.separateCalculationStatus)}`}
@@ -2608,17 +2608,17 @@ function ComponentCalculationOwnershipPanel({
               </div>
 
               <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
-                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Confidence {contract.confidence}</span>
-                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Owner decision {contract.owner_decision}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Confidence {contract.confidence}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Owner decision {contract.owner_decision}</span>
               </div>
 
-              <div className="mt-3 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Should own</p>
-                <p className="mt-1 font-mono text-[10px] text-slate-200">{audit.shouldOwn.join(", ")}</p>
+              <div className="mt-3 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">Should own</p>
+                <p className="mt-1 font-mono text-[10px] text-wo-text-primary">{audit.shouldOwn.join(", ")}</p>
               </div>
 
-              <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Current gaps</p>
+              <div className="mt-2 rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">Current gaps</p>
                 <div className="mt-1 space-y-1 text-[10px] text-amber-200/85">
                   {audit.gaps.map((gap) => (
                     <p key={gap}>{gap}</p>
@@ -2626,8 +2626,8 @@ function ComponentCalculationOwnershipPanel({
                 </div>
               </div>
 
-              <div className="mt-2 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-                <div className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+              <div className="mt-2 overflow-hidden rounded-lg border border-slate-800/90 bg-wo-surface-inset">
+                <div className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-wo-text-muted">
                   <span>Canonical field key</span>
                   <span>Product Truth path</span>
                   <span>Source/state</span>
@@ -2636,7 +2636,7 @@ function ComponentCalculationOwnershipPanel({
                 <div className="divide-y divide-slate-800/80">
                   {audit.fields.map((field) => (
                     <div key={field.key} className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]">
-                      <p className="font-mono font-bold text-slate-100">{field.key}</p>
+                      <p className="font-mono font-bold text-wo-text-primary">{field.key}</p>
                       <p className="font-mono text-cyan-200/85">{field.productTruthPath}</p>
                       <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${ownershipFieldStateClass(field.sourceState)}`}>{field.sourceState}</span>
                       <p className="text-amber-200/85">{field.warning}</p>
@@ -2654,13 +2654,13 @@ function ComponentCalculationOwnershipPanel({
                 </>
               ) : null}
 
-              <p className="mt-2 text-[10px] text-slate-400">{audit.note}</p>
+              <p className="mt-2 text-[10px] text-wo-text-muted">{audit.note}</p>
             </article>
           );
         })}
       </div>
 
-      <p className="mt-3 text-[10px] text-slate-500">
+      <p className="mt-3 text-[10px] text-wo-text-muted">
         Canonical field bindings stay read-only. Use the Form System tab for the backing field-binding map; do not treat ProductAggregate or ProductDefinition as primary owners.
       </p>
     </section>
@@ -2702,7 +2702,7 @@ function SharedVolumetricFoundationPanel({
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Read-only</span>
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Profile {profiles}</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Contracts {contracts.length}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">Contracts {contracts.length}</span>
           {lighting?.confidence === "PARTIAL" ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting PARTIAL</span> : null}
         </div>
       </div>
@@ -2717,12 +2717,12 @@ function SharedVolumetricFoundationPanel({
           <div key={contract.component_key} className="rounded-lg border border-slate-800 bg-slate-950/40 px-2.5 py-1.5">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p className="text-[11px] font-bold text-slate-100">{contract.display_name}</p>
+                <p className="text-[11px] font-bold text-wo-text-primary">{contract.display_name}</p>
                 <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">{contract.component_key}</p>
               </div>
-              <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span>
+              <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-wo-text-secondary"}`}>{contract.confidence}</span>
             </div>
-            <p className="mt-1 text-[10px] text-slate-500">Profile: {contract.profile_key}</p>
+            <p className="mt-1 text-[10px] text-wo-text-muted">Profile: {contract.profile_key}</p>
             <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {SHARED_VOLUMETRIC_EDITOR_MODULES[contract.component_key] ?? contract.shared_module_template_code ?? contract.module_template_code}</p>
             {contract.component_key === "volumetric_lighting" && contract.shared_module_template_code ? (
               <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {contract.shared_module_template_code}</p>
@@ -2733,15 +2733,15 @@ function SharedVolumetricFoundationPanel({
             {contract.component_key === "volumetric_lighting" && contract.calculation_strategy_key ? (
               <p className="mt-0.5 truncate font-mono text-[10px] text-amber-300">Strategy: {contract.calculation_strategy_key}</p>
             ) : null}
-            <p className="mt-1 text-[10px] text-slate-400">Owner decision: {contract.owner_decision}</p>
-            <p className="mt-0.5 text-[10px] font-bold text-slate-300">Runtime status: {runtimeStatusFor(contract)}</p>
+            <p className="mt-1 text-[10px] text-wo-text-muted">Owner decision: {contract.owner_decision}</p>
+            <p className="mt-0.5 text-[10px] font-bold text-wo-text-secondary">Runtime status: {runtimeStatusFor(contract)}</p>
             {contract.component_key === "volumetric_lighting" && contract.strategy_meaning ? (
-              <p className="mt-0.5 text-[9px] text-slate-500">{contract.strategy_meaning}</p>
+              <p className="mt-0.5 text-[9px] text-wo-text-muted">{contract.strategy_meaning}</p>
             ) : null}
             {contract.component_key === "volumetric_lighting" && contract.reserved_module_template_code ? (
-              <p className="mt-0.5 truncate font-mono text-[9px] text-slate-500">Logo lighting strategy/profile source: {contract.reserved_module_template_code}</p>
+              <p className="mt-0.5 truncate font-mono text-[9px] text-wo-text-muted">Logo lighting strategy/profile source: {contract.reserved_module_template_code}</p>
             ) : null}
-            <p className="mt-0.5 text-[9px] text-slate-600">No pricing / no runtime activation.</p>
+            <p className="mt-0.5 text-[9px] text-wo-text-dim">No pricing / no runtime activation.</p>
           </div>
         ))}
       </div>
@@ -3005,7 +3005,7 @@ function TemplateEditor({
       <ComponentCalculationOwnershipPanel availability={availability} />
 
       {aggregateLoading ? (
-        <div className="text-[11px] text-slate-500">Se încarcă {PRODUCT_COMPILER_LABEL}…</div>
+        <div className="text-[11px] text-wo-text-muted">Se încarcă {PRODUCT_COMPILER_LABEL}…</div>
       ) : isLogoSharedProfile ? (
         <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
@@ -3020,7 +3020,7 @@ function TemplateEditor({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-            <h3 className="text-[14px] font-bold text-slate-100">{PRODUCT_COMPILER_GRAPH_STAGE_LABEL}</h3>
+            <h3 className="text-[14px] font-bold text-wo-text-primary">{PRODUCT_COMPILER_GRAPH_STAGE_LABEL}</h3>
             <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
               {aggregate.components.length}
             </span>
@@ -3035,7 +3035,7 @@ function TemplateEditor({
       ) : (
         <>
       {constructionStages.length > 0 ? (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-3">
           <TemplateConstructionStageRow
             stages={constructionStages}
             selectedIndex={selectedComponentIndex}
@@ -3051,12 +3051,12 @@ function TemplateEditor({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-              <h3 className="text-[14px] font-bold text-slate-100">Structură produs</h3>
+              <h3 className="text-[14px] font-bold text-wo-text-primary">Structură produs</h3>
               <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
                 {draft.components.length}
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 mt-1 pl-7">
+            <p className="text-[10px] text-wo-text-muted mt-1 pl-7">
               Apasă pe o componentă pentru detalii în panoul din dreapta. Folosește săgeata pentru
               editare inline.
             </p>
@@ -3073,10 +3073,10 @@ function TemplateEditor({
         </div>
 
         {draft.components.length === 0 ? (
-          <div className="bg-[#111827] border border-[#1E293B] border-dashed rounded-xl p-8 text-center">
-            <Layers className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentă definită</p>
-            <p className="text-[11px] text-slate-500 mb-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle border-dashed rounded-xl p-8 text-center">
+            <Layers className="w-10 h-10 text-wo-text-dim mx-auto mb-3" />
+            <p className="text-[13px] text-wo-text-muted font-semibold mb-1">Nicio componentă definită</p>
+            <p className="text-[11px] text-wo-text-muted mb-4">
               Adaugă componentele care definesc structura produsului.
             </p>
             {!readOnly ? (
@@ -3123,7 +3123,7 @@ function TemplateEditor({
   );
 
   return (
-    <div className="flex flex-col w-full min-h-[min(720px,calc(100vh-240px))] max-h-[calc(100vh-200px)] border border-[#1E293B] rounded-xl overflow-hidden bg-[#0A0F1C]">
+    <div className="flex flex-col w-full min-h-[min(720px,calc(100vh-240px))] max-h-[calc(100vh-200px)] border border-wo-border-subtle rounded-xl overflow-hidden bg-wo-surface-inset">
       <TemplateEditorCommandBar
         templateCode={draft.template_code}
         displayName={templateDisplayName}
@@ -3144,7 +3144,7 @@ function TemplateEditor({
       />
 
       {ownerProofWorkspaceId && isVolumetricLettersTemplate(draft.template_code) ? (
-        <div className="shrink-0 border-b border-[#1E293B] px-3 py-2 overflow-y-auto max-h-[42vh]">
+        <div className="shrink-0 border-b border-wo-border-subtle px-3 py-2 overflow-y-auto max-h-[42vh]">
           <OwnerReadonlyVolumetricProofPanel
             templateCode={draft.template_code}
             workspaceId={ownerProofWorkspaceId}
@@ -3163,21 +3163,21 @@ function TemplateEditor({
         <div
           className={`flex flex-col min-w-0 min-h-0 ${
             studioTab === "structure"
-              ? "xl:flex-[7] xl:border-r border-[#1E293B]"
+              ? "xl:flex-[7] xl:border-r border-wo-border-subtle"
               : studioTab === "operational" || studioTab === "form-system"
                 ? "flex-1"
                 : "flex-1"
           }`}
         >
-          <div className="flex items-center justify-between px-4 py-2 bg-[#111827] border-b border-[#1E293B] shrink-0">
-            <div className="flex gap-1 bg-[#0D1321] p-1 rounded-lg border border-[#1E293B]">
+          <div className="flex items-center justify-between px-4 py-2 bg-wo-surface-raised border-b border-wo-border-subtle shrink-0">
+            <div className="flex gap-1 bg-wo-surface-inset p-1 rounded-lg border border-wo-border-subtle">
               <button
                 type="button"
                 onClick={() => setStudioTab("structure")}
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "structure"
                     ? "bg-purple-600/30 text-purple-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
                 data-testid="product-system-studio-tab-compiler"
               >
@@ -3189,7 +3189,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "operational"
                     ? "bg-violet-600/30 text-violet-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
               >
                 Resurse operaționale
@@ -3200,7 +3200,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "form-system"
                     ? "bg-sky-600/30 text-sky-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
                 data-testid="product-system-form-system-tab"
               >
@@ -3212,7 +3212,7 @@ function TemplateEditor({
                 className={`px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors ${
                   studioTab === "general"
                     ? "bg-purple-600/30 text-purple-200"
-                    : "text-slate-500 hover:text-slate-300"
+                    : "text-wo-text-muted hover:text-wo-text-secondary"
                 }`}
               >
                 Informații generale
@@ -3229,7 +3229,7 @@ function TemplateEditor({
                 : studioTab === "form-system"
                   ? (
                       isNew ? (
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-wo-text-muted">
                           Form System este disponibil după salvarea template-ului.
                         </div>
                       ) : (
@@ -3241,7 +3241,7 @@ function TemplateEditor({
         </div>
 
         {studioTab === "structure" ? (
-          <div className="flex flex-col min-h-0 min-w-0 flex-1 xl:flex-[3] xl:min-w-[300px] xl:max-w-[38%] border-t xl:border-t-0 border-[#1E293B]">
+          <div className="flex flex-col min-h-0 min-w-0 flex-1 xl:flex-[3] xl:min-w-[300px] xl:max-w-[38%] border-t xl:border-t-0 border-wo-border-subtle">
             <ComponentDetailInsightPanel
               selectedComponent={selectedComponent}
               selectedIndex={selectedComponentIndex}
@@ -3306,13 +3306,13 @@ function ProductSystemLibraryMoreMenu({
         aria-label="More catalog actions"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
-        className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700"
+        className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
       >
         <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
       {open ? (
         <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[12rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
-          <p className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+          <p className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-wo-text-muted">
             Design-time (admin)
           </p>
           <button
@@ -3322,13 +3322,13 @@ function ProductSystemLibraryMoreMenu({
               onCreateTemplate();
               setOpen(false);
             }}
-            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-wo-text-primary hover:bg-slate-800"
           >
             Șablon nou
           </button>
           <p
             data-testid="product-system-library-design-time-note"
-            className="px-2 pb-1 text-[10px] leading-snug text-slate-500"
+            className="px-2 pb-1 text-[10px] leading-snug text-wo-text-muted"
           >
             Admin design-time only — not operator quoting
           </p>
@@ -3336,7 +3336,7 @@ function ProductSystemLibraryMoreMenu({
           <Link
             to="/product-system/blueprint-dossier"
             data-testid="product-system-library-blueprint-link"
-            className="block rounded px-2 py-1 text-[11px] text-slate-200 hover:bg-slate-800"
+            className="block rounded px-2 py-1 text-[11px] text-wo-text-primary hover:bg-slate-800"
             onClick={() => setOpen(false)}
           >
             Blueprint Dossier
@@ -3375,8 +3375,8 @@ function ProductSystemInfoPopover({
           type="button"
           className={
             compact
-              ? "rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700"
-              : "flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
+              ? "rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
+              : "flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-wo-text-secondary border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
           }
           aria-label="Informații ProductSystem"
         >
@@ -3385,10 +3385,10 @@ function ProductSystemInfoPopover({
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-[#111827] p-4 text-slate-200 shadow-xl"
+        className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-wo-surface-raised p-4 text-wo-text-primary shadow-xl"
       >
-        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcționează?</p>
-        <ul className="space-y-2 text-[11px] text-slate-400 leading-relaxed list-disc pl-4">
+        <p className="text-[12px] font-bold text-wo-text-primary mb-2">Cum funcționează?</p>
+        <ul className="space-y-2 text-[11px] text-wo-text-muted leading-relaxed list-disc pl-4">
           <li>
             Fiecare produs este definit ca un <strong className="text-purple-300">șablon</strong>{" "}
             format din <strong className="text-blue-300">componente</strong>.
@@ -3416,16 +3416,16 @@ function ProductSystemInfoPopover({
             — structură produs, materiale și operații.
           </li>
           <li>
-            Șabloanele nu se șterg din interfață; se <strong className="text-slate-300">arhivează</strong>{" "}
+            Șabloanele nu se șterg din interfață; se <strong className="text-wo-text-secondary">arhivează</strong>{" "}
             pentru a păstra istoricul.
           </li>
         </ul>
-        <p className="mt-3 text-[10px] text-slate-500 border-t border-slate-700/80 pt-3">
+        <p className="mt-3 text-[10px] text-wo-text-muted border-t border-slate-700/80 pt-3">
           Prețurile și ofertele folosesc aceste șabloane în modulele dedicate — fără modificarea datelor
           istorice.
         </p>
-        <p className="mt-2 text-[10px] text-slate-600">
-          Sursă date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
+        <p className="mt-2 text-[10px] text-wo-text-dim">
+          Sursă date: <span className="text-wo-text-muted">{loadModeChipLabel(loadMode)}</span>
           {" Â· "}
           {catalogCounts.activeProducts} produse ofertabile Â· {catalogCounts.candidateProducts} in pregatire Â· {catalogCounts.internalModules} module interne
         </p>
@@ -3820,7 +3820,7 @@ export default function ProductSystem() {
               {!shellMode ? (
                 <Link
                   to="/dashboard"
-                  className="shrink-0 rounded-md border border-slate-800 p-2 text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
+                  className="shrink-0 rounded-md border border-slate-800 p-2 text-wo-text-muted transition-colors hover:border-slate-700 hover:text-wo-text-secondary"
                   aria-label="Înapoi la Dashboard"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -3830,13 +3830,13 @@ export default function ProductSystem() {
                 <div className="flex flex-wrap items-center gap-2">
                   {shellMode ? (
                     <h2
-                      className="truncate text-sm font-semibold leading-tight text-slate-200"
+                      className="truncate text-sm font-semibold leading-tight text-wo-text-primary"
                       data-testid="product-system-products-title"
                     >
                       Catalog vechi (intern)
                     </h2>
                   ) : (
-                    <h1 className="truncate text-base font-bold leading-tight text-slate-100">Product System</h1>
+                    <h1 className="truncate text-base font-bold leading-tight text-wo-text-primary">Product System</h1>
                   )}
                   <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
                   <span
@@ -3850,14 +3850,14 @@ export default function ProductSystem() {
             </div>
 
             <div className="flex min-w-[12rem] flex-1 items-center gap-2 rounded-md border border-slate-800/80 bg-[#0a0f18]/80 px-2.5 py-1.5 lg:max-w-md">
-              <Search className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+              <Search className="h-3.5 w-3.5 shrink-0 text-wo-text-muted" />
               <input
                 type="text"
                 value={catalogSearch}
                 onChange={(event) => setCatalogSearch(event.target.value)}
                 placeholder="Caută cod, familie, descriere…"
                 data-testid="product-system-unified-search"
-                className="w-full bg-transparent text-sm text-slate-200 outline-none placeholder:text-slate-500"
+                className="w-full bg-transparent text-sm text-wo-text-primary outline-none placeholder:text-wo-text-muted"
               />
             </div>
 
@@ -3874,7 +3874,7 @@ export default function ProductSystem() {
                 disabled={loading}
                 aria-label="Reîncarcă"
                 data-testid="product-system-reload-icon"
-                className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
+                className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
               >
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </button>
@@ -3908,7 +3908,7 @@ export default function ProductSystem() {
             disabled={loading}
             aria-label="Reîncarcă"
             data-testid="product-system-reload-icon"
-            className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
+            className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -3928,15 +3928,15 @@ export default function ProductSystem() {
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-2 text-[10px] text-slate-500">
+          <div className="flex items-center gap-2 text-[10px] text-wo-text-muted">
             <Link
               to="/dashboard"
-              className="flex items-center gap-1 hover:text-slate-300 transition-colors"
+              className="flex items-center gap-1 hover:text-wo-text-secondary transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="text-slate-300">
+            <span className="text-wo-text-secondary">
               {shouldShowEditorScreen(screen, draft)
                 ? "ProductSystem / Editor șablon"
                 : "ProductSystem / Șabloane"}
@@ -3949,13 +3949,13 @@ export default function ProductSystem() {
                 <Package className="w-5 h-5 text-purple-400" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-[16px] font-bold text-slate-100 leading-tight">
+                <h1 className="text-[16px] font-bold text-wo-text-primary leading-tight">
                   {shouldShowEditorScreen(screen, draft)
                     ? "ProductSystem / Editor șablon"
                     : "Product System Catalog"}
                 </h1>
                 {shouldShowEditorScreen(screen, draft) ? (
-                  <p className="text-[10px] text-slate-500 mt-0.5">Editor pentru structura șablonului selectat.</p>
+                  <p className="text-[10px] text-wo-text-muted mt-0.5">Editor pentru structura șablonului selectat.</p>
                 ) : null}
                 {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
                   <p className="text-[10px] text-amber-400/90 mt-0.5">
@@ -3985,7 +3985,7 @@ export default function ProductSystem() {
               <button
                 onClick={loadTemplates}
                 disabled={loading}
-                className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-wo-text-primary rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
               </button>
@@ -4069,7 +4069,7 @@ export default function ProductSystem() {
             }
           />
         ) : loadMode === "auth_required" && !loading ? (
-          <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">
+          <div className="bg-wo-surface-raised border border-amber-800/30 rounded-xl p-12 text-center">
             <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
             <p className="text-[12px] text-amber-300 font-semibold">
               Lipsă sesiune / autentificare necesară pentru API real.

@@ -48,13 +48,13 @@ function OptionalSupportRow({ row }: { row: ProductSystemV2ModuleRow }) {
       data-testid={`product-system-v2-module-${row.moduleCode}`}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="truncate text-[13px] font-semibold text-slate-100">{row.roleLabel}</span>
-        <span className="shrink-0 text-[10px] text-slate-500">{row.statusLabel}</span>
+        <span className="truncate text-[13px] font-semibold text-wo-text-primary">{row.roleLabel}</span>
+        <span className="shrink-0 text-[10px] text-wo-text-muted">{row.statusLabel}</span>
       </div>
       {row.uiHint ? (
-        <p className="mt-0.5 text-[12px] leading-snug text-slate-400">{row.uiHint}</p>
+        <p className="mt-0.5 text-[12px] leading-snug text-wo-text-muted">{row.uiHint}</p>
       ) : null}
-      <p className="mt-1 truncate font-mono text-[10px] text-slate-600">{row.moduleCode}</p>
+      <p className="mt-1 truncate font-mono text-[10px] text-wo-text-dim">{row.moduleCode}</p>
     </li>
   );
 }
@@ -136,9 +136,9 @@ export function ProductSystemV2Workspace({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Caută Product Template…"
             data-testid="product-system-v2-search"
-            className="w-full rounded-md border border-slate-700 bg-[#0B1220] px-2.5 py-2 text-sm text-slate-200 outline-none placeholder:text-slate-600 focus:border-slate-500"
+            className="w-full rounded-md border border-slate-700 bg-wo-surface-input px-2.5 py-2 text-sm text-wo-text-primary outline-none placeholder:text-wo-text-dim focus:border-slate-500"
           />
-          <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim">
             Product Templates
           </p>
           <ul
@@ -146,9 +146,9 @@ export function ProductSystemV2Workspace({
             data-testid="product-system-v2-product-list"
           >
             {loading ? (
-              <li className="px-2 py-6 text-center text-[12px] text-slate-500">Se încarcă…</li>
+              <li className="px-2 py-6 text-center text-[12px] text-wo-text-muted">Se încarcă…</li>
             ) : items.length === 0 ? (
-              <li className="px-2 py-6 text-center text-[12px] text-slate-500">
+              <li className="px-2 py-6 text-center text-[12px] text-wo-text-muted">
                 Niciun Product Template vizibil.
               </li>
             ) : (
@@ -169,10 +169,10 @@ export function ProductSystemV2Workspace({
                           : "border-transparent hover:border-slate-800 hover:bg-slate-900/40"
                       }`}
                     >
-                      <span className="block truncate text-[13px] font-medium text-slate-100">
+                      <span className="block truncate text-[13px] font-medium text-wo-text-primary">
                         {item.displayName}
                       </span>
-                      <span className="mt-0.5 block truncate font-mono text-[10px] text-slate-600">
+                      <span className="mt-0.5 block truncate font-mono text-[10px] text-wo-text-dim">
                         {item.templateCode}
                       </span>
                     </button>
@@ -189,8 +189,8 @@ export function ProductSystemV2Workspace({
               className={`${PS_SURFACE_PANEL} flex min-h-[22rem] flex-col items-start justify-center gap-3 px-6 py-8`}
               data-testid="product-system-v2-empty"
             >
-              <p className="text-sm font-semibold text-slate-200">Alege un Product Template</p>
-              <p className="max-w-md text-[12px] leading-relaxed text-slate-500">
+              <p className="text-sm font-semibold text-wo-text-primary">Alege un Product Template</p>
+              <p className="max-w-md text-[12px] leading-relaxed text-wo-text-muted">
                 Structura produsului apare aici — ca în editorul clasic, doar pentru citire.
               </p>
               {requestedTemplateCode ? (
@@ -208,12 +208,12 @@ export function ProductSystemV2Workspace({
                 className={`${PS_SURFACE_PANEL} px-4 py-3`}
                 data-testid="product-system-v2-template-center"
               >
-                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">
                   {PRODUCT_TEMPLATE_LABEL}
                 </p>
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <h3 className="text-xl font-semibold text-slate-50">{selected.displayName}</h3>
-                  <span className="font-mono text-xs text-slate-500">{selected.templateCode}</span>
+                  <span className="font-mono text-xs text-wo-text-muted">{selected.templateCode}</span>
                 </div>
               </section>
 
@@ -225,13 +225,13 @@ export function ProductSystemV2Workspace({
                   data-testid="product-system-v2-modules-center"
                 >
                   <p
-                    className="text-[14px] font-bold text-slate-100"
+                    className="text-[14px] font-bold text-wo-text-primary"
                     data-testid="product-system-v2-structure-title"
                   >
                     Structură produs
                   </p>
                   <p
-                    className="mt-2 text-[12px] text-slate-500"
+                    className="mt-2 text-[12px] text-wo-text-muted"
                     data-testid="product-system-v2-modules-empty"
                   >
                     Acest template nu are încă componente în structura clasică.
@@ -244,10 +244,10 @@ export function ProductSystemV2Workspace({
                   className={`${PS_SURFACE_PANEL} space-y-2 px-4 py-3`}
                   data-testid="product-system-v2-modules-optional"
                 >
-                  <p className="text-[12px] font-semibold text-slate-300">
+                  <p className="text-[12px] font-semibold text-wo-text-secondary">
                     În plus, dacă e nevoie ({layers!.optional.length})
                   </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-wo-text-muted">
                     Suporturi / montaje opționale — nu înlocuiesc structura de mai sus.
                   </p>
                   <ul className="mt-1 grid gap-2 sm:grid-cols-2">
@@ -262,13 +262,13 @@ export function ProductSystemV2Workspace({
                 className={`${PS_SURFACE_PANEL} px-4 py-3`}
                 data-testid="product-system-v2-compiler-readiness-row"
               >
-                <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-200">
+                <summary className="cursor-pointer select-none text-[12px] font-medium text-wo-text-muted hover:text-wo-text-primary">
                   Product Compiler / Pregătire
                 </summary>
                 <div className="mt-3 grid gap-3 lg:grid-cols-2">
                   <div data-testid="product-system-v2-compiler">
                     <ProductCompilerDisplayShell stage="both" compact />
-                    <p className="mt-2 px-1 text-[10px] text-slate-600">
+                    <p className="mt-2 px-1 text-[10px] text-wo-text-dim">
                       {PRODUCT_COMPILER_NO_PRICE_HELP}
                     </p>
                   </div>
@@ -279,10 +279,10 @@ export function ProductSystemV2Workspace({
                     <p className="text-[10px] font-bold uppercase tracking-wide text-sky-300/90">
                       Pregătire
                     </p>
-                    <p className="mt-1 text-[13px] font-medium text-slate-100">
+                    <p className="mt-1 text-[13px] font-medium text-wo-text-primary">
                       {selected.rollupLabel}
                     </p>
-                    <p className="mt-1 text-[12px] leading-relaxed text-slate-400">
+                    <p className="mt-1 text-[12px] leading-relaxed text-wo-text-muted">
                       {selected.blockerCount > 0
                         ? `${selected.blockerCount} blocaje structurale — verifică înainte de publicare.`
                         : "Fără blocaje structurale în rollup-ul curent."}
@@ -295,7 +295,7 @@ export function ProductSystemV2Workspace({
                 className={`${PS_SURFACE_PANEL} px-4 py-3`}
                 data-testid="product-system-v2-downstream"
               >
-                <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-200">
+                <summary className="cursor-pointer select-none text-[12px] font-medium text-wo-text-muted hover:text-wo-text-primary">
                   Alte sisteme — Cost / Ofertă / Execution
                 </summary>
                 <div className="mt-3">
@@ -310,7 +310,7 @@ export function ProductSystemV2Workspace({
                 onToggle={(event) => setAdminOpen((event.target as HTMLDetailsElement).open)}
               >
                 <summary
-                  className="cursor-pointer select-none text-[12px] font-medium text-slate-500 hover:text-slate-300"
+                  className="cursor-pointer select-none text-[12px] font-medium text-wo-text-muted hover:text-wo-text-secondary"
                   data-testid="product-system-v2-admin-summary"
                 >
                   Detalii tehnice (opțional)
@@ -318,10 +318,10 @@ export function ProductSystemV2Workspace({
                 <div className="mt-3 space-y-3" data-testid="product-system-v2-admin-body">
                   {layers && layers.contracts.length > 0 ? (
                     <div data-testid="product-system-v2-shared-contracts">
-                      <p className="text-[11px] font-semibold text-slate-300">
+                      <p className="text-[11px] font-semibold text-wo-text-secondary">
                         Verificare internă pe aceleași piese
                       </p>
-                      <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500">
+                      <p className="mt-0.5 text-[11px] leading-relaxed text-wo-text-muted">
                         Nu sunt piese noi — e același produs, văzut pentru audit.
                       </p>
                       <ul className="mt-2 space-y-1.5">
@@ -332,14 +332,14 @@ export function ProductSystemV2Workspace({
                             data-testid={`product-system-v2-contract-${contract.component_key}`}
                           >
                             <div className="flex flex-wrap items-baseline justify-between gap-2">
-                              <span className="text-[12px] font-medium text-slate-200">
+                              <span className="text-[12px] font-medium text-wo-text-primary">
                                 {contract.display_name}
                               </span>
-                              <span className="text-[10px] uppercase tracking-wide text-slate-500">
+                              <span className="text-[10px] uppercase tracking-wide text-wo-text-muted">
                                 {contract.confidence}
                               </span>
                             </div>
-                            <p className="mt-0.5 font-mono text-[10px] text-slate-600">
+                            <p className="mt-0.5 font-mono text-[10px] text-wo-text-dim">
                               {contract.module_template_code}
                             </p>
                           </li>
@@ -353,7 +353,7 @@ export function ProductSystemV2Workspace({
                       type="button"
                       data-testid="product-system-v2-admin-open-editor"
                       onClick={() => onOpenTemplate(template)}
-                      className="rounded border border-slate-700 px-2.5 py-1.5 text-[11px] font-medium text-slate-300 hover:bg-slate-900/60"
+                      className="rounded border border-slate-700 px-2.5 py-1.5 text-[11px] font-medium text-wo-text-secondary hover:bg-slate-900/60"
                     >
                       Laborator vechi (editor șablon)
                     </button>

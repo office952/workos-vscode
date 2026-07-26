@@ -30,7 +30,7 @@ function StatusPill({ status }: { status: OwnershipSettingRecord["runtime_status
           ? "border-amber-800/50 bg-amber-950/20 text-amber-200"
           : status === "BLOCKED"
             ? "border-red-800/50 bg-red-950/20 text-red-200"
-            : "border-slate-700 bg-slate-900/40 text-slate-400";
+            : "border-slate-700 bg-slate-900/40 text-wo-text-muted";
   return (
     <span className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide ${tone}`}>
       {ownershipStatusLabelRo(status)}
@@ -48,7 +48,7 @@ function GateStatusPill({ status }: { status: "APPROVED" | "NOT_APPROVED" | "NOT
   }
   if (status === "NOT_PLANNED") {
     return (
-      <span className="rounded border border-slate-600 px-1.5 py-0.5 text-[9px] font-semibold text-slate-400">
+      <span className="rounded border border-slate-600 px-1.5 py-0.5 text-[9px] font-semibold text-wo-text-muted">
         NOT PLANNED
       </span>
     );
@@ -71,18 +71,18 @@ function OwnershipRows({
 }) {
   return (
     <div data-testid={testId} className="space-y-2">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{title}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-wo-text-muted">{title}</p>
       <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {rows.map((row) => (
           <li
             key={row.id}
             data-testid={`ownership-row-${row.id}`}
-            className="min-w-0 rounded-md border border-[#2A3548]/55 bg-transparent px-2.5 py-2"
+            className="min-w-0 rounded-md border border-wo-border-strong bg-transparent px-2.5 py-2"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="break-words text-[12px] font-medium text-slate-100">{row.labelRo}</p>
-                <p className="mt-0.5 break-all font-mono text-[10px] text-slate-500">{row.fieldKey}</p>
+                <p className="break-words text-[12px] font-medium text-wo-text-primary">{row.labelRo}</p>
+                <p className="mt-0.5 break-all font-mono text-[10px] text-wo-text-muted">{row.fieldKey}</p>
               </div>
               <div className="flex flex-wrap items-center gap-1">
                 <StatusPill status={row.runtime_status} />
@@ -93,8 +93,8 @@ function OwnershipRows({
                 ) : null}
               </div>
             </div>
-            <p className="mt-1 break-words text-[11px] text-slate-300">{row.ownerDetailRo}</p>
-            <p className="mt-0.5 break-words text-[11px] text-slate-500">{row.noteRo}</p>
+            <p className="mt-1 break-words text-[11px] text-wo-text-secondary">{row.ownerDetailRo}</p>
+            <p className="mt-0.5 break-words text-[11px] text-wo-text-muted">{row.noteRo}</p>
             {row.activation_gate !== "none" ? (
               <p className="mt-1 break-all text-[10px] text-amber-200/80">Gate: {row.activation_gate}</p>
             ) : null}
@@ -114,16 +114,16 @@ export function FinishMountingOwnershipPanel() {
   return (
     <section
       data-testid="finish-mounting-ownership-panel"
-      className="space-y-4 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-4 text-sm text-slate-200"
+      className="space-y-4 rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-4 py-4 text-sm text-wo-text-primary"
     >
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-wo-text-muted">
           Responsabilități FINISH / MOUNTING / logistică
         </p>
-        <p className="mt-1 text-[12px] text-slate-400">
+        <p className="mt-1 text-[12px] text-wo-text-muted">
           Desfacem bucket-ul mixt. Nu scoatem nimic din produs. Sold chip-uri rămân amânate.
         </p>
-        <ul className="mt-2 space-y-0.5 text-[11px] text-slate-500" data-testid="ownership-law-lines">
+        <ul className="mt-2 space-y-0.5 text-[11px] text-wo-text-muted" data-testid="ownership-law-lines">
           {FINISH_MOUNTING_OWNERSHIP_LAW_RO.map((line) => (
             <li key={line}>{line}</li>
           ))}
@@ -132,7 +132,7 @@ export function FinishMountingOwnershipPanel() {
 
       <div
         data-testid="responsibility-codes"
-        className="flex flex-wrap gap-2 text-[10px] font-mono text-slate-300"
+        className="flex flex-wrap gap-2 text-[10px] font-mono text-wo-text-secondary"
       >
         {(
           [
@@ -145,7 +145,7 @@ export function FinishMountingOwnershipPanel() {
           <span
             key={id}
             data-testid={`responsibility-code-${id}`}
-            className="max-w-full break-all rounded border border-[#2A3548]/55 bg-transparent px-2 py-1"
+            className="max-w-full break-all rounded border border-wo-border-strong bg-transparent px-2 py-1"
           >
             {code}
           </span>
@@ -206,22 +206,22 @@ export function FinishMountingOwnershipPanel() {
 
       <div
         data-testid="mounting-ownership-summary"
-        className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 px-3 py-2 text-[12px] text-slate-200"
+        className="rounded-md border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px] text-wo-text-primary"
       >
-        <p className="font-semibold text-slate-100">MOUNTING</p>
+        <p className="font-semibold text-wo-text-primary">MOUNTING</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.linkedSupportRo}</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.soldStatusRo}</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.methodFieldRo}</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.solutionFieldRo}</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.aliasFieldRo}</p>
         <p className="break-words text-emerald-200/80">{MOUNTING_OWNERSHIP_SUMMARY_RO.mapGateRo}</p>
-        <p className="mt-1 break-all font-mono text-[10px] text-slate-500">
+        <p className="mt-1 break-all font-mono text-[10px] text-wo-text-muted">
           {`MOUNTING → {${MOUNTING_RUNTIME_MAP_NARROWED.join(", ")}}`}
         </p>
       </div>
 
       <div data-testid="mounting-field-model" className="space-y-1.5 text-[11px]">
-        <p className="font-semibold uppercase tracking-wide text-slate-500">Model câmpuri montaj V1</p>
+        <p className="font-semibold uppercase tracking-wide text-wo-text-muted">Model câmpuri montaj V1</p>
         <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
           {(
             [
@@ -236,9 +236,9 @@ export function FinishMountingOwnershipPanel() {
               key={key}
               className="flex min-w-0 flex-wrap items-center justify-between gap-2 rounded border border-slate-800/50 px-2 py-1.5"
             >
-              <span className="break-all font-mono text-slate-300">{key}</span>
+              <span className="break-all font-mono text-wo-text-secondary">{key}</span>
               <StatusPill status={meta.status} />
-              <span className="w-full break-words text-slate-500">{meta.labelRo}</span>
+              <span className="w-full break-words text-wo-text-muted">{meta.labelRo}</span>
             </div>
           ))}
         </div>
@@ -261,7 +261,7 @@ export function FinishMountingOwnershipPanel() {
         <p className="mt-1 break-all font-mono text-[10px] text-amber-200/70">
           {LEGACY_FINISAJE_ALIAS_CODES.join(" · ")}
         </p>
-        <p className="mt-1 text-[11px] text-slate-400">
+        <p className="mt-1 text-[11px] text-wo-text-muted">
           Writer: {SNAPSHOT_WRITER_VERSION} · Reader legacy: {SNAPSHOT_LEGACY_VERSION}
         </p>
       </div>
@@ -279,7 +279,7 @@ export function FinishMountingOwnershipPanel() {
       />
 
       <div data-testid="ownership-owner-gates" className="space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-wo-text-muted">
           Owner gates
         </p>
         <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
@@ -287,21 +287,21 @@ export function FinishMountingOwnershipPanel() {
             <li
               key={gate.id}
               data-testid={`ownership-gate-${gate.id}`}
-              className="min-w-0 rounded-md border border-[#2A3548]/55 bg-transparent px-2.5 py-2 text-[11px]"
+              className="min-w-0 rounded-md border border-wo-border-strong bg-transparent px-2.5 py-2 text-[11px]"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="break-all font-mono text-[10px] text-slate-300">{gate.id}</p>
+                <p className="break-all font-mono text-[10px] text-wo-text-secondary">{gate.id}</p>
                 <GateStatusPill status={gate.status} />
               </div>
-              <p className="mt-1 break-words text-slate-200">{gate.labelRo}</p>
-              <p className="break-words text-slate-500">{gate.meaningRo}</p>
+              <p className="mt-1 break-words text-wo-text-primary">{gate.labelRo}</p>
+              <p className="break-words text-wo-text-muted">{gate.meaningRo}</p>
             </li>
           ))}
         </ul>
       </div>
 
       <div
-        className="sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-[#1E293B] bg-[#111827]/95 py-2 text-[12px] backdrop-blur-sm"
+        className="sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-wo-border-subtle bg-wo-surface-raised py-2 text-[12px] backdrop-blur-sm"
         data-testid="ownership-action-links"
       >
         <Link to="/intake-v6/operator" className="text-blue-400 hover:text-blue-300">

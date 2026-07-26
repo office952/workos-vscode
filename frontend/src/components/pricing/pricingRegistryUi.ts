@@ -37,23 +37,25 @@ export const PRICING_VIEW_TAB_META: Record<
 /** Card-row shell — mirrors Quotes QuoteCard rhythm. */
 export function entryRowClass(selected: boolean): string {
   return [
-    "bg-[#111827] border rounded-lg p-4 cursor-pointer transition-all",
+    "bg-wo-surface-raised border rounded-lg p-4 cursor-pointer transition-all",
     selected
       ? "border-blue-500/50 ring-1 ring-blue-500/30"
-      : "border-[#1E293B] hover:border-slate-500",
+      : "border-wo-border-subtle hover:border-slate-500",
   ].join(" ");
 }
 
 export function statusSeverityBadgeClass(severity: StatusSeverity): string {
   switch (severity) {
     case "ok":
-      return "bg-emerald-900/30 text-emerald-300 border-emerald-700/50";
+      return "bg-emerald-500/15 text-emerald-700 border-emerald-600/40 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50";
     case "warn":
-      return "bg-amber-900/30 text-amber-300 border-amber-700/50";
+      return "bg-amber-500/15 text-amber-800 border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/50";
     case "bad":
-      return "bg-red-900/30 text-red-300 border-red-700/50";
-    default:
-      return "bg-slate-800/60 text-slate-400 border-slate-600";
+      return "bg-red-500/15 text-red-700 border-red-600/40 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700/50";
+    default: {
+      const _exhaustive: never = severity;
+      return _exhaustive;
+    }
   }
 }
 

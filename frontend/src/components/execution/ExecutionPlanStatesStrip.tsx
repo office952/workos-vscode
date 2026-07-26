@@ -47,13 +47,13 @@ export function ExecutionPlanStatesStrip({
 
   return (
     <div
-      className="rounded-lg border border-slate-700/50 bg-[#111827] px-3 py-2.5"
+      className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-3 py-2.5"
       data-testid="execution-plan-states-strip"
       data-active-state={active}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{EXECUTION_PLAN_LABEL}</p>
-        <p className="text-[10px] text-slate-500">{EXECUTION_PLAN_STATES_HELP}</p>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">{EXECUTION_PLAN_LABEL}</p>
+        <p className="text-[10px] text-wo-text-muted">{EXECUTION_PLAN_STATES_HELP}</p>
       </div>
       <ol className="mt-2 flex flex-wrap items-center gap-1.5">
         {STATES.map((state, index) => {
@@ -61,14 +61,14 @@ export function ExecutionPlanStatesStrip({
           const isOperationalBlocked = state.id === "operational" && operationalBlocked && !hasOperationalTasks;
           return (
             <li key={state.id} className="flex items-center gap-1.5">
-              {index > 0 ? <span className="text-[10px] text-slate-600">→</span> : null}
+              {index > 0 ? <span className="text-[10px] text-wo-text-dim">→</span> : null}
               <span
                 className={
                   isActive
-                    ? "rounded border border-cyan-700/50 bg-cyan-950/40 px-2 py-0.5 text-[10px] font-bold text-cyan-200"
+                    ? "rounded border border-cyan-600/40 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold text-cyan-800 dark:border-cyan-700/50 dark:bg-cyan-950/40 dark:text-cyan-200"
                     : isOperationalBlocked
-                      ? "rounded border border-amber-800/40 bg-amber-950/20 px-2 py-0.5 text-[10px] font-semibold text-amber-200/80"
-                      : "rounded border border-slate-700/50 bg-slate-900/40 px-2 py-0.5 text-[10px] font-semibold text-slate-400"
+                      ? "rounded border border-amber-600/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-800 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-200/80"
+                      : "rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-0.5 text-[10px] font-semibold text-wo-text-muted"
                 }
                 data-testid={`execution-plan-state-${state.id}`}
                 data-active={isActive ? "true" : "false"}

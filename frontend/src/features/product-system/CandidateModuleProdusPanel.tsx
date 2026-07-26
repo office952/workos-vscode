@@ -182,9 +182,9 @@ function CandidateModuleProdusForbiddenSummary({ compact = false }: { compact?: 
   return (
     <div
       data-testid="product-system-candidate-module-forbidden-summary"
-      className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300"
+      className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 text-[10px] text-wo-text-secondary"
     >
-      <p className="font-bold uppercase tracking-wide text-slate-400">Forbidden capabilities (candidate set)</p>
+      <p className="font-bold uppercase tracking-wide text-wo-text-muted">Forbidden capabilities (candidate set)</p>
       {compact ? (
         <p className="mt-1">
           Not exposed in Work Intake · No Pricing / Quote / Order / Execution · No ProductDefinition runtime /
@@ -223,20 +223,20 @@ function CandidateModuleProdusProductComposerCard({
   return (
     <ReadonlyCardShell
       testId={testId}
-      className="border-purple-800/40 bg-[#111827] hover:border-purple-600/40 hover:bg-[#131B2E]"
+      className="border-purple-800/40 bg-wo-surface-raised hover:border-purple-600/40 hover:bg-[#131B2E]"
     >
       <div className="flex min-h-[5rem] items-start gap-3">
         <TemplateIcon templateCode={model.composerTemplateCode} compact={variant === "compact"} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[13px] font-bold text-slate-100">
+            <p className="text-[13px] font-bold text-wo-text-primary">
               {variant === "overview" ? "Litere volumetrice — Product Template candidat" : model.composerTemplateCode}
             </p>
             <ReadonlyStatusChip label="Product Template" tone="purple" />
           </div>
-          <p className="mt-0.5 font-mono text-[11px] font-bold text-slate-200">{model.composerTemplateCode}</p>
+          <p className="mt-0.5 font-mono text-[11px] font-bold text-wo-text-primary">{model.composerTemplateCode}</p>
           {variant === "overview" ? (
-            <p className="mt-0.5 text-[12px] text-slate-400">Product Template candidat — Module produs egale (readonly)</p>
+            <p className="mt-0.5 text-[12px] text-wo-text-muted">Product Template candidat — Module produs egale (readonly)</p>
           ) : null}
           <div className="mt-2 flex flex-wrap gap-1">
             <ReadonlyStatusChip label="INACTIVE" tone="cyan" />
@@ -249,22 +249,22 @@ function CandidateModuleProdusProductComposerCard({
               <CandidateModuleProdusSemanticLabel />
               <p
                 data-testid="product-system-candidate-module-completeness-count"
-                className="mt-2 text-[11px] font-bold text-slate-300"
+                className="mt-2 text-[11px] font-bold text-wo-text-secondary"
               >
                 Live rows: {model.foundRowCount}/{model.expectedRowCount} · {model.components.length} Module produs · Work
                 Intake: no · Owner GO required
               </p>
               <p
                 data-testid="product-system-candidate-module-dossier-contract-summary"
-                className="mt-1 text-[10px] text-slate-400"
+                className="mt-1 text-[10px] text-wo-text-muted"
               >
                 Dossier contract: {CANDIDATE_MODULE_DOSSIER_CONTRACT_FIXTURE.length}/
                 {CANDIDATE_MODULE_DOSSIER_CONTRACT_FIXTURE.length} · Runtime dossier rows:{" "}
                 {model.foundRowCount === 0 ? "not linked yet" : "readonly contract only"}
               </p>
-              <details className="mt-2 text-[10px] text-slate-400">
-                <summary className="cursor-pointer font-semibold text-slate-300">Composer details</summary>
-                <div className="mt-1 grid gap-1 text-slate-300">
+              <details className="mt-2 text-[10px] text-wo-text-muted">
+                <summary className="cursor-pointer font-semibold text-wo-text-secondary">Composer details</summary>
+                <div className="mt-1 grid gap-1 text-wo-text-secondary">
                   <p>Role: Product Template — compune Module produs egale</p>
                   <p>Owns material truth: no · Owns operation truth: no</p>
                   <p>Pricing / Quote / Order / Execution: no</p>
@@ -272,7 +272,7 @@ function CandidateModuleProdusProductComposerCard({
               </details>
             </>
           ) : (
-            <p className="mt-2 text-[10px] text-slate-400">
+            <p className="mt-2 text-[10px] text-wo-text-muted">
               Composer — coordinates components only · does not own material truth · does not own operation truth ·
               no module links: {String(model.noModuleLinks)}
             </p>
@@ -328,13 +328,13 @@ function CandidateModuleProdusComponentEntityCard({
       <div className="flex min-h-[4.5rem] items-start gap-2.5">
         <TemplateIcon templateCode={component.templateCode} compact />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-bold text-slate-100">{displayName}</p>
-          <p className="font-mono text-[11px] font-bold text-slate-200">{component.templateCode}</p>
+          <p className="text-[13px] font-bold text-wo-text-primary">{displayName}</p>
+          <p className="font-mono text-[11px] font-bold text-wo-text-primary">{component.templateCode}</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             <ReadonlyStatusChip label="Module produs" tone="slate" />
             <ReadonlyStatusChip label="INACTIVE · READONLY · CANDIDATE" tone="cyan" />
           </div>
-          <p className="mt-2 text-[11px] text-slate-300">
+          <p className="mt-2 text-[11px] text-wo-text-secondary">
             <span data-testid={`product-system-candidate-module-truth-owner-${component.templateCode}`}>
               {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "component_owned_truth")}
             </span>
@@ -358,16 +358,16 @@ function CandidateModuleProdusComponentEntityCard({
               </>
             ) : null}
           </p>
-          <p className="mt-1 text-[10px] text-slate-400">
+          <p className="mt-1 text-[10px] text-wo-text-muted">
             Live/fallback: {component.liveRowPresent ? "live inactive row" : "contract fallback row"} ·{" "}
             <span className="font-semibold text-amber-200/90">
               {blockerCount} blockers · {dependencySummary}
             </span>
           </p>
-          <details className="mt-2 text-[10px] text-slate-400">
-            <summary className="cursor-pointer font-semibold text-slate-300">Component details</summary>
-            <div className="mt-1 space-y-1 text-slate-300">
-              <p className="text-slate-500">{component.componentId}</p>
+          <details className="mt-2 text-[10px] text-wo-text-muted">
+            <summary className="cursor-pointer font-semibold text-wo-text-secondary">Component details</summary>
+            <div className="mt-1 space-y-1 text-wo-text-secondary">
+              <p className="text-wo-text-muted">{component.componentId}</p>
               {fieldGroups ? (
                 <p data-testid={`product-system-candidate-module-field-groups-${component.templateCode}`}>
                   Field groups: {fieldGroups}
@@ -377,7 +377,7 @@ function CandidateModuleProdusComponentEntityCard({
                 <p className="font-mono text-amber-200/80">Blockers: {component.blockers.join(", ")}</p>
               ) : null}
               {component.dependencies.length > 0 ? (
-                <p className="font-mono text-slate-400">Dependencies: {component.dependencies.join(", ")}</p>
+                <p className="font-mono text-wo-text-muted">Dependencies: {component.dependencies.join(", ")}</p>
               ) : null}
             </div>
           </details>
@@ -438,7 +438,7 @@ function CandidateModuleProdusCandidateSetCard({
                 NOT OFFERABLE
               </span>
             </div>
-            <div className="mt-2 space-y-0.5 text-[10px] text-slate-300">
+            <div className="mt-2 space-y-0.5 text-[10px] text-wo-text-secondary">
               <p data-testid="product-system-candidate-module-completeness-count">
                 Live rows: {model.foundRowCount}/{model.expectedRowCount}
               </p>
@@ -499,7 +499,7 @@ function CandidateModuleProdusOverviewPanel({
         data-testid="product-system-candidate-module-owner-review"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Owner review (compact)</p>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">Owner review (compact)</p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <span
             data-testid="product-system-candidate-module-owner-status-title"
@@ -516,22 +516,22 @@ function CandidateModuleProdusOverviewPanel({
         </div>
         <p
           data-testid="product-system-candidate-module-owner-summary"
-          className="mt-2 text-[11px] leading-relaxed text-slate-200"
+          className="mt-2 text-[11px] leading-relaxed text-wo-text-primary"
         >
           {ownerSummary.oneSentenceSummary}
         </p>
         <ul
           data-testid="product-system-candidate-module-owner-checks"
-          className="mt-2 space-y-1 text-[10px] text-slate-300"
+          className="mt-2 space-y-1 text-[10px] text-wo-text-secondary"
         >
           {ownerSummary.ownerVisibleChecks.map((check) => (
             <li key={check.label}>
-              <span className="text-slate-400">{check.label}:</span>{" "}
-              <span className="font-semibold text-slate-100">{check.value}</span>
+              <span className="text-wo-text-muted">{check.label}:</span>{" "}
+              <span className="font-semibold text-wo-text-primary">{check.value}</span>
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-[10px] text-slate-400">
+        <p className="mt-2 text-[10px] text-wo-text-muted">
           Drift/completeness summary: live {model.foundRowCount}/{model.expectedRowCount} · contract check in Guards /
           Audit
         </p>
@@ -543,7 +543,7 @@ function CandidateModuleProdusOverviewPanel({
         </p>
         <p
           data-testid="product-system-candidate-module-owner-guard"
-          className="mt-1 text-[10px] font-mono text-slate-400"
+          className="mt-1 text-[10px] font-mono text-wo-text-muted"
         >
           Cannot use in Work Intake; cannot price; cannot create quote/order; cannot materialize tasks.
         </p>
@@ -569,7 +569,7 @@ function CandidateModuleProdusOverviewPanel({
         </p>
       ) : null}
       {driftAssessment.metadataUnavailableWarnings.length > 0 ? (
-        <p className="text-[10px] font-mono text-slate-400">
+        <p className="text-[10px] font-mono text-wo-text-muted">
           Metadata warnings present — see Guards / Audit.
         </p>
       ) : null}
@@ -609,8 +609,8 @@ function CandidateModuleProdusComponentsPanel({
         className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
       >
         <div className="flex items-center justify-between gap-2">
-          <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-100">Module produs</h4>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[11px] font-bold text-slate-300">
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">Module produs</h4>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[11px] font-bold text-wo-text-secondary">
             {model.components.length} Module produs egale
           </span>
         </div>
@@ -620,7 +620,7 @@ function CandidateModuleProdusComponentsPanel({
             data-testid="product-system-candidate-module-components-table"
             className="mt-3 overflow-hidden rounded-lg border border-slate-800"
           >
-            <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[11px] font-bold uppercase text-slate-500">
+            <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[11px] font-bold uppercase text-wo-text-muted">
               <span>Module</span>
               <span>Module code</span>
               <span>Blockers</span>
@@ -629,10 +629,10 @@ function CandidateModuleProdusComponentsPanel({
               <div
                 key={component.templateCode}
                 data-testid={`product-system-candidate-module-component-row-${component.templateCode}`}
-                className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+                className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-wo-text-primary last:border-b-0"
               >
                 <span className="font-bold">{candidateModuleProdusDisplayName(component.templateCode)}</span>
-                <span className="font-mono text-[11px] text-slate-300">{component.templateCode}</span>
+                <span className="font-mono text-[11px] text-wo-text-secondary">{component.templateCode}</span>
                 <div className="flex flex-wrap items-center gap-1">
                   <span className="text-[11px] text-amber-200">{component.blockers.length} blockers</span>
                   <button
@@ -699,7 +699,7 @@ function CandidateModuleProdusDossierPanel({
         data-testid="product-system-candidate-module-dossier-workspace"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Dossier workspace (readonly)</h4>
+        <h4 className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">Dossier workspace (readonly)</h4>
         <div
           data-testid="product-system-candidate-module-dossier-section"
           className="mt-2 space-y-2"
@@ -710,13 +710,13 @@ function CandidateModuleProdusDossierPanel({
           >
             <span
               data-testid="product-system-candidate-module-dossier-contract-count"
-              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary"
             >
               Dossier contract: {dossierAlignment.dossierContractCount}/{dossierAlignment.expectedCount}
             </span>
             <span
               data-testid="product-system-candidate-module-dossier-runtime-link"
-              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-muted"
             >
               {candidateModuleProdusDossierRuntimeLinkLabel(dossierAlignment.dossierRuntimeLinkState)}
             </span>
@@ -729,7 +729,7 @@ function CandidateModuleProdusDossierPanel({
           </div>
           <p
             data-testid="product-system-candidate-module-dossier-truth-ownership"
-            className="text-[10px] text-slate-300"
+            className="text-[10px] text-wo-text-secondary"
           >
             Truth ownership: Composer = product orchestration only; Components = component-owned truth
           </p>
@@ -765,7 +765,7 @@ function CandidateModuleProdusDossierPanel({
           ) : null}
           <p className="text-[10px] font-bold uppercase tracking-wide text-purple-200">Product Template — Dossier</p>
           <p className="mt-1 font-mono text-[10px] font-bold text-cyan-200">{composerEntry.templateCode}</p>
-          <div className="mt-2 space-y-1 text-[10px] text-slate-300">
+          <div className="mt-2 space-y-1 text-[10px] text-wo-text-secondary">
             <p>Entity type: Product Template</p>
             <p>Dossier role: {composerEntry.expectedDossierRole}</p>
             <p>Truth owner: {truthOwnerLabel(composerEntry.expectedTruthOwner)}</p>
@@ -799,7 +799,7 @@ function CandidateModuleProdusDossierPanel({
             key={entry.templateCode}
             data-testid={`product-system-candidate-module-dossier-card-${entry.templateCode}`}
             data-focused={isFocused ? "true" : "false"}
-            className={`rounded-lg border bg-[#0D1321]/90 p-3 ${
+            className={`rounded-lg border bg-wo-surface-inset p-3 ${
               isFocused
                 ? "border-cyan-500/60 ring-2 ring-cyan-500/40 shadow-[0_0_0_1px_rgba(34,211,238,0.25)]"
                 : "border-slate-800/90"
@@ -814,18 +814,18 @@ function CandidateModuleProdusDossierPanel({
               </p>
             ) : null}
             <p className="font-mono text-[10px] font-bold text-cyan-200">{entry.templateCode}</p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-wo-text-muted">
               {candidateModuleProdusDisplayName(entry.templateCode)} · Module produs
             </p>
-            <div className="mt-2 space-y-1 text-[10px] text-slate-300">
+            <div className="mt-2 space-y-1 text-[10px] text-wo-text-secondary">
               <p>
-                <span className="text-slate-500">Dossier role:</span> {entry.expectedDossierRole}
+                <span className="text-wo-text-muted">Dossier role:</span> {entry.expectedDossierRole}
               </p>
               <p>
-                <span className="text-slate-500">Truth owner:</span> {truthOwnerLabel(entry.expectedTruthOwner)}
+                <span className="text-wo-text-muted">Truth owner:</span> {truthOwnerLabel(entry.expectedTruthOwner)}
               </p>
               <p>
-                <span className="text-slate-500">Future metadata:</span> {entry.futureAllowedMetadata.join(", ")}
+                <span className="text-wo-text-muted">Future metadata:</span> {entry.futureAllowedMetadata.join(", ")}
               </p>
             </div>
             <div className="mt-2 flex flex-wrap gap-1 text-[9px] font-bold">
@@ -869,17 +869,17 @@ function CandidateModuleProdusFormSystemPanel({
       className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
     >
       <div data-testid="product-system-candidate-module-form-system-readiness">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Form System readiness</p>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">Form System readiness</p>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
           <span
             data-testid="product-system-candidate-module-form-readiness-contract-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary"
           >
             Readiness contract: {formReadiness.readinessContractEntries}/{formReadiness.expectedComponents}
           </span>
           <span
             data-testid="product-system-candidate-module-form-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-muted"
           >
             {candidateModuleProdusFormRuntimeLinkLabel(formReadiness.runtimeFormSystemLinkState)}
           </span>
@@ -892,21 +892,21 @@ function CandidateModuleProdusFormSystemPanel({
         </div>
         <p
           data-testid="product-system-candidate-module-form-field-ownership"
-          className="mt-2 text-[10px] text-slate-300"
+          className="mt-2 text-[10px] text-wo-text-secondary"
         >
           Field ownership: Composer = coordinates sections only; Components = own future fields
         </p>
         <ul
           data-testid="product-system-candidate-module-form-compact-fields"
-          className="mt-3 space-y-2 text-[10px] text-slate-400"
+          className="mt-3 space-y-2 text-[10px] text-wo-text-muted"
         >
           {formReadiness.contractEntries.map((entry) => (
-            <li key={entry.templateCode} className="rounded border border-slate-800/80 bg-[#0D1321]/60 px-2 py-1.5">
-              <span className="font-mono font-bold text-slate-200">{entry.templateCode}</span>
+            <li key={entry.templateCode} className="rounded border border-slate-800/80 bg-wo-surface-inset px-2 py-1.5">
+              <span className="font-mono font-bold text-wo-text-primary">{entry.templateCode}</span>
               {entry.role === "component_template" ? (
-                <span className="ml-2 text-slate-300">— {entry.fieldGroups.join(", ")}</span>
+                <span className="ml-2 text-wo-text-secondary">— {entry.fieldGroups.join(", ")}</span>
               ) : (
-                <span className="ml-2 text-slate-300">— coordinates: {entry.coordinates.join(", ")}</span>
+                <span className="ml-2 text-wo-text-secondary">— coordinates: {entry.coordinates.join(", ")}</span>
               )}
             </li>
           ))}
@@ -947,18 +947,18 @@ function CandidateModuleProdusProductTruthPanel({
       className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
     >
       <div data-testid="product-system-candidate-module-product-truth-mapping">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Product Truth mapping</p>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">Product Truth mapping</p>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
           <span
             data-testid="product-system-candidate-module-product-truth-mapping-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary"
           >
             Mapping contract: {productTruthMapping.mappingContractEntriesCount}/
             {productTruthMapping.expectedMappingEntriesCount}
           </span>
           <span
             data-testid="product-system-candidate-module-product-truth-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-muted"
           >
             {candidateModuleProdusProductTruthRuntimeLinkLabel(productTruthMapping.runtimeProductTruthLinkState)}
           </span>
@@ -971,24 +971,24 @@ function CandidateModuleProdusProductTruthPanel({
         </div>
         <p
           data-testid="product-system-candidate-module-product-truth-write-policy"
-          className="mt-2 text-[10px] text-slate-300"
+          className="mt-2 text-[10px] text-wo-text-secondary"
         >
           Write policy: no Product Truth write
         </p>
         <p
           data-testid="product-system-candidate-module-product-truth-state-policy"
-          className="mt-1 text-[10px] font-mono text-slate-400"
+          className="mt-1 text-[10px] font-mono text-wo-text-muted"
         >
           State policy: suggested != confirmed; fallback/hydrated/manual draft != confirmed; operator confirmation
           required later; no confirmed values created
         </p>
         <ul
           data-testid="product-system-candidate-module-product-truth-compact-paths"
-          className="mt-3 space-y-2 text-[10px] text-slate-400"
+          className="mt-3 space-y-2 text-[10px] text-wo-text-muted"
         >
           {[...grouped.entries()].map(([templateCode, entries]) => (
-            <li key={templateCode} className="rounded border border-slate-800/80 bg-[#0D1321]/60 px-2 py-1.5">
-              <p className="font-mono font-bold text-slate-200">{templateCode}</p>
+            <li key={templateCode} className="rounded border border-slate-800/80 bg-wo-surface-inset px-2 py-1.5">
+              <p className="font-mono font-bold text-wo-text-primary">{templateCode}</p>
               <ul className="mt-1 space-y-0.5 font-mono text-cyan-200/80">
                 {entries.map((entry) => (
                   <li key={entry.fieldGroup}>
@@ -1039,9 +1039,9 @@ function CandidateModuleProdusGuardsAuditPanel({
     <div data-testid="product-system-candidate-module-panel-guards-audit" className="space-y-3">
       <div
         data-testid="product-system-candidate-module-drift-guard"
-        className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2"
+        className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2"
       >
-        <p className="text-[10px] font-bold uppercase tracking-wide text-slate-300">Completeness & drift</p>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-wo-text-secondary">Completeness & drift</p>
         <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] font-bold">
           <span
             data-testid="product-system-candidate-module-contract-check"
@@ -1049,13 +1049,13 @@ function CandidateModuleProdusGuardsAuditPanel({
           >
             {candidateModuleProdusContractCheckLabel(driftAssessment.contractCheckStatus)}
           </span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
             expected rows: {driftAssessment.completeness.expectedRowCount}
           </span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
             live rows: {driftAssessment.completeness.foundRowCount}/{driftAssessment.completeness.expectedRowCount}
           </span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
             drift: {candidateModuleProdusDriftLabel(driftAssessment.driftState)}
           </span>
         </div>
@@ -1080,7 +1080,7 @@ function CandidateModuleProdusGuardsAuditPanel({
         {driftAssessment.metadataUnavailableWarnings.length > 0 ? (
           <p
             data-testid="product-system-candidate-module-metadata-warnings"
-            className="mt-1 text-[10px] font-mono text-slate-400"
+            className="mt-1 text-[10px] font-mono text-wo-text-muted"
           >
             Metadata unavailable: {driftAssessment.metadataUnavailableWarnings.join(", ")}
           </p>
@@ -1091,21 +1091,21 @@ function CandidateModuleProdusGuardsAuditPanel({
         data-testid="product-system-candidate-module-product-definition-readiness"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">
+        <p className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">
           Product Compiler · Definiție — readiness
         </p>
-        <p className="text-[10px] text-slate-500">intern: ProductDefinition consumption contract (readonly)</p>
+        <p className="text-[10px] text-wo-text-muted">intern: ProductDefinition consumption contract (readonly)</p>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
           <span
             data-testid="product-system-candidate-module-product-definition-paths-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary"
           >
             Consumption contract: {productDefinitionReadiness.mappedPathsCount}/
             {productDefinitionReadiness.requiredPathsCount} paths
           </span>
           <span
             data-testid="product-system-candidate-module-product-definition-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-muted"
           >
             {candidateModuleProdusProductDefinitionRuntimeLinkLabel(
               productDefinitionReadiness.runtimeProductDefinitionLinkState
@@ -1123,24 +1123,24 @@ function CandidateModuleProdusGuardsAuditPanel({
         </div>
         <p
           data-testid="product-system-candidate-module-product-definition-missing-behavior"
-          className="mt-2 text-[10px] text-slate-300"
+          className="mt-2 text-[10px] text-wo-text-secondary"
         >
           Missing truth behavior: report missing truth; do not invent; do not price; do not create aggregate/tasks
         </p>
         <p
           data-testid="product-system-candidate-module-product-definition-state-policy"
-          className="mt-1 text-[10px] font-mono text-slate-400"
+          className="mt-1 text-[10px] font-mono text-wo-text-muted"
         >
           State policy: suggested/fallback/hydrated/manual draft are not ProductDefinition truth; confirmed truth
           required later
         </p>
         <ul
           data-testid="product-system-candidate-module-product-definition-compact-paths"
-          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
+          className="mt-2 space-y-0.5 text-[10px] text-wo-text-muted"
         >
           {productDefinitionReadiness.compactPathSummaries.map((summary) => (
             <li key={summary.label}>
-              <span className="font-semibold text-slate-300">{summary.label} required paths:</span> {summary.paths}
+              <span className="font-semibold text-wo-text-secondary">{summary.label} required paths:</span> {summary.paths}
             </li>
           ))}
         </ul>
@@ -1315,23 +1315,23 @@ export function CandidateModuleProdusPanel({
               <CandidateModuleProdusSemanticLabel />
             </div>
             <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
                 active = {String(model.composerActive)}
               </span>
-              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
                 catalog status = {model.composerCatalogStatus}
               </span>
             </div>
           </div>
         ) : (
           <div>
-            <p className="text-[11px] font-bold text-slate-200">Candidate Module produs — Litere</p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[11px] font-bold text-wo-text-primary">Candidate Module produs — Litere</p>
+            <p className="text-[10px] text-wo-text-muted">
               Readonly · NOT OFFERABLE · 1 Composer + 6 Module produs · no Work Intake / Pricing / Quote / Execution
             </p>
             <p
               data-testid="product-system-candidate-module-detail-meta"
-              className="mt-0.5 text-[10px] font-mono text-slate-600"
+              className="mt-0.5 text-[10px] font-mono text-wo-text-dim"
             >
               active = {String(model.composerActive)} · catalog status = {model.composerCatalogStatus}
             </p>
@@ -1354,7 +1354,7 @@ export function CandidateModuleProdusPanel({
               className={`rounded-md border px-2.5 py-1 text-[11px] font-bold transition-colors ${
                 activeTab === tab.id
                   ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
-                  : "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
+                  : "border-slate-700 bg-slate-900 text-wo-text-muted hover:text-wo-text-primary"
               }`}
             >
               {tab.label}

@@ -227,7 +227,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
         {truth.summaryChipsRo.map((chip) => (
           <span
             key={chip}
-            className="rounded border border-[#2A3548]/55 bg-transparent px-2 py-0.5 text-[11px] font-medium text-slate-300"
+            className="rounded border border-wo-border-strong bg-transparent px-2 py-0.5 text-[11px] font-medium text-wo-text-secondary"
           >
             {chip}
           </span>
@@ -265,7 +265,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="font-medium text-slate-100">{mod.labelRo}</span>
-                <span className="text-[11px] text-slate-400">{mod.independenceRo}</span>
+                <span className="text-[11px] text-wo-text-muted">{mod.independenceRo}</span>
               </div>
               {mod.scopeRo ? (
                 <p className="mt-1 text-[11px] text-slate-500">Scope: {mod.scopeRo}</p>
@@ -314,7 +314,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
                 <p className="text-[12px] text-slate-200">
                   {dep.sourceRo} → {dep.dependencyRo}
                 </p>
-                <p className="mt-0.5 text-[11px] font-medium text-slate-400">{dep.classLabelRo}</p>
+                <p className="mt-0.5 text-[11px] font-medium text-wo-text-muted">{dep.classLabelRo}</p>
                 <p className="mt-1 text-[11px] text-slate-500">{dep.meaningRo}</p>
               </li>
             ))}
@@ -372,7 +372,7 @@ function ProductStoryOverview({
               {MODULE_PRODUS_LIST_HEADING} care compun {humanTemplateName(template.template_code)}
             </h3>
           </div>
-          <span className="rounded-full border border-slate-800 bg-slate-950/60 px-2 py-0.5 text-[11px] font-bold tabular-nums text-slate-400">
+          <span className="rounded-full border border-slate-800 bg-slate-950/60 px-2 py-0.5 text-[11px] font-bold tabular-nums text-wo-text-muted">
             {modules.length}
           </span>
         </div>
@@ -394,7 +394,7 @@ function ProductStoryOverview({
                   </span>
                   <span className="shrink-0 text-[10px] text-slate-500">{row.statusLabel}</span>
                 </div>
-                <p className="mt-0.5 truncate text-[11px] text-slate-300">{row.moduleName}</p>
+                <p className="mt-0.5 truncate text-[11px] text-wo-text-secondary">{row.moduleName}</p>
                 <p
                   className="mt-0.5 truncate font-mono text-[10px] text-slate-600"
                   title={MODULE_PRODUS_CODE_LABEL}
@@ -409,7 +409,7 @@ function ProductStoryOverview({
           type="button"
           data-testid="product-system-template-story-open-composition"
           onClick={() => onSectionChange("composition")}
-          className="mt-3 inline-flex rounded border border-slate-700/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800/60"
+          className="mt-3 inline-flex rounded border border-slate-700/70 px-2.5 py-1 text-[11px] font-medium text-wo-text-secondary hover:bg-slate-800/60"
         >
           Deschide Module produs
         </button>
@@ -435,7 +435,7 @@ function ProductStoryOverview({
             <p className="text-[10px] font-bold uppercase tracking-wide text-sky-300/90">
               Pregătire E2E
             </p>
-            <p className="mt-1 text-[12px] text-slate-300">
+            <p className="mt-1 text-[12px] text-wo-text-secondary">
               {readyForOffer
                 ? "Structură validă pentru readiness — Oferta client rămâne downstream."
                 : "Verifică blockerele structurale. Publicare / Ofertă sunt în afara centrului workspace."}
@@ -453,7 +453,7 @@ function ProductStoryOverview({
       </div>
 
       <details className="group" data-testid="product-system-template-story-downstream">
-        <summary className="cursor-pointer select-none text-[11px] font-medium text-slate-500 hover:text-slate-300">
+        <summary className="cursor-pointer select-none text-[11px] font-medium text-slate-500 hover:text-wo-text-secondary">
           Downstream (secundar) — Cost / Ofertă / Execution
         </summary>
         <div className="mt-2">
@@ -539,7 +539,7 @@ export function ProductSystemTemplateDetailPanel({
           </div>
           <p
             data-testid="product-system-template-detail-bucket-headline"
-            className="mt-1 text-sm text-slate-400"
+            className="mt-1 text-sm text-wo-text-muted"
           >
             {overview.headline}
           </p>
@@ -553,7 +553,7 @@ export function ProductSystemTemplateDetailPanel({
             dbActive={Boolean(template.active ?? availability.status === "available")}
           />
           <details className="text-right">
-            <summary className="cursor-pointer select-none text-[10px] text-slate-500 hover:text-slate-400">
+            <summary className="cursor-pointer select-none text-[10px] text-slate-500 hover:text-wo-text-muted">
               Status catalog
             </summary>
             <div className="mt-1 flex justify-end">
@@ -579,7 +579,7 @@ export function ProductSystemTemplateDetailPanel({
           className={`${PS_SURFACE_INSET} flex flex-wrap items-center justify-between gap-2 px-3 py-2`}
           data-testid="product-system-template-next-action-strip"
         >
-          <p className="text-[12px] text-slate-300">
+          <p className="text-[12px] text-wo-text-secondary">
             <span className="font-semibold text-slate-100">Centru workspace:</span>{" "}
             Module produs + Product Compiler + Pregătire.{" "}
             {publicationStatus === "PUBLISHED" ? (
@@ -601,7 +601,7 @@ export function ProductSystemTemplateDetailPanel({
             </button>
             <button
               type="button"
-              className="rounded border border-slate-700/60 px-2.5 py-1 text-[11px] font-medium text-slate-400 hover:bg-slate-900/40"
+              className="rounded border border-slate-700/60 px-2.5 py-1 text-[11px] font-medium text-wo-text-muted hover:bg-slate-900/40"
               data-testid="product-system-template-next-action-compiler"
               onClick={() => onSectionChange("compiler")}
             >
@@ -629,7 +629,7 @@ export function ProductSystemTemplateDetailPanel({
               className={`border-b-2 px-3 py-2 text-xs font-semibold transition-colors ${
                 section === tab.id
                   ? "border-sky-500 text-slate-100"
-                  : "border-transparent text-slate-500 hover:text-slate-300"
+                  : "border-transparent text-slate-500 hover:text-wo-text-secondary"
               }`}
             >
               {tab.label}
@@ -643,7 +643,7 @@ export function ProductSystemTemplateDetailPanel({
             open={diagnosticSections.some((tab) => tab.id === section)}
           >
             <summary
-              className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-slate-400"
+              className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-wo-text-muted"
               data-testid="product-system-template-admin-drawer-summary"
             >
               Admin / debug / diagnostic
@@ -664,7 +664,7 @@ export function ProductSystemTemplateDetailPanel({
                   className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
                     section === tab.id
                       ? "bg-slate-800/80 text-slate-200 ring-1 ring-slate-600/50"
-                      : "text-slate-600 hover:bg-slate-900/50 hover:text-slate-400"
+                      : "text-slate-600 hover:bg-slate-900/50 hover:text-wo-text-muted"
                   }`}
                 >
                   {tab.label}
@@ -697,8 +697,8 @@ export function ProductSystemTemplateDetailPanel({
             {rowMetadata ? (
               <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">{rowMetadata}</p>
             ) : null}
-            <details className="text-sm text-slate-400">
-              <summary className="cursor-pointer select-none text-slate-500 hover:text-slate-300">Mai mult context</summary>
+            <details className="text-sm text-wo-text-muted">
+              <summary className="cursor-pointer select-none text-slate-500 hover:text-wo-text-secondary">Mai mult context</summary>
               <ul className="mt-2 space-y-1.5 pl-4">
                 {overview.bullets.map((bullet) => (
                   <li key={bullet}>{bullet}</li>
@@ -721,7 +721,7 @@ export function ProductSystemTemplateDetailPanel({
 
       {section === "compiler" && isProduct ? (
         <div className="space-y-3" data-testid="product-system-template-detail-compiler">
-          <p className="text-[12px] text-slate-400">
+          <p className="text-[12px] text-wo-text-muted">
             {PRODUCT_COMPILER_LABEL} compact — output tehnic (Definiție + Graf). Fără preț, fără Ofertă.
           </p>
           <ProductCompilerDisplayShell stage="both" compact={false} />
@@ -837,7 +837,7 @@ export function ProductSystemTemplateDetailPanel({
           {!isProduct ? (
             <p
               data-testid="product-system-template-pricing-module-note"
-              className="mb-3 text-[12px] text-slate-400"
+              className="mb-3 text-[12px] text-wo-text-muted"
             >
               Modul component / legacy — bucket neschimbat. Prețuri template reutilizează
               același Studio și API; nu transformă entitatea în produs root.
@@ -850,12 +850,12 @@ export function ProductSystemTemplateDetailPanel({
       {section === "relationships" && isProduct ? (
         <section
           data-testid="product-system-template-detail-relationships"
-          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-300`}
+          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-wo-text-secondary`}
         >
           <p className="text-[11px] text-slate-500">
             Hartă relații parent↔child din availability — validare vizuală, fără auto-activare.
           </p>
-          <ul className="space-y-2 text-xs text-slate-300">
+          <ul className="space-y-2 text-xs text-wo-text-secondary">
             {availability.composition_modules.map((module) => (
               <li key={`rel-${module.role_key}-${module.module_template_code}`}>
                 <span className="font-medium text-slate-100">{humanTemplateName(template.template_code)}</span>
@@ -903,7 +903,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "dossier" ? (
         <section
           data-testid="product-system-template-detail-dossier"
-          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-300`}
+          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-wo-text-secondary`}
         >
           <p>
             Un singur Dossier canonic. Prezența în Dossier nu dovedește modularitate — distinge rădăcină,
@@ -914,7 +914,7 @@ export function ProductSystemTemplateDetailPanel({
             Intake / PD / Order — nu în Dossier.
           </p>
           {modularity ? (
-            <ul className="space-y-1 text-[12px] text-slate-400" data-testid="product-system-dossier-modularity-hints">
+            <ul className="space-y-1 text-[12px] text-wo-text-muted" data-testid="product-system-dossier-modularity-hints">
               {modularity.summaryChipsRo.map((chip) => (
                 <li key={chip}>· {chip}</li>
               ))}
@@ -922,7 +922,7 @@ export function ProductSystemTemplateDetailPanel({
           ) : null}
           {template.template_code === LETTERS_TEMPLATE_CODE ? (
             <div data-testid="product-system-dossier-ownership-truth">
-              <p className="mb-2 text-[12px] text-slate-400">
+              <p className="mb-2 text-[12px] text-wo-text-muted">
                 Ownership FINISH / MOUNTING — read-only (current vs target). Nu este editor.
               </p>
               <FinishMountingOwnershipPanel />
@@ -951,7 +951,7 @@ export function ProductSystemTemplateDetailPanel({
                 type="button"
                 data-testid="product-system-template-detail-open-editor"
                 onClick={onOpenEditor}
-                className="text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline"
+                className="text-wo-text-muted underline-offset-2 hover:text-slate-200 hover:underline"
               >
                 Editor șablon
               </button>
@@ -980,7 +980,7 @@ export function ProductSystemTemplateDetailPanel({
             Fail-closed publish · fără auto-publish · fără SVG geometry checks în poarta de publicare.
           </p>
           <details className={`${PS_SURFACE_PANEL} px-4 py-3`} data-testid="product-system-admin-lab-closure">
-            <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
+            <summary className="cursor-pointer select-none text-[12px] font-medium text-wo-text-muted hover:text-wo-text-secondary">
               Laboratory / finish line (admin only — nu pe overview)
             </summary>
             <div className="mt-3 space-y-4">
@@ -1008,7 +1008,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "fields" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-fields"
-          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
+          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-wo-text-secondary`}
         >
           <p>Câmpurile modulului legacy se configurează în editorul Product System.</p>
           <p className="mt-2 font-mono text-xs text-slate-500">
@@ -1024,7 +1024,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "product-truth-paths" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-product-truth-paths"
-          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
+          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-wo-text-secondary`}
         >
           <p>Căile Product Truth sunt deținute de compoziția produsului părinte.</p>
           <p className="mt-2 text-sm text-slate-500">Vizualizare readonly în catalog — fără scriere Product Truth.</p>
@@ -1035,7 +1035,7 @@ export function ProductSystemTemplateDetailPanel({
         <div className="space-y-4">
           <section
             data-testid="product-system-template-detail-guards"
-            className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
+            className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-wo-text-secondary`}
           >
             <p>
               <span className="text-slate-500">Status tehnic:</span> {availability.status}
@@ -1044,7 +1044,7 @@ export function ProductSystemTemplateDetailPanel({
               <span className="text-slate-500">Motiv:</span> {availability.status_reason}
             </p>
             <details className="mt-3 text-sm text-slate-500">
-              <summary className="cursor-pointer select-none hover:text-slate-400">Detaliu readiness</summary>
+              <summary className="cursor-pointer select-none hover:text-wo-text-muted">Detaliu readiness</summary>
               <p className="mt-1">{availability.readiness_reason}</p>
               <p className="mt-1">Readonly · Nu runtime · Fără Pricing / Quote / Order / Execution.</p>
             </details>

@@ -41,7 +41,7 @@ const ACCENT: Record<
     title: "text-cyan-300/90",
     border: "border-cyan-500/35",
     chip: "border-cyan-400/40 bg-cyan-500/15 text-cyan-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-[#0A0F1A] text-wo-text-muted",
     mono: "text-cyan-300/85",
     hero: "border-cyan-500/35",
   },
@@ -49,7 +49,7 @@ const ACCENT: Record<
     title: "text-amber-300/90",
     border: "border-amber-500/35",
     chip: "border-amber-400/40 bg-amber-500/15 text-amber-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-[#0A0F1A] text-wo-text-muted",
     mono: "text-amber-300/85",
     hero: "border-amber-500/35",
   },
@@ -89,19 +89,19 @@ export default function AcmBoxedStructureDetailPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[#2A3548] bg-[#111827] px-3 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:border-cyan-500/40 hover:text-cyan-100"
+          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-cyan-500/40 hover:text-cyan-100"
           data-testid="acm-boxed-structure-detail-back"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
           Structură
         </Link>
-        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-wo-text-muted">
           {ACM_BOXED_OWNER_LABEL_RO} · pas {doc.stepIndex} / 2
         </span>
       </header>
 
       <section
-        className={`relative overflow-hidden rounded-2xl border ${styles.hero} bg-[#111827]`}
+        className={`relative overflow-hidden rounded-2xl border ${styles.hero} bg-wo-surface-raised`}
         data-testid="acm-boxed-structure-detail-hero"
       >
         <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-end lg:px-8 lg:py-8">
@@ -120,7 +120,7 @@ export default function AcmBoxedStructureDetailPage() {
             <p className={`mt-3 font-mono text-[12px] ${styles.mono}`}>{doc.heroCodeRo}</p>
           </div>
           <p
-            className={`max-w-xl border-t ${styles.border} pt-4 text-[13px] leading-relaxed text-slate-200/85 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0`}
+            className={`max-w-xl border-t ${styles.border} pt-4 text-[13px] leading-relaxed text-wo-text-primary/85 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0`}
           >
             {doc.roleRo}
           </p>
@@ -132,7 +132,7 @@ export default function AcmBoxedStructureDetailPage() {
           <h2 className={`text-[12px] font-bold uppercase tracking-[0.16em] ${styles.title}`}>
             Cum obții · ordine taskuri
           </h2>
-          <span className="text-[11px] text-slate-500">card ≠ task · nucleu ACM · fără Composer</span>
+          <span className="text-[11px] text-wo-text-muted">card ≠ task · nucleu ACM · fără Composer</span>
         </div>
         <div className="grid gap-5 xl:grid-cols-2">
           <article className={`${PS_SURFACE_PANEL} ${styles.border} px-5 py-5`}>
@@ -145,9 +145,9 @@ export default function AcmBoxedStructureDetailPage() {
             <p className="mt-4 text-[13px] leading-relaxed text-amber-100/90">{doc.withoutTheseRo}</p>
             <ol className="mt-4 space-y-2.5">
               {obtainTasks.map((task, index) => (
-                <li key={task.id} className="flex gap-3 text-[13px] leading-relaxed text-slate-300">
+                <li key={task.id} className="flex gap-3 text-[13px] leading-relaxed text-wo-text-secondary">
                   <span className={`font-mono text-[12px] font-bold ${styles.mono}`}>{index + 1}.</span>
-                  <span className="font-medium text-slate-100">{task.labelRo}</span>
+                  <span className="font-medium text-wo-text-primary">{task.labelRo}</span>
                 </li>
               ))}
             </ol>
@@ -189,7 +189,7 @@ export default function AcmBoxedStructureDetailPage() {
           {doc.calcCards.map((card) => (
             <article
               key={card.id}
-              className={`relative overflow-hidden rounded-2xl border ${styles.border} bg-[#111827] px-6 py-6`}
+              className={`relative overflow-hidden rounded-2xl border ${styles.border} bg-wo-surface-raised px-6 py-6`}
               data-testid={`acm-boxed-structure-detail-calc-${card.id}`}
             >
               <div className="flex items-start gap-4">
@@ -210,24 +210,24 @@ export default function AcmBoxedStructureDetailPage() {
                 </div>
               </div>
               <p
-                className={`mt-5 rounded-xl border ${styles.border} bg-black/20 px-4 py-3.5 font-mono text-[13px] text-slate-100`}
+                className={`mt-5 rounded-xl border ${styles.border} bg-black/20 px-4 py-3.5 font-mono text-[13px] text-wo-text-primary`}
               >
                 {card.formulaRo}
               </p>
               <ol className="mt-5 space-y-2">
                 {card.stepsRo.map((step, index) => (
-                  <li key={step} className="flex gap-3 text-[13px] text-slate-300">
+                  <li key={step} className="flex gap-3 text-[13px] text-wo-text-secondary">
                     <span className={`font-mono text-[12px] font-bold ${styles.mono}`}>{index + 1}.</span>
                     {step}
                   </li>
                 ))}
               </ol>
-              <ul className="mt-4 space-y-1 text-[12px] text-slate-400">
+              <ul className="mt-4 space-y-1 text-[12px] text-wo-text-muted">
                 {card.outputsRo.map((line) => (
                   <li key={line}>→ {line}</li>
                 ))}
               </ul>
-              <ul className="mt-3 space-y-1 text-[11px] text-slate-500">
+              <ul className="mt-3 space-y-1 text-[11px] text-wo-text-muted">
                 {card.notThisRo.map((line) => (
                   <li key={line}>{line}</li>
                 ))}
@@ -235,7 +235,7 @@ export default function AcmBoxedStructureDetailPage() {
               <div
                 className={`mt-5 flex flex-wrap items-center justify-between gap-3 border-t ${styles.border} pt-4`}
               >
-                <p className="text-[11px] text-slate-500">{card.priceNoteRo}</p>
+                <p className="text-[11px] text-wo-text-muted">{card.priceNoteRo}</p>
                 <Link
                   to={card.verifyHref}
                   className="inline-flex items-center gap-1 text-[11px] font-medium text-cyan-300/90 underline-offset-2 hover:underline"
@@ -258,11 +258,11 @@ export default function AcmBoxedStructureDetailPage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {doc.sections.map((section) => (
-            <article key={section.id} className="rounded-xl border border-[#2A3548] bg-[#0A0F1A] px-4 py-4">
-              <h3 className="text-[13px] font-semibold text-slate-100">{section.titleRo}</h3>
-              <p className="mt-2 text-[12px] leading-relaxed text-slate-400">{section.bodyRo}</p>
+            <article key={section.id} className="rounded-xl border border-wo-border-strong bg-[#0A0F1A] px-4 py-4">
+              <h3 className="text-[13px] font-semibold text-wo-text-primary">{section.titleRo}</h3>
+              <p className="mt-2 text-[12px] leading-relaxed text-wo-text-muted">{section.bodyRo}</p>
               {section.bulletsRo?.length ? (
-                <ul className="mt-3 space-y-1.5 text-[12px] text-slate-300">
+                <ul className="mt-3 space-y-1.5 text-[12px] text-wo-text-secondary">
                   {section.bulletsRo.map((bullet) => (
                     <li key={bullet}>· {bullet}</li>
                   ))}
@@ -271,10 +271,10 @@ export default function AcmBoxedStructureDetailPage() {
             </article>
           ))}
         </div>
-        <ul className="mt-5 space-y-1 border-t border-[#2A3548] pt-4 text-[11px] text-slate-500">
+        <ul className="mt-5 space-y-1 border-t border-wo-border-strong pt-4 text-[11px] text-wo-text-muted">
           {ACM_BOXED_DOC_SOURCES.map((source) => (
             <li key={source.path}>
-              <span className="text-slate-400">{source.labelRo}</span> —{" "}
+              <span className="text-wo-text-muted">{source.labelRo}</span> —{" "}
               <span className="font-mono">{source.path}</span>
             </li>
           ))}

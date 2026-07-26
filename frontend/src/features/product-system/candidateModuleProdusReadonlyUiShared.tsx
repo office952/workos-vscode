@@ -57,7 +57,7 @@ export function CandidateModuleProdusStatusStrip({
         NOT OFFERABLE
       </span>
       {showWorkIntake ? (
-        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">
           Not exposed in Work Intake
         </span>
       ) : null}
@@ -124,8 +124,8 @@ export function ReadonlyStatusChip({
         : tone === "purple"
           ? "border-purple-700/40 bg-purple-950/30 text-purple-200"
           : tone === "slate"
-            ? "border-slate-700 bg-slate-900 text-slate-300"
-            : "border-slate-700 bg-slate-900 text-slate-300";
+            ? "border-slate-700 bg-slate-900 text-wo-text-secondary"
+            : "border-slate-700 bg-slate-900 text-wo-text-secondary";
 
   return (
     <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${toneClass}`}>{label}</span>
@@ -164,39 +164,39 @@ export function CandidateModuleProdusInertGuardLabels({
   return (
     <div
       data-testid="product-system-candidate-module-inert-guard-labels"
-      className="grid gap-2 md:grid-cols-3 text-[10px] text-slate-200"
+      className="grid gap-2 md:grid-cols-3 text-[10px] text-wo-text-primary"
     >
-      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+      <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 space-y-1">
         <p>
-          <span className="text-slate-500">Work Intake exposure:</span>{" "}
+          <span className="text-wo-text-muted">Work Intake exposure:</span>{" "}
           {blockedExposureLabel(noWorkIntakeExposure)}
         </p>
         <p>
-          <span className="text-slate-500">Pricing activation:</span> {blockedExposureLabel(noPricingActivation)}
+          <span className="text-wo-text-muted">Pricing activation:</span> {blockedExposureLabel(noPricingActivation)}
         </p>
         <p>
-          <span className="text-slate-500">ProductDefinition runtime:</span>{" "}
+          <span className="text-wo-text-muted">ProductDefinition runtime:</span>{" "}
           {blockedExposureLabel(noProductDefinitionActivation)}
         </p>
       </div>
-      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+      <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 space-y-1">
         <p>
-          <span className="text-slate-500">ProductAggregate runtime:</span>{" "}
+          <span className="text-wo-text-muted">ProductAggregate runtime:</span>{" "}
           {blockedExposureLabel(noProductAggregateRuntimeWiring)}
         </p>
         <p>
-          <span className="text-slate-500">Executable operations:</span> {blockedExposureLabel(noExecutableOperations)}
+          <span className="text-wo-text-muted">Executable operations:</span> {blockedExposureLabel(noExecutableOperations)}
         </p>
         <p>
-          <span className="text-slate-500">Quote/Order/Execution:</span> blocked
+          <span className="text-wo-text-muted">Quote/Order/Execution:</span> blocked
         </p>
       </div>
-      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+      <div className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2 space-y-1">
         <p>
-          <span className="text-slate-500">Executable BOM:</span> {blockedExposureLabel(noExecutableBom)}
+          <span className="text-wo-text-muted">Executable BOM:</span> {blockedExposureLabel(noExecutableBom)}
         </p>
         <p>
-          <span className="text-slate-500">Catalog status:</span> {composerCatalogStatus}
+          <span className="text-wo-text-muted">Catalog status:</span> {composerCatalogStatus}
         </p>
       </div>
     </div>
@@ -220,7 +220,7 @@ export function ReadonlyCardShell({
     <article
       data-testid={testId}
       data-focused={focused ? "true" : "false"}
-      className={`group rounded-xl border border-[#1E293B] bg-[#111827] p-4 transition-colors hover:border-slate-600/50 ${focused ? "border-cyan-500/50 ring-1 ring-cyan-500/30" : ""} ${className}`}
+      className={`group rounded-xl border border-wo-border-subtle bg-wo-surface-raised p-4 transition-colors hover:border-slate-600/50 ${focused ? "border-cyan-500/50 ring-1 ring-cyan-500/30" : ""} ${className}`}
       onClick={onClick}
       onKeyDown={
         onClick

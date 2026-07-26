@@ -21,10 +21,10 @@ import {
 
 /** Hover/focus row — lighter than popover #0f172a, same blue family as app panels. */
 const PICKER_ITEM =
-  "data-[selected=true]:!bg-[#1e293b] data-[selected=true]:!text-slate-100 aria-selected:!bg-[#1e293b] aria-selected:!text-slate-100";
+  "data-[selected=true]:!bg-[#1e293b] data-[selected=true]:!text-wo-text-primary aria-selected:!bg-[#1e293b] aria-selected:!text-wo-text-primary";
 
 const PICKER_COMMAND =
-  "[&_[cmdk-group-heading]]:text-slate-500 [&_[cmdk-input]]:bg-[#0d1321] [&_[cmdk-input]]:text-slate-200";
+  "[&_[cmdk-group-heading]]:text-wo-text-muted [&_[cmdk-input]]:bg-[#0d1321] [&_[cmdk-input]]:text-wo-text-primary";
 
 type MaterialRegistryPickerProps = {
   materials: InventoryMaterialEntity[];
@@ -86,8 +86,8 @@ export function MaterialRegistryPicker({
           <p className="font-mono text-[11px] font-bold text-emerald-300 leading-tight">
             {mat.code}
           </p>
-          <p className="text-[10px] text-slate-300 leading-snug mt-0.5">{short}</p>
-          <p className="text-[9px] text-slate-500 font-mono mt-0.5">{mat.unit}</p>
+          <p className="text-[10px] text-wo-text-secondary leading-snug mt-0.5">{short}</p>
+          <p className="text-[9px] text-wo-text-muted font-mono mt-0.5">{mat.unit}</p>
         </div>
       </CommandItem>
     );
@@ -104,7 +104,7 @@ export function MaterialRegistryPicker({
           disabled={disabled}
           className={cn(
             "flex-[2] h-auto min-h-9 justify-between gap-2 px-2 py-1.5",
-            "bg-[#0D1321] border-[#334155] hover:bg-[#111827] hover:border-emerald-600/40",
+            "bg-wo-surface-inset border-[#334155] hover:bg-wo-surface-raised hover:border-emerald-600/40",
             "text-left font-normal",
             className
           )}
@@ -114,22 +114,22 @@ export function MaterialRegistryPicker({
               <p className="font-mono text-[11px] font-bold text-emerald-300 truncate">
                 {value}
               </p>
-              <p className="text-[10px] text-slate-400 truncate">{selectedShort}</p>
+              <p className="text-[10px] text-wo-text-muted truncate">{selectedShort}</p>
             </div>
           ) : (
-            <span className="text-[11px] text-slate-500">— alege material —</span>
+            <span className="text-[11px] text-wo-text-muted">— alege material —</span>
           )}
-          <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+          <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-wo-text-muted" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[min(calc(100vw-2rem),22rem)] p-0 bg-[#0f172a] border-[#334155] text-slate-100 shadow-xl"
+        className="w-[min(calc(100vw-2rem),22rem)] p-0 bg-[#0f172a] border-[#334155] text-wo-text-primary shadow-xl"
       >
-        <Command className={cn("bg-[#0f172a] text-slate-100", PICKER_COMMAND)}>
+        <Command className={cn("bg-[#0f172a] text-wo-text-primary", PICKER_COMMAND)}>
           <CommandInput
             placeholder="Caută cod sau nume…"
-            className="h-9 text-[12px] border-[#334155] placeholder:text-slate-500"
+            className="h-9 text-[12px] border-[#334155] placeholder:text-wo-text-muted"
           />
           <CommandList className="max-h-[min(50vh,280px)]">
             <CommandGroup>
@@ -139,12 +139,12 @@ export function MaterialRegistryPicker({
                   onValueChange("");
                   setOpen(false);
                 }}
-                className={cn("py-2 text-slate-500", PICKER_ITEM)}
+                className={cn("py-2 text-wo-text-muted", PICKER_ITEM)}
               >
                 — fără material —
               </CommandItem>
             </CommandGroup>
-            <CommandEmpty className="py-4 text-[11px] text-slate-500">
+            <CommandEmpty className="py-4 text-[11px] text-wo-text-muted">
               Niciun material găsit.
             </CommandEmpty>
             {suggested.length > 0 ? (
@@ -166,7 +166,7 @@ export function MaterialRegistryPicker({
                   className={cn("py-2", PICKER_ITEM)}
                 >
                   <p className="font-mono text-[11px] text-amber-300">{value}</p>
-                  <p className="text-[10px] text-slate-500">Necunoscut în registru</p>
+                  <p className="text-[10px] text-wo-text-muted">Necunoscut în registru</p>
                 </CommandItem>
               </CommandGroup>
             ) : null}

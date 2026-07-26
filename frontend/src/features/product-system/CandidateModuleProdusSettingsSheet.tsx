@@ -49,9 +49,9 @@ type ComponentSettingsContext = {
 
 function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-2.5">
-      <h4 className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{title}</h4>
-      <div className="mt-2 space-y-1 text-[11px] text-slate-200">{children}</div>
+    <section className="rounded-lg border border-slate-800/90 bg-wo-surface-inset px-3 py-2.5">
+      <h4 className="text-[10px] font-bold uppercase tracking-wide text-wo-text-muted">{title}</h4>
+      <div className="mt-2 space-y-1 text-[11px] text-wo-text-primary">{children}</div>
     </section>
   );
 }
@@ -74,27 +74,27 @@ function ProductSettingsBody({ ctx }: { ctx: ProductSettingsContext }) {
       <CandidateModuleProdusStatusStrip showWorkIntake={false} testIdPrefix="product-system-candidate-module-settings" />
       <SettingsSection title="Overview">
         <p>
-          <span className="text-slate-500">Title:</span> Litere volumetrice candidate-module
+          <span className="text-wo-text-muted">Title:</span> Litere volumetrice candidate-module
         </p>
         <p>
-          <span className="text-slate-500">Template code:</span> {model.composerTemplateCode}
+          <span className="text-wo-text-muted">Template code:</span> {model.composerTemplateCode}
         </p>
         <p>
-          <span className="text-slate-500">Type:</span> Product Template / Composer
+          <span className="text-wo-text-muted">Type:</span> Product Template / Composer
         </p>
         <p>
-          <span className="text-slate-500">Readiness:</span> {model.composerReadiness}
+          <span className="text-wo-text-muted">Readiness:</span> {model.composerReadiness}
         </p>
         <p>
-          <span className="text-slate-500">Activation guard:</span> {model.composerActivationGuard}
+          <span className="text-wo-text-muted">Activation guard:</span> {model.composerActivationGuard}
         </p>
         <p>
-          <span className="text-slate-500">Readonly boundary:</span> inactive candidate set; no Work Intake; no
+          <span className="text-wo-text-muted">Readonly boundary:</span> inactive candidate set; no Work Intake; no
           commercial path
         </p>
       </SettingsSection>
       <SettingsSection title="Composition">
-        <p className="text-[10px] text-slate-400">Product Template coordinates {model.components.length} Module produs egale.</p>
+        <p className="text-[10px] text-wo-text-muted">Product Template coordinates {model.components.length} Module produs egale.</p>
         <ul className="mt-1 space-y-1 text-[10px] font-mono text-cyan-200/85">
           {model.compositionList.map((entry) => (
             <li key={entry.componentTemplateCode}>
@@ -102,11 +102,11 @@ function ProductSettingsBody({ ctx }: { ctx: ProductSettingsContext }) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-[10px] text-slate-400">
-          No module links: <span className="font-bold text-slate-200">{String(model.noModuleLinks)}</span>
+        <p className="mt-2 text-[10px] text-wo-text-muted">
+          No module links: <span className="font-bold text-wo-text-primary">{String(model.noModuleLinks)}</span>
         </p>
-        <details className="mt-2 text-[10px] text-slate-400">
-          <summary className="cursor-pointer font-semibold text-slate-300">Dependency summary</summary>
+        <details className="mt-2 text-[10px] text-wo-text-muted">
+          <summary className="cursor-pointer font-semibold text-wo-text-secondary">Dependency summary</summary>
           <ul className="mt-1 space-y-0.5 font-mono">
             {model.dependencyGraph.map((edge) => (
               <li key={`${edge.from}-${edge.to}`}>
@@ -118,17 +118,17 @@ function ProductSettingsBody({ ctx }: { ctx: ProductSettingsContext }) {
       </SettingsSection>
       <SettingsSection title="Product Dossier">
         <p>
-          <span className="text-slate-500">Dossier role:</span> {dossierEntry?.expectedDossierRole ?? "composer_orchestration"}
+          <span className="text-wo-text-muted">Dossier role:</span> {dossierEntry?.expectedDossierRole ?? "composer_orchestration"}
         </p>
         <p>
-          <span className="text-slate-500">Truth owner:</span>{" "}
+          <span className="text-wo-text-muted">Truth owner:</span>{" "}
           {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "product_composer")}
         </p>
         <p>
-          <span className="text-slate-500">Future metadata:</span>{" "}
+          <span className="text-wo-text-muted">Future metadata:</span>{" "}
           {dossierEntry?.futureAllowedMetadata.join(", ") ?? "technical_fields, validations, calculation_readiness"}
         </p>
-        <p className="text-slate-500">Forbidden now:</p>
+        <p className="text-wo-text-muted">Forbidden now:</p>
         <ForbiddenNowList
           items={[
             "No task materialization",
@@ -144,10 +144,10 @@ function ProductSettingsBody({ ctx }: { ctx: ProductSettingsContext }) {
           <>
             <p>Composer coordinates sections only.</p>
             <p>
-              <span className="text-slate-500">Coordinates:</span> {composerFormEntry.coordinates.join(", ")}
+              <span className="text-wo-text-muted">Coordinates:</span> {composerFormEntry.coordinates.join(", ")}
             </p>
             <p>
-              <span className="text-slate-500">ownsTruth:</span> false
+              <span className="text-wo-text-muted">ownsTruth:</span> false
             </p>
           </>
         ) : (
@@ -162,7 +162,7 @@ function ProductSettingsBody({ ctx }: { ctx: ProductSettingsContext }) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-[10px] text-slate-400">Write policy: readonly mapping only; no confirmed values created</p>
+        <p className="mt-2 text-[10px] text-wo-text-muted">Write policy: readonly mapping only; no confirmed values created</p>
       </SettingsSection>
       <SettingsSection title="Guards">
         <ForbiddenNowList
@@ -191,47 +191,47 @@ function ComponentSettingsBody({ ctx }: { ctx: ComponentSettingsContext }) {
       <CandidateModuleProdusStatusStrip showWorkIntake={false} testIdPrefix="product-system-candidate-module-settings" />
       <SettingsSection title="Overview">
         <p>
-          <span className="text-slate-500">Display name:</span> {displayName}
+          <span className="text-wo-text-muted">Display name:</span> {displayName}
         </p>
         <p>
-          <span className="text-slate-500">Template code:</span> {component.templateCode}
+          <span className="text-wo-text-muted">Template code:</span> {component.templateCode}
         </p>
         <p>
-          <span className="text-slate-500">Type:</span> Module produs
+          <span className="text-wo-text-muted">Type:</span> Module produs
         </p>
         <p>
-          <span className="text-slate-500">Truth owner:</span>{" "}
+          <span className="text-wo-text-muted">Truth owner:</span>{" "}
           {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "component_owned_truth")}
         </p>
         <p>
-          <span className="text-slate-500">Role label:</span> {component.roleLabel}
+          <span className="text-wo-text-muted">Role label:</span> {component.roleLabel}
         </p>
         <p>
-          <span className="text-slate-500">Component kind:</span> {component.componentKind}
+          <span className="text-wo-text-muted">Component kind:</span> {component.componentKind}
         </p>
         <p>
-          <span className="text-slate-500">Readiness state:</span> {component.readinessState}
+          <span className="text-wo-text-muted">Readiness state:</span> {component.readinessState}
         </p>
         <p>
-          <span className="text-slate-500">active:</span> {String(component.active)}
+          <span className="text-wo-text-muted">active:</span> {String(component.active)}
         </p>
         <p>
-          <span className="text-slate-500">Live row:</span>{" "}
+          <span className="text-wo-text-muted">Live row:</span>{" "}
           {component.liveRowPresent ? "live inactive row" : "contract fallback row"}
         </p>
       </SettingsSection>
       <SettingsSection title="Dossier">
         <p>
-          <span className="text-slate-500">Dossier role:</span> {dossierEntry?.expectedDossierRole ?? "—"}
+          <span className="text-wo-text-muted">Dossier role:</span> {dossierEntry?.expectedDossierRole ?? "—"}
         </p>
         <p>
-          <span className="text-slate-500">Future metadata:</span>{" "}
+          <span className="text-wo-text-muted">Future metadata:</span>{" "}
           {dossierEntry?.futureAllowedMetadata.join(", ") ?? "—"}
         </p>
         <p>
-          <span className="text-slate-500">Runtime dossier link:</span> {ctx.dossierRuntimeLinkState}
+          <span className="text-wo-text-muted">Runtime dossier link:</span> {ctx.dossierRuntimeLinkState}
         </p>
-        <p className="text-slate-500">Forbidden now:</p>
+        <p className="text-wo-text-muted">Forbidden now:</p>
         <ForbiddenNowList
           items={[
             "No component root",
@@ -245,15 +245,15 @@ function ComponentSettingsBody({ ctx }: { ctx: ComponentSettingsContext }) {
       </SettingsSection>
       <SettingsSection title="Fields / Form readiness">
         <p>
-          <span className="text-slate-500">Field groups:</span> {fieldGroups}
+          <span className="text-wo-text-muted">Field groups:</span> {fieldGroups}
         </p>
         {formEntry && formEntry.role === "component_template" ? (
           <>
             <p>
-              <span className="text-slate-500">Possible sources:</span> {formEntry.possibleSources.join(", ")}
+              <span className="text-wo-text-muted">Possible sources:</span> {formEntry.possibleSources.join(", ")}
             </p>
             <p>
-              <span className="text-slate-500">State policy:</span> {formEntry.requiredStatePolicy.join("; ")}
+              <span className="text-wo-text-muted">State policy:</span> {formEntry.requiredStatePolicy.join("; ")}
             </p>
           </>
         ) : null}
@@ -267,19 +267,19 @@ function ComponentSettingsBody({ ctx }: { ctx: ComponentSettingsContext }) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-[10px] text-slate-400">
+        <p className="mt-2 text-[10px] text-wo-text-muted">
           suggested / fallback / hydrated / manual draft ≠ confirmed
         </p>
       </SettingsSection>
       <SettingsSection title="Future calculation readiness">
         <p>
-          <span className="text-slate-500">Readiness:</span> {component.readinessState} (planned)
+          <span className="text-wo-text-muted">Readiness:</span> {component.readinessState} (planned)
         </p>
         <p>
-          <span className="text-slate-500">Activation guard:</span> {component.activationGuard}
+          <span className="text-wo-text-muted">Activation guard:</span> {component.activationGuard}
         </p>
         <details className="mt-1 text-[10px] text-amber-200/90">
-          <summary className="cursor-pointer font-semibold text-slate-300">
+          <summary className="cursor-pointer font-semibold text-wo-text-secondary">
             Blockers ({component.blockers.length})
           </summary>
           <p className="mt-1 font-mono">{component.blockers.join(", ") || "none"}</p>
@@ -350,12 +350,12 @@ export function CandidateModuleProdusSettingsSheet({
       <SheetContent
         side="right"
         data-testid="product-system-candidate-module-settings-sheet"
-        className="w-full overflow-y-auto border-[#1E293B] bg-[#0A0F1A] sm:max-w-lg"
+        className="w-full overflow-y-auto border-wo-border-subtle bg-[#0A0F1A] sm:max-w-lg"
       >
         <SheetHeader className="space-y-2 border-b border-slate-800 pb-3">
           <ReadonlyDrawerBanner />
-          <SheetTitle className="text-left text-[13px] font-bold text-slate-100">{title}</SheetTitle>
-          <SheetDescription className="text-left text-[11px] text-slate-400">
+          <SheetTitle className="text-left text-[13px] font-bold text-wo-text-primary">{title}</SheetTitle>
+          <SheetDescription className="text-left text-[11px] text-wo-text-muted">
             Readonly contract view — no save, no edit, no activation.
           </SheetDescription>
         </SheetHeader>

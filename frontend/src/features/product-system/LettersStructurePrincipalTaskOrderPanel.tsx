@@ -30,7 +30,7 @@ const ACCENT: Record<
     title: "text-violet-300/90",
     border: "border-violet-500/30",
     chip: "border-violet-400/40 bg-violet-500/15 text-violet-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-violet-300/85",
     panelBorder: "border-violet-500/35",
   },
@@ -38,7 +38,7 @@ const ACCENT: Record<
     title: "text-sky-300/90",
     border: "border-sky-500/30",
     chip: "border-sky-400/40 bg-sky-500/15 text-sky-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-sky-300/85",
     panelBorder: "border-sky-500/35",
   },
@@ -46,7 +46,7 @@ const ACCENT: Record<
     title: "text-amber-300/90",
     border: "border-amber-500/30",
     chip: "border-amber-400/40 bg-amber-500/15 text-amber-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-amber-300/85",
     panelBorder: "border-amber-500/35",
   },
@@ -54,7 +54,7 @@ const ACCENT: Record<
     title: "text-yellow-300/90",
     border: "border-yellow-500/30",
     chip: "border-yellow-400/40 bg-yellow-500/15 text-yellow-50",
-    chipMuted: "border-[#2A3548] bg-[#0A0F1A] text-slate-400",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-yellow-300/85",
     panelBorder: "border-yellow-500/35",
   },
@@ -108,7 +108,7 @@ export function LettersStructurePrincipalTaskOrderPanel({
           <p className="mt-4 text-[13px] leading-relaxed text-amber-100/90">{obtain.withoutTheseRo}</p>
           <ol className="mt-4 space-y-2.5">
             {obtainTasks.map((task, index) => (
-              <li key={task.id} className="flex gap-3 text-[13px] leading-relaxed text-slate-300">
+              <li key={task.id} className="flex gap-3 text-[13px] leading-relaxed text-wo-text-secondary">
                 <span className={`font-mono text-[12px] font-bold tabular-nums ${styles.mono}`}>
                   {index + 1}.
                 </span>
@@ -149,7 +149,7 @@ export function LettersStructurePrincipalTaskOrderPanel({
               </h3>
             </div>
           </div>
-          <p className="mt-3 text-[12px] leading-relaxed text-slate-400">
+          <p className="mt-3 text-[12px] leading-relaxed text-wo-text-muted">
             {LETTERS_PRINCIPAL_TASK_CHAIN_INTRO_RO}
           </p>
           <ol className="mt-4 max-h-[22rem] space-y-1.5 overflow-y-auto pr-1">

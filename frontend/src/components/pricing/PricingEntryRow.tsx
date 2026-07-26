@@ -102,7 +102,7 @@ export function PricingEntryRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-2">
-              <p className="text-[13px] font-semibold text-slate-100 truncate">{displayName}</p>
+              <p className="text-[13px] font-semibold text-wo-text-primary truncate">{displayName}</p>
               {showCncBadge ? (
                 <span
                   className="shrink-0"
@@ -117,8 +117,8 @@ export function PricingEntryRow({
               ) : null}
             </div>
             <div className="text-right shrink-0">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide">{costLabel}</p>
-              <p className="text-[15px] font-bold text-slate-100">
+              <p className="text-[10px] text-wo-text-muted uppercase tracking-wide">{costLabel}</p>
+              <p className="text-[15px] font-bold text-wo-text-primary">
                 {item.base_cost != null ? fmtCost(item.base_cost, item.currency) : "Lipsă"}
               </p>
             </div>
@@ -130,7 +130,7 @@ export function PricingEntryRow({
                 status={pricingRegistryItemStatusKey(item)}
                 label={status.text}
               />
-              <span className="text-[10px] text-slate-400 border border-slate-700/60 rounded px-1.5 py-0.5">
+              <span className="text-[10px] text-wo-text-muted border border-slate-700/60 rounded px-1.5 py-0.5">
                 {typedCatalogLabelRo(typed)}
               </span>
               {familyLabel && (
@@ -140,12 +140,12 @@ export function PricingEntryRow({
               )}
               <span className="font-mono text-[11px] text-blue-400/90 truncate">{item.pricing_code}</span>
             </div>
-            <p className="text-[10px] text-slate-500 shrink-0">{item.unit}</p>
+            <p className="text-[10px] text-wo-text-muted shrink-0">{item.unit}</p>
           </div>
-          <div className="flex items-center gap-2 mt-1.5 text-[11px] text-slate-500 flex-wrap">
+          <div className="flex items-center gap-2 mt-1.5 text-[11px] text-wo-text-muted flex-wrap">
             {showCategory && <span>{item.registry_category}</span>}
             {showCategory && <span>·</span>}
-            <span className="text-slate-400">{impact}</span>
+            <span className="text-wo-text-muted">{impact}</span>
           </div>
           {namingNote ? (
             <p className="mt-1.5 text-[10px] leading-snug text-amber-500/80">{namingNote}</p>
@@ -157,7 +157,7 @@ export function PricingEntryRow({
             </p>
           )}
           {showTemplates && item.used_by_templates.length > 0 && (
-            <p className="text-[10px] text-slate-600 mt-1 font-mono truncate">
+            <p className="text-[10px] text-wo-text-dim mt-1 font-mono truncate">
               {item.used_by_templates.join(", ")}
             </p>
           )}
@@ -172,7 +172,7 @@ export function PricingEntryRow({
             <button
               type="button"
               onClick={() => onEditMaterial(item)}
-              className="p-2 rounded-md border border-[#2A3548] bg-[#0F1629] hover:border-blue-600/40 hover:text-blue-300 text-slate-400 transition-colors"
+              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-blue-600/40 hover:text-blue-300 text-wo-text-muted transition-colors"
               title="Editare preț"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -183,7 +183,7 @@ export function PricingEntryRow({
               type="button"
               onClick={() => onEditRate(item)}
               disabled={loadingRate}
-              className="p-2 rounded-md border border-[#2A3548] bg-[#0F1629] hover:border-blue-600/40 hover:text-blue-300 text-slate-400 transition-colors disabled:opacity-50"
+              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-blue-600/40 hover:text-blue-300 text-wo-text-muted transition-colors disabled:opacity-50"
               title="Editare rată"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ export function PricingEntryRow({
           <button
             type="button"
             onClick={onSelect}
-            className="p-2 rounded-md border border-[#2A3548] bg-[#0F1629] hover:border-purple-600/40 hover:text-purple-300 text-slate-400 transition-colors"
+            className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-purple-600/40 hover:text-purple-300 text-wo-text-muted transition-colors"
             title="Detalii / istoric"
           >
             <History className="w-3.5 h-3.5" />

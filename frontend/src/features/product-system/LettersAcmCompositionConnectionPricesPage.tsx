@@ -47,13 +47,13 @@ export default function LettersAcmCompositionConnectionPricesPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[#2A3548] bg-[#111827] px-3 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:border-emerald-500/40 hover:text-emerald-100"
+          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-emerald-500/40 hover:text-emerald-100"
           data-testid="letters-acm-connection-prices-back"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
           Structură
         </Link>
-        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-slate-500">
+        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-wo-text-muted">
           Conexiune · prețuri
         </span>
       </header>
@@ -65,7 +65,7 @@ export default function LettersAcmCompositionConnectionPricesPage() {
         <h1 className="mt-1 text-[1.45rem] font-semibold text-slate-50">
           {LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO}
         </h1>
-        <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-slate-400">
+        <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-wo-text-muted">
           {LETTERS_ACM_CONNECTION_PRICES_HELPER_RO}
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
@@ -97,8 +97,8 @@ export default function LettersAcmCompositionConnectionPricesPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-[11px] text-slate-500">{line.order}.</span>
-                    <h2 className="text-[14px] font-semibold text-slate-100">{line.labelRo}</h2>
+                    <span className="font-mono text-[11px] text-wo-text-muted">{line.order}.</span>
+                    <h2 className="text-[14px] font-semibold text-wo-text-primary">{line.labelRo}</h2>
                     <span
                       className={`rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                         isLocked
@@ -109,10 +109,10 @@ export default function LettersAcmCompositionConnectionPricesPage() {
                       {decisionBadgeRo(line.decision)}
                     </span>
                   </div>
-                  <p className="mt-1 text-[12px] text-slate-400">
+                  <p className="mt-1 text-[12px] text-wo-text-muted">
                     Bază qty: {line.qtyBasisRo}
                   </p>
-                  <p className="mt-1 text-[12px] leading-relaxed text-slate-500">{line.rationaleRo}</p>
+                  <p className="mt-1 text-[12px] leading-relaxed text-wo-text-muted">{line.rationaleRo}</p>
                 </div>
                 <p
                   className={`shrink-0 font-mono text-[15px] font-semibold ${
@@ -129,20 +129,20 @@ export default function LettersAcmCompositionConnectionPricesPage() {
       </section>
 
       <section className={`${PS_SURFACE_PANEL} px-4 py-4`}>
-        <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+        <h3 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-wo-text-muted">
           Ordine atelier (spine comun)
         </h3>
-        <ol className="mt-2 space-y-1 text-[12px] text-slate-400">
+        <ol className="mt-2 space-y-1 text-[12px] text-wo-text-muted">
           {LETTERS_ACM_COMPOSITION_TASK_CHAIN.map((task) => (
             <li key={task.id}>
-              <span className="font-mono text-slate-500">{task.order}.</span> {task.labelRo}
+              <span className="font-mono text-wo-text-muted">{task.order}.</span> {task.labelRo}
               {task.costNoteRo ? (
                 <span className="ml-2 font-mono text-emerald-300/80">{task.costNoteRo}</span>
               ) : null}
             </li>
           ))}
         </ol>
-        <p className="mt-3 text-[11px] text-slate-500">
+        <p className="mt-3 text-[11px] text-wo-text-muted">
           Nucleu ACM (1.5 EUR/ml debitare · 3.0 EUR/ml V-groove · 15 EUR/mp asamblare casetă) și
           materiale Litere/LED/PSU rămân pe template-urile lor — nu pe această foaie.
         </p>
@@ -155,7 +155,7 @@ export default function LettersAcmCompositionConnectionPricesPage() {
           </Link>
           <a
             href="/inventory/pricing"
-            className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200"
+            className="inline-flex items-center gap-1 text-wo-text-muted hover:text-wo-text-primary"
           >
             Pricing Registry
             <ExternalLink className="h-3 w-3" aria-hidden />

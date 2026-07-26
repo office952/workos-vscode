@@ -167,7 +167,7 @@ function LettersAcmConnectionPricesEntryCard({ templateCode }: { templateCode: s
           <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-300">
             Prețuri conexiune
           </p>
-          <p className="mt-0.5 truncate text-[13px] font-semibold text-slate-200">
+          <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
             {LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO}
           </p>
           <p className="mt-0.5 text-[11px] text-emerald-200/70">
@@ -199,7 +199,7 @@ function LettersAcmComposerEntryCard({ templateCode }: { templateCode: string })
           <p className="text-[11px] font-bold uppercase tracking-wide text-violet-300">
             Composer
           </p>
-          <p className="mt-0.5 truncate text-[13px] font-semibold text-slate-200">
+          <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
             Litere ↔ Alucobond — mock IA
           </p>
           <p className="mt-0.5 text-[11px] text-violet-200/70">
@@ -244,7 +244,7 @@ function AcmBoxedTeachingCard({
       className={`overflow-hidden rounded-xl border transition-all duration-200 ${
         selected
           ? "border-purple-500/50 bg-purple-500/[0.06] ring-1 ring-purple-500/25"
-          : "border-[#1E293B] bg-[#111827]"
+          : "border-wo-border-subtle bg-wo-surface-raised"
       } ${isFrame ? "hover:border-amber-500/40" : "hover:border-cyan-500/40"}`}
     >
       <button
@@ -266,7 +266,7 @@ function AcmBoxedTeachingCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[10px] text-slate-500">#{index + 1}</span>
+              <span className="font-mono text-[10px] text-wo-text-muted">#{index + 1}</span>
               <span
                 className={`text-[11px] font-bold uppercase tracking-wide ${
                   isFrame ? "text-amber-300" : "text-cyan-300"
@@ -275,7 +275,7 @@ function AcmBoxedTeachingCard({
                 {typeLabel}
               </span>
             </div>
-            <p className="mt-0.5 truncate text-[13px] font-semibold text-slate-200">{displayName}</p>
+            <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">{displayName}</p>
           </div>
           <ChevronRight
             className={`h-4 w-4 shrink-0 ${isFrame ? "text-amber-300/80" : "text-cyan-300/80"}`}
@@ -416,7 +416,7 @@ const STAGE_VISUAL_BY_TYPE: Record<ProductComponentType, StageVisual> = {
   },
   EXTERNALIZARE: {
     icon: <Layers className="w-5 h-5" />,
-    color: "text-slate-300",
+    color: "text-wo-text-secondary",
     bgColor: "bg-slate-500/10",
     borderColor: "border-slate-500/30",
     label: "Externalizare",
@@ -529,7 +529,7 @@ function ReadonlyStructureCard({
       className={`overflow-hidden rounded-xl border transition-all duration-200 ${
         selected
           ? "border-purple-500/50 bg-purple-500/[0.06] ring-1 ring-purple-500/25"
-          : "border-[#1E293B] bg-[#111827]"
+          : "border-wo-border-subtle bg-wo-surface-raised"
       } ${showLettersFaceProcess ? "hover:border-violet-500/40" : ""} ${
         showLettersVolumeAluminum ? "hover:border-sky-500/40" : ""
       } ${showLettersBackForex ? "hover:border-amber-500/40" : ""} ${
@@ -558,7 +558,7 @@ function ReadonlyStructureCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[10px] text-slate-500">#{index + 1}</span>
+              <span className="font-mono text-[10px] text-wo-text-muted">#{index + 1}</span>
               <span className={`text-[11px] font-bold uppercase tracking-wide ${visual.color}`}>
                 {typeLabel}
               </span>
@@ -569,8 +569,8 @@ function ReadonlyStructureCard({
                 />
               ) : null}
             </div>
-            <p className="mt-0.5 truncate text-[13px] font-semibold text-slate-200">
-              {displayName || <span className="italic text-slate-500">Fără nume</span>}
+            <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
+              {displayName || <span className="italic text-wo-text-muted">Fără nume</span>}
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
@@ -689,7 +689,7 @@ export function ProductSystemStructureReadonlyPanel({
               <div className="flex items-center gap-2">
                 <Hammer className="h-5 w-5 shrink-0 text-purple-400" />
                 <h3
-                  className="text-[14px] font-bold text-slate-100"
+                  className="text-[14px] font-bold text-wo-text-primary"
                   data-testid="product-system-v2-structure-title"
                 >
                   Structură produs
@@ -698,7 +698,7 @@ export function ProductSystemStructureReadonlyPanel({
                   {ACM_BOXED_STRUCTURE_TEACHING_CARDS.length}
                 </span>
               </div>
-              <p className="mt-1 pl-7 text-[10px] text-slate-500">
+              <p className="mt-1 pl-7 text-[10px] text-wo-text-muted">
                 {ACM_BOXED_STRUCTURE_HELPER_RO} {ACM_BOXED_CARD_NOT_TASK_HELPER_RO}
               </p>
             </div>
@@ -736,11 +736,11 @@ export function ProductSystemStructureReadonlyPanel({
       <section className={`${PS_SURFACE_PANEL} px-4 py-4`} data-testid={testId}>
         <div className="flex items-center gap-2">
           <Hammer className="h-5 w-5 shrink-0 text-purple-400" />
-          <h3 className="text-[14px] font-bold text-slate-100" data-testid="product-system-v2-structure-title">
+          <h3 className="text-[14px] font-bold text-wo-text-primary" data-testid="product-system-v2-structure-title">
             Structură produs
           </h3>
         </div>
-        <p className="mt-2 text-[12px] text-slate-500" data-testid="product-system-v2-modules-empty">
+        <p className="mt-2 text-[12px] text-wo-text-muted" data-testid="product-system-v2-modules-empty">
           Nicio componentă vizibilă pe acest Product Template.
         </p>
       </section>
@@ -751,7 +751,7 @@ export function ProductSystemStructureReadonlyPanel({
     <section className="space-y-4" data-testid={testId}>
       {stages.length > 0 ? (
         <div
-          className="rounded-xl border border-[#1E293B] bg-[#111827] p-3"
+          className="rounded-xl border border-wo-border-subtle bg-wo-surface-raised p-3"
           data-testid="product-system-v2-structure-chips"
         >
           <TemplateConstructionStageRow
@@ -781,7 +781,7 @@ export function ProductSystemStructureReadonlyPanel({
             <div className="flex items-center gap-2">
               <Hammer className="h-5 w-5 shrink-0 text-purple-400" />
               <h3
-                className="text-[14px] font-bold text-slate-100"
+                className="text-[14px] font-bold text-wo-text-primary"
                 data-testid="product-system-v2-structure-title"
               >
                 Structură produs
@@ -790,7 +790,7 @@ export function ProductSystemStructureReadonlyPanel({
                 {visibleComponents.length}
               </span>
             </div>
-            <p className="mt-1 pl-7 text-[10px] text-slate-500">
+            <p className="mt-1 pl-7 text-[10px] text-wo-text-muted">
               {isVolumetricLettersTemplate(template.template_code)
                 ? `Față · Volum · Spate · LED → pagină detaliu. Finisaj produs ascuns (față/cant pe pașii lor). ${LETTERS_STRUCTURE_CARD_NOT_TASK_HELPER_RO}`
                 : "Componente template → selectare pe hartă."}

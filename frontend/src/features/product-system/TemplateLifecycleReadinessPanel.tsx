@@ -14,7 +14,7 @@ function statusClass(status: string): string {
   if (status === "OWNER_GATE_REQUIRED" || status === "PREVIEW_ONLY") {
     return "text-amber-200 border-amber-700/40 bg-amber-950/25";
   }
-  return "text-slate-300 border-slate-700/50 bg-slate-950/40";
+  return "text-wo-text-secondary border-slate-700/50 bg-slate-950/40";
 }
 
 export function TemplateLifecycleReadinessPanel({
@@ -51,7 +51,7 @@ export function TemplateLifecycleReadinessPanel({
 
   if (loading) {
     return (
-      <p className="text-sm text-slate-500" data-testid="product-system-lifecycle-loading">
+      <p className="text-sm text-wo-text-muted" data-testid="product-system-lifecycle-loading">
         Se încarcă lifecycle readiness…
       </p>
     );
@@ -75,15 +75,15 @@ export function TemplateLifecycleReadinessPanel({
   return (
     <section
       data-testid="product-system-lifecycle-readiness"
-      className="space-y-4 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-4 text-sm text-slate-200"
+      className="space-y-4 rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-4 py-4 text-sm text-wo-text-primary"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-muted">
             Lifecycle readiness
           </p>
-          <p className="mt-1 font-mono text-xs text-slate-400">{data.template_code}</p>
-          <p className="mt-1 text-[12px] text-slate-500">
+          <p className="mt-1 font-mono text-xs text-wo-text-muted">{data.template_code}</p>
+          <p className="mt-1 text-[12px] text-wo-text-muted">
             Derivare Product System — fără registry paralel. Read-only.
           </p>
         </div>
@@ -94,10 +94,10 @@ export function TemplateLifecycleReadinessPanel({
           >
             {data.lifecycle_status}
           </span>
-          <span className="text-[12px] text-slate-400" data-testid="product-system-lifecycle-score">
+          <span className="text-[12px] text-wo-text-muted" data-testid="product-system-lifecycle-score">
             Score: {data.readiness_score}/100
           </span>
-          <span className="text-[11px] text-slate-500">
+          <span className="text-[11px] text-wo-text-muted">
             Activare: {data.activation_eligible ? "eligibilă (gated)" : "blocată"}
           </span>
         </div>
@@ -106,7 +106,7 @@ export function TemplateLifecycleReadinessPanel({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[520px] border-collapse text-left text-[11px]">
           <thead>
-            <tr className="border-b border-slate-800 text-slate-500">
+            <tr className="border-b border-slate-800 text-wo-text-muted">
               <th className="py-1.5 pr-2 font-medium">Etapa</th>
               <th className="py-1.5 pr-2 font-medium">Status</th>
               <th className="py-1.5 pr-2 font-medium">Dovadă</th>
@@ -120,13 +120,13 @@ export function TemplateLifecycleReadinessPanel({
                 className="border-b border-slate-900/80"
                 data-testid={`product-system-lifecycle-stage-${stage.stage}`}
               >
-                <td className="py-1.5 pr-2 font-mono text-slate-300">{stage.stage}</td>
+                <td className="py-1.5 pr-2 font-mono text-wo-text-secondary">{stage.stage}</td>
                 <td className="py-1.5 pr-2">
                   <span className={`rounded border px-1.5 py-0.5 ${statusClass(stage.status)}`}>
                     {stage.status}
                   </span>
                 </td>
-                <td className="max-w-[220px] truncate py-1.5 pr-2 text-slate-500" title={stage.evidence.join(" | ")}>
+                <td className="max-w-[220px] truncate py-1.5 pr-2 text-wo-text-muted" title={stage.evidence.join(" | ")}>
                   {stage.evidence[0] ?? "—"}
                 </td>
                 <td className="py-1.5 text-rose-300/90">
@@ -139,10 +139,10 @@ export function TemplateLifecycleReadinessPanel({
       </div>
 
       <details className="rounded-lg border border-slate-800/60 px-3 py-2">
-        <summary className="cursor-pointer text-[12px] text-slate-400 hover:text-slate-200">
+        <summary className="cursor-pointer text-[12px] text-wo-text-muted hover:text-wo-text-primary">
           Owner gates ({data.owner_gates.length})
         </summary>
-        <ul className="mt-2 space-y-1 text-[11px] text-slate-400" data-testid="product-system-lifecycle-owner-gates">
+        <ul className="mt-2 space-y-1 text-[11px] text-wo-text-muted" data-testid="product-system-lifecycle-owner-gates">
           {data.owner_gates.length === 0 ? (
             <li>—</li>
           ) : (
@@ -156,13 +156,13 @@ export function TemplateLifecycleReadinessPanel({
       </details>
 
       <details className="rounded-lg border border-slate-800/60 px-3 py-2">
-        <summary className="cursor-pointer text-[12px] text-slate-400 hover:text-slate-200">
+        <summary className="cursor-pointer text-[12px] text-wo-text-muted hover:text-wo-text-primary">
           Impact / legacy ({(data.legacy_conflicts?.length ?? 0)} conflicts)
         </summary>
-        <div className="mt-2 space-y-2 text-[11px] text-slate-400" data-testid="product-system-lifecycle-impact">
+        <div className="mt-2 space-y-2 text-[11px] text-wo-text-muted" data-testid="product-system-lifecycle-impact">
           {data.impact_summary ? (
             <div>
-              <p className="text-slate-300">Changed: {data.impact_summary.changed}</p>
+              <p className="text-wo-text-secondary">Changed: {data.impact_summary.changed}</p>
               <p>Intake: {(data.impact_summary.affected_intake ?? []).join(", ") || "—"}</p>
               <p>
                 ProductDefinition:{" "}

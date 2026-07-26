@@ -165,7 +165,7 @@ function CompactMetadataPopover({
           setOpen(true);
         }}
         onKeyDown={(event) => event.stopPropagation()}
-        className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-700 bg-slate-900/70 text-slate-400 transition-colors hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+        className="flex h-7 w-7 items-center justify-center rounded-md border border-slate-700 bg-slate-900/70 text-wo-text-muted transition-colors hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
       >
         <Info className="h-3.5 w-3.5" />
       </button>
@@ -176,12 +176,12 @@ function CompactMetadataPopover({
           className="absolute right-0 top-8 z-30 w-56 rounded-lg border border-slate-700 bg-slate-950 p-3 text-[11px] shadow-xl shadow-black/40"
           onClick={(event) => event.stopPropagation()}
         >
-          <p className="mb-2 font-mono text-[10px] font-bold text-slate-300">{templateCode}</p>
+          <p className="mb-2 font-mono text-[10px] font-bold text-wo-text-secondary">{templateCode}</p>
           <dl className="space-y-1.5">
             {metadata.map(([term, value]) => (
               <div key={term} className="flex items-center justify-between gap-3">
-                <dt className="text-slate-500">{term}</dt>
-                <dd className="text-right font-bold text-slate-200">{value}</dd>
+                <dt className="text-wo-text-muted">{term}</dt>
+                <dd className="text-right font-bold text-wo-text-primary">{value}</dd>
               </div>
             ))}
           </dl>
@@ -231,15 +231,15 @@ function SharedComponentUsagePopover({
           className="absolute right-0 top-8 z-40 w-80 rounded-lg border border-slate-700 bg-slate-950 p-3 text-[11px] shadow-xl shadow-black/40"
           onClick={(event) => event.stopPropagation()}
         >
-          <p className="font-mono text-[10px] font-bold uppercase text-slate-500">Module produs</p>
+          <p className="font-mono text-[10px] font-bold uppercase text-wo-text-muted">Module produs</p>
           <p className="mt-0.5 font-mono text-[12px] font-bold text-cyan-100">{componentCode}</p>
           <p className="mt-1 font-mono text-[10px] text-cyan-200">Module produs: {sharedModuleCode}</p>
-          <p className="mt-3 text-[10px] font-bold uppercase text-slate-500">Folosita de</p>
+          <p className="mt-3 text-[10px] font-bold uppercase text-wo-text-muted">Folosita de</p>
           <div className="mt-1.5 space-y-1.5">
             {contract.bindings.map((binding) => (
               <div key={`${componentCode}-${binding.productTemplateCode}-${binding.profileKey}`} className="rounded-md border border-slate-800 bg-slate-900/70 px-2 py-1.5">
-                <p className="font-mono text-[10px] font-bold text-slate-100">{binding.productTemplateCode}</p>
-                <p className="mt-0.5 text-[10px] text-slate-400">
+                <p className="font-mono text-[10px] font-bold text-wo-text-primary">{binding.productTemplateCode}</p>
+                <p className="mt-0.5 text-[10px] text-wo-text-muted">
                   {binding.usageModeLabel} — {binding.workIntakeLabel}
                   {contract.componentKey === "volumetric_lighting" && binding.strategySourceTemplateCode ? ` — strategy: ${binding.strategySourceTemplateCode}` : ""}
                 </p>
@@ -469,9 +469,9 @@ function TemplateLibraryRow({
         }
       }}
       data-testid={`product-system-template-${template.template_code}`}
-      className={`bg-[#111827] border rounded-lg ${detailed ? "p-4" : "p-3"} cursor-pointer transition-all group ${
+      className={`bg-wo-surface-raised border rounded-lg ${detailed ? "p-4" : "p-3"} cursor-pointer transition-all group ${
         availability?.display_group === "active_products"
-          ? "border-[#1E293B] hover:border-purple-600/40 hover:bg-[#131B2E]"
+          ? "border-wo-border-subtle hover:border-purple-600/40 hover:bg-[#131B2E]"
           : "border-slate-800/80 hover:border-slate-600/50 hover:bg-[#131B2E]/80 opacity-90"
       } ${recommended ? "ring-1 ring-purple-500/30 border-purple-500/40" : ""}`}
     >
@@ -483,7 +483,7 @@ function TemplateLibraryRow({
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`${detailed ? "text-[14px]" : "text-[12px]"} font-mono font-bold text-slate-100 truncate`}>
+              <span className={`${detailed ? "text-[14px]" : "text-[12px]"} font-mono font-bold text-wo-text-primary truncate`}>
                 {template.template_code}
               </span>
               {detailed && recommended ? (
@@ -499,39 +499,39 @@ function TemplateLibraryRow({
                 className="text-[9px] uppercase"
               /> : null}
             </div>
-            <p className="text-[12px] text-slate-400 truncate mt-0.5">
+            <p className="text-[12px] text-wo-text-muted truncate mt-0.5">
               {template.family_name || "—"}
             </p>
-            {detailed ? <p className="text-[11px] text-slate-500 mt-1">{metricsLine}</p> : <p className="mt-1 text-[11px] font-bold text-slate-300">{compactStatusLabel}</p>}
+            {detailed ? <p className="text-[11px] text-wo-text-muted mt-1">{metricsLine}</p> : <p className="mt-1 text-[11px] font-bold text-wo-text-secondary">{compactStatusLabel}</p>}
             {!detailed && sharedContracts.length > 0 ? (
               <div data-testid={`product-system-template-compact-foundation-${template.template_code}`} className="mt-1 space-y-1 text-[9px] font-bold">
                 <div className="flex flex-wrap gap-1">
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared base: {sharedContracts.length}/6</span>
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">{MODULE_PRODUS_SHARED_LABEL}: {sharedContracts.length}/6</span>
-                  <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
-                  <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{scope?.workIntakeLabel ?? `Work Intake ${availability?.quote_offerable ? "DA" : "NU"}`}</span>
+                  <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Profile {sharedProfileLabel}</span>
+                  <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-wo-text-muted"}`}>{scope?.workIntakeLabel ?? `Work Intake ${availability?.quote_offerable ? "DA" : "NU"}`}</span>
                 </div>
                 {lightingStrategy?.strategy_source_template_code ? <p className="font-mono text-[9px] text-amber-200">{lightingStrategy.profile_key === "logo" ? "Lighting strategy/profile source" : "Lighting strategy source"}: {lightingStrategy.strategy_source_template_code}</p> : null}
-                <p className="font-mono text-[9px] text-slate-500">{MODULE_PRODUS_SHARED_LABEL}: {formatSharedModuleCodes()}</p>
+                <p className="font-mono text-[9px] text-wo-text-muted">{MODULE_PRODUS_SHARED_LABEL}: {formatSharedModuleCodes()}</p>
               </div>
             ) : null}
             {detailed ? (
               <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
-                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Module {moduleCount}</span>
-                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Validare {summary.validationPassed}/{summary.validationTotal}</span>
-                <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Module {moduleCount}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Validare {summary.validationPassed}/{summary.validationTotal}</span>
+                <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-wo-text-muted"}`}>Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</span>
                 {availability?.owner_decision_required ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">GO owner</span> : null}
               </div>
             ) : null}
             {detailed && sharedContracts.length > 0 ? (
               <div data-testid={`product-system-template-shared-foundation-${template.template_code}`} className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
                 <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">{MODULE_PRODUS_SHARED_LABEL}: {sharedContracts.length}/6</span>
-                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-wo-text-secondary">Profile {sharedProfileLabel}</span>
                 {hasLightingAudit && lightingStrategy?.strategy_source_template_code ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{lightingStrategy.profile_key === "logo" ? "Lighting strategy/profile source" : "Lighting strategy source"}: {lightingStrategy.strategy_source_template_code}</span> : null}
               </div>
             ) : null}
             {detailed && parentCodes.length > 0 ? (
-              <p className="text-[10px] text-slate-500 mt-1">
+              <p className="text-[10px] text-wo-text-muted mt-1">
                 Folosit de: {parentCodes.join(", ")}
               </p>
             ) : null}
@@ -539,7 +539,7 @@ function TemplateLibraryRow({
               <p className="text-[10px] text-emerald-300/90 mt-1">Apare in Work Intake</p>
             ) : null}
             {detailed && availability?.runtime_module ? (
-              <p className="text-[10px] text-slate-500 mt-1">Nu se alege direct in Work Intake</p>
+              <p className="text-[10px] text-wo-text-muted mt-1">Nu se alege direct in Work Intake</p>
             ) : null}
             {detailed && !availability?.runtime_module && scope?.forbiddenReason ? (
               <p className="text-[10px] text-amber-300/90 mt-1">
@@ -548,7 +548,7 @@ function TemplateLibraryRow({
               </p>
             ) : null}
             {detailed && (updated || created) && (
-              <p className="text-[10px] text-slate-600 mt-1">
+              <p className="text-[10px] text-wo-text-dim mt-1">
                 {updated ? `Actualizat: ${updated}` : null}
                 {updated && created ? " · " : null}
                 {created ? `Creat: ${created}` : null}
@@ -570,7 +570,7 @@ function TemplateLibraryRow({
               aria-expanded={compositionOpen}
               aria-label={`${compositionOpen ? "Ascunde" : "Afiseaza"} baza comuna volumetrica, ${SHARED_VOLUMETRIC_BASE_MODULES.length} module comune`}
               data-testid={`product-system-template-composition-trigger-${template.template_code}`}
-              className={`inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-900/70 text-[10px] font-bold text-slate-200 hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
+              className={`inline-flex items-center justify-center rounded-md border border-slate-700 bg-slate-900/70 text-[10px] font-bold text-wo-text-primary hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
                 detailed ? "gap-2 px-2 py-1" : "h-8 w-8 px-0 py-0"
               }`}
             >
@@ -602,7 +602,7 @@ function TemplateLibraryRow({
                 className={`w-8 h-8 rounded-md flex items-center justify-center border transition-colors ${
                   availability?.display_group === "active_products"
                     ? "bg-purple-500/10 border-purple-500/25 text-purple-300 group-hover:bg-purple-500/20 group-hover:border-purple-500/40"
-                    : "bg-slate-800/50 border-slate-700/60 text-slate-400 group-hover:bg-slate-800 group-hover:text-slate-300"
+                    : "bg-slate-800/50 border-slate-700/60 text-wo-text-muted group-hover:bg-slate-800 group-hover:text-wo-text-secondary"
                 }`}
               >
                 {availability?.display_group !== "archived_experimental" ? (
@@ -618,7 +618,7 @@ function TemplateLibraryRow({
           </Tooltip>
           {detailed ? <ChevronRight
             className={`w-4 h-4 transition-transform group-hover:translate-x-0.5 ${
-              quoteActive ? "text-purple-400" : "text-slate-600"
+              quoteActive ? "text-purple-400" : "text-wo-text-dim"
             }`}
           /> : null}
         </div>
@@ -630,15 +630,15 @@ function TemplateLibraryRow({
               {sharedBase ? (
                 <div data-testid={`product-system-template-shared-composition-${template.template_code}`} className="p-2.5 text-[11px]">
                   <p className="font-bold text-cyan-100">Shared volumetric base: 6 module comune</p>
-                  <p className="mt-1 text-slate-300">Modules: {formatSharedBaseModules()}</p>
+                  <p className="mt-1 text-wo-text-secondary">Modules: {formatSharedBaseModules()}</p>
                   {lightingStrategySource ? <p className="mt-1 font-mono text-[10px] text-amber-200">Lighting strategy source: {lightingStrategySource}</p> : null}
-                  <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</p>
+                  <p className="mt-1 text-[10px] font-bold text-wo-text-secondary">Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</p>
                   {scope?.isCandidateComposition ? <p className="mt-1 text-[10px] text-amber-200">Status: {scope.usageModeLabel} / {scope.workIntakeLabel}</p> : null}
-                  {lightingStrategy?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-slate-500">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
+                  {lightingStrategy?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-wo-text-muted">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)_auto] gap-2 border-b border-slate-800 px-2.5 py-1.5 text-[9px] font-bold uppercase text-slate-500">
+                  <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)_auto] gap-2 border-b border-slate-800 px-2.5 py-1.5 text-[9px] font-bold uppercase text-wo-text-muted">
                     <span>Rol</span>
                     <span>Module produs</span>
                     <span>Status</span>
@@ -650,12 +650,12 @@ function TemplateLibraryRow({
                         className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"
                       >
                         <div className="min-w-0">
-                          <p className="font-bold text-slate-100">{module.role_label}</p>
-                          {detailed && module.ui_hint ? <p className="mt-0.5 text-[10px] text-slate-500">{module.ui_hint}</p> : null}
+                          <p className="font-bold text-wo-text-primary">{module.role_label}</p>
+                          {detailed && module.ui_hint ? <p className="mt-0.5 text-[10px] text-wo-text-muted">{module.ui_hint}</p> : null}
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-[11px] text-slate-200">{humanTemplateName(module.module_template_code)}</p>
-                          <p className="mt-0.5 truncate font-mono text-[9px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                          <p className="truncate text-[11px] text-wo-text-primary">{humanTemplateName(module.module_template_code)}</p>
+                          <p className="mt-0.5 truncate font-mono text-[9px] text-wo-text-muted" title={MODULE_PRODUS_CODE_LABEL}>
                             {module.module_template_code}
                           </p>
                         </div>
@@ -998,12 +998,12 @@ export function TemplateLibraryView({
 
   return (
     <div className="space-y-3" data-testid="product-system-catalog-shell" data-density={density}>
-      <div className="rounded-lg border border-[#1E293B] bg-[#111827] px-3 py-2.5">
+      <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-[14px] font-bold text-slate-100">{shellContextLabel ?? "Product System Catalog"}</p>
+            <p className="text-[14px] font-bold text-wo-text-primary">{shellContextLabel ?? "Product System Catalog"}</p>
             {detailed ? (
-              <p className="mt-0.5 text-[11px] text-slate-500">
+              <p className="mt-0.5 text-[11px] text-wo-text-muted">
                 Catalog scalabil pentru produse, componente si compozitii.
               </p>
             ) : null}
@@ -1015,7 +1015,7 @@ export function TemplateLibraryView({
                 type="button"
                 data-testid={`product-system-density-${mode}`}
                 onClick={() => onDensityChange(mode)}
-                className={`rounded-md px-2 py-1 text-[10px] font-bold ${density === mode ? "bg-purple-500/20 text-purple-100" : "text-slate-500 hover:text-slate-300"}`}
+                className={`rounded-md px-2 py-1 text-[10px] font-bold ${density === mode ? "bg-purple-500/20 text-purple-100" : "text-wo-text-muted hover:text-wo-text-secondary"}`}
               >
                 {mode === "compact" ? "Compact" : "Detaliat"}
               </button>
@@ -1038,7 +1038,7 @@ export function TemplateLibraryView({
                 className={`rounded-md border px-2.5 py-1 text-[10px] font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
                   active
                     ? "border-purple-500/50 bg-purple-500/10 text-purple-100"
-                    : "border-slate-700 bg-slate-900/70 text-slate-300 hover:border-purple-500/30 hover:text-purple-200"
+                    : "border-slate-700 bg-slate-900/70 text-wo-text-secondary hover:border-purple-500/30 hover:text-purple-200"
                 }`}
               >
                 {view.label}{view.id !== "overview" ? ` ${count}` : ""}
@@ -1049,17 +1049,17 @@ export function TemplateLibraryView({
         )}
       </div>
 
-      <section className="rounded-lg border border-[#1E293B] bg-[#111827] p-3" data-testid={`product-system-view-${effectiveCatalogView}`}>
+      <section className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-3" data-testid={`product-system-view-${effectiveCatalogView}`}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 ref={headingRef} tabIndex={-1} className="text-[14px] font-bold text-slate-100 focus:outline-none">
+            <h2 ref={headingRef} tabIndex={-1} className="text-[14px] font-bold text-wo-text-primary focus:outline-none">
               {currentView.label}
             </h2>
-            {detailed ? <p className="mt-0.5 text-[11px] text-slate-500">
+            {detailed ? <p className="mt-0.5 text-[11px] text-wo-text-muted">
               {effectiveCatalogView === "overview" ? "Alege o zona pentru lucru. Overview-ul nu afiseaza toate componentele, ca sa ramana clar si rapid la volum mare." : currentView.description}
             </p> : null}
           </div>
-          <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-400">
+          <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-wo-text-muted">
             {allCatalogRows.length} catalog entries
           </span>
         </div>
@@ -1067,10 +1067,10 @@ export function TemplateLibraryView({
         {loading ? (
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2" />
-            <p className="text-[12px] text-slate-500">Se încarcă șabloanele…</p>
+            <p className="text-[12px] text-wo-text-muted">Se încarcă șabloanele…</p>
           </div>
         ) : allCatalogRows.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 text-[13px]">Nu există șabloane în registru.</div>
+          <div className="text-center py-12 text-wo-text-muted text-[13px]">Nu există șabloane în registru.</div>
         ) : effectiveCatalogView === "overview" ? (
           <div className="space-y-3">
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
@@ -1081,8 +1081,8 @@ export function TemplateLibraryView({
                 { id: "archived" as const, title: "Catalog entries", count: allCatalogRows.length, detail: "Total tehnic: produse, module backing si arhive", action: "Vezi catalog" },
               ].map((card) => (
                 <button key={card.id} type="button" onClick={() => onCatalogViewChange(card.id)} data-testid={`product-system-overview-card-${card.id}`} className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-left transition-colors hover:border-purple-500/40 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/40">
-                  <span className="flex items-center justify-between gap-2 text-[11px] font-bold text-slate-200"><span>{card.title}</span><span className="text-lg text-slate-100">{card.count}</span></span>
-                  {detailed ? <span className="mt-1 block text-[10px] text-slate-500">{card.detail}</span> : null}
+                  <span className="flex items-center justify-between gap-2 text-[11px] font-bold text-wo-text-primary"><span>{card.title}</span><span className="text-lg text-wo-text-primary">{card.count}</span></span>
+                  {detailed ? <span className="mt-1 block text-[10px] text-wo-text-muted">{card.detail}</span> : null}
                   <span className="mt-1 inline-flex text-[10px] font-bold text-purple-300">{card.action}</span>
                 </button>
               ))}
@@ -1096,8 +1096,8 @@ export function TemplateLibraryView({
                 </div>
                 <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">{sharedFoundationProductRows.length} produse conectate</span>
-                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">{sharedFoundationContractKeys.size} componente comune</span>
-                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">{sharedFoundationBindingCount} product usages</span>
+                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">{sharedFoundationContractKeys.size} componente comune</span>
+                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">{sharedFoundationBindingCount} product usages</span>
                   {sharedLightingModuleCode ? <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Lighting shared module: {sharedLightingModuleCode}</span> : null}
                   {sharedFoundationLightingPartial ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting profile needs Product Truth/runtime validation</span> : null}
                 </div>
@@ -1105,19 +1105,19 @@ export function TemplateLibraryView({
               <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
                 {hasOfferableSharedFoundationProduct ? <span className="rounded border border-emerald-700/40 bg-emerald-900/20 px-2 py-0.5 text-emerald-300">Letters: offerable</span> : null}
                 {hasCandidateSharedFoundationProduct ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Logo: candidate / not Work Intake</span> : null}
-                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Letters strategy source: TPL-VOLUMETRIC-LED_v1</span>
-                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1</span>
-                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Logo lighting profile is not a duplicated primary module</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">Letters strategy source: TPL-VOLUMETRIC-LED_v1</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">Logo lighting profile is not a duplicated primary module</span>
               </div>
             </div>
 
             <div className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2">
-              <p className="text-[12px] font-bold text-slate-200">Produse importante</p>
+              <p className="text-[12px] font-bold text-wo-text-primary">Produse importante</p>
               <div className="mt-2 grid gap-2 md:grid-cols-2">
                 {productRows.slice(0, 4).map(({ template, availability }) => (
                   <div key={template.id} className="rounded-md border border-slate-800 bg-slate-900/50 px-2.5 py-1.5">
-                    <p className="font-mono text-[11px] font-bold text-slate-100">{template.template_code}</p>
-                    {detailed ? <p className="mt-0.5 text-[10px] text-slate-500">{availability.ui_label}</p> : null}
+                    <p className="font-mono text-[11px] font-bold text-wo-text-primary">{template.template_code}</p>
+                    {detailed ? <p className="mt-0.5 text-[10px] text-wo-text-muted">{availability.ui_label}</p> : null}
                   </div>
                 ))}
               </div>
@@ -1126,15 +1126,15 @@ export function TemplateLibraryView({
         ) : (
           <div className="space-y-3">
             <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-center gap-2 bg-[#111827] rounded-md px-2.5 py-1.5 border border-[#1E293B] w-full max-w-md">
-                <Search className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                <input type="text" placeholder="Caută cod șablon, familie…" value={search} onChange={(e) => onSearchChange(e.target.value)} className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full" />
+              <div className="flex items-center gap-2 bg-wo-surface-raised rounded-md px-2.5 py-1.5 border border-wo-border-subtle w-full max-w-md">
+                <Search className="w-3.5 h-3.5 text-wo-text-muted shrink-0" />
+                <input type="text" placeholder="Caută cod șablon, familie…" value={search} onChange={(e) => onSearchChange(e.target.value)} className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full" />
               </div>
 
               {effectiveCatalogView === "products" ? (
                 <div className="flex flex-wrap gap-2">
                   {[["all", "Toate produsele"], ["offerable", "Ofertabile"], ["candidate", "In pregatire"], ["owner_go", "Necesita GO owner"]].map(([id, label]) => (
-                    <button key={id} type="button" onClick={() => setProductFilter(id as ProductFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${productFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
+                    <button key={id} type="button" onClick={() => setProductFilter(id as ProductFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${productFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-wo-text-muted"}`}>{label}</button>
                   ))}
                 </div>
               ) : null}
@@ -1142,9 +1142,9 @@ export function TemplateLibraryView({
               {effectiveCatalogView === "components" ? (
                 <div className="flex flex-wrap gap-2">
                   {[["contracts", "Module partajate"], ["technical", "Module tehnice"], ["all", "Toate"]].map(([id, label]) => (
-                    <button key={id} type="button" onClick={() => setComponentFilter(id as ComponentFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${componentFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
+                    <button key={id} type="button" onClick={() => setComponentFilter(id as ComponentFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${componentFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-wo-text-muted"}`}>{label}</button>
                   ))}
-                  <select aria-label="Filtru produs parinte" value={parentFilter} onChange={(event) => setParentFilter(event.target.value)} className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-300 outline-none">
+                  <select aria-label="Filtru produs parinte" value={parentFilter} onChange={(event) => setParentFilter(event.target.value)} className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-wo-text-secondary outline-none">
                     <option value="all">Toti parintii</option>
                     {parentOptions.map((code) => <option key={code} value={code}>{code}</option>)}
                   </select>
@@ -1154,14 +1154,14 @@ export function TemplateLibraryView({
 
             {effectiveCatalogView === "products" ? (
               <div className="space-y-2">
-                {detailed ? <p className="text-[11px] text-slate-500">Produse ofertabile și produse în pregătire. Modulele produs nu sunt afișate aici (vezi tab Module produs).</p> : null}
-                {searchedProductRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Niciun produs pentru filtrele curente.</div> : <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" data-testid="product-system-products-list">{searchedProductRows.map(renderTemplateRow)}</div>}
+                {detailed ? <p className="text-[11px] text-wo-text-muted">Produse ofertabile și produse în pregătire. Modulele produs nu sunt afișate aici (vezi tab Module produs).</p> : null}
+                {searchedProductRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-wo-text-muted">Niciun produs pentru filtrele curente.</div> : <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" data-testid="product-system-products-list">{searchedProductRows.map(renderTemplateRow)}</div>}
               </div>
             ) : null}
 
             {effectiveCatalogView === "components" ? (
               <div className="space-y-2">
-                {detailed ? <p className="text-[11px] text-slate-500">Modulele produs partajate sunt unitățile principale; Product Template-urile care le folosesc sunt sumarizate în iconul shared.</p> : null}
+                {detailed ? <p className="text-[11px] text-wo-text-muted">Modulele produs partajate sunt unitățile principale; Product Template-urile care le folosesc sunt sumarizate în iconul shared.</p> : null}
                 {(componentFilter === "contracts" || componentFilter === "all") && searchedSharedContractGroups.length > 0 ? (
                   <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3" data-testid="product-system-shared-contracts-list">
                     {searchedSharedContractGroups.map((contract) => {
@@ -1176,22 +1176,22 @@ export function TemplateLibraryView({
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
                               <p className="truncate font-mono text-[12px] font-bold text-cyan-100">{componentCode}</p>
-                              <p className="mt-0.5 truncate text-[11px] font-bold text-slate-200">{componentLabel}</p>
+                              <p className="mt-0.5 truncate text-[11px] font-bold text-wo-text-primary">{componentLabel}</p>
                             </div>
                             <SharedComponentUsagePopover contract={contract} sharedModuleCode={sharedModuleCode} />
                           </div>
                           <p className="mt-2 truncate font-mono text-[10px] text-cyan-200">Module produs principal: {sharedModuleCode}</p>
                           <div className="mt-2 flex flex-wrap gap-1.5 text-[9px] font-bold">
                             <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">shared</span>
-                            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">used by {contract.bindings.length} products</span>
-                            {detailed ? <span className={`rounded border px-2 py-0.5 ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span> : null}
+                            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">used by {contract.bindings.length} products</span>
+                            {detailed ? <span className={`rounded border px-2 py-0.5 ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-wo-text-secondary"}`}>{contract.confidence}</span> : null}
                           </div>
                           {detailed && lightingStrategies.length > 0 ? (
                             <div className="mt-2 space-y-0.5 text-[10px] text-amber-200">
                               {lightingStrategies.map((binding) => (
                                 <p key={`${componentCode}-${binding.profileKey}-strategy`} className="truncate font-mono">{binding.profileKey === "logo" ? "Logo" : "Letters"} strategy source: {binding.strategySourceTemplateCode}</p>
                               ))}
-                              <p className="text-slate-500">Logo lighting profile is strategy only, not a duplicated primary module.</p>
+                              <p className="text-wo-text-muted">Logo lighting profile is strategy only, not a duplicated primary module.</p>
                             </div>
                           ) : null}
                         </div>
@@ -1200,29 +1200,29 @@ export function TemplateLibraryView({
                   </div>
                 ) : null}
                 {(componentFilter === "technical" || componentFilter === "all") && searchedComponentRows.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio componenta pentru filtrele curente.</div>
+                  <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-wo-text-muted">Nicio componenta pentru filtrele curente.</div>
                 ) : null}
                 {(componentFilter === "technical" || componentFilter === "all") && searchedComponentRows.length > 0 ? (
                   <div className="overflow-hidden rounded-lg border border-slate-800" data-testid="product-system-components-list">
-                    <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)_minmax(0,0.9fr)_minmax(0,1.25fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[9px] font-bold uppercase text-slate-500"><span>Rol / label</span><span>Template code</span><span>Folosit de</span><span>Contract comun</span><span>Status</span></div>
+                    <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)_minmax(0,0.9fr)_minmax(0,1.25fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[9px] font-bold uppercase text-wo-text-muted"><span>Rol / label</span><span>Template code</span><span>Folosit de</span><span>Contract comun</span><span>Status</span></div>
                     <div className="divide-y divide-slate-800/80">
                       {searchedComponentRows.map(({ template, availability }) => {
                         const parents = availability.parent_product_codes.length > 0 ? availability.parent_product_codes : availability.parent_codes;
                         const foundation = sharedFoundationByModule.get(normalizeTemplateCode(template.template_code));
                         return (
                           <div key={template.id} data-testid={`product-system-component-row-${template.template_code}`} className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)_minmax(0,0.9fr)_minmax(0,1.25fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]">
-                            <span className="min-w-0 font-bold text-slate-100">{availability.ui_label}</span>
-                            <span className="min-w-0 truncate font-mono text-[10px] text-slate-400">{template.template_code}</span>
-                            <span className="min-w-0 truncate text-[10px] text-slate-500">{parents.length > 0 ? parents.join(", ") : "Necunoscut"}</span>
+                            <span className="min-w-0 font-bold text-wo-text-primary">{availability.ui_label}</span>
+                            <span className="min-w-0 truncate font-mono text-[10px] text-wo-text-muted">{template.template_code}</span>
+                            <span className="min-w-0 truncate text-[10px] text-wo-text-muted">{parents.length > 0 ? parents.join(", ") : "Necunoscut"}</span>
                             {foundation ? (
-                              <span data-testid={`product-system-component-foundation-${template.template_code}`} className="min-w-0 text-[10px] text-slate-300">
+                              <span data-testid={`product-system-component-foundation-${template.template_code}`} className="min-w-0 text-[10px] text-wo-text-secondary">
                                 <span className="font-mono font-bold text-cyan-200">{foundation.componentKey}</span>
-                                <span className="block text-slate-500">Profil: {foundation.profileKey}</span>
+                                <span className="block text-wo-text-muted">Profil: {foundation.profileKey}</span>
                               </span>
                             ) : (
-                              <span className="text-[10px] text-slate-600">Fara contract comun</span>
+                              <span className="text-[10px] text-wo-text-dim">Fara contract comun</span>
                             )}
-                            <span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">{availability.ui_label}</span>
+                            <span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-wo-text-secondary">{availability.ui_label}</span>
                           </div>
                         );
                       })}
@@ -1234,42 +1234,42 @@ export function TemplateLibraryView({
 
             {effectiveCatalogView === "composition" ? (
               <div className="space-y-2" data-testid="product-system-composition-list">
-                {detailed ? <p className="text-[11px] text-slate-500">Model principal: shared volumetric base. Backing bindings raman tehnice/istorice.</p> : null}
-                {searchedCompositionRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio compozitie pentru cautarea curenta.</div> : searchedCompositionRows.map(({ template, availability }) => {
+                {detailed ? <p className="text-[11px] text-wo-text-muted">Model principal: shared volumetric base. Backing bindings raman tehnice/istorice.</p> : null}
+                {searchedCompositionRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-wo-text-muted">Nicio compozitie pentru cautarea curenta.</div> : searchedCompositionRows.map(({ template, availability }) => {
                   const scope = getProductTemplateScopePresentation(availability);
 
                   return (
                     <div key={template.id} className="rounded-lg border border-slate-800 bg-slate-900/40 p-2.5">
-                      <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[12px] font-bold text-slate-100">{template.template_code}</p><p className="mt-0.5 text-[10px] text-slate-500">{availability.ui_label}</p></div><span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2 py-1 text-[10px] font-bold text-cyan-200">Shared base: 6/6</span></div>
+                      <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[12px] font-bold text-wo-text-primary">{template.template_code}</p><p className="mt-0.5 text-[10px] text-wo-text-muted">{availability.ui_label}</p></div><span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2 py-1 text-[10px] font-bold text-cyan-200">Shared base: 6/6</span></div>
                       {hasSharedVolumetricBase(availability) ? (
                         <div data-testid={`product-system-composition-shared-base-${template.template_code}`} className="mt-2 rounded-lg border border-cyan-900/40 bg-cyan-950/10 px-2.5 py-2 text-[11px]">
                           <p className="font-bold text-cyan-100">Shared volumetric base: 6 module comune</p>
-                          <p className="mt-1 text-slate-300">Modules: {formatSharedBaseModules()}</p>
+                          <p className="mt-1 text-wo-text-secondary">Modules: {formatSharedBaseModules()}</p>
                           {getLightingStrategySource(availability) ? <p className="mt-1 font-mono text-[10px] text-amber-200">Lighting strategy source: {getLightingStrategySource(availability)}</p> : null}
-                          <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {scope.workIntakeLabel.replace("Work Intake ", "")}</p>
+                          <p className="mt-1 text-[10px] font-bold text-wo-text-secondary">Work Intake: {scope.workIntakeLabel.replace("Work Intake ", "")}</p>
                           {scope.isCandidateComposition ? <p className="mt-1 text-[10px] text-amber-200">Status: {scope.usageModeLabel} / {scope.workIntakeLabel}</p> : null}
-                          {getLightingStrategyBinding(availability.shared_component_contracts)?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-slate-500">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
+                          {getLightingStrategyBinding(availability.shared_component_contracts)?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-wo-text-muted">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
                         </div>
-                      ) : availability.composition_modules.length === 0 ? <div className="mt-3 rounded-lg border border-dashed border-slate-700 bg-slate-950/40 px-3 py-3 text-[11px] text-slate-500">Produsul nu are compozitie expusa in API.</div> : (
+                      ) : availability.composition_modules.length === 0 ? <div className="mt-3 rounded-lg border border-dashed border-slate-700 bg-slate-950/40 px-3 py-3 text-[11px] text-wo-text-muted">Produsul nu are compozitie expusa in API.</div> : (
                         detailed ? <div className="mt-2 divide-y divide-slate-800 overflow-hidden rounded-lg border border-slate-800">
                           {availability.composition_modules.map((module) => (
                             <div
                               key={`${template.template_code}-${module.role_key}-${module.module_template_code}`}
                               className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"
                             >
-                              <span className="font-bold text-slate-100">{module.role_label}</span>
+                              <span className="font-bold text-wo-text-primary">{module.role_label}</span>
                               <div className="min-w-0">
-                                <span className="block truncate text-slate-200">{humanTemplateName(module.module_template_code)}</span>
-                                <span className="mt-0.5 block truncate font-mono text-[9px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                                <span className="block truncate text-wo-text-primary">{humanTemplateName(module.module_template_code)}</span>
+                                <span className="mt-0.5 block truncate font-mono text-[9px] text-wo-text-muted" title={MODULE_PRODUS_CODE_LABEL}>
                                   {module.module_template_code}
                                 </span>
                               </div>
-                              <span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-slate-300">
+                              <span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-wo-text-secondary">
                                 {module.status_label ?? (module.is_required ? "Modul intern activ" : "Optional / conditionat")}
                               </span>
                             </div>
                           ))}
-                        </div> : <p className="mt-2 text-[11px] text-slate-300">{availability.composition_modules.map((module) => module.role_label).join(" | ")}</p>
+                        </div> : <p className="mt-2 text-[11px] text-wo-text-secondary">{availability.composition_modules.map((module) => module.role_label).join(" | ")}</p>
                       )}
                     </div>
                   );
@@ -1279,8 +1279,8 @@ export function TemplateLibraryView({
 
             {effectiveCatalogView === "archived" ? (
               <div className="space-y-3" data-testid="product-system-archived-list">
-                <p className="text-[11px] text-slate-500">Template-uri scoase din flow activ sau pastrate pentru analiza.</p>
-                {searchedArchivedRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nu exista template-uri arhivate sau experimentale in catalogul curent.</div> : <div className="space-y-2">{searchedArchivedRows.map(renderTemplateRow)}</div>}
+                <p className="text-[11px] text-wo-text-muted">Template-uri scoase din flow activ sau pastrate pentru analiza.</p>
+                {searchedArchivedRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-wo-text-muted">Nu exista template-uri arhivate sau experimentale in catalogul curent.</div> : <div className="space-y-2">{searchedArchivedRows.map(renderTemplateRow)}</div>}
               </div>
             ) : null}
           </div>

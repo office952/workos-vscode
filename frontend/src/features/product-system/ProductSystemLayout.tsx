@@ -25,7 +25,7 @@ function ProductSystemLayoutInner() {
     <div className="space-y-3" data-testid="product-system-shell" data-workspace="blank">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h1
-          className="text-base font-bold text-slate-100"
+          className="text-base font-bold text-wo-text-primary"
           data-testid="product-system-shell-title"
         >
           Product System
@@ -37,7 +37,7 @@ function ProductSystemLayoutInner() {
       </header>
 
       {showSectionNav ? (
-        <div className="border-b border-slate-800/70 pb-0.5">
+        <div className="border-b border-wo-border-subtle pb-0.5">
           <nav
             aria-label="Product System sections"
             className="flex flex-wrap gap-1"
@@ -53,8 +53,8 @@ function ProductSystemLayoutInner() {
                 className={({ isActive }) =>
                   `inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
                     isActive
-                      ? "border border-b-0 border-[#1E293B] bg-[#111827] text-slate-100"
-                      : "text-slate-500 hover:text-slate-300"
+                      ? "border border-b-0 border-wo-border-subtle bg-wo-surface-raised text-wo-text-primary"
+                      : "text-wo-text-muted hover:text-wo-text-secondary"
                   }`
                 }
               >

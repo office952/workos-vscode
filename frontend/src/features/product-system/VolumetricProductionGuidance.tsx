@@ -14,7 +14,7 @@ export const VOLUMETRIC_PRODUCTION_FLOW_ONE_LINE =
 export function VolumetricProductionFlowSummary() {
   return (
     <div className="rounded-lg border border-blue-800/25 bg-blue-950/15 px-3 py-2">
-      <p className="text-[10px] text-slate-400 leading-relaxed">
+      <p className="text-[10px] text-wo-text-muted leading-relaxed">
         <span className="font-bold uppercase tracking-wide text-blue-300/90">Flux: </span>
         {VOLUMETRIC_PRODUCTION_FLOW_ONE_LINE}
       </p>
@@ -38,7 +38,7 @@ export function VolumetricProductionGuidancePanel({ compact = false }: { compact
           Flux producție · litere volumetrice
         </p>
         {!compact && (
-          <p className="text-[9px] text-slate-500 mt-0.5 leading-relaxed">
+          <p className="text-[9px] text-wo-text-muted mt-0.5 leading-relaxed">
             Referință operator — valorile concrete (651, 8500, RAL) se iau din specificația intake / ofertă.
           </p>
         )}
@@ -46,8 +46,8 @@ export function VolumetricProductionGuidancePanel({ compact = false }: { compact
       <ul className="space-y-2">
         {VOLUMETRIC_PRODUCTION_RULES.map((rule) => (
           <li key={rule.title} className="text-[10px] leading-relaxed">
-            <span className="font-semibold text-slate-200">{rule.title}: </span>
-            <span className="text-slate-400">{rule.body}</span>
+            <span className="font-semibold text-wo-text-primary">{rule.title}: </span>
+            <span className="text-wo-text-muted">{rule.body}</span>
           </li>
         ))}
       </ul>
@@ -79,7 +79,7 @@ export function VolumetricComponentProductionHint({
   const hint = VOLUMETRIC_COMPONENT_PRODUCTION_HINTS[componentId];
   if (!hint) return null;
   return (
-    <p className="text-[10px] text-blue-300/90 leading-relaxed px-1 pb-1 border-b border-[#1E293B]/80 mb-2">
+    <p className="text-[10px] text-blue-300/90 leading-relaxed px-1 pb-1 border-b border-wo-border-subtle mb-2">
       {hint}
     </p>
   );
@@ -127,7 +127,7 @@ export function VolumetricCantProductionModulesPanel({
         <p className="text-[10px] font-bold uppercase tracking-wide text-cyan-300">
           Modularitate producere cant
         </p>
-        <p className="mt-1 text-[10px] leading-relaxed text-slate-400">
+        <p className="mt-1 text-[10px] leading-relaxed text-wo-text-muted">
           Audit live pe traseele de cant pentru șablonul volumetric, derivat din operațiile și materialele deja definite în template.
         </p>
       </div>
@@ -136,13 +136,13 @@ export function VolumetricCantProductionModulesPanel({
         {modules.map((module) => (
           <div
             key={module.key}
-            className="rounded-lg border border-[#1E293B] bg-[#0A0F1C] px-3 py-2.5"
+            className="rounded-lg border border-wo-border-subtle bg-wo-surface-inset px-3 py-2.5"
             data-testid={`volumetric-cant-module-${module.key}`}
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[11px] font-semibold text-slate-100">{module.title}</p>
-                <p className="mt-0.5 text-[10px] leading-relaxed text-slate-400">
+                <p className="text-[11px] font-semibold text-wo-text-primary">{module.title}</p>
+                <p className="mt-0.5 text-[10px] leading-relaxed text-wo-text-muted">
                   {module.appliesWhen}
                 </p>
               </div>
@@ -153,24 +153,24 @@ export function VolumetricCantProductionModulesPanel({
               </span>
             </div>
 
-            <p className="mt-2 text-[10px] leading-relaxed text-slate-300">
-              <span className="font-semibold text-slate-200">Secvență:</span> {module.sequencing}
+            <p className="mt-2 text-[10px] leading-relaxed text-wo-text-secondary">
+              <span className="font-semibold text-wo-text-primary">Secvență:</span> {module.sequencing}
             </p>
 
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
               <div>
-                <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                <p className="text-[9px] font-semibold uppercase tracking-wide text-wo-text-muted">
                   Operații cerute
                 </p>
-                <p className="mt-1 text-[10px] text-slate-300 font-mono break-words">
+                <p className="mt-1 text-[10px] text-wo-text-secondary font-mono break-words">
                   {module.operationCodes.join(", ")}
                 </p>
               </div>
               <div>
-                <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+                <p className="text-[9px] font-semibold uppercase tracking-wide text-wo-text-muted">
                   Materiale cerute
                 </p>
-                <p className="mt-1 text-[10px] text-slate-300 font-mono break-words">
+                <p className="mt-1 text-[10px] text-wo-text-secondary font-mono break-words">
                   {module.materialCodes.join(", ")}
                 </p>
               </div>

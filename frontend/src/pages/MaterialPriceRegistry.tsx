@@ -68,7 +68,7 @@ const STATUS_CONFIG: Record<
   active: { label: "Activ", textCls: "text-emerald-400", dotCls: "bg-emerald-500", icon: CheckCircle2 },
   missing_price: { label: "Preț lipsă", textCls: "text-amber-400", dotCls: "bg-amber-500", icon: AlertTriangle },
   needs_owner_input: { label: "Necesită input", textCls: "text-orange-400", dotCls: "bg-orange-500", icon: Clock },
-  archived: { label: "Arhivat", textCls: "text-slate-500", dotCls: "bg-slate-600", icon: Archive },
+  archived: { label: "Arhivat", textCls: "text-wo-text-muted", dotCls: "bg-slate-600", icon: Archive },
 };
 
 const STATUS_OPTIONS = [
@@ -327,12 +327,12 @@ function ProductSystemBadge({ ready }: { ready: boolean }) {
       <ShieldCheck className="w-2.5 h-2.5 mr-0.5" />Ready
     </Badge>
   ) : (
-    <Badge variant="outline" className="px-1.5 py-0 text-[10px] font-medium border-slate-700/50 bg-slate-800/30 text-slate-500">Blocked</Badge>
+    <Badge variant="outline" className="px-1.5 py-0 text-[10px] font-medium border-slate-700/50 bg-slate-800/30 text-wo-text-muted">Blocked</Badge>
   );
 }
 
 function StatusBadge({ status }: { status?: string | null }) {
-  const cfg = STATUS_CONFIG[status ?? ""] ?? { label: status ?? "\u2014", textCls: "text-slate-400", dotCls: "bg-slate-500", icon: Info };
+  const cfg = STATUS_CONFIG[status ?? ""] ?? { label: status ?? "\u2014", textCls: "text-wo-text-muted", dotCls: "bg-slate-500", icon: Info };
   return (
     <Badge variant="outline" className={`inline-flex items-center gap-1 border-slate-700/50 bg-slate-800/30 px-1.5 py-0 text-[10px] font-semibold ${cfg.textCls}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${cfg.dotCls}`} />
@@ -364,24 +364,24 @@ function ReadyBadge({ ready }: { ready: boolean }) {
 // ── Form components ───────────────────────────────────────────────────────────
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1">{children}</label>;
+  return <label className="block text-[11px] font-semibold uppercase tracking-wide text-wo-text-muted mb-1">{children}</label>;
 }
 
 function FieldInput({ value, onChange, placeholder, type = "text", readOnly }: { value: string; onChange?: (v: string) => void; placeholder?: string; type?: string; readOnly?: boolean }) {
   return (
     <Input type={type} value={value} readOnly={readOnly} onChange={readOnly ? undefined : (e) => onChange?.(e.target.value)} placeholder={placeholder}
-      className={`w-full bg-[#0D1321] border-[#2A3548] text-[13px] text-slate-200 placeholder:text-slate-600 focus:border-blue-500 ${readOnly ? "opacity-60 cursor-default" : ""}`} />
+      className={`w-full bg-wo-surface-inset border-wo-border-strong text-[13px] text-wo-text-primary placeholder:text-wo-text-dim focus:border-blue-500 ${readOnly ? "opacity-60 cursor-default" : ""}`} />
   );
 }
 
 function FieldTextarea({ value, onChange, placeholder, rows = 2 }: { value: string; onChange: (v: string) => void; placeholder?: string; rows?: number }) {
-  return <Textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={rows} className="w-full min-h-0 bg-[#0D1321] border-[#2A3548] text-[13px] text-slate-200 placeholder:text-slate-600 focus:border-blue-500 resize-none" />;
+  return <Textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={rows} className="w-full min-h-0 bg-wo-surface-inset border-wo-border-strong text-[13px] text-wo-text-primary placeholder:text-wo-text-dim focus:border-blue-500 resize-none" />;
 }
 
 function FieldSelect({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: { value: string; label: string }[] }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full bg-[#0D1321] border-[#2A3548] text-[13px] text-slate-200"><SelectValue /></SelectTrigger>
+      <SelectTrigger className="w-full bg-wo-surface-inset border-wo-border-strong text-[13px] text-wo-text-primary"><SelectValue /></SelectTrigger>
       <SelectContent>{options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
     </Select>
   );
@@ -394,24 +394,24 @@ function PriceHistoryPanel({ code, refreshToken }: { code: string; refreshToken:
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => { setLoading(true); setError(null); inventoryMaterialsAdminApi.priceHistory(code).then(setEntries).catch((err) => setError(err instanceof Error ? err.message : "Eroare")).finally(() => setLoading(false)); }, [code, refreshToken]);
-  if (loading) return <div className="flex items-center gap-2 py-4 text-slate-500 text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103 istoricul...</div>;
+  if (loading) return <div className="flex items-center gap-2 py-4 text-wo-text-muted text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103 istoricul...</div>;
   if (error) return <div className="flex items-center gap-2 py-3 text-red-400 text-[12px]"><AlertTriangle className="w-4 h-4" />{error}</div>;
-  if (entries.length === 0) return <p className="text-[12px] text-slate-600 py-3 italic">Nu exist\u0103 intr\u0103ri \u00een istoricul de pre\u021buri.</p>;
+  if (entries.length === 0) return <p className="text-[12px] text-wo-text-dim py-3 italic">Nu exist\u0103 intr\u0103ri \u00een istoricul de pre\u021buri.</p>;
   return (
     <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
       {entries.map((e) => (
-        <Card key={e.id} className="border-[#2A3548] bg-[#0D1321]">
+        <Card key={e.id} className="border-wo-border-strong bg-wo-surface-inset">
           <CardContent className="px-3 py-2 text-[12px]">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-slate-500 text-[11px]">{fmtDateTime(e.changed_at ?? e.created_at)}</span>
-              {e.changed_by && <span className="text-slate-600 text-[10px]">by {e.changed_by}</span>}
+              <span className="text-wo-text-muted text-[11px]">{fmtDateTime(e.changed_at ?? e.created_at)}</span>
+              {e.changed_by && <span className="text-wo-text-dim text-[10px]">by {e.changed_by}</span>}
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-              {(e.old_unit_cost != null || e.new_unit_cost != null || e.unit_cost != null) && (<><span className="text-slate-500">Cost:</span><span className="text-slate-300">{e.old_unit_cost != null || e.new_unit_cost != null ? `${fmtCost(e.old_unit_cost)} \u2192 ${fmtCost(e.new_unit_cost, e.new_currency ?? e.old_currency)}` : fmtCost(e.unit_cost, e.currency)}</span></>)}
-              {(e.old_vat_percent != null || e.new_vat_percent != null || e.vat_percent != null) && (<><span className="text-slate-500">TVA:</span><span className="text-slate-300">{e.old_vat_percent != null || e.new_vat_percent != null ? `${fmtVat(e.old_vat_percent)} \u2192 ${fmtVat(e.new_vat_percent)}` : fmtVat(e.vat_percent)}</span></>)}
-              {(e.old_valid_from != null || e.new_valid_from != null || e.valid_from != null) && (<><span className="text-slate-500">Valid from:</span><span className="text-slate-300">{e.old_valid_from != null || e.new_valid_from != null ? `${fmtDate(e.old_valid_from)} \u2192 ${fmtDate(e.new_valid_from)}` : fmtDate(e.valid_from)}</span></>)}
+              {(e.old_unit_cost != null || e.new_unit_cost != null || e.unit_cost != null) && (<><span className="text-wo-text-muted">Cost:</span><span className="text-wo-text-secondary">{e.old_unit_cost != null || e.new_unit_cost != null ? `${fmtCost(e.old_unit_cost)} \u2192 ${fmtCost(e.new_unit_cost, e.new_currency ?? e.old_currency)}` : fmtCost(e.unit_cost, e.currency)}</span></>)}
+              {(e.old_vat_percent != null || e.new_vat_percent != null || e.vat_percent != null) && (<><span className="text-wo-text-muted">TVA:</span><span className="text-wo-text-secondary">{e.old_vat_percent != null || e.new_vat_percent != null ? `${fmtVat(e.old_vat_percent)} \u2192 ${fmtVat(e.new_vat_percent)}` : fmtVat(e.vat_percent)}</span></>)}
+              {(e.old_valid_from != null || e.new_valid_from != null || e.valid_from != null) && (<><span className="text-wo-text-muted">Valid from:</span><span className="text-wo-text-secondary">{e.old_valid_from != null || e.new_valid_from != null ? `${fmtDate(e.old_valid_from)} \u2192 ${fmtDate(e.new_valid_from)}` : fmtDate(e.valid_from)}</span></>)}
             </div>
-            <p className="mt-1 text-slate-400 text-[11px] italic">Motiv: {e.change_reason && e.change_reason.trim() ? e.change_reason : "No reason recorded"}</p>
+            <p className="mt-1 text-wo-text-muted text-[11px] italic">Motiv: {e.change_reason && e.change_reason.trim() ? e.change_reason : "No reason recorded"}</p>
           </CardContent>
         </Card>
       ))}
@@ -424,23 +424,23 @@ function SourceReviewAuditPanel({ code, refreshToken }: { code: string; refreshT
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => { setLoading(true); setError(null); inventoryMaterialsAdminApi.sourceReviewAudit(code).then(setEntries).catch((err) => setError(err instanceof Error ? err.message : "Eroare")).finally(() => setLoading(false)); }, [code, refreshToken]);
-  if (loading) return <div className="flex items-center gap-2 py-4 text-slate-500 text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103 auditul...</div>;
+  if (loading) return <div className="flex items-center gap-2 py-4 text-wo-text-muted text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103 auditul...</div>;
   if (error) return <div className="flex items-center gap-2 py-3 text-red-400 text-[12px]"><AlertTriangle className="w-4 h-4" />{error}</div>;
-  if (entries.length === 0) return <p className="text-[12px] text-slate-600 py-3 italic">No source review audit yet.</p>;
+  if (entries.length === 0) return <p className="text-[12px] text-wo-text-dim py-3 italic">No source review audit yet.</p>;
   return (
     <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
       {entries.map((entry) => (
-        <Card key={entry.id} className="border-[#2A3548] bg-[#0D1321]">
+        <Card key={entry.id} className="border-wo-border-strong bg-wo-surface-inset">
           <CardContent className="px-3 py-2 text-[12px]">
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-slate-500 text-[11px]">{fmtDateTime(entry.created_at)}</span>
-              <span className="text-slate-600 text-[10px]">by {entry.actor ?? "\u2014"}</span>
+              <span className="text-wo-text-muted text-[11px]">{fmtDateTime(entry.created_at)}</span>
+              <span className="text-wo-text-dim text-[10px]">by {entry.actor ?? "\u2014"}</span>
             </div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-              <span className="text-slate-500">Status:</span>
-              <span className="text-slate-300">{entry.old_status ?? "\u2014"} \u2192 {entry.new_status ?? "\u2014"}</span>
+              <span className="text-wo-text-muted">Status:</span>
+              <span className="text-wo-text-secondary">{entry.old_status ?? "\u2014"} \u2192 {entry.new_status ?? "\u2014"}</span>
             </div>
-            <p className="mt-1 text-slate-400 text-[11px] italic">Motiv: {entry.reason && entry.reason.trim() ? entry.reason : "No reason recorded"}</p>
+            <p className="mt-1 text-wo-text-muted text-[11px] italic">Motiv: {entry.reason && entry.reason.trim() ? entry.reason : "No reason recorded"}</p>
           </CardContent>
         </Card>
       ))}
@@ -506,17 +506,17 @@ function EditDrawer({ material, policy, open, onClose, onSaved }: { material: In
 
   return (
     <Sheet open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <SheetContent side="right" className="w-[520px] max-w-full bg-[#0D1321] border-l border-[#1E293B] text-slate-200 overflow-y-auto p-0">
-        <SheetHeader className="px-6 py-4 border-b border-[#1E293B]">
-          <SheetTitle className="text-[15px] font-semibold text-slate-100 flex items-center gap-2">
+      <SheetContent side="right" className="w-[520px] max-w-full bg-wo-surface-inset border-l border-wo-border-subtle text-wo-text-primary overflow-y-auto p-0">
+        <SheetHeader className="px-6 py-4 border-b border-wo-border-subtle">
+          <SheetTitle className="text-[15px] font-semibold text-wo-text-primary flex items-center gap-2">
             <span>{material.code}</span><StatusBadge status={material.status} />{incomplete && <IncompleteBadge />}
           </SheetTitle>
-          <p className="text-[12px] text-slate-500 mt-0.5 truncate">{material.name}</p>
-          <SheetDescription className="text-[11px] text-slate-500">Edit material pricing, source metadata and governance fields.</SheetDescription>
+          <p className="text-[12px] text-wo-text-muted mt-0.5 truncate">{material.name}</p>
+          <SheetDescription className="text-[11px] text-wo-text-muted">Edit material pricing, source metadata and governance fields.</SheetDescription>
         </SheetHeader>
         <div className="px-6 py-4 space-y-5">
           {incomplete && (<div className="flex items-start gap-2 p-3 rounded-md bg-red-900/15 border border-red-800/40 text-[12px] text-red-300"><AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" /><span>Material activ cu date de pre\u021bare incomplete.</span></div>)}
-          <Card className="border-[#2A3548] bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Identity</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
+          <Card className="border-wo-border-strong bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-wo-text-muted">Identity</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
             <div className="grid grid-cols-2 gap-3"><div><FieldLabel>Cod</FieldLabel><FieldInput value={material.code} readOnly /></div><div><FieldLabel>Unitate</FieldLabel><FieldInput value={material.unit ?? "\u2014"} readOnly /></div></div>
             <div><FieldLabel>Categorie</FieldLabel><FieldInput value={material.category ?? "\u2014"} readOnly /></div>
             <div><FieldLabel>Subcategorie</FieldLabel><FieldInput value={form.subcategory} onChange={(v) => update("subcategory", v)} placeholder={suggestedSubcategory ?? "Subcategorie"} /></div>
@@ -529,16 +529,16 @@ function EditDrawer({ material, policy, open, onClose, onSaved }: { material: In
             </div>
           </CardContent></Card>
 
-          <Card className="border-[#2A3548] bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Pre\u021bare \u2014 cost achizi\u021bie / produc\u021bie</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
-            <p className="text-[11px] text-slate-600">unit_cost = cost achizi\u021bie/produc\u021bie. Adaosul comercial se configureaz\u0103 separat.</p>
+          <Card className="border-wo-border-strong bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-wo-text-muted">Pre\u021bare \u2014 cost achizi\u021bie / produc\u021bie</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
+            <p className="text-[11px] text-wo-text-dim">unit_cost = cost achizi\u021bie/produc\u021bie. Adaosul comercial se configureaz\u0103 separat.</p>
             <div className="grid grid-cols-2 gap-3"><div><FieldLabel>Cost unitar (f\u0103r\u0103 TVA)</FieldLabel><FieldInput value={form.unit_cost} onChange={(v) => update("unit_cost", v)} placeholder="12.50" /></div><div><FieldLabel>Moned\u0103</FieldLabel><FieldInput value={form.currency} onChange={(v) => update("currency", v)} placeholder="RON" /></div></div>
             <div className="grid grid-cols-2 gap-3"><div><FieldLabel>TVA (%)</FieldLabel><FieldInput value={form.vat_percent} onChange={(v) => update("vat_percent", v)} placeholder="19" /></div><div><FieldLabel>Valabil de la</FieldLabel><FieldInput value={form.valid_from} onChange={(v) => update("valid_from", v)} type="date" /></div></div>
             <div><FieldLabel>Status</FieldLabel><FieldSelect value={form.status} onChange={(v) => update("status", v)} options={STATUS_OPTIONS.filter((o) => o.value !== "all")} /></div>
             <div><FieldLabel>Furnizor</FieldLabel><FieldInput value={form.supplier} onChange={(v) => update("supplier", v)} placeholder="Furnizor" /></div>
           </CardContent></Card>
 
-          <Card className="border-[#2A3548] bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Surs\u0103 de verificare</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
-            <p className="text-[11px] text-slate-600">Sursa este referin\u021b\u0103 de verificare, nu actualizeaz\u0103 automat pre\u021bul activ.</p>
+          <Card className="border-wo-border-strong bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-wo-text-muted">Surs\u0103 de verificare</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
+            <p className="text-[11px] text-wo-text-dim">Sursa este referin\u021b\u0103 de verificare, nu actualizeaz\u0103 automat pre\u021bul activ.</p>
             <div><FieldLabel>Surs\u0103 (denumire)</FieldLabel><FieldInput value={form.source_name} onChange={(v) => update("source_name", v)} placeholder="Baduc, Oracal" /></div>
             <div><FieldLabel>URL surs\u0103</FieldLabel><div className="flex items-center gap-2"><FieldInput value={form.source_url} onChange={(v) => update("source_url", v)} placeholder="https://..." />{form.source_url && <a href={form.source_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 shrink-0"><ExternalLink className="w-4 h-4" /></a>}</div></div>
             <div><FieldLabel>Verificat la</FieldLabel><FieldInput value={form.source_checked_at} onChange={(v) => update("source_checked_at", v)} type="date" /></div>
@@ -546,26 +546,26 @@ function EditDrawer({ material, policy, open, onClose, onSaved }: { material: In
             <div><FieldLabel>Source review status</FieldLabel><FieldSelect value={form.source_review_status} onChange={(v) => update("source_review_status", v)} options={SOURCE_REVIEW_OPTIONS} /></div>
           </CardContent></Card>
 
-          <Card className="border-[#2A3548] bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Governance</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
-            <div className="flex items-center gap-2"><span className="text-[11px] text-slate-500">Ready for pricing:</span><ReadyBadge ready={isReadyForPricing(draftForChecks)} /></div>
-            <div className="flex items-center gap-2"><span className="text-[11px] text-slate-500">Source review:</span><SourceReviewBadge material={draftForChecks} policy={policy} /></div>
-            <div className="flex items-center gap-2"><span className="text-[11px] text-slate-500">ProductSystem:</span><ProductSystemBadge ready={isProductSystemReady(draftForChecks, policy)} /></div>
-            <div className="rounded-md border border-[#2A3548] bg-[#0D1321] px-2.5 py-2 space-y-1">
-              <p className="text-[11px] font-semibold text-slate-400">Readiness</p>
+          <Card className="border-wo-border-strong bg-transparent"><CardHeader className="px-3 py-3"><CardTitle className="text-[11px] font-bold uppercase tracking-wide text-wo-text-muted">Governance</CardTitle></CardHeader><CardContent className="px-3 pb-3 space-y-3">
+            <div className="flex items-center gap-2"><span className="text-[11px] text-wo-text-muted">Ready for pricing:</span><ReadyBadge ready={isReadyForPricing(draftForChecks)} /></div>
+            <div className="flex items-center gap-2"><span className="text-[11px] text-wo-text-muted">Source review:</span><SourceReviewBadge material={draftForChecks} policy={policy} /></div>
+            <div className="flex items-center gap-2"><span className="text-[11px] text-wo-text-muted">ProductSystem:</span><ProductSystemBadge ready={isProductSystemReady(draftForChecks, policy)} /></div>
+            <div className="rounded-md border border-wo-border-strong bg-wo-surface-inset px-2.5 py-2 space-y-1">
+              <p className="text-[11px] font-semibold text-wo-text-muted">Readiness</p>
               {missingPriceFieldsDraft.length === 0 ? <p className="text-[11px] text-emerald-300">Pricing fields complete.</p> : <p className="text-[11px] text-amber-300">Missing: {missingPriceFieldsDraft.join(", ")}</p>}
             </div>
-            <div className="rounded-md border border-[#2A3548] bg-[#0D1321] px-2.5 py-2 space-y-1">
-              <p className="text-[11px] font-semibold text-slate-400">Category</p>
-              <p className="text-[11px] text-slate-300">Canonical: {categoryCanonical ?? "Missing"}</p>
-              <p className="text-[11px] text-slate-500">Suggested sub: {suggestedSubcategory ?? "No match"}</p>
+            <div className="rounded-md border border-wo-border-strong bg-wo-surface-inset px-2.5 py-2 space-y-1">
+              <p className="text-[11px] font-semibold text-wo-text-muted">Category</p>
+              <p className="text-[11px] text-wo-text-secondary">Canonical: {categoryCanonical ?? "Missing"}</p>
+              <p className="text-[11px] text-wo-text-muted">Suggested sub: {suggestedSubcategory ?? "No match"}</p>
             </div>
-            <div className="rounded-md border border-[#2A3548] bg-[#0D1321] px-2.5 py-2 space-y-1">
-              <p className="text-[11px] font-semibold text-slate-400">Source review</p>
-              <p className="text-[11px] text-slate-300">Status: {sourceStatus.replace(/_/g, " ")}</p>
-              <p className="text-[11px] text-slate-500">Missing: {sourceMissing.length > 0 ? sourceMissing.join(", ") : "none"}</p>
+            <div className="rounded-md border border-wo-border-strong bg-wo-surface-inset px-2.5 py-2 space-y-1">
+              <p className="text-[11px] font-semibold text-wo-text-muted">Source review</p>
+              <p className="text-[11px] text-wo-text-secondary">Status: {sourceStatus.replace(/_/g, " ")}</p>
+              <p className="text-[11px] text-wo-text-muted">Missing: {sourceMissing.length > 0 ? sourceMissing.join(", ") : "none"}</p>
             </div>
-            <div className="rounded-md border border-[#2A3548] bg-[#0D1321] px-2.5 py-2 space-y-1">
-              <p className="text-[11px] font-semibold text-slate-400">ProductSystem gate</p>
+            <div className="rounded-md border border-wo-border-strong bg-wo-surface-inset px-2.5 py-2 space-y-1">
+              <p className="text-[11px] font-semibold text-wo-text-muted">ProductSystem gate</p>
               {productReasons.length === 0 ? <p className="text-[11px] text-emerald-300">No blockers.</p> : <ul className="list-disc pl-4 text-[11px] text-amber-300 space-y-0.5">{productReasons.map((r) => <li key={r}>{r}</li>)}</ul>}
             </div>
             <div><FieldLabel>Motiv modificare *</FieldLabel><FieldTextarea value={form.change_reason} onChange={(v) => update("change_reason", v)} placeholder="Motiv (obligatoriu pt schimb\u0103ri de pre\u021b)" rows={2} />{reasonMissingForPriceChange && <p className="text-[11px] text-amber-300 mt-1">change_reason obligatoriu.</p>}</div>
@@ -576,15 +576,15 @@ function EditDrawer({ material, policy, open, onClose, onSaved }: { material: In
 
           <div className="flex items-center gap-3 pt-1">
             <Button onClick={handleSave} disabled={disableSave} className="flex items-center gap-2">{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}{saving ? "Se salveaz\u0103..." : "Salveaz\u0103"}</Button>
-            <Button onClick={onClose} variant="outline" className="flex items-center gap-2 border-[#2A3548] bg-transparent text-slate-300 hover:bg-slate-800/50"><X className="w-4 h-4" />Anuleaz\u0103</Button>
+            <Button onClick={onClose} variant="outline" className="flex items-center gap-2 border-wo-border-strong bg-transparent text-wo-text-secondary hover:bg-slate-800/50"><X className="w-4 h-4" />Anuleaz\u0103</Button>
           </div>
 
-          <div className="border-t border-[#1E293B] pt-4">
-            <Button onClick={() => setShowHistory((v) => !v)} variant="ghost" className="h-auto px-0 py-0 flex items-center gap-2 text-[12px] font-semibold text-slate-400 hover:text-slate-200"><History className="w-4 h-4" />Istoric pre\u021buri{showHistory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</Button>
+          <div className="border-t border-wo-border-subtle pt-4">
+            <Button onClick={() => setShowHistory((v) => !v)} variant="ghost" className="h-auto px-0 py-0 flex items-center gap-2 text-[12px] font-semibold text-wo-text-muted hover:text-wo-text-primary"><History className="w-4 h-4" />Istoric pre\u021buri{showHistory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</Button>
             {showHistory && <div className="mt-3"><PriceHistoryPanel code={material.code} refreshToken={historyRefreshToken} /></div>}
           </div>
-          <div className="border-t border-[#1E293B] pt-4">
-            <Button onClick={() => setShowSourceAudit((v) => !v)} variant="ghost" className="h-auto px-0 py-0 flex items-center gap-2 text-[12px] font-semibold text-slate-400 hover:text-slate-200"><History className="w-4 h-4" />Source review audit{showSourceAudit ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</Button>
+          <div className="border-t border-wo-border-subtle pt-4">
+            <Button onClick={() => setShowSourceAudit((v) => !v)} variant="ghost" className="h-auto px-0 py-0 flex items-center gap-2 text-[12px] font-semibold text-wo-text-muted hover:text-wo-text-primary"><History className="w-4 h-4" />Source review audit{showSourceAudit ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</Button>
             {showSourceAudit && <div className="mt-3"><SourceReviewAuditPanel code={material.code} refreshToken={historyRefreshToken} /></div>}
           </div>
         </div>
@@ -671,7 +671,7 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {[
-          { label: "Total materiale", value: kpis.total, cls: "text-slate-100" },
+          { label: "Total materiale", value: kpis.total, cls: "text-wo-text-primary" },
           { label: "Active", value: kpis.active, cls: "text-emerald-400" },
           { label: "Incomplete", value: kpis.incomplete, cls: "text-red-400" },
           { label: "Ready for pricing", value: kpis.ready, cls: "text-cyan-400" },
@@ -679,7 +679,7 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
         ].map((k) => (
           <Card key={k.label} className="border-slate-800/60 bg-slate-950/70 shadow-none">
             <CardContent className="px-4 py-3">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600">{k.label}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-wo-text-dim">{k.label}</p>
               <p className={`text-[22px] font-bold mt-1 ${k.cls}`}>{k.value}</p>
             </CardContent>
           </Card>
@@ -692,11 +692,11 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
           { label: "Source stale", value: kpis.sourceStale, cls: "text-orange-300 border-orange-800/40" },
           { label: "ProductSystem ready", value: kpis.productReady, cls: "text-blue-300 border-blue-800/40" },
           { label: "Category norm.", value: kpis.needsCategory, cls: "text-yellow-300 border-yellow-800/40" },
-          { label: "Archived", value: kpis.archived, cls: "text-slate-500 border-slate-700/50" },
+          { label: "Archived", value: kpis.archived, cls: "text-wo-text-muted border-slate-700/50" },
         ].map((item) => (
           <Badge key={item.label} variant="outline" className={`bg-slate-900/50 px-2.5 py-1 ${item.cls}`}>{item.label}: {item.value}</Badge>
         ))}
-        <Button onClick={() => void load()} disabled={loading} variant="ghost" className="ml-auto h-7 px-2.5 text-[11px] text-slate-400 hover:text-slate-200">
+        <Button onClick={() => void load()} disabled={loading} variant="ghost" className="ml-auto h-7 px-2.5 text-[11px] text-wo-text-muted hover:text-wo-text-primary">
           <RefreshCw className={`w-3 h-3 mr-1.5 ${loading ? "animate-spin" : ""}`} />Re\u00eencarc\u0103
         </Button>
       </div>
@@ -704,16 +704,16 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
       {/* Filters */}
       <div className="grid gap-2 lg:grid-cols-[minmax(0,1.5fr)_180px_160px_160px_auto]">
         <div className="relative flex items-center">
-          <Search className="absolute left-3 w-3.5 h-3.5 text-slate-600" />
-          <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Caut\u0103 cod, denumire, categorie..." className="pl-9 bg-slate-950/80 border-slate-800/60 text-[12px] text-slate-200 placeholder:text-slate-600 h-9" />
-          {search && <Button onClick={() => setSearch("")} variant="ghost" size="icon" className="absolute right-0 h-8 w-8 text-slate-600 hover:text-slate-400"><X className="w-3.5 h-3.5" /></Button>}
+          <Search className="absolute left-3 w-3.5 h-3.5 text-wo-text-dim" />
+          <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Caut\u0103 cod, denumire, categorie..." className="pl-9 bg-slate-950/80 border-slate-800/60 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim h-9" />
+          {search && <Button onClick={() => setSearch("")} variant="ghost" size="icon" className="absolute right-0 h-8 w-8 text-wo-text-dim hover:text-wo-text-muted"><X className="w-3.5 h-3.5" /></Button>}
         </div>
-        <Select value={quickView} onValueChange={setQuickView}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-slate-300 h-9"><SelectValue placeholder="Quick view" /></SelectTrigger><SelectContent>{QUICK_VIEW_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select>
-        <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-slate-300 h-9"><SelectValue placeholder="Status" /></SelectTrigger><SelectContent>{STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select>
-        {categories.length > 0 && <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-slate-300 h-9"><SelectValue placeholder="Categorie" /></SelectTrigger><SelectContent><SelectItem value="all">Toate categoriile</SelectItem>{categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>}
+        <Select value={quickView} onValueChange={setQuickView}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-wo-text-secondary h-9"><SelectValue placeholder="Quick view" /></SelectTrigger><SelectContent>{QUICK_VIEW_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select>
+        <Select value={statusFilter} onValueChange={setStatusFilter}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-wo-text-secondary h-9"><SelectValue placeholder="Status" /></SelectTrigger><SelectContent>{STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent></Select>
+        {categories.length > 0 && <Select value={categoryFilter} onValueChange={setCategoryFilter}><SelectTrigger className="bg-slate-950/80 border-slate-800/60 text-[12px] text-wo-text-secondary h-9"><SelectValue placeholder="Categorie" /></SelectTrigger><SelectContent><SelectItem value="all">Toate categoriile</SelectItem>{categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>}
         <div className="flex items-center justify-end gap-2">
-          <span className="text-[11px] text-slate-600 whitespace-nowrap">{filtered.length}/{items.length}</span>
-          {hasActiveFilters && <Button onClick={() => { setSearch(""); setStatusFilter("all"); setCategoryFilter("all"); setQuickView("all"); }} variant="outline" className="h-8 border-slate-800/60 bg-transparent px-2.5 text-[11px] text-slate-400 hover:bg-slate-900/80">Reset</Button>}
+          <span className="text-[11px] text-wo-text-dim whitespace-nowrap">{filtered.length}/{items.length}</span>
+          {hasActiveFilters && <Button onClick={() => { setSearch(""); setStatusFilter("all"); setCategoryFilter("all"); setQuickView("all"); }} variant="outline" className="h-8 border-slate-800/60 bg-transparent px-2.5 text-[11px] text-wo-text-muted hover:bg-slate-900/80">Reset</Button>}
         </div>
       </div>
 
@@ -727,18 +727,18 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
       {/* Category cleanup */}
       <Card className="border-slate-800/60 bg-slate-950/60 shadow-none">
         <CardHeader className="px-5 py-3 flex flex-row items-center justify-between gap-3">
-          <div><CardTitle className="text-[12px] font-semibold text-slate-300">Category cleanup preview</CardTitle><p className="text-[10px] text-slate-600">Preview only.</p></div>
-          <Button onClick={() => { const next = !showCleanupPreview; setShowCleanupPreview(next); if (next && cleanupPreview.length === 0 && !cleanupLoading) void loadCleanupPreview(); }} variant="outline" className="border-slate-800/60 bg-transparent text-[11px] text-slate-400 hover:bg-slate-900/80 h-7 px-3">{showCleanupPreview ? "Hide" : "Show"}</Button>
+          <div><CardTitle className="text-[12px] font-semibold text-wo-text-secondary">Category cleanup preview</CardTitle><p className="text-[10px] text-wo-text-dim">Preview only.</p></div>
+          <Button onClick={() => { const next = !showCleanupPreview; setShowCleanupPreview(next); if (next && cleanupPreview.length === 0 && !cleanupLoading) void loadCleanupPreview(); }} variant="outline" className="border-slate-800/60 bg-transparent text-[11px] text-wo-text-muted hover:bg-slate-900/80 h-7 px-3">{showCleanupPreview ? "Hide" : "Show"}</Button>
         </CardHeader>
         {showCleanupPreview && (
           <CardContent className="px-5 pb-4 pt-0 space-y-3">
-            {cleanupLoading && <div className="flex items-center gap-2 py-3 text-slate-500 text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103...</div>}
+            {cleanupLoading && <div className="flex items-center gap-2 py-3 text-wo-text-muted text-[12px]"><Loader2 className="w-4 h-4 animate-spin" />Se \u00eencarc\u0103...</div>}
             {cleanupError && <div className="flex items-center gap-2 py-3 text-red-400 text-[12px]"><AlertTriangle className="w-4 h-4" />{cleanupError}</div>}
-            {!cleanupLoading && !cleanupError && (cleanupPreview.length === 0 ? <p className="text-[12px] text-slate-500 italic">No issues detected.</p> : (
+            {!cleanupLoading && !cleanupError && (cleanupPreview.length === 0 ? <p className="text-[12px] text-wo-text-muted italic">No issues detected.</p> : (
               <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">{cleanupPreview.map((item) => (
                 <div key={item.material_id} className="rounded-lg border border-slate-800/50 bg-slate-900/30 px-3 py-2 text-[11px]">
-                  <div className="flex items-center justify-between gap-2"><span className="text-slate-200 font-medium">{item.code}</span><Badge variant="outline" className="border-amber-800/40 bg-amber-900/20 text-amber-300 text-[9px] px-1.5">{item.issue_type ?? "issue"}</Badge></div>
-                  <p className="text-slate-500 mt-0.5">{item.current_category ?? "\u2014"} \u2192 {item.suggested_category ?? "\u2014"}</p>
+                  <div className="flex items-center justify-between gap-2"><span className="text-wo-text-primary font-medium">{item.code}</span><Badge variant="outline" className="border-amber-800/40 bg-amber-900/20 text-amber-300 text-[9px] px-1.5">{item.issue_type ?? "issue"}</Badge></div>
+                  <p className="text-wo-text-muted mt-0.5">{item.current_category ?? "\u2014"} \u2192 {item.suggested_category ?? "\u2014"}</p>
                 </div>
               ))}</div>
             ))}
@@ -748,27 +748,27 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
 
       {/* Table */}
       <Card className="border-slate-800/60 bg-slate-950/60 shadow-none overflow-hidden rounded-xl">
-        {loading && <div className="flex items-center justify-center gap-3 py-16 text-slate-500"><Loader2 className="w-5 h-5 animate-spin" /><span className="text-[13px]">Se \u00eencarc\u0103 materialele...</span></div>}
+        {loading && <div className="flex items-center justify-center gap-3 py-16 text-wo-text-muted"><Loader2 className="w-5 h-5 animate-spin" /><span className="text-[13px]">Se \u00eencarc\u0103 materialele...</span></div>}
         {!loading && loadError && <div className="flex flex-col items-center gap-2 py-16 text-red-400"><AlertTriangle className="w-6 h-6" /><p className="text-[13px]">{loadError}</p><Button onClick={() => void load()} variant="outline" className="mt-2 border-red-800/40 bg-transparent text-[12px] hover:bg-red-900/20">Re\u00eencearc\u0103</Button></div>}
         {!loading && !loadError && filtered.length === 0 && (
-          <div className="flex flex-col items-center gap-2 py-16 text-slate-600">
+          <div className="flex flex-col items-center gap-2 py-16 text-wo-text-dim">
             <PackageSearch className="w-7 h-7" />
             <p className="text-[13px]">{items.length === 0 ? "Nu exist\u0103 materiale \u00een registru." : "Niciun material nu corespunde filtrelor."}</p>
-            {hasActiveFilters && <Button onClick={() => { setSearch(""); setStatusFilter("all"); setCategoryFilter("all"); setQuickView("all"); }} variant="outline" className="border-slate-800/60 bg-transparent text-[12px] text-slate-400 hover:bg-slate-900/80">Reset filters</Button>}
+            {hasActiveFilters && <Button onClick={() => { setSearch(""); setStatusFilter("all"); setCategoryFilter("all"); setQuickView("all"); }} variant="outline" className="border-slate-800/60 bg-transparent text-[12px] text-wo-text-muted hover:bg-slate-900/80">Reset filters</Button>}
           </div>
         )}
         {!loading && !loadError && filtered.length > 0 && (
           <Table className="min-w-0 text-[12px]">
             <TableHeader>
               <TableRow className="border-b border-slate-800/50 hover:bg-transparent">
-                <TableHead className="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-600">Material</TableHead>
-                <TableHead className="px-3 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-600">Categorie</TableHead>
-                <TableHead className="px-3 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-600 w-[50px]">UM</TableHead>
-                <TableHead className="px-3 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-slate-600">Cost</TableHead>
-                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-600">Status</TableHead>
-                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-600">Source</TableHead>
-                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-600">Gate</TableHead>
-                <TableHead className="px-3 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-slate-600 w-[80px]">Actions</TableHead>
+                <TableHead className="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Material</TableHead>
+                <TableHead className="px-3 py-3 text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Categorie</TableHead>
+                <TableHead className="px-3 py-3 text-[10px] font-bold uppercase tracking-wider text-wo-text-dim w-[50px]">UM</TableHead>
+                <TableHead className="px-3 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Cost</TableHead>
+                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Status</TableHead>
+                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Source</TableHead>
+                <TableHead className="px-3 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-wo-text-dim">Gate</TableHead>
+                <TableHead className="px-3 py-3 text-right text-[10px] font-bold uppercase tracking-wider text-wo-text-dim w-[80px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -779,23 +779,23 @@ export default function MaterialPriceRegistry({ embedded = false }: MaterialPric
                   <TableRow key={m.code} className="border-b border-slate-800/40 hover:bg-slate-900/40 transition-colors cursor-pointer" onClick={() => openEdit(m)}>
                     <TableCell className="px-4 py-3 align-top">
                       <div className="space-y-0.5">
-                        <p className="text-[12px] font-medium text-slate-100 truncate max-w-[200px]" title={m.name}>{m.name}</p>
-                        <p className="text-[10px] font-mono text-slate-500">{m.code}</p>
+                        <p className="text-[12px] font-medium text-wo-text-primary truncate max-w-[200px]" title={m.name}>{m.name}</p>
+                        <p className="text-[10px] font-mono text-wo-text-muted">{m.code}</p>
                         {mIncomplete && <IncompleteBadge />}
                       </div>
                     </TableCell>
                     <TableCell className="px-3 py-3 align-top">
-                      <p className="text-[11px] text-slate-300 truncate max-w-[140px]" title={m.category ?? undefined}>{m.category ?? "\u2014"}</p>
+                      <p className="text-[11px] text-wo-text-secondary truncate max-w-[140px]" title={m.category ?? undefined}>{m.category ?? "\u2014"}</p>
                     </TableCell>
-                    <TableCell className="px-3 py-3 align-top text-[11px] text-slate-500">{m.unit ?? "\u2014"}</TableCell>
+                    <TableCell className="px-3 py-3 align-top text-[11px] text-wo-text-muted">{m.unit ?? "\u2014"}</TableCell>
                     <TableCell className="px-3 py-3 align-top text-right">
-                      <span className="text-[13px] font-semibold text-slate-100 tabular-nums">{fmtCost(m.unit_cost, m.currency)}</span>
+                      <span className="text-[13px] font-semibold text-wo-text-primary tabular-nums">{fmtCost(m.unit_cost, m.currency)}</span>
                     </TableCell>
                     <TableCell className="px-3 py-3 align-top text-center"><StatusBadge status={m.status} /></TableCell>
                     <TableCell className="px-3 py-3 align-top text-center"><SourceReviewBadge material={m} policy={policy} /></TableCell>
                     <TableCell className="px-3 py-3 align-top text-center"><ProductSystemBadge ready={psReady} /></TableCell>
                     <TableCell className="px-3 py-3 align-top text-right">
-                      <Button onClick={(e) => { e.stopPropagation(); openEdit(m); }} variant="ghost" className="h-7 px-2 text-[11px] text-slate-400 hover:text-slate-200">
+                      <Button onClick={(e) => { e.stopPropagation(); openEdit(m); }} variant="ghost" className="h-7 px-2 text-[11px] text-wo-text-muted hover:text-wo-text-primary">
                         <Pencil className="w-3 h-3 mr-1" />Edit
                       </Button>
                     </TableCell>
