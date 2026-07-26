@@ -263,6 +263,9 @@ export const executionJobs: ExecutionJob[] = DEMO_DATA_ENABLED ? [
 ] : [];
 
 // --- KPI DATA ---
+/** G7: kind clarifies actual vs planned vs derived vs proxy vs placeholder. */
+export type KPIMetricKind = "actual" | "planned" | "derived" | "proxy" | "placeholder";
+
 export interface KPIValue {
   code: string;
   label: string;
@@ -271,17 +274,21 @@ export interface KPIValue {
   trend: "up" | "down" | "stable";
   trendValue: number;
   status: "good" | "warning" | "critical";
+  kind?: KPIMetricKind;
+  window?: string;
+  explanation?: string;
+  gapNote?: string;
 }
 
 export const managementKPIs: KPIValue[] = [
-  { code: "KPI_ACTIVE_JOBS", label: "Active Jobs", value: 10, unit: "", trend: "stable", trendValue: 0, status: "good" },
-  { code: "KPI_BLOCKED_JOBS", label: "Blocked", value: 2, unit: "", trend: "up", trendValue: 1, status: "critical" },
-  { code: "KPI_THROUGHPUT", label: "Throughput Today", value: 4, unit: "jobs", trend: "down", trendValue: -1, status: "warning" },
-  { code: "KPI_OTIF", label: "OTIF", value: 87, unit: "%", trend: "down", trendValue: -3, status: "warning" },
-  { code: "KPI_REWORK_RATE", label: "Rework Rate", value: 4.2, unit: "%", trend: "up", trendValue: 0.8, status: "warning" },
-  { code: "KPI_MACHINE_UTIL", label: "Machine Util.", value: 68, unit: "%", trend: "stable", trendValue: 0, status: "good" },
-  { code: "KPI_LEAD_TIME", label: "Avg Lead Time", value: 3.2, unit: "days", trend: "up", trendValue: 0.3, status: "warning" },
-  { code: "KPI_QUEUE_TIME", label: "Avg Queue", value: 42, unit: "min", trend: "down", trendValue: -5, status: "good" },
+  { code: "KPI_ACTIVE_JOBS", label: "Job-uri în pipeline", value: 10, unit: "", trend: "stable", trendValue: 0, status: "good", kind: "actual", window: "open_orders", explanation: "Comenzi created/confirmed/locked/in_execution." },
+  { code: "KPI_BLOCKED_JOBS", label: "Blocate (execuție)", value: 2, unit: "", trend: "up", trendValue: 1, status: "critical", kind: "actual", window: "in_execution_with_blocked_tasks", explanation: "Task-uri reality.blocked=true." },
+  { code: "KPI_THROUGHPUT", label: "Throughput azi (UTC)", value: 4, unit: "jobs", trend: "down", trendValue: -1, status: "warning", kind: "actual", window: "utc_calendar_today", explanation: "Completed cu updated_at în ziua UTC curentă." },
+  { code: "KPI_OTIF", label: "OTIF (proxy)", value: 87, unit: "%", trend: "down", trendValue: -3, status: "warning", kind: "proxy", window: "completed_with_promised_delivery", explanation: "Proxy slab — lipsa date = assumed on-time.", gapNote: "Semnal OTIF durabil indisponibil." },
+  { code: "KPI_REWORK_RATE", label: "Rework Rate", value: 0, unit: "%", trend: "stable", trendValue: 0, status: "good", kind: "placeholder", window: "none", explanation: "Placeholder — fără semnal rework în DB.", gapNote: "0 ≠ zero rework." },
+  { code: "KPI_MACHINE_UTIL", label: "Load planificat WC", value: 68, unit: "%", trend: "stable", trendValue: 0, status: "good", kind: "derived", window: "lifetime_plan_vs_finished_sessions", explanation: "Media load planificat 0–100 pe workcenter.", gapNote: "Utilaj calendar/shift: date indisponibile." },
+  { code: "KPI_LEAD_TIME", label: "Lead time mediu", value: 3.2, unit: "days", trend: "up", trendValue: 0.3, status: "warning", kind: "derived", window: "completed_created_to_updated", explanation: "created_at → updated_at pe completed." },
+  { code: "KPI_QUEUE_TIME", label: "Vârstă medie coadă", value: 42, unit: "min", trend: "down", trendValue: -5, status: "good", kind: "derived", window: "open_pipeline_age", explanation: "Vârsta medie a comenzilor în pipeline." },
 ];
 
 // --- ALERTS ---
@@ -361,10 +368,30 @@ export const operatorTasks: OperatorTask[] = DEMO_DATA_ENABLED ? [
 export interface CapacitySlot {
   workcenterId: string;
   workcenterName: string;
+  /** Legacy key — semantics: planned-load % 0–100, not calendar-today util. */
   loadToday: number;
   load7d: number;
   load30d: number;
   availableToday: number;
+  plannedMinutes?: number;
+  actualMinutes?: number;
+  overrunMinutes?: number;
+  loadKind?: "planned_load";
+  loadLabel?: string;
+  window?: string;
+  explanation?: string;
+}
+
+/** G7 operational-truth envelope from /dashboard-stats (optional on mock). */
+export interface OperationalTruth {
+  plannedMinutesTotal: number;
+  actualMinutesTotal: number;
+  overrunMinutesTotal: number;
+  throughputWindow: string;
+  workcenterLoadKind: string;
+  calendarShiftUtilAvailable: boolean;
+  notices: string[];
+  boundaries: Record<string, string>;
 }
 
 export const capacityLoad: CapacitySlot[] = [
