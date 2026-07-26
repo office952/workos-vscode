@@ -354,9 +354,9 @@ function MarkupRulesDrawer({
             </div>
           )}
 
-          <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg p-3">
-            <p className="text-[11px] text-amber-200 leading-relaxed">
-              <Ban className="w-3 h-3 inline mr-1" />
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-700/40 dark:bg-amber-900/20">
+            <p className="text-[11px] leading-relaxed text-amber-900 dark:text-amber-200">
+              <Ban className="mr-1 inline h-3 w-3" />
               Editare reguli adaos — build separat. Regulile sunt vizibile aici, dar modificarea se face într-un flux dedicat.
             </p>
           </div>
@@ -715,7 +715,7 @@ function MaterialEditDrawer({
         </div>
 
         <div className="px-6 py-4 space-y-4">
-          <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg p-3 text-[11px] text-amber-200 leading-relaxed">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-900 dark:border-amber-700/40 dark:bg-amber-900/20 dark:text-amber-200">
             Registry intern de referință — Cost achiziție intern. Nu este tarif client.
             Oferta oficială = Snapshot V2. Inventory rămâne zona pentru recepții, furnizori, consum și stoc.
           </div>
@@ -934,7 +934,7 @@ function WorkcenterRateEditDrawer({
         </div>
 
         <div className="px-6 py-4 space-y-4">
-          <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg p-3 text-[11px] text-amber-200 leading-relaxed">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-900 dark:border-amber-700/40 dark:bg-amber-900/20 dark:text-amber-200">
             Registry intern — Efort intern / capacitate. Nu este tarif client. Oferta oficială = Snapshot V2.
           </div>
 

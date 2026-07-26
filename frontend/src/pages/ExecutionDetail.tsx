@@ -437,12 +437,12 @@ export default function ExecutionDetail() {
               {!obs.has_plan && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2"
+                  className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 dark:border-amber-800/60 dark:bg-amber-900/20"
                 >
-                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div className="text-[12px] text-amber-200">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="text-[12px] text-amber-900 dark:text-amber-200">
                     <p className="font-semibold">Nu există execution plan</p>
-                    <p className="text-amber-600 dark:text-amber-300/80 mt-0.5">
+                    <p className="mt-0.5 text-amber-800/90 dark:text-amber-300/80">
                       Nu s-a generat un plan de execuție pentru această comandă.
                       Acțiunile sunt indisponibile până la generarea planului.
                     </p>
@@ -679,13 +679,13 @@ export default function ExecutionDetail() {
           <div className="p-4 space-y-3">
             {!obs.has_plan && (
               <div className="space-y-3">
-                <div className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div className="text-[12px] text-amber-200">
+                <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 dark:border-amber-800/60 dark:bg-amber-900/20">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <div className="text-[12px] text-amber-900 dark:text-amber-200">
                     <p className="font-semibold">
                       Planul de execuție nu este generat
                     </p>
-                    <p className="text-amber-600 dark:text-amber-300/80 mt-0.5">
+                    <p className="mt-0.5 text-amber-800/90 dark:text-amber-300/80">
                       Generarea planului este condiționată de un snapshot
                       canonical (product_definition + cost_result) salvat pe
                       comandă. Backend-ul este singura autoritate: dacă
@@ -1043,11 +1043,11 @@ function GatePreviewSection({ orderId }: { orderId: number }) {
       {/* Preview error */}
       {preview.error && (
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
-          <div className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2">
-            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-            <div className="text-[12px] text-amber-600 dark:text-amber-300">
+          <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 dark:border-amber-800/60 dark:bg-amber-900/20">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+            <div className="text-[12px] text-amber-900 dark:text-amber-300">
               <p className="font-semibold">ProductSystem preview indisponibil</p>
-              <p className="text-[11px] text-amber-600 dark:text-amber-300/70 mt-0.5">
+              <p className="mt-0.5 text-[11px] text-amber-800/90 dark:text-amber-300/70">
                 {preview.error}
               </p>
             </div>

@@ -350,10 +350,26 @@ class SystemHealthService:
         }
 
     async def run_public_health(self) -> Dict[str, Any]:
-        """Return a minimal public health response with no sensitive details."""
+        """Return a minimal public health response with no sensitive details.
+
+        Public aggregate status is driven by the **database** check only.
+        Optional diagnostics probes (e.g. execution_anchor_order_14) must not
+        paint the operator chrome as "necesită verificare" while Live DB
+        surfaces are healthy. Full check detail remains on /diagnostics.
+        """
         diagnostics = await self.run_diagnostics()
+        checks = diagnostics.get("checks") or {}
+        db_status = (checks.get("database") or {}).get("status", STATUS_UNKNOWN)
+        if db_status == STATUS_OK:
+            public_status = STATUS_OK
+        elif db_status == STATUS_FAIL:
+            public_status = STATUS_FAIL
+        elif db_status == STATUS_WARNING:
+            public_status = STATUS_WARNING
+        else:
+            public_status = STATUS_UNKNOWN
         return {
-            "status": diagnostics.get("status", STATUS_UNKNOWN),
+            "status": public_status,
             "service": PUBLIC_SERVICE_NAME,
             "generated_at": diagnostics.get("generated_at", _iso_now_utc()),
             # Keep the key for frontend compatibility without exposing internals.

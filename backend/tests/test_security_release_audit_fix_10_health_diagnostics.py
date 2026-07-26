@@ -148,6 +148,34 @@ class PublicHealthContractTest(unittest.TestCase):
         for token in forbidden_tokens:
             self.assertNotIn(token, raw, f"public health leaked sensitive token: {token}")
 
+    def test_public_health_ok_when_database_ok_even_if_optional_anchor_warns(self):
+        """Missing execution_anchor must not alarm public chrome while DB is live."""
+        # This fixture seeds config + anchor; force-missing anchor via patch on service.
+        from services.system_health_service import SystemHealthService, STATUS_OK, STATUS_WARNING
+
+        async def _fake_diagnostics(self):
+            return {
+                "status": STATUS_WARNING,
+                "generated_at": "2026-07-26T00:00:00+00:00",
+                "checks": {
+                    "database": {"status": STATUS_OK, "details": {"ping": "SELECT 1"}},
+                    "version": {"status": STATUS_OK, "details": {}},
+                    "seed_pipeline": {"status": STATUS_OK, "details": {}},
+                    "observation_thresholds": {"status": STATUS_OK, "details": {}},
+                    "execution_anchor_order_14": {
+                        "status": STATUS_WARNING,
+                        "details": {"reason": "anchor_order_missing"},
+                    },
+                },
+            }
+
+        with mock.patch.object(SystemHealthService, "run_diagnostics", _fake_diagnostics):
+            resp = self.client.get("/api/v1/system/health")
+        self.assertEqual(resp.status_code, 200)
+        payload = resp.json()
+        self.assertEqual(payload["status"], STATUS_OK)
+        self.assertEqual(payload["checks"], {})
+
 
 class DiagnosticsAuthorizationTest(unittest.TestCase):
     @classmethod

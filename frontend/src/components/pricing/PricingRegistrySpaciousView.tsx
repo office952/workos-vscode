@@ -56,11 +56,11 @@ function fmtCost(n: number | null | undefined, currency?: string | null): string
 function severityClass(sev: StatusSeverity): string {
   switch (sev) {
     case "ok":
-      return "text-emerald-400";
+      return "text-emerald-700 dark:text-emerald-400";
     case "warn":
-      return "text-amber-400";
+      return "text-amber-700 dark:text-amber-400";
     case "bad":
-      return "text-red-400";
+      return "text-red-700 dark:text-red-400";
     default:
       return "text-muted-foreground";
   }
@@ -69,11 +69,11 @@ function severityClass(sev: StatusSeverity): string {
 function readinessClass(readiness: string): string {
   switch (readiness) {
     case "available":
-      return "text-emerald-400";
+      return "text-emerald-700 dark:text-emerald-400";
     case "partial":
-      return "text-amber-400";
+      return "text-amber-700 dark:text-amber-400";
     case "blocked":
-      return "text-red-400";
+      return "text-red-700 dark:text-red-400";
     default:
       return "text-muted-foreground";
   }
@@ -305,11 +305,11 @@ export function PricingRegistrySpaciousView({
           <button
             type="button"
             onClick={onOpenMarkupDrawer}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded bg-purple-900/30 text-purple-300 border border-purple-700/50 hover:bg-purple-900/50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded border border-purple-200 bg-purple-50 px-2.5 py-1.5 text-[11px] font-medium text-purple-700 transition-colors hover:bg-purple-100 dark:border-purple-700/50 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
           >
             <Settings2 className="w-3 h-3" />
             Adaos
-            <span className="bg-purple-800/50 text-purple-200 px-1.5 py-0.5 rounded text-[10px]">
+            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] text-purple-800 dark:bg-purple-800/50 dark:text-purple-200">
               {activePoliciesCount}
             </span>
           </button>
@@ -317,7 +317,7 @@ export function PricingRegistrySpaciousView({
             type="button"
             onClick={onRefresh}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded bg-slate-700 text-muted-foreground hover:bg-slate-600 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded border border-border bg-wo-surface-raised px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
             Actualizează
@@ -326,9 +326,9 @@ export function PricingRegistrySpaciousView({
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="text-[12px] text-red-300">{error}</p>
+        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-800/40 dark:bg-red-900/20">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
+          <p className="text-[12px] text-red-800 dark:text-red-300">{error}</p>
         </div>
       )}
 
@@ -338,7 +338,7 @@ export function PricingRegistrySpaciousView({
           const meta = PRICING_VIEW_TAB_META[key];
           const countBadge =
             key === "verify" && verifyCount > 0 ? (
-              <span className="ml-1 text-[9px] bg-amber-900/40 text-amber-300 px-1.5 py-0.5 rounded-full">
+              <span className="ml-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
                 {verifyCount}
               </span>
             ) : null;
@@ -557,8 +557,13 @@ function TemplateZone({
           <p className="text-[12px] text-muted-foreground mt-0.5 truncate">{templateHumanLabel(selectedTemplate)}</p>
           <p className="text-[10px] text-muted-foreground mt-1">
             {templateStats.ownerConfirmed} confirmate ·{" "}
-            <span className="text-amber-400">{templateStats.estimated + templateStats.needsReview} review</span> ·{" "}
-            <span className="text-red-400">{templateStats.missingPrice} lipsă</span>
+            <span className="text-amber-700 dark:text-amber-400">
+              {templateStats.estimated + templateStats.needsReview} review
+            </span>{" "}
+            ·{" "}
+            <span className="text-red-700 dark:text-red-400">
+              {templateStats.missingPrice} lipsă
+            </span>
           </p>
         </div>
         <button
@@ -581,8 +586,8 @@ function TemplateZone({
               title="Favorite"
               className={`px-2 py-0.5 rounded-full text-[10px] border transition-colors ${
                 code === selectedTemplate
-                  ? "text-amber-300 border-amber-700/40 bg-amber-900/20"
-                  : "text-muted-foreground border-wo-border-strong hover:text-amber-300"
+                  ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700/40 dark:bg-amber-900/20 dark:text-amber-300"
+                  : "border-wo-border-strong text-muted-foreground hover:text-amber-700 dark:hover:text-amber-300"
               }`}
             >
               ★ {code}
@@ -827,9 +832,9 @@ function MarkupView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="bg-amber-900/20 border border-amber-700/40 rounded-lg px-4 py-3">
-        <p className="text-[11px] text-amber-200 leading-relaxed">
-          <Info className="w-3 h-3 inline mr-1" />
+      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-700/40 dark:bg-amber-900/20">
+        <p className="text-[11px] leading-relaxed text-amber-900 dark:text-amber-200">
+          <Info className="mr-1 inline h-3 w-3" />
           Editare reguli adaos — build separat. Regulile sunt vizibile aici, dar modificarea se face într-un flux dedicat.
         </p>
       </div>
