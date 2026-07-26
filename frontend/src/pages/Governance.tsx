@@ -93,10 +93,10 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
 function TabHonestyBanner({ meta }: { meta: GovernanceTabHonestyMeta }) {
   const tone =
     meta.status === "HONESTY_BASELINE"
-      ? "border-blue-800/40 bg-blue-900/15 text-blue-200/95"
+      ? "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800/40 dark:bg-blue-900/25 dark:text-blue-200"
       : meta.status === "STALE_HINT" || meta.status === "OWNER_REVIEW"
-        ? "border-amber-800/40 bg-amber-900/15 text-amber-200/95"
-        : "border-slate-600/50 bg-slate-800/40 text-slate-300";
+        ? "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/40 dark:bg-amber-900/25 dark:text-amber-200"
+        : "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary";
   return (
     <div
       className={`flex items-start gap-2 px-3 py-2 rounded-lg border text-[11px] leading-relaxed ${tone}`}
@@ -1137,9 +1137,9 @@ function TruthHierarchyView({
       </div>
 
       {/* Conflict Resolution */}
-      <div className="bg-wo-surface-inset border border-blue-800/30 rounded-lg p-4">
-        <p className="text-[12px] text-blue-400 font-semibold mb-2">🔀 Regula de conflict</p>
-        <p className="text-[12px] text-slate-300 leading-relaxed">
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/40 dark:bg-blue-900/25">
+        <p className="mb-2 text-[12px] font-semibold text-blue-800 dark:text-blue-200">🔀 Regula de conflict</p>
+        <p className="text-[12px] leading-relaxed text-blue-900/90 dark:text-blue-100/90">
           Dacă UI din Figma spune ceva, dar .md spune altceva → .md câștigă. Dacă Atoms implementează ceva care contrazice Figma sau .md → Figma / .md câștigă.
           Dacă codul și runtime-ul contrazic .md → QA Alignment investighează, Nucleu arbitrează dacă e nevoie.
         </p>
@@ -1549,9 +1549,9 @@ function ProductCatalogView() {
       </div>
 
       {/* Code Structure */}
-      <div className="bg-wo-surface-inset border border-blue-800/30 rounded-lg p-4">
-        <p className="text-[12px] text-blue-400 font-semibold mb-2">📋 Structura Cod Produs</p>
-        <p className="text-[12px] text-slate-300 mb-2">Format: <span className="font-mono text-blue-300">[CATEGORIE]-[TIP]-[VARIANTA]</span></p>
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/40 dark:bg-blue-900/25">
+        <p className="mb-2 text-[12px] font-semibold text-blue-800 dark:text-blue-200">📋 Structura Cod Produs</p>
+        <p className="mb-2 text-[12px] text-blue-900/90 dark:text-blue-100/90">Format: <span className="font-mono text-blue-700 dark:text-blue-300">[CATEGORIE]-[TIP]-[VARIANTA]</span></p>
         <div className="flex flex-wrap gap-2">
           {["CL-SIMPLU-STD", "LV-FRONTAL-LED", "TOTEM-ILUMINAT-STD", "PRINT-AUTO-LAMINAT", "CNC-PVC-DEBITARE"].map((code) => (
             <span key={code} className="text-[11px] font-mono text-slate-300 bg-wo-surface-raised border border-wo-border-subtle px-2 py-1 rounded">
@@ -2047,7 +2047,7 @@ export default function Governance() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Caută reguli, agenți, produse, statusuri..."
-              className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-slate-600 outline-none w-full"
+              className="w-full bg-transparent text-[13px] text-wo-text-primary outline-none placeholder:text-wo-text-muted"
             />
             {/* Filter toggle */}
             <button
@@ -2154,8 +2154,8 @@ export default function Governance() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
-                  : "text-slate-400 hover:text-wo-text-primary hover:bg-slate-800/50 border border-transparent"
+                  ? "border border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600/50 dark:bg-blue-600/20 dark:text-blue-300"
+                  : "border border-transparent text-wo-text-secondary hover:bg-wo-hover hover:text-wo-text-primary"
               }`}
             >
               {tab.icon}

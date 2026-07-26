@@ -23,6 +23,14 @@ function resolveTheme(theme: Theme): "light" | "dark" {
   return theme;
 }
 
+function applyResolvedTheme(resolved: "light" | "dark") {
+  const root = document.documentElement;
+  root.classList.remove("light", "dark");
+  root.classList.add(resolved);
+  root.dataset.theme = resolved;
+  root.style.colorScheme = resolved;
+}
+
 export function ThemeProvider({ children, defaultTheme = "light" }: { children: ReactNode; defaultTheme?: Theme }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === "undefined") return defaultTheme;
@@ -39,23 +47,31 @@ export function ThemeProvider({ children, defaultTheme = "light" }: { children: 
 
   // useLayoutEffect so html.light / html.dark flips before paint (toggle must not lag).
   useLayoutEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove("light", "dark");
-    root.classList.add(resolvedTheme);
+    applyResolvedTheme(resolvedTheme);
   }, [resolvedTheme]);
 
   useEffect(() => {
     if (theme === "system") {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       const handler = () => {
-        const root = document.documentElement;
-        root.classList.remove("light", "dark");
-        root.classList.add(getSystemTheme());
+        applyResolvedTheme(getSystemTheme());
       };
       mq.addEventListener("change", handler);
       return () => mq.removeEventListener("change", handler);
     }
   }, [theme]);
+
+  // Keep React state aligned when another tab / crawl harness writes workos-theme.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY || event.newValue == null) return;
+      if (["light", "dark", "system"].includes(event.newValue)) {
+        setThemeState(event.newValue as Theme);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
@@ -64,6 +80,7 @@ export function ThemeProvider({ children, defaultTheme = "light" }: { children: 
     } catch {
       // localStorage unavailable
     }
+    applyResolvedTheme(resolveTheme(newTheme));
   };
 
   const toggleTheme = () => {

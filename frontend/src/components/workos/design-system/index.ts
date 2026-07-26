@@ -43,5 +43,6 @@ export { PageShell } from "./PageShell";
 export { SectionCard } from "./SectionCard";
 export { EmptyState } from "./EmptyState";
 export { AlertBanner } from "./AlertBanner";
+export { chromeBanner, chromeForm, chromeTab } from "./chromeRecipes";
 
 export * from "./tokens";

@@ -17,7 +17,13 @@ import {
   companySettings,
   type CompanySettings,
 } from "@/lib/mockData";
-import { ReadinessPanel, type ReadinessItem } from "@/components/workos/design-system";
+import {
+  ReadinessPanel,
+  chromeBanner,
+  chromeForm,
+  chromeTab,
+  type ReadinessItem,
+} from "@/components/workos/design-system";
 import {
   Settings as SettingsIcon,
   Building2,
@@ -140,22 +146,22 @@ export default function Settings() {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-2 px-3 py-2 bg-blue-900/10 border border-blue-800/30 rounded-lg">
-        <p className="text-[11px] text-blue-200">
+      <div className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 ${chromeBanner.info}`}>
+        <p className="text-[11px]">
           Pentru analize operaționale pe formate de sheet invalide, folosește Inventory Sheet Quality.
         </p>
         <Link
           to={sheetQualityInvalidUrl}
-          className="text-[11px] font-semibold text-blue-600 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-200 underline underline-offset-2 whitespace-nowrap"
+          className="whitespace-nowrap text-[11px] font-semibold underline underline-offset-2 text-blue-800 hover:text-blue-950 dark:text-blue-200 dark:hover:text-blue-100"
         >
           Open Sheet Quality
         </Link>
       </div>
 
       {activeTab === "company" && (
-        <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-[11px] text-amber-700 dark:text-amber-300/90">
+        <div className={`flex items-start gap-2 rounded-lg px-3 py-2 ${chromeBanner.warning}`}>
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-300" />
+          <p className="text-[11px]">
             Tabul "Societate" afișează profil local static. Nu este sincronizat cu o sursă live backend în acest build.
           </p>
         </div>
@@ -189,10 +195,8 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-md text-[12px] font-semibold transition-colors ${
-        active
-          ? "bg-blue-600/20 text-blue-600 dark:text-blue-400"
-          : "text-muted-foreground hover:text-foreground"
+      className={`rounded-md px-4 py-2 text-[12px] font-semibold transition-colors ${
+        active ? chromeTab.active : chromeTab.inactive
       }`}
     >
       <span className="flex items-center gap-2">
@@ -217,7 +221,7 @@ function InfoRow({
 }) {
   return (
     <div>
-      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
+      <p className={`${chromeForm.label} mb-1 flex items-center gap-1`}>
         {icon}
         {label}
       </p>
@@ -285,7 +289,7 @@ function CompanyCommercialVatPanel() {
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">
+          <label className={chromeForm.label}>
             TVA implicit pentru oferte (%)
           </label>
           <input
@@ -296,7 +300,7 @@ function CompanyCommercialVatPanel() {
             disabled={loading || saving}
             value={vatPct}
             onChange={(e) => setVatPct(e.target.value)}
-            className="w-32 bg-background border border-border rounded px-3 py-2 text-[13px] text-foreground"
+            className={`w-32 ${chromeForm.input}`}
             data-testid="settings-default-vat-pct"
           />
         </div>
@@ -375,7 +379,7 @@ function CompanyCommercialFxPanel() {
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">
+          <label className={chromeForm.label}>
             Curs EUR/RON (RON pentru 1 EUR)
           </label>
           <input
@@ -385,7 +389,7 @@ function CompanyCommercialFxPanel() {
             disabled={loading || saving}
             value={rate}
             onChange={(e) => setRate(e.target.value)}
-            className="w-40 bg-background border border-border rounded px-3 py-2 text-[13px] text-foreground"
+            className={`w-40 ${chromeForm.input}`}
             data-testid="settings-eur-to-ron-rate"
           />
         </div>
@@ -425,7 +429,7 @@ function CompanyTab({ settings }: { settings: CompanySettings }) {
             <InfoRow label="Cod Poștal" value={settings.postalCode} />
           </div>
           <div>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Plătitor TVA</p>
+            <p className={`${chromeForm.label} mb-1`}>Plătitor TVA</p>
             <span
               className={`inline-flex items-center gap-1 text-[12px] font-semibold ${
                 settings.vatPayer ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
@@ -701,12 +705,12 @@ function IntegrationsTab() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Enabled</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Enabled</p>
               <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
             </label>
 
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Base URL</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Base URL</p>
               <input
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
@@ -716,7 +720,7 @@ function IntegrationsTab() {
             </label>
 
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Username</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Username</p>
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -726,7 +730,7 @@ function IntegrationsTab() {
             </label>
 
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Token (write-only)</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Token (write-only)</p>
               <input
                 type="password"
                 value={token}
@@ -738,7 +742,7 @@ function IntegrationsTab() {
             </label>
 
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Lookup path</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Lookup path</p>
               <input
                 value={lookupPath}
                 onChange={(e) => setLookupPath(e.target.value)}
@@ -748,7 +752,7 @@ function IntegrationsTab() {
             </label>
 
             <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Timeout seconds</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Timeout seconds</p>
               <input
                 value={timeoutSeconds}
                 onChange={(e) => setTimeoutSeconds(e.target.value)}
@@ -862,7 +866,7 @@ function IntegrationsTab() {
           </div>
 
           <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Missing fields</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Missing fields</p>
             {health.missing_fields.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {health.missing_fields.map((field) => (
@@ -877,7 +881,7 @@ function IntegrationsTab() {
           </div>
 
           <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Live validation</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary mb-2">Live validation</p>
             <p className="text-[12px] text-muted-foreground">{health.live_validation.message}</p>
           </div>
 
@@ -2107,7 +2111,7 @@ function MetricCard({
 }) {
   return (
     <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
-      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+      <p className={`${chromeForm.label} mb-1`}>
         {label}
       </p>
       <p
@@ -2145,7 +2149,7 @@ function TextField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+      <label className={chromeForm.label}>
         {label}
       </label>
       <input
@@ -2153,16 +2157,16 @@ function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         step={type === "number" ? "0.01" : undefined}
-        className={`w-full bg-background border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none ${
+        className={`w-full ${chromeForm.input} ${
           error
             ? "border-red-600/60 focus:border-red-500"
-            : "border-border focus:border-blue-500/50"
+            : ""
         }`}
       />
       {hint && !error && (
-        <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>
+        <p className={`${chromeForm.helper} mt-1 text-[10px]`}>{hint}</p>
       )}
-      {error && <p className="text-[10px] text-red-600 dark:text-red-400 mt-1">{error}</p>}
+      {error && <p className="mt-1 text-[10px] text-red-700 dark:text-red-400">{error}</p>}
     </div>
   );
 }
@@ -2178,14 +2182,14 @@ function TextareaField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+      <label className={chromeForm.label}>
         {label}
       </label>
       <textarea
         value={value}
         rows={3}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none focus:border-blue-500/50 resize-y"
+        className={`w-full resize-y ${chromeForm.input}`}
       />
     </div>
   );
@@ -2204,13 +2208,13 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+      <label className={chromeForm.label}>
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground outline-none focus:border-blue-500/50"
+        className={`w-full ${chromeForm.input}`}
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

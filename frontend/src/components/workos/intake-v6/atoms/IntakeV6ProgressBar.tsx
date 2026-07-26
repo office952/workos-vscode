@@ -67,12 +67,12 @@ export default function IntakeV6ProgressBar({
 									compact ? "text-[11px]" : "text-[12px]"
 								} ${
 									active
-										? "text-sky-300"
+										? "text-sky-800 dark:text-sky-300"
 										: done
-											? "text-emerald-400"
+											? "text-emerald-700 dark:text-emerald-400"
 											: visited && !complete
-												? "text-amber-200"
-												: "text-slate-500"
+												? "text-amber-800 dark:text-amber-200"
+												: "text-wo-text-secondary"
 								}`}
 							>
 								{step.label}
