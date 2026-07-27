@@ -2,16 +2,14 @@
 # Sets script-scoped dev env (incl. dev auth flags), verifies layout, then starts the stack.
 # Does NOT hardcode dev auth in Python source - env vars only.
 #
-# Usage (Owner interactive — streams FE logs; Ctrl+C stops the session-scoped jobs):
-#   .\scripts\dev.ps1              Start or reuse backend :8000 + frontend :3000
-#   .\scripts\dev.ps1 -PreflightOnly   Validate layout/env only (no servers)
+# LEGACY interactive launcher (session-scoped Start-Job + finally teardown).
+# Owner NEVER runs terminal scripts. Cursor agents MUST use .\scripts\dev-detached.ps1
+# when Owner asks "pornește aplicația" so the stack survives agent session end.
 #
-# Agents / durable start (survives Cursor agent shell end) — prefer:
-#   .\scripts\dev-detached.ps1
-# Owner-gated stop (agents only with explicit Owner GO):
-#   .\scripts\stop-dev.ps1
-#
-# Stop interactive: Ctrl+C when frontend logs are streaming; or .\scripts\stop-dev.ps1
+#   .\scripts\dev-detached.ps1     Agent primary start/reuse - durable OS processes
+#   .\scripts\stop-dev.ps1         Agent stop - only after Owner says oprește
+#   .\scripts\dev.ps1              Legacy streaming launcher - DO NOT use in agent shells
+#   .\scripts\dev.ps1 -PreflightOnly
 
 param(
     [switch] $PreflightOnly

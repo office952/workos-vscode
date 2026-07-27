@@ -1,10 +1,12 @@
 # Stop WorkOS local listeners on canonical ports (:8000 backend, :3000 frontend).
 #
-# OWNER GATE — agents may run this ONLY when the Owner explicitly says
+# OWNER GATE — agents run this ONLY when the Owner explicitly says in chat
 # "oprește" / "stop server" / "kill stack" / "restart" (or clear equivalent).
 # Starting the app is NEVER a reason to run this script.
 #
-# Usage (Owner or agent-with-explicit-GO only):
+# Owner NEVER runs this in a terminal. Agent runs it after Owner GO.
+#
+# Usage (agent after Owner GO):
 #   .\scripts\stop-dev.ps1
 #   .\scripts\stop-dev.ps1 -WhatIf
 
@@ -22,8 +24,8 @@ $Root = Split-Path -Parent $PSScriptRoot
 $StatePath = Join-Path $Root ".workos-dev-detached.json"
 
 Write-Host ""
-Write-Host '=== WorkOS stop-dev - Owner-gated ===' -ForegroundColor Yellow
-Write-Host '  Agents: run only after explicit Owner stop/kill/restart request.'
+Write-Host '=== WorkOS stop-dev - Owner-gated - agent runs this ===' -ForegroundColor Yellow
+Write-Host '  Owner never uses the terminal. Agents run this only after explicit opreste/stop GO.'
 Write-Host ('  Targets = listeners on :{0} backend and :{1} frontend' -f $BackendPort, $FrontendPort)
 Write-Host ""
 
@@ -75,5 +77,5 @@ if (-not $WhatIf) {
 }
 
 Write-Host ""
-Write-Host 'Done. Start again with .\scripts\dev-detached.ps1 for agents, or .\scripts\dev.ps1 for Owner interactive.' -ForegroundColor DarkGray
+Write-Host 'Done. Next start: agent runs .\scripts\dev-detached.ps1 when Owner asks porneste. Owner uses browser only.' -ForegroundColor DarkGray
 Write-Host ""

@@ -1,14 +1,14 @@
-# WorkOS detached local stack (Windows).
+# WorkOS detached local stack (Windows) - AGENT PRIMARY LAUNCHER.
 # Starts backend (:8000) + frontend (:3000) as independent OS processes that
 # SURVIVE the parent PowerShell / Cursor agent session ending.
 #
-# Prefer this for agents and any unattended start. Owner interactive streaming:
-#   .\scripts\dev.ps1
+# Owner NEVER runs this in a terminal. Owner asks in chat ("pornește aplicația");
+# the Cursor agent runs this script. Owner only uses the browser.
 #
 # This script does NOT kill listeners. If a port is occupied but unhealthy,
-# it exits with a blocker - Owner may then run .\scripts\stop-dev.ps1.
+# it exits with a blocker - agent reports; stop only via stop-dev.ps1 after Owner GO.
 #
-# Usage:
+# Usage (agent):
 #   .\scripts\dev-detached.ps1
 #   .\scripts\dev-detached.ps1 -PreflightOnly
 
@@ -133,7 +133,8 @@ Write-Host ('  Root          = {0}' -f $Root)
 Write-Host ('  Backend URL   = {0}' -f $BackendUrl)
 Write-Host ('  Frontend URL  = {0}' -f $FrontendUrl)
 Write-Host '  Mode          = detached OS processes - survives agent session end'
-Write-Host '  Stop          = Owner only via .\scripts\stop-dev.ps1'
+Write-Host '  Owner         = browser only - never runs terminal scripts'
+Write-Host '  Stop          = agent runs .\scripts\stop-dev.ps1 only after Owner GO opreste'
 Write-Host ""
 
 if ($PreflightOnly) {
@@ -160,7 +161,7 @@ if ($backendHealthy -and $frontendHealthy) {
 if ($backendListener -and -not $backendHealthy) {
     Write-Host ""
     Write-Host ('BLOCKER: Port {0} is occupied but /health is not OK - PID={1}, {2}.' -f $BackendPort, $backendListener.PID, $backendListener.ProcessName) -ForegroundColor Red
-    Write-Host '  Agents must NOT kill this process. Ask Owner to run .\scripts\stop-dev.ps1, then retry.' -ForegroundColor Red
+    Write-Host '  Agents must NOT kill this process. Tell Owner the blocker; run stop-dev.ps1 only if they say opreste.' -ForegroundColor Red
     Write-Host ""
     exit 1
 }
@@ -168,7 +169,7 @@ if ($backendListener -and -not $backendHealthy) {
 if ($frontendListener -and -not $frontendHealthy) {
     Write-Host ""
     Write-Host ('BLOCKER: Port {0} is occupied but frontend is not OK - PID={1}, {2}.' -f $FrontendPort, $frontendListener.PID, $frontendListener.ProcessName) -ForegroundColor Red
-    Write-Host '  Agents must NOT kill this process. Ask Owner to run .\scripts\stop-dev.ps1, then retry.' -ForegroundColor Red
+    Write-Host '  Agents must NOT kill this process. Tell Owner the blocker; run stop-dev.ps1 only if they say opreste.' -ForegroundColor Red
     Write-Host ""
     exit 1
 }
@@ -229,7 +230,7 @@ if (-not $frontendHealthy) {
     $frontendOk = Wait-ForService -Name "Frontend" -Probe { Test-HttpOk -Url $FrontendUrl }
     if (-not $frontendOk) {
         Write-Host "Frontend did not become healthy. Check logs under $LogDir" -ForegroundColor Red
-        Write-Host 'Backend was left running - detached. Owner may stop with .\scripts\stop-dev.ps1' -ForegroundColor Yellow
+        Write-Host 'Backend was left running - detached. Stop only after Owner GO via .\scripts\stop-dev.ps1' -ForegroundColor Yellow
         exit 1
     }
 }
@@ -240,6 +241,6 @@ Write-Host ('  Frontend = {0}' -f $FrontendUrl)
 Write-Host ('  Backend  = {0}' -f $BackendUrl)
 Write-Host ('  Health   = {0}' -f $HealthUrl)
 Write-Host ('  Logs     = {0}' -f $LogDir)
-Write-Host '  Survives Cursor/agent shell end. Owner stops manually with .\scripts\stop-dev.ps1'
+Write-Host '  Survives Cursor/agent shell end. Owner uses browser only. Stop only on Owner GO opreste.'
 Write-Host ""
 exit 0
