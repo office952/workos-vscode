@@ -391,6 +391,28 @@ export interface CapacitySlot {
 }
 
 /** G7 operational-truth envelope from /dashboard-stats (optional on mock). */
+export interface OperationalDataGapBlock {
+  domain: string;
+  ownerDataNeeded?: boolean;
+  notice?: string;
+  boundary?: string;
+  missingPriceCount?: number;
+  missingMaterialCount?: number;
+  missingOperationRateCount?: number;
+  sampleCodes?: string[];
+  valid?: boolean;
+  incompleteEmployeeCount?: number;
+  warnings?: string[];
+  calendarShiftUtilAvailable?: boolean;
+  unknown?: boolean;
+}
+
+export interface OperationalDataGaps {
+  pricing?: OperationalDataGapBlock;
+  costIntern?: OperationalDataGapBlock;
+  capacity?: OperationalDataGapBlock;
+}
+
 export interface OperationalTruth {
   plannedMinutesTotal: number;
   actualMinutesTotal: number;
@@ -399,6 +421,7 @@ export interface OperationalTruth {
   workcenterLoadKind: string;
   calendarShiftUtilAvailable: boolean;
   notices: string[];
+  dataGaps?: OperationalDataGaps;
   boundaries: Record<string, string>;
 }
 

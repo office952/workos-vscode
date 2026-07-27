@@ -439,9 +439,23 @@ export default function Employees() {
     <div className="space-y-4">
       {/* Internal Cost Notice — HR ≠ tarif client */}
       <InternalCostNotice
-        message="Cost intern angajat — analytics / profitability. NU tarif client. Registry intern HR nu conduce oferta client."
+        message="Cost intern angajat — analytics / profitability. NU tarif client. Registry intern HR nu conduce oferta client. Nu inventăm salariu → tarif comercial."
         compact
       />
+      <div className="flex flex-wrap items-center gap-2" data-testid="employees-cost-boundary">
+        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+          Boundary
+        </span>
+        <span className="rounded border border-sky-200 bg-sky-50 px-2 py-0.5 text-[10px] text-sky-800 dark:border-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
+          Cost Intern = analytics
+        </span>
+        <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-800 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
+          Nu Pricing Registry
+        </span>
+        <span className="rounded border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+          Nu Ofertă client
+        </span>
+      </div>
 
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
