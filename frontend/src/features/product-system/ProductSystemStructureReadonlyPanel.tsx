@@ -165,25 +165,25 @@ function LettersAcmConnectionPricesEntryCard({ templateCode }: { templateCode: s
     <button
       type="button"
       onClick={() => navigate(path)}
-      className="mt-3 w-full overflow-hidden rounded-xl border border-emerald-500/35 bg-emerald-950/20 px-4 py-3 text-left transition-colors hover:border-emerald-400/50 hover:bg-emerald-950/30"
+      className="mt-3 w-full overflow-hidden rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-left transition-colors hover:border-emerald-400 hover:bg-emerald-100/80 dark:border-emerald-500/35 dark:bg-emerald-950/20 dark:hover:border-emerald-400/50 dark:hover:bg-emerald-950/30"
       data-testid="product-system-v2-letters-acm-connection-prices-entry"
     >
       <div className="flex items-center gap-3">
-        <div className="shrink-0 rounded-lg bg-emerald-500/15 p-2 text-emerald-300 [&>svg]:h-5 [&>svg]:w-5">
+        <div className="shrink-0 rounded-lg bg-emerald-500/15 p-2 text-emerald-700 dark:text-emerald-300 [&>svg]:h-5 [&>svg]:w-5">
           <Tags className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-300">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
             Prețuri conexiune
           </p>
           <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
             {LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO}
           </p>
-          <p className="mt-0.5 text-[11px] text-emerald-200/70">
+          <p className="mt-0.5 text-[11px] text-emerald-700/80 dark:text-emerald-200/70">
             Șablon 20 EUR/mp · {verifiedCount} linii verificate owner
           </p>
         </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-emerald-300/80" aria-hidden />
+        <ChevronRight className="h-4 w-4 shrink-0 text-emerald-700/80 dark:text-emerald-300/80" aria-hidden />
       </div>
     </button>
   );
@@ -197,25 +197,25 @@ function LettersAcmComposerEntryCard({ templateCode }: { templateCode: string })
     <button
       type="button"
       onClick={() => navigate(path)}
-      className="mt-2 w-full overflow-hidden rounded-xl border border-violet-500/35 bg-violet-950/20 px-4 py-3 text-left transition-colors hover:border-violet-400/50 hover:bg-violet-950/30"
+      className="mt-2 w-full overflow-hidden rounded-xl border border-violet-300 bg-violet-50 px-4 py-3 text-left transition-colors hover:border-violet-400 hover:bg-violet-100/80 dark:border-violet-500/35 dark:bg-violet-950/20 dark:hover:border-violet-400/50 dark:hover:bg-violet-950/30"
       data-testid="product-system-v2-letters-acm-composer-entry"
     >
       <div className="flex items-center gap-3">
-        <div className="shrink-0 rounded-lg bg-violet-500/15 p-2 text-violet-300 [&>svg]:h-5 [&>svg]:w-5">
+        <div className="shrink-0 rounded-lg bg-violet-500/15 p-2 text-violet-700 dark:text-violet-300 [&>svg]:h-5 [&>svg]:w-5">
           <Layers2 className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-violet-300">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-violet-800 dark:text-violet-300">
             Composer
           </p>
           <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
             Litere ↔ Alucobond — mock IA
           </p>
-          <p className="mt-0.5 text-[11px] text-violet-200/70">
+          <p className="mt-0.5 text-[11px] text-violet-700/80 dark:text-violet-200/70">
             Compatibil v1 · composit readonly · fără CostEngine
           </p>
         </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-violet-300/80" aria-hidden />
+        <ChevronRight className="h-4 w-4 shrink-0 text-violet-700/80 dark:text-violet-300/80" aria-hidden />
       </div>
     </button>
   );

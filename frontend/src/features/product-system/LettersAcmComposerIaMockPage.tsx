@@ -71,7 +71,7 @@ export default function LettersAcmComposerIaMockPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-violet-500/40 hover:text-violet-100"
+          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-violet-500/40 hover:text-violet-800 dark:hover:text-violet-100"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
           Structură
@@ -81,8 +81,8 @@ export default function LettersAcmComposerIaMockPage() {
         </span>
       </header>
 
-      <section className={`${PS_SURFACE_PANEL} border-violet-500/30 px-5 py-5`}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-300/80">
+      <section className={`${PS_SURFACE_PANEL} border-violet-300 px-5 py-5 dark:border-violet-500/30`}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-800 dark:text-violet-300/80">
           Compatibilitate Litere ↔ Alucobond
         </p>
         <h1 className="mt-1 text-[1.45rem] font-semibold text-wo-text-primary">
@@ -93,7 +93,7 @@ export default function LettersAcmComposerIaMockPage() {
           Fără scriere CostEngine / Ofertă / Execution. Prețurile conexiunii sunt teaching
           readonly.
         </p>
-        <p className="mt-2 inline-flex items-center gap-1 rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-100">
+        <p className="mt-2 inline-flex items-center gap-1 rounded border border-amber-400/50 bg-amber-50 px-2 py-1 text-[11px] text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
           Mock — nu calc live
         </p>
       </section>
@@ -114,7 +114,7 @@ export default function LettersAcmComposerIaMockPage() {
           <p className="mt-1 font-mono text-[11px] text-wo-text-muted">{peer.code}</p>
           <button
             type="button"
-            className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-violet-500/40 bg-violet-500/15 px-3 py-1.5 text-[12px] font-semibold text-violet-100"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-violet-400/50 bg-violet-100/80 px-3 py-1.5 text-[12px] font-semibold text-violet-800 dark:border-violet-500/40 dark:bg-violet-500/15 dark:text-violet-100"
             onClick={() => setAttached(true)}
             data-testid="letters-acm-composer-attach"
           >
@@ -126,15 +126,15 @@ export default function LettersAcmComposerIaMockPage() {
 
       {attached ? (
         <section
-          className={`${PS_SURFACE_PANEL} border-emerald-500/30 px-5 py-5`}
+          className={`${PS_SURFACE_PANEL} border-emerald-300 px-5 py-5 dark:border-emerald-500/30`}
           data-testid="letters-acm-composer-composite"
         >
           <div className="flex flex-wrap items-center gap-2">
-            <Layers2 className="h-4 w-4 text-emerald-300" aria-hidden />
+            <Layers2 className="h-4 w-4 text-emerald-700 dark:text-emerald-300" aria-hidden />
             <h2 className="text-[1.1rem] font-semibold text-wo-text-primary">
               Composit: {rootLabel} + {peer.labelRo}
             </h2>
-            <span className="inline-flex items-center gap-1 rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-100">
+            <span className="inline-flex items-center gap-1 rounded border border-emerald-400/50 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-100">
               <BadgeCheck className="h-3 w-3" aria-hidden />
               Contract v1
             </span>
@@ -149,7 +149,9 @@ export default function LettersAcmComposerIaMockPage() {
               <li key={task.id}>
                 <span className="font-mono text-wo-text-muted">{task.order}.</span> {task.labelRo}
                 {task.costNoteRo ? (
-                  <span className="ml-2 font-mono text-emerald-300/80">{task.costNoteRo}</span>
+                  <span className="ml-2 font-mono text-emerald-700 dark:text-emerald-300/80">
+                    {task.costNoteRo}
+                  </span>
                 ) : null}
               </li>
             ))}
@@ -171,7 +173,7 @@ export default function LettersAcmComposerIaMockPage() {
             </ul>
             <Link
               to={pricesPath}
-              className="mt-3 inline-block text-[11px] text-emerald-300/90 hover:text-emerald-200"
+              className="mt-3 inline-block text-[11px] text-emerald-700 hover:text-emerald-800 dark:text-emerald-300/90 dark:hover:text-emerald-200"
             >
               Deschide foaia de prețuri →
             </Link>
