@@ -167,7 +167,7 @@ export default function WorkIntake() {
           <Inbox className="w-5 h-5 text-orange-400" />
           <h1 className="text-[18px] font-bold text-wo-text-primary">Work Intake</h1>
           <SourceBadge source={intakeSource} />
-          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
+          <span className="text-[10px] font-medium text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded-full ml-1">
             {intakeRequests.length} cereri
           </span>
         </div>
@@ -311,14 +311,14 @@ export default function WorkIntake() {
                     <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
                       req.priority === "urgent" ? "bg-red-600 text-white" :
                       req.priority === "high" ? "bg-amber-600 text-white" :
-                      "bg-slate-700 text-slate-300"
+                      "bg-wo-surface-inset text-wo-text-secondary border border-wo-border-strong"
                     }`}>
                       {req.priority.toUpperCase()}
                     </span>
                   </div>
                   <p className="text-[13px] font-semibold text-wo-text-primary">{req.client}</p>
-                  <p className="text-[11px] text-slate-400 truncate mt-0.5">{req.description}</p>
-                  <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-500">
+                  <p className="text-[11px] text-wo-text-muted truncate mt-0.5">{req.description}</p>
+                  <div className="flex items-center gap-3 mt-1.5 text-[10px] text-wo-text-dim">
                     <span className="flex items-center gap-1">{channelIcon[req.channel]} {req.channel}</span>
                     <span>{formatIntakeProductFamilyLabel(req.productFamily)}</span>
                     <span>Qty: {req.quantity}</span>
