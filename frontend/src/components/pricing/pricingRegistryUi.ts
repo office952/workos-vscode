@@ -39,19 +39,19 @@ export function entryRowClass(selected: boolean): string {
   return [
     "bg-wo-surface-raised border rounded-lg p-4 cursor-pointer transition-all",
     selected
-      ? "border-blue-500/50 ring-1 ring-blue-500/30"
-      : "border-wo-border-subtle hover:border-slate-500",
+      ? "border-wo-info/50 ring-1 ring-wo-info/30"
+      : "border-wo-border-subtle hover:border-wo-border-strong hover:bg-wo-hover",
   ].join(" ");
 }
 
 export function statusSeverityBadgeClass(severity: StatusSeverity): string {
   switch (severity) {
     case "ok":
-      return "bg-emerald-500/15 text-emerald-700 border-emerald-600/40 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700/50";
+      return "bg-wo-success-muted text-wo-success border-wo-success/35";
     case "warn":
-      return "bg-amber-500/15 text-amber-800 border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/50";
+      return "bg-wo-warning-muted text-wo-warning border-wo-warning/35";
     case "bad":
-      return "bg-red-500/15 text-red-700 border-red-600/40 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700/50";
+      return "bg-wo-error-muted text-wo-error border-wo-error/35";
     default: {
       const _exhaustive: never = severity;
       return _exhaustive;

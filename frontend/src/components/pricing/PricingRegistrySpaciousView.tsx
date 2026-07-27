@@ -37,7 +37,13 @@ import {
   type TemplateListEntry,
 } from "@/lib/pricingRegistry";
 import { PricingEntryRow } from "./PricingEntryRow";
-import { SourceBadge, PreviewOfficialBanner, CapacityNotice, BoundaryBadge } from "@/components/workos/design-system";
+import {
+  SourceBadge,
+  PreviewOfficialBanner,
+  CapacityNotice,
+  BoundaryBadge,
+  chromeBanner,
+} from "@/components/workos/design-system";
 import { PRICING_VIEW_TAB_META } from "./pricingRegistryUi";
 import {
   filterByTypedCatalogView,
@@ -56,26 +62,28 @@ function fmtCost(n: number | null | undefined, currency?: string | null): string
 function severityClass(sev: StatusSeverity): string {
   switch (sev) {
     case "ok":
-      return "text-emerald-700 dark:text-emerald-400";
+      return "text-wo-success";
     case "warn":
-      return "text-amber-700 dark:text-amber-400";
+      return "text-wo-warning";
     case "bad":
-      return "text-red-700 dark:text-red-400";
-    default:
-      return "text-muted-foreground";
+      return "text-wo-error";
+    default: {
+      const _exhaustive: never = sev;
+      return _exhaustive;
+    }
   }
 }
 
 function readinessClass(readiness: string): string {
   switch (readiness) {
     case "available":
-      return "text-emerald-700 dark:text-emerald-400";
+      return "text-wo-success";
     case "partial":
-      return "text-amber-700 dark:text-amber-400";
+      return "text-wo-warning";
     case "blocked":
-      return "text-red-700 dark:text-red-400";
+      return "text-wo-error";
     default:
-      return "text-muted-foreground";
+      return "text-wo-text-muted";
   }
 }
 
@@ -259,52 +267,24 @@ export function PricingRegistrySpaciousView({
   const verifyCount = buildProblemQueue(templateItems).length;
 
   return (
-    <div className="flex flex-col min-h-0 space-y-2">
-      {/* Stage Banner */}
-      <PreviewOfficialBanner
-        stage="internal"
-        label="Registry intern de referință"
-        detail="Material / Reguli comerciale / Cost intern / Capacitate / Analytics. Nu este hub unic de ofertare. Oferta oficială = Snapshot V2."
-        compact={false}
-      />
-      <div className="flex flex-wrap items-center gap-2">
-        <BoundaryBadge
-          domain="pricing"
-          label="Pricing Registry"
-          detail="Material cost ≠ regulă comercială ≠ cost intern ≠ capacitate"
-        />
-        <BoundaryBadge domain="inventory" label="Material cost" compact />
-        <BoundaryBadge domain="pricing" label="Regulă comercială" compact />
-        <BoundaryBadge domain="hr" label="Cost intern (analytics)" compact />
-        <BoundaryBadge domain="machines" label="Capacity rule" compact />
-        <CapacityNotice
-          message="Efort intern / oră = capacitate — NU tarif client. Nu deblochează oferta. Fără amestec comercial↔intern."
-          compact
-        />
-      </div>
-
-      {/* Header — compact */}
+    <div className="flex flex-col min-h-0 space-y-3">
+      {/* Header — title first; honesty collapsed */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <TrendingUp className="w-5 h-5 text-blue-400 shrink-0" />
-            <h1 className="text-[18px] font-bold text-foreground">Pricing Registry</h1>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              Registry intern de referință — nu este fluxul operator Product Template → Structură produs → Product
-              Compiler.
-            </p>
+            <TrendingUp className="w-5 h-5 text-wo-info shrink-0" />
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Pricing Registry</h1>
             <SourceBadge
               source={source === "db" ? "db" : source === "loading" ? "loading" : "error"}
             />
           </div>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            <span className="text-muted-foreground">Pricing</span> = registry intern (materiale / utilaje / manoperă) ·{" "}
-            <span className="text-muted-foreground">Inventory</span> = stoc și cost achiziție · Oferta client rămâne pe canal CPP
+          <p className="text-[11px] text-wo-text-muted mt-0.5">
+            Registry intern de referință (materiale / utilaje / manoperă) · Inventory = stoc · Oferta client = Snapshot V2
             {baseCurrency ? (
               <>
                 {" "}
-                · Monedă de bază (Settings):{" "}
-                <span className="text-muted-foreground font-semibold">{baseCurrency}</span>
+                · Monedă bază:{" "}
+                <span className="text-wo-text-secondary font-semibold">{baseCurrency}</span>
               </>
             ) : null}
           </p>
@@ -313,11 +293,11 @@ export function PricingRegistrySpaciousView({
           <button
             type="button"
             onClick={onOpenMarkupDrawer}
-            className="inline-flex items-center gap-1.5 rounded border border-purple-200 bg-purple-50 px-2.5 py-1.5 text-[11px] font-medium text-purple-700 transition-colors hover:bg-purple-100 dark:border-purple-700/50 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
+            className="inline-flex items-center gap-1.5 rounded-md border border-wo-info/40 bg-wo-info-muted px-2.5 py-1.5 text-[11px] font-semibold text-wo-info transition-colors hover:bg-wo-hover"
           >
             <Settings2 className="w-3 h-3" />
             Adaos
-            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] text-purple-800 dark:bg-purple-800/50 dark:text-purple-200">
+            <span className="rounded border border-wo-info/35 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] text-wo-info">
               {activePoliciesCount}
             </span>
           </button>
@@ -325,7 +305,7 @@ export function PricingRegistrySpaciousView({
             type="button"
             onClick={onRefresh}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded border border-border bg-wo-surface-raised px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-2.5 py-1.5 text-[11px] font-medium text-wo-text-secondary transition-colors hover:bg-wo-hover disabled:opacity-50"
           >
             <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
             Actualizează
@@ -333,10 +313,44 @@ export function PricingRegistrySpaciousView({
         </div>
       </div>
 
+      <details
+        className={`rounded-lg px-3 py-2 group ${chromeBanner.info}`}
+        data-testid="pricing-registry-rules"
+      >
+        <summary className="cursor-pointer list-none text-[11px] font-semibold text-wo-text-primary flex items-center gap-2">
+          <Info className="w-3.5 h-3.5 text-wo-info shrink-0" />
+          Registry rules — material ≠ comercial ≠ cost intern ≠ capacitate
+          <span className="text-[10px] font-normal text-wo-text-muted group-open:hidden">(detalii)</span>
+        </summary>
+        <div className="mt-2 space-y-2">
+          <PreviewOfficialBanner
+            stage="internal"
+            label="Registry intern de referință"
+            detail="Material / Reguli comerciale / Cost intern / Capacitate / Analytics. Nu este hub unic de ofertare. Oferta oficială = Snapshot V2."
+            compact
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <BoundaryBadge
+              domain="pricing"
+              label="Pricing Registry"
+              detail="Material cost ≠ regulă comercială ≠ cost intern ≠ capacitate"
+            />
+            <BoundaryBadge domain="inventory" label="Material cost" compact />
+            <BoundaryBadge domain="pricing" label="Regulă comercială" compact />
+            <BoundaryBadge domain="hr" label="Cost intern (analytics)" compact />
+            <BoundaryBadge domain="machines" label="Capacity rule" compact />
+          </div>
+          <CapacityNotice
+            message="Efort intern / oră = capacitate — NU tarif client. Nu deblochează oferta. Fără amestec comercial↔intern."
+            compact
+          />
+        </div>
+      </details>
+
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-800/40 dark:bg-red-900/20">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
-          <p className="text-[12px] text-red-800 dark:text-red-300">{error}</p>
+        <div className={`flex items-center gap-2 rounded-lg px-3 py-2 ${chromeBanner.error}`}>
+          <AlertTriangle className="h-4 w-4 shrink-0 text-wo-error" />
+          <p className="text-[12px]">{error}</p>
         </div>
       )}
 
@@ -346,7 +360,7 @@ export function PricingRegistrySpaciousView({
           const meta = PRICING_VIEW_TAB_META[key];
           const countBadge =
             key === "verify" && verifyCount > 0 ? (
-              <span className="ml-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+              <span className="ml-1 rounded-full border border-wo-warning/35 bg-wo-warning-muted px-1.5 py-0.5 text-[9px] text-wo-warning">
                 {verifyCount}
               </span>
             ) : null;
@@ -357,7 +371,7 @@ export function PricingRegistrySpaciousView({
               onClick={() => onMainViewChange(key)}
               className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition-all ${
                 mainView === key
-                  ? "border border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600/50 dark:bg-blue-600/20 dark:text-blue-300"
+                  ? "border border-wo-info/40 bg-wo-info-muted text-wo-info"
                   : "border border-wo-border-strong bg-transparent text-wo-text-secondary hover:bg-wo-hover hover:text-wo-text-primary"
               }`}
             >
@@ -387,7 +401,7 @@ export function PricingRegistrySpaciousView({
               data-testid={`pricing-catalog-filter-${tab.key}`}
               className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
                 typedCatalogView === tab.key
-                  ? "border border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-700/50 dark:bg-cyan-900/30 dark:text-cyan-200"
+                  ? "border border-wo-info/40 bg-wo-info-muted text-wo-info"
                   : "border border-wo-border-strong bg-transparent text-wo-text-secondary hover:bg-wo-hover hover:text-wo-text-primary"
               }`}
             >
@@ -445,7 +459,7 @@ export function PricingRegistrySpaciousView({
                     placeholder="Caută cod, nume…"
                     value={stackSearch}
                     onChange={(e) => onStackSearchChange(e.target.value)}
-                    className="w-[200px] rounded-lg border border-wo-border-strong bg-wo-surface-inset py-1.5 pl-8 pr-3 text-[12px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-blue-600/50 focus:outline-none"
+                    className="w-[200px] rounded-lg border border-wo-border-strong bg-wo-surface-inset py-1.5 pl-8 pr-3 text-[12px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-wo-info/50 focus:outline-none"
                   />
                 </div>
               )}
@@ -558,7 +572,7 @@ function TemplateZone({
       <div className="flex items-center justify-between gap-3 flex-wrap px-3 py-2.5 bg-card border border-border rounded-lg">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-mono text-[12px] font-semibold text-blue-400">{selectedTemplate}</p>
+            <p className="font-mono text-[12px] font-semibold text-wo-info">{selectedTemplate}</p>
             <span className={`text-[10px] font-semibold ${readinessClass(templateStats.readiness)}`}>
               {templateStats.readinessLabel}
             </span>
@@ -566,11 +580,11 @@ function TemplateZone({
           <p className="text-[12px] text-muted-foreground mt-0.5 truncate">{templateHumanLabel(selectedTemplate)}</p>
           <p className="text-[10px] text-muted-foreground mt-1">
             {templateStats.ownerConfirmed} confirmate ·{" "}
-            <span className="text-amber-700 dark:text-amber-400">
+            <span className="text-wo-warning">
               {templateStats.estimated + templateStats.needsReview} review
             </span>{" "}
             ·{" "}
-            <span className="text-red-700 dark:text-red-400">
+            <span className="text-wo-error">
               {templateStats.missingPrice} lipsă
             </span>
           </p>
@@ -578,7 +592,7 @@ function TemplateZone({
         <button
           type="button"
           onClick={onOpenPicker}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-wo-border-strong bg-wo-surface-inset text-foreground hover:border-blue-600/40 hover:text-blue-300 transition-colors whitespace-nowrap"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg border border-wo-border-strong bg-wo-surface-inset text-wo-text-primary hover:border-wo-info/40 hover:text-wo-info transition-colors whitespace-nowrap"
         >
           Schimbă template…
           <ChevronDown className="w-3.5 h-3.5" />
@@ -595,8 +609,8 @@ function TemplateZone({
               title="Favorite"
               className={`px-2 py-0.5 rounded-full text-[10px] border transition-colors ${
                 code === selectedTemplate
-                  ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700/40 dark:bg-amber-900/20 dark:text-amber-300"
-                  : "border-wo-border-strong text-muted-foreground hover:text-amber-700 dark:hover:text-amber-300"
+                  ? "border-wo-warning/40 bg-wo-warning-muted text-wo-warning"
+                  : "border-wo-border-strong text-wo-text-muted hover:text-wo-warning"
               }`}
             >
               ★ {code}
@@ -655,7 +669,7 @@ function TemplateZone({
                 placeholder="Caută template_code, nume, familie…"
                 value={pickerSearch}
                 onChange={(e) => onPickerSearchChange(e.target.value)}
-                className="mt-2 w-full rounded-lg border border-wo-border-strong bg-card px-3 py-2 text-[13px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-blue-600/50 focus:outline-none"
+                className="mt-2 w-full rounded-lg border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[13px] text-wo-text-primary placeholder:text-wo-text-muted focus:border-wo-info/50 focus:outline-none"
                 autoFocus
               />
             </div>
@@ -693,7 +707,7 @@ function TemplateZone({
                         onClick={() => onSelectTemplate(t.template_code)}
                         className="flex-1 text-left px-3 py-2.5"
                       >
-                        <p className="font-mono text-[11px] font-semibold text-blue-400">{t.template_code}</p>
+                        <p className="font-mono text-[11px] font-semibold text-wo-info">{t.template_code}</p>
                         <p className="text-[13px] text-foreground mt-0.5">{t.label}</p>
                         <p className="text-[10px] text-muted-foreground mt-1">
                           {t.family} · {t.materialCount} materiale · {t.workcenterCount} operații
@@ -702,11 +716,11 @@ function TemplateZone({
                       <button
                         type="button"
                         onClick={() => onToggleFavoriteTemplate(t.template_code)}
-                        className="p-2 mt-1 text-muted-foreground hover:text-amber-400"
+                        className="p-2 mt-1 text-muted-foreground hover:text-wo-warning"
                         title={isFav ? "Elimină din favorite" : "Adaugă la favorite"}
                       >
                         <Star
-                          className={`w-4 h-4 ${isFav ? "fill-amber-400 text-amber-400" : ""}`}
+                          className={`w-4 h-4 ${isFav ? "fill-wo-warning text-wo-warning" : ""}`}
                         />
                       </button>
                     </div>
@@ -841,8 +855,8 @@ function MarkupView({
 }) {
   return (
     <div className="space-y-3">
-      <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 dark:border-amber-700/40 dark:bg-amber-900/20">
-        <p className="text-[11px] leading-relaxed text-amber-900 dark:text-amber-200">
+      <div className={`rounded-lg px-4 py-3 ${chromeBanner.warning}`}>
+        <p className="text-[11px] leading-relaxed">
           <Info className="mr-1 inline h-3 w-3" />
           Editare reguli adaos — build separat. Regulile sunt vizibile aici, dar modificarea se face într-un flux dedicat.
         </p>
@@ -948,10 +962,13 @@ function DetailPanel({
 
   if (!model || !item) {
     return (
-      <div className="flex flex-col items-center justify-center p-6 text-center min-h-[280px]">
-        <Info className="w-7 h-7 text-wo-text-dim mb-2" />
-        <p className="text-[12px] text-muted-foreground max-w-[240px]">
-          Selectează o intrare pentru impact ofertă, sursă tehnică și acțiuni.
+      <div className="flex flex-col items-center justify-center p-6 text-center min-h-[280px] rounded-lg border border-dashed border-wo-border-strong bg-wo-surface-inset">
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-wo-surface-raised border border-wo-border-subtle mb-3">
+          <Info className="w-5 h-5 text-wo-text-muted" />
+        </div>
+        <p className="text-[13px] font-semibold text-wo-text-primary">Nicio intrare selectată</p>
+        <p className="text-[12px] text-wo-text-muted max-w-[240px] mt-1">
+          Alege un rând din listă pentru impact ofertă, sursă tehnică și acțiuni.
         </p>
       </div>
     );
@@ -964,32 +981,32 @@ function DetailPanel({
 
   return (
     <div className="flex flex-col min-h-0 overflow-y-auto p-4 space-y-3">
-      <div className="border-b border-border pb-3">
-        <h2 className="text-[15px] font-bold text-foreground">{model.name}</h2>
-        <p className="font-mono text-[11px] text-blue-400 mt-0.5">{model.code}</p>
-        <p className="text-[10px] text-muted-foreground mt-1">
+      <div className="border-b border-wo-border-subtle pb-3">
+        <h2 className="text-[15px] font-bold text-wo-text-primary">{model.name}</h2>
+        <p className="font-mono text-[11px] text-wo-info mt-0.5">{model.code}</p>
+        <p className="text-[10px] text-wo-text-muted mt-1">
           {model.typeLabel} · {model.category}
         </p>
       </div>
 
-      <div className="bg-card border border-border rounded-lg p-3">
-        <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">{model.costLabelRo}</p>
-        <p className="text-[20px] font-bold text-foreground">{costDisplay}</p>
-        <p className="text-[11px] text-muted-foreground">{model.unit}</p>
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+        <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">{model.costLabelRo}</p>
+        <p className="text-[20px] font-bold text-wo-text-primary">{costDisplay}</p>
+        <p className="text-[11px] text-wo-text-muted">{model.unit}</p>
         {model.machineFamilyLabel && (
-          <p className="text-[11px] text-cyan-300/80 mt-1">{model.machineFamilyLabel}</p>
+          <p className="text-[11px] text-wo-info mt-1">{model.machineFamilyLabel}</p>
         )}
         <p className={`text-[11px] font-semibold mt-2 ${severityClass(model.status.severity)}`}>
           {model.status.text}
         </p>
         {model.currencyMismatchWarning && (
-          <p className="text-[10px] text-amber-300 mt-2 leading-relaxed flex items-start gap-1">
+          <p className="text-[10px] text-wo-warning mt-2 leading-relaxed flex items-start gap-1">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {model.currencyMismatchWarning}
           </p>
         )}
         {model.dataQualityWarningRo && (
-          <p className="text-[10px] text-amber-300 mt-2 leading-relaxed flex items-start gap-1">
+          <p className="text-[10px] text-wo-warning mt-2 leading-relaxed flex items-start gap-1">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {model.dataQualityWarningRo}
           </p>
@@ -1026,7 +1043,7 @@ function DetailPanel({
         {model.costEngineRate != null && (
           <div className="flex justify-between">
             <span className="text-muted-foreground">CostEngine</span>
-            <span className={model.costEngineRateMatch ? "text-emerald-400" : "text-amber-400"}>
+            <span className={model.costEngineRateMatch ? "text-wo-success" : "text-wo-warning"}>
               {model.costEngineRate} {model.costEngineRateMatch ? "✓" : "≠"}
             </span>
           </div>
@@ -1036,7 +1053,7 @@ function DetailPanel({
       {model.isMaterial && (
         <Link
           to="/inventory"
-          className="inline-flex items-center gap-1.5 text-[11px] text-blue-400 hover:underline"
+          className="inline-flex items-center gap-1.5 text-[11px] text-wo-info hover:underline"
         >
           <ExternalLink className="w-3 h-3" />
           Referință operațională în Inventory
@@ -1047,7 +1064,7 @@ function DetailPanel({
         <div>
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1.5">Istoric recent</p>
           {loadingHistory ? (
-            <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+            <Loader2 className="w-4 h-4 animate-spin text-wo-info" />
           ) : priceHistory.length > 0 ? (
             <div className="space-y-1">
               {priceHistory.slice(0, 3).map((h, idx) => (
@@ -1068,7 +1085,7 @@ function DetailPanel({
           <button
             type="button"
             onClick={() => onEditMaterial(item)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded bg-blue-600 text-white hover:bg-blue-500"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-md border border-wo-info/40 bg-wo-info-muted text-wo-info hover:bg-wo-hover"
           >
             <Pencil className="w-3 h-3" />
             Editare preț
@@ -1079,14 +1096,14 @@ function DetailPanel({
             type="button"
             onClick={() => onEditRate(item)}
             disabled={loadingRate}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-md border border-wo-info/40 bg-wo-info-muted text-wo-info hover:bg-wo-hover disabled:opacity-50"
           >
             <Pencil className="w-3 h-3" />
             Editare rată
           </button>
         )}
         {model.isMarkup && (
-          <span className="text-[10px] text-amber-400/90 self-center">Editare reguli adaos — build separat</span>
+          <span className="text-[10px] text-wo-warning self-center">Editare reguli adaos — build separat</span>
         )}
         {!model.isMaterial && !model.isRate && !model.isMarkup && (
           <span className="text-[10px] text-muted-foreground self-center">Vizualizare read-only</span>
