@@ -2,11 +2,16 @@
 # Sets script-scoped dev env (incl. dev auth flags), verifies layout, then starts the stack.
 # Does NOT hardcode dev auth in Python source - env vars only.
 #
-# Usage:
+# Usage (Owner interactive — streams FE logs; Ctrl+C stops the session-scoped jobs):
 #   .\scripts\dev.ps1              Start or reuse backend :8000 + frontend :3000
 #   .\scripts\dev.ps1 -PreflightOnly   Validate layout/env only (no servers)
 #
-# Stop: Ctrl+C when frontend logs are streaming; or stop PIDs on ports 8000 / 3000.
+# Agents / durable start (survives Cursor agent shell end) — prefer:
+#   .\scripts\dev-detached.ps1
+# Owner-gated stop (agents only with explicit Owner GO):
+#   .\scripts\stop-dev.ps1
+#
+# Stop interactive: Ctrl+C when frontend logs are streaming; or .\scripts\stop-dev.ps1
 
 param(
     [switch] $PreflightOnly
