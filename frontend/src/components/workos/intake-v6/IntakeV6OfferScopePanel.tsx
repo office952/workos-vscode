@@ -352,11 +352,11 @@ export default function IntakeV6OfferScopePanel({
 
   return (
     <section
-      className={`${v6.cardCompact} ${confirmed ? "border-emerald-500/30 bg-emerald-500/5" : "border-violet-500/30 bg-violet-500/5"}`}
+      className={`${v6.cardCompact} ${confirmed ? "border-wo-success/35 bg-wo-success-muted/40" : "border-wo-info/30 bg-wo-info-muted/30"}`}
       data-testid="intake-v6-offer-scope-panel"
     >
       <p className="flex items-center gap-2 text-[12px] font-semibold text-wo-text-primary">
-        <Package className="h-3.5 w-3.5 text-violet-500 dark:text-violet-300" aria-hidden />
+        <Package className="h-3.5 w-3.5 text-wo-info" aria-hidden />
         Ce producem?
       </p>
 
@@ -378,7 +378,7 @@ export default function IntakeV6OfferScopePanel({
               aria-pressed={selected}
               className={
                 selected
-                  ? "rounded border border-violet-500/40 bg-violet-500/15 px-2.5 py-1 text-[11px] text-wo-text-primary"
+                  ? "rounded border border-wo-info/40 bg-wo-info-muted px-2.5 py-1 text-[11px] text-wo-info font-semibold"
                   : "rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1 text-[11px] text-wo-text-secondary hover:border-wo-border-strong hover:text-wo-text-primary"
               }
             >
@@ -388,7 +388,8 @@ export default function IntakeV6OfferScopePanel({
         })}
       </div>
 
-      <fieldset className="mt-3 space-y-2" disabled={disabled || saving}>
+      {/* Radios kept for a11y / tests; visually collapsed to avoid duplicating presets */}
+      <fieldset className="sr-only" disabled={disabled || saving} aria-label="Mod ofertă">
         <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
           <input
             type="radio"
@@ -438,7 +439,7 @@ export default function IntakeV6OfferScopePanel({
           </div>
           <button
             type="button"
-            className="text-[10px] text-violet-300 hover:text-violet-200"
+            className="text-[10px] text-wo-info hover:underline"
             aria-expanded={advancedOpen}
             data-testid="intake-v6-offer-scope-advanced-toggle"
             onClick={() => setAdvancedOpen((open) => !open)}
@@ -467,7 +468,7 @@ export default function IntakeV6OfferScopePanel({
       ) : null}
 
       {subsetInvalid ? (
-        <p className="mt-2 text-[11px] text-amber-200" data-testid="intake-v6-offer-scope-empty-subset-error">
+        <p className="mt-2 text-[11px] text-wo-warning" data-testid="intake-v6-offer-scope-empty-subset-error">
           Selectează cel puțin o componentă (Față, Cant, Spate sau Sistem LED complet).
         </p>
       ) : null}
@@ -479,9 +480,9 @@ export default function IntakeV6OfferScopePanel({
         dependencyConfirmations={readDependencyConfirmations(payload)}
       />
 
-      {saveError ? <p className="mt-2 text-[11px] text-rose-300">{saveError}</p> : null}
+      {saveError ? <p className="mt-2 text-[11px] text-wo-error">{saveError}</p> : null}
 
-      <p className="mt-2 text-[10px] text-slate-500" data-testid="intake-v6-offer-scope-status">
+      <p className="mt-2 text-[10px] text-wo-text-muted" data-testid="intake-v6-offer-scope-status">
         {saving
           ? "Salvez selecția…"
           : confirmed
@@ -492,7 +493,7 @@ export default function IntakeV6OfferScopePanel({
       </p>
 
       {confirmed ? (
-        <p className="mt-1 flex items-center gap-1.5 text-[10px] text-emerald-300">
+        <p className="mt-1 flex items-center gap-1.5 text-[10px] text-wo-success">
           <CheckCircle2 className="h-3 w-3" aria-hidden />
           {mode === "full_product"
             ? "Ofertă pentru produs complet"

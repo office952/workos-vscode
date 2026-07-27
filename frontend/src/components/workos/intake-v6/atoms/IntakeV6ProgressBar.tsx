@@ -52,12 +52,12 @@ export default function IntakeV6ProgressBar({
 							<span
 								className={`flex items-center justify-center rounded-full border-2 font-bold ${circleClass} ${
 									done
-										? "border-emerald-500/40 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+										? "border-wo-success/40 bg-wo-success-muted text-wo-success"
 										: active
-											? "border-sky-500/40 bg-sky-50 text-sky-800 dark:bg-sky-500/10 dark:text-sky-300"
+											? "border-wo-info/40 bg-wo-info-muted text-wo-info"
 											: visited && !complete
-												? "border-amber-500/40 bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-200"
-												: "border-wo-border-strong bg-wo-hover text-wo-text-dim"
+												? "border-wo-warning/40 bg-wo-warning-muted text-wo-warning"
+												: "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary"
 								}`}
 							>
 								{done ? "✓" : index + 1}
@@ -67,11 +67,11 @@ export default function IntakeV6ProgressBar({
 									compact ? "text-[11px]" : "text-[12px]"
 								} ${
 									active
-										? "text-sky-800 dark:text-sky-300"
+										? "text-wo-info"
 										: done
-											? "text-emerald-700 dark:text-emerald-400"
+											? "text-wo-success"
 											: visited && !complete
-												? "text-amber-800 dark:text-amber-200"
+												? "text-wo-warning"
 												: "text-wo-text-secondary"
 								}`}
 							>
@@ -81,7 +81,7 @@ export default function IntakeV6ProgressBar({
 						{index < INTAKE_V6_VISIBLE_PROGRESS_STEPS.length - 1 ? (
 							<div
 								className={`mx-2 h-0.5 flex-1 rounded ${compact ? "mx-1.5" : "mx-3"} ${
-									done ? "bg-emerald-500/40" : "bg-wo-hover"
+									done ? "bg-wo-success/40" : "bg-wo-border-subtle"
 								}`}
 							/>
 						) : null}

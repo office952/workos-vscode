@@ -184,7 +184,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
 
   return (
     <footer
-      className="sticky bottom-0 z-10 mt-auto border-t border-wo-border-strong bg-wo-surface-raised/95 px-5 py-2 shadow-[0_-4px_14px_rgba(0,0,0,0.08)] dark:shadow-[0_-6px_18px_rgba(0,0,0,0.28)] backdrop-blur-sm"
+      className="sticky bottom-0 z-10 mt-auto border-t border-wo-border-strong bg-wo-surface-raised/95 px-5 py-2.5 shadow-[0_-4px_14px_hsl(var(--wo-text-primary)/0.08)] backdrop-blur-sm"
       data-testid="intake-v6-operator-workspace-footer"
       data-footer-weight="compact"
     >
@@ -217,7 +217,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
               {primaryActionReason}
             </span>
           ) : guidance.canContinue ? (
-            <span className="basis-full text-emerald-800 dark:text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
+            <span className="basis-full text-wo-success" data-testid="intake-v6-guidance-next-action">
               <span className="font-semibold">Următorul pas: </span>
               {guidance.continueEnabledLabel}
             </span>
@@ -229,10 +229,10 @@ export default function IntakeV6OperatorWorkspaceFooter({
       ) : null}
 
       {showIssuesDrawer ? (
-        <div className="mb-2 rounded border border-wo-border-strong bg-wo-surface-inset/60" data-testid="intake-v6-footer-issues">
+        <div className="mb-2 rounded border border-wo-warning/40 bg-wo-warning-muted/50" data-testid="intake-v6-footer-issues">
           <button
             type="button"
-            className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold text-wo-text-secondary"
+            className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold text-wo-warning"
             onClick={() => setIssuesOpen((value) => !value)}
             data-testid="intake-v6-footer-issues-toggle"
             aria-expanded={issuesOpen}
@@ -265,7 +265,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
                         {entry.action && /^(confirm-step|jump-)/.test(entry.action) ? (
                           <button
                             type="button"
-                            className="ml-2 text-[10px] font-semibold text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"
+                            className="ml-2 text-[10px] font-semibold text-wo-info hover:underline"
                             onClick={() => handleStatusAction(entry.action!)}
                             data-testid={`intake-v6-footer-issue-action-${entry.action}`}
                           >
