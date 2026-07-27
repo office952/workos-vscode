@@ -80,7 +80,17 @@ export default function ExecutionDashboard() {
   const activeWcCapacity = capacity.filter((c) => (c.plannedMinutes ?? 0) > 0 || c.loadToday > 0);
   const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? 0;
   const maintAvail =
-    capacityModel?.machineMappingReadiness?.maintenance?.availability ?? "gap";
+    capacityModel?.batch04Gates?.maintenance?.availability ??
+    capacityModel?.machineMappingReadiness?.maintenance?.availability ??
+    "gap";
+  const batch04 = operationalTruth?.capacityBatch04;
+  const assignmentTruth =
+    capacityModel?.batch04Gates?.assignment?.truthCount ?? batch04?.assignmentTruthCount ?? 0;
+  const needsAssignment =
+    capacityModel?.batch04Gates?.assignment?.needsAssignmentCount ??
+    batch04?.needsAssignmentCount ??
+    0;
+  const preMat = capacityModel?.preMaterializeChecklist;
   const [rows, setRows] = useState<DashboardRow[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -195,6 +205,17 @@ export default function ExecutionDashboard() {
         <p className="text-[10px] text-wo-text-muted">
           Nu blochează oferta · nu CostEngine · nu POST materialize. Overload = warning only.
           Minutes NULL+WARN: {minutesMissing}. Mentenanță: {maintAvail}. Materialize: BLOCAT.
+        </p>
+        <p className="text-[10px] text-wo-text-muted" data-testid="execution-batch04-gates">
+          Assignment truth: {assignmentTruth} ·{" "}
+          <span className="text-wo-warning font-semibold">
+            {needsAssignment} NEEDS ASSIGNMENT TRUTH
+          </span>
+          {" · "}Machine util%:{" "}
+          <span className="text-wo-warning font-semibold">GAP</span> fără CAP-012/013.
+          Pre-materialize blockers:{" "}
+          {preMat?.blockerCount ?? batch04?.preMaterializeBlockerCount ?? "—"} —{" "}
+          {preMat?.summary ?? batch04?.preMaterializeSummary ?? "DEC-009 blocked"}
         </p>
         {calendarShiftOk && activeWcCapacity.length > 0 && (
           <ul className="flex flex-wrap gap-2 pt-0.5">

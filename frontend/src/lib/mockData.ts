@@ -421,6 +421,60 @@ export interface CapacityBatch02Truth {
   materialize?: string;
 }
 
+export interface CapacityBatch04Truth {
+  materialize?: string;
+  dec009?: string;
+  maintenanceAvailability?: string;
+  statusOnlyMaintenanceCount?: number;
+  assignmentTruthCount?: number;
+  needsAssignmentCount?: number;
+  preMaterializeBlockerCount?: number;
+  preMaterializeSummary?: string;
+}
+
+export interface PreMaterializeChecklistItem {
+  id?: string;
+  label?: string;
+  status?: string;
+  blocking?: boolean;
+  detail?: string;
+}
+
+export interface PreMaterializeChecklist {
+  materialize?: string;
+  dec009?: string;
+  readyForMaterializeGo?: boolean;
+  blockerCount?: number;
+  items?: PreMaterializeChecklistItem[];
+  summary?: string;
+}
+
+export interface CapacityBatch04Gates {
+  assignment?: {
+    truthCount?: number;
+    needsAssignmentCount?: number;
+    policy?: string;
+  };
+  machineUtil?: {
+    rows?: Array<{
+      machineCode?: string;
+      machineUtilPct?: number | null;
+      machineUtilStatus?: string;
+      machineUtilNote?: string;
+      maintenanceAvailability?: string;
+      statusOnlyMaintenance?: boolean;
+    }>;
+    policy?: string;
+  };
+  maintenance?: {
+    availability?: string;
+    statusOnlyCount?: number;
+    notice?: string;
+    deductionMinutesByWc?: Record<string, number>;
+  };
+  ownerCapLock?: Record<string, string>;
+}
+
 export interface CapacityModelPayload {
   batch?: string;
   materialize?: string;
@@ -429,6 +483,7 @@ export interface CapacityModelPayload {
   year?: number;
   month?: number;
   warnings?: string[];
+  ownerCapLock?: Record<string, string>;
   minutesReadiness?: {
     tasksWithMinutes?: number;
     tasksMissingMinutes?: number;
@@ -445,8 +500,12 @@ export interface CapacityModelPayload {
     maintenance?: {
       availability?: string;
       notice?: string;
+      statusOnlyCount?: number;
+      deductionMinutesByWc?: Record<string, number>;
     };
   };
+  batch04Gates?: CapacityBatch04Gates;
+  preMaterializeChecklist?: PreMaterializeChecklist;
 }
 
 export interface OperationalTruth {
@@ -460,6 +519,7 @@ export interface OperationalTruth {
   dataGaps?: OperationalDataGaps;
   boundaries: Record<string, string>;
   capacityBatch02?: CapacityBatch02Truth;
+  capacityBatch04?: CapacityBatch04Truth;
 }
 
 export const capacityLoad: CapacitySlot[] = [
