@@ -51,6 +51,7 @@ import {
 const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "active", label: "Activ" },
   { value: "inactive", label: "Inactiv" },
+  { value: "ended", label: "Încheiat" },
   { value: "on_leave", label: "Concediu" },
   { value: "sick", label: "Medical" },
   { value: "training", label: "Training" },
@@ -66,6 +67,7 @@ const QUICK_STATUS_FILTERS: { value: string; label: string }[] = [
   { value: "all", label: "Toți" },
   { value: "active", label: "Activi" },
   { value: "inactive", label: "Inactivi" },
+  { value: "ended", label: "Încheiați" },
 ];
 
 const QUICK_MOBILE_FILTERS: { value: "all" | "mobile" | "no_mobile"; label: string }[] = [
@@ -111,6 +113,7 @@ interface FormState {
   skills: string; // comma separated
   machines: string; // comma separated
   data_angajare: string; // yyyy-mm-dd
+  end_date: string; // yyyy-mm-dd — resignation / termination
   observatii: string;
 }
 
@@ -127,6 +130,7 @@ const EMPTY_FORM: FormState = {
   skills: "",
   machines: "",
   data_angajare: "",
+  end_date: "",
   observatii: "",
 };
 
@@ -156,6 +160,7 @@ function toFormState(e: EmployeeDTO): FormState {
     skills: (e.skills ?? []).join(", "),
     machines: (e.machines ?? []).join(", "),
     data_angajare: e.data_angajare ? e.data_angajare.slice(0, 10) : "",
+    end_date: e.end_date ? e.end_date.slice(0, 10) : "",
     observatii: e.observatii ?? "",
   };
 }
@@ -237,6 +242,7 @@ function formToPayload(f: FormState): EmployeePayload {
     skills: parseList(f.skills),
     machines: parseList(f.machines),
     data_angajare: f.data_angajare ? `${f.data_angajare}T00:00:00` : null,
+    end_date: f.end_date ? `${f.end_date}T00:00:00` : null,
     observatii: f.observatii.trim() || null,
   };
 }
@@ -416,15 +422,19 @@ export default function Employees() {
 
   const remove = async () => {
     if (selectedId === null) return;
-    if (!window.confirm("Sigur vrei să ștergi acest angajat?")) return;
+    if (
+      !window.confirm(
+        "Închei contractul acestui angajat? Nu se șterge din istoric (pontaj/taskuri/costuri rămân legate). Status → Încheiat + data de azi.",
+      )
+    )
+      return;
     setDeleting(true);
     try {
       await employeesApi.remove(selectedId);
-      setSelectedId(null);
-      setMode("view");
       await load();
+      setMode("view");
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : "Eroare la ștergere");
+      setSaveError(err instanceof Error ? err.message : "Eroare la încheiere");
     } finally {
       setDeleting(false);
     }
@@ -840,14 +850,17 @@ function EmployeeDetail({
           >
             <Pencil className="w-3.5 h-3.5" />
           </button>
-          <button
-            onClick={onDelete}
-            disabled={deleting}
-            className="p-1.5 text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-red-600/60 transition-colors disabled:opacity-50"
-            title="Șterge"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          {e.status !== "ended" && e.status !== "inactive" && (
+            <button
+              onClick={onDelete}
+              disabled={deleting}
+              className="p-1.5 text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-red-600/60 transition-colors disabled:opacity-50"
+              title="Încheie angajarea (fără ștergere)"
+              data-testid="employee-end-employment"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -958,10 +971,24 @@ function EmployeeDetail({
         </div>
       )}
 
-      {e.data_angajare && (
+      <div className="grid grid-cols-2 gap-3">
         <Field label="Data angajării">
-          {new Date(e.data_angajare).toLocaleDateString("ro-RO")}
+          {e.data_angajare
+            ? new Date(e.data_angajare).toLocaleDateString("ro-RO")
+            : "—"}
         </Field>
+        <Field label="Data încheierii">
+          {e.end_date ? new Date(e.end_date).toLocaleDateString("ro-RO") : "—"}
+        </Field>
+      </div>
+      <Field label="Eligibil asignare">
+        {e.is_assignable === false ? "Nu (inactiv / după end_date)" : "Da"}
+      </Field>
+      {e.ore_productive_luna_source && (
+        <p className="text-[10px] text-muted-foreground italic" data-testid="employee-hours-source">
+          Ore productive: {fmtNumber(e.ore_productive_luna)} h · sursă{" "}
+          {e.ore_productive_luna_source}
+        </p>
       )}
 
       {e.observatii && (
@@ -1138,12 +1165,22 @@ function EmployeeForm({
         onChange={(v) => onChange("machines", v)}
       />
 
-      <TextField
-        label="Data angajării"
-        value={form.data_angajare}
-        onChange={(v) => onChange("data_angajare", v)}
-        type="date"
-      />
+      <div className="grid grid-cols-2 gap-2">
+        <TextField
+          label="Data angajării (start)"
+          value={form.data_angajare}
+          onChange={(v) => onChange("data_angajare", v)}
+          type="date"
+          hint="Capacitate Cost Intern doar după această dată."
+        />
+        <TextField
+          label="Data încheierii (end)"
+          value={form.end_date}
+          onChange={(v) => onChange("end_date", v)}
+          type="date"
+          hint="Demisie/încetare — nu șterge istoricul."
+        />
+      </div>
 
       <TextareaField
         label="Observații"

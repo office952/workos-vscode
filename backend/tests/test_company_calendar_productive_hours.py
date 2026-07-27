@@ -124,7 +124,11 @@ async def test_cost_engine_uses_calendar_hours_without_stored_field(db_session):
     from sqlalchemy import select, update
 
     await db_session.execute(
-        update(Employees).values(status="inactive")
+        update(Employees).values(
+            status="inactive",
+            end_date=None,
+            employee_type="administrative",
+        )
     )
     await db_session.commit()
 
@@ -143,7 +147,9 @@ async def test_cost_engine_uses_calendar_hours_without_stored_field(db_session):
     )
     assert cfg["valid"] is True
     assert cfg["total_productive_hours_month"] == 184.0
-    assert cfg["productive_hours_source"] == "company_calendar_minus_approved_leave"
+    assert cfg["productive_hours_source"] == (
+        "company_calendar_minus_approved_leave_clipped_employment"
+    )
     assert abs(cfg["average_labour_hour_cost"] - (8000 / 184.0)) < 0.01
     assert not any("employee_invalid" in w for w in cfg["warnings"])
     # sanity: only one active productive remains

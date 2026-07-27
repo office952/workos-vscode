@@ -1,4 +1,4 @@
-"""Employees router — CRUD for personal/angajati."""
+"""Employees router — CRUD for personal/angajati + lifecycle read models."""
 import json
 import logging
 from datetime import date, datetime
@@ -9,8 +9,14 @@ from dependencies.auth import get_current_user
 from dependencies.permissions import require_permission
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.auth import User
-from schemas.auth import UserResponse
 from pydantic import BaseModel
+from schemas.auth import UserResponse
+from services.employee_lifecycle import (
+    build_capacity_read_model,
+    employment_interval,
+    find_open_assignments_needing_reassignment,
+    is_assignable,
+)
 from services.employee_productive_hours import compute_productive_hours_by_employee
 from services.employees import (
     EmployeesService,
@@ -47,6 +53,7 @@ class EmployeeData(BaseModel):
     skills: Optional[Any] = None
     machines: Optional[Any] = None
     data_angajare: Optional[datetime] = None
+    end_date: Optional[datetime] = None
     observatii: Optional[str] = None
 
 
@@ -66,7 +73,13 @@ class EmployeeUpdateData(BaseModel):
     skills: Optional[Any] = None
     machines: Optional[Any] = None
     data_angajare: Optional[datetime] = None
+    end_date: Optional[datetime] = None
     observatii: Optional[str] = None
+
+
+class EmployeeEndData(BaseModel):
+    end_date: Optional[datetime] = None
+    status: Optional[str] = "ended"
 
 
 class EmployeeResponse(BaseModel):
@@ -94,6 +107,8 @@ class EmployeeResponse(BaseModel):
     skills: Optional[List[str]] = None
     machines: Optional[List[str]] = None
     data_angajare: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    is_assignable: bool = True
     observatii: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -145,7 +160,11 @@ def _serialize(
     is_linked, has_mobile = _mobile_access_flags(user_id, row.status, user)
     # Owner: hours are calendar-derived; expose calculated value for Cost Intern UI.
     hours = calculated_hours
-    hours_source = "company_calendar_minus_approved_leave" if hours is not None else None
+    hours_source = (
+        "company_calendar_minus_approved_leave_clipped_employment"
+        if hours is not None
+        else None
+    )
     if hours is None and row.ore_productive_luna is not None:
         hours = float(row.ore_productive_luna)
         hours_source = "stored_legacy"
@@ -175,6 +194,8 @@ def _serialize(
         skills=_parse_list(row.skills),
         machines=_parse_list(row.machines),
         data_angajare=row.data_angajare,
+        end_date=getattr(row, "end_date", None),
+        is_assignable=is_assignable(row, date.today()),
         observatii=row.observatii,
         created_at=row.created_at,
         updated_at=row.updated_at,
@@ -202,6 +223,45 @@ async def _user_for_employee(db: AsyncSession, user_id: Optional[str]) -> User |
     if not (user_id or "").strip():
         return None
     return await db.get(User, user_id)
+
+
+@router.get("/lifecycle/capacity")
+async def employee_capacity_read_model(
+    year: Optional[int] = Query(None),
+    month: Optional[int] = Query(None),
+    db: AsyncSession = Depends(get_db),
+):
+    """Current-month capacity — effective-date based (HR, not client pricing)."""
+    today = date.today()
+    y = int(year or today.year)
+    m = int(month or today.month)
+    svc = EmployeesService(db)
+    result = await svc.get_list(skip=0, limit=2000)
+    hours_by_id = await compute_productive_hours_by_employee(
+        db, [r.id for r in result["items"]], year=y, month=m
+    )
+    rows = await build_capacity_read_model(
+        db, result["items"], year=y, month=m, hours_by_id=hours_by_id
+    )
+    return {
+        "year": y,
+        "month": m,
+        "source": "company_calendar_minus_approved_leave_clipped_employment",
+        "items": rows,
+        "total": len(rows),
+        "boundary": "HR capacity / Cost Intern only — never client tariff",
+    }
+
+
+@router.get("/lifecycle/needs-reassignment")
+async def open_assignments_needing_reassignment(db: AsyncSession = Depends(get_db)):
+    """Open plan tasks assigned to inactive/ended employees after end_date."""
+    flags = await find_open_assignments_needing_reassignment(db)
+    return {
+        "items": flags,
+        "total": len(flags),
+        "boundary": "Assignment eligibility only — never client pricing",
+    }
 
 
 @router.get("", response_model=EmployeeListResponse)
@@ -279,10 +339,44 @@ async def update_employee(id: int, data: EmployeeUpdateData, db: AsyncSession = 
     return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
 
 
+@router.post("/{id}/end-employment", response_model=EmployeeResponse)
+async def end_employee_employment(
+    id: int,
+    data: EmployeeEndData,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("employee.update")),
+):
+    """Soft-end resignation/termination — never hard-delete."""
+    svc = EmployeesService(db)
+    try:
+        row = await svc.end_employment(
+            id,
+            end_date=data.end_date,
+            status=data.status or "ended",
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    if not row:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    user = await _user_for_employee(db, getattr(row, "user_id", None))
+    hours_by_id = await _hours_map_for_rows(db, [row])
+    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
+
+
 @router.delete("/{id}")
 async def delete_employee(id: int, db: AsyncSession = Depends(get_db), _user: UserResponse = Depends(require_permission("employee.delete"))):
+    """Soft-end (never hard-delete). Historic pontaj/tasks/costs stay linked."""
     svc = EmployeesService(db)
-    ok = await svc.delete(id)
-    if not ok:
+    row = await svc.end_employment(id, status="ended")
+    if not row:
         raise HTTPException(status_code=404, detail="Employee not found")
-    return {"message": "Employee deleted successfully", "id": id}
+    start, end = employment_interval(row)
+    return {
+        "message": "Employee soft-ended (never hard-deleted)",
+        "id": id,
+        "status": row.status,
+        "end_date": end.isoformat() if end else None,
+        "start_date": start.isoformat() if start else None,
+        "hard_deleted": False,
+    }
+

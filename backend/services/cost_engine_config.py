@@ -86,18 +86,30 @@ class CostEngineConfigService:
         employees_svc = EmployeesService(self.db)
         payments_svc = RecurringPaymentsService(self.db)
 
-        active_productive = await employees_svc.get_active_productive()
+        # Effective-date capacity: productive employees with employment overlap
+        # in the target month (hire/end dates), not only status==active today.
+        month_contributors = await employees_svc.get_productive_contributors_for_month(
+            target_year, target_month
+        )
 
         # Per-row validity check. Invalid rows are EXCLUDED from the aggregates
         # and reported as warnings — never silently treated as zero.
         valid_employees = []
-        for emp in active_productive:
-            if is_valid_for_cost_engine(emp):
-                valid_employees.append(emp)
-            else:
+        for emp in month_contributors:
+            # Mid-month leavers still contribute clipped hours; require cost.
+            if emp.employee_type == "productive" and (
+                emp.cost_lunar_firma is None or float(emp.cost_lunar_firma or 0) <= 0
+            ):
                 warnings.append(
                     f"employee_invalid:id={emp.id}:missing_cost_lunar_firma"
                 )
+                continue
+            if emp.status == "active" and not is_valid_for_cost_engine(emp):
+                warnings.append(
+                    f"employee_invalid:id={emp.id}:missing_cost_lunar_firma"
+                )
+                continue
+            valid_employees.append(emp)
 
         hours_by_id = await compute_productive_hours_by_employee(
             self.db,
@@ -144,7 +156,7 @@ class CostEngineConfigService:
             "metoda_overhead": cfg.metoda_overhead,
             "cost_ora_manopera_default": cfg.cost_ora_manopera_default,
             "allow_manual_override": bool(cfg.allow_manual_override),
-            "productive_hours_source": "company_calendar_minus_approved_leave",
+            "productive_hours_source": "company_calendar_minus_approved_leave_clipped_employment",
             "productive_hours_year": target_year,
             "productive_hours_month": target_month,
         }
