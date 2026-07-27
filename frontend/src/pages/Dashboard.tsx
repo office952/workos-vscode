@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
-import { CapacityNotice } from "@/components/workos/design-system";
-import type { KPIMetricKind, KPIValue, OperationalTruth } from "@/lib/mockData";
+import { CapacityNotice, BoundaryBadge } from "@/components/workos/design-system";
+import type {
+  KPIMetricKind,
+  KPIValue,
+  OperationalDataGaps,
+  OperationalTruth,
+} from "@/lib/mockData";
 import {
   readDashboardBannerAcknowledged,
   readDashboardGapsAcknowledged,
@@ -31,6 +36,7 @@ import {
   Factory,
   BarChart3,
   Info,
+  Users,
 } from "lucide-react";
 
 /* ─── Status Header ─── */
@@ -359,6 +365,92 @@ function OperationalTruthBanner({
           Am înțeles
         </button>
       </div>
+    </div>
+  );
+}
+
+/* ─── Operational data gaps (Pricing / Cost Intern / Capacity) ─── */
+function OperationalDataGapsPanel({ gaps }: { gaps?: OperationalDataGaps | null }) {
+  if (!gaps) return null;
+  const rows = [
+    {
+      key: "pricing",
+      title: "Pricing rates",
+      href: "/inventory/pricing",
+      icon: BarChart3,
+      domain: "pricing" as const,
+      block: gaps.pricing,
+    },
+    {
+      key: "costIntern",
+      title: "Cost Intern",
+      href: "/employees",
+      icon: Users,
+      domain: "hr" as const,
+      block: gaps.costIntern,
+    },
+    {
+      key: "capacity",
+      title: "Capacity",
+      href: "/utilaje",
+      icon: Gauge,
+      domain: "machines" as const,
+      block: gaps.capacity,
+    },
+  ].filter((r) => r.block);
+
+  if (!rows.length) return null;
+
+  return (
+    <div
+      className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-4 py-3 space-y-2"
+      data-testid="dashboard-data-gaps"
+      role="region"
+      aria-label="Operational data gaps"
+    >
+      <div className="flex items-center gap-2 flex-wrap">
+        <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+        <h3 className="text-xs font-semibold text-foreground">
+          Gap-uri date operaționale
+        </h3>
+        <span className="text-[10px] text-wo-text-muted">
+          Material ≠ regulă comercială ≠ cost intern ≠ capacitate
+        </span>
+      </div>
+      <ul className="space-y-2">
+        {rows.map(({ key, title, href, icon: Icon, domain, block }) => {
+          const needed = Boolean(block?.ownerDataNeeded ?? block?.unknown);
+          return (
+            <li
+              key={key}
+              className="flex flex-col gap-1 rounded-md border border-wo-border-subtle/80 px-3 py-2"
+              data-testid={`dashboard-data-gap-${key}`}
+            >
+              <div className="flex items-center gap-2 flex-wrap">
+                <Icon className="w-3.5 h-3.5 text-wo-text-muted shrink-0" />
+                <span className="text-[11px] font-semibold text-foreground">{title}</span>
+                <BoundaryBadge domain={domain} compact />
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                    needed
+                      ? "bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200"
+                      : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                  }`}
+                >
+                  {needed ? "Owner data needed" : "OK"}
+                </span>
+                <Link
+                  to={href}
+                  className="ml-auto text-[10px] font-medium text-blue-700 hover:underline dark:text-blue-300"
+                >
+                  Deschide
+                </Link>
+              </div>
+              <p className="text-[11px] leading-snug text-wo-text-muted">{block?.notice}</p>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
@@ -803,6 +895,8 @@ export default function Dashboard() {
           setBannerAcknowledged(false);
         }}
       />
+
+      <OperationalDataGapsPanel gaps={operationalTruth?.dataGaps} />
 
       <div
         className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-raised px-3 py-2"

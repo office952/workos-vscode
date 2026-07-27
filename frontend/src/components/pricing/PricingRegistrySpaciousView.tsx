@@ -268,9 +268,17 @@ export function PricingRegistrySpaciousView({
         compact={false}
       />
       <div className="flex flex-wrap items-center gap-2">
-        <BoundaryBadge domain="pricing" label="Pricing Registry" />
+        <BoundaryBadge
+          domain="pricing"
+          label="Pricing Registry"
+          detail="Material cost ≠ regulă comercială ≠ cost intern ≠ capacitate"
+        />
+        <BoundaryBadge domain="inventory" label="Material cost" compact />
+        <BoundaryBadge domain="pricing" label="Regulă comercială" compact />
+        <BoundaryBadge domain="hr" label="Cost intern (analytics)" compact />
+        <BoundaryBadge domain="machines" label="Capacity rule" compact />
         <CapacityNotice
-          message="Efort intern / oră = capacitate — NU tarif client. Nu deblochează oferta."
+          message="Efort intern / oră = capacitate — NU tarif client. Nu deblochează oferta. Fără amestec comercial↔intern."
           compact
         />
       </div>

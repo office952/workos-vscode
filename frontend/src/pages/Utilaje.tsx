@@ -165,8 +165,11 @@ export default function Utilaje() {
 
   return (
     <div className="space-y-4">
-      {/* Capacity Notice */}
-      <CapacityNotice compact />
+      {/* Capacity Notice — feasibility only, never commercial tariff */}
+      <CapacityNotice
+        message="Utilaje = feasibility / capacity — NU tarif comercial. Load/util fără semnal = GAP (nu inventăm %)."
+        compact
+      />
 
       {/* Header */}
       <div className="flex items-center justify-between">

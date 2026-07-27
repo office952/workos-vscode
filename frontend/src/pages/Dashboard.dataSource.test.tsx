@@ -91,10 +91,34 @@ vi.mock("@/hooks/useDashboardStats", () => ({
       workcenterLoadKind: "planned_load_0_100",
       calendarShiftUtilAvailable: false,
       notices: [
+        "Pricing Registry: 2 rate/price lipsă — Owner data needed.",
+        "Cost Intern (HR analytics/profitability — NU tarif client): 1 angajați productivi incompleți.",
+        "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100.",
         "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter (nu utilizare pe ture/calendar).",
         "Capacitate / load planificat — nu pricing comercial, nu cost orar utilaj → tarif client.",
         "Throughput azi = comenzi completed cu updated_at în ziua calendaristică UTC curentă.",
       ],
+      dataGaps: {
+        pricing: {
+          domain: "pricing_registry",
+          ownerDataNeeded: true,
+          missingPriceCount: 2,
+          notice: "Pricing Registry: 2 rate/price lipsă — Owner data needed.",
+        },
+        costIntern: {
+          domain: "hr_internal_cost",
+          ownerDataNeeded: true,
+          incompleteEmployeeCount: 1,
+          notice:
+            "Cost Intern (HR analytics/profitability — NU tarif client): 1 angajați productivi incompleți.",
+        },
+        capacity: {
+          domain: "capacity_feasibility",
+          ownerDataNeeded: true,
+          unknown: true,
+          notice: "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100.",
+        },
+      },
       boundaries: {
         pricing: "Dashboard does not compute or display client tariffs.",
       },
@@ -155,6 +179,19 @@ describe("Dashboard data source honesty", () => {
     expect(screen.getByTestId("dashboard-honesty-banner-ack")).toBeInTheDocument();
     expect(screen.getByTestId("dashboard-honesty-gaps-ack")).toBeInTheDocument();
     expect(screen.getAllByTestId("kpi-gap-note").length).toBeGreaterThan(0);
+  });
+
+  it("surfaces Pricing / Cost Intern / Capacity data gaps without mixing domains", () => {
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("dashboard-data-gaps")).toBeInTheDocument();
+    expect(screen.getByTestId("dashboard-data-gap-pricing")).toHaveTextContent(/Owner data needed/i);
+    expect(screen.getByTestId("dashboard-data-gap-costIntern")).toHaveTextContent(/NU tarif client/i);
+    expect(screen.getByTestId("dashboard-data-gap-capacity")).toHaveTextContent(/calendar\/shift/i);
+    expect(screen.getByText(/Material ≠ regulă comercială ≠ cost intern ≠ capacitate/i)).toBeInTheDocument();
   });
 
   it("separates planned vs actual vs blocked in summary bar", () => {
