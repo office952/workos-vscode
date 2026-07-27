@@ -52,7 +52,7 @@ export default function IntakeV6Header({
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-5 py-2 sm:px-6">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-[12px]">
           <span
-            className={`${v6.mono} font-semibold text-sky-700 dark:text-sky-300`}
+            className={`${v6.mono} font-semibold text-wo-info`}
             data-testid="intake-v6-header-workspace-code"
           >
             {code}
@@ -71,7 +71,7 @@ export default function IntakeV6Header({
           </span>
           {logoOnlyCandidate ? (
             <span
-              className="basis-full text-[11px] font-semibold text-amber-800 dark:text-amber-200 sm:basis-auto"
+              className="basis-full text-[11px] font-semibold text-wo-warning sm:basis-auto"
               data-testid="intake-v6-header-logo-only-guard"
             >
               {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE} Context UI existent: {template} shell.
@@ -93,7 +93,7 @@ export default function IntakeV6Header({
             {promoteTemplateV2Message ? (
               <span
                 className={`text-[11px] ${
-                  promoteTemplateV2Status === "error" ? "text-red-300" : "text-emerald-300"
+                  promoteTemplateV2Status === "error" ? "text-wo-error" : "text-wo-success"
                 }`}
                 data-testid="intake-v6-promote-template-v2-message"
               >

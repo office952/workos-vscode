@@ -35,7 +35,7 @@ import {
   type EmployeePayload,
 } from "@/api/costEngine";
 import { EmployeeOperationalPanel } from "@/features/operational-registry/EmployeeOperationalPanel";
-import { InternalCostNotice } from "@/components/workos/design-system";
+import { InternalCostNotice, chromeBanner } from "@/components/workos/design-system";
 import EmployeeMobileAccessBadge from "@/components/workos/employees/EmployeeMobileAccessBadge";
 import EmployeeAdminOperationalSummary from "@/components/workos/employees/EmployeeAdminOperationalSummary";
 import {
@@ -253,14 +253,14 @@ function formToPayload(f: FormState): EmployeePayload {
 function ValidityBadge({ valid }: { valid: boolean }) {
   if (valid) {
     return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 border border-emerald-200 dark:text-emerald-300 dark:bg-emerald-900/30 dark:border-emerald-700/50 rounded px-1.5 py-0.5">
+      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-wo-success bg-wo-success-muted border border-wo-success/35 rounded px-1.5 py-0.5">
         <CheckCircle2 className="w-3 h-3" />
         Cost intern valid
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-100 border border-amber-200 dark:text-amber-300 dark:bg-amber-900/30 dark:border-amber-700/50 rounded px-1.5 py-0.5">
+    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-wo-warning bg-wo-warning-muted border border-wo-warning/35 rounded px-1.5 py-0.5">
       <AlertTriangle className="w-3 h-3" />
       Date incomplete
     </span>
@@ -274,8 +274,8 @@ function EmployeeStatusBadge({ status }: { status: string }) {
     <span
       className={`inline-flex items-center gap-1 text-[10px] font-semibold rounded-full border px-2 py-0.5 ${
         isActive
-          ? "text-emerald-700 bg-emerald-100 border-emerald-200 dark:text-emerald-300 dark:bg-emerald-900/25 dark:border-emerald-700/45"
-          : "text-slate-600 bg-slate-100 border-slate-200 dark:text-muted-foreground dark:bg-muted/60 dark:border-slate-600"
+          ? "text-wo-success bg-wo-success-muted border-wo-success/35"
+          : "text-wo-text-secondary bg-wo-surface-inset border-wo-border-strong"
       }`}
     >
       {isActive ? (
@@ -444,63 +444,39 @@ export default function Employees() {
   // Render
   // ============================================================
   return (
-    <div className="space-y-4">
-      {/* Internal Cost Notice — HR ≠ tarif client */}
-      <InternalCostNotice
-        message="Cost intern angajat — analytics / profitability. NU tarif client. Registry intern HR nu conduce oferta client. Nu inventăm salariu → tarif comercial."
-        compact
-      />
-      <div className="flex flex-wrap items-center gap-2" data-testid="employees-cost-boundary">
-        <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-          Boundary
-        </span>
-        <span className="rounded border border-sky-200 bg-sky-50 px-2 py-0.5 text-[10px] text-sky-800 dark:border-sky-700 dark:bg-sky-900/30 dark:text-sky-300">
-          Cost Intern = analytics
-        </span>
-        <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-800 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-          Nu Pricing Registry
-        </span>
-        <span className="rounded border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] text-amber-800 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-          Nu Ofertă client
-        </span>
-      </div>
-
-      {/* Header */}
+    <div className="space-y-5 pb-4">
+      {/* Header first — hierarchy: title → KPIs → filters → list; boundary collapsed */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <Users className="w-5 h-5 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
-            <h1 className="text-[18px] font-bold text-foreground">Angajați operaționali</h1>
-            <Badge
-              className="gap-1 text-[10px] uppercase tracking-wide bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-600/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
-            >
+            <Users className="w-5 h-5 text-wo-info" />
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Angajați operaționali</h1>
+            <Badge className="gap-1 text-[10px] uppercase tracking-wide border-wo-success/35 bg-wo-success-muted text-wo-success hover:bg-wo-success-muted">
               <Database className="w-3 h-3" />
               LIVE DB
             </Badge>
-            <Badge
-              className="text-[10px] uppercase tracking-wide bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-700/60 hover:bg-cyan-100 dark:hover:bg-cyan-950/60"
-            >
+            <Badge className="text-[10px] uppercase tracking-wide border-wo-info/35 bg-wo-info-muted text-wo-info hover:bg-wo-info-muted">
               OPERAȚIONAL
             </Badge>
-            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+            <span className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded-full">
               {kpis.total} persoane
             </span>
           </div>
-          <p className="text-[13px] text-muted-foreground pl-7">
+          <p className="text-[13px] text-wo-text-muted pl-7">
             Registry pentru execuție, operații, autorizări și alocări. Nu este evidență salarială.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => void load()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-wo-text-secondary bg-wo-surface-raised border border-wo-border-strong rounded-md hover:bg-wo-hover transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reîncarcă
           </button>
           <button
             onClick={startCreate}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-wo-info bg-wo-info-muted border border-wo-info/40 rounded-md hover:bg-wo-hover transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
             Adaugă angajat
@@ -508,22 +484,52 @@ export default function Employees() {
         </div>
       </div>
 
+      <details
+        className={`rounded-lg px-3 py-2 group ${chromeBanner.info}`}
+        data-testid="employees-cost-boundary"
+      >
+        <summary className="cursor-pointer list-none text-[11px] font-semibold text-wo-text-primary flex items-center gap-2">
+          <Info className="w-3.5 h-3.5 text-wo-info shrink-0" />
+          Boundary cost intern — NU tarif client
+          <span className="text-[10px] font-normal text-wo-text-muted group-open:hidden">
+            (detalii)
+          </span>
+        </summary>
+        <div className="mt-2 space-y-2">
+          <InternalCostNotice
+            message="Cost intern angajat — analytics / profitability. NU tarif client. Registry intern HR nu conduce oferta client. Nu inventăm salariu → tarif comercial."
+            compact
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded border border-wo-info/35 bg-wo-surface-raised px-2 py-0.5 text-[10px] text-wo-info">
+              Cost Intern = analytics
+            </span>
+            <span className="rounded border border-wo-success/35 bg-wo-surface-raised px-2 py-0.5 text-[10px] text-wo-success">
+              Nu Pricing Registry
+            </span>
+            <span className="rounded border border-wo-warning/35 bg-wo-surface-raised px-2 py-0.5 text-[10px] text-wo-warning">
+              Nu Ofertă client
+            </span>
+          </div>
+        </div>
+      </details>
+
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Total</p>
-          <p className="text-[22px] font-bold text-foreground">{kpis.total}</p>
-          <p className="text-[10px] text-muted-foreground">angajați înregistrați</p>
+          <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Total</p>
+          <p className="text-[22px] font-bold text-wo-text-primary">{kpis.total}</p>
+          <p className="text-[10px] text-wo-text-muted">angajați înregistrați</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Activi</p>
-          <p className="text-[22px] font-bold text-emerald-600 dark:text-emerald-400">{kpis.active}</p>
-          <p className="text-[10px] text-muted-foreground">status = activ</p>
+          <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Activi</p>
+          <p className="text-[22px] font-bold text-wo-success">{kpis.active}</p>
+          <p className="text-[10px] text-wo-text-muted">status = activ</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Productivi</p>
-          <p className="text-[22px] font-bold text-blue-600 dark:text-blue-400">{kpis.productive}</p>
-          <p className="text-[10px] text-muted-foreground">intră în calcul cost intern</p>
+          <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Productivi</p>
+          <p className="text-[22px] font-bold text-wo-info">{kpis.productive}</p>
+          <p className="text-[10px] text-wo-text-muted">intră în calcul cost intern</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Validați cost intern</p>
@@ -593,8 +599,8 @@ export default function Employees() {
                 type="button"
                 className={`px-2.5 py-1.5 text-[10px] font-medium rounded-full border transition-colors min-h-[30px] ${
                   active
-                    ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-200 dark:border-blue-700/50"
-                    : "bg-background text-muted-foreground border-border hover:border-slate-600"
+                    ? "bg-wo-info-muted text-wo-info border-wo-info/40"
+                    : "bg-wo-surface-raised text-wo-text-muted border-wo-border-strong hover:bg-wo-hover hover:text-wo-text-secondary"
                 }`}
                 data-testid={`employees-quick-filter-${option.value}`}
                 aria-pressed={active}
@@ -619,8 +625,8 @@ export default function Employees() {
                 type="button"
                 className={`px-2.5 py-1.5 text-[10px] font-medium rounded-full border transition-colors min-h-[30px] ${
                   active
-                    ? "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-700/45"
-                    : "bg-background text-muted-foreground border-border hover:border-slate-600"
+                    ? "bg-wo-success-muted text-wo-success border-wo-success/40"
+                    : "bg-wo-surface-raised text-wo-text-muted border-wo-border-strong hover:bg-wo-hover hover:text-wo-text-secondary"
                 }`}
                 data-testid={`employees-quick-mobile-filter-${option.value}`}
                 aria-pressed={active}
@@ -637,8 +643,8 @@ export default function Employees() {
         <div className="space-y-2">
           <div className={`rounded-lg px-4 py-3 text-[12px] border ${
             loadError.includes("401") || loadError.includes("403") || loadError.toLowerCase().includes("unauthorized")
-              ? "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-900/20 dark:border-amber-800/60 dark:text-amber-300"
-              : "bg-red-100 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800/60 dark:text-red-300"
+              ? "bg-wo-warning-muted border-wo-warning/35 text-wo-warning"
+              : "bg-wo-error-muted border-wo-error/35 text-wo-error"
           }`}>
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
@@ -705,14 +711,14 @@ export default function Employees() {
                     setSelectedId(e.id);
                     setMode("view");
                   }}
-                  className={`bg-card border rounded-xl p-3.5 cursor-pointer transition-all ${
+                  className={`bg-wo-surface-raised border rounded-xl p-3.5 cursor-pointer transition-all focus-within:ring-1 focus-within:ring-wo-info/40 ${
                     active
-                      ? "border-blue-500/50 ring-1 ring-blue-500/30"
-                      : "border-border hover:border-slate-500"
+                      ? "border-wo-info/50 ring-1 ring-wo-info/30"
+                      : "border-wo-border-subtle hover:border-wo-border-strong hover:bg-wo-hover"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-[13px] font-bold text-muted-foreground shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-wo-surface-inset border border-wo-border-strong flex items-center justify-center text-[13px] font-bold text-wo-text-secondary shrink-0">
                       {e.name
                         .split(" ")
                         .map((n) => n[0])
@@ -823,7 +829,7 @@ function EmployeeDetail({
       data-testid="employee-detail-panel"
     >
       <div className="flex items-start gap-3">
-        <div className="w-11 h-11 rounded-full bg-slate-700 flex items-center justify-center text-[14px] font-bold text-muted-foreground">
+        <div className="w-11 h-11 rounded-full bg-wo-surface-inset border border-wo-border-strong flex items-center justify-center text-[14px] font-bold text-wo-text-secondary">
           {e.name
             .split(" ")
             .map((n) => n[0])
@@ -923,7 +929,7 @@ function EmployeeDetail({
             {fmtNumber(e.ore_lucru_luna)}
           </Field>
           <Field label="Cost oră calculat (RON/h)">
-            <span className="font-mono text-emerald-600 dark:text-emerald-300">
+            <span className="font-mono text-wo-success">
               {fmtMoney(e.cost_ora_calculat)}
             </span>
           </Field>
@@ -1189,7 +1195,7 @@ function EmployeeForm({
       />
 
       {warnings.length > 0 && (
-        <div className="bg-amber-100 border border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-700/50 dark:text-amber-200 text-[11px] rounded-md px-3 py-2 space-y-1">
+        <div className="bg-wo-warning-muted border border-wo-warning/35 text-wo-warning text-[11px] rounded-md px-3 py-2 space-y-1">
           {warnings.map((w) => (
             <div key={w} className="flex items-start gap-1.5">
               <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
@@ -1209,7 +1215,7 @@ function EmployeeForm({
         <button
           type="submit"
           disabled={saving || hasErrors}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-wo-info bg-wo-info-muted border border-wo-info/40 rounded-md hover:bg-wo-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Save className="w-3.5 h-3.5" />
           {saving ? "Se salvează..." : mode === "create" ? "Creează" : "Salvează"}

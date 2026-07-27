@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 export const v6 = {
 	page: "flex min-h-full flex-col bg-wo-surface-inset text-wo-text-primary text-[12px] leading-relaxed",
 	shell: "border-wo-border-strong",
-	main: "w-full max-w-none flex-1 px-5 pt-5 pb-4 sm:px-6 lg:px-8",
+	main: "w-full max-w-none flex-1 px-5 pt-5 pb-28 sm:px-6 lg:px-8",
 	grid: "grid gap-4",
 	gridTwoCol: "grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] xl:gap-5",
 	layersFullWidthGrid:
@@ -35,7 +35,7 @@ export const v6 = {
 	btnConfirm:
 		"rounded-md border border-emerald-400/40 bg-gradient-to-b from-emerald-500 to-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white shadow-[0_4px_14px_rgba(16,185,129,0.35)] hover:from-emerald-400 hover:to-emerald-500 disabled:cursor-not-allowed disabled:border-wo-border-strong disabled:bg-wo-surface-inset disabled:from-transparent disabled:to-transparent disabled:text-wo-text-muted disabled:shadow-none disabled:opacity-90",
 	btnGhost:
-		"rounded-md border border-wo-border-strong bg-wo-hover px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-sky-500/30 disabled:cursor-not-allowed disabled:text-wo-text-muted disabled:opacity-70",
+		"rounded-md border border-wo-border-strong bg-wo-surface-raised px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-wo-info/40 hover:bg-wo-hover disabled:cursor-not-allowed disabled:border-wo-border-subtle disabled:bg-wo-surface-inset disabled:text-wo-text-muted disabled:opacity-90",
 } as const;
 
 /**
