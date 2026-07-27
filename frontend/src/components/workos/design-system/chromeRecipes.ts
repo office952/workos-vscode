@@ -32,6 +32,8 @@ export const chromeBanner = {
     "border border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800/40 dark:bg-amber-900/25 dark:text-amber-200",
   error:
     "border border-red-200 bg-red-50 text-red-800 dark:border-red-800/40 dark:bg-red-900/25 dark:text-red-200",
+  success:
+    "border border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800/50 dark:bg-emerald-950/20 dark:text-emerald-100",
   neutral:
     "border border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary",
 } as const;

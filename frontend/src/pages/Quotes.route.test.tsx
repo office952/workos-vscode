@@ -36,6 +36,7 @@ vi.mock("@/lib/dataStore", () => ({
 
 const sampleQuote: Quote = {
   id: "QT-2245",
+  dbId: 5,
   client: "MOL",
   contactPerson: "Radu",
   assignedTo: "Operator",
@@ -91,6 +92,14 @@ describe("Quotes direct route", () => {
     await waitFor(() => {
       expect(screen.getByTestId("quote-not-found")).toBeInTheDocument();
     });
+  });
+
+  it("resolves numeric dbId deep-link /quotes/:id", async () => {
+    renderAt("/quotes/5");
+    await waitFor(() => {
+      expect(screen.getAllByText("QT-2245").length).toBeGreaterThan(0);
+    });
+    expect(screen.queryByTestId("quote-not-found")).not.toBeInTheDocument();
   });
 
   it("shows terminal policy for rejected quotes", async () => {

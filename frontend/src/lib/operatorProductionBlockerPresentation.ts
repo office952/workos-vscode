@@ -61,9 +61,9 @@ export function unresolvedBlockingCount(decisions: OwnerDecisionSummaryItem[]): 
 
 export function productionReleaseStatusLabel(status: string, blocked: boolean): string {
   if (blocked || status === "RELEASE_BLOCKED_OWNER_DECISIONS") {
-    return "Productie blocata";
+    return "Producție blocată";
   }
-  if (status === "RELEASE_ALLOWED") return "Productie permisa";
+  if (status === "RELEASE_ALLOWED") return "Producție permisă";
   return status.replace(/_/g, " ");
 }
 

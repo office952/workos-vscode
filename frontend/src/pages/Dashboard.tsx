@@ -4,6 +4,12 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { CapacityNotice } from "@/components/workos/design-system";
 import type { KPIMetricKind, KPIValue, OperationalTruth } from "@/lib/mockData";
 import {
+  readDashboardBannerAcknowledged,
+  readDashboardGapsAcknowledged,
+  writeDashboardBannerAcknowledged,
+  writeDashboardGapsAcknowledged,
+} from "@/lib/dashboardHonestyDisclosure";
+import {
   AlertTriangle,
   Activity,
   Zap,
@@ -131,6 +137,7 @@ function KPICardLarge({
   explanation,
   gapNote,
   window,
+  showGapNoise = true,
 }: {
   label: string;
   value: number;
@@ -143,6 +150,8 @@ function KPICardLarge({
   explanation?: string;
   gapNote?: string;
   window?: string;
+  /** When false, kind badges stay; verbose Gap: lines collapse. */
+  showGapNoise?: boolean;
 }) {
   const statusStyles = {
     good: {
@@ -226,12 +235,12 @@ function KPICardLarge({
         {unit && <span className="text-lg ml-0.5 opacity-60">{unit}</span>}
       </p>
       <p className="text-xs text-wo-text-muted mt-1.5 font-medium">{label}</p>
-      {explanation && (
+      {showGapNoise && explanation && (
         <p className="text-[10px] text-wo-text-muted/80 mt-1 leading-snug line-clamp-2">
           {explanation}
         </p>
       )}
-      {gapNote && (
+      {showGapNoise && gapNote && (
         <p
           className="text-[10px] text-amber-400/90 mt-1 leading-snug line-clamp-2"
           data-testid="kpi-gap-note"
@@ -239,12 +248,27 @@ function KPICardLarge({
           Gap: {gapNote}
         </p>
       )}
+      {!showGapNoise && gapNote && (
+        <p className="text-[10px] text-wo-text-muted mt-1" data-testid="kpi-gap-collapsed">
+          Gap ascuns — eticheta {kindMeta?.label?.toUpperCase() || "KIND"} rămâne
+        </p>
+      )}
     </div>
   );
 }
 
 /* ─── Truth notices ─── */
-function OperationalTruthBanner({ truth }: { truth: OperationalTruth | null }) {
+function OperationalTruthBanner({
+  truth,
+  acknowledged,
+  onAcknowledge,
+  onExpand,
+}: {
+  truth: OperationalTruth | null;
+  acknowledged: boolean;
+  onAcknowledge: () => void;
+  onExpand: () => void;
+}) {
   if (!truth) return null;
   const notices = truth.notices?.length
     ? truth.notices
@@ -252,13 +276,48 @@ function OperationalTruthBanner({ truth }: { truth: OperationalTruth | null }) {
         "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter.",
       ];
 
+  if (acknowledged) {
+    return (
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200/80 bg-amber-50/80 px-3 py-2 dark:border-amber-800/40 dark:bg-amber-950/15"
+        data-testid="dashboard-operational-truth"
+        data-collapsed="true"
+        role="note"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <Info className="w-3.5 h-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <p className="text-[11px] font-medium text-amber-900 dark:text-amber-200 truncate">
+            Adevăr operațional — citit
+          </p>
+          {!truth.calendarShiftUtilAvailable && (
+            <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300">
+              fără util calendar/shift
+            </span>
+          )}
+          <span className="font-mono text-[10px] text-wo-text-muted hidden sm:inline">
+            P {truth.plannedMinutesTotal ?? 0}m · A {truth.actualMinutesTotal ?? 0}m
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onExpand}
+          className="text-[11px] font-semibold text-amber-800 hover:text-amber-950 dark:text-amber-300 dark:hover:text-amber-100"
+          data-testid="dashboard-honesty-banner-expand"
+        >
+          Arată detalii
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 space-y-2 dark:border-amber-800/40 dark:bg-amber-950/20"
       data-testid="dashboard-operational-truth"
+      data-collapsed="false"
       role="note"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
         <h3 className="text-xs font-semibold text-amber-900 dark:text-amber-200">
           Adevăr operațional (Dashboard)
@@ -289,6 +348,16 @@ function OperationalTruthBanner({ truth }: { truth: OperationalTruth | null }) {
           Overrun: {truth.overrunMinutesTotal ?? 0} min
         </span>
         <span>Fereastră throughput: {truth.throughputWindow}</span>
+      </div>
+      <div className="flex justify-end pt-1">
+        <button
+          type="button"
+          onClick={onAcknowledge}
+          className="rounded-md border border-amber-300 bg-amber-100/80 px-2.5 py-1 text-[11px] font-semibold text-amber-900 hover:bg-amber-100 dark:border-amber-700/50 dark:bg-amber-900/40 dark:text-amber-100"
+          data-testid="dashboard-honesty-banner-ack"
+        >
+          Am înțeles
+        </button>
       </div>
     </div>
   );
@@ -655,6 +724,13 @@ export default function Dashboard() {
   } = useDashboardStats(30000);
 
   const [showAllRisks, setShowAllRisks] = useState(false);
+  const [bannerAcknowledged, setBannerAcknowledged] = useState(
+    readDashboardBannerAcknowledged,
+  );
+  const [gapsAcknowledged, setGapsAcknowledged] = useState(
+    readDashboardGapsAcknowledged,
+  );
+  const showGapNoise = !gapsAcknowledged;
 
   // Mutually exclusive production buckets (no double-count blocked∩active)
   const blockedJobs = jobs.filter((j) => j.isBlocked);
@@ -715,7 +791,42 @@ export default function Dashboard() {
         onRefresh={refresh}
       />
 
-      <OperationalTruthBanner truth={operationalTruth} />
+      <OperationalTruthBanner
+        truth={operationalTruth}
+        acknowledged={bannerAcknowledged}
+        onAcknowledge={() => {
+          writeDashboardBannerAcknowledged(true);
+          setBannerAcknowledged(true);
+        }}
+        onExpand={() => {
+          writeDashboardBannerAcknowledged(false);
+          setBannerAcknowledged(false);
+        }}
+      />
+
+      <div
+        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-raised px-3 py-2"
+        data-testid="dashboard-honesty-gap-toggle"
+      >
+        <p className="text-[11px] text-wo-text-muted">
+          Etichetele ACTUAL / PROXY / DERIVAT rămân pe carduri.
+          {showGapNoise
+            ? " Textul Gap detaliat e vizibil (mod audit)."
+            : " Zgomotul Gap e pliat pentru tură."}
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            const next = !gapsAcknowledged;
+            writeDashboardGapsAcknowledged(next);
+            setGapsAcknowledged(next);
+          }}
+          className="text-[11px] font-semibold text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
+          data-testid="dashboard-honesty-gaps-ack"
+        >
+          {showGapNoise ? "Am înțeles — pliază Gap" : "Arată Gap-uri"}
+        </button>
+      </div>
 
       {/* Quick Actions */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -763,26 +874,31 @@ export default function Dashboard() {
           {...activeKpi}
           label={activeKpi.label || "Job-uri în pipeline"}
           icon={<Activity className="w-5 h-5" />}
+          showGapNoise={showGapNoise}
         />
         <KPICardLarge
           {...blockedKpi}
           label={blockedKpi.label || "Blocate (execuție)"}
           icon={<XCircle className="w-5 h-5" />}
+          showGapNoise={showGapNoise}
         />
         <KPICardLarge
           {...otifKpi}
           label={otifKpi.label || "OTIF (proxy)"}
           icon={<CheckCircle2 className="w-5 h-5" />}
+          showGapNoise={showGapNoise}
         />
         <KPICardLarge
           {...throughputKpi}
           label={throughputKpi.label || "Throughput azi (UTC)"}
           icon={<Zap className="w-5 h-5" />}
+          showGapNoise={showGapNoise}
         />
         <KPICardLarge
           {...utilKpi}
           label={utilKpi.label || "Load planificat WC"}
           icon={<Gauge className="w-5 h-5" />}
+          showGapNoise={showGapNoise}
         />
       </div>
 
@@ -918,12 +1034,22 @@ export default function Dashboard() {
                 message="Capacity / load planificat — nu pricing comercial."
               />
             </div>
-            <div
-              className="mb-3 rounded border border-amber-200 bg-amber-50 px-2 py-1.5 text-[10px] text-amber-900 dark:border-amber-800/30 dark:bg-amber-950/15 dark:text-amber-200/90"
-              data-testid="capacity-calendar-gap"
-            >
-              Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter
-            </div>
+            {showGapNoise ? (
+              <div
+                className="mb-3 rounded border border-amber-200 bg-amber-50 px-2 py-1.5 text-[10px] text-amber-900 dark:border-amber-800/30 dark:bg-amber-950/15 dark:text-amber-200/90"
+                data-testid="capacity-calendar-gap"
+              >
+                Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter
+              </div>
+            ) : (
+              <div
+                className="mb-3 rounded border border-wo-border-subtle bg-wo-surface-inset px-2 py-1.5 text-[10px] text-wo-text-muted"
+                data-testid="capacity-calendar-gap"
+                data-collapsed="true"
+              >
+                Gap calendar/shift pliat — load rămâne etichetat ca planificat (nu util pe ture)
+              </div>
+            )}
 
             <div className="space-y-2.5">
               {capacity.map((c) => (
