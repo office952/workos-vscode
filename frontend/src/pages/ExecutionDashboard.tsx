@@ -18,7 +18,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Activity, ChevronRight, RefreshCw, AlertTriangle, Info, ShieldAlert } from "lucide-react";
+import { Activity, ChevronRight, RefreshCw, AlertTriangle, Info, ShieldAlert, Gauge } from "lucide-react";
 import {
   executionApi,
   type DashboardRow,
@@ -28,6 +28,7 @@ import {
 import FlowBreadcrumb, { executionBreadcrumb } from "@/components/workos/FlowBreadcrumb";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
 import { MetricTile, DataTableWrapper, OwnerGoNotice, chromeBanner } from "@/components/workos/design-system";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
 
 // ---------------------------------------------------------------------------
 // Formatting helpers — all null-safe. They ONLY handle presentation; they
@@ -74,6 +75,9 @@ function presenceBadgeCls(value: "present" | "absent"): string {
 
 export default function ExecutionDashboard() {
   const navigate = useNavigate();
+  const { capacity, operationalTruth } = useDashboardStats();
+  const calendarShiftOk = Boolean(operationalTruth?.calendarShiftUtilAvailable);
+  const activeWcCapacity = capacity.filter((c) => (c.plannedMinutes ?? 0) > 0 || c.loadToday > 0);
   const [rows, setRows] = useState<DashboardRow[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +169,42 @@ export default function ExecutionDashboard() {
         detail="Plan operațional (materializare) blocat — necesită Owner GO. Planned tasks ≠ taskuri active în atelier."
         compact
       />
+
+      <div
+        className={`rounded-lg px-3 py-2 space-y-1.5 ${chromeBanner.neutral}`}
+        data-testid="execution-capacity-strip"
+      >
+        <div className="flex items-center gap-2">
+          <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
+          <p className="text-[11px] font-semibold text-wo-text-primary">
+            Capacity strip (read-only) — util% = planned / shift WC
+          </p>
+          {calendarShiftOk ? (
+            <span className="text-[10px] text-wo-success border border-wo-success/35 bg-wo-success-muted px-1.5 py-0.5 rounded">
+              calendar/shift activ
+            </span>
+          ) : (
+            <span className="text-[10px] text-wo-warning border border-wo-warning/35 bg-wo-warning-muted px-1.5 py-0.5 rounded">
+              calendar/shift GAP
+            </span>
+          )}
+        </div>
+        <p className="text-[10px] text-wo-text-muted">
+          Nu blochează oferta · nu CostEngine · nu POST materialize. Overload = warning only.
+        </p>
+        {calendarShiftOk && activeWcCapacity.length > 0 && (
+          <ul className="flex flex-wrap gap-2 pt-0.5">
+            {activeWcCapacity.slice(0, 6).map((c) => (
+              <li
+                key={c.workcenterId}
+                className="text-[10px] font-mono text-wo-text-secondary border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset"
+              >
+                {c.workcenterName}: {c.loadToday}%
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
       {/* Summary cards — one per status. Purely reflective. */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

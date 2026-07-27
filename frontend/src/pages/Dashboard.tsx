@@ -310,7 +310,11 @@ function OperationalTruthBanner({
           <p className="text-[11px] font-medium text-wo-text-primary truncate">
             Adevăr operațional — citit
           </p>
-          {!truth.calendarShiftUtilAvailable && (
+          {truth.calendarShiftUtilAvailable ? (
+            <span className="rounded border border-wo-success/40 bg-wo-success-muted px-1.5 py-0.5 text-[10px] text-wo-success">
+              util% = planned / shift WC
+            </span>
+          ) : (
             <span className="rounded border border-wo-warning/40 bg-wo-warning-muted px-1.5 py-0.5 text-[10px] text-wo-warning">
               fără util calendar/shift
             </span>
@@ -343,7 +347,11 @@ function OperationalTruthBanner({
         <h3 className="text-xs font-semibold text-wo-text-primary">
           Adevăr operațional (Dashboard)
         </h3>
-        {!truth.calendarShiftUtilAvailable && (
+        {truth.calendarShiftUtilAvailable ? (
+          <span className="rounded border border-wo-success/40 bg-wo-success-muted px-1.5 py-0.5 text-[10px] text-wo-success">
+            util% = planned / shift WC
+          </span>
+        ) : (
           <span className="rounded border border-wo-warning/40 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] text-wo-warning">
             fără util calendar/shift
           </span>
@@ -1133,32 +1141,31 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 mb-2">
               <Gauge className="w-4 h-4 text-wo-info" />
               <h3 className="text-sm font-semibold text-wo-text-primary">
-                Load planificat pe workcenter
+                Util% shift pe workcenter
               </h3>
             </div>
             <p className="text-[10px] text-wo-text-muted mb-2 leading-snug">
-              Clamp 0–100 · actual_min / planned_min · nu utilizare pe ture/calendar
+              planned_min / ore shift (Company Calendar) · clamp 0–100 · nu HR hours · nu tarif client
             </p>
             <div className="mb-3">
               <CapacityNotice
                 compact
-                message="Capacity / load planificat — nu pricing comercial."
+                message="Capacity / planned load — nu pricing comercial, nu CostEngine."
               />
             </div>
-            {showGapNoise ? (
+            {operationalTruth?.calendarShiftUtilAvailable ? (
+              <div
+                className="mb-3 rounded border border-wo-success/30 bg-wo-success-muted px-2 py-1.5 text-[10px] text-wo-success"
+                data-testid="capacity-calendar-active"
+              >
+                Calendar/shift activ — util% = planned load / ore shift pe WC (warnings non-blocking).
+              </div>
+            ) : (
               <div
                 className={`mb-3 rounded px-2 py-1.5 text-[10px] ${chromeBanner.warning}`}
                 data-testid="capacity-calendar-gap"
               >
-                Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter
-              </div>
-            ) : (
-              <div
-                className="mb-3 rounded border border-wo-border-subtle bg-wo-surface-inset px-2 py-1.5 text-[10px] text-wo-text-muted"
-                data-testid="capacity-calendar-gap"
-                data-collapsed="true"
-              >
-                Gap calendar/shift pliat — load rămâne etichetat ca planificat (nu util pe ture)
+                Utilaj calendar/shift: date indisponibile — nu inventăm util %.
               </div>
             )}
 
@@ -1176,7 +1183,7 @@ export default function Dashboard() {
                 ))
               ) : (
                 <p className="text-[11px] text-wo-text-muted py-2">
-                  Niciun workcenter cu load planificat / minute raportate.
+                  Niciun workcenter cu planned load &gt; 0 în luna curentă (util% 0% e onest, nu inventat).
                 </p>
               )}
               {quietCapacityCount > 0 && (
@@ -1184,7 +1191,7 @@ export default function Dashboard() {
                   className="text-[10px] text-wo-text-muted border-t border-wo-border-subtle pt-2 mt-1"
                   data-testid="dashboard-capacity-quiet-summary"
                 >
-                  {quietCapacityCount} workcentere cu load 0% (fără util calendar/shift) — gap Owner, nu inventăm utilizare.
+                  {quietCapacityCount} workcentere cu planned load 0% — idle pe shift model, nu inventăm utilizare.
                 </p>
               )}
             </div>

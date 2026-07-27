@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMachinesData } from "@/hooks/useMachinesData";
+import { useDashboardStats } from "@/hooks/useDashboardStats";
 import { CapacityNotice, chromeBanner } from "@/components/workos/design-system";
 import { RegistryResourceEditor } from "@/features/operational-registry/RegistryResourceEditor";
 import type {
@@ -134,6 +135,9 @@ function SourceBadge({ source }: { source: "db" | "mock" | "empty" | "error" | "
 }
 
 export default function Utilaje() {
+  const { capacity, operationalTruth } = useDashboardStats();
+  const calendarShiftOk = Boolean(operationalTruth?.calendarShiftUtilAvailable);
+  const activeWcCapacity = capacity.filter((c) => (c.plannedMinutes ?? 0) > 0 || c.loadToday > 0);
   const {
     machines,
     machineSpecs,
@@ -217,14 +221,54 @@ export default function Utilaje() {
       >
         <summary className="cursor-pointer list-none text-[11px] font-semibold text-wo-text-primary flex items-center gap-2">
           <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
-          Capacity honesty — load/util fără semnal = GAP
+          Capacity — WC shift util% + utilaj GAP fără assignment
           <span className="text-[10px] font-normal text-wo-text-muted group-open:hidden">(detalii)</span>
         </summary>
         <div className="mt-2 space-y-2">
           <CapacityNotice
-            message="Utilaje = feasibility / capacity — NU tarif comercial. Load/util fără semnal = GAP (nu inventăm %)."
+            message="Utilaje = feasibility / capacity — NU tarif comercial. Util% WC = planned/shift; utilaj fără assignment = GAP."
             compact
           />
+          {calendarShiftOk ? (
+            <div
+              className="rounded-lg border border-wo-success/30 bg-wo-success-muted px-3 py-2 space-y-1.5"
+              data-testid="utilaje-wc-capacity-strip"
+            >
+              <p className="text-[11px] font-semibold text-wo-success">
+                Util% shift pe workcenter (Company Calendar) — nu CostEngine, nu tarif client
+              </p>
+              {activeWcCapacity.length > 0 ? (
+                <ul className="space-y-1">
+                  {activeWcCapacity.slice(0, 8).map((c) => (
+                    <li
+                      key={c.workcenterId}
+                      className="flex items-center justify-between gap-2 text-[11px] text-wo-text-secondary"
+                    >
+                      <span>{c.workcenterName}</span>
+                      <span className="font-mono text-wo-text-primary">
+                        {c.loadToday}% · {c.plannedMinutes ?? 0}m / {c.availableMinutes ?? "—"}m
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-[11px] text-wo-text-muted">
+                  Niciun WC cu planned load &gt; 0 — util% 0% onest (nu inventat).
+                </p>
+              )}
+            </div>
+          ) : (
+            <div
+              className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.warning}`}
+              data-testid="utilaje-util-honesty"
+              role="note"
+            >
+              <Gauge className="w-4 h-4 text-wo-warning mt-0.5 shrink-0" />
+              <p className="text-[11px] text-wo-text-secondary">
+                Calendar/shift indisponibil — nu inventăm util %.
+              </p>
+            </div>
+          )}
           <div
             className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.neutral}`}
             data-testid="utilaje-util-honesty"
@@ -232,9 +276,8 @@ export default function Utilaje() {
           >
             <Gauge className="w-4 h-4 text-wo-info mt-0.5 shrink-0" />
             <p className="text-[11px] text-wo-text-secondary">
-              Utilizare: același standard ca Dashboard — fără inventare de load. Registry fără job ={" "}
-              <span className="font-semibold text-wo-warning">GAP</span> (nu 70% fals). PROXY doar când există semnal
-              demo/proxy explicit.
+              Per utilaj: fără machine assignment (CAP-006=D) ={" "}
+              <span className="font-semibold text-wo-warning">GAP</span> pe cardul din dreapta — load-ul e la nivel WC.
             </p>
           </div>
           <div className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.warning}`}>

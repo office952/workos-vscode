@@ -25,7 +25,7 @@ export function presentMachineUtilization(machine: Machine): MachineUtilPresenta
       displayPct: "—",
       showBar: false,
       barValue: 0,
-      note: "Utilizare atelier indisponibilă — registry, nu load pe ture",
+      note: "Utilizare atelier indisponibilă — registry, nu load pe ture (util% WC pe Dashboard)",
     };
   }
 
