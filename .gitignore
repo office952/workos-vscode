@@ -68,8 +68,15 @@ htmlcov/
 # OS / IDE (local only)
 .DS_Store
 Thumbs.db
-.cursor/
+.cursor/*
+!.cursor/rules/
+.cursor/rules/*
+!.cursor/rules/workos-live-stack-no-kill.mdc
 .mgx/
+
+# Detached-dev runtime state / logs (local only)
+.workos-dev-logs/
+.workos-dev-detached.json
 
 # Local workspace artifacts (keep on disk; do not commit)
 backend/validation_input/

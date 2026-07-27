@@ -1,0 +1,34 @@
+---
+description: Agent starts WorkOS detached; never kill 3000/8000 without Owner GO; Owner never runs terminal
+alwaysApply: true
+---
+
+# WorkOS live stack — agent-operated, Owner browser-only
+
+App: `C:\w\psiso` · Vite `:3000` · uvicorn `:8000`.
+
+## Owner reality (non-negotiable)
+
+- Owner **never** runs terminal scripts (no Windows Terminal, no `dev.ps1`, no copy-paste PowerShell).
+- Owner only uses the **browser** and chat ("pornește aplicația" / live / "oprește").
+- **You** start/stop the stack when Owner asks in chat.
+
+## When Owner asks to start (pornește / live / devmode)
+
+1. Prefer **reuse** if `:3000` + `:8000` already healthy — tell Owner the URL; do nothing else.
+2. If down, **you** run detached (survives agent session end):
+   ```powershell
+   cd C:\w\psiso
+   .\scripts\dev-detached.ps1
+   ```
+3. NEVER use foreground `.\scripts\dev.ps1` in an agent shell (`finally` kills FE+BE when the shell ends).
+4. NEVER kill ports as part of start. If blocked, report — do not kill.
+
+## Forbidden without explicit Owner GO (oprește / stop / kill / restart)
+
+- NEVER `Stop-Process` / `taskkill` / kill listeners on **3000** or **8000**
+- NEVER kill vite / uvicorn / node "to free the port"
+
+## When Owner asks to stop
+
+**You** run `.\scripts\stop-dev.ps1` — do not tell Owner to run it.
