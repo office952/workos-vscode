@@ -57,12 +57,17 @@ async def build_operational_data_gaps(
         if pricing_owner_needed
         else "Pricing Registry: fără missing_price pe itemele active din registry."
     )
+    hours_source = str(cost_cfg.get("productive_hours_source") or "company_calendar")
     cost_notice = (
         f"Cost Intern (HR analytics/profitability — NU tarif client): "
         f"{len(employee_invalid)} angajați productivi incompleți "
-        f"(cost_lunar_firma / ore_productive_luna); base-config valid={cost_valid}."
+        f"(lipsește cost_lunar_firma; orele vin din {hours_source}); "
+        f"base-config valid={cost_valid}."
         if cost_owner_needed
-        else "Cost Intern: base-config valid pentru angajați productivi (analytics only)."
+        else (
+            f"Cost Intern: base-config valid — ore productive din {hours_source} "
+            "(analytics only; NU tarif client)."
+        )
     )
     capacity_notice = (
         "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100; "

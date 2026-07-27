@@ -40,6 +40,9 @@ export interface EmployeeDTO {
   skills?: string[] | null;
   machines?: string[] | null;
   data_angajare?: string | null;
+  end_date?: string | null;
+  is_assignable?: boolean;
+  ore_productive_luna_source?: string | null;
   observatii?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
@@ -65,6 +68,7 @@ export interface EmployeePayload {
   skills?: string[] | null;
   machines?: string[] | null;
   data_angajare?: string | null;
+  end_date?: string | null;
   observatii?: string | null;
 }
 
@@ -191,8 +195,22 @@ export const employeesApi = {
       body: JSON.stringify(data),
     }),
   remove: (id: number) =>
-    request<{ message: string; id: number }>(`/entities/employees/${id}`, {
+    request<{
+      message: string;
+      id: number;
+      status?: string;
+      end_date?: string | null;
+      hard_deleted?: boolean;
+    }>(`/entities/employees/${id}`, {
       method: 'DELETE',
+    }),
+  endEmployment: (
+    id: number,
+    data: { end_date?: string | null; status?: string } = {},
+  ) =>
+    request<EmployeeDTO>(`/entities/employees/${id}/end-employment`, {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 };
 

@@ -7,10 +7,13 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 from weakref import WeakValueDictionary
 
+from datetime import date
+
 from fastapi import HTTPException
 from models.employees import Employees
 from models.execution_plan import ExecutionPlan
 from models.execution_reality import ExecutionReality
+from services.employee_lifecycle import is_assignable
 from services.execution_plan_operational_readiness_service import (
     assert_operational_mutation_allowed,
 )
@@ -98,8 +101,16 @@ async def assign_plan_task(
     ).scalar_one_or_none()
     if emp is None:
         raise HTTPException(status_code=404, detail={"error": "employee_not_found"})
-    if emp.status != "active":
-        raise HTTPException(status_code=422, detail={"error": "employee_not_active"})
+    # Future assignment excludes inactive/ended and past end_date.
+    if not is_assignable(emp, date.today()):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "employee_not_assignable",
+                "status": emp.status,
+                "end_date": emp.end_date.isoformat() if emp.end_date else None,
+            },
+        )
 
     async with _assignment_lock(order_id, task_id):
         plan = (
