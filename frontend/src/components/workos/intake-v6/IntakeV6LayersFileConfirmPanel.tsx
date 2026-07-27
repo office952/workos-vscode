@@ -117,15 +117,15 @@ export default function IntakeV6LayersFileConfirmPanel({
           className="flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-wo-border-strong bg-wo-surface-inset/40 px-4 py-6 text-center"
           data-testid="intake-v6-svg-preview-empty"
         >
-          <Upload className="h-8 w-8 text-slate-600" aria-hidden />
-          <p className={v6.helper}>Trage SVG aici sau folosește panoul operator.</p>
+          <Upload className="h-8 w-8 text-wo-text-muted" aria-hidden />
+          <p className={v6.helper}>Trage SVG aici — singurul upload principal pe acest pas.</p>
           <IntakeV6Nest2SvgUploader
             busy={analyzing}
             disabled={!canImportSvg}
             label="Încarcă SVG"
             busyLabel="Analizez..."
             buttonClassName={v6.btnPrimary}
-            inputTestId="intake-v6-svg-input-preview"
+            inputTestId="intake-v6-svg-input"
             onFileSelected={(file) => void onImportFile(file)}
           />
         </div>

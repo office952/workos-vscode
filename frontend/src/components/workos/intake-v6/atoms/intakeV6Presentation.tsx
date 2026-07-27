@@ -35,7 +35,7 @@ export const v6 = {
 	btnConfirm:
 		"rounded-md border border-emerald-400/40 bg-gradient-to-b from-emerald-500 to-emerald-600 px-5 py-2.5 text-[12px] font-bold text-white shadow-[0_4px_14px_rgba(16,185,129,0.35)] hover:from-emerald-400 hover:to-emerald-500 disabled:cursor-not-allowed disabled:border-wo-border-strong disabled:bg-wo-surface-inset disabled:from-transparent disabled:to-transparent disabled:text-wo-text-muted disabled:shadow-none disabled:opacity-90",
 	btnGhost:
-		"rounded-md border border-wo-border-strong bg-wo-surface-raised px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-wo-info/40 hover:bg-wo-hover disabled:cursor-not-allowed disabled:border-wo-border-subtle disabled:bg-wo-surface-inset disabled:text-wo-text-muted disabled:opacity-90",
+		"rounded-md border border-wo-border-strong bg-wo-surface-raised px-4 py-2 text-[12px] font-semibold text-wo-text-secondary hover:border-wo-info/40 hover:bg-wo-hover disabled:cursor-not-allowed disabled:border-wo-border-subtle disabled:bg-wo-surface-inset disabled:text-wo-text-dim disabled:opacity-100",
 } as const;
 
 /**

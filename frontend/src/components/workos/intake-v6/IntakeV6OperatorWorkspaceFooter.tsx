@@ -181,6 +181,8 @@ export default function IntakeV6OperatorWorkspaceFooter({
   }
 
   const countLabel = guidance.drawerToggleLabel;
+  /** When the blocker chip is shown, keep a single attention surface (chip → Continues). */
+  const compactBlockedChrome = showIssuesDrawer && !guidance.canContinue;
 
   return (
     <footer
@@ -188,48 +190,11 @@ export default function IntakeV6OperatorWorkspaceFooter({
       data-testid="intake-v6-operator-workspace-footer"
       data-footer-weight="compact"
     >
-      {(nextDisabled || isHandoffStep || guidance.nextAction || !guidance.canContinue) &&
-      (primaryActionReason || guidance.progressLabel || guidance.countsLabel) ? (
-        <div
-          id="intake-v6-footer-primary-action-reason"
-          className="mb-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5 text-[11px] leading-snug text-wo-text-secondary"
-          data-testid="intake-v6-footer-primary-action-reason"
-          data-guidance-status={guidance.statusLabel}
-          role="status"
-          aria-live="polite"
-        >
-          <span className="font-semibold text-wo-text-primary" data-testid="intake-v6-guidance-status">
-            {guidance.statusLabel}
-          </span>
-          {guidance.progressLabel ? (
-            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-progress">
-              · {guidance.progressLabel}
-            </span>
-          ) : null}
-          {guidance.countsLabel ? (
-            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-counts">
-              · {guidance.countsLabel}
-            </span>
-          ) : null}
-          {primaryActionReason ? (
-            <span className="basis-full text-wo-text-secondary" data-testid="intake-v6-guidance-next-action">
-              <span className="font-semibold text-wo-text-primary">Următorul pas: </span>
-              {primaryActionReason}
-            </span>
-          ) : guidance.canContinue ? (
-            <span className="basis-full text-wo-success" data-testid="intake-v6-guidance-next-action">
-              <span className="font-semibold">Următorul pas: </span>
-              {guidance.continueEnabledLabel}
-            </span>
-          ) : null}
-          <span className="sr-only" data-testid="intake-v6-guidance-spine">
-            {guidance.statusLabel}
-          </span>
-        </div>
-      ) : null}
-
       {showIssuesDrawer ? (
-        <div className="mb-2 rounded border border-wo-warning/40 bg-wo-warning-muted/50" data-testid="intake-v6-footer-issues">
+        <div
+          className="mb-2 rounded border border-wo-warning/40 bg-wo-warning-muted/50"
+          data-testid="intake-v6-footer-issues"
+        >
           <button
             type="button"
             className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold text-wo-warning"
@@ -240,6 +205,37 @@ export default function IntakeV6OperatorWorkspaceFooter({
             <span data-testid="intake-v6-footer-issues-count">{countLabel}</span>
             <span className="text-wo-text-dim">{issuesOpen ? "▾" : "▸"}</span>
           </button>
+          {compactBlockedChrome && primaryActionReason ? (
+            <p
+              id="intake-v6-footer-primary-action-reason"
+              className="border-t border-wo-border-strong/70 px-3 py-1.5 text-[11px] leading-snug text-wo-text-secondary"
+              data-testid="intake-v6-footer-primary-action-reason"
+              data-guidance-status={guidance.statusLabel}
+              role="status"
+              aria-live="polite"
+            >
+              <span data-testid="intake-v6-guidance-next-action">
+                <span className="font-semibold text-wo-text-primary">Următorul pas: </span>
+                {primaryActionReason}
+              </span>
+              <span className="sr-only" data-testid="intake-v6-guidance-status">
+                {guidance.statusLabel}
+              </span>
+              {guidance.progressLabel ? (
+                <span className="sr-only" data-testid="intake-v6-guidance-progress">
+                  {guidance.progressLabel}
+                </span>
+              ) : null}
+              {guidance.countsLabel ? (
+                <span className="sr-only" data-testid="intake-v6-guidance-counts">
+                  {guidance.countsLabel}
+                </span>
+              ) : null}
+              <span className="sr-only" data-testid="intake-v6-guidance-spine">
+                {guidance.statusLabel}
+              </span>
+            </p>
+          ) : null}
           {issuesOpen ? (
             <div className="border-t border-wo-border-strong px-3 py-2 text-[11px]" data-testid="intake-v6-footer-issues-content">
               <p className="mb-2 text-[10px] text-wo-text-dim" data-testid="intake-v6-footer-issues-breakdown">
@@ -279,6 +275,44 @@ export default function IntakeV6OperatorWorkspaceFooter({
               ))}
             </div>
           ) : null}
+        </div>
+      ) : (nextDisabled || isHandoffStep || guidance.nextAction || !guidance.canContinue) &&
+        (primaryActionReason || guidance.progressLabel || guidance.countsLabel) ? (
+        <div
+          id="intake-v6-footer-primary-action-reason"
+          className="mb-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5 text-[11px] leading-snug text-wo-text-secondary"
+          data-testid="intake-v6-footer-primary-action-reason"
+          data-guidance-status={guidance.statusLabel}
+          role="status"
+          aria-live="polite"
+        >
+          <span className="font-semibold text-wo-text-primary" data-testid="intake-v6-guidance-status">
+            {guidance.statusLabel}
+          </span>
+          {guidance.progressLabel ? (
+            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-progress">
+              · {guidance.progressLabel}
+            </span>
+          ) : null}
+          {guidance.countsLabel ? (
+            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-counts">
+              · {guidance.countsLabel}
+            </span>
+          ) : null}
+          {primaryActionReason ? (
+            <span className="basis-full text-wo-text-secondary" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold text-wo-text-primary">Următorul pas: </span>
+              {primaryActionReason}
+            </span>
+          ) : guidance.canContinue ? (
+            <span className="basis-full text-wo-success" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold">Următorul pas: </span>
+              {guidance.continueEnabledLabel}
+            </span>
+          ) : null}
+          <span className="sr-only" data-testid="intake-v6-guidance-spine">
+            {guidance.statusLabel}
+          </span>
         </div>
       ) : null}
 

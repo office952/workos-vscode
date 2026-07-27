@@ -38,11 +38,14 @@ export default function IntakeV6ProgressBar({
 				const active = step.id === visibleStep;
 				const accessible = canAccessStep?.(step.id) ?? true;
 				const circleClass = compact ? "h-6 w-6 text-[11px]" : "h-9 w-9 text-[13px]";
+				const inactiveMuted = !active && !done && !(visited && !complete);
 				return (
 					<div key={step.id} className="flex flex-1 items-center">
 						<button
 							type="button"
-							className="flex items-center gap-1.5 bg-transparent p-0 disabled:cursor-not-allowed disabled:opacity-40"
+							className={`flex items-center gap-1.5 bg-transparent p-0 ${
+								accessible ? "" : "cursor-not-allowed"
+							}`}
 							disabled={!accessible}
 							onClick={() => onStepClick?.(step.id)}
 							data-testid={`intake-v6-progress-step-${step.id}`}
@@ -57,7 +60,7 @@ export default function IntakeV6ProgressBar({
 											? "border-wo-info/40 bg-wo-info-muted text-wo-info"
 											: visited && !complete
 												? "border-wo-warning/40 bg-wo-warning-muted text-wo-warning"
-												: "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary"
+												: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted"
 								}`}
 							>
 								{done ? "✓" : index + 1}
@@ -72,7 +75,9 @@ export default function IntakeV6ProgressBar({
 											? "text-wo-success"
 											: visited && !complete
 												? "text-wo-warning"
-												: "text-wo-text-secondary"
+												: inactiveMuted
+													? "text-wo-text-muted"
+													: "text-wo-text-secondary"
 								}`}
 							>
 								{step.label}
