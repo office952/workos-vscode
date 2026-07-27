@@ -15,6 +15,7 @@ import {
   type TrendPoint,
   type SystemEvent,
   type OperationalTruth,
+  type CapacityModelPayload,
 } from "@/lib/mockData";
 
 export type DataSource = "db" | "mock" | "empty" | "error" | "loading";
@@ -73,6 +74,7 @@ interface DashboardStats {
   kpis: KPIValue[];
   jobs: ExecutionJob[];
   capacity: CapacitySlot[];
+  capacityModel: CapacityModelPayload | null;
   alerts: ProductionAlert[];
   throughput: TrendPoint[];
   events: SystemEvent[];
@@ -94,6 +96,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
   const [kpis, setKpis] = useState<KPIValue[]>(mockEnabled ? managementKPIs : []);
   const [jobs, setJobs] = useState<ExecutionJob[]>(mockEnabled ? executionJobs : []);
   const [capacity, setCapacity] = useState<CapacitySlot[]>(mockEnabled ? capacityLoad : []);
+  const [capacityModel, setCapacityModel] = useState<CapacityModelPayload | null>(null);
   const [alerts, setAlerts] = useState<ProductionAlert[]>(mockEnabled ? productionAlerts : []);
   const [throughput, setThroughput] = useState<TrendPoint[]>(mockEnabled ? throughputTrend : []);
   const [events, setEvents] = useState<SystemEvent[]>(mockEnabled ? recentEvents : []);
@@ -131,6 +134,9 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
       if (data.capacityLoad?.length) {
         setCapacity(data.capacityLoad as CapacitySlot[]);
       }
+      if (data.capacityModel) {
+        setCapacityModel(data.capacityModel as CapacityModelPayload);
+      }
 
       // Map alerts
       if (data.alerts) {
@@ -167,6 +173,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
         setKpis([]);
         setJobs([]);
         setCapacity([]);
+        setCapacityModel(null);
         setAlerts([]);
         setThroughput([]);
         setEvents([]);
@@ -197,6 +204,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
     kpis,
     jobs,
     capacity,
+    capacityModel,
     alerts,
     throughput,
     events,

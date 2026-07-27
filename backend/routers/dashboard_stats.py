@@ -22,6 +22,12 @@ from models.quotes import Quotes
 from models.intake_requests import Intake_requests
 from models.execution_plan import ExecutionPlan
 from models.execution_reality import ExecutionReality
+from models.operational_registry import MachineRegistry
+from services.capacity_batch_02_readiness import (
+    build_machine_mapping_readiness,
+    parse_estimated_minutes,
+    scan_minutes_readiness,
+)
 from services.capacity_shift_model import build_calendar_shift_capacity
 from services.execution_plan_task_parser import operational_tasks_only
 from services.operational_data_gaps import (
@@ -47,6 +53,16 @@ NOTICE_CALENDAR_SHIFT_ACTIVE = (
 
 NOTICE_CAPACITY_NOT_PRICING = (
     "Capacitate / load planificat — nu pricing comercial, nu cost orar utilaj → tarif client."
+)
+
+NOTICE_MINUTES_NULL_WARN = (
+    "DEC-006: estimated_minutes lipsă → NULL + WARN / PLANNING MINUTES REQUIRED "
+    "(fără fallback inventat; fără CostEngine)."
+)
+
+NOTICE_MATERIALIZE_BLOCKED = (
+    "Materialize rămâne blocat — Capacity Batch 02 = readiness only "
+    "(minutes + WC→utilaj mapping; fără operational_tasks create)."
 )
 
 NOTICE_OTIF_PROXY = (
@@ -84,13 +100,9 @@ def _task_operation_label(task: dict) -> str:
     return str(op) if op else "—"
 
 def _task_estimated_minutes(task: dict) -> float:
-    raw = task.get("estimated_minutes")
-    if raw is None:
-        raw = task.get("estimated_time_minutes")
-    try:
-        return float(raw or 0)
-    except (TypeError, ValueError):
-        return 0.0
+    """Contribution to planned load — None/missing → 0 without inventing a stored value."""
+    parsed = parse_estimated_minutes(task)
+    return float(parsed) if parsed is not None else 0.0
 
 def _clamp_pct(value: float) -> int:
     """Bound a percentage to the closed interval [0, 100]."""
@@ -201,11 +213,16 @@ def _build_capacity_load(
     *,
     year: int | None = None,
     month: int | None = None,
+    planned_override: dict[str, float] | None = None,
+    maintenance_deduction_by_wc: dict[str, float] | None = None,
+    maintenance_availability: str = "gap",
 ) -> dict:
-    """Capacity Batch 01: planned_min / shift_available_min per WC (CAP-001/002)."""
-    planned = {
-        wc: float(data.get("total_min") or 0) for wc, data in workcenters.items()
-    }
+    """Capacity: planned_min / shift_available_min per WC (+ optional maint deduct)."""
+    planned = (
+        dict(planned_override)
+        if planned_override is not None
+        else {wc: float(data.get("total_min") or 0) for wc, data in workcenters.items()}
+    )
     actual = {
         wc: float(data.get("completed_min") or 0) for wc, data in workcenters.items()
     }
@@ -214,6 +231,8 @@ def _build_capacity_load(
         year=year,
         month=month,
         actual_minutes_by_wc=actual,
+        maintenance_deduction_by_wc=maintenance_deduction_by_wc,
+        maintenance_availability=maintenance_availability,
         default_workcenters=None if planned else None,
     )
 
@@ -238,10 +257,53 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
     res_r = await db.execute(select(ExecutionReality))
     realities = list(res_r.scalars().all())
     realities_by_order = {r.order_id: r for r in realities}
-    # Shared workcenter aggregation for capacity + completion analytics
+    # DEC-006 minutes readiness + WC planned load (no invent)
+    minutes_readiness = scan_minutes_readiness(plans)
+    # Completion analytics still from operational aggregation
     workcenters = _aggregate_workcenter_minutes(plans, realities, plans_by_order)
-    capacity_model = _build_capacity_load(workcenters)
+    # Machines for WC→utilaj mapping + calendarized maintenance
+    res_m = await db.execute(select(MachineRegistry).where(MachineRegistry.is_active == True))  # noqa: E712
+    machine_rows = list(res_m.scalars().all())
+    machine_payloads = [
+        {
+            "machine_code": m.machine_code,
+            "name": m.name,
+            "workcenter_code": m.workcenter_code,
+            "operational_status": m.operational_status,
+            "capacity_metadata": m.capacity_metadata,
+        }
+        for m in machine_rows
+    ]
+    today = datetime.now(timezone.utc).date()
+    mapping_readiness = build_machine_mapping_readiness(
+        machine_payloads,
+        year=today.year,
+        month=today.month,
+    )
+    maint_block = mapping_readiness.get("maintenance") or {}
+    capacity_model = _build_capacity_load(
+        workcenters,
+        year=today.year,
+        month=today.month,
+        planned_override=minutes_readiness.get("plannedMinutesByWc") or {},
+        maintenance_deduction_by_wc=maint_block.get("deductionMinutesByWc") or {},
+        maintenance_availability=str(maint_block.get("availability") or "gap"),
+    )
     calendar_shift_ok = bool(capacity_model.get("calendarShiftUtilAvailable"))
+    capacity_model["minutesReadiness"] = minutes_readiness
+    capacity_model["machineMappingReadiness"] = {
+        "policy": mapping_readiness.get("policy"),
+        "summary": mapping_readiness.get("summary"),
+        "maintenance": mapping_readiness.get("maintenance"),
+        "workcenters": mapping_readiness.get("workcenters"),
+        "machines": mapping_readiness.get("machines"),
+    }
+    capacity_model["batch"] = "capacity_batch_02"
+    capacity_model["materialize"] = "BLOCKED"
+    # Merge DEC-006 warnings into capacity warnings (non-blocking)
+    capacity_model["warnings"] = list(capacity_model.get("warnings") or []) + list(
+        minutes_readiness.get("warnings") or []
+    )
     # ── Compute KPIs ──
     order_statuses = Counter(o.status for o in orders)
     active_statuses = {"created", "confirmed", "locked", "in_execution"}
@@ -291,7 +353,10 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             delta_min = (now - created).total_seconds() / 60
             queue_times.append(delta_min)
     avg_queue = round(sum(queue_times) / len(queue_times)) if queue_times else 0
-    planned_min_total = round(sum(d.get("total_min") or 0 for d in workcenters.values()), 1)
+    planned_min_total = round(
+        sum(float(v) for v in (minutes_readiness.get("plannedMinutesByWc") or {}).values()),
+        1,
+    )
     actual_min_total = round(sum(d.get("completed_min") or 0 for d in workcenters.values()), 1)
     overrun_min_total = round(max(0.0, actual_min_total - planned_min_total), 1)
     kpis = [
@@ -584,12 +649,16 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         "executionJobs": execution_jobs,
         "capacityLoad": capacity_load,
         "capacityModel": {
+            "batch": "capacity_batch_02",
+            "materialize": "BLOCKED",
             "availableMinutesMonth": capacity_model.get("availableMinutesMonth"),
             "workdaysInMonth": capacity_model.get("workdaysInMonth"),
             "year": capacity_model.get("year"),
             "month": capacity_model.get("month"),
             "warnings": capacity_model.get("warnings") or [],
             "ownerCapLock": capacity_model.get("ownerCapLock") or {},
+            "minutesReadiness": minutes_readiness,
+            "machineMappingReadiness": capacity_model.get("machineMappingReadiness"),
         },
         "alerts": alerts,
         "throughputTrend": throughput_trend,
@@ -610,6 +679,8 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                 *gap_notices,
                 capacity_notice,
                 NOTICE_CAPACITY_NOT_PRICING,
+                NOTICE_MINUTES_NULL_WARN,
+                NOTICE_MATERIALIZE_BLOCKED,
                 NOTICE_THROUGHPUT_UTC,
                 NOTICE_OTIF_PROXY,
             ],
@@ -618,10 +689,20 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                 "hrCost": "Cost Intern / HR = analytics/profitability only — never client tariff.",
                 "machines": (
                     "Util% = planned load / company shift minutes per WC — "
-                    "not machine hourly → client price; not HR productive hours."
+                    "not machine hourly → client price; not HR productive hours. "
+                    "Machine util% remains GAP without assignment truth."
                 ),
-                "executionPlan": "Reads ExecutionPlan/Reality only — no materialization.",
+                "executionPlan": (
+                    "Reads ExecutionPlan planned/operational tasks for minutes readiness only — "
+                    "no materialization / no sessions."
+                ),
                 "productSystem": "No ProductDefinition / ProductAggregate ownership.",
+            },
+            "capacityBatch02": {
+                "tasksMissingMinutes": minutes_readiness.get("tasksMissingMinutes"),
+                "tasksWithMinutes": minutes_readiness.get("tasksWithMinutes"),
+                "maintenanceAvailability": (maint_block.get("availability") or "gap"),
+                "materialize": "BLOCKED",
             },
         },
     }

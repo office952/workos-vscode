@@ -835,6 +835,7 @@ export default function Dashboard() {
     kpis,
     jobs,
     capacity,
+    capacityModel,
     alerts,
     operationalTruth,
     source,
@@ -842,6 +843,13 @@ export default function Dashboard() {
     lastUpdate,
     refresh,
   } = useDashboardStats(30000);
+  const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? operationalTruth?.capacityBatch02?.tasksMissingMinutes;
+  const minutesPresent = capacityModel?.minutesReadiness?.tasksWithMinutes ?? operationalTruth?.capacityBatch02?.tasksWithMinutes;
+  const maintAvail =
+    capacityModel?.machineMappingReadiness?.maintenance?.availability ??
+    operationalTruth?.capacityBatch02?.maintenanceAvailability ??
+    "gap";
+  const mappingSummary = capacityModel?.machineMappingReadiness?.summary;
 
   const [showAllRisks, setShowAllRisks] = useState(false);
   const [bannerAcknowledged, setBannerAcknowledged] = useState(
@@ -1168,6 +1176,32 @@ export default function Dashboard() {
                 Utilaj calendar/shift: date indisponibile — nu inventăm util %.
               </div>
             )}
+
+            <div
+              className="mb-3 rounded border border-wo-border-subtle bg-wo-surface-inset px-2 py-2 space-y-1"
+              data-testid="capacity-batch02-readiness"
+            >
+              <p className="text-[10px] font-semibold text-wo-text-primary">
+                Batch 02 readiness — DEC-006 minutes · WC→utilaj · mentenanță
+              </p>
+              <p className="text-[10px] text-wo-text-muted" data-testid="capacity-minutes-readiness">
+                Minutes: {minutesPresent ?? 0} cu valoare ·{" "}
+                <span className={Number(minutesMissing) > 0 ? "text-wo-warning font-semibold" : ""}>
+                  {minutesMissing ?? 0} NULL + WARN / PLANNING MINUTES REQUIRED
+                </span>
+                {" "}(fără invent)
+              </p>
+              <p className="text-[10px] text-wo-text-muted" data-testid="capacity-mapping-readiness">
+                Mapping: {mappingSummary?.mappedToWc ?? "—"} utilaje pe WC ·{" "}
+                {mappingSummary?.unmappedWc ?? "—"} unmapped · utilaj individual = GAP · materialize BLOCAT
+              </p>
+              <p className="text-[10px] text-wo-text-muted" data-testid="capacity-maintenance-readiness">
+                Mentenanță available:{" "}
+                <span className={maintAvail === "gap" ? "text-wo-warning font-semibold" : "text-wo-success"}>
+                  {maintAvail === "calendarized" ? "calendarized (scăzută din available)" : "gap"}
+                </span>
+              </p>
+            </div>
 
             <div className="space-y-2.5" data-testid="dashboard-capacity-list">
               {activeCapacity.length > 0 ? (

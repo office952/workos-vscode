@@ -3,10 +3,10 @@
 Owner CAP lock (do not renegotiate here):
   CAP-001 A: util% = planned_load_min / shift_available_min per workcenter
   CAP-002 A: Company Calendar (Mon–Fri 8h, RO holidays) as denominator
-  CAP-003 C: maintenance does not reduce available in Batch 01
-  CAP-004 A: missing estimated_minutes → skip invent (0 contribution)
-  CAP-005 A: numerator = sum estimated_minutes on plan tasks by WC
-  CAP-006 D: WC-level only (no machine assignment)
+  CAP-003: Batch 02 may subtract calendarized maintenance only (else GAP)
+  CAP-004 A: missing estimated_minutes → null + warn (no invent)
+  CAP-005 A: numerator = sum valid estimated_minutes on planning tasks by WC
+  CAP-006 D: WC-level util%; machine util stays GAP without assignment truth
   CAP-007 A: overload = warning only (never blocks commercial)
   CAP-008 A: no CostEngine coupling
   CAP-010 A: no materialize/sessions
@@ -86,13 +86,16 @@ def build_calendar_shift_capacity(
     month: Optional[int] = None,
     default_workcenters: Optional[Iterable[str]] = None,
     actual_minutes_by_wc: Optional[Mapping[str, float]] = None,
+    maintenance_deduction_by_wc: Optional[Mapping[str, float]] = None,
+    maintenance_availability: str = "gap",
 ) -> Dict[str, Any]:
     """Build WC capacity rows. calendarShiftUtilAvailable is True when denominator exists."""
     today = date.today()
     y = int(year if year is not None else today.year)
     m = int(month if month is not None else today.month)
-    available = shift_available_minutes_for_month(y, m)
+    base_available = shift_available_minutes_for_month(y, m)
     actuals = actual_minutes_by_wc or {}
+    maint = maintenance_deduction_by_wc or {}
 
     names: List[str] = []
     seen: set[str] = set()
@@ -108,6 +111,13 @@ def build_calendar_shift_capacity(
     for wc_name in names:
         planned = float(planned_minutes_by_wc.get(wc_name) or 0.0)
         actual = float(actuals.get(wc_name) or 0.0)
+        deduction = float(maint.get(wc_name) or 0.0)
+        if maintenance_availability == "calendarized" and deduction > 0:
+            available = max(0.0, base_available - deduction)
+            maint_applied = deduction
+        else:
+            available = base_available
+            maint_applied = None
         ratio = raw_load_ratio(planned, available)
         load_pct = planned_over_shift_pct(planned, available)
         overrun = max(0.0, actual - planned)
@@ -134,6 +144,11 @@ def build_calendar_shift_capacity(
                 "actualMinutes": round(actual, 1),
                 "overrunMinutes": round(overrun, 1),
                 "availableMinutes": round(available, 1),
+                "baseAvailableMinutes": round(base_available, 1),
+                "maintenanceDeductionMinutes": (
+                    None if maint_applied is None else round(maint_applied, 1)
+                ),
+                "maintenanceAvailability": maintenance_availability,
                 "rawLoadRatio": None if ratio is None else round(ratio, 4),
                 "loadKind": "calendar_shift_planned_load",
                 "loadLabel": "Planned load / ore shift (WC)",

@@ -414,6 +414,41 @@ export interface OperationalDataGaps {
   capacity?: OperationalDataGapBlock;
 }
 
+export interface CapacityBatch02Truth {
+  tasksMissingMinutes?: number;
+  tasksWithMinutes?: number;
+  maintenanceAvailability?: string;
+  materialize?: string;
+}
+
+export interface CapacityModelPayload {
+  batch?: string;
+  materialize?: string;
+  availableMinutesMonth?: number;
+  workdaysInMonth?: number;
+  year?: number;
+  month?: number;
+  warnings?: string[];
+  minutesReadiness?: {
+    tasksWithMinutes?: number;
+    tasksMissingMinutes?: number;
+    labels?: { required?: string; nullWarn?: string };
+    materialize?: string;
+  };
+  machineMappingReadiness?: {
+    summary?: {
+      machineCount?: number;
+      mappedToWc?: number;
+      unmappedWc?: number;
+      calendarizedMaintenancePresent?: boolean;
+    };
+    maintenance?: {
+      availability?: string;
+      notice?: string;
+    };
+  };
+}
+
 export interface OperationalTruth {
   plannedMinutesTotal: number;
   actualMinutesTotal: number;
@@ -424,6 +459,7 @@ export interface OperationalTruth {
   notices: string[];
   dataGaps?: OperationalDataGaps;
   boundaries: Record<string, string>;
+  capacityBatch02?: CapacityBatch02Truth;
 }
 
 export const capacityLoad: CapacitySlot[] = [
