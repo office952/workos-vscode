@@ -47,7 +47,7 @@ export default function LettersAcmCompositionConnectionPricesPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-emerald-500/40 hover:text-emerald-100"
+          className="inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-2 text-[12px] font-medium text-wo-text-secondary transition-colors hover:border-emerald-500/40 hover:text-emerald-800 dark:hover:text-emerald-100"
           data-testid="letters-acm-connection-prices-back"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
@@ -58,8 +58,8 @@ export default function LettersAcmCompositionConnectionPricesPage() {
         </span>
       </header>
 
-      <section className={`${PS_SURFACE_PANEL} border-emerald-500/30 px-5 py-5`}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-300/80">
+      <section className={`${PS_SURFACE_PANEL} border-emerald-300 px-5 py-5 dark:border-emerald-500/30`}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-800 dark:text-emerald-300/80">
           Contract Litere ↔ Alucobond
         </p>
         <h1 className="mt-1 text-[1.45rem] font-semibold text-wo-text-primary">
@@ -69,11 +69,11 @@ export default function LettersAcmCompositionConnectionPricesPage() {
           {LETTERS_ACM_CONNECTION_PRICES_HELPER_RO}
         </p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
-          <span className="inline-flex items-center gap-1 rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-emerald-100">
+          <span className="inline-flex items-center gap-1 rounded border border-emerald-400/50 bg-emerald-50 px-2 py-1 text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-100">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
             {ownerLocked} owner blocat
           </span>
-          <span className="inline-flex items-center gap-1 rounded border border-sky-500/40 bg-sky-500/10 px-2 py-1 text-sky-100">
+          <span className="inline-flex items-center gap-1 rounded border border-sky-400/50 bg-sky-50 px-2 py-1 text-sky-800 dark:border-sky-500/40 dark:bg-sky-500/10 dark:text-sky-100">
             <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
             {ownerVerified} owner verificat (coerent)
           </span>
@@ -88,8 +88,8 @@ export default function LettersAcmCompositionConnectionPricesPage() {
               key={line.id}
               className={`rounded-xl border px-4 py-3 ${
                 isLocked
-                  ? "border-emerald-500/35 bg-emerald-950/20"
-                  : "border-sky-500/30 bg-sky-950/15"
+                  ? "border-emerald-300 bg-emerald-50 dark:border-emerald-500/35 dark:bg-emerald-950/20"
+                  : "border-sky-300 bg-sky-50 dark:border-sky-500/30 dark:bg-sky-950/15"
               }`}
               data-testid={`letters-acm-connection-price-${line.id}`}
               data-decision={line.decision}
@@ -102,8 +102,8 @@ export default function LettersAcmCompositionConnectionPricesPage() {
                     <span
                       className={`rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                         isLocked
-                          ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-50"
-                          : "border-sky-400/40 bg-sky-500/15 text-sky-50"
+                          ? "border-emerald-400/50 bg-emerald-100/80 text-emerald-800 dark:border-emerald-400/40 dark:bg-emerald-500/15 dark:text-emerald-50"
+                          : "border-sky-400/50 bg-sky-100/80 text-sky-800 dark:border-sky-400/40 dark:bg-sky-500/15 dark:text-sky-50"
                       }`}
                     >
                       {decisionBadgeRo(line.decision)}
@@ -116,7 +116,9 @@ export default function LettersAcmCompositionConnectionPricesPage() {
                 </div>
                 <p
                   className={`shrink-0 font-mono text-[15px] font-semibold ${
-                    isLocked ? "text-emerald-200" : "text-sky-200"
+                    isLocked
+                      ? "text-emerald-800 dark:text-emerald-200"
+                      : "text-sky-800 dark:text-sky-200"
                   }`}
                   data-testid={`letters-acm-connection-price-value-${line.id}`}
                 >
@@ -137,7 +139,9 @@ export default function LettersAcmCompositionConnectionPricesPage() {
             <li key={task.id}>
               <span className="font-mono text-wo-text-muted">{task.order}.</span> {task.labelRo}
               {task.costNoteRo ? (
-                <span className="ml-2 font-mono text-emerald-300/80">{task.costNoteRo}</span>
+                <span className="ml-2 font-mono text-emerald-700 dark:text-emerald-300/80">
+                  {task.costNoteRo}
+                </span>
               ) : null}
             </li>
           ))}
@@ -149,7 +153,7 @@ export default function LettersAcmCompositionConnectionPricesPage() {
         <div className="mt-3 flex flex-wrap gap-3 text-[11px]">
           <Link
             to={`${backPath}/structure/composer-litere-acm`}
-            className="text-violet-300/90 hover:text-violet-200"
+            className="text-violet-700 hover:text-violet-800 dark:text-violet-300/90 dark:hover:text-violet-200"
           >
             Composer mock →
           </Link>

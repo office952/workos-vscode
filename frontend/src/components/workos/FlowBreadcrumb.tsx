@@ -27,21 +27,21 @@ export default function FlowBreadcrumb({ items, className = "" }: FlowBreadcrumb
   return (
     <nav
       aria-label="Navigare flux"
-      className={`flex items-center gap-1 text-[11px] text-slate-500 ${className}`}
+      className={`flex items-center gap-1 text-[11px] text-wo-text-muted ${className}`}
     >
       <Link
         to="/dashboard"
-        className="flex items-center gap-1 hover:text-slate-300 transition-colors"
+        className="flex items-center gap-1 transition-colors hover:text-wo-text-primary"
       >
         <Home className="w-3 h-3" />
       </Link>
       {items.map((item, idx) => (
         <span key={idx} className="flex items-center gap-1">
-          <ChevronRight className="w-3 h-3 text-slate-600" />
+          <ChevronRight className="w-3 h-3 text-wo-text-dim" />
           {item.to && !item.active ? (
             <Link
               to={item.to}
-              className="hover:text-slate-300 transition-colors"
+              className="transition-colors hover:text-wo-text-primary"
             >
               {item.label}
             </Link>
@@ -49,8 +49,8 @@ export default function FlowBreadcrumb({ items, className = "" }: FlowBreadcrumb
             <span
               className={
                 item.active
-                  ? "text-slate-200 font-medium"
-                  : "text-slate-600"
+                  ? "font-medium text-wo-text-primary"
+                  : "text-wo-text-dim"
               }
             >
               {item.label}
