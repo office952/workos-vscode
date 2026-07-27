@@ -100,7 +100,7 @@ export function TemplateEditorCommandBar({
           type="button"
           onClick={onBackToLibrary}
           disabled={saving}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-semibold text-wo-text-muted hover:text-wo-text-primary border border-transparent hover:border-slate-600 rounded-lg transition-colors shrink-0"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-semibold text-wo-text-muted hover:text-wo-text-primary border border-transparent hover:border-wo-border-strong rounded-lg transition-colors shrink-0"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Înapoi la șabloane
@@ -146,7 +146,7 @@ export function TemplateEditorCommandBar({
             type="button"
             onClick={onChangeTemplate}
             disabled={saving}
-            className="flex items-center gap-1.5 px-3 py-2 bg-wo-surface-inset hover:bg-slate-800 text-wo-text-secondary border border-wo-border-subtle hover:border-slate-600 rounded-lg text-[11px] font-semibold transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-2 bg-wo-surface-inset hover:bg-wo-hover text-wo-text-secondary border border-wo-border-subtle hover:border-wo-border-strong rounded-lg text-[11px] font-semibold transition-colors disabled:opacity-50"
           >
             <ChevronsUpDown className="w-3.5 h-3.5" /> {changeTemplateLabel}
           </button>
@@ -163,7 +163,7 @@ export function TemplateEditorCommandBar({
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="flex items-center gap-1.5 px-3 py-2 bg-transparent hover:bg-slate-800 text-wo-text-muted hover:text-wo-text-primary rounded-lg text-[12px] font-medium transition-colors disabled:opacity-50 border border-transparent hover:border-slate-700"
+          className="flex items-center gap-1.5 px-3 py-2 bg-transparent hover:bg-wo-hover text-wo-text-muted hover:text-wo-text-primary rounded-lg text-[12px] font-medium transition-colors disabled:opacity-50 border border-transparent hover:border-wo-border-strong"
         >
           <X className="w-3.5 h-3.5" /> Anulează
         </button>

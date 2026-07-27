@@ -16,6 +16,7 @@ import { ModuleModelDeferredNotice } from "@/components/workos/design-system";
 import { ProductCompilerDisplayShell } from "./ProductCompilerDisplayShell";
 import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
 import { ProductSystemSpineBand } from "./ProductSystemSpineBand";
+import { ProductSystemSurfaceTruthChips } from "./ProductSystemSurfaceTruthChips";
 import { ProductSystemStructureReadonlyPanel } from "./ProductSystemStructureReadonlyPanel";
 import { ProductE2EReadinessPanel } from "./ProductE2EReadinessPanel";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
@@ -120,6 +121,7 @@ export function ProductSystemV2Workspace({
     >
       <header data-testid="product-system-v2-header" className="space-y-2">
         <ProductSystemSpineBand compact testId="product-system-v2-spine" />
+        <ProductSystemSurfaceTruthChips testId="product-system-v2-surface-truth-chips" />
         <ModuleModelDeferredNotice compact />
       </header>
 
@@ -138,7 +140,7 @@ export function ProductSystemV2Workspace({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Caută Product Template…"
             data-testid="product-system-v2-search"
-            className="w-full rounded-md border border-slate-700 bg-wo-surface-input px-2.5 py-2 text-sm text-wo-text-primary outline-none placeholder:text-wo-text-dim focus:border-slate-500"
+            className="w-full rounded-md border border-wo-border-strong bg-wo-surface-input px-2.5 py-2 text-sm text-wo-text-primary outline-none placeholder:text-wo-text-dim focus:border-wo-info/50"
           />
           <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim">
             Product Templates
@@ -167,8 +169,8 @@ export function ProductSystemV2Workspace({
                       onClick={() => onRequestedTemplateCodeChange?.(item.templateCode)}
                       className={`w-full rounded-md border px-2.5 py-2 text-left transition-colors ${
                         active
-                          ? "border-sky-700/50 bg-sky-950/30"
-                          : "border-transparent hover:border-slate-800 hover:bg-slate-900/40"
+                          ? "border-sky-300 bg-sky-50 dark:border-sky-700/50 dark:bg-sky-950/30"
+                          : "border-transparent hover:border-wo-border-strong hover:bg-wo-hover"
                       }`}
                     >
                       <span className="block truncate text-[13px] font-medium text-wo-text-primary">

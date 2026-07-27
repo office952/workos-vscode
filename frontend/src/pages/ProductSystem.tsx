@@ -359,7 +359,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!routing) {
     if (!opCode.trim()) return null;
     return (
-      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-wo-text-dim border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
+      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-wo-surface-inset text-wo-text-dim border border-wo-border-strong whitespace-nowrap" title="Routing lipsă — operație necunoscută">
         ! Routing lipsă
       </span>
     );
@@ -368,7 +368,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!ws) return null;
   return (
     <span
-      className={`px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 border border-slate-700/50 whitespace-nowrap ${ws.color}`}
+      className={`px-1.5 py-0.5 text-[8px] font-semibold rounded bg-wo-surface-inset border border-wo-border-strong whitespace-nowrap ${ws.color}`}
       title={`Stație: ${ws.name} Â· Skill: ${routing.skillLabel} Â· Tablet-ready âœ“`}
     >
       {ws.icon} {ws.shortName}
@@ -389,9 +389,9 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
     >
       {children}
       {show && (
-        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] text-wo-text-primary whitespace-nowrap pointer-events-none">
+        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl text-[11px] text-wo-text-primary whitespace-nowrap pointer-events-none">
           {text}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-2 h-2 bg-slate-800 border-r border-b border-slate-600 rotate-45" />
+          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-2 h-2 bg-wo-surface-raised border-r border-b border-wo-border-strong rotate-45" />
         </div>
       )}
     </div>
@@ -2542,8 +2542,8 @@ function ComponentCalculationOwnershipPanel({
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200">Read-only</span>
-          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200" data-testid="product-system-ownership-composer-badge">Product Template = composer</span>
+          <span className="rounded border border-wo-warning/40 bg-wo-warning-muted px-2 py-0.5 text-wo-warning">Read-only</span>
+          <span className="rounded border border-wo-warning/40 bg-wo-warning-muted px-2 py-0.5 text-wo-warning" data-testid="product-system-ownership-composer-badge">Product Template = composer</span>
           <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component root</span>
           <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No component quote</span>
           <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-wo-text-secondary">No promote</span>
@@ -3306,7 +3306,7 @@ function ProductSystemLibraryMoreMenu({
         aria-label="More catalog actions"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
-        className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
+        className="rounded border border-wo-border-strong bg-wo-surface-inset p-1.5 text-wo-text-secondary transition-colors hover:bg-wo-hover"
       >
         <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
@@ -3322,7 +3322,7 @@ function ProductSystemLibraryMoreMenu({
               onCreateTemplate();
               setOpen(false);
             }}
-            className="block w-full rounded px-2 py-1 text-left text-[11px] text-wo-text-primary hover:bg-slate-800"
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-wo-text-primary hover:bg-wo-hover"
           >
             Șablon nou
           </button>
@@ -3336,7 +3336,7 @@ function ProductSystemLibraryMoreMenu({
           <Link
             to="/product-system/blueprint-dossier"
             data-testid="product-system-library-blueprint-link"
-            className="block rounded px-2 py-1 text-[11px] text-wo-text-primary hover:bg-slate-800"
+            className="block rounded px-2 py-1 text-[11px] text-wo-text-primary hover:bg-wo-hover"
             onClick={() => setOpen(false)}
           >
             Blueprint Dossier
@@ -3375,8 +3375,8 @@ function ProductSystemInfoPopover({
           type="button"
           className={
             compact
-              ? "rounded border border-slate-700 bg-slate-800/80 p-1.5 text-wo-text-secondary transition-colors hover:bg-slate-700"
-              : "flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-wo-text-secondary border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
+              ? "rounded border border-wo-border-strong bg-wo-surface-inset p-1.5 text-wo-text-secondary transition-colors hover:bg-wo-hover"
+              : "flex items-center gap-1.5 px-3 py-2 bg-wo-surface-inset hover:bg-wo-hover text-wo-text-secondary border border-wo-border-strong rounded-lg text-[12px] font-semibold transition-colors"
           }
           aria-label="Informații ProductSystem"
         >
@@ -3849,7 +3849,7 @@ export default function ProductSystem() {
               </div>
             </div>
 
-            <div className="flex min-w-[12rem] flex-1 items-center gap-2 rounded-md border border-slate-800/80 bg-[#0a0f18]/80 px-2.5 py-1.5 lg:max-w-md">
+            <div className="flex min-w-[12rem] flex-1 items-center gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-inset px-2.5 py-1.5 lg:max-w-md">
               <Search className="h-3.5 w-3.5 shrink-0 text-wo-text-muted" />
               <input
                 type="text"
@@ -3874,7 +3874,7 @@ export default function ProductSystem() {
                 disabled={loading}
                 aria-label="Reîncarcă"
                 data-testid="product-system-reload-icon"
-                className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
+                className="rounded-md border border-wo-border-strong bg-wo-surface-inset p-2 text-wo-text-secondary transition-colors hover:bg-wo-hover disabled:opacity-50"
               >
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </button>
@@ -3908,7 +3908,7 @@ export default function ProductSystem() {
             disabled={loading}
             aria-label="Reîncarcă"
             data-testid="product-system-reload-icon"
-            className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-wo-text-secondary transition-colors hover:bg-slate-700 disabled:opacity-50"
+            className="rounded-md border border-wo-border-strong bg-wo-surface-inset p-2 text-wo-text-secondary transition-colors hover:bg-wo-hover disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           </button>
