@@ -71,21 +71,42 @@ import {
 } from "./lettersAcmCompositionConnectionPrices";
 import { buildLettersAcmComposerPath } from "./lettersAcmComposerIaMockRoutes";
 
+/** Day/Night structure-card footer — inset wash, not dark *-950/15. */
+const STRUCTURE_DETAIL_TEASER_FOOTER =
+  "flex items-center justify-between gap-2 border-t border-wo-border-subtle bg-wo-surface-inset px-4 py-2";
+
+function StructureDetailTeaserLabel({
+  title,
+  hint,
+}: {
+  title: string;
+  hint: string;
+}) {
+  return (
+    <>
+      <p className="truncate text-[11px] text-wo-text-secondary">
+        <span className="font-medium text-wo-text-primary">{title}</span>
+        <span className="text-wo-text-muted">{hint}</span>
+      </p>
+      <span className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-wo-text-muted">
+        Detaliu
+        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+      </span>
+    </>
+  );
+}
+
 /** Thin teaser — full volume documentation lives on the detail page. */
 function LettersVolumeAluminumDetailTeaser() {
   return (
     <div
-      className="flex items-center justify-between gap-2 border-t border-sky-800/35 bg-sky-950/15 px-4 py-2"
+      className={STRUCTURE_DETAIL_TEASER_FOOTER}
       data-testid="product-system-v2-letters-volume-detail-teaser"
     >
-      <p className="truncate text-[11px] text-sky-200/80">
-        <span className="font-medium text-sky-100">{LETTERS_VOLUME_STRUCTURE_DISPLAY_NAME}</span>
-        <span className="text-sky-500/70"> · 30/60/80/100 · ml</span>
-      </p>
-      <span className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-sky-300/90">
-        Detaliu
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-      </span>
+      <StructureDetailTeaserLabel
+        title={LETTERS_VOLUME_STRUCTURE_DISPLAY_NAME}
+        hint=" · 30/60/80/100 · ml"
+      />
     </div>
   );
 }
@@ -94,17 +115,13 @@ function LettersVolumeAluminumDetailTeaser() {
 function LettersBackForexDetailTeaser() {
   return (
     <div
-      className="flex items-center justify-between gap-2 border-t border-amber-800/35 bg-amber-950/15 px-4 py-2"
+      className={STRUCTURE_DETAIL_TEASER_FOOTER}
       data-testid="product-system-v2-letters-back-detail-teaser"
     >
-      <p className="truncate text-[11px] text-amber-200/80">
-        <span className="font-medium text-amber-100">{LETTERS_BACK_STRUCTURE_DISPLAY_NAME}</span>
-        <span className="text-amber-500/70"> · CNC · șanfren opț.</span>
-      </p>
-      <span className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-300/90">
-        Detaliu
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-      </span>
+      <StructureDetailTeaserLabel
+        title={LETTERS_BACK_STRUCTURE_DISPLAY_NAME}
+        hint=" · CNC · șanfren opț."
+      />
     </div>
   );
 }
@@ -113,17 +130,13 @@ function LettersBackForexDetailTeaser() {
 function LettersLedDetailTeaser() {
   return (
     <div
-      className="flex items-center justify-between gap-2 border-t border-yellow-800/35 bg-yellow-950/15 px-4 py-2"
+      className={STRUCTURE_DETAIL_TEASER_FOOTER}
       data-testid="product-system-v2-letters-led-detail-teaser"
     >
-      <p className="truncate text-[11px] text-yellow-200/80">
-        <span className="font-medium text-yellow-100">{LETTERS_LED_STRUCTURE_DISPLAY_NAME}</span>
-        <span className="text-yellow-500/70"> · module · PSU</span>
-      </p>
-      <span className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-yellow-300/90">
-        Detaliu
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-      </span>
+      <StructureDetailTeaserLabel
+        title={LETTERS_LED_STRUCTURE_DISPLAY_NAME}
+        hint=" · module · PSU"
+      />
     </div>
   );
 }
@@ -132,17 +145,13 @@ function LettersLedDetailTeaser() {
 function LettersFaceDetailTeaser() {
   return (
     <div
-      className="flex items-center justify-between gap-2 border-t border-violet-800/35 bg-violet-950/15 px-4 py-2"
+      className={STRUCTURE_DETAIL_TEASER_FOOTER}
       data-testid="product-system-v2-letters-face-detail-teaser"
     >
-      <p className="truncate text-[11px] text-violet-200/80">
-        <span className="font-medium text-violet-100">{LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}</span>
-        <span className="text-violet-500/70"> · CNC · finisaj</span>
-      </p>
-      <span className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-violet-300/90">
-        Detaliu
-        <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-      </span>
+      <StructureDetailTeaserLabel
+        title={LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}
+        hint=" · CNC · finisaj"
+      />
     </div>
   );
 }
@@ -284,27 +293,10 @@ function AcmBoxedTeachingCard({
         </div>
       </button>
       <div
-        className={`flex items-center justify-between gap-2 border-t px-4 py-2 ${
-          isFrame
-            ? "border-amber-800/35 bg-amber-950/15"
-            : "border-cyan-800/35 bg-cyan-950/15"
-        }`}
+        className={STRUCTURE_DETAIL_TEASER_FOOTER}
         data-testid="product-system-v2-acm-boxed-detail-teaser"
       >
-        <p className={`truncate text-[11px] ${isFrame ? "text-amber-200/80" : "text-cyan-200/80"}`}>
-          <span className={`font-medium ${isFrame ? "text-amber-100" : "text-cyan-100"}`}>
-            {teaserRo}
-          </span>
-          <span className={isFrame ? "text-amber-500/70" : "text-cyan-500/70"}>{teaserHintRo}</span>
-        </p>
-        <span
-          className={`inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] ${
-            isFrame ? "text-amber-300/90" : "text-cyan-300/90"
-          }`}
-        >
-          Detaliu
-          <ChevronRight className="h-3.5 w-3.5" aria-hidden />
-        </span>
+        <StructureDetailTeaserLabel title={teaserRo} hint={teaserHintRo} />
       </div>
     </div>
   );

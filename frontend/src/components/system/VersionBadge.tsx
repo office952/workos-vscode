@@ -40,13 +40,13 @@ function envPillClasses(tone: EnvTone): string {
     "inline-flex items-center gap-1 px-1.5 py-[1px] rounded text-[9px] font-bold uppercase tracking-wider leading-none";
   switch (tone) {
     case "live":
-      return `${base} bg-emerald-900/50 text-emerald-300 border border-emerald-700/70 shadow-[0_0_0_1px_rgba(16,185,129,0.08)]`;
+      return `${base} border border-wo-success/40 bg-wo-success-muted text-wo-success`;
     case "preview":
-      return `${base} bg-amber-900/40 text-amber-300 border border-amber-800/60`;
+      return `${base} border border-wo-warning/40 bg-wo-warning-muted text-amber-900 dark:text-wo-warning`;
     case "dev":
-      return `${base} bg-slate-800 text-slate-300 border border-slate-700`;
+      return `${base} border border-wo-border-strong bg-wo-surface-inset text-wo-text-muted`;
     default:
-      return `${base} bg-slate-800 text-slate-400 border border-slate-700`;
+      return `${base} border border-wo-border-subtle bg-wo-surface-inset text-wo-text-dim`;
   }
 }
 
@@ -134,7 +134,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
         title="Version unavailable"
         data-testid="version-badge-collapsed"
       >
-        <Activity className="w-3 h-3 text-slate-600" />
+        <Activity className="w-3 h-3 text-wo-text-dim" />
       </div>
     );
   }
@@ -143,10 +143,10 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
   if (state.status === "loading") {
     return (
       <div
-        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-slate-600 flex items-center gap-1.5"
+        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-wo-text-dim flex items-center gap-1.5"
         data-testid="version-badge"
       >
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-600 animate-pulse" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-wo-text-dim animate-pulse" />
         Loading version…
       </div>
     );
@@ -155,7 +155,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
   if (state.status === "error") {
     return (
       <div
-        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-slate-500"
+        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-wo-text-muted"
         title={state.message}
         data-testid="version-badge"
       >
@@ -190,16 +190,16 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
     >
       <button
         type="button"
-        className="w-full px-3 py-2 flex items-center gap-2 text-left hover:bg-slate-900/40 transition-colors focus:outline-none focus:bg-slate-900/50"
+        className="w-full px-3 py-2 flex items-center gap-2 text-left hover:bg-wo-hover transition-colors focus:outline-none focus:bg-wo-active"
         aria-expanded={popoverOpen}
         aria-label={`${app} ${version} ${env}`}
       >
-        <Activity className="w-3 h-3 text-slate-500 shrink-0" />
+        <Activity className="w-3 h-3 text-wo-text-dim shrink-0" />
         <div className="flex-1 min-w-0 leading-tight">
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-semibold text-slate-200 truncate">
+            <span className="text-[11px] font-semibold text-wo-text-secondary truncate">
               {app}{" "}
-              <span className="font-mono text-slate-300">{version}</span>
+              <span className="font-mono text-wo-text-muted">{version}</span>
             </span>
             <span className={envPillClasses(tone)}>
               <span
@@ -209,7 +209,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
             </span>
           </div>
           {scope && (
-            <div className="text-[9px] text-slate-500 truncate font-mono">
+            <div className="text-[9px] text-wo-text-dim truncate font-mono">
               {scope}
             </div>
           )}
@@ -218,7 +218,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
 
       {popoverOpen && (
         <div
-          className="absolute bottom-full left-2 right-2 mb-1 z-50 rounded-md border border-slate-700/80 bg-slate-900/95 backdrop-blur-sm shadow-xl px-3 py-2.5 text-[10px] leading-tight"
+          className="absolute bottom-full left-2 right-2 mb-1 z-50 rounded-md border border-wo-border-strong bg-wo-surface-raised shadow-xl px-3 py-2.5 text-[10px] leading-tight"
           role="tooltip"
           data-testid="version-badge-popover"
         >
@@ -229,40 +229,40 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
               />
               {env}
             </span>
-            <span className="text-slate-200 font-semibold text-[11px]">
-              {app} <span className="font-mono">{version}</span>
+            <span className="text-wo-text-primary font-semibold text-[11px]">
+              {app} <span className="font-mono text-wo-text-muted">{version}</span>
             </span>
           </div>
 
           {label && (
-            <div className="text-slate-300 italic text-[10px] mb-1.5 border-l-2 border-slate-700 pl-2">
+            <div className="text-wo-text-secondary italic text-[10px] mb-1.5 border-l-2 border-wo-border-strong pl-2">
               {label}
             </div>
           )}
 
-          <dl className="grid grid-cols-[64px_1fr] gap-x-2 gap-y-0.5 text-slate-400">
+          <dl className="grid grid-cols-[64px_1fr] gap-x-2 gap-y-0.5 text-wo-text-muted">
             {scope && (
               <>
-                <dt className="text-slate-500">scope</dt>
-                <dd className="font-mono text-slate-300 truncate">{scope}</dd>
+                <dt className="text-wo-text-dim">scope</dt>
+                <dd className="font-mono text-wo-text-secondary truncate">{scope}</dd>
               </>
             )}
-            <dt className="text-slate-500">source</dt>
-            <dd className="font-mono text-slate-300">{source}</dd>
+            <dt className="text-wo-text-dim">source</dt>
+            <dd className="font-mono text-wo-text-secondary">{source}</dd>
             {buildTimeFmt && (
               <>
-                <dt className="text-slate-500">build</dt>
-                <dd className="font-mono text-slate-300">{buildTimeFmt}</dd>
+                <dt className="text-wo-text-dim">build</dt>
+                <dd className="font-mono text-wo-text-secondary">{buildTimeFmt}</dd>
               </>
             )}
-            <dt className="text-slate-500">observed</dt>
-            <dd className="font-mono text-slate-300 truncate">
+            <dt className="text-wo-text-dim">observed</dt>
+            <dd className="font-mono text-wo-text-secondary truncate">
               {data.observed_at}
             </dd>
           </dl>
 
           {diagnosticsOff && (
-            <div className="mt-2 pt-2 border-t border-slate-800 flex items-center gap-1.5 text-slate-500">
+            <div className="mt-2 pt-2 border-t border-wo-border-subtle flex items-center gap-1.5 text-wo-text-dim">
               <ShieldOff className="w-3 h-3 shrink-0" />
               <span className="text-[9px]">
                 Diagnostics gated off · <code>db-identity</code> disabled
@@ -270,7 +270,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
             </div>
           )}
 
-          <div className="mt-1.5 text-[9px] text-slate-600">
+          <div className="mt-1.5 text-[9px] text-wo-text-dim">
             Read-only · <code>GET /api/v1/system/version</code>
           </div>
         </div>
