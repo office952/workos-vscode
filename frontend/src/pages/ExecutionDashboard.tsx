@@ -75,9 +75,12 @@ function presenceBadgeCls(value: "present" | "absent"): string {
 
 export default function ExecutionDashboard() {
   const navigate = useNavigate();
-  const { capacity, operationalTruth } = useDashboardStats();
+  const { capacity, capacityModel, operationalTruth } = useDashboardStats();
   const calendarShiftOk = Boolean(operationalTruth?.calendarShiftUtilAvailable);
   const activeWcCapacity = capacity.filter((c) => (c.plannedMinutes ?? 0) > 0 || c.loadToday > 0);
+  const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? 0;
+  const maintAvail =
+    capacityModel?.machineMappingReadiness?.maintenance?.availability ?? "gap";
   const [rows, setRows] = useState<DashboardRow[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -191,6 +194,7 @@ export default function ExecutionDashboard() {
         </div>
         <p className="text-[10px] text-wo-text-muted">
           Nu blochează oferta · nu CostEngine · nu POST materialize. Overload = warning only.
+          Minutes NULL+WARN: {minutesMissing}. Mentenanță: {maintAvail}. Materialize: BLOCAT.
         </p>
         {calendarShiftOk && activeWcCapacity.length > 0 && (
           <ul className="flex flex-wrap gap-2 pt-0.5">

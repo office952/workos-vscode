@@ -4,6 +4,15 @@ import { MemoryRouter } from "react-router-dom";
 
 vi.mock("@/hooks/useDashboardStats", () => ({
   useDashboardStats: () => ({
+    capacityModel: {
+      batch: "capacity_batch_02",
+      materialize: "BLOCKED",
+      minutesReadiness: { tasksWithMinutes: 1, tasksMissingMinutes: 2 },
+      machineMappingReadiness: {
+        summary: { mappedToWc: 3, unmappedWc: 1, machineCount: 4 },
+        maintenance: { availability: "gap", notice: "maintenance availability: gap" },
+      },
+    },
     kpis: [
       {
         code: "KPI_MACHINE_UTIL",
@@ -168,6 +177,8 @@ describe("Dashboard data source honesty", () => {
     expect(screen.getByText("Throughput azi (UTC)")).toBeInTheDocument();
     expect(screen.getByText("OTIF (proxy)")).toBeInTheDocument();
     expect(screen.getByText(/Util% shift pe workcenter/i)).toBeInTheDocument();
+    expect(screen.getByTestId("capacity-batch02-readiness")).toHaveTextContent(/NULL \+ WARN/i);
+    expect(screen.getByTestId("capacity-maintenance-readiness")).toHaveTextContent(/gap/i);
   });
 
   it("allows progressive disclosure for honesty banner and gap noise", () => {

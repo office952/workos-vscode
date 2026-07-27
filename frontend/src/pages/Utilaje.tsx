@@ -135,9 +135,13 @@ function SourceBadge({ source }: { source: "db" | "mock" | "empty" | "error" | "
 }
 
 export default function Utilaje() {
-  const { capacity, operationalTruth } = useDashboardStats();
+  const { capacity, capacityModel, operationalTruth } = useDashboardStats();
   const calendarShiftOk = Boolean(operationalTruth?.calendarShiftUtilAvailable);
   const activeWcCapacity = capacity.filter((c) => (c.plannedMinutes ?? 0) > 0 || c.loadToday > 0);
+  const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? 0;
+  const mappingSummary = capacityModel?.machineMappingReadiness?.summary;
+  const maintAvail =
+    capacityModel?.machineMappingReadiness?.maintenance?.availability ?? "gap";
   const {
     machines,
     machineSpecs,
@@ -278,6 +282,9 @@ export default function Utilaje() {
             <p className="text-[11px] text-wo-text-secondary">
               Per utilaj: fără machine assignment (CAP-006=D) ={" "}
               <span className="font-semibold text-wo-warning">GAP</span> pe cardul din dreapta — load-ul e la nivel WC.
+              Mapping readiness: {mappingSummary?.mappedToWc ?? "—"} mapped /{" "}
+              {mappingSummary?.unmappedWc ?? "—"} unmapped. Minutes NULL+WARN: {minutesMissing}. Mentenanță:{" "}
+              {maintAvail}. Materialize: BLOCAT.
             </p>
           </div>
           <div className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.warning}`}>
