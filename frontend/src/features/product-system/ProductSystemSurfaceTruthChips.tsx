@@ -21,12 +21,13 @@ const CHIPS: { label: string; tone: string; testId: string }[] = [
   },
   {
     label: "Pricing reference · NOT PRICE",
-    tone: "border-wo-warning/40 bg-wo-warning-muted text-wo-warning",
+    // Day: amber-on-amber ~2:1 → deeper text; Night keeps wo-warning
+    tone: "border-wo-warning/40 bg-wo-warning-muted text-amber-900 dark:text-wo-warning",
     testId: "ps-chip-pricing-ref",
   },
   {
     label: "Internal cost · NOT CLIENT PRICE",
-    tone: "border-wo-warning/40 bg-wo-warning-muted text-wo-warning",
+    tone: "border-wo-warning/40 bg-wo-warning-muted text-amber-900 dark:text-wo-warning",
     testId: "ps-chip-internal-cost",
   },
   {
