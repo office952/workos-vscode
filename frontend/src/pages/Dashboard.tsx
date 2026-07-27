@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
-import { CapacityNotice, BoundaryBadge } from "@/components/workos/design-system";
+import {
+  CapacityNotice,
+  BoundaryBadge,
+  chromeBanner,
+} from "@/components/workos/design-system";
 import type {
   KPIMetricKind,
   KPIValue,
@@ -39,6 +43,20 @@ import {
   Users,
 } from "lucide-react";
 
+/** Drop snake_case-only internal formula tokens from honesty list (keep human notices). */
+function isHumanReadableNotice(notice: string): boolean {
+  const trimmed = notice.trim();
+  if (!trimmed) return false;
+  if (/\s/.test(trimmed)) return true;
+  return !/^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/i.test(trimmed);
+}
+
+const QUICK_ACTION_CLASS =
+  "inline-flex items-center gap-1.5 rounded-md border border-wo-border-strong bg-wo-surface-raised px-3 py-1.5 text-[11px] font-medium text-wo-text-secondary transition-colors hover:bg-wo-hover hover:text-wo-text-primary";
+
+const QUICK_ACTION_PRIMARY_CLASS =
+  "inline-flex items-center gap-1.5 rounded-md border border-wo-info/40 bg-wo-info-muted px-3 py-1.5 text-[11px] font-medium text-wo-info transition-colors hover:bg-wo-hover";
+
 /* ─── Status Header ─── */
 function StatusHeader({
   source,
@@ -57,23 +75,23 @@ function StatusHeader({
         {source === "db" ? (
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-wo-success opacity-40" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-wo-success" />
             </span>
-            <span className="text-sm text-green-400 font-medium" data-testid="dashboard-data-source">
+            <span className="text-sm text-wo-success font-medium" data-testid="dashboard-data-source">
               Date disponibile
             </span>
-            <Database className="w-3.5 h-3.5 text-green-400/60" />
+            <Database className="w-3.5 h-3.5 text-wo-success/70" />
           </div>
         ) : source === "mock" ? (
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-            <span className="text-sm text-amber-400 font-medium">Demo</span>
-            <HardDrive className="w-3.5 h-3.5 text-amber-400/60" />
+            <span className="w-2.5 h-2.5 rounded-full bg-wo-warning" />
+            <span className="text-sm text-wo-warning font-medium">Demo</span>
+            <HardDrive className="w-3.5 h-3.5 text-wo-warning/70" />
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-slate-500 animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-wo-text-dim animate-pulse" />
             <span className="text-sm text-wo-text-muted">Conectare...</span>
           </div>
         )}
@@ -106,23 +124,19 @@ const KIND_BADGE: Record<
 > = {
   actual: {
     label: "actual",
-    className:
-      "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300",
+    className: "border-wo-info/30 bg-wo-info-muted text-wo-info",
   },
   planned: {
     label: "planificat",
-    className:
-      "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-500/30 dark:bg-slate-500/15 dark:text-slate-300",
+    className: "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary",
   },
   derived: {
     label: "derivat",
-    className:
-      "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-500/30 dark:bg-cyan-500/15 dark:text-cyan-300",
+    className: "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary",
   },
   proxy: {
     label: "proxy",
-    className:
-      "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300",
+    className: "border-wo-warning/30 bg-wo-warning-muted text-wo-warning",
   },
   placeholder: {
     label: "gap",
@@ -164,19 +178,19 @@ function KPICardLarge({
       border: "border-wo-border-subtle",
       bg: "bg-wo-surface-raised",
       value: "text-wo-text-primary",
-      iconColor: "text-green-600 dark:text-green-400",
+      iconColor: "text-wo-success",
     },
     warning: {
-      border: "border-amber-200 dark:border-amber-900/40",
+      border: "border-wo-warning/35",
       bg: "bg-wo-surface-raised",
-      value: "text-amber-800 dark:text-amber-300",
-      iconColor: "text-amber-600 dark:text-amber-400",
+      value: "text-wo-warning",
+      iconColor: "text-wo-warning",
     },
     critical: {
-      border: "border-red-200 dark:border-red-900/40",
+      border: "border-wo-error/35",
       bg: "bg-wo-surface-raised",
-      value: "text-red-700 dark:text-red-300",
-      iconColor: "text-red-600 dark:text-red-400",
+      value: "text-wo-error",
+      iconColor: "text-wo-error",
     },
   };
 
@@ -187,12 +201,12 @@ function KPICardLarge({
   const trendColor =
     trend === "up"
       ? status === "critical" || status === "warning"
-        ? "text-red-400"
-        : "text-green-400"
+        ? "text-wo-error"
+        : "text-wo-success"
       : trend === "down"
         ? status === "critical" || status === "warning"
-          ? "text-green-400"
-          : "text-red-400"
+          ? "text-wo-success"
+          : "text-wo-error"
         : "text-wo-text-muted";
 
   // Defensive display for % KPIs: never render absurd values like 56596%.
@@ -248,7 +262,7 @@ function KPICardLarge({
       )}
       {showGapNoise && gapNote && (
         <p
-          className="text-[10px] text-amber-400/90 mt-1 leading-snug line-clamp-2"
+          className="text-[10px] text-wo-warning mt-1 leading-snug line-clamp-2"
           data-testid="kpi-gap-note"
         >
           Gap: {gapNote}
@@ -276,27 +290,28 @@ function OperationalTruthBanner({
   onExpand: () => void;
 }) {
   if (!truth) return null;
-  const notices = truth.notices?.length
+  const rawNotices = truth.notices?.length
     ? truth.notices
     : [
         "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter.",
       ];
+  const notices = rawNotices.filter(isHumanReadableNotice).slice(0, 3);
 
   if (acknowledged) {
     return (
       <div
-        className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-amber-200/80 bg-amber-50/80 px-3 py-2 dark:border-amber-800/40 dark:bg-amber-950/15"
+        className={`flex flex-wrap items-center justify-between gap-2 rounded-lg px-3 py-2 ${chromeBanner.warning}`}
         data-testid="dashboard-operational-truth"
         data-collapsed="true"
         role="note"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <Info className="w-3.5 h-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
-          <p className="text-[11px] font-medium text-amber-900 dark:text-amber-200 truncate">
+          <Info className="w-3.5 h-3.5 shrink-0 text-wo-warning" />
+          <p className="text-[11px] font-medium text-wo-text-primary truncate">
             Adevăr operațional — citit
           </p>
           {!truth.calendarShiftUtilAvailable && (
-            <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300">
+            <span className="rounded border border-wo-warning/40 bg-wo-warning-muted px-1.5 py-0.5 text-[10px] text-wo-warning">
               fără util calendar/shift
             </span>
           )}
@@ -307,7 +322,7 @@ function OperationalTruthBanner({
         <button
           type="button"
           onClick={onExpand}
-          className="text-[11px] font-semibold text-amber-800 hover:text-amber-950 dark:text-amber-300 dark:hover:text-amber-100"
+          className="text-[11px] font-semibold text-wo-info hover:underline"
           data-testid="dashboard-honesty-banner-expand"
         >
           Arată detalii
@@ -318,39 +333,39 @@ function OperationalTruthBanner({
 
   return (
     <div
-      className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 space-y-2 dark:border-amber-800/40 dark:bg-amber-950/20"
+      className={`rounded-lg px-4 py-3 space-y-2 ${chromeBanner.warning}`}
       data-testid="dashboard-operational-truth"
       data-collapsed="false"
       role="note"
     >
       <div className="flex items-center gap-2 flex-wrap">
-        <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-        <h3 className="text-xs font-semibold text-amber-900 dark:text-amber-200">
+        <Info className="w-4 h-4 shrink-0 text-wo-warning" />
+        <h3 className="text-xs font-semibold text-wo-text-primary">
           Adevăr operațional (Dashboard)
         </h3>
         {!truth.calendarShiftUtilAvailable && (
-          <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300">
+          <span className="rounded border border-wo-warning/40 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] text-wo-warning">
             fără util calendar/shift
           </span>
         )}
       </div>
       <ul className="space-y-1">
-        {notices.slice(0, 3).map((n) => (
+        {notices.map((n) => (
           <li
             key={n}
-            className="flex gap-1.5 text-[11px] leading-snug text-amber-900/90 dark:text-amber-100/80"
+            className="flex gap-1.5 text-[11px] leading-snug text-wo-text-secondary"
           >
-            <span className="shrink-0 text-amber-600 dark:text-amber-500">•</span>
+            <span className="shrink-0 text-wo-warning">•</span>
             <span>{n}</span>
           </li>
         ))}
       </ul>
       <div className="flex flex-wrap gap-3 pt-1 font-mono text-[10px] text-wo-text-muted">
         <span>Planificat: {truth.plannedMinutesTotal ?? 0} min</span>
-        <span className="text-blue-700 dark:text-blue-300">
+        <span className="text-wo-info">
           Actual: {truth.actualMinutesTotal ?? 0} min
         </span>
-        <span className="text-red-700 dark:text-red-300">
+        <span className="text-wo-error">
           Overrun: {truth.overrunMinutesTotal ?? 0} min
         </span>
         <span>Fereastră throughput: {truth.throughputWindow}</span>
@@ -359,7 +374,7 @@ function OperationalTruthBanner({
         <button
           type="button"
           onClick={onAcknowledge}
-          className="rounded-md border border-amber-300 bg-amber-100/80 px-2.5 py-1 text-[11px] font-semibold text-amber-900 hover:bg-amber-100 dark:border-amber-700/50 dark:bg-amber-900/40 dark:text-amber-100"
+          className="rounded-md border border-wo-warning/50 bg-wo-surface-raised px-2.5 py-1 text-[11px] font-semibold text-wo-text-primary hover:bg-wo-hover"
           data-testid="dashboard-honesty-banner-ack"
         >
           Am înțeles
@@ -409,8 +424,8 @@ function OperationalDataGapsPanel({ gaps }: { gaps?: OperationalDataGaps | null 
       aria-label="Operational data gaps"
     >
       <div className="flex items-center gap-2 flex-wrap">
-        <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-        <h3 className="text-xs font-semibold text-foreground">
+        <AlertTriangle className="w-4 h-4 text-wo-warning shrink-0" />
+        <h3 className="text-xs font-semibold text-wo-text-primary">
           Gap-uri date operaționale
         </h3>
         <span className="text-[10px] text-wo-text-muted">
@@ -428,20 +443,20 @@ function OperationalDataGapsPanel({ gaps }: { gaps?: OperationalDataGaps | null 
             >
               <div className="flex items-center gap-2 flex-wrap">
                 <Icon className="w-3.5 h-3.5 text-wo-text-muted shrink-0" />
-                <span className="text-[11px] font-semibold text-foreground">{title}</span>
+                <span className="text-[11px] font-semibold text-wo-text-primary">{title}</span>
                 <BoundaryBadge domain={domain} compact />
                 <span
-                  className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                  className={`rounded px-1.5 py-0.5 text-[10px] font-medium border ${
                     needed
-                      ? "bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200"
-                      : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300"
+                      ? "border-wo-warning/35 bg-wo-warning-muted text-wo-warning"
+                      : "border-wo-success/35 bg-wo-success-muted text-wo-success"
                   }`}
                 >
                   {needed ? "Owner data needed" : "OK"}
                 </span>
                 <Link
                   to={href}
-                  className="ml-auto text-[10px] font-medium text-blue-700 hover:underline dark:text-blue-300"
+                  className="ml-auto text-[10px] font-medium text-wo-info hover:underline"
                 >
                   Deschide
                 </Link>
@@ -471,10 +486,10 @@ function SummaryBar({
 }) {
   const total = planned + inExecution + blocked + completed;
   const segments = [
-    { label: "Finalizate", count: completed, color: "bg-green-500", tone: "actual" },
-    { label: "În execuție", count: inExecution, color: "bg-blue-500", tone: "actual" },
-    { label: "Blocate", count: blocked, color: "bg-red-500", tone: "blocked" },
-    { label: "Planificate", count: planned, color: "bg-slate-500", tone: "planned" },
+    { label: "Finalizate", count: completed, color: "bg-wo-success", tone: "actual" },
+    { label: "În execuție", count: inExecution, color: "bg-wo-info", tone: "actual" },
+    { label: "Blocate", count: blocked, color: "bg-wo-error", tone: "blocked" },
+    { label: "Planificate", count: planned, color: "bg-wo-text-dim", tone: "planned" },
   ];
 
   return (
@@ -494,7 +509,7 @@ function SummaryBar({
         <div className="flex items-center gap-2 text-xs text-wo-text-muted">
           <span>{total} job-uri</span>
           {late > 0 && (
-            <span className="text-amber-400 font-medium border border-amber-700/40 rounded px-1.5 py-0.5">
+            <span className="text-wo-warning font-medium border border-wo-warning/40 bg-wo-warning-muted rounded px-1.5 py-0.5">
               {late} late
             </span>
           )}
@@ -550,33 +565,37 @@ function RiskCard({
 }) {
   const riskStyles = {
     high: {
-      border: "border-red-200 dark:border-red-900/50",
-      bg: "bg-red-50 dark:bg-red-950/20",
-      badge:
-        "border-red-200 bg-red-100 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-400",
+      border: "border-wo-error/35",
+      bg: "bg-wo-error-muted",
+      badge: "border-wo-error/35 bg-wo-surface-raised text-wo-error",
     },
     medium: {
-      border: "border-amber-200 dark:border-amber-900/50",
-      bg: "bg-amber-50 dark:bg-amber-950/15",
-      badge:
-        "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400",
+      border: "border-wo-warning/35",
+      bg: "bg-wo-warning-muted",
+      badge: "border-wo-warning/35 bg-wo-surface-raised text-wo-warning",
     },
     low: {
-      border: "border-blue-200 dark:border-blue-900/50",
-      bg: "bg-blue-50 dark:bg-blue-950/15",
-      badge:
-        "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-400",
+      border: "border-wo-info/35",
+      bg: "bg-wo-info-muted",
+      badge: "border-wo-info/35 bg-wo-surface-raised text-wo-info",
     },
   };
 
   const style =
     riskStyles[job.riskLevel as keyof typeof riskStyles] || riskStyles.low;
 
+  const progressColor =
+    job.progress >= 60
+      ? "bg-wo-success"
+      : job.progress >= 30
+        ? "bg-wo-info"
+        : "bg-wo-warning";
+
   return (
     <div className={`rounded-lg border p-3.5 transition-all ${style.border} ${style.bg}`}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-sm text-blue-300 font-medium">
+          <span className="font-mono text-sm text-wo-info font-medium">
             {job.id}
           </span>
           <span
@@ -585,21 +604,21 @@ function RiskCard({
             {job.riskLevel}
           </span>
           {job.isBlocked && (
-            <span className="rounded border border-red-200 bg-red-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
+            <span className="rounded border border-wo-error/35 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase text-wo-error">
               blocked
             </span>
           )}
           {!job.isBlocked && job.isLate && (
-            <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+            <span className="rounded border border-wo-warning/35 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase text-wo-warning">
               late
             </span>
           )}
         </div>
         {job.isBlocked && (
-          <XCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
+          <XCircle className="h-4 w-4 shrink-0 text-wo-error" />
         )}
         {!job.isBlocked && job.isLate && (
-          <Clock className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+          <Clock className="h-4 w-4 shrink-0 text-wo-warning" />
         )}
       </div>
 
@@ -609,7 +628,7 @@ function RiskCard({
       <p className="text-xs text-wo-text-muted truncate mt-0.5">{job.product}</p>
 
       {job.riskReason && (
-        <p className="text-xs text-red-300/70 mt-1.5 italic">
+        <p className="text-xs text-wo-error/90 mt-1.5 italic">
           {job.riskReason}
         </p>
       )}
@@ -617,13 +636,7 @@ function RiskCard({
       <div className="flex items-center gap-2 mt-2.5">
         <div className="flex-1 bg-wo-border-subtle rounded-full h-1.5 overflow-hidden">
           <div
-            className={`h-1.5 rounded-full transition-all duration-700 ${
-              job.progress >= 60
-                ? "bg-green-500"
-                : job.progress >= 30
-                  ? "bg-blue-500"
-                  : "bg-amber-500"
-            }`}
+            className={`h-1.5 rounded-full transition-all duration-700 ${progressColor}`}
             style={{ width: `${job.progress}%` }}
           />
         </div>
@@ -637,7 +650,7 @@ function RiskCard({
           {job.currentOperation !== "—" ? job.currentOperation : "În așteptare"}
         </span>
         <span
-          className={`text-[11px] ${job.isLate ? "text-red-400 font-medium" : "text-wo-text-muted"}`}
+          className={`text-[11px] ${job.isLate ? "text-wo-error font-medium" : "text-wo-text-muted"}`}
         >
           {job.promisedAt}
         </span>
@@ -663,22 +676,22 @@ function ActiveJobRow({
   };
 }) {
   const priorityColors = {
-    urgent: "bg-red-500",
-    high: "bg-amber-500",
-    normal: "bg-blue-500",
-    low: "bg-slate-500",
+    urgent: "bg-wo-error",
+    high: "bg-wo-warning",
+    normal: "bg-wo-info",
+    low: "bg-wo-text-dim",
   };
 
   return (
     <div className="flex items-center gap-3 py-2.5 px-3 rounded-md hover:bg-wo-hover transition-colors group">
       <span
-        className={`w-1.5 h-8 rounded-full shrink-0 ${priorityColors[job.priority as keyof typeof priorityColors] || "bg-slate-500"}`}
+        className={`w-1.5 h-8 rounded-full shrink-0 ${priorityColors[job.priority as keyof typeof priorityColors] || "bg-wo-text-dim"}`}
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-blue-300">{job.id}</span>
+          <span className="font-mono text-xs text-wo-info">{job.id}</span>
           <span className="text-sm text-wo-text-primary truncate">{job.client}</span>
-          <span className="text-[9px] uppercase tracking-wide px-1 py-0.5 rounded border border-blue-500/30 text-blue-300 bg-blue-500/10">
+          <span className="text-[9px] uppercase tracking-wide px-1 py-0.5 rounded border border-wo-info/30 text-wo-info bg-wo-info-muted">
             actual
           </span>
         </div>
@@ -692,7 +705,7 @@ function ActiveJobRow({
         <div className="w-20">
           <div className="w-full bg-wo-border-subtle rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-blue-500 h-1.5 rounded-full transition-all duration-700"
+              className="bg-wo-info h-1.5 rounded-full transition-all duration-700"
               style={{ width: `${job.progress}%` }}
             />
           </div>
@@ -717,9 +730,9 @@ function AlertItemSimple({
   };
 }) {
   const severityStyles = {
-    critical: "border-l-red-500 bg-red-950/15",
-    warning: "border-l-amber-500 bg-amber-950/15",
-    info: "border-l-blue-500 bg-blue-950/15",
+    critical: "border-l-wo-error bg-wo-error-muted",
+    warning: "border-l-wo-warning bg-wo-warning-muted",
+    info: "border-l-wo-info bg-wo-info-muted",
   };
 
   const style =
@@ -751,22 +764,24 @@ function CapacityItem({
 }) {
   const barColor =
     load >= 90
-      ? "bg-red-500"
+      ? "bg-wo-error"
       : load >= 75
-        ? "bg-amber-500"
-        : "bg-blue-500";
+        ? "bg-wo-warning"
+        : "bg-wo-info";
   const textColor =
     load >= 90
-      ? "text-red-400"
+      ? "text-wo-error"
       : load >= 75
-        ? "text-amber-400"
+        ? "text-wo-warning"
         : "text-wo-text-secondary";
   const hasOverrun = (overrunMinutes ?? 0) > 0;
 
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-2">
-        <span className="text-xs text-wo-text-muted w-20 truncate">{name}</span>
+        <span className="text-xs text-wo-text-muted w-20 truncate" title={name}>
+          {name}
+        </span>
         <div className="flex-1 bg-wo-border-subtle rounded-full h-2 overflow-hidden">
           <div
             className={`h-2 rounded-full transition-all duration-700 ${barColor}`}
@@ -779,9 +794,9 @@ function CapacityItem({
       </div>
       <div className="flex items-center gap-2 pl-[5.5rem] text-[10px] text-wo-text-muted font-mono">
         <span>P {plannedMinutes ?? 0}m</span>
-        <span className="text-blue-300/80">A {actualMinutes ?? 0}m</span>
+        <span className="text-wo-info">A {actualMinutes ?? 0}m</span>
         {hasOverrun && (
-          <span className="text-red-300/90">OV +{overrunMinutes}m</span>
+          <span className="text-wo-error">OV +{overrunMinutes}m</span>
         )}
       </div>
     </div>
@@ -798,6 +813,11 @@ function emptyKPI(code: string): KPIValue {
     trendValue: 0,
     status: "good",
   };
+}
+
+/** Show bars only when derived load > 0 — zero-load rows collapse to a gap summary (no invented util %). */
+function hasVisibleCapacityLoad(c: { loadToday: number }): boolean {
+  return c.loadToday > 0;
 }
 
 /* ─── Main Dashboard ─── */
@@ -873,9 +893,17 @@ export default function Dashboard() {
   const activeKpi = getKPI("KPI_ACTIVE_JOBS");
   const blockedKpi = getKPI("KPI_BLOCKED_JOBS");
 
+  const { activeCapacity, quietCapacityCount } = useMemo(() => {
+    const active = capacity.filter(hasVisibleCapacityLoad);
+    return {
+      activeCapacity: active,
+      quietCapacityCount: Math.max(0, capacity.length - active.length),
+    };
+  }, [capacity]);
+
   return (
-    <div className="space-y-4 max-w-[1600px] mx-auto">
-      {/* Status Header */}
+    <div className="space-y-5 max-w-[1600px] mx-auto pb-6">
+      {/* 1. Status + honesty */}
       <StatusHeader
         source={source}
         loading={loading}
@@ -896,10 +924,11 @@ export default function Dashboard() {
         }}
       />
 
+      {/* Keep operational gaps (Pricing / Cost Intern / Capacity) */}
       <OperationalDataGapsPanel gaps={operationalTruth?.dataGaps} />
 
       <div
-        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-raised px-3 py-2"
+        className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-inset px-3 py-2"
         data-testid="dashboard-honesty-gap-toggle"
       >
         <p className="text-[11px] text-wo-text-muted">
@@ -915,55 +944,15 @@ export default function Dashboard() {
             writeDashboardGapsAcknowledged(next);
             setGapsAcknowledged(next);
           }}
-          className="text-[11px] font-semibold text-blue-700 hover:text-blue-900 dark:text-blue-300 dark:hover:text-blue-200"
+          className="text-[11px] font-semibold text-wo-info hover:underline"
           data-testid="dashboard-honesty-gaps-ack"
         >
           {showGapNoise ? "Am înțeles — pliază Gap" : "Arată Gap-uri"}
         </button>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[11px] text-wo-text-muted font-medium mr-1">Acțiuni rapide:</span>
-        <button
-          onClick={() => navigate("/intake")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-medium text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-700/40 dark:bg-blue-600/20 dark:text-blue-300 dark:hover:border-blue-600/60 dark:hover:bg-blue-600/30"
-        >
-          <Plus className="w-3 h-3" />
-          Cerere Nouă
-        </button>
-        <button
-          onClick={() => navigate("/quotes")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-medium text-emerald-700 transition-colors hover:bg-emerald-100 dark:border-emerald-700/40 dark:bg-emerald-600/20 dark:text-emerald-300 dark:hover:border-emerald-600/60 dark:hover:bg-emerald-600/30"
-        >
-          <FileText className="w-3 h-3" />
-          Oferte
-        </button>
-        <button
-          onClick={() => navigate("/orders")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-medium text-amber-800 transition-colors hover:bg-amber-100 dark:border-amber-700/40 dark:bg-amber-600/20 dark:text-amber-300 dark:hover:border-amber-600/60 dark:hover:bg-amber-600/30"
-        >
-          <ShoppingCart className="w-3 h-3" />
-          Comenzi
-        </button>
-        <button
-          onClick={() => navigate("/shop-floor")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 text-[11px] font-medium text-purple-700 transition-colors hover:bg-purple-100 dark:border-purple-700/40 dark:bg-purple-600/20 dark:text-purple-300 dark:hover:border-purple-600/60 dark:hover:bg-purple-600/30"
-        >
-          <Factory className="w-3 h-3" />
-          Shop Floor
-        </button>
-        <button
-          onClick={() => navigate("/reports")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-cyan-600/20 border border-cyan-700/40 text-cyan-300 hover:bg-cyan-600/30 hover:border-cyan-600/60 transition-colors"
-        >
-          <BarChart3 className="w-3 h-3" />
-          Rapoarte
-        </button>
-      </div>
-
-      {/* KPI Cards — 5 key metrics with honest labels */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+      {/* 2. Primary KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <KPICardLarge
           {...activeKpi}
           label={activeKpi.label || "Job-uri în pipeline"}
@@ -996,6 +985,34 @@ export default function Dashboard() {
         />
       </div>
 
+      {/* 3. Quick actions — token primary + neutral */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] text-wo-text-muted font-medium mr-1">Acțiuni rapide:</span>
+        <button
+          onClick={() => navigate("/intake")}
+          className={QUICK_ACTION_PRIMARY_CLASS}
+        >
+          <Plus className="w-3 h-3" />
+          Cerere Nouă
+        </button>
+        <button onClick={() => navigate("/quotes")} className={QUICK_ACTION_CLASS}>
+          <FileText className="w-3 h-3" />
+          Oferte
+        </button>
+        <button onClick={() => navigate("/orders")} className={QUICK_ACTION_CLASS}>
+          <ShoppingCart className="w-3 h-3" />
+          Comenzi
+        </button>
+        <button onClick={() => navigate("/shop-floor")} className={QUICK_ACTION_CLASS}>
+          <Factory className="w-3 h-3" />
+          Shop Floor
+        </button>
+        <button onClick={() => navigate("/reports")} className={QUICK_ACTION_CLASS}>
+          <BarChart3 className="w-3 h-3" />
+          Rapoarte
+        </button>
+      </div>
+
       {/* Summary Bar */}
       <SummaryBar
         planned={plannedJobs.length}
@@ -1005,7 +1022,7 @@ export default function Dashboard() {
         late={lateJobs.length}
       />
 
-      {/* Main Content — 2 columns */}
+      {/* 4. Secondary lists / workcenters */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* LEFT: Risk + Active Jobs */}
         <div className="lg:col-span-2 space-y-4">
@@ -1013,12 +1030,12 @@ export default function Dashboard() {
           <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <AlertTriangle className="w-4 h-4 text-wo-warning" />
                 <h3 className="text-sm font-semibold text-wo-text-primary">
                   Riscuri livrare
                 </h3>
                 {riskyJobs.length > 0 && (
-                  <span className="text-xs bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-full font-medium">
+                  <span className="text-xs border border-wo-error/30 bg-wo-error-muted text-wo-error px-1.5 py-0.5 rounded-full font-medium">
                     {riskyJobs.length}
                   </span>
                 )}
@@ -1026,7 +1043,7 @@ export default function Dashboard() {
               {riskyJobs.length > 4 && (
                 <button
                   onClick={() => setShowAllRisks(!showAllRisks)}
-                  className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                  className="flex items-center gap-1 text-xs text-wo-info hover:underline transition-colors"
                 >
                   {showAllRisks ? "Ascunde" : `Vezi toate (${riskyJobs.length})`}
                   {showAllRisks ? (
@@ -1046,7 +1063,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-8 h-8 text-green-500/40 mx-auto mb-2" />
+                <CheckCircle2 className="w-8 h-8 text-wo-success/50 mx-auto mb-2" />
                 <p className="text-sm text-wo-text-muted">
                   Niciun risc de livrare detectat
                 </p>
@@ -1057,11 +1074,11 @@ export default function Dashboard() {
           {/* Active Jobs */}
           <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Activity className="w-4 h-4 text-blue-400" />
+              <Activity className="w-4 h-4 text-wo-info" />
               <h3 className="text-sm font-semibold text-wo-text-primary">
                 În execuție (actual)
               </h3>
-              <span className="text-xs bg-blue-500/15 text-blue-400 px-1.5 py-0.5 rounded-full font-medium">
+              <span className="text-xs border border-wo-info/30 bg-wo-info-muted text-wo-info px-1.5 py-0.5 rounded-full font-medium">
                 {inExecutionJobs.length}
               </span>
               <span className="text-[10px] text-wo-text-muted">
@@ -1088,10 +1105,10 @@ export default function Dashboard() {
           {/* Alerts */}
           <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-4 h-4 text-red-400" />
+              <AlertTriangle className="w-4 h-4 text-wo-error" />
               <h3 className="text-sm font-semibold text-wo-text-primary">Alerte</h3>
               {activeAlerts.length > 0 && (
-                <span className="text-xs bg-red-500/15 text-red-400 px-1.5 py-0.5 rounded-full font-medium">
+                <span className="text-xs border border-wo-error/30 bg-wo-error-muted text-wo-error px-1.5 py-0.5 rounded-full font-medium">
                   {activeAlerts.length}
                 </span>
               )}
@@ -1105,16 +1122,16 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="text-center py-6">
-                <CheckCircle2 className="w-6 h-6 text-green-500/40 mx-auto mb-1.5" />
+                <CheckCircle2 className="w-6 h-6 text-wo-success/50 mx-auto mb-1.5" />
                 <p className="text-xs text-wo-text-muted">Nicio alertă activă</p>
               </div>
             )}
           </div>
 
-          {/* Capacity */}
+          {/* Capacity — keep Owner gap; quiet zero-signal rows */}
           <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Gauge className="w-4 h-4 text-blue-400" />
+              <Gauge className="w-4 h-4 text-wo-info" />
               <h3 className="text-sm font-semibold text-wo-text-primary">
                 Load planificat pe workcenter
               </h3>
@@ -1130,7 +1147,7 @@ export default function Dashboard() {
             </div>
             {showGapNoise ? (
               <div
-                className="mb-3 rounded border border-amber-200 bg-amber-50 px-2 py-1.5 text-[10px] text-amber-900 dark:border-amber-800/30 dark:bg-amber-950/15 dark:text-amber-200/90"
+                className={`mb-3 rounded px-2 py-1.5 text-[10px] ${chromeBanner.warning}`}
                 data-testid="capacity-calendar-gap"
               >
                 Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter
@@ -1145,17 +1162,31 @@ export default function Dashboard() {
               </div>
             )}
 
-            <div className="space-y-2.5">
-              {capacity.map((c) => (
-                <CapacityItem
-                  key={c.workcenterId}
-                  name={c.workcenterName}
-                  load={c.loadToday}
-                  plannedMinutes={c.plannedMinutes}
-                  actualMinutes={c.actualMinutes}
-                  overrunMinutes={c.overrunMinutes}
-                />
-              ))}
+            <div className="space-y-2.5" data-testid="dashboard-capacity-list">
+              {activeCapacity.length > 0 ? (
+                activeCapacity.map((c) => (
+                  <CapacityItem
+                    key={c.workcenterId}
+                    name={c.workcenterName}
+                    load={c.loadToday}
+                    plannedMinutes={c.plannedMinutes}
+                    actualMinutes={c.actualMinutes}
+                    overrunMinutes={c.overrunMinutes}
+                  />
+                ))
+              ) : (
+                <p className="text-[11px] text-wo-text-muted py-2">
+                  Niciun workcenter cu load planificat / minute raportate.
+                </p>
+              )}
+              {quietCapacityCount > 0 && (
+                <p
+                  className="text-[10px] text-wo-text-muted border-t border-wo-border-subtle pt-2 mt-1"
+                  data-testid="dashboard-capacity-quiet-summary"
+                >
+                  {quietCapacityCount} workcentere cu load 0% (fără util calendar/shift) — gap Owner, nu inventăm utilizare.
+                </p>
+              )}
             </div>
           </div>
         </div>
