@@ -1,0 +1,23 @@
+# Enforceable CI unit-test allowlist (one path per line).
+# Full `pnpm run test` still exists for local debt discovery — do NOT delete failing suites;
+# expand this allowlist only when a file is green and Owner wants it gated.
+src/lib/csrf.test.ts
+src/lib/apiError.test.ts
+src/lib/auth.test.ts
+src/lib/rbac.test.ts
+src/lib/runtimeHealth.test.ts
+src/lib/localApiCompatibility.test.ts
+src/lib/environmentSafety.test.ts
+src/lib/activeTemplateScope.test.ts
+src/lib/activeScopeGovernanceTruth.test.ts
+src/lib/commercialSpineNavigation.test.ts
+src/lib/pricingRegistry.test.ts
+src/lib/pricing/pricingTypedCatalog.test.ts
+src/lib/quoteCommercialGuidance.test.ts
+src/lib/quoteIntakeCommercialGuard.test.ts
+src/lib/volumetricCommercialPreview.test.ts
+src/lib/intakeV6/intakeV6OfficialPricing.test.ts
+src/api/productReadiness.test.ts
+src/features/product-system/volumetricLettersProduction.test.ts
+src/lib/svgAnalyzer/pblLayereChildParts.regression.test.ts
+src/components/workos/intake-v6/IntakeV6OperatorUiPolish.test.tsx

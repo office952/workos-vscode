@@ -156,13 +156,21 @@ export default function Attendance() {
   const error = employeesError ?? attendanceError;
 
   function prevMonth() {
-    if (month === 1) setYear(year - 1), setMonth(12);
-    else setMonth(month - 1);
+    if (month === 1) {
+      setYear(year - 1);
+      setMonth(12);
+    } else {
+      setMonth(month - 1);
+    }
   }
 
   function nextMonth() {
-    if (month === 12) setYear(year + 1), setMonth(1);
-    else setMonth(month + 1);
+    if (month === 12) {
+      setYear(year + 1);
+      setMonth(1);
+    } else {
+      setMonth(month + 1);
+    }
   }
 
   function openForm(prefill?: AttendanceEventDTO) {

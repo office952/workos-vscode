@@ -75,13 +75,13 @@ export function LocalApiCompatibilityBannerView({ snapshot }: { snapshot: LocalC
 }
 
 export default function LocalApiCompatibilityBanner() {
-  if (!import.meta.env.DEV) return null;
-
   const snapshot = useSyncExternalStore(
     subscribeLocalApiCompatibility,
     getLocalApiCompatibilitySnapshot,
     getLocalApiCompatibilitySnapshot,
   );
+
+  if (!import.meta.env.DEV) return null;
 
   return <LocalApiCompatibilityBannerView snapshot={snapshot} />;
 }

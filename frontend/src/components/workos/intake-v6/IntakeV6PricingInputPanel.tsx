@@ -53,20 +53,8 @@ function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-export default function IntakeV6PricingInputPanel({
-  preview,
-  breakdown,
-  officialPricing,
-  loading,
-  title = "Rezumat Ofertă client (V6)",
-  showDebugPayload = false,
-  commercialInputs,
-  onCommercialInputsChange,
-  eurToRonRate,
-  onEditCommercialInReview,
-  variant = "full",
-}: IntakeV6PricingInputPanelProps) {
-  if (loading) {
+export default function IntakeV6PricingInputPanel(props: IntakeV6PricingInputPanelProps) {
+  if (props.loading) {
     return (
       <div className={`${v6.card} mb-4`} data-testid="intake-v6-pricing-input-preview">
         <p className="text-[12px] text-slate-400">Încarc pricing input preview…</p>
@@ -74,7 +62,7 @@ export default function IntakeV6PricingInputPanel({
     );
   }
 
-  if (!preview) {
+  if (!props.preview) {
     return (
       <div className={`${v6.card} mb-4`} data-testid="intake-v6-pricing-input-preview">
         <IntakeV6AggregateCostTruthNotice compact />
@@ -88,6 +76,23 @@ export default function IntakeV6PricingInputPanel({
     );
   }
 
+  return <IntakeV6PricingInputPanelReady {...props} preview={props.preview} />;
+}
+
+function IntakeV6PricingInputPanelReady({
+  preview,
+  breakdown,
+  officialPricing,
+  title = "Rezumat Ofertă client (V6)",
+  showDebugPayload = false,
+  commercialInputs,
+  onCommercialInputsChange,
+  eurToRonRate,
+  onEditCommercialInReview,
+  variant = "full",
+}: Omit<IntakeV6PricingInputPanelProps, "preview" | "loading"> & {
+  preview: IntakeV6PricingInputPreviewResponse;
+}) {
   const quoteInput = preview.quote_input_payload;
   const [localCommercialInputs, setLocalCommercialInputs] = useState<IntakeV6OfferCommercialInputs>(() =>
     resolveIntakeV6OfferCommercialDefaults(preview),

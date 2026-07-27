@@ -44,8 +44,6 @@ export function buildLayerPaintEvidence(layerId: string, elements: ParsedSvgElem
     paintKind = 'solid'
   } else if (fills.length === 0 && strokes.length === 0 && layerElements.length > 0) {
     paintKind = 'mixed'
-  } else if (fills.length === 1 && strokes.length >= 1) {
-    paintKind = 'solid'
   } else if (layerElements.length > 0) {
     paintKind = 'mixed'
   }

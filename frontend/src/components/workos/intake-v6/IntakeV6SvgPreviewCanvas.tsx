@@ -113,7 +113,6 @@ export default function IntakeV6SvgPreviewCanvas({
           ref={canvasRef}
           className={canvasClass}
           data-testid={`${testId}-canvas`}
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: source }}
         />
       </div>

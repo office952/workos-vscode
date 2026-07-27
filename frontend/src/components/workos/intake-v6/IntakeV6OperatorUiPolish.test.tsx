@@ -74,7 +74,7 @@ describe("IntakeV6OperatorUiPolish", () => {
     render(<IntakeV6MaterialBreakdownPanel breakdown={breakdownWithMixedOperations()} loading={false} />);
     expect(screen.getByText(/Estimare internă materiale — informativ/)).toBeInTheDocument();
     expect(screen.getAllByText(/Nu este preț final ofertă/).length).toBeGreaterThan(0);
-    expect(screen.queryByText("Total estimat materiale \(ofertă\)")).not.toBeInTheDocument();
+    expect(screen.queryByText("Total estimat materiale (ofertă)")).not.toBeInTheDocument();
   });
 
   it("shows controlled missing raster placeholder on SVG preview", () => {

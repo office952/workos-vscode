@@ -473,9 +473,9 @@ export function filterTasksByScope(
       return tasks;
 
     case "active":
+      return tasks.filter((task) => task.status !== "done");
 
     default:
-
       return tasks.filter((task) => task.status !== "done");
 
   }
