@@ -58,6 +58,9 @@ class CostEngineBaseConfigResponse(BaseModel):
     metoda_overhead: Optional[str] = None
     cost_ora_manopera_default: Optional[float] = None
     allow_manual_override: Optional[bool] = None
+    productive_hours_source: Optional[str] = None
+    productive_hours_year: Optional[int] = None
+    productive_hours_month: Optional[int] = None
 
 
 @router.get("/config", response_model=CostEngineConfigResponse)

@@ -8,11 +8,16 @@ from typing import Any, Dict, List, Optional, Set
 
 from models.employee_attendance_event import EmployeeAttendanceEvent
 from models.employees import Employees
+from services.company_calendar import (
+    WORK_HOURS_PER_DAY,
+    WORKING_WEEKDAYS,
+    is_company_workday,
+)
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-DEFAULT_WORK_HOURS_PER_DAY = 8.0
-DEFAULT_WORKING_WEEKDAYS: Set[int] = {0, 1, 2, 3, 4}
+DEFAULT_WORK_HOURS_PER_DAY = WORK_HOURS_PER_DAY
+DEFAULT_WORKING_WEEKDAYS: Set[int] = set(WORKING_WEEKDAYS)
 
 EVENT_TYPES = frozenset({"absent", "leave", "sick", "partial", "overtime", "correction"})
 EVENT_STATUSES = frozenset({"planned", "approved", "confirmed", "cancelled"})
@@ -28,7 +33,8 @@ _MAX_DELTA = 24.0
 
 
 def is_working_weekday(day: date) -> bool:
-    return day.weekday() in DEFAULT_WORKING_WEEKDAYS
+    """Mon–Fri and not a RO legal holiday (Company Calendar)."""
+    return is_company_workday(day)
 
 
 def count_standard_work_days(start_date: date, end_date: date) -> int:

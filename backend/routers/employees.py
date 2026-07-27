@@ -1,8 +1,8 @@
 """Employees router — CRUD for personal/angajati."""
 import json
 import logging
-from datetime import datetime
-from typing import Any, List, Optional
+from datetime import date, datetime
+from typing import Any, Dict, List, Optional
 
 from core.database import get_db
 from dependencies.auth import get_current_user
@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from models.auth import User
 from schemas.auth import UserResponse
 from pydantic import BaseModel
+from services.employee_productive_hours import compute_productive_hours_by_employee
 from services.employees import (
     EmployeesService,
     compute_cost_ora_calculat,
@@ -87,6 +88,7 @@ class EmployeeResponse(BaseModel):
     salary_period: Optional[str] = "monthly"
     ore_lucru_luna: Optional[float] = None
     ore_productive_luna: Optional[float] = None
+    ore_productive_luna_source: Optional[str] = None
     cost_ora_calculat: Optional[float] = None
     valid_for_cost_engine: bool = True
     skills: Optional[List[str]] = None
@@ -122,7 +124,12 @@ def _mobile_access_flags(
     return is_linked, has_mobile
 
 
-def _serialize(row, user: User | None = None) -> EmployeeResponse:
+def _serialize(
+    row,
+    user: User | None = None,
+    *,
+    calculated_hours: Optional[float] = None,
+) -> EmployeeResponse:
     def _parse_list(val: Optional[str]) -> Optional[List[str]]:
         if val is None:
             return None
@@ -136,6 +143,12 @@ def _serialize(row, user: User | None = None) -> EmployeeResponse:
 
     user_id = getattr(row, "user_id", None)
     is_linked, has_mobile = _mobile_access_flags(user_id, row.status, user)
+    # Owner: hours are calendar-derived; expose calculated value for Cost Intern UI.
+    hours = calculated_hours
+    hours_source = "company_calendar_minus_approved_leave" if hours is not None else None
+    if hours is None and row.ore_productive_luna is not None:
+        hours = float(row.ore_productive_luna)
+        hours_source = "stored_legacy"
 
     return EmployeeResponse(
         id=row.id,
@@ -155,8 +168,9 @@ def _serialize(row, user: User | None = None) -> EmployeeResponse:
         salary_currency=getattr(row, "salary_currency", None) or "RON",
         salary_period=getattr(row, "salary_period", None) or "monthly",
         ore_lucru_luna=row.ore_lucru_luna,
-        ore_productive_luna=row.ore_productive_luna,
-        cost_ora_calculat=compute_cost_ora_calculat(row.cost_lunar_firma, row.ore_productive_luna),
+        ore_productive_luna=hours,
+        ore_productive_luna_source=hours_source,
+        cost_ora_calculat=compute_cost_ora_calculat(row.cost_lunar_firma, hours),
         valid_for_cost_engine=is_valid_for_cost_engine(row),
         skills=_parse_list(row.skills),
         machines=_parse_list(row.machines),
@@ -164,6 +178,16 @@ def _serialize(row, user: User | None = None) -> EmployeeResponse:
         observatii=row.observatii,
         created_at=row.created_at,
         updated_at=row.updated_at,
+    )
+
+
+async def _hours_map_for_rows(db: AsyncSession, rows: list) -> Dict[int, float]:
+    today = date.today()
+    return await compute_productive_hours_by_employee(
+        db,
+        [r.id for r in rows],
+        year=today.year,
+        month=today.month,
     )
 
 
@@ -202,9 +226,14 @@ async def list_employees(
         if getattr(row, "user_id", None)
     }
     users_by_id = await _users_by_id(db, user_ids)
+    hours_by_id = await _hours_map_for_rows(db, result["items"])
     return EmployeeListResponse(
         items=[
-            _serialize(r, users_by_id.get((getattr(r, "user_id", None) or "").strip()))
+            _serialize(
+                r,
+                users_by_id.get((getattr(r, "user_id", None) or "").strip()),
+                calculated_hours=hours_by_id.get(r.id),
+            )
             for r in result["items"]
         ],
         total=result["total"],
@@ -220,7 +249,8 @@ async def get_employee(id: int, db: AsyncSession = Depends(get_db)):
     if not row:
         raise HTTPException(status_code=404, detail="Employee not found")
     user = await _user_for_employee(db, getattr(row, "user_id", None))
-    return _serialize(row, user)
+    hours_by_id = await _hours_map_for_rows(db, [row])
+    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
 
 
 @router.post("", response_model=EmployeeResponse, status_code=201)
@@ -231,7 +261,8 @@ async def create_employee(data: EmployeeData, db: AsyncSession = Depends(get_db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     user = await _user_for_employee(db, getattr(row, "user_id", None))
-    return _serialize(row, user)
+    hours_by_id = await _hours_map_for_rows(db, [row])
+    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
 
 
 @router.put("/{id}", response_model=EmployeeResponse)
@@ -244,7 +275,8 @@ async def update_employee(id: int, data: EmployeeUpdateData, db: AsyncSession = 
     if not row:
         raise HTTPException(status_code=404, detail="Employee not found")
     user = await _user_for_employee(db, getattr(row, "user_id", None))
-    return _serialize(row, user)
+    hours_by_id = await _hours_map_for_rows(db, [row])
+    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
 
 
 @router.delete("/{id}")

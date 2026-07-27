@@ -3,11 +3,16 @@
 This module is READ-MOSTLY for the CostEngine: it loads the singleton
 config row and aggregates live inputs from employees + recurring payments
 into a `CostEngineBaseConfig` dict. It DOES NOT compute product cost.
+
+Productive hours are calculated from Company Calendar − approved leave
+(not manual per-employee `ore_productive_luna`).
 """
 import logging
+from datetime import date
 from typing import Any, Dict, List, Optional
 
 from models.cost_engine_config import CostEngineConfig
+from services.employee_productive_hours import compute_productive_hours_by_employee
 from services.employees import EmployeesService, is_valid_for_cost_engine
 from services.recurring_payments import (
     RecurringPaymentsService,
@@ -56,16 +61,27 @@ class CostEngineConfigService:
         await self.db.refresh(row)
         return row
 
-    async def compute_base_config(self) -> Dict[str, Any]:
+    async def compute_base_config(
+        self,
+        *,
+        year: Optional[int] = None,
+        month: Optional[int] = None,
+    ) -> Dict[str, Any]:
         """Aggregate live inputs into the canonical `CostEngineBaseConfig` dict.
 
         NOTE: This is strictly an input-builder for CostEngine; the dict it
         returns contains NO product-specific math. A downstream consumer
         (CostEngine) is the sole authority to turn these inputs into an
         actual cost per product.
+
+        Productive hours = Company Calendar workdays × 8 − approved leave × 8
+        for the target month (defaults to current calendar month).
         """
         cfg = await self.get_or_create()
         warnings: List[str] = []
+        today = date.today()
+        target_year = int(year or today.year)
+        target_month = int(month or today.month)
 
         employees_svc = EmployeesService(self.db)
         payments_svc = RecurringPaymentsService(self.db)
@@ -80,12 +96,17 @@ class CostEngineConfigService:
                 valid_employees.append(emp)
             else:
                 warnings.append(
-                    f"employee_invalid:id={emp.id}:missing_cost_or_productive_hours"
+                    f"employee_invalid:id={emp.id}:missing_cost_lunar_firma"
                 )
 
-        total_productive_hours = sum(
-            float(e.ore_productive_luna or 0) for e in valid_employees
+        hours_by_id = await compute_productive_hours_by_employee(
+            self.db,
+            [e.id for e in valid_employees],
+            year=target_year,
+            month=target_month,
         )
+
+        total_productive_hours = sum(float(hours_by_id.get(e.id, 0.0)) for e in valid_employees)
         total_productive_cost = sum(
             float(e.cost_lunar_firma or 0) for e in valid_employees
         )
@@ -123,4 +144,7 @@ class CostEngineConfigService:
             "metoda_overhead": cfg.metoda_overhead,
             "cost_ora_manopera_default": cfg.cost_ora_manopera_default,
             "allow_manual_override": bool(cfg.allow_manual_override),
+            "productive_hours_source": "company_calendar_minus_approved_leave",
+            "productive_hours_year": target_year,
+            "productive_hours_month": target_month,
         }

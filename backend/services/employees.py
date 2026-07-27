@@ -3,7 +3,9 @@
 No cost formula that belongs to CostEngine lives here. The only derived
 value we expose is `cost_ora_calculat`, which is an algebraic identity on
 a single row (`cost_lunar_firma / ore_productive_luna`), not a company-wide
-aggregate. Company-wide aggregates live in
+aggregate. Monthly productive hours are calculated by
+`services.employee_productive_hours` (Company Calendar − approved leave).
+Company-wide aggregates live in
 `services.cost_engine_config.CostEngineConfigService.compute_base_config`.
 """
 import json
@@ -36,26 +38,28 @@ def compute_cost_ora_calculat(cost_lunar_firma: Optional[float], ore_productive_
 
 
 def is_valid_for_cost_engine(row: "Employees | dict") -> bool:
-    """Productive employees must have both cost_lunar_firma and ore_productive_luna > 0."""
+    """Active productive employees need cost_lunar_firma > 0.
+
+    Productive hours come from Company Calendar − approved leave
+    (`employee_productive_hours`); stored `ore_productive_luna` is not required.
+    """
     if isinstance(row, dict):
         emp_type = row.get("employee_type")
         status = row.get("status")
         cost = row.get("cost_lunar_firma")
-        hours = row.get("ore_productive_luna")
     else:
         emp_type = row.employee_type
         status = row.status
         cost = row.cost_lunar_firma
-        hours = row.ore_productive_luna
 
     if emp_type != "productive":
         return True  # non-productive employees are never a blocker for labour-rate calc
     if status != "active":
         return True  # only ACTIVE productive employees need to be valid
-    if cost is None or hours is None:
+    if cost is None:
         return False
     try:
-        if float(cost) <= 0 or float(hours) <= 0:
+        if float(cost) <= 0:
             return False
     except (TypeError, ValueError):
         return False

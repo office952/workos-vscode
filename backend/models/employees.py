@@ -4,7 +4,9 @@ Canonical rules (see `/workspace/workos_foundation_log.md`):
 - This table is a DATA SOURCE, it does NOT perform cost calculations.
 - Only employees with `employee_type='productive'` contribute to `cost_ora_manopera`.
 - `cost_ora_calculat = cost_lunar_firma / ore_productive_luna` (calculated on read).
-- Missing `cost_lunar_firma` / `ore_productive_luna` on a productive employee ⇒ invalid.
+- Productive hours for CostEngine come from Company Calendar − approved leave
+  (not manual `ore_productive_luna`). Missing `cost_lunar_firma` on an active
+  productive employee ⇒ invalid.
 """
 from core.database import Base
 from datetime import datetime

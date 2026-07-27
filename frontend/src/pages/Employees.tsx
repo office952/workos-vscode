@@ -198,15 +198,13 @@ function validateForm(f: FormState): ValidationResult {
     if (cost === null || cost <= 0)
       fieldErrors.cost_lunar_firma =
         "Cost lunar firmă este obligatoriu (> 0) pentru angajați productivi.";
-    if (oreProd === null || oreProd <= 0)
-      fieldErrors.ore_productive_luna =
-        "Ore productive/lună este obligatoriu (> 0) pentru angajați productivi.";
+    // Ore productive = Company Calendar − concediu aprobat (nu se introduc manual).
   } else {
     if (cost !== null && cost < 0)
       fieldErrors.cost_lunar_firma = "Cost lunar firmă nu poate fi negativ.";
-    if (oreProd !== null && oreProd < 0)
-      fieldErrors.ore_productive_luna = "Orele productive nu pot fi negative.";
   }
+  if (oreProd !== null && oreProd < 0)
+    fieldErrors.ore_productive_luna = "Orele productive nu pot fi negative.";
 
   if (oreLucru !== null && oreLucru < 0)
     fieldErrors.ore_lucru_luna = "Orele de lucru nu pot fi negative.";
@@ -905,7 +903,7 @@ function EmployeeDetail({
           <Field label="Cost lunar firmă (RON)">
             {fmtMoney(e.cost_lunar_firma)}
           </Field>
-          <Field label="Ore productive / lună">
+          <Field label="Ore productive / lună (calculat)">
             {fmtNumber(e.ore_productive_luna)}
           </Field>
           <Field label="Ore lucru / lună">
@@ -918,8 +916,9 @@ function EmployeeDetail({
           </Field>
         </div>
         <p className="text-[10px] text-muted-foreground italic">
-          Cost oră calculat este furnizat de backend (cost_lunar_firma /
-          ore_productive_luna). Frontend-ul nu recalculează.
+          Ore productive = calendar firmă (L–V 8h − sărbători − concediu
+          aprobat). Cost oră = cost_lunar_firma / ore_productive. Frontend-ul
+          nu recalculează.
         </p>
       </div>
 
@@ -1114,15 +1113,17 @@ function EmployeeForm({
             error={fieldErrors.ore_lucru_luna}
           />
           <TextField
-            label="Ore productive / lună *"
+            label="Ore productive / lună (opțional / legacy)"
             value={form.ore_productive_luna}
             onChange={(v) => onChange("ore_productive_luna", v)}
             type="number"
             error={fieldErrors.ore_productive_luna}
+            hint="Nu e necesar — CostEngine folosește calendarul firmei."
           />
         </div>
         <p className="text-[10px] text-muted-foreground italic">
-          Costul oră este calculat de backend — nu se editează aici.
+          Ore productive lunare se calculează automat (calendar − concediu).
+          Costul oră este calculat de backend.
         </p>
       </div>
 
