@@ -138,7 +138,7 @@ export function PricingEntryRow({
                   {familyLabel}
                 </span>
               )}
-              <span className="font-mono text-[11px] text-blue-400/90 truncate">{item.pricing_code}</span>
+              <span className="font-mono text-[11px] text-wo-info/90 truncate">{item.pricing_code}</span>
             </div>
             <p className="text-[10px] text-wo-text-muted shrink-0">{item.unit}</p>
           </div>
@@ -148,10 +148,10 @@ export function PricingEntryRow({
             <span className="text-wo-text-muted">{impact}</span>
           </div>
           {namingNote ? (
-            <p className="mt-1.5 text-[10px] leading-snug text-amber-500/80">{namingNote}</p>
+            <p className="mt-1.5 text-[10px] leading-snug text-wo-warning/90">{namingNote}</p>
           ) : null}
           {mismatch && (
-            <p className="flex items-start gap-1.5 mt-1.5 text-[11px] text-amber-300/90">
+            <p className="flex items-start gap-1.5 mt-1.5 text-[11px] text-wo-warning">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
               <span>{item.data_quality_message_ro || RATE_BASIS_MISMATCH_MESSAGE_RO}</span>
             </p>
@@ -172,7 +172,7 @@ export function PricingEntryRow({
             <button
               type="button"
               onClick={() => onEditMaterial(item)}
-              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-blue-600/40 hover:text-blue-300 text-wo-text-muted transition-colors"
+              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-wo-info/40 hover:text-wo-info text-wo-text-muted transition-colors"
               title="Editare preț"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -183,7 +183,7 @@ export function PricingEntryRow({
               type="button"
               onClick={() => onEditRate(item)}
               disabled={loadingRate}
-              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-blue-600/40 hover:text-blue-300 text-wo-text-muted transition-colors disabled:opacity-50"
+              className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-wo-info/40 hover:text-wo-info text-wo-text-muted transition-colors disabled:opacity-50"
               title="Editare rată"
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -192,7 +192,7 @@ export function PricingEntryRow({
           <button
             type="button"
             onClick={onSelect}
-            className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-purple-600/40 hover:text-purple-300 text-wo-text-muted transition-colors"
+            className="p-2 rounded-md border border-wo-border-strong bg-wo-surface-inset hover:border-wo-info/40 hover:text-wo-info text-wo-text-muted transition-colors"
             title="Detalii / istoric"
           >
             <History className="w-3.5 h-3.5" />

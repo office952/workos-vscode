@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMachinesData } from "@/hooks/useMachinesData";
-import { CapacityNotice } from "@/components/workos/design-system";
+import { CapacityNotice, chromeBanner } from "@/components/workos/design-system";
 import { RegistryResourceEditor } from "@/features/operational-registry/RegistryResourceEditor";
 import type {
   Machine,
@@ -34,30 +34,50 @@ import { machineCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge
 import { presentMachineUtilization } from "@/lib/machineUtilizationHonesty";
 
 const machineStatusConfig: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
-  running: { label: "Rulează", cls: "text-emerald-600 dark:text-emerald-400", icon: <Activity className="w-3 h-3" /> },
-  idle: { label: "Idle", cls: "text-amber-600 dark:text-amber-400", icon: <Pause className="w-3 h-3" /> },
-  maintenance: { label: "Mentenanță", cls: "text-red-600 dark:text-red-400", icon: <WrenchIcon className="w-3 h-3" /> },
-  offline: { label: "Offline", cls: "text-muted-foreground", icon: <Power className="w-3 h-3" /> },
-  changeover: { label: "Changeover", cls: "text-blue-600 dark:text-blue-400", icon: <RefreshCw className="w-3 h-3" /> },
+  running: { label: "Rulează", cls: "text-wo-success", icon: <Activity className="w-3 h-3" /> },
+  idle: { label: "Idle", cls: "text-wo-warning", icon: <Pause className="w-3 h-3" /> },
+  maintenance: { label: "Mentenanță", cls: "text-wo-error", icon: <WrenchIcon className="w-3 h-3" /> },
+  offline: { label: "Offline", cls: "text-wo-text-muted", icon: <Power className="w-3 h-3" /> },
+  changeover: { label: "Changeover", cls: "text-wo-info", icon: <RefreshCw className="w-3 h-3" /> },
 };
 
-function UtilBar({ value, max = 100, color = "bg-blue-500" }: { value: number; max?: number; color?: string }) {
+function statusDotClass(status: string): string {
+  switch (status) {
+    case "running":
+      return "bg-wo-success";
+    case "idle":
+      return "bg-wo-warning";
+    case "maintenance":
+      return "bg-wo-error";
+    default:
+      return "bg-wo-text-dim";
+  }
+}
+
+function utilKindBadgeClass(kindLabel: string): string {
+  if (kindLabel === "GAP" || kindLabel === "PROXY") {
+    return "border-wo-warning/35 bg-wo-warning-muted text-wo-warning";
+  }
+  return "border-wo-info/35 bg-wo-info-muted text-wo-info";
+}
+
+function UtilBar({ value, max = 100, color = "bg-wo-info" }: { value: number; max?: number; color?: string }) {
   const pct = Math.min((value / max) * 100, 100);
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 bg-wo-surface-inset border border-wo-border-subtle rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[11px] text-muted-foreground font-mono w-10 text-right">{value}%</span>
+      <span className="text-[11px] text-wo-text-muted font-mono w-10 text-right">{value}%</span>
     </div>
   );
 }
 
 function MntTypeBadge({ type }: { type: string }) {
   const cfg: Record<string, { label: string; cls: string }> = {
-    preventive: { label: "Preventivă", cls: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700" },
-    corrective: { label: "Corectivă", cls: "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700" },
-    calibration: { label: "Calibrare", cls: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700" },
+    preventive: { label: "Preventivă", cls: "bg-wo-info-muted text-wo-info border-wo-info/35" },
+    corrective: { label: "Corectivă", cls: "bg-wo-error-muted text-wo-error border-wo-error/35" },
+    calibration: { label: "Calibrare", cls: "bg-wo-warning-muted text-wo-warning border-wo-warning/35" },
   };
   const c = cfg[type] || cfg.preventive;
   return (
@@ -94,20 +114,20 @@ function SourceBadge({ source }: { source: "db" | "mock" | "empty" | "error" | "
   if (source === "loading") return null;
   if (source === "db") {
     return (
-      <span className="text-[10px] text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/30 flex items-center gap-1">
+      <span className="text-[10px] text-wo-success bg-wo-success-muted px-2 py-0.5 rounded-full border border-wo-success/35 flex items-center gap-1">
         <Database className="w-3 h-3" /> Live DB
       </span>
     );
   }
   if (source === "mock") {
     return (
-      <span className="text-[10px] text-amber-700 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/30">
+      <span className="text-[10px] text-wo-warning bg-wo-warning-muted px-2 py-0.5 rounded-full border border-wo-warning/35">
         Mock Data
       </span>
     );
   }
   return (
-    <span className="text-[10px] text-amber-700 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/30">
+    <span className="text-[10px] text-wo-warning bg-wo-warning-muted px-2 py-0.5 rounded-full border border-wo-warning/35">
       No Data
     </span>
   );
@@ -157,64 +177,74 @@ export default function Utilaje() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 text-cyan-600 dark:text-cyan-400 animate-spin" />
-        <span className="ml-2 text-muted-foreground text-sm">Se încarcă utilajele...</span>
+        <Loader2 className="w-6 h-6 text-wo-info animate-spin" />
+        <span className="ml-2 text-wo-text-muted text-sm">Se încarcă utilajele...</span>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      {/* Capacity Notice — feasibility only, never commercial tariff */}
-      <CapacityNotice
-        message="Utilaje = feasibility / capacity — NU tarif comercial. Load/util fără semnal = GAP (nu inventăm %)."
-        compact
-      />
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Cog className="w-5 h-5 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
-          <h1 className="text-[18px] font-bold text-foreground">Utilaje (registry)</h1>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Registry intern de capacitate — nu face parte din fluxul Product Template → Structură produs → Product
-            Compiler.
+      {/* Header — title / count first; honesty collapsed */}
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Cog className="w-5 h-5 text-wo-info shrink-0" />
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Utilaje (registry)</h1>
+            <span className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded-full">
+              {machines.length} echipamente
+            </span>
+            <SourceBadge source={source} />
+          </div>
+          <p className="text-[11px] text-wo-text-muted mt-0.5">
+            Registry intern de capacitate — nu face parte din fluxul Product Template → Structură produs → Product Compiler.
           </p>
-          <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full ml-1">
-            {machines.length} echipamente
-          </span>
-          <SourceBadge source={source} />
         </div>
         <button
           type="button"
           disabled
           title={createBlockedReason}
-          className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 text-muted-foreground rounded-lg text-[12px] font-bold cursor-not-allowed"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-wo-surface-inset text-wo-text-dim border border-wo-border-subtle rounded-md text-[11px] font-medium cursor-not-allowed opacity-70"
         >
           <Plus className="w-3.5 h-3.5" />
-          Utilaj Nou
+          Utilaj Nou (blocat)
         </button>
       </div>
 
-      <div className="flex items-start gap-2 px-3 py-2 bg-amber-50 border border-amber-200 dark:bg-amber-900/15 dark:border-amber-800/30 rounded-lg">
-        <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-        <p className="text-[11px] text-amber-700 dark:text-amber-300/90">
-          Crearea utilajelor este blocată în UI deoarece backend-ul curent expune doar endpoint-uri read-only pentru registrul de maşini.
-        </p>
-      </div>
-
-      <div
-        className="flex items-start gap-2 px-3 py-2 rounded-lg border border-cyan-200 bg-cyan-50 dark:border-cyan-800/40 dark:bg-cyan-950/20"
-        data-testid="utilaje-util-honesty"
-        role="note"
+      <details
+        className={`rounded-lg px-3 py-2 group ${chromeBanner.info}`}
+        data-testid="utilaje-capacity-honesty"
       >
-        <Gauge className="w-4 h-4 text-cyan-700 dark:text-cyan-400 mt-0.5 shrink-0" />
-        <p className="text-[11px] text-cyan-900 dark:text-cyan-100/90">
-          Utilizare: același standard ca Dashboard — fără inventare de load. Registry fără job ={" "}
-          <span className="font-semibold">GAP</span> (nu 70% fals). PROXY doar când există semnal
-          demo/proxy explicit.
-        </p>
-      </div>
+        <summary className="cursor-pointer list-none text-[11px] font-semibold text-wo-text-primary flex items-center gap-2">
+          <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
+          Capacity honesty — load/util fără semnal = GAP
+          <span className="text-[10px] font-normal text-wo-text-muted group-open:hidden">(detalii)</span>
+        </summary>
+        <div className="mt-2 space-y-2">
+          <CapacityNotice
+            message="Utilaje = feasibility / capacity — NU tarif comercial. Load/util fără semnal = GAP (nu inventăm %)."
+            compact
+          />
+          <div
+            className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.neutral}`}
+            data-testid="utilaje-util-honesty"
+            role="note"
+          >
+            <Gauge className="w-4 h-4 text-wo-info mt-0.5 shrink-0" />
+            <p className="text-[11px] text-wo-text-secondary">
+              Utilizare: același standard ca Dashboard — fără inventare de load. Registry fără job ={" "}
+              <span className="font-semibold text-wo-warning">GAP</span> (nu 70% fals). PROXY doar când există semnal
+              demo/proxy explicit.
+            </p>
+          </div>
+          <div className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.warning}`}>
+            <AlertTriangle className="w-4 h-4 text-wo-warning mt-0.5 shrink-0" />
+            <p className="text-[11px]">
+              Crearea utilajelor este blocată în UI deoarece backend-ul curent expune doar endpoint-uri read-only pentru registrul de mașini.
+            </p>
+          </div>
+        </div>
+      </details>
 
       {/* Status Summary */}
       <div className="grid grid-cols-3 gap-3">
@@ -234,20 +264,20 @@ export default function Utilaje() {
 
       {/* Search + Filter */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
-          <Search className="w-4 h-4 text-muted-foreground" />
+        <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-wo-info/50">
+          <Search className="w-4 h-4 text-wo-text-muted" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Caută utilaj, tip..."
-            className="bg-transparent text-[13px] text-foreground placeholder:text-wo-text-dim outline-none w-full"
+            className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full"
           />
         </div>
         <select
           value={filterWC}
           onChange={(e) => setFilterWC(e.target.value)}
-          className="bg-card border border-border rounded-lg px-3 py-2 text-[12px] text-muted-foreground outline-none focus:border-blue-500/50"
+          className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-muted outline-none focus:border-wo-info/50"
         >
           <option value="all">Toate workcentrele</option>
           {workcenters.map((wc) => (
@@ -267,16 +297,14 @@ export default function Utilaje() {
               <div
                 key={m.id}
                 onClick={() => { setSelected(m); setEditingInk(null); setInkSaved(false); }}
-                className={`bg-card border rounded-lg p-3 cursor-pointer transition-all ${
-                  selected?.id === m.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-border hover:border-slate-500"
+                className={`bg-wo-surface-raised border rounded-lg p-3 cursor-pointer transition-all ${
+                  selected?.id === m.id
+                    ? "border-wo-info/50 ring-1 ring-wo-info/30"
+                    : "border-wo-border-subtle hover:border-wo-border-strong hover:bg-wo-hover"
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-2 h-10 rounded-full shrink-0 ${
-                    m.status === "running" ? "bg-emerald-500" :
-                    m.status === "idle" ? "bg-amber-500" :
-                    m.status === "maintenance" ? "bg-red-500" : "bg-slate-600"
-                  }`} />
+                  <div className={`w-2 h-10 rounded-full shrink-0 ${statusDotClass(m.status)}`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span className="text-[13px] font-semibold text-foreground">{m.name}</span>
@@ -299,13 +327,7 @@ export default function Utilaje() {
                           <span>{wc?.name || m.workcenterId}</span>
                           <span>•</span>
                           <span
-                            className={`uppercase tracking-wide font-semibold px-1 py-0.5 rounded border ${
-                              util.kindLabel === "GAP"
-                                ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
-                                : util.kindLabel === "PROXY"
-                                  ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
-                                  : "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600/40 dark:bg-blue-900/30 dark:text-blue-300"
-                            }`}
+                            className={`uppercase tracking-wide font-semibold px-1 py-0.5 rounded border ${utilKindBadgeClass(util.kindLabel)}`}
                             data-testid={`utilaje-util-kind-${m.id}`}
                           >
                             {util.kindLabel}
@@ -329,7 +351,7 @@ export default function Utilaje() {
             );
           })}
           {filtered.length === 0 && (
-            <div className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-[13px]">
+            <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-8 text-center text-wo-text-muted text-[13px]">
               Niciun utilaj găsit.
             </div>
           )}
@@ -340,14 +362,10 @@ export default function Utilaje() {
           {selected ? (
             <>
               {/* Machine Info */}
-              <div className="bg-card border border-border rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
-                  <div className={`w-3 h-3 rounded-full ${
-                    selected.status === "running" ? "bg-emerald-500" :
-                    selected.status === "idle" ? "bg-amber-500" :
-                    selected.status === "maintenance" ? "bg-red-500" : "bg-slate-600"
-                  }`} />
-                  <h3 className="text-[16px] font-bold text-foreground">{selected.name}</h3>
+                  <div className={`w-3 h-3 rounded-full ${statusDotClass(selected.status)}`} />
+                  <h3 className="text-[16px] font-bold text-wo-text-primary">{selected.name}</h3>
                   {machineCarriesCncProcessableBadge({
                     type: selected.type,
                     id: selected.id,
@@ -414,7 +432,7 @@ export default function Utilaje() {
                           <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1.5 flex-wrap">
                             <Gauge className="w-3 h-3" /> Utilizare
                             <span
-                              className="normal-case tracking-normal font-semibold px-1.5 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
+                              className={`normal-case tracking-normal font-semibold px-1.5 py-0.5 rounded border ${utilKindBadgeClass(util.kindLabel)}`}
                               data-testid="utilaje-util-kind-selected"
                             >
                               {util.kindLabel}
@@ -425,10 +443,10 @@ export default function Utilaje() {
                               value={util.barValue}
                               color={
                                 util.barValue >= 80
-                                  ? "bg-emerald-500"
+                                  ? "bg-wo-success"
                                   : util.barValue >= 50
-                                    ? "bg-amber-500"
-                                    : "bg-red-500"
+                                    ? "bg-wo-warning"
+                                    : "bg-wo-error"
                               }
                             />
                           ) : (
@@ -461,7 +479,7 @@ export default function Utilaje() {
               {selectedSpec && (
                 <div className="bg-card border border-border rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <Ruler className="w-4 h-4 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
+                    <Ruler className="w-4 h-4 text-wo-info" />
                     <span className="text-[13px] font-bold text-foreground">Specificații</span>
                   </div>
                   <div className="space-y-2 text-[11px]">
@@ -539,7 +557,7 @@ export default function Utilaje() {
                   <div className="bg-card border border-border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Droplets className="w-4 h-4 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
+                        <Droplets className="w-4 h-4 text-wo-info" />
                         <span className="text-[13px] font-bold text-foreground">Setări Cerneală</span>
                       </div>
                       {!isEditing && (
@@ -551,7 +569,7 @@ export default function Utilaje() {
                             });
                             setInkSaved(false);
                           }}
-                          className="text-[11px] text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-semibold"
+                          className="text-[11px] text-wo-info hover:opacity-80 transition-colors font-semibold"
                         >
                           Editează
                         </button>
@@ -570,7 +588,7 @@ export default function Utilaje() {
                             step="100"
                             value={editingInk.tankCapacityML}
                             onChange={(e) => setEditingInk({ ...editingInk, tankCapacityML: e.target.value })}
-                            className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-foreground outline-none focus:border-cyan-500/50"
+                            className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-foreground outline-none focus:border-wo-info/50"
                             placeholder="ex: 1500"
                           />
                         </div>
@@ -584,7 +602,7 @@ export default function Utilaje() {
                             step="0.5"
                             value={editingInk.avgConsumptionPerSqm}
                             onChange={(e) => setEditingInk({ ...editingInk, avgConsumptionPerSqm: e.target.value })}
-                            className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-foreground outline-none focus:border-cyan-500/50"
+                            className="w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-foreground outline-none focus:border-wo-info/50"
                             placeholder="ex: 18"
                           />
                         </div>
@@ -609,7 +627,7 @@ export default function Utilaje() {
                                 setTimeout(() => setInkSaved(false), 3000);
                               }
                             }}
-                            className="flex-1 px-3 py-2 text-[11px] font-semibold text-white bg-cyan-600 rounded-lg hover:bg-cyan-500 transition-colors flex items-center justify-center gap-1.5"
+                            className="flex-1 px-3 py-2 text-[11px] font-semibold text-wo-info bg-wo-info-muted border border-wo-info/40 rounded-lg hover:bg-wo-hover transition-colors flex items-center justify-center gap-1.5"
                           >
                             <Save className="w-3.5 h-3.5" />
                             Salvează
@@ -627,7 +645,7 @@ export default function Utilaje() {
                           <span className="text-muted-foreground font-mono font-semibold">{currentSettings.avgConsumptionPerSqm} ml/mp</span>
                         </div>
                         {inkSaved && (
-                          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-[10px] mt-1">
+                          <div className="flex items-center gap-1.5 text-wo-success text-[10px] mt-1">
                             <Check className="w-3 h-3" />
                             <span>Setări salvate cu succes</span>
                           </div>
@@ -641,7 +659,7 @@ export default function Utilaje() {
               {/* Maintenance History */}
               <div className="bg-card border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <WrenchIcon className="w-4 h-4 text-amber-600 dark:text-amber-600 dark:text-amber-400" />
+                  <WrenchIcon className="w-4 h-4 text-wo-warning" />
                   <span className="text-[13px] font-bold text-foreground">Istoric Mentenanță</span>
                 </div>
                 {selectedMnt.length > 0 ? (
@@ -659,7 +677,7 @@ export default function Utilaje() {
                           <span>{mnt.technician}</span>
                         </div>
                         {mnt.nextScheduled && (
-                          <div className="flex items-center gap-1 mt-1 text-[10px] text-blue-600 dark:text-blue-400">
+                          <div className="flex items-center gap-1 mt-1 text-[10px] text-wo-info">
                             <Calendar className="w-3 h-3" />
                             Următoarea: {new Date(mnt.nextScheduled).toLocaleDateString("ro-RO")}
                           </div>
@@ -673,9 +691,14 @@ export default function Utilaje() {
               </div>
             </>
           ) : (
-            <div className="bg-card border border-border rounded-lg p-8 text-center">
-              <Cog className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
-              <p className="text-[13px] text-muted-foreground">Selectează un utilaj pentru detalii</p>
+            <div className="bg-wo-surface-inset border border-dashed border-wo-border-strong rounded-lg p-8 text-center min-h-[220px] flex flex-col items-center justify-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-wo-surface-raised border border-wo-border-subtle mb-3">
+                <Cog className="w-5 h-5 text-wo-text-muted" />
+              </div>
+              <p className="text-[13px] font-semibold text-wo-text-primary">Niciun utilaj selectat</p>
+              <p className="text-[12px] text-wo-text-muted mt-1 max-w-[220px]">
+                Alege un echipament din listă pentru status, utilizare (GAP dacă lipsește semnalul) și mentenanță.
+              </p>
             </div>
           )}
         </div>
