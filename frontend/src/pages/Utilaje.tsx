@@ -141,7 +141,21 @@ export default function Utilaje() {
   const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? 0;
   const mappingSummary = capacityModel?.machineMappingReadiness?.summary;
   const maintAvail =
-    capacityModel?.machineMappingReadiness?.maintenance?.availability ?? "gap";
+    capacityModel?.batch04Gates?.maintenance?.availability ??
+    capacityModel?.machineMappingReadiness?.maintenance?.availability ??
+    "gap";
+  const batch04 = operationalTruth?.capacityBatch04;
+  const assignmentTruth =
+    capacityModel?.batch04Gates?.assignment?.truthCount ?? batch04?.assignmentTruthCount ?? 0;
+  const needsAssignment =
+    capacityModel?.batch04Gates?.assignment?.needsAssignmentCount ??
+    batch04?.needsAssignmentCount ??
+    0;
+  const statusOnlyMaint =
+    capacityModel?.batch04Gates?.maintenance?.statusOnlyCount ??
+    batch04?.statusOnlyMaintenanceCount ??
+    0;
+  const preMat = capacityModel?.preMaterializeChecklist;
   const {
     machines,
     machineSpecs,
@@ -280,11 +294,31 @@ export default function Utilaje() {
           >
             <Gauge className="w-4 h-4 text-wo-info mt-0.5 shrink-0" />
             <p className="text-[11px] text-wo-text-secondary">
-              Per utilaj: fără machine assignment (CAP-006=D) ={" "}
-              <span className="font-semibold text-wo-warning">GAP</span> pe cardul din dreapta — load-ul e la nivel WC.
-              Mapping readiness: {mappingSummary?.mappedToWc ?? "—"} mapped /{" "}
-              {mappingSummary?.unmappedWc ?? "—"} unmapped. Minutes NULL+WARN: {minutesMissing}. Mentenanță:{" "}
-              {maintAvail}. Materialize: BLOCAT.
+              Per utilaj: fără machine assignment truth (CAP-012) ={" "}
+              <span className="font-semibold text-wo-warning">GAP / NEEDS ASSIGNMENT TRUTH</span>{" "}
+              — load-ul e la nivel WC. Mapping: {mappingSummary?.mappedToWc ?? "—"} mapped /{" "}
+              {mappingSummary?.unmappedWc ?? "—"} unmapped. Minutes NULL+WARN: {minutesMissing}.
+              Mentenanță: {maintAvail}
+              {Number(statusOnlyMaint) > 0 ? ` · ${statusOnlyMaint} status-only (nu scădem)` : ""}.
+              Assignment truth: {assignmentTruth} · needs: {needsAssignment}. Materialize: BLOCAT.
+            </p>
+          </div>
+          <div
+            className={`rounded-lg px-3 py-2 space-y-1 ${chromeBanner.warning}`}
+            data-testid="utilaje-batch04-gates"
+          >
+            <p className="text-[11px] font-semibold text-wo-text-primary">
+              Batch 04 — machine util gated · pre-materialize checklist
+            </p>
+            <p className="text-[10px] text-wo-text-muted" data-testid="utilaje-machine-util-gate">
+              Machine util% rămâne{" "}
+              <span className="font-semibold text-wo-warning">GAP / NEEDS ASSIGNMENT TRUTH</span>{" "}
+              până CAP-012/013 + materialize OPEN — fără % inventat.
+            </p>
+            <p className="text-[10px] text-wo-text-muted" data-testid="utilaje-pre-materialize-checklist">
+              Pre-materialize: {preMat?.summary ?? batch04?.preMaterializeSummary ?? "DEC-009 blocked"}{" "}
+              · blockers {preMat?.blockerCount ?? batch04?.preMaterializeBlockerCount ?? "—"} ·
+              materialize {preMat?.materialize ?? "BLOCKED"}
             </p>
           </div>
           <div className={`flex items-start gap-2 px-3 py-2 rounded-lg ${chromeBanner.warning}`}>

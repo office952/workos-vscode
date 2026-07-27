@@ -5,12 +5,53 @@ import { MemoryRouter } from "react-router-dom";
 vi.mock("@/hooks/useDashboardStats", () => ({
   useDashboardStats: () => ({
     capacityModel: {
-      batch: "capacity_batch_02",
+      batch: "capacity_batch_04",
       materialize: "BLOCKED",
       minutesReadiness: { tasksWithMinutes: 1, tasksMissingMinutes: 2 },
       machineMappingReadiness: {
         summary: { mappedToWc: 3, unmappedWc: 1, machineCount: 4 },
         maintenance: { availability: "gap", notice: "maintenance availability: gap" },
+      },
+      batch04Gates: {
+        assignment: { truthCount: 0, needsAssignmentCount: 4, policy: "machine_code on operational_tasks" },
+        machineUtil: {
+          rows: [
+            {
+              machineCode: "M1",
+              machineUtilPct: null,
+              machineUtilStatus: "GAP",
+              machineUtilNote: "NEEDS ASSIGNMENT TRUTH",
+            },
+          ],
+          policy: "CAP-013 gated",
+        },
+        maintenance: {
+          availability: "gap",
+          statusOnlyCount: 1,
+          notice: "maintenance availability: gap",
+        },
+      },
+      preMaterializeChecklist: {
+        materialize: "BLOCKED",
+        dec009: "A",
+        readyForMaterializeGo: false,
+        blockerCount: 4,
+        summary: "DEC-009 blocked — 4 capacity/route blockers still open.",
+        items: [
+          {
+            id: "DEC-009",
+            label: "POST materialize GO (DEC-009)",
+            status: "BLOCKED",
+            blocking: true,
+            detail: "DEC-009=A — materialize remains BLOCKED",
+          },
+          {
+            id: "CAP-012",
+            label: "Machine assignment truth on operational tasks",
+            status: "NEEDS ASSIGNMENT TRUTH",
+            blocking: true,
+          },
+        ],
       },
     },
     kpis: [
@@ -131,6 +172,16 @@ vi.mock("@/hooks/useDashboardStats", () => ({
       boundaries: {
         pricing: "Dashboard does not compute or display client tariffs.",
       },
+      capacityBatch04: {
+        materialize: "BLOCKED",
+        dec009: "A",
+        maintenanceAvailability: "gap",
+        statusOnlyMaintenanceCount: 1,
+        assignmentTruthCount: 0,
+        needsAssignmentCount: 4,
+        preMaterializeBlockerCount: 4,
+        preMaterializeSummary: "DEC-009 blocked — 4 capacity/route blockers still open.",
+      },
     },
     source: "db",
     loading: false,
@@ -179,6 +230,10 @@ describe("Dashboard data source honesty", () => {
     expect(screen.getByText(/Util% shift pe workcenter/i)).toBeInTheDocument();
     expect(screen.getByTestId("capacity-batch02-readiness")).toHaveTextContent(/NULL \+ WARN/i);
     expect(screen.getByTestId("capacity-maintenance-readiness")).toHaveTextContent(/gap/i);
+    expect(screen.getByTestId("capacity-batch04-gates")).toHaveTextContent(/NEEDS ASSIGNMENT TRUTH/i);
+    expect(screen.getByTestId("capacity-machine-util-gate")).toHaveTextContent(/GAP/i);
+    expect(screen.getByTestId("capacity-pre-materialize-checklist")).toHaveTextContent(/DEC-009/i);
+    expect(screen.getByTestId("capacity-pre-materialize-checklist")).toHaveTextContent(/BLOCKED/i);
   });
 
   it("allows progressive disclosure for honesty banner and gap noise", () => {

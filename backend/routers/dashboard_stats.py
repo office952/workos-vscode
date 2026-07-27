@@ -28,6 +28,10 @@ from services.capacity_batch_02_readiness import (
     parse_estimated_minutes,
     scan_minutes_readiness,
 )
+from services.capacity_batch_04_gates import (
+    build_pre_materialize_checklist,
+    scan_assignment_and_util_gates,
+)
 from services.capacity_shift_model import build_calendar_shift_capacity
 from services.execution_plan_task_parser import operational_tasks_only
 from services.operational_data_gaps import (
@@ -61,8 +65,13 @@ NOTICE_MINUTES_NULL_WARN = (
 )
 
 NOTICE_MATERIALIZE_BLOCKED = (
-    "Materialize rămâne blocat — Capacity Batch 02 = readiness only "
-    "(minutes + WC→utilaj mapping; fără operational_tasks create)."
+    "Materialize rămâne blocat (DEC-009=A) — Capacity Batch 04 = gates only "
+    "(maintenance_windows · assignment truth · machine util gated · checklist)."
+)
+
+NOTICE_MACHINE_UTIL_GATED = (
+    "Util% utilaj: GAP / NEEDS ASSIGNMENT TRUTH până la CAP-012/013 "
+    "(machine_code pe operational task + materialize OPEN) — fără invent."
 )
 
 NOTICE_OTIF_PROXY = (
@@ -271,6 +280,7 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             "workcenter_code": m.workcenter_code,
             "operational_status": m.operational_status,
             "capacity_metadata": m.capacity_metadata,
+            "is_active": m.is_active,
         }
         for m in machine_rows
     ]
@@ -280,7 +290,14 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         year=today.year,
         month=today.month,
     )
-    maint_block = mapping_readiness.get("maintenance") or {}
+    batch04_gates = scan_assignment_and_util_gates(
+        plans,
+        machine_payloads,
+        calendar_shift_ok=True,
+        year=today.year,
+        month=today.month,
+    )
+    maint_block = batch04_gates.get("maintenance") or {}
     capacity_model = _build_capacity_load(
         workcenters,
         year=today.year,
@@ -290,15 +307,33 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         maintenance_availability=str(maint_block.get("availability") or "gap"),
     )
     calendar_shift_ok = bool(capacity_model.get("calendarShiftUtilAvailable"))
+    pre_mat = build_pre_materialize_checklist(
+        minutes_readiness=minutes_readiness,
+        mapping_summary=mapping_readiness.get("summary") or {},
+        gates=batch04_gates,
+        dec009="A",
+    )
     capacity_model["minutesReadiness"] = minutes_readiness
     capacity_model["machineMappingReadiness"] = {
         "policy": mapping_readiness.get("policy"),
         "summary": mapping_readiness.get("summary"),
-        "maintenance": mapping_readiness.get("maintenance"),
+        "maintenance": maint_block,
         "workcenters": mapping_readiness.get("workcenters"),
         "machines": mapping_readiness.get("machines"),
     }
-    capacity_model["batch"] = "capacity_batch_02"
+    capacity_model["batch04Gates"] = {
+        "assignment": batch04_gates.get("assignment"),
+        "machineUtil": batch04_gates.get("machineUtil"),
+        "maintenance": {
+            "availability": maint_block.get("availability"),
+            "statusOnlyCount": maint_block.get("statusOnlyCount"),
+            "notice": maint_block.get("notice"),
+            "deductionMinutesByWc": maint_block.get("deductionMinutesByWc"),
+        },
+        "ownerCapLock": batch04_gates.get("ownerCapLock"),
+    }
+    capacity_model["preMaterializeChecklist"] = pre_mat
+    capacity_model["batch"] = "capacity_batch_04"
     capacity_model["materialize"] = "BLOCKED"
     # Merge DEC-006 warnings into capacity warnings (non-blocking)
     capacity_model["warnings"] = list(capacity_model.get("warnings") or []) + list(
@@ -546,9 +581,20 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
     # ── Capacity load (CAP-001/002 calendar-shift planned load) ──
     capacity_load = list(capacity_model.get("capacityLoad") or [])
     if not capacity_load:
-        capacity_model = build_calendar_shift_capacity({})
-        capacity_load = list(capacity_model.get("capacityLoad") or [])
-        calendar_shift_ok = bool(capacity_model.get("calendarShiftUtilAvailable"))
+        # Fallback bars only — do NOT wipe Batch 04 gates / checklist attachments.
+        fallback = build_calendar_shift_capacity({})
+        capacity_load = list(fallback.get("capacityLoad") or [])
+        calendar_shift_ok = bool(fallback.get("calendarShiftUtilAvailable"))
+        for key in (
+            "availableMinutesMonth",
+            "workdaysInMonth",
+            "year",
+            "month",
+            "warnings",
+            "ownerCapLock",
+        ):
+            if capacity_model.get(key) is None and key in fallback:
+                capacity_model[key] = fallback[key]
     # ── Alerts (derived from execution data) ──
     alerts = []
     alert_id = 1
@@ -649,16 +695,21 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         "executionJobs": execution_jobs,
         "capacityLoad": capacity_load,
         "capacityModel": {
-            "batch": "capacity_batch_02",
+            "batch": "capacity_batch_04",
             "materialize": "BLOCKED",
             "availableMinutesMonth": capacity_model.get("availableMinutesMonth"),
             "workdaysInMonth": capacity_model.get("workdaysInMonth"),
             "year": capacity_model.get("year"),
             "month": capacity_model.get("month"),
             "warnings": capacity_model.get("warnings") or [],
-            "ownerCapLock": capacity_model.get("ownerCapLock") or {},
+            "ownerCapLock": {
+                **(capacity_model.get("ownerCapLock") or {}),
+                **(batch04_gates.get("ownerCapLock") or {}),
+            },
             "minutesReadiness": minutes_readiness,
             "machineMappingReadiness": capacity_model.get("machineMappingReadiness"),
+            "batch04Gates": capacity_model.get("batch04Gates"),
+            "preMaterializeChecklist": capacity_model.get("preMaterializeChecklist"),
         },
         "alerts": alerts,
         "throughputTrend": throughput_trend,
@@ -680,6 +731,7 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                 capacity_notice,
                 NOTICE_CAPACITY_NOT_PRICING,
                 NOTICE_MINUTES_NULL_WARN,
+                NOTICE_MACHINE_UTIL_GATED,
                 NOTICE_MATERIALIZE_BLOCKED,
                 NOTICE_THROUGHPUT_UTC,
                 NOTICE_OTIF_PROXY,
@@ -688,12 +740,11 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                 "pricing": "Dashboard does not compute or display client tariffs. Material ≠ commercial ≠ internal rate.",
                 "hrCost": "Cost Intern / HR = analytics/profitability only — never client tariff.",
                 "machines": (
-                    "Util% = planned load / company shift minutes per WC — "
-                    "not machine hourly → client price; not HR productive hours. "
-                    "Machine util% remains GAP without assignment truth."
+                    "Util% WC = planned/shift. Machine util% = GAP/NEEDS ASSIGNMENT TRUTH "
+                    "until CAP-012/013 (no invent)."
                 ),
                 "executionPlan": (
-                    "Reads ExecutionPlan planned/operational tasks for minutes readiness only — "
+                    "Reads plan tasks for capacity gates only — "
                     "no materialization / no sessions."
                 ),
                 "productSystem": "No ProductDefinition / ProductAggregate ownership.",
@@ -703,6 +754,20 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                 "tasksWithMinutes": minutes_readiness.get("tasksWithMinutes"),
                 "maintenanceAvailability": (maint_block.get("availability") or "gap"),
                 "materialize": "BLOCKED",
+            },
+            "capacityBatch04": {
+                "materialize": "BLOCKED",
+                "dec009": "A",
+                "maintenanceAvailability": maint_block.get("availability") or "gap",
+                "statusOnlyMaintenanceCount": maint_block.get("statusOnlyCount") or 0,
+                "assignmentTruthCount": (batch04_gates.get("assignment") or {}).get(
+                    "truthCount"
+                ),
+                "needsAssignmentCount": (batch04_gates.get("assignment") or {}).get(
+                    "needsAssignmentCount"
+                ),
+                "preMaterializeBlockerCount": pre_mat.get("blockerCount"),
+                "preMaterializeSummary": pre_mat.get("summary"),
             },
         },
     }

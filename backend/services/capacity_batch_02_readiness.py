@@ -164,7 +164,7 @@ def _parse_iso_date(value: Any) -> Optional[date]:
             return None
 
 
-def _overlap_minutes(start: date, end: date, month_start: date, month_end: date) -> float:
+def overlap_minutes(start: date, end: date, month_start: date, month_end: date) -> float:
     """Whole-day overlap minutes within month (8h company day not applied — calendar downtime)."""
     if end < start:
         return 0.0
@@ -232,7 +232,7 @@ def build_machine_mapping_readiness(
         windows = extract_maintenance_windows(meta)
         downtime = 0.0
         for w in windows:
-            downtime += _overlap_minutes(w["start"], w["end"], month_start, month_end)
+            downtime += overlap_minutes(w["start"], w["end"], month_start, month_end)
         if windows:
             has_any_calendarized = True
             if mapped and downtime > 0:

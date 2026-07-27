@@ -846,10 +846,28 @@ export default function Dashboard() {
   const minutesMissing = capacityModel?.minutesReadiness?.tasksMissingMinutes ?? operationalTruth?.capacityBatch02?.tasksMissingMinutes;
   const minutesPresent = capacityModel?.minutesReadiness?.tasksWithMinutes ?? operationalTruth?.capacityBatch02?.tasksWithMinutes;
   const maintAvail =
+    capacityModel?.batch04Gates?.maintenance?.availability ??
     capacityModel?.machineMappingReadiness?.maintenance?.availability ??
+    operationalTruth?.capacityBatch04?.maintenanceAvailability ??
     operationalTruth?.capacityBatch02?.maintenanceAvailability ??
     "gap";
   const mappingSummary = capacityModel?.machineMappingReadiness?.summary;
+  const batch04 = operationalTruth?.capacityBatch04;
+  const assignmentTruth =
+    capacityModel?.batch04Gates?.assignment?.truthCount ?? batch04?.assignmentTruthCount ?? 0;
+  const needsAssignment =
+    capacityModel?.batch04Gates?.assignment?.needsAssignmentCount ??
+    batch04?.needsAssignmentCount ??
+    0;
+  const statusOnlyMaint =
+    capacityModel?.batch04Gates?.maintenance?.statusOnlyCount ??
+    batch04?.statusOnlyMaintenanceCount ??
+    0;
+  const preMat = capacityModel?.preMaterializeChecklist;
+  const machineUtilRows = capacityModel?.batch04Gates?.machineUtil?.rows ?? [];
+  const machineUtilGated = machineUtilRows.every(
+    (r) => r.machineUtilPct == null && r.machineUtilStatus !== "READY",
+  ) || machineUtilRows.length === 0;
 
   const [showAllRisks, setShowAllRisks] = useState(false);
   const [bannerAcknowledged, setBannerAcknowledged] = useState(
@@ -1200,7 +1218,67 @@ export default function Dashboard() {
                 <span className={maintAvail === "gap" ? "text-wo-warning font-semibold" : "text-wo-success"}>
                   {maintAvail === "calendarized" ? "calendarized (scăzută din available)" : "gap"}
                 </span>
+                {Number(statusOnlyMaint) > 0 ? (
+                  <span className="text-wo-warning"> · {statusOnlyMaint} status-only (nu scădem)</span>
+                ) : null}
               </p>
+            </div>
+
+            <div
+              className="mb-3 rounded border border-wo-warning/35 bg-wo-warning-muted px-2 py-2 space-y-1"
+              data-testid="capacity-batch04-gates"
+            >
+              <p className="text-[10px] font-semibold text-wo-text-primary">
+                Batch 04 gates — maintenance · assignment truth · machine util · DEC-009
+              </p>
+              <p className="text-[10px] text-wo-text-muted" data-testid="capacity-assignment-truth">
+                Assignment truth: {assignmentTruth} READY ·{" "}
+                <span className="text-wo-warning font-semibold">
+                  {needsAssignment} NEEDS ASSIGNMENT TRUTH
+                </span>
+                {" "}(machine_code pe operational task)
+              </p>
+              <p className="text-[10px] text-wo-text-muted" data-testid="capacity-machine-util-gate">
+                Machine util%:{" "}
+                <span className="text-wo-warning font-semibold">
+                  {machineUtilGated ? "GAP / NEEDS ASSIGNMENT TRUTH" : "gate review"}
+                </span>
+                {" "}— fără % inventat până CAP-012/013 + materialize OPEN
+              </p>
+              <div data-testid="capacity-pre-materialize-checklist">
+                <p className="text-[10px] font-semibold text-wo-text-primary">
+                  Pre-materialize checklist — materialize{" "}
+                  <span className="text-wo-warning">{preMat?.materialize ?? "BLOCKED"}</span>
+                  {" · "}DEC-009={preMat?.dec009 ?? batch04?.dec009 ?? "A"} ·{" "}
+                  {preMat?.blockerCount ?? batch04?.preMaterializeBlockerCount ?? "—"} blockers
+                </p>
+                <p className="text-[10px] text-wo-text-muted">
+                  {preMat?.summary ?? batch04?.preMaterializeSummary ?? "DEC-009 blocked — no POST materialize."}
+                </p>
+                <ul className="mt-1 space-y-0.5">
+                  {(preMat?.items ?? []).slice(0, 8).map((item) => (
+                    <li
+                      key={item.id ?? item.label}
+                      className="text-[10px] text-wo-text-muted flex gap-1.5"
+                      data-testid={`pre-mat-item-${item.id}`}
+                    >
+                      <span
+                        className={
+                          item.status === "READY" || item.status === "OPEN"
+                            ? "text-wo-success"
+                            : "text-wo-warning font-semibold"
+                        }
+                      >
+                        [{item.status}]
+                      </span>
+                      <span>
+                        {item.label}
+                        {item.blocking ? " · blocker" : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <div className="space-y-2.5" data-testid="dashboard-capacity-list">
