@@ -7,17 +7,15 @@ vi.mock("@/hooks/useDashboardStats", () => ({
     kpis: [
       {
         code: "KPI_MACHINE_UTIL",
-        label: "Load planificat WC",
+        label: "Util% shift WC",
         value: 56596,
         unit: "%",
         trend: "stable",
         trendValue: 0,
         status: "good",
         kind: "derived",
-        window: "lifetime_plan_vs_finished_sessions",
-        explanation: "Media load planificat 0–100 pe workcenter.",
-        gapNote:
-          "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter.",
+        window: "month_2026_07_shift",
+        explanation: "Media util% planned/shift pe workcenter.",
       },
       {
         code: "KPI_ACTIVE_JOBS",
@@ -76,8 +74,9 @@ vi.mock("@/hooks/useDashboardStats", () => ({
         plannedMinutes: 100,
         actualMinutes: 200,
         overrunMinutes: 100,
-        loadKind: "planned_load",
-        loadLabel: "Load planificat 0–100",
+        loadKind: "calendar_shift_planned_load",
+        loadLabel: "Planned load / ore shift (WC)",
+        availableMinutes: 11040,
       },
     ],
     alerts: [],
@@ -88,13 +87,13 @@ vi.mock("@/hooks/useDashboardStats", () => ({
       actualMinutesTotal: 200,
       overrunMinutesTotal: 100,
       throughputWindow: "utc_calendar_today",
-      workcenterLoadKind: "planned_load_0_100",
-      calendarShiftUtilAvailable: false,
+      workcenterLoadKind: "calendar_shift_planned_load",
+      calendarShiftUtilAvailable: true,
       notices: [
         "Pricing Registry: 2 rate/price lipsă — Owner data needed.",
         "Cost Intern (HR analytics/profitability — NU tarif client): 1 angajați productivi incompleți.",
-        "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100.",
-        "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter (nu utilizare pe ture/calendar).",
+        "Capacitate: util% WC = planned load / ore shift (Company Calendar).",
+        "Util% WC = planned load / ore shift (Company Calendar L–V 8h − sărbători RO).",
         "Capacitate / load planificat — nu pricing comercial, nu cost orar utilaj → tarif client.",
         "Throughput azi = comenzi completed cu updated_at în ziua calendaristică UTC curentă.",
       ],
@@ -114,9 +113,10 @@ vi.mock("@/hooks/useDashboardStats", () => ({
         },
         capacity: {
           domain: "capacity_feasibility",
-          ownerDataNeeded: true,
-          unknown: true,
-          notice: "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100.",
+          ownerDataNeeded: false,
+          unknown: false,
+          calendarShiftUtilAvailable: true,
+          notice: "Capacitate: util% WC = planned load / ore shift (Company Calendar).",
         },
       },
       boundaries: {
@@ -152,22 +152,22 @@ describe("Dashboard data source honesty", () => {
     );
     expect(screen.queryByText(/56596/)).not.toBeInTheDocument();
     expect(screen.getByText(">100")).toBeInTheDocument();
-    expect(screen.getByText("Load planificat WC")).toBeInTheDocument();
+    expect(screen.getByText("Util% shift WC")).toBeInTheDocument();
   });
 
-  it("surfaces calendar/shift util gap and UTC throughput labels", () => {
+  it("surfaces calendar/shift util active and UTC throughput labels", () => {
     render(
       <MemoryRouter>
         <Dashboard />
       </MemoryRouter>,
     );
     expect(screen.getByTestId("dashboard-operational-truth")).toBeInTheDocument();
-    expect(screen.getByTestId("capacity-calendar-gap")).toHaveTextContent(
-      /calendar\/shift/i,
+    expect(screen.getByTestId("capacity-calendar-active")).toHaveTextContent(
+      /Calendar\/shift activ/i,
     );
     expect(screen.getByText("Throughput azi (UTC)")).toBeInTheDocument();
     expect(screen.getByText("OTIF (proxy)")).toBeInTheDocument();
-    expect(screen.getByText(/Load planificat pe workcenter/i)).toBeInTheDocument();
+    expect(screen.getByText(/Util% shift pe workcenter/i)).toBeInTheDocument();
   });
 
   it("allows progressive disclosure for honesty banner and gap noise", () => {
@@ -190,7 +190,9 @@ describe("Dashboard data source honesty", () => {
     expect(screen.getByTestId("dashboard-data-gaps")).toBeInTheDocument();
     expect(screen.getByTestId("dashboard-data-gap-pricing")).toHaveTextContent(/Owner data needed/i);
     expect(screen.getByTestId("dashboard-data-gap-costIntern")).toHaveTextContent(/NU tarif client/i);
-    expect(screen.getByTestId("dashboard-data-gap-capacity")).toHaveTextContent(/calendar\/shift/i);
+    expect(screen.getByTestId("dashboard-data-gap-capacity")).toHaveTextContent(
+      /planned load \/ ore shift/i,
+    );
     expect(screen.getByText(/Material ≠ regulă comercială ≠ cost intern ≠ capacitate/i)).toBeInTheDocument();
   });
 

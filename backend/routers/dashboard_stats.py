@@ -2,11 +2,12 @@
 Dashboard Stats API — aggregates real DB data for the frontend Dashboard page.
 Provides:
   GET /api/v1/dashboard-stats  →  KPIs, job summaries, capacity, alerts, events
-G7 operational truth:
+G7 / Capacity Batch 01 operational truth:
   - KPIs carry kind / window / explanation / gapNote so the UI never implies
-    calendar/shift util, commercial pricing, or invented completeness.
-  - Workcenter load stays mean planned-load completion clamped 0–100.
+    commercial pricing or invented completeness.
+  - Workcenter util% = planned_minutes / company_shift_available_minutes (CAP-001/002).
   - Throughput "today" is UTC calendar day of order.updated_at.
+  - No CostEngine coupling; no materialize; warnings non-blocking.
 """
 import json
 from collections import Counter
@@ -21,6 +22,7 @@ from models.quotes import Quotes
 from models.intake_requests import Intake_requests
 from models.execution_plan import ExecutionPlan
 from models.execution_reality import ExecutionReality
+from services.capacity_shift_model import build_calendar_shift_capacity
 from services.execution_plan_task_parser import operational_tasks_only
 from services.operational_data_gaps import (
     build_operational_data_gaps,
@@ -36,6 +38,11 @@ router = APIRouter(
 NOTICE_CALENDAR_SHIFT_GAP = (
     "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter "
     "(nu utilizare pe ture/calendar)."
+)
+
+NOTICE_CALENDAR_SHIFT_ACTIVE = (
+    "Util% WC = planned load / ore shift (Company Calendar L–V 8h − sărbători RO). "
+    "Nu ore HR productive, nu tarif client, nu CostEngine."
 )
 
 NOTICE_CAPACITY_NOT_PRICING = (
@@ -189,33 +196,26 @@ def _throughput_today_count(orders: list, now: datetime | None = None) -> int:
             count += 1
     return count
 
-def _build_capacity_load(workcenters: dict[str, dict[str, float]]) -> list[dict]:
-    """Capacity bars: planned-load 0–100 + planned/actual/overrun minutes (honest labels)."""
-    capacity_load: list[dict] = []
-    for wc_name, data in workcenters.items():
-        planned = float(data.get("total_min") or 0)
-        actual = float(data.get("completed_min") or 0)
-        load = _clamp_pct((actual / planned * 100) if planned > 0 else 0)
-        overrun = max(0.0, actual - planned)
-        capacity_load.append({
-            "workcenterId": f"wc_{wc_name.lower().replace(' ', '_').replace('/', '_')}",
-            "workcenterName": wc_name,
-            "loadToday": load,  # legacy key — semantics: planned-load %, not calendar today
-            "load7d": load,
-            "load30d": load,
-            "availableToday": max(100 - load, 0),
-            "plannedMinutes": round(planned, 1),
-            "actualMinutes": round(actual, 1),
-            "overrunMinutes": round(overrun, 1),
-            "loadKind": "planned_load",
-            "loadLabel": "Load planificat 0–100",
-            "window": "lifetime_plan_vs_finished_sessions",
-            "explanation": (
-                "completed_min / planned_min pe workcenter, clamp 0–100. "
-                "Nu este utilizare pe calendar/ture."
-            ),
-        })
-    return capacity_load
+def _build_capacity_load(
+    workcenters: dict[str, dict[str, float]],
+    *,
+    year: int | None = None,
+    month: int | None = None,
+) -> dict:
+    """Capacity Batch 01: planned_min / shift_available_min per WC (CAP-001/002)."""
+    planned = {
+        wc: float(data.get("total_min") or 0) for wc, data in workcenters.items()
+    }
+    actual = {
+        wc: float(data.get("completed_min") or 0) for wc, data in workcenters.items()
+    }
+    return build_calendar_shift_capacity(
+        planned,
+        year=year,
+        month=month,
+        actual_minutes_by_wc=actual,
+        default_workcenters=None if planned else None,
+    )
 
 @router.get("")
 
@@ -238,8 +238,10 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
     res_r = await db.execute(select(ExecutionReality))
     realities = list(res_r.scalars().all())
     realities_by_order = {r.order_id: r for r in realities}
-    # Shared workcenter aggregation for capacity + machine util KPI
+    # Shared workcenter aggregation for capacity + completion analytics
     workcenters = _aggregate_workcenter_minutes(plans, realities, plans_by_order)
+    capacity_model = _build_capacity_load(workcenters)
+    calendar_shift_ok = bool(capacity_model.get("calendarShiftUtilAvailable"))
     # ── Compute KPIs ──
     order_statuses = Counter(o.status for o in orders)
     active_statuses = {"created", "confirmed", "locked", "in_execution"}
@@ -268,8 +270,8 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             else:
                 on_time += 1
     otif_pct = _clamp_pct((on_time / total_with_deadline * 100) if total_with_deadline > 0 else 0)
-    # Machine util: mean workcenter planned-load (0–100), not global overrun ratio
-    machine_util = _machine_util_pct(workcenters)
+    # CAP-001: mean WC util% among workcenters with planned minutes > 0
+    machine_util = int(capacity_model.get("meanUtilPctActiveWc") or 0)
     # Average lead time (days) from order creation to completion
     lead_times = []
     for o in orders:
@@ -350,17 +352,23 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         ),
         _kpi(
             code="KPI_MACHINE_UTIL",
-            label="Load planificat WC",
+            label="Util% shift WC",
             value=machine_util,
             unit="%",
-            status="good" if machine_util >= 50 else "warning",
+            status="good" if machine_util < 85 else "warning",
             kind="derived",
-            window="lifetime_plan_vs_finished_sessions",
-            explanation=(
-                "Media pe workcenter a (actual_min / planned_min), fiecare WC clamp 0–100. "
-                "NU este utilizare utilaj pe calendar/ture."
+            window=(
+                f"month_{capacity_model.get('year')}_{int(capacity_model.get('month') or 0):02d}_shift"
             ),
-            gap_note=NOTICE_CALENDAR_SHIFT_GAP,
+            explanation=(
+                "Media util% pe WC cu planned>0: planned_minutes / ore_shift_disponibile "
+                "(Company Calendar). Nu HR hours, nu tarif client."
+            ),
+            gap_note=(
+                None
+                if calendar_shift_ok
+                else NOTICE_CALENDAR_SHIFT_GAP
+            ),
         ),
         _kpi(
             code="KPI_LEAD_TIME",
@@ -470,27 +478,12 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             "operationsTotal": ops_total,
             "operationsCompleted": ops_completed,
         })
-    # ── Capacity load (same workcenter aggregation as machine util KPI) ──
-    capacity_load = _build_capacity_load(workcenters)
-    # If no capacity data from plans, provide default workcenters (zero load — honest empty)
+    # ── Capacity load (CAP-001/002 calendar-shift planned load) ──
+    capacity_load = list(capacity_model.get("capacityLoad") or [])
     if not capacity_load:
-        default_wcs = ["Print", "Laminare", "Cut / Plotter", "CNC", "Metal / Sudură", "Asamblare", "Electric", "Ambalare"]
-        for wc in default_wcs:
-            capacity_load.append({
-                "workcenterId": f"wc_{wc.lower().replace(' ', '_').replace('/', '_')}",
-                "workcenterName": wc,
-                "loadToday": 0,
-                "load7d": 0,
-                "load30d": 0,
-                "availableToday": 100,
-                "plannedMinutes": 0,
-                "actualMinutes": 0,
-                "overrunMinutes": 0,
-                "loadKind": "planned_load",
-                "loadLabel": "Load planificat 0–100",
-                "window": "no_plan_data",
-                "explanation": "Fără planuri operaționale — load 0 (nu înseamnă idle calendar).",
-            })
+        capacity_model = build_calendar_shift_capacity({})
+        capacity_load = list(capacity_model.get("capacityLoad") or [])
+        calendar_shift_ok = bool(capacity_model.get("calendarShiftUtilAvailable"))
     # ── Alerts (derived from execution data) ──
     alerts = []
     alert_id = 1
@@ -577,14 +570,27 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
 
     data_gaps = await build_operational_data_gaps(
         db,
-        calendar_shift_util_available=False,
+        calendar_shift_util_available=calendar_shift_ok,
     )
     gap_notices = data_gap_notices(data_gaps)
+    capacity_notice = (
+        NOTICE_CALENDAR_SHIFT_ACTIVE
+        if calendar_shift_ok
+        else NOTICE_CALENDAR_SHIFT_GAP
+    )
 
     return {
         "kpis": kpis,
         "executionJobs": execution_jobs,
         "capacityLoad": capacity_load,
+        "capacityModel": {
+            "availableMinutesMonth": capacity_model.get("availableMinutesMonth"),
+            "workdaysInMonth": capacity_model.get("workdaysInMonth"),
+            "year": capacity_model.get("year"),
+            "month": capacity_model.get("month"),
+            "warnings": capacity_model.get("warnings") or [],
+            "ownerCapLock": capacity_model.get("ownerCapLock") or {},
+        },
         "alerts": alerts,
         "throughputTrend": throughput_trend,
         "recentEvents": events,
@@ -597,12 +603,12 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             "actualMinutesTotal": actual_min_total,
             "overrunMinutesTotal": overrun_min_total,
             "throughputWindow": "utc_calendar_today",
-            "workcenterLoadKind": "planned_load_0_100",
-            "calendarShiftUtilAvailable": False,
+            "workcenterLoadKind": "calendar_shift_planned_load",
+            "calendarShiftUtilAvailable": calendar_shift_ok,
             "dataGaps": data_gaps,
             "notices": [
                 *gap_notices,
-                NOTICE_CALENDAR_SHIFT_GAP,
+                capacity_notice,
                 NOTICE_CAPACITY_NOT_PRICING,
                 NOTICE_THROUGHPUT_UTC,
                 NOTICE_OTIF_PROXY,
@@ -610,7 +616,10 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             "boundaries": {
                 "pricing": "Dashboard does not compute or display client tariffs. Material ≠ commercial ≠ internal rate.",
                 "hrCost": "Cost Intern / HR = analytics/profitability only — never client tariff.",
-                "machines": "Load is planned-load % / capacity feasibility — not machine hourly → client price.",
+                "machines": (
+                    "Util% = planned load / company shift minutes per WC — "
+                    "not machine hourly → client price; not HR productive hours."
+                ),
                 "executionPlan": "Reads ExecutionPlan/Reality only — no materialization.",
                 "productSystem": "No ProductDefinition / ProductAggregate ownership.",
             },

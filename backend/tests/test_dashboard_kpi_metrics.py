@@ -152,32 +152,34 @@ def test_throughput_today_naive_updated_at_treated_as_utc():
 def test_kpi_payload_includes_operational_truth_fields():
     payload = _kpi(
         code="KPI_MACHINE_UTIL",
-        label="Load planificat WC",
+        label="Util% shift WC",
         value=68,
         unit="%",
         status="good",
         kind="derived",
-        window="lifetime_plan_vs_finished_sessions",
-        explanation="mean planned-load",
+        window="month_2026_07_shift",
+        explanation="planned / shift available",
         gap_note=NOTICE_CALENDAR_SHIFT_GAP,
     )
     assert payload["kind"] == "derived"
-    assert payload["window"] == "lifetime_plan_vs_finished_sessions"
+    assert "shift" in payload["window"]
     assert "calendar/shift" in payload["gapNote"]
-    assert "Load planificat" in payload["label"]
+    assert "Util% shift" in payload["label"]
 
 
-def test_capacity_load_exposes_planned_actual_overrun_and_clamped_pct():
+def test_capacity_load_uses_calendar_shift_planned_over_available():
     workcenters = {
-        "CNC": {"total_min": 100.0, "completed_min": 250.0},
-        "Print": {"total_min": 100.0, "completed_min": 40.0},
+        "CNC": {"total_min": 5520.0, "completed_min": 250.0},  # 50% of 11040
+        "Print": {"total_min": 0.0, "completed_min": 40.0},
     }
-    slots = _build_capacity_load(workcenters)
+    model = _build_capacity_load(workcenters, year=2026, month=7)
+    assert model["calendarShiftUtilAvailable"] is True
+    slots = model["capacityLoad"]
     by_name = {s["workcenterName"]: s for s in slots}
-    assert by_name["CNC"]["loadToday"] == 100  # clamped
-    assert by_name["CNC"]["plannedMinutes"] == 100.0
+    assert by_name["CNC"]["loadToday"] == 50
+    assert by_name["CNC"]["plannedMinutes"] == 5520.0
     assert by_name["CNC"]["actualMinutes"] == 250.0
-    assert by_name["CNC"]["overrunMinutes"] == 150.0
-    assert by_name["CNC"]["loadKind"] == "planned_load"
-    assert by_name["Print"]["loadToday"] == 40
-    assert by_name["Print"]["overrunMinutes"] == 0.0
+    assert by_name["CNC"]["availableMinutes"] == 11040.0
+    assert by_name["CNC"]["loadKind"] == "calendar_shift_planned_load"
+    assert by_name["Print"]["loadToday"] == 0
+    assert model["meanUtilPctActiveWc"] == 50

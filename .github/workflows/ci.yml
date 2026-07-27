@@ -62,6 +62,7 @@ jobs:
           ENVIRONMENT: test
         run: >
           python -m pytest -q
+          tests/test_capacity_shift_model.py
           tests/test_dashboard_kpi_metrics.py
           tests/test_operational_data_gaps.py
           tests/test_pricing_registry.py

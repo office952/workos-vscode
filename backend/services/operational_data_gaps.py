@@ -73,7 +73,10 @@ async def build_operational_data_gaps(
         "Capacitate: util calendar/shift necunoscut — afișăm load planificat 0–100; "
         "Utilaje fără semnal job rămân GAP (nu tarif comercial)."
         if capacity_unknown
-        else "Capacitate: semnal calendar/shift disponibil."
+        else (
+            "Capacitate: util% WC = planned load / ore shift (Company Calendar). "
+            "Nu HR hours, nu tarif client; overload = warning non-blocking."
+        )
     )
 
     return {

@@ -376,7 +376,7 @@ export const operatorTasks: OperatorTask[] = DEMO_DATA_ENABLED ? [
 export interface CapacitySlot {
   workcenterId: string;
   workcenterName: string;
-  /** Legacy key — semantics: planned-load % 0–100, not calendar-today util. */
+  /** CAP-001: planned_min / shift_available_min % 0–100 (legacy key loadToday). */
   loadToday: number;
   load7d: number;
   load30d: number;
@@ -384,7 +384,8 @@ export interface CapacitySlot {
   plannedMinutes?: number;
   actualMinutes?: number;
   overrunMinutes?: number;
-  loadKind?: "planned_load";
+  availableMinutes?: number;
+  loadKind?: "planned_load" | "calendar_shift_planned_load";
   loadLabel?: string;
   window?: string;
   explanation?: string;
