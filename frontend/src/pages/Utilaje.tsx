@@ -402,25 +402,25 @@ export default function Utilaje() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Status</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Status</p>
                       <span className={`inline-flex items-center gap-1 text-[12px] font-medium ${machineStatusConfig[selected.status].cls}`}>
                         {machineStatusConfig[selected.status].icon} {machineStatusConfig[selected.status].label}
                       </span>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Workcenter</p>
-                      <p className="text-[12px] text-muted-foreground">{workcenters.find((w) => w.id === selected.workcenterId)?.name || selected.workcenterId}</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Workcenter</p>
+                      <p className="text-[12px] text-wo-text-primary">{workcenters.find((w) => w.id === selected.workcenterId)?.name || selected.workcenterId}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Job Curent</p>
-                      <p className="text-[12px] text-muted-foreground font-mono">{selected.currentJobId || "—"}</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Job Curent</p>
+                      <p className="text-[12px] text-wo-text-primary font-mono">{selected.currentJobId || "—"}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Operator</p>
-                      <p className="text-[12px] text-muted-foreground">{selected.currentOperator || "—"}</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Operator</p>
+                      <p className="text-[12px] text-wo-text-primary">{selected.currentOperator || "—"}</p>
                     </div>
                   </div>
 
@@ -429,7 +429,7 @@ export default function Utilaje() {
                       const util = presentMachineUtilization(selected);
                       return (
                         <>
-                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1.5 flex-wrap">
+                          <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1 flex items-center gap-1.5 flex-wrap">
                             <Gauge className="w-3 h-3" /> Utilizare
                             <span
                               className={`normal-case tracking-normal font-semibold px-1.5 py-0.5 rounded border ${utilKindBadgeClass(util.kindLabel)}`}
@@ -451,10 +451,12 @@ export default function Utilaje() {
                             />
                           ) : (
                             <p
-                              className="text-[12px] text-muted-foreground"
+                              className="text-[12px] text-wo-text-primary leading-snug"
                               data-testid="utilaje-util-gap"
                             >
-                              {util.displayPct} — {util.note}
+                              <span className="text-wo-text-muted">{util.displayPct}</span>
+                              {" — "}
+                              <span className="text-wo-warning">{util.note}</span>
                             </p>
                           )}
                         </>
@@ -464,12 +466,12 @@ export default function Utilaje() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Runtime</p>
-                      <p className="text-[12px] text-muted-foreground">{selected.runtimeMinutes} min</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Runtime</p>
+                      <p className="text-[12px] text-wo-text-primary">{selected.runtimeMinutes} min</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Coadă</p>
-                      <p className="text-[12px] text-muted-foreground">{selected.queueCount} job-uri</p>
+                      <p className="text-[10px] font-semibold text-wo-text-secondary uppercase tracking-wide mb-1">Coadă</p>
+                      <p className="text-[12px] text-wo-text-primary">{selected.queueCount} job-uri</p>
                     </div>
                   </div>
                 </div>
@@ -477,66 +479,66 @@ export default function Utilaje() {
 
               {/* Specs */}
               {selectedSpec && (
-                <div className="bg-card border border-border rounded-lg p-4">
+                <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <Ruler className="w-4 h-4 text-wo-info" />
-                    <span className="text-[13px] font-bold text-foreground">Specificații</span>
+                    <span className="text-[13px] font-bold text-wo-text-primary">Specificații</span>
                   </div>
                   <div className="space-y-2 text-[11px]">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Producător</span>
-                      <span className="text-muted-foreground">{selectedSpec.manufacturer} {selectedSpec.model}</span>
+                    <div className="flex justify-between gap-3">
+                      <span className="text-wo-text-secondary shrink-0">Producător</span>
+                      <span className="text-wo-text-primary text-right">{selectedSpec.manufacturer} {selectedSpec.model}</span>
                     </div>
                     {selectedSpec.year > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">An fabricație</span>
-                        <span className="text-muted-foreground">{selectedSpec.year}</span>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-wo-text-secondary shrink-0">An fabricație</span>
+                        <span className="text-wo-text-primary">{selectedSpec.year}</span>
                       </div>
                     )}
                     {selectedSpec.maxWidth > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Dimensiune max</span>
-                        <span className="text-muted-foreground font-mono">
+                      <div className="flex justify-between gap-3">
+                        <span className="text-wo-text-secondary shrink-0">Dimensiune max</span>
+                        <span className="text-wo-text-primary font-mono">
                           {selectedSpec.maxWidth}{selectedSpec.maxHeight > 0 ? `×${selectedSpec.maxHeight}` : ""} mm
                         </span>
                       </div>
                     )}
                     {selectedSpec.maxSpeed !== "N/A" && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Viteză max</span>
-                        <span className="text-muted-foreground">{selectedSpec.maxSpeed}</span>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-wo-text-secondary shrink-0">Viteză max</span>
+                        <span className="text-wo-text-primary">{selectedSpec.maxSpeed}</span>
                       </div>
                     )}
                     {selectedSpec.resolution && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Rezoluție</span>
-                        <span className="text-muted-foreground">{selectedSpec.resolution}</span>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-wo-text-secondary shrink-0">Rezoluție</span>
+                        <span className="text-wo-text-primary">{selectedSpec.resolution}</span>
                       </div>
                     )}
                     {selectedSpec.powerKW > 0 && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Putere</span>
-                        <span className="text-muted-foreground">{selectedSpec.powerKW} kW</span>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-wo-text-secondary shrink-0">Putere</span>
+                        <span className="text-wo-text-primary">{selectedSpec.powerKW} kW</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Locație</span>
-                      <span className="text-muted-foreground">{selectedSpec.location}</span>
+                    <div className="flex justify-between gap-3">
+                      <span className="text-wo-text-secondary shrink-0">Locație</span>
+                      <span className="text-wo-text-primary">{selectedSpec.location}</span>
                     </div>
                     {selectedSpec.totalJobsCompleted > 0 && (
                       <>
                         <div className="border-t border-wo-border-strong my-2" />
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Total job-uri</span>
-                          <span className="text-muted-foreground font-bold">{selectedSpec.totalJobsCompleted}</span>
+                        <div className="flex justify-between gap-3">
+                          <span className="text-wo-text-secondary shrink-0">Total job-uri</span>
+                          <span className="text-wo-text-primary font-bold">{selectedSpec.totalJobsCompleted}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Total ore funcționare</span>
-                          <span className="text-muted-foreground">{selectedSpec.totalHoursRun}h</span>
+                        <div className="flex justify-between gap-3">
+                          <span className="text-wo-text-secondary shrink-0">Total ore funcționare</span>
+                          <span className="text-wo-text-primary">{selectedSpec.totalHoursRun}h</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Avg durată/job</span>
-                          <span className="text-muted-foreground">{selectedSpec.avgJobDurationMin} min</span>
+                        <div className="flex justify-between gap-3">
+                          <span className="text-wo-text-secondary shrink-0">Avg durată/job</span>
+                          <span className="text-wo-text-primary">{selectedSpec.avgJobDurationMin} min</span>
                         </div>
                       </>
                     )}
@@ -657,21 +659,21 @@ export default function Utilaje() {
               })()}
 
               {/* Maintenance History */}
-              <div className="bg-card border border-border rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <WrenchIcon className="w-4 h-4 text-wo-warning" />
-                  <span className="text-[13px] font-bold text-foreground">Istoric Mentenanță</span>
+                  <span className="text-[13px] font-bold text-wo-text-primary">Istoric Mentenanță</span>
                 </div>
                 {selectedMnt.length > 0 ? (
                   <div className="space-y-2">
                     {selectedMnt.map((mnt) => (
-                      <div key={mnt.id} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-2.5">
+                      <div key={mnt.id} className="bg-wo-surface-inset border border-wo-border-subtle rounded-lg p-2.5">
                         <div className="flex items-center justify-between mb-1">
                           <MntTypeBadge type={mnt.type} />
-                          <span className="text-[10px] text-muted-foreground">{new Date(mnt.date).toLocaleDateString("ro-RO")}</span>
+                          <span className="text-[10px] text-wo-text-muted">{new Date(mnt.date).toLocaleDateString("ro-RO")}</span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground mb-1">{mnt.description}</p>
-                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                        <p className="text-[11px] text-wo-text-primary mb-1">{mnt.description}</p>
+                        <div className="flex items-center gap-3 text-[10px] text-wo-text-secondary">
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{mnt.durationHours}h</span>
                           <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" />{mnt.cost} RON</span>
                           <span>{mnt.technician}</span>
@@ -686,7 +688,7 @@ export default function Utilaje() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[11px] text-muted-foreground">Niciun istoric de mentenanță.</p>
+                  <p className="text-[11px] text-wo-text-secondary">Niciun istoric de mentenanță.</p>
                 )}
               </div>
             </>

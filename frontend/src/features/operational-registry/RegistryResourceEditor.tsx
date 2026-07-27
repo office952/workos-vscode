@@ -5,6 +5,7 @@ import {
   type RegistryResource,
 } from "@/api/operationalRegistry";
 import { Save, RefreshCw, AlertTriangle, Database } from "lucide-react";
+import { chromeBanner } from "@/components/workos/design-system";
 
 interface Props {
   resourceCode: string | null;
@@ -82,65 +83,83 @@ export function RegistryResourceEditor({ resourceCode }: Props) {
   if (!resourceCode) return null;
 
   return (
-    <div className="rounded-lg border border-emerald-800/40 bg-emerald-950/10 p-4 space-y-3">
+    <div
+      className="rounded-lg border border-wo-border-strong bg-wo-surface-raised p-4 space-y-3"
+      data-testid="registry-resource-editor"
+    >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Database className="w-4 h-4 text-emerald-400" />
-          <h4 className="text-sm font-semibold text-emerald-100">Registry resursă (canonical)</h4>
+          <Database className="w-4 h-4 text-wo-success shrink-0" />
+          <h4 className="text-[13px] font-bold text-wo-text-primary">Registry manual (control)</h4>
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded border border-slate-600 text-slate-300"
+          className="inline-flex items-center gap-1 px-2 py-1 text-[11px] rounded-md border border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary hover:bg-wo-hover transition-colors"
         >
           <RefreshCw className="w-3 h-3" />
           Reîncarcă
         </button>
       </div>
 
-      {loading && <p className="text-xs text-slate-400">Se încarcă…</p>}
+      {loading && <p className="text-[11px] text-wo-text-muted">Se încarcă…</p>}
       {error && (
-        <p className="text-xs text-red-300 flex items-center gap-1">
-          <AlertTriangle className="w-3 h-3" />
+        <p className={`text-[11px] flex items-center gap-1 rounded-md px-2 py-1.5 ${chromeBanner.error}`}>
+          <AlertTriangle className="w-3 h-3 shrink-0" />
           {error}
         </p>
       )}
-      {saved && <p className="text-xs text-emerald-300">capacity_metadata salvat (merge non-destructiv).</p>}
+      {saved && (
+        <p className={`text-[11px] rounded-md px-2 py-1.5 ${chromeBanner.success}`}>
+          capacity_metadata salvat (merge non-destructiv).
+        </p>
+      )}
 
       {resource && !loading && (
         <>
-          <dl className="grid grid-cols-2 gap-2 text-xs">
+          <dl className="grid grid-cols-2 gap-3 text-[11px]">
             <div>
-              <dt className="text-slate-500">Cod</dt>
-              <dd className="font-mono text-slate-200">{resource.resource_code}</dd>
+              <dt className="text-[10px] font-bold uppercase tracking-wide text-wo-text-primary mb-0.5">
+                Cod
+              </dt>
+              <dd className="font-mono text-[12px] text-wo-text-primary">{resource.resource_code}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Tip</dt>
-              <dd className="text-slate-200">{resource.resource_kind}</dd>
+              <dt className="text-[10px] font-bold uppercase tracking-wide text-wo-text-primary mb-0.5">
+                Tip
+              </dt>
+              <dd className="text-[12px] text-wo-text-primary">{resource.resource_kind}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Workcenter</dt>
-              <dd className="text-slate-200">{workcenterLabel}</dd>
+              <dt className="text-[10px] font-bold uppercase tracking-wide text-wo-text-primary mb-0.5">
+                Workcenter
+              </dt>
+              <dd className="text-[12px] text-wo-text-primary">{workcenterLabel}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">Status</dt>
-              <dd className="text-slate-200">{resource.operational_status}</dd>
+              <dt className="text-[10px] font-bold uppercase tracking-wide text-wo-text-primary mb-0.5">
+                Status
+              </dt>
+              <dd className="text-[12px] text-wo-text-primary">{resource.operational_status}</dd>
             </div>
           </dl>
-          <label className="block space-y-1">
-            <span className="text-xs font-semibold text-slate-300">capacity_metadata (JSON)</span>
+          <label className="block space-y-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-wo-text-primary">
+              capacity_metadata (JSON)
+            </span>
             <textarea
               value={metadataJson}
               onChange={(e) => setMetadataJson(e.target.value)}
               rows={8}
-              className="w-full font-mono text-xs rounded border border-slate-700 bg-slate-950 text-slate-200 p-2"
+              spellCheck={false}
+              className="w-full font-mono text-[11px] rounded-md border border-wo-border-strong bg-wo-surface-inset text-wo-text-primary placeholder:text-wo-text-dim p-2.5 outline-none focus:border-wo-info/50 focus:ring-1 focus:ring-[hsl(var(--wo-focus-ring))]"
             />
           </label>
           <button
             type="button"
             onClick={() => void saveMetadata()}
             disabled={saving}
-            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs rounded bg-emerald-700 hover:bg-emerald-600 text-white disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-md border border-wo-success/40 bg-wo-success-muted text-wo-success hover:bg-wo-hover disabled:opacity-50 transition-colors"
           >
             <Save className="w-3 h-3" />
             Salvează metadata
