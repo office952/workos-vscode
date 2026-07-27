@@ -63,9 +63,9 @@ function SummaryMetric({
   return (
     <div
       data-testid={testId}
-      className={`rounded-lg border border-slate-800/80 bg-slate-950/40 px-3 py-2 ${muted ? "opacity-80" : ""}`}
+      className={`rounded-lg border border-wo-border-strong bg-wo-surface-inset px-3 py-2 ${muted ? "opacity-80" : ""}`}
     >
-      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-wide text-wo-text-muted">{label}</p>
       <p className="mt-0.5 text-[15px] font-bold text-wo-text-primary">{value}</p>
     </div>
   );
@@ -83,10 +83,10 @@ function ReadonlyPlaceholder({
   return (
     <section
       data-testid={testId}
-      className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-4"
+      className="rounded-xl border border-wo-border-strong bg-wo-surface-inset px-4 py-4"
     >
       <h2 className="text-[15px] font-bold text-wo-text-primary">{title}</h2>
-      <div className="mt-2 space-y-2 text-[12px] leading-relaxed text-slate-400">{children}</div>
+      <div className="mt-2 space-y-2 text-[12px] leading-relaxed text-wo-text-secondary">{children}</div>
     </section>
   );
 }
@@ -177,7 +177,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
 
       <section
         data-testid="product-system-summary-bar"
-        className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
+        className="rounded-xl border border-wo-border-strong bg-wo-surface-inset px-4 py-3"
       >
         <h2 className="text-[14px] font-bold text-wo-text-primary">Catalog summary</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
@@ -216,7 +216,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
           />
         </div>
         {summary.dossiers != null ? (
-          <p className="mt-2 text-[11px] text-slate-500">{summary.dossiersLabel}</p>
+          <p className="mt-2 text-[11px] text-wo-text-muted">{summary.dossiersLabel}</p>
         ) : null}
       </section>
 
@@ -254,7 +254,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
           className="rounded-xl border border-purple-900/30 bg-slate-950/20 px-4 py-3"
         >
           <h2 className="text-[15px] font-bold text-wo-text-primary">Active catalog roots / existing templates</h2>
-          <p className="mt-1 text-[12px] text-slate-400">
+          <p className="mt-1 text-[12px] text-wo-text-secondary">
             Offerable and in-preparation product roots including TPL-VOLUMETRIC-LETTERS_v2. Candidate readonly sets
             live in the Seturi Module produs tab.
           </p>
@@ -294,7 +294,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
           </p>
           <div className="mt-3">
             {candidateSetsPanel ?? (
-              <p className="text-[12px] text-slate-500">No readonly candidate sets in the current catalog.</p>
+              <p className="text-[12px] text-wo-text-muted">No readonly candidate sets in the current catalog.</p>
             )}
           </div>
         </section>
@@ -307,7 +307,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
             <>
               <p>
                 Candidate Module produs — Litere expune{" "}
-                <strong className="text-slate-200">{CANDIDATE_MODULE_DOSSIER_CONTRACT_FIXTURE.length}</strong> contracte
+                <strong className="text-wo-text-primary">{CANDIDATE_MODULE_DOSSIER_CONTRACT_FIXTURE.length}</strong> contracte
                 dossier readonly (Product Template + Module produs).
               </p>
               <p>
@@ -333,7 +333,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
           ) : (
             <p>No candidate guard bundle loaded in the current catalog view.</p>
           )}
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-wo-text-muted">
             No activation, no Work Intake exposure, no Pricing / Quote / Order / Execution wiring from this surface.
           </p>
         </ReadonlyPlaceholder>
@@ -341,9 +341,9 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
 
       {primaryTab === "archived" ? (
         <section data-testid="product-system-archived-tab-panel" className="space-y-3">
-          <div className="rounded-xl border border-slate-800/80 bg-slate-950/20 px-4 py-3">
+          <div className="rounded-xl border border-wo-border-strong bg-wo-surface-inset px-4 py-3">
             <h2 className="text-[15px] font-bold text-wo-text-primary">Archived / experimental templates</h2>
-            <p className="mt-1 text-[12px] text-slate-400">
+            <p className="mt-1 text-[12px] text-wo-text-secondary">
               Templates removed from active offerable flow — historical and experimental entries only.
             </p>
           </div>

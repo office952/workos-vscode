@@ -11,6 +11,7 @@ import {
   ProductSystemTemplateDetailPanel,
 } from "./ProductSystemTemplateDetailPanel";
 import { ProductSystemSpineBand } from "./ProductSystemSpineBand";
+import { ProductSystemSurfaceTruthChips } from "./ProductSystemSurfaceTruthChips";
 import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
 import { useProductSystemShell } from "./ProductSystemShellContext";
 import {
@@ -63,9 +64,9 @@ function rollupToneClass(rollup: CanonicalCatalogProduct["rollup"]): string {
     case "INTERNAL":
       return "border-slate-700 bg-slate-900/60 text-slate-300";
     case "DEPRECATED":
-      return "border-slate-700 bg-slate-900/60 text-slate-400";
+      return "border-slate-700 bg-slate-900/60 text-wo-text-secondary";
     default:
-      return "border-slate-800 bg-slate-900/50 text-slate-300";
+      return "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary";
   }
 }
 
@@ -147,21 +148,21 @@ function CatalogProductCard({
       className={`w-full rounded-xl border px-3 py-3 text-left transition-colors ${
         selected
           ? "border-purple-600/50 bg-purple-950/20"
-          : "border-slate-800/70 bg-slate-950/20 hover:border-slate-700 hover:bg-slate-900/30"
+          : "border-wo-border-strong bg-wo-surface-inset hover:border-wo-border-strong hover:bg-wo-hover"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-wo-text-primary">{product.displayName}</p>
-          <p className="mt-0.5 truncate text-xs text-slate-500">{product.familyName}</p>
+          <p className="mt-0.5 truncate text-xs text-wo-text-muted">{product.familyName}</p>
           <p
-            className="mt-1 font-mono text-[11px] text-slate-600"
+            className="mt-1 font-mono text-[11px] text-wo-text-dim"
             data-testid="product-system-canonical-card-template-code"
           >
             {product.templateCode}
           </p>
         </div>
-        <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-600" aria-hidden />
+        <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-wo-text-dim" aria-hidden />
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -172,7 +173,7 @@ function CatalogProductCard({
           {product.commercialChipRo}
         </span>
         <span
-          className="rounded-full border border-slate-800 bg-slate-900/60 px-2 py-0.5 text-[11px] font-medium text-slate-400"
+          className="rounded-full border border-wo-border-strong bg-wo-surface-inset px-2 py-0.5 text-[11px] font-medium text-wo-text-secondary"
           data-testid="product-system-canonical-card-capability"
         >
           {product.capabilityLabel === "Standalone" || product.capabilityLabel === "Both"
@@ -182,7 +183,7 @@ function CatalogProductCard({
               : product.capabilityLabel}
         </span>
         <span
-          className="rounded-full border border-slate-800/80 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+          className="rounded-full border border-wo-border-subtle px-2 py-0.5 text-[10px] font-medium text-wo-text-dim"
           data-testid="product-system-canonical-card-readiness-rollup"
           title="Pregătire tehnică — nu înlocuiește chip-ul comercial"
         >
@@ -223,11 +224,11 @@ function CatalogListSection({
   return (
     <section data-testid={testId} className="space-y-2">
       <div className="px-1">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</h3>
-        <p className="mt-0.5 text-xs text-slate-600">{description}</p>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-wo-text-muted">{title}</h3>
+        <p className="mt-0.5 text-xs text-wo-text-dim">{description}</p>
       </div>
       {products.length === 0 ? (
-        <p className="px-1 text-xs text-slate-500">{emptyMessage}</p>
+        <p className="px-1 text-xs text-wo-text-muted">{emptyMessage}</p>
       ) : (
         <div className="space-y-2" role="list">
           {products.map((product) => (
@@ -418,18 +419,18 @@ export function ProductSystemCanonicalCatalog({
       data-layout="comfortable"
     >
       <div
-        className="space-y-2 rounded-xl border border-slate-800/70 bg-slate-950/20 px-3 py-2"
+        className="space-y-2 rounded-xl border border-wo-border-strong bg-wo-surface-inset px-3 py-2"
         data-testid="product-system-catalog-toolbar"
       >
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-sm font-semibold text-slate-200">Catalog produse</h2>
-            <p className="mt-0.5 text-xs text-slate-500">
+            <h2 className="text-sm font-semibold text-wo-text-primary">Catalog produse</h2>
+            <p className="mt-0.5 text-xs text-wo-text-muted">
               Produse operationale canonice — un singur catalog, fara bucket-uri legacy.
             </p>
           </div>
           <span
-            className="self-start rounded-full border border-slate-800 bg-slate-950/60 px-2.5 py-1 text-[11px] font-bold tabular-nums text-slate-400"
+            className="self-start rounded-full border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1 text-[11px] font-bold tabular-nums text-wo-text-secondary"
             data-testid="product-system-canonical-catalog-count"
           >
             {loading ? "…" : visibleCount}
@@ -447,7 +448,7 @@ export function ProductSystemCanonicalCatalog({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="Cauta dupa nume, cod template sau familie…"
             data-testid="product-system-canonical-search-input"
-            className="w-full rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-700/50 focus:outline-none"
+            className="w-full rounded-lg border border-wo-border-strong bg-wo-surface-input px-3 py-2 text-sm text-wo-text-primary placeholder:text-wo-text-dim focus:border-purple-700/50 focus:outline-none"
           />
         </div>
 
@@ -473,7 +474,7 @@ export function ProductSystemCanonicalCatalog({
                   className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
                     active
                       ? "border-purple-600/50 bg-purple-950/30 text-purple-100"
-                      : "border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                      : "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary hover:border-wo-border-strong hover:text-wo-text-primary"
                   }`}
                 >
                   {chip.label}
@@ -492,8 +493,8 @@ export function ProductSystemCanonicalCatalog({
                       onClick={() => setFilter(chip.id)}
                       className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
                         active
-                          ? "border-slate-600/50 bg-slate-900/70 text-slate-200"
-                          : "border-slate-800 bg-slate-900/50 text-slate-500 hover:border-slate-700 hover:text-slate-300"
+                          ? "border-slate-600/50 bg-slate-900/70 text-wo-text-primary"
+                          : "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted hover:border-wo-border-strong hover:text-wo-text-secondary"
                       }`}
                     >
                       {chip.label}
@@ -508,17 +509,17 @@ export function ProductSystemCanonicalCatalog({
       <div className="grid gap-4 xl:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)] xl:items-start">
         <section data-testid="product-system-canonical-results-list" className="space-y-4">
           {loading ? (
-            <p className="px-1 text-sm text-slate-500">Se incarca catalogul…</p>
+            <p className="px-1 text-sm text-wo-text-muted">Se incarca catalogul…</p>
           ) : showOperatorEmpty ? (
             <div
-              className="rounded-xl border border-dashed border-slate-800 px-4 py-8 text-center"
+              className="rounded-xl border border-dashed border-wo-border-strong px-4 py-8 text-center"
               data-testid="product-system-canonical-empty-operational"
             >
               <p className="text-sm font-medium text-slate-300">Nu exista produse operationale disponibile.</p>
             </div>
           ) : showFilteredEmpty ? (
             <div
-              className="rounded-xl border border-dashed border-slate-800 px-4 py-8 text-center"
+              className="rounded-xl border border-dashed border-wo-border-strong px-4 py-8 text-center"
               data-testid="product-system-canonical-empty-filtered"
             >
               <p className="text-sm font-medium text-slate-300">
@@ -537,10 +538,10 @@ export function ProductSystemCanonicalCatalog({
               />
               {canViewAdvanced && filter === "all" && advancedProducts.length > 0 ? (
                 <details
-                  className="rounded-lg border border-slate-800/70 px-2 py-2"
+                  className="rounded-lg border border-wo-border-strong px-2 py-2"
                   data-testid="product-system-canonical-advanced-details"
                 >
-                  <summary className="cursor-pointer select-none px-1 text-[11px] font-medium text-slate-500 hover:text-slate-300">
+                  <summary className="cursor-pointer select-none px-1 text-[11px] font-medium text-wo-text-muted hover:text-slate-300">
                     Admin — catalog intern / depreciat ({advancedProducts.length})
                   </summary>
                   <div className="mt-2">
@@ -571,7 +572,7 @@ export function ProductSystemCanonicalCatalog({
 
         <section
           data-testid="product-system-detail-panel"
-          className="min-h-[22rem] rounded-xl border border-slate-800/70 bg-slate-950/20 p-4 xl:sticky xl:top-3 xl:max-h-[calc(100vh-148px)] xl:overflow-y-auto"
+          className="min-h-[22rem] rounded-xl border border-wo-border-strong bg-wo-surface-inset p-4 xl:sticky xl:top-3 xl:max-h-[calc(100vh-148px)] xl:overflow-y-auto"
         >
           {templateQueryMessage ? (
             <div
@@ -580,9 +581,9 @@ export function ProductSystemCanonicalCatalog({
             >
               <p className="text-sm font-medium text-amber-200">{templateQueryMessage}</p>
               {normalizedRequestedCode ? (
-                <p className="mt-2 font-mono text-xs text-slate-500">{normalizedRequestedCode}</p>
+                <p className="mt-2 font-mono text-xs text-wo-text-muted">{normalizedRequestedCode}</p>
               ) : null}
-              <p className="mt-3 max-w-sm text-xs leading-relaxed text-slate-500">
+              <p className="mt-3 max-w-sm text-xs leading-relaxed text-wo-text-muted">
                 Selecteaza un produs activ din catalog sau verifica codul template-ului solicitat.
               </p>
             </div>
@@ -592,17 +593,18 @@ export function ProductSystemCanonicalCatalog({
               data-testid="product-system-detail-empty-story"
             >
               <div>
-                <p className="text-sm font-semibold text-slate-200">
+                <p className="text-sm font-semibold text-wo-text-primary">
                   Alege un Product Template
                 </p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                <p className="mt-1 text-xs leading-relaxed text-wo-text-muted">
                   Centrul workspace: Product Template + Structură produs + Product Compiler +
                   Pregătire. Cost / Ofertă / Execution sunt doar downstream (secundar).
                 </p>
               </div>
               <ProductSystemSpineBand />
+              <ProductSystemSurfaceTruthChips testId="product-system-legacy-surface-truth-chips" />
               <details data-testid="product-system-detail-empty-downstream">
-                <summary className="cursor-pointer select-none text-[11px] font-medium text-slate-500 hover:text-slate-300">
+                <summary className="cursor-pointer select-none text-[11px] font-medium text-wo-text-muted hover:text-wo-text-secondary">
                   Downstream (secundar)
                 </summary>
                 <div className="mt-2">

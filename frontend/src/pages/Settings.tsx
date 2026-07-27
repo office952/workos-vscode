@@ -886,9 +886,9 @@ function IntegrationsTab() {
           </div>
 
           {health.warnings.length > 0 && (
-            <div className="flex items-start gap-2 px-3 py-3 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-              <div className="text-[12px] text-amber-600 dark:text-amber-300 space-y-1">
+            <div className={`flex items-start gap-2 px-3 py-3 rounded-lg ${chromeBanner.warning}`}>
+              <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+              <div className="text-[12px] space-y-1">
                 {health.warnings.map((warning) => (
                   <p key={warning}>{warning}</p>
                 ))}
@@ -911,7 +911,7 @@ const PAYMENT_CATEGORIES: { value: string; label: string; cls: string }[] = [
   { value: "asigurare", label: "Asigurare", cls: "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700" },
   { value: "abonament", label: "Abonament", cls: "bg-cyan-50 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-700" },
   { value: "servicii", label: "Servicii", cls: "bg-teal-50 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700" },
-  { value: "alte_costuri", label: "Alte costuri", cls: "bg-slate-700/60 text-muted-foreground border-slate-600" },
+  { value: "alte_costuri", label: "Alte costuri", cls: "bg-wo-surface-inset text-muted-foreground border-wo-border-strong" },
 ];
 
 const PAYMENT_PERIODICITY: { value: string; label: string }[] = [
@@ -934,7 +934,7 @@ function categoryConfig(v: string) {
     PAYMENT_CATEGORIES.find((c) => c.value === v) ?? {
       value: v,
       label: v,
-      cls: "bg-slate-700/60 text-muted-foreground border-slate-600",
+      cls: "bg-wo-surface-inset text-muted-foreground border-wo-border-strong",
     }
   );
 }
@@ -1226,7 +1226,7 @@ function RecurringPaymentsTab() {
           className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
             categoryFilter === "all"
               ? "bg-blue-600/20 text-blue-600 dark:text-blue-400 border-blue-500/50"
-              : "bg-card text-muted-foreground border-border hover:border-slate-500"
+              : "bg-card text-muted-foreground border-border hover:border-wo-border-strong"
           }`}
         >
           Toate ({items.length})
@@ -1243,7 +1243,7 @@ function RecurringPaymentsTab() {
               className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
                 categoryFilter === cat.value
                   ? "bg-blue-600/20 text-blue-600 dark:text-blue-400 border-blue-500/50"
-                  : "bg-card text-muted-foreground border-border hover:border-slate-500"
+                  : "bg-card text-muted-foreground border-border hover:border-wo-border-strong"
               }`}
             >
               {cat.label} ({count})
@@ -1253,7 +1253,7 @@ function RecurringPaymentsTab() {
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => void load()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reîncarcă
@@ -1300,7 +1300,7 @@ function RecurringPaymentsTab() {
                   className={`bg-card border rounded-lg p-3 cursor-pointer transition-all ${
                     active
                       ? "border-blue-500/50 ring-1 ring-blue-500/30"
-                      : "border-border hover:border-slate-500"
+                      : "border-border hover:border-wo-border-strong"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1423,7 +1423,7 @@ function PaymentDetail({
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={onEdit}
-            className="p-1.5 text-muted-foreground hover:text-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+            className="p-1.5 text-muted-foreground hover:text-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong"
             title="Editează"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -1667,7 +1667,7 @@ function PaymentForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+          className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong"
         >
           Anulează
         </button>
@@ -1832,18 +1832,46 @@ function CostEngineTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+          <Calculator className="w-4 h-4 text-wo-info" />
           <h2 className="text-[14px] font-bold text-foreground">
             Configurație cost intern
           </h2>
         </div>
         <button
           onClick={() => void load()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong hover:bg-wo-hover"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Reîncarcă
         </button>
+      </div>
+
+      <div
+        className={`rounded-lg px-3 py-2.5 space-y-2 ${chromeBanner.warning}`}
+        data-testid="settings-cost-rate-honesty"
+      >
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="rounded border border-wo-warning/40 bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold text-wo-warning">
+            INTERNAL ONLY
+          </span>
+          <span className="rounded border border-wo-border-strong bg-wo-surface-inset px-1.5 py-0.5 text-[10px] font-semibold text-wo-text-secondary">
+            NOT CLIENT PRICE
+          </span>
+          <span className="rounded border border-wo-info/40 bg-wo-info-muted px-1.5 py-0.5 text-[10px] font-semibold text-wo-info">
+            FROZEN
+          </span>
+          <span className="rounded border border-wo-warning/40 bg-wo-warning-muted px-1.5 py-0.5 text-[10px] font-semibold text-wo-warning">
+            NEEDS OWNER GO
+          </span>
+        </div>
+        <p className="text-[11px] leading-relaxed">
+          <code className="font-mono text-[10px]">labour_rate</code>
+          {" / "}
+          <code className="font-mono text-[10px]">machine_rate</code>
+          {" / "}
+          <code className="font-mono text-[10px]">workcenter</code> hourly și costurile oră manoperă /
+          overhead sunt tarife de cost intern — nu preț client și nu ofertă comercială.
+        </p>
       </div>
 
       {loadError && (
@@ -1895,13 +1923,13 @@ function CostEngineTab() {
               label="Cost mediu manoperă / h"
               value={fmtMoney(baseConfig.average_labour_hour_cost)}
               suffix={baseConfig.currency}
-              hint="cost_lunar_firma / ore_productive_luna"
+              hint="labour_rate intern · ≠ preț client · cost_lunar_firma / ore_productive_luna"
             />
             <MetricCard
               label="Overhead / h"
               value={fmtMoney(baseConfig.overhead_hour_cost)}
               suffix={baseConfig.currency}
-              hint="overhead lunar / ore productive totale"
+              hint="cost intern / h · NOT CLIENT PRICE · overhead lunar / ore productive"
             />
             <MetricCard
               label="Overhead lunar"
@@ -1933,7 +1961,7 @@ function CostEngineTab() {
           </div>
 
           {baseConfig.warnings.length > 0 && (
-            <div className="mt-3 bg-amber-900/20 border border-amber-700/50 text-amber-200 text-[11px] rounded-md px-3 py-2 space-y-1">
+            <div className={`mt-3 text-[11px] rounded-md px-3 py-2 space-y-1 ${chromeBanner.warning}`}>
               {baseConfig.warnings.map((w, i) => (
                 <div key={i} className="flex items-start gap-1.5">
                   <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
@@ -1945,7 +1973,7 @@ function CostEngineTab() {
           <p className="text-[10px] text-muted-foreground italic mt-3">
             Aceste valori sunt calculate exclusiv de backend (endpoint
             GET&nbsp;/api/v1/cost-engine/base-config). Frontend-ul le afișează
-            fără recalcul.
+            fără recalcul. Nu sunt preț client.
           </p>
         </div>
       )}
@@ -1959,7 +1987,7 @@ function CostEngineTab() {
             {!editing && (
               <button
                 onClick={startEdit}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong"
               >
                 <Pencil className="w-3.5 h-3.5" />
                 Editează
@@ -1992,7 +2020,7 @@ function CostEngineTab() {
                 }
               />
               <InfoRow
-                label="Cost oră manoperă default"
+                label="Cost oră manoperă default (INTERNAL ONLY)"
                 value={
                   config.cost_ora_manopera_default === null ||
                   config.cost_ora_manopera_default === undefined
@@ -2046,12 +2074,12 @@ function CostEngineTab() {
                 />
               </div>
               <TextField
-                label="Cost oră manoperă default"
+                label="Cost oră manoperă default (INTERNAL ONLY)"
                 value={form.cost_ora_manopera_default}
                 onChange={(v) => updateField("cost_ora_manopera_default", v)}
                 type="number"
                 error={errors.cost_ora_manopera_default}
-                hint="Folosit ca fallback dacă angajatul nu are date complete."
+                hint="Fallback cost intern — nu este preț client. Folosit dacă angajatul nu are date complete."
               />
               <label className="flex items-center gap-2 text-[12px] text-foreground">
                 <input
@@ -2083,7 +2111,7 @@ function CostEngineTab() {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
+                  className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-wo-border-strong"
                 >
                   Anulează
                 </button>

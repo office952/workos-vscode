@@ -13,10 +13,10 @@ import {
 import { PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 const STEP_TONE: Record<ProductSystemSpineStep["id"], string> = {
-  template: "border-purple-700/50 bg-purple-950/30 text-purple-100",
-  structure: "border-cyan-700/50 bg-cyan-950/30 text-cyan-100",
-  compiler: "border-violet-700/50 bg-violet-950/30 text-violet-100",
-  readiness: "border-sky-700/50 bg-sky-950/30 text-sky-100",
+  template: "border-wo-info/40 bg-wo-info-muted text-wo-info",
+  structure: "border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-700/50 dark:bg-cyan-950/30 dark:text-cyan-100",
+  compiler: "border-violet-300 bg-violet-50 text-violet-800 dark:border-violet-700/50 dark:bg-violet-950/30 dark:text-violet-100",
+  readiness: "border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-700/50 dark:bg-sky-950/30 dark:text-sky-100",
 };
 
 export function ProductSystemSpineBand({
@@ -41,7 +41,7 @@ export function ProductSystemSpineBand({
                 className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
                   active
                     ? STEP_TONE[step.id]
-                    : "border-slate-800 bg-slate-900/50 text-slate-400"
+                    : "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary"
                 }`}
                 title={step.hint}
               >
@@ -51,14 +51,14 @@ export function ProductSystemSpineBand({
                 <span>{step.label}</span>
               </div>
               {i < PRODUCT_SYSTEM_SPINE_STEPS.length - 1 ? (
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-600" aria-hidden />
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-wo-text-dim" aria-hidden />
               ) : null}
             </div>
           );
         })}
       </div>
       {!compact ? (
-        <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+        <p className="mt-2 text-[11px] leading-relaxed text-wo-text-muted">
           {PRODUCT_SYSTEM_SPINE_TAGLINE}
         </p>
       ) : null}

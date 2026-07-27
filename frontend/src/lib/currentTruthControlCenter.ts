@@ -1330,19 +1330,27 @@ export const MODULE_CHAIN_TABS = [
 export type ModuleChainTabId = (typeof MODULE_CHAIN_TABS)[number]["id"];
 
 export function presentStatusBadgeClass(status: PresentStatus): string {
-  if (status === "CONFIRMAT") return "bg-emerald-900/30 text-emerald-300 border-emerald-700";
-  if (status === "PARTIAL") return "bg-amber-900/30 text-amber-300 border-amber-700";
-  if (status === "BLOCAT") return "bg-red-900/30 text-red-300 border-red-700";
-  if (status === "INACTIV") return "bg-slate-700/50 text-slate-400 border-slate-600";
-  return "bg-slate-700/60 text-slate-300 border-slate-600";
+  if (status === "CONFIRMAT")
+    return "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
+  if (status === "PARTIAL")
+    return "bg-wo-warning-muted text-wo-warning border-wo-warning/40";
+  if (status === "BLOCAT")
+    return "bg-red-50 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700";
+  if (status === "INACTIV")
+    return "bg-wo-surface-inset text-wo-text-muted border-wo-border-strong";
+  return "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong";
 }
 
 export function governanceStatusBadgeClass(status: GovernanceEnforcementStatus): string {
-  if (status === "APLICAT") return "bg-emerald-900/30 text-emerald-300 border-emerald-700";
-  if (status === "PARTIAL APLICAT") return "bg-amber-900/30 text-amber-300 border-amber-700";
-  if (status === "POLITICA OWNER") return "bg-blue-900/30 text-blue-300 border-blue-700";
-  if (status === "NEAPLICAT") return "bg-red-900/30 text-red-300 border-red-700";
-  return "bg-slate-700/60 text-slate-300 border-slate-600";
+  if (status === "APLICAT")
+    return "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
+  if (status === "PARTIAL APLICAT")
+    return "bg-wo-warning-muted text-wo-warning border-wo-warning/40";
+  if (status === "POLITICA OWNER")
+    return "bg-wo-info-muted text-wo-info border-wo-info/40";
+  if (status === "NEAPLICAT")
+    return "bg-red-50 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700";
+  return "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong";
 }
 
 /** Cross-page helpers — same names/owners for Modules + Governance. */
