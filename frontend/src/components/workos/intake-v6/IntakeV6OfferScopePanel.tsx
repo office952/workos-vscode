@@ -388,9 +388,10 @@ export default function IntakeV6OfferScopePanel({
         })}
       </div>
 
-      {/* Radios kept for a11y / tests; visually collapsed to avoid duplicating presets */}
-      <fieldset className="sr-only" disabled={disabled || saving} aria-label="Mod ofertă">
-        <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
+      {/* Radios stay for a11y/tests only — chips are the sole visible "Ce producem?" controls. */}
+      <fieldset className="sr-only" disabled={disabled || saving} aria-label="Mod ofertă (ascuns)">
+        <legend className="sr-only">Mod ofertă</legend>
+        <label>
           <input
             type="radio"
             name="intake-v6-offer-scope-mode"
@@ -400,7 +401,7 @@ export default function IntakeV6OfferScopePanel({
           />
           Produs complet
         </label>
-        <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
+        <label>
           <input
             type="radio"
             name="intake-v6-offer-scope-mode"

@@ -114,19 +114,22 @@ export default function IntakeV6LayersOperatorPanel({
             </p>
           ) : null}
 
-          <IntakeV6Nest2SvgUploader
-            inputTestId="intake-v6-svg-input"
-            busy={analyzing}
-            disabled={!canImportSvg}
-            label="Încarcă SVG"
-            busyLabel="Analizez..."
-            buttonClassName={
-              report && confirmation && confirmation.confirmationStatus !== "complete"
-                ? `${v6.btnGhost} w-full`
-                : v6.btnPrimary
-            }
-            onFileSelected={(file) => void onImportFile(file)}
-          />
+          {/* Primary empty-state upload lives in the preview dropzone — avoid dual "Încarcă SVG". */}
+          {report ? (
+            <IntakeV6Nest2SvgUploader
+              inputTestId="intake-v6-svg-input"
+              busy={analyzing}
+              disabled={!canImportSvg}
+              label="Schimbă SVG"
+              busyLabel="Analizez..."
+              buttonClassName={`${v6.btnGhost} w-full`}
+              onFileSelected={(file) => void onImportFile(file)}
+            />
+          ) : (
+            <p className={v6.helper} data-testid="intake-v6-operator-upload-hint">
+              Încarcă SVG din zona de confirmare fișier (stânga).
+            </p>
+          )}
         </div>
 
         {!workspaceReady ? (

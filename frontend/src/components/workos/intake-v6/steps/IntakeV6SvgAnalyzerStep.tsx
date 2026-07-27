@@ -743,7 +743,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 
 			{workspaceReady && !report && !analyzing && !fatalError ? (
 				<p className={`${v6.helper} mt-4`} data-testid="intake-v6-empty-analyzer-state">
-					Nu există încă o analiză SVG salvată. Folosește panoul operator pentru upload.
+					Nu există încă o analiză SVG salvată. Încarcă SVG din zona de confirmare fișier.
 				</p>
 			) : null}
 
