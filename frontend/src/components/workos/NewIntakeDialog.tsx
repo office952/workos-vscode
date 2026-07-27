@@ -54,8 +54,8 @@ function getTemplateHintPresentation(template: ProductTemplateAvailabilityItem):
     familyLabel: scope.familyLabel,
     badgeLabel: scope.statusLabel,
     badgeClassName: scope.isDirectRootAllowed
-      ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"
-      : "text-amber-300 bg-amber-500/10 border-amber-500/30",
+      ? "text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border-emerald-600/30 dark:border-emerald-500/30"
+      : "text-amber-900 dark:text-amber-300 bg-amber-500/15 border-amber-600/30 dark:border-amber-500/30",
     description: scope.shortDescription,
     workIntakeLabel: scope.workIntakeLabel,
     directRootLabel: scope.rootDirectLabel,
@@ -317,15 +317,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
       <div className="bg-wo-surface-inset border border-wo-border-strong rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3 border-b border-wo-border-strong">
           <div className="flex items-center gap-2">
-            <Plus className="w-4 h-4 text-emerald-400" />
-            <h2 className="text-[14px] font-bold text-slate-100">Cerere Nouă</h2>
-            <span className="text-[10px] text-slate-500 bg-slate-800/60 px-2 py-0.5 rounded">
+            <Plus className="w-4 h-4 text-emerald-500" />
+            <h2 className="text-[15px] font-bold text-wo-text-primary tracking-tight">Cerere nouă</h2>
+            <span className="text-[10px] font-medium text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded">
               Pas {step === "method" ? "1" : step === "template" ? "2" : "3"}/3
             </span>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-200 transition-colors"
+            className="text-wo-text-muted hover:text-wo-text-primary transition-colors"
             aria-label="Închide"
           >
             <X className="w-4 h-4" />
@@ -336,8 +336,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           {step === "method" && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-[14px] font-bold text-slate-100">Alege modalitatea de ofertare</h3>
-                <p className="text-[12px] text-slate-400 mt-1">
+                <h3 className="text-[14px] font-bold text-wo-text-primary">Alege modalitatea de ofertare</h3>
+                <p className="text-[12px] text-wo-text-muted mt-1.5 leading-relaxed">
                   Selectează cum începe cererea comercială. Prima metodă activă pornește workspace-ul modular Intake V6.
                 </p>
               </div>
@@ -351,15 +351,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                     className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                       selectedOfferMethod === method.id
                         ? "bg-blue-600/15 border-blue-500/50"
-                        : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
-                    } ${method.enabled ? "" : "opacity-50 cursor-not-allowed"}`}
+                        : "bg-wo-surface-raised border-wo-border-strong hover:border-wo-border-strong hover:bg-wo-hover"
+                    } ${method.enabled ? "" : "opacity-55 cursor-not-allowed"}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-[13px] font-bold text-slate-100">{method.label}</p>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{method.description}</p>
+                        <p className="text-[13px] font-bold text-wo-text-primary">{method.label}</p>
+                        <p className="text-[11px] text-wo-text-muted mt-1 leading-relaxed">{method.description}</p>
                       </div>
-                      <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
+                      <span className="shrink-0 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-600/30 dark:border-emerald-500/30 rounded px-2 py-0.5">
                         {method.statusLabel}
                       </span>
                     </div>
@@ -372,21 +372,21 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           {step === "template" && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-[14px] font-bold text-slate-100">Hint Product System opțional</h3>
-                <p className="text-[12px] text-slate-400 mt-1">
+                <h3 className="text-[14px] font-bold text-wo-text-primary">Hint Product System opțional</h3>
+                <p className="text-[12px] text-wo-text-muted mt-1.5 leading-relaxed">
                   Analyzer-ul pornește primul. Alege un hint doar dacă operatorul știe deja familia probabilă.
                 </p>
               </div>
               <section className="space-y-2">
                 <div className="flex items-center gap-1.5">
-                  <Boxes className="w-3.5 h-3.5 text-blue-400" />
-                  <h4 className="text-[12px] font-bold text-slate-200">Template hint</h4>
+                  <Boxes className="w-3.5 h-3.5 text-blue-500" />
+                  <h4 className="text-[12px] font-bold text-wo-text-secondary">Template hint</h4>
                 </div>
                 <div className="space-y-2" data-testid="template-hint-list">
                   {loadingTemplates ? (
-                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile candidate...</p>
+                    <p className="text-[11px] text-wo-text-muted p-4 text-center">Se încarcă template-urile candidate...</p>
                   ) : visibleTemplates.length === 0 ? (
-                    <p className="text-[11px] text-slate-500 p-4 text-center border border-wo-border-strong rounded-lg bg-wo-surface-raised">
+                    <p className="text-[11px] text-wo-text-muted p-4 text-center border border-wo-border-strong rounded-lg bg-wo-surface-raised">
                       Nu există template-uri candidate disponibile.
                     </p>
                   ) : (
@@ -396,18 +396,18 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                         selectedTemplateCode === null
                           ? "bg-blue-600/15 border-blue-500/50"
-                          : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
+                          : "bg-wo-surface-raised border-wo-border-strong hover:border-wo-border-strong hover:bg-wo-hover"
                       }`}
                       data-testid="analyzer-first-no-template-hint"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-[13px] font-bold text-slate-100">Analyzer-first</p>
-                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                          <p className="text-[13px] font-bold text-wo-text-primary">Analyzer-first</p>
+                          <p className="text-[11px] text-wo-text-muted mt-1 leading-relaxed">
                             {analyzerFirstPresentation.shortDescription}
                           </p>
                         </div>
-                        <span className="shrink-0 text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded px-2 py-0.5">
+                        <span className="shrink-0 text-[10px] font-semibold text-blue-800 dark:text-blue-300 bg-blue-500/15 border border-blue-600/30 dark:border-blue-500/30 rounded px-2 py-0.5">
                           {analyzerFirstPresentation.statusLabel}
                         </span>
                       </div>
@@ -425,27 +425,27 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                           className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
                             selectedTemplateCode === template.template_code
                               ? "bg-blue-600/15 border-blue-500/50"
-                              : "bg-wo-surface-raised border-wo-border-strong hover:border-slate-500"
+                              : "bg-wo-surface-raised border-wo-border-strong hover:border-wo-border-strong hover:bg-wo-hover"
                           }`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
-                              <p className="text-[10px] uppercase tracking-wide text-slate-500 mt-1">
+                              <p className="text-[13px] font-mono font-bold text-wo-text-primary break-all">{template.template_code}</p>
+                              <p className="text-[10px] uppercase tracking-wide text-wo-text-dim mt-1">
                                 {presentation.categoryLabel}
                               </p>
-                              <p className="text-[11px] text-slate-400 mt-1">{presentation.familyLabel}</p>
-                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{presentation.description}</p>
+                              <p className="text-[11px] text-wo-text-secondary mt-1">{presentation.familyLabel}</p>
+                              <p className="text-[11px] text-wo-text-muted mt-1 leading-relaxed">{presentation.description}</p>
                               <div className="mt-2 flex flex-wrap gap-2 text-[10px]">
-                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-300">
+                                <span className="rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-0.5 text-wo-text-secondary">
                                   {presentation.workIntakeLabel}
                                 </span>
-                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-400">
+                                <span className="rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-0.5 text-wo-text-muted">
                                   {presentation.directRootLabel}
                                 </span>
                               </div>
                               {template.has_modules ? (
-                                <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
+                                <p className="text-[10px] text-wo-text-muted mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
                               ) : null}
                             </div>
                             <span
@@ -465,7 +465,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
 
           {step === "details" && (
             <div className="space-y-4">
-              <p className="text-[12px] text-slate-400">
+              <p className="text-[12px] text-wo-text-muted leading-relaxed">
                 Alege un client existent sau creează unul nou.
                 <InfoHint label="Despre client temporar">
                   Clientul temporar poate fi convertit ulterior la identitate fiscală (CUI) înainte de acceptarea
@@ -489,8 +489,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                     }}
                     className={`flex items-center justify-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-lg border transition-colors ${
                       mode === m.v
-                        ? "bg-blue-600/20 text-blue-300 border-blue-500/50"
-                        : "bg-wo-surface-raised text-slate-400 border-wo-border-strong hover:border-slate-500"
+                        ? "bg-blue-600/20 text-blue-800 dark:text-blue-300 border-blue-500/50"
+                        : "bg-wo-surface-raised text-wo-text-muted border-wo-border-strong hover:bg-wo-hover hover:text-wo-text-secondary"
                     }`}
                   >
                     {m.icon}
@@ -502,7 +502,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
               {mode === "existing" && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 focus-within:border-blue-500/50">
-                    <Search className="w-4 h-4 text-slate-500" />
+                    <Search className="w-4 h-4 text-wo-text-dim" />
                     <input
                       id="new-intake-client-search"
                       name="new-intake-client-search"
@@ -510,15 +510,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       value={clientSearch}
                       onChange={(e) => setClientSearch(e.target.value)}
                       placeholder="Caută după nume, CUI, persoană contact..."
-                      className="bg-transparent text-[12px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+                      className="bg-transparent text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full"
                     />
                   </div>
                   <div className="max-h-60 overflow-y-auto border border-wo-border-strong rounded-lg bg-wo-surface-raised">
                     {loadingClients ? (
-                      <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă clienții...</p>
+                      <p className="text-[11px] text-wo-text-muted p-4 text-center">Se încarcă clienții...</p>
                     ) : filteredClients.length === 0 ? (
                       <div className="p-4 text-center">
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-wo-text-muted">
                           {clients.length === 0
                             ? "Nu există clienți în baza de date. Alege „Client Temporar\" pentru a crea unul rapid."
                             : "Niciun client găsit."}
@@ -533,13 +533,13 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                               className={`w-full text-left px-3 py-2 border-b border-wo-border-strong last:border-b-0 transition-colors ${
                                 selectedClient?.id === c.id
                                   ? "bg-blue-600/15"
-                                  : "hover:bg-slate-800/40"
+                                  : "hover:bg-wo-hover"
                               }`}
                             >
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <p className="text-[12px] font-semibold text-slate-200">{c.name}</p>
-                                  <p className="text-[10px] text-slate-500">
+                                  <p className="text-[12px] font-semibold text-wo-text-primary">{c.name}</p>
+                                  <p className="text-[10px] text-wo-text-muted">
                                     {c.identity_type === "fiscal" ? `CUI: ${c.cui ?? "—"}` : `TEMP: ${c.temp_ref ?? "—"}`}
                                     {c.contact_person ? ` · ${c.contact_person}` : ""}
                                   </p>
@@ -561,10 +561,10 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                 <div className="space-y-3">
                   <div>
                     <label
-                      className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                      className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                       htmlFor="new-intake-client-name"
                     >
-                      Nume Client <span className="text-red-400">*</span>
+                      Nume Client <span className="text-red-500">*</span>
                     </label>
                     <input
                       id="new-intake-client-name"
@@ -572,16 +572,16 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       value={newClient.name}
                       onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
                       placeholder="SC Exemplu SRL sau Ion Popescu"
-                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none focus:border-blue-500/50"
                     />
                   </div>
                   {mode === "new_fiscal" && (
                     <div>
                       <label
-                        className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                        className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                         htmlFor="new-intake-client-cui"
                       >
-                        CUI <span className="text-red-400">*</span>
+                        CUI <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="new-intake-client-cui"
@@ -589,14 +589,14 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.cui}
                         onChange={(e) => setNewClient({ ...newClient, cui: e.target.value })}
                         placeholder="RO12345678"
-                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none focus:border-blue-500/50"
                       />
                     </div>
                   )}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label
-                        className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                        className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                         htmlFor="new-intake-client-contact"
                       >
                         Persoană Contact
@@ -607,12 +607,12 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.contact_person}
                         onChange={(e) => setNewClient({ ...newClient, contact_person: e.target.value })}
                         placeholder="Numele persoanei"
-                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none focus:border-blue-500/50"
                       />
                     </div>
                     <div>
                       <label
-                        className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                        className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                         htmlFor="new-intake-client-phone"
                       >
                         Telefon
@@ -623,7 +623,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         value={newClient.phone}
                         onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
                         placeholder="07xx xxx xxx"
-                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50"
+                        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none focus:border-blue-500/50"
                       />
                     </div>
                   </div>
@@ -632,28 +632,28 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
               <div className="space-y-5 pt-2">
               <div className="flex items-center justify-between gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Template Product System</p>
-                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "Analyzer-first"}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Fără template final înainte de SVG"}</p>
+                  <p className="text-[10px] text-wo-text-dim uppercase tracking-wide">Template Product System</p>
+                  <p className="text-[13px] font-semibold text-wo-text-primary truncate">{selectedTemplate?.template_code ?? "Analyzer-first"}</p>
+                  <p className="text-[10px] text-wo-text-muted mt-0.5 truncate">{selectedTemplate?.family_name ?? "Fără template final înainte de SVG"}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep("template")}
-                  className="shrink-0 text-[11px] font-semibold text-blue-400 hover:text-blue-300"
+                  className="shrink-0 text-[11px] font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
                 >
                   Schimbă hint
                 </button>
               </div>
 
               <section className="space-y-3">
-                <h3 className="text-[12px] font-bold text-slate-200">Date cerere</h3>
+                <h3 className="text-[12px] font-bold text-wo-text-primary">Date cerere</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label
-                      className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                      className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                       htmlFor="new-intake-channel"
                     >
-                      Canal <span className="text-red-400">*</span>
+                      Canal <span className="text-red-500">*</span>
                     </label>
                     <select
                       id="new-intake-channel"
@@ -661,7 +661,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       aria-label="Canal"
                       value={intake.channel}
                       onChange={(e) => setIntake({ ...intake, channel: e.target.value })}
-                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-blue-500/50"
                     >
                       {CHANNELS.map((c) => (
                         <option key={c.value} value={c.value}>
@@ -672,7 +672,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   </div>
                   <div>
                     <label
-                      className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                      className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                       htmlFor="new-intake-priority"
                     >
                       Prioritate
@@ -685,7 +685,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       onChange={(e) =>
                         setIntake({ ...intake, priority: e.target.value as IntakeRequestEntity["priority"] })
                       }
-                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-blue-500/50"
                     >
                       {PRIORITIES.map((p) => (
                         <option key={p.value} value={p.value}>
@@ -696,7 +696,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   </div>
                   <div>
                     <label
-                      className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                      className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                       htmlFor="new-intake-delivery-type"
                     >
                       Tip livrare
@@ -707,7 +707,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       aria-label="Tip livrare"
                       value={intake.delivery_type}
                       onChange={(e) => setIntake({ ...intake, delivery_type: e.target.value })}
-                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary outline-none focus:border-blue-500/50"
                     >
                       {INTAKE_DELIVERY_OPTIONS.map((d) => (
                         <option key={d.value} value={d.value}>
@@ -718,10 +718,10 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   </div>
                   <div className="md:col-span-2">
                     <label
-                      className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1"
+                      className="text-[10px] text-wo-text-dim uppercase tracking-wide block mb-1"
                       htmlFor="new-intake-description"
                     >
-                      Descriere scurtă <span className="text-red-400">*</span>
+                      Descriere scurtă <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="new-intake-description"
@@ -730,7 +730,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       onChange={(e) => setIntake({ ...intake, description: e.target.value })}
                       placeholder="Ex: Litere volumetrice pentru fațadă, 12 caractere, montaj inclus..."
                       rows={3}
-                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50 resize-none"
+                      className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none focus:border-blue-500/50 resize-none"
                     />
                   </div>
                 </div>
@@ -740,9 +740,9 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           )}
 
           {(templateLoadError || error) && (
-            <div className="mt-3 flex items-start gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-              <AlertTriangle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
-              <p className="text-[11px] text-red-300">{error ?? templateLoadError}</p>
+            <div className="mt-3 flex items-start gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-lg">
+              <AlertTriangle className="w-3.5 h-3.5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-red-700 dark:text-red-300">{error ?? templateLoadError}</p>
             </div>
           )}
         </div>
@@ -750,7 +750,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
         <div className="flex items-center justify-between px-5 py-3 border-t border-wo-border-strong bg-wo-surface-inset">
           <button
             onClick={step === "details" ? () => setStep("template") : step === "template" ? () => setStep("method") : onClose}
-            className="text-[12px] font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+            className="text-[12px] font-semibold text-wo-text-muted hover:text-wo-text-primary transition-colors"
             disabled={submitting}
           >
             {step === "method" ? "Anulează" : "← Înapoi"}
@@ -758,7 +758,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           <div className="flex flex-col items-end gap-1">
             {step === "details" && !canSubmit() && !submitting && (
               <p
-                className="text-[10px] text-amber-400/90"
+                className="text-[10px] text-amber-800 dark:text-amber-400/90"
                 data-testid="create-intake-missing-requirements"
               >
                 Completează: client, descriere
@@ -772,7 +772,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   className={`px-4 py-2 text-[12px] font-bold rounded-lg transition-colors ${
                     canProceedFromMethod()
                       ? "bg-blue-600 hover:bg-blue-500 text-white"
-                      : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                      : "bg-wo-surface-raised text-wo-text-dim border border-wo-border-strong cursor-not-allowed"
                   }`}
                 >
                   Continuă →
@@ -784,7 +784,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   className={`px-4 py-2 text-[12px] font-bold rounded-lg transition-colors ${
                     canProceedFromTemplate()
                       ? "bg-blue-600 hover:bg-blue-500 text-white"
-                      : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                      : "bg-wo-surface-raised text-wo-text-dim border border-wo-border-strong cursor-not-allowed"
                   }`}
                 >
                   Continuă →
@@ -796,7 +796,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   className={`px-4 py-2 text-[12px] font-bold rounded-lg transition-colors flex items-center gap-2 ${
                     canSubmit() && !submitting
                       ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                      : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                      : "bg-wo-surface-raised text-wo-text-dim border border-wo-border-strong cursor-not-allowed"
                   }`}
                 >
                   {submitting ? (
