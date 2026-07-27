@@ -94,9 +94,9 @@ describe("operatorProductionBlockerPresentation", () => {
   });
 
   it("labels release allowed vs blocked from backend status", () => {
-    expect(productionReleaseStatusLabel("RELEASE_ALLOWED", false)).toBe("Productie permisa");
+    expect(productionReleaseStatusLabel("RELEASE_ALLOWED", false)).toBe("Producție permisă");
     expect(productionReleaseStatusLabel("RELEASE_BLOCKED_OWNER_DECISIONS", true)).toBe(
-      "Productie blocata",
+      "Producție blocată",
     );
   });
 });

@@ -56,7 +56,7 @@ describe("Operator production blocker UI", () => {
   it("renders blocked order-level release strip", () => {
     render(<OperatorProductionReleaseSummary truth={blockedTruth()} />);
     expect(screen.getByTestId("operator-production-release-status")).toHaveTextContent(
-      /Productie blocata/i,
+      /Producție blocată/i,
     );
     expect(screen.getByTestId("operator-production-blocker-count")).toHaveTextContent(
       /decizie/i,

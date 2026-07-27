@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { CncProcessableBadge } from "@/components/workos/CncProcessableBadge";
 import { machineCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge";
+import { presentMachineUtilization } from "@/lib/machineUtilizationHonesty";
 
 const machineStatusConfig: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
   running: { label: "Rulează", cls: "text-emerald-600 dark:text-emerald-400", icon: <Activity className="w-3 h-3" /> },
@@ -199,6 +200,19 @@ export default function Utilaje() {
         </p>
       </div>
 
+      <div
+        className="flex items-start gap-2 px-3 py-2 rounded-lg border border-cyan-200 bg-cyan-50 dark:border-cyan-800/40 dark:bg-cyan-950/20"
+        data-testid="utilaje-util-honesty"
+        role="note"
+      >
+        <Gauge className="w-4 h-4 text-cyan-700 dark:text-cyan-400 mt-0.5 shrink-0" />
+        <p className="text-[11px] text-cyan-900 dark:text-cyan-100/90">
+          Utilizare: același standard ca Dashboard — fără inventare de load. Registry fără job ={" "}
+          <span className="font-semibold">GAP</span> (nu 70% fals). PROXY doar când există semnal
+          demo/proxy explicit.
+        </p>
+      </div>
+
       {/* Status Summary */}
       <div className="grid grid-cols-3 gap-3">
         {(Object.entries(statusSummary) as [string, number][]).map(([status, count]) => {
@@ -275,19 +289,36 @@ export default function Utilaje() {
                         {stCfg.icon} {stCfg.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                      <span>{wc?.name || m.workcenterId}</span>
-                      <span>•</span>
-                      <span>Util: {m.utilizationPct}%</span>
-                      <span>•</span>
-                      <span>{m.currentJobId || "Fără job"}</span>
-                      {m.currentOperator && (
-                        <>
+                    {(() => {
+                      const util = presentMachineUtilization(m);
+                      return (
+                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-wrap">
+                          <span>{wc?.name || m.workcenterId}</span>
                           <span>•</span>
-                          <span>{m.currentOperator}</span>
-                        </>
-                      )}
-                    </div>
+                          <span
+                            className={`uppercase tracking-wide font-semibold px-1 py-0.5 rounded border ${
+                              util.kindLabel === "GAP"
+                                ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
+                                : util.kindLabel === "PROXY"
+                                  ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
+                                  : "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600/40 dark:bg-blue-900/30 dark:text-blue-300"
+                            }`}
+                            data-testid={`utilaje-util-kind-${m.id}`}
+                          >
+                            {util.kindLabel}
+                          </span>
+                          <span>Util: {util.displayPct}</span>
+                          <span>•</span>
+                          <span>{m.currentJobId || "Fără job"}</span>
+                          {m.currentOperator && (
+                            <>
+                              <span>•</span>
+                              <span>{m.currentOperator}</span>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                   <ChevronRight className="w-4 h-4 text-wo-text-dim shrink-0" />
                 </div>
@@ -373,13 +404,41 @@ export default function Utilaje() {
                   </div>
 
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
-                      <Gauge className="w-3 h-3" /> Utilizare
-                    </p>
-                    <UtilBar
-                      value={selected.utilizationPct}
-                      color={selected.utilizationPct >= 80 ? "bg-emerald-500" : selected.utilizationPct >= 50 ? "bg-amber-500" : "bg-red-500"}
-                    />
+                    {(() => {
+                      const util = presentMachineUtilization(selected);
+                      return (
+                        <>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1.5 flex-wrap">
+                            <Gauge className="w-3 h-3" /> Utilizare
+                            <span
+                              className="normal-case tracking-normal font-semibold px-1.5 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300"
+                              data-testid="utilaje-util-kind-selected"
+                            >
+                              {util.kindLabel}
+                            </span>
+                          </p>
+                          {util.showBar ? (
+                            <UtilBar
+                              value={util.barValue}
+                              color={
+                                util.barValue >= 80
+                                  ? "bg-emerald-500"
+                                  : util.barValue >= 50
+                                    ? "bg-amber-500"
+                                    : "bg-red-500"
+                              }
+                            />
+                          ) : (
+                            <p
+                              className="text-[12px] text-muted-foreground"
+                              data-testid="utilaje-util-gap"
+                            >
+                              {util.displayPct} — {util.note}
+                            </p>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">

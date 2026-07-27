@@ -173,6 +173,9 @@ export const contractHandoffs: ContractHandoff[] = [
 ];
 
 // --- MACHINES & WORKCENTERS ---
+/** Honesty kind for machine util — mirrors Dashboard ACTUAL/PROXY/GAP. */
+export type MachineUtilizationKind = "actual" | "proxy" | "placeholder";
+
 export interface Machine {
   id: string;
   name: string;
@@ -184,6 +187,11 @@ export interface Machine {
   currentOperator: string | null;
   runtimeMinutes: number;
   utilizationPct: number;
+  /**
+   * When absent on mock demo rows, UI may treat values as proxy.
+   * Registry/DB rows without shop-floor load must use "placeholder".
+   */
+  utilizationKind?: MachineUtilizationKind;
   queueCount: number;
   nextJobId: string | null;
 }

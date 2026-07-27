@@ -71,6 +71,7 @@ describe("OperatorTaskIdentityPresentation", () => {
       />,
     );
     expect(screen.getByTestId("operator-task-component-label")).toHaveTextContent("Panou montaj");
+    expect(screen.getByTestId("operator-task-technical-details")).toBeTruthy();
     expect(screen.getByText(/mounting_assembly/)).toBeTruthy();
   });
 

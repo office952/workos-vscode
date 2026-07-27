@@ -146,6 +146,17 @@ describe("Dashboard data source honesty", () => {
     expect(screen.getByText(/Load planificat pe workcenter/i)).toBeInTheDocument();
   });
 
+  it("allows progressive disclosure for honesty banner and gap noise", () => {
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
+    );
+    expect(screen.getByTestId("dashboard-honesty-banner-ack")).toBeInTheDocument();
+    expect(screen.getByTestId("dashboard-honesty-gaps-ack")).toBeInTheDocument();
+    expect(screen.getAllByTestId("kpi-gap-note").length).toBeGreaterThan(0);
+  });
+
   it("separates planned vs actual vs blocked in summary bar", () => {
     render(
       <MemoryRouter>

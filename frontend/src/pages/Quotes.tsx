@@ -26,6 +26,7 @@ import {
 import { useCompanyCommercialSettings } from "@/hooks/useCompanyCommercialSettings";
 import { useBackendData } from "@/hooks/useBackendData";
 import { useAuth } from "@/contexts/AuthContext";
+import { matchQuoteByRouteParam } from "@/lib/quoteRouteMatch";
 import { SectionHeader } from "@/components/workos/SharedComponents";
 import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import ComponentBreakdownTable from "@/components/workos/ComponentBreakdownTable";
@@ -367,19 +368,21 @@ export default function Quotes() {
 
   useEffect(() => {
     if (!quoteIdParam || loading) return;
-    const match = quotes.find(
-      (q) => q.id.toLowerCase() === quoteIdParam.toLowerCase()
-    );
+    const match = matchQuoteByRouteParam(quotes, quoteIdParam);
     if (match) {
       setQuoteNotFound(false);
       setSelectedQuote((prev) => (prev?.id === match.id ? prev : match));
+      // Canonicalize numeric /quotes/:dbId deep-links to commercial code URL.
+      if (quoteIdParam !== match.id) {
+        navigate(quoteDetailPath(match.id), { replace: true, state: location.state });
+      }
       return;
     }
     if (quotes.length > 0) {
       setQuoteNotFound(true);
       setSelectedQuote(null);
     }
-  }, [quoteIdParam, quotes, loading]);
+  }, [quoteIdParam, quotes, loading, navigate, location.state]);
   
   // Warning acknowledgement modal state
   const [pendingWarningQuoteId, setPendingWarningQuoteId] = useState<string | null>(null);

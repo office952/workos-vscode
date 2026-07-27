@@ -70,7 +70,9 @@ function mapDBToMachine(db: DBMachine): Machine {
     currentOperationCode: null,
     currentOperator: null,
     runtimeMinutes: 0,
-    utilizationPct: db.is_available ? 70 : 0, // Default estimate
+    // Do not invent shop-floor util (was hard-coded 70%). Gap until real load exists.
+    utilizationPct: 0,
+    utilizationKind: "placeholder",
     queueCount: 0,
     nextJobId: null,
   };

@@ -77,6 +77,7 @@ import {
 } from "@/api/collaboration";
 import OperatorTaskCollaborationPanel from "@/components/workos/collaboration/OperatorTaskCollaborationPanel";
 import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
+import { resolveExecutionNextAction } from "@/lib/executionNextAction";
 
 // Human-readable labels for plan-generation failure codes coming from the
 // backend. We keep the raw code visible alongside so the operator (and QA)
@@ -1228,6 +1229,46 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
           testId="execution-structured-start-error"
         />
       )}
+
+      {(() => {
+        const next = resolveExecutionNextAction(
+          plan.tasks,
+          reality,
+          taskTruthByTaskId,
+        );
+        const tone =
+          next.kind === "blocked"
+            ? "border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-800/50 dark:bg-amber-950/25 dark:text-amber-100"
+            : next.kind === "idle"
+              ? "border-wo-border-subtle bg-wo-surface-raised text-wo-text-secondary"
+              : "border-blue-200 bg-blue-50 text-blue-950 dark:border-blue-800/50 dark:bg-blue-950/25 dark:text-blue-100";
+        return (
+          <div
+            className={`rounded-lg border px-3 py-2.5 space-y-1 ${tone}`}
+            data-testid="execution-next-action"
+            data-next-kind={next.kind}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wide opacity-80">
+              Decizie operator — first fold
+            </p>
+            {next.kind === "start" || next.kind === "complete" || next.kind === "blocked" ? (
+              <p className="text-[13px] font-semibold" data-testid="execution-next-action-label">
+                {next.kind === "start"
+                  ? `Start: ${next.label}`
+                  : next.kind === "complete"
+                    ? `Complete: ${next.label}`
+                    : `Blocat: ${next.label}`}
+              </p>
+            ) : null}
+            <p className="text-[11px] opacity-90">{next.hint}</p>
+            {next.kind === "blocked" && next.blockedBy.length > 0 ? (
+              <p className="text-[11px] font-medium" data-testid="execution-next-action-blocked-by">
+                Blocat de: {next.blockedBy.join(", ")}
+              </p>
+            ) : null}
+          </div>
+        );
+      })()}
 
       <div className="bg-wo-surface-inset border border-border rounded-md overflow-hidden">
         <table className="w-full text-[12px]">

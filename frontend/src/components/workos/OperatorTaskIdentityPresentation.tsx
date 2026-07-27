@@ -39,6 +39,22 @@ function RoleBadge({ label, tone }: { label: string; tone: "role" | "legacy" | "
   );
 }
 
+function blockingTaskNames(runtime: OperatorTaskTruthTask["runtime"]): string[] {
+  const fromObjects = (runtime.blocking_tasks ?? [])
+    .map((b) => {
+      if (b && typeof b === "object") {
+        const name = (b as { name?: unknown }).name;
+        if (typeof name === "string" && name.trim()) return name.trim();
+      }
+      return null;
+    })
+    .filter((n): n is string => Boolean(n));
+  if (fromObjects.length > 0) return fromObjects;
+  return (runtime.blocking_task_ids ?? []).filter(
+    (id): id is string => typeof id === "string" && id.trim().length > 0,
+  );
+}
+
 export function OperatorTaskIdentityPresentation({
   truth,
   fallbackOperationName,
@@ -55,9 +71,17 @@ export function OperatorTaskIdentityPresentation({
           {fallbackOperationName || fallbackTaskId || "Task necunoscut"}
         </p>
         {fallbackTaskId ? (
-          <p className="text-[10px] text-slate-500 font-mono" data-testid="operator-task-diagnostic-key">
-            {fallbackTaskId}
-          </p>
+          <details className="text-[10px] text-slate-500">
+            <summary
+              className="cursor-pointer select-none text-slate-400"
+              data-testid="operator-task-technical-details"
+            >
+              Detalii tehnice
+            </summary>
+            <p className="mt-1 font-mono" data-testid="operator-task-diagnostic-key">
+              {fallbackTaskId}
+            </p>
+          </details>
         ) : null}
       </div>
     );
@@ -74,6 +98,13 @@ export function OperatorTaskIdentityPresentation({
   const productionBlocked = runtime.production_release_blocked === true;
   const operationalNotReady =
     !productionBlocked && (readiness.is_blocked || readiness.is_startable === false);
+  const blockers = blockingTaskNames(runtime);
+  const hasTechnical =
+    Boolean(identity.source_operation_code) ||
+    Boolean(identity.component_template_code) ||
+    Boolean(identity.parent_graph_node_id) ||
+    Boolean(identity.logo_segment_key) ||
+    showDiagnostics;
 
   return (
     <div data-testid={testId} className="space-y-1 min-w-0">
@@ -117,29 +148,10 @@ export function OperatorTaskIdentityPresentation({
       )}
 
       {!compact && (
-        <div className="text-[10px] text-slate-500 space-y-0.5">
-          {identity.source_operation_code ? (
-            <p>
-              Operație:{" "}
-              <span className="text-slate-400">{identity.source_operation_code}</span>
-            </p>
-          ) : null}
-          {identity.component_template_code ? (
-            <p>
-              Șablon:{" "}
-              <span className="text-slate-400">{identity.component_template_code}</span>
-            </p>
-          ) : null}
-          {identity.parent_graph_node_id ? (
-            <p>
-              Părinte:{" "}
-              <span className="text-slate-400 font-mono">{identity.parent_graph_node_id}</span>
-            </p>
-          ) : null}
-          {identity.logo_segment_key ? (
-            <p data-testid="operator-task-logo-segment">
-              Segment logo:{" "}
-              <span className="text-slate-400">{identity.logo_segment_key}</span>
+        <div className="text-[10px] space-y-0.5">
+          {blockers.length > 0 ? (
+            <p className="text-amber-300/95" data-testid="operator-task-blocked-by">
+              Blocat de: {blockers.join(", ")}
             </p>
           ) : null}
           {productionBlocked && (runtime.blocking_owner_decision_codes?.length ?? 0) > 0 ? (
@@ -156,15 +168,54 @@ export function OperatorTaskIdentityPresentation({
         </div>
       )}
 
-      {showDiagnostics ? (
+      {hasTechnical ? (
         <details className="text-[10px] text-slate-500">
-          <summary className="cursor-pointer select-none">Diagnostic</summary>
-          <div className="mt-1 space-y-0.5 font-mono">
-            <p data-testid="operator-task-diagnostic-key">Key: {diagnosticTaskKey(identity)}</p>
-            {identity.source_graph_node_id ? <p>Node: {identity.source_graph_node_id}</p> : null}
-            {identity.source_task_rule_code ? <p>Rule: {identity.source_task_rule_code}</p> : null}
-            <p>Source: {identitySourceLabel(identity)}</p>
-            <p>Task ID: {identity.task_id}</p>
+          <summary
+            className="cursor-pointer select-none text-slate-400"
+            data-testid="operator-task-technical-details"
+          >
+            Detalii tehnice
+          </summary>
+          <div className="mt-1 space-y-0.5">
+            {identity.source_operation_code ? (
+              <p>
+                Operație:{" "}
+                <span className="text-slate-400">{identity.source_operation_code}</span>
+              </p>
+            ) : null}
+            {identity.component_template_code ? (
+              <p>
+                Șablon:{" "}
+                <span className="text-slate-400">{identity.component_template_code}</span>
+              </p>
+            ) : null}
+            {identity.parent_graph_node_id ? (
+              <p>
+                Părinte:{" "}
+                <span className="text-slate-400 font-mono">{identity.parent_graph_node_id}</span>
+              </p>
+            ) : null}
+            {identity.logo_segment_key ? (
+              <p data-testid="operator-task-logo-segment">
+                Segment logo:{" "}
+                <span className="text-slate-400">{identity.logo_segment_key}</span>
+              </p>
+            ) : null}
+            {showDiagnostics ? (
+              <div className="space-y-0.5 font-mono pt-0.5">
+                <p data-testid="operator-task-diagnostic-key">
+                  Key: {diagnosticTaskKey(identity)}
+                </p>
+                {identity.source_graph_node_id ? (
+                  <p>Node: {identity.source_graph_node_id}</p>
+                ) : null}
+                {identity.source_task_rule_code ? (
+                  <p>Rule: {identity.source_task_rule_code}</p>
+                ) : null}
+                <p>Source: {identitySourceLabel(identity)}</p>
+                <p>Task ID: {identity.task_id}</p>
+              </div>
+            ) : null}
           </div>
         </details>
       ) : null}
