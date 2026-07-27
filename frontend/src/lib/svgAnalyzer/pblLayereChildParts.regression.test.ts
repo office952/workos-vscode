@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { analyzeSvgString } from "./index";
 import { isDegenerateBbox, measurePathShape } from "./part-extractor/shapeBounds";
-import { classifyLetterPartsFromAnalysis } from "../intakeV4/intakeV4LetterPartClassification";
+import { classifyLetterPartsFromAnalysis } from "../intakeV6/intakeV4LetterPartClassification";
 
 const fixtureDir = dirname(fileURLToPath(import.meta.url));
 

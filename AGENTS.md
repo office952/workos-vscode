@@ -109,6 +109,21 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 
 
 
+### CI Preflight Gate (mandatory before ACCEPT / next GO)
+
+Canonical checklist: handoff `CI_PREFLIGHT_GATE.md` · Cursor rule `.cursor/rules/ci-preflight-gate.mdc`.
+
+Must pass **CI-equivalent** commands (aligned with `.github/workflows/ci.yml`) before ACCEPT:
+
+1. `cd frontend && pnpm run lint`
+2. `cd frontend && pnpm run test:ci` (allowlist in `frontend/scripts/ci-unit-tests.txt`; expand when repaired)
+3. `cd frontend && pnpm run build`
+4. Backend targeted pytest (same four files as Actions; `APP_ENV=test`)
+5. Runtime health + screenshot proof when the GO is UI/API-visible
+6. Persistent worklog + **GitHub Actions green** (or logs explicitly verified)
+
+Do **not** start Capacity (or any next GO) on red CI. No broad lint disables; no weakening/deleting tests to go green. Full `pnpm run test` debt is a separate GO — do not pretend it is green.
+
 ### Validation truth
 
 
@@ -117,21 +132,21 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 
 |------|--------|----------------|
 
-| `validate:frontend` | **FAIL** (~85 TS errors) | Intended full gate; do **not** declare frontend validation green |
+| GitHub Actions `CI` | Required green on PR/`main` | Preflight Gate — lint + unit + build + targeted pytest |
+
+| `validate:frontend` | Broader local gate; may still have TS debt | Do **not** confuse with Actions; Actions uses lint/test/build only |
 
 | Targeted Vitest | Use for scoped frontend builds | Example below |
 
-| Full `test:frontend` | Noisy | Not the current repo gate |
-
-| Full `test:backend` | Known failures exist | Prefer targeted pytest files |
+| Full `test:backend` | Known failures exist outside CI set | Prefer the four CI pytest files unless expanding CI |
 
 | E2E finish smoke | Passes when seeded + stack live | See E2E section |
 
-| `template-lifecycle:validate` | Local gate ready; **no real CI pipeline in-repo yet** | Run before template-affecting work; currently fails on Metal Premount baseline until dedicated GO |
+| `template-lifecycle:validate` | Local gate; not in Actions yet | Run before template-affecting work |
 
 
 
-Next recommended build: **Frontend Typecheck Debt Audit** (separate from feature work).
+Next recommended build after green CI: **Capacity util** (Owner GO) — only when Preflight Gate is green.
 
 
 

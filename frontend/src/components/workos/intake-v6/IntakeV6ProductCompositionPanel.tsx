@@ -174,6 +174,30 @@ export default function IntakeV6ProductCompositionPanel({
   const recommendation = readRecommendation(payload);
   if (!recommendation) return null;
 
+  return (
+    <IntakeV6ProductCompositionPanelReady
+      payload={payload}
+      recommendation={recommendation}
+      linkedSegments={linkedSegments}
+      onConfirm={onConfirm}
+      compact={compact}
+    />
+  );
+}
+
+function IntakeV6ProductCompositionPanelReady({
+  payload,
+  recommendation,
+  linkedSegments,
+  onConfirm,
+  compact = false,
+}: {
+  payload: Record<string, unknown> | null | undefined;
+  recommendation: CompositionRecommendation;
+  linkedSegments?: ProductDefinitionLinkedRuntimeSegmentsSummary | null;
+  onConfirm?: (items: Array<Record<string, unknown>>) => void;
+  compact?: boolean;
+}) {
   const finish = asRecord(payload)?.finish_setup;
   const acmModel = buildAcmPanelUiReadModel({
     finishSetup: finish,

@@ -14,6 +14,7 @@ from seeds.seed_acm_owner_confirmed_prices import seed_acm_owner_confirmed_price
 from scripts.seed_acm_template_pack import seed_acm_template_pack  # noqa: E402
 from seeds.seed_active_template_scope import seed_active_template_scope  # noqa: E402
 from seeds.seed_build4_templates import seed_build4_templates  # noqa: E402
+from seeds.seed_tpl_volumetric_letters_v2 import seed_tpl_volumetric_letters_v2  # noqa: E402
 from seeds.seed_volumetric_owner_confirmed_prices import (  # noqa: E402
     seed_volumetric_owner_confirmed_prices,
 )
@@ -87,6 +88,8 @@ class TestPricingRegistryService(unittest.TestCase):
         await cls._seed_material_stubs()
         await seed_volumetric_owner_confirmed_prices()
         await seed_volumetric_operations_and_rates()
+        # Owner-valid registry scope requires canonical _v2 (legacy build4 alias alone is archived).
+        await seed_tpl_volumetric_letters_v2()
         await seed_active_template_scope()
 
     @classmethod
@@ -163,7 +166,9 @@ class TestPricingRegistryService(unittest.TestCase):
         default_usage = [
             u["template_code"] for u in default_reg.get("template_usage") or []
         ]
-        self.assertEqual(default_usage, ["TPL-VOLUMETRIC-LETTERS"])
+        self.assertIn("TPL-VOLUMETRIC-LETTERS_v2", default_usage)
+        self.assertNotIn("TPL-VOLUMETRIC-LETTERS", default_usage)
+        self.assertNotIn("TPL-ACM-CASSETTED-PANEL", default_usage)
         self.assertEqual(
             {i["pricing_code"] for i in filtered_reg["items"]},
             set(),

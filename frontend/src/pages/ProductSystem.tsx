@@ -360,7 +360,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
     if (!opCode.trim()) return null;
     return (
       <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-wo-text-dim border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
-        âš  Routing lipsă
+        ! Routing lipsă
       </span>
     );
   }
@@ -3295,8 +3295,8 @@ function ProductSystemLibraryMoreMenu({
   onCreateTemplate: () => void;
   readOnly?: boolean;
 }) {
-  if (readOnly) return null;
   const [open, setOpen] = useState(false);
+  if (readOnly) return null;
 
   return (
     <div className="relative">

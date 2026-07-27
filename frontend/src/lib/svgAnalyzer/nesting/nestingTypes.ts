@@ -212,7 +212,7 @@ export interface NestingResult {
   warnings: NestingWarning[]
 }
 
-export interface NestingReport extends NestingResult {}
+export type NestingReport = NestingResult
 
 export interface NestingBuildContext {
   partsReport: SvgPartExtractionReport

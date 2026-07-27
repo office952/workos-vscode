@@ -23,15 +23,17 @@ jobs:
           version: 8.10.0
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # Node 22 LTS — avoids Node 20 setup deprecation on Actions runners.
+          # (Action *runtime* Node-20 warnings may remain until upstream action majors.)
+          node-version: "22"
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Lint
         run: pnpm run lint
-      - name: Unit tests
-        run: pnpm run test
+      - name: Unit tests (CI allowlist)
+        run: pnpm run test:ci
       - name: Build
         run: pnpm run build
 

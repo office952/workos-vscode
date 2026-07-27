@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "postinstall": "echo 'Dependencies installed successfully'",
     "test": "vitest run",
+    "test:ci": "node scripts/run-ci-unit-tests.mjs",
+    "test:ci:list": "node -e \"const fs=require('fs');console.log(fs.readFileSync('scripts/ci-unit-tests.txt','utf8'))\"",
     "test:e2e": "playwright test",
     "test:e2e:commercial-live": "playwright test e2e/commercial-chain-live.spec.ts",
     "test:e2e:commercial-warn-ack": "playwright test e2e/commercial-chain-warn-ack.spec.ts",

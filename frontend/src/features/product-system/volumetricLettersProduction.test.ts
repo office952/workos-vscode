@@ -2,16 +2,16 @@ import { describe, expect, it } from "vitest";
 import {
   VOLUMETRIC_PRODUCTION_RULES,
   buildVolumetricCantProductionModules,
-  getVolumetricIntakeV3DependencyBadges,
+  getVolumetricOperationalContractBadges,
   isVolumetricCantLateralComponent,
 } from "@/features/product-system/volumetricLettersProduction";
 import type { ProductTemplateComponent } from "@/lib/api";
 
 describe("volumetricLettersProduction", () => {
-  it("keeps explicit Intake V3 dependency badges", () => {
-    const badges = getVolumetricIntakeV3DependencyBadges();
+  it("keeps explicit volumetric operational contract badges", () => {
+    const badges = getVolumetricOperationalContractBadges();
 
-    expect(badges).toContain("source_module=intake_v3");
+    expect(badges).toContain("source_module=volumetric_operator_contract");
     expect(badges).toContain("template=TPL-VOLUMETRIC-LETTERS");
     expect(badges).toContain("return_vinyl=before_forming");
     expect(badges).toContain("return_paint=after_assembly");
@@ -19,13 +19,13 @@ describe("volumetricLettersProduction", () => {
     expect(badges).toContain("no_shared_support=psu_in_package");
   });
 
-  it("includes Intake V3 production dependency rules", () => {
+  it("includes volumetric operational production rules", () => {
     const titles = VOLUMETRIC_PRODUCTION_RULES.map((rule) => rule.title);
 
-    expect(titles).toContain("Dependență V3 · cant colantat");
-    expect(titles).toContain("Dependență V3 · cant vopsit");
-    expect(titles).toContain("Dependență V3 · față colantată");
-    expect(titles).toContain("Dependență V3 · no shared support");
+    expect(titles).toContain("Regulă operațională · cant colantat");
+    expect(titles).toContain("Regulă operațională · cant vopsit");
+    expect(titles).toContain("Regulă operațională · față colantată");
+    expect(titles).toContain("Regulă operațională · no shared support");
   });
 
   it("builds modular cant coverage from template components", () => {
