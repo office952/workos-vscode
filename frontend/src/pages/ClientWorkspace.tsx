@@ -76,38 +76,38 @@ type QuoteStatus = "draft" | "priced" | "sent" | "viewed" | "negotiating" | "acc
 type OrderStatus = "created" | "confirmed" | "locked" | "in_execution" | "completed" | "cancelled";
 
 const intakeStatusConfig: Record<IntakeStatus, { label: string; cls: string }> = {
-  new: { label: "Nou", cls: "bg-slate-700/60 text-slate-300 border-slate-600" },
-  in_review: { label: "În Analiză", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
-  needs_info: { label: "Lipsă Info", cls: "bg-amber-900/40 text-amber-300 border-amber-700" },
-  ready_for_quote: { label: "Gata pt. Ofertă", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
-  blocked: { label: "Blocat", cls: "bg-red-900/40 text-red-300 border-red-700" },
-  cancelled: { label: "Anulat", cls: "bg-slate-800/60 text-slate-400 border-slate-600" },
+  new: { label: "Nou", cls: "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong" },
+  in_review: { label: "În Analiză", cls: "bg-wo-info-muted text-wo-info border-wo-info/35" },
+  needs_info: { label: "Lipsă Info", cls: "bg-wo-warning-muted text-wo-warning border-wo-warning/35" },
+  ready_for_quote: { label: "Gata pt. Ofertă", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
+  blocked: { label: "Blocat", cls: "bg-wo-error-muted text-wo-error border-wo-error/35" },
+  cancelled: { label: "Anulat", cls: "bg-wo-surface-inset text-wo-text-muted border-wo-border-subtle" },
 };
 
 const quoteStatusConfig: Record<QuoteStatus, { label: string; cls: string }> = {
-  draft: { label: "Draft", cls: "bg-slate-700/60 text-slate-300 border-slate-600" },
-  priced: { label: "Priced", cls: "bg-purple-900/40 text-purple-300 border-purple-700" },
-  sent: { label: "Trimis", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
-  viewed: { label: "Vizualizat", cls: "bg-cyan-900/40 text-cyan-300 border-cyan-700" },
-  negotiating: { label: "Negociere", cls: "bg-amber-900/40 text-amber-300 border-amber-700" },
-  accepted: { label: "Acceptat", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
-  rejected: { label: "Respins", cls: "bg-red-900/40 text-red-300 border-red-700" },
-  expired: { label: "Expirat", cls: "bg-slate-800/60 text-slate-400 border-slate-600" },
+  draft: { label: "Draft", cls: "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong" },
+  priced: { label: "Priced", cls: "bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-700" },
+  sent: { label: "Trimis", cls: "bg-wo-info-muted text-wo-info border-wo-info/35" },
+  viewed: { label: "Vizualizat", cls: "bg-cyan-50 text-cyan-800 border-cyan-200 dark:bg-cyan-900/40 dark:text-cyan-300 dark:border-cyan-700" },
+  negotiating: { label: "Negociere", cls: "bg-wo-warning-muted text-wo-warning border-wo-warning/35" },
+  accepted: { label: "Acceptat", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
+  rejected: { label: "Respins", cls: "bg-wo-error-muted text-wo-error border-wo-error/35" },
+  expired: { label: "Expirat", cls: "bg-wo-surface-inset text-wo-text-muted border-wo-border-subtle" },
 };
 
 const orderStatusConfig: Record<OrderStatus, { label: string; cls: string }> = {
-  created: { label: "Creat", cls: "bg-slate-700/60 text-slate-300 border-slate-600" },
-  confirmed: { label: "Confirmat", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
-  locked: { label: "Înghețat", cls: "bg-purple-900/40 text-purple-300 border-purple-700" },
-  in_execution: { label: "În Execuție", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
-  completed: { label: "Finalizat", cls: "bg-emerald-900/50 text-emerald-200 border-emerald-600" },
-  cancelled: { label: "Anulat", cls: "bg-red-900/40 text-red-300 border-red-700" },
+  created: { label: "Creat", cls: "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong" },
+  confirmed: { label: "Confirmat", cls: "bg-wo-info-muted text-wo-info border-wo-info/35" },
+  locked: { label: "Înghețat", cls: "bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-700" },
+  in_execution: { label: "În Execuție", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
+  completed: { label: "Finalizat", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
+  cancelled: { label: "Anulat", cls: "bg-wo-error-muted text-wo-error border-wo-error/35" },
 };
 
 const paymentConfig: Record<string, { label: string; cls: string }> = {
-  pending: { label: "Neplătit", cls: "text-red-400 bg-red-900/20 border-red-800/30" },
-  partial: { label: "Avans", cls: "text-amber-400 bg-amber-900/20 border-amber-800/30" },
-  paid: { label: "Plătit", cls: "text-emerald-400 bg-emerald-900/20 border-emerald-800/30" },
+  pending: { label: "Neplătit", cls: "text-wo-error bg-wo-error-muted border-wo-error/35" },
+  partial: { label: "Avans", cls: "text-wo-warning bg-wo-warning-muted border-wo-warning/35" },
+  paid: { label: "Plătit", cls: "text-wo-success bg-wo-success-muted border-wo-success/35" },
 };
 
 function StatusBadge({ label, cls }: { label: string; cls: string }) {
@@ -123,7 +123,7 @@ function ActionButton({ label, onClick, icon }: { label: string; onClick: () => 
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
-      className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-blue-700/50 bg-blue-900/15 text-blue-300 hover:bg-blue-900/30 hover:border-blue-600 transition-colors"
+      className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-wo-info/40 bg-wo-info-muted text-wo-info hover:bg-wo-hover hover:border-wo-info/50 transition-colors"
     >
       {icon}
       {label}
@@ -135,7 +135,7 @@ function DisabledActionButton({ label, reason }: { label: string; reason: string
   return (
     <span
       title={reason}
-      className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-slate-700/40 bg-slate-800/20 text-slate-600 cursor-not-allowed"
+      className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-wo-border-subtle bg-wo-surface-inset text-wo-text-dim cursor-not-allowed"
     >
       <Ban className="w-2.5 h-2.5" />
       {label}
@@ -145,7 +145,7 @@ function DisabledActionButton({ label, reason }: { label: string; reason: string
 
 function ReadOnlyBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-slate-700/30 bg-slate-800/10 text-slate-500">
+    <span className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-wo-border-subtle bg-wo-surface-inset text-wo-text-muted">
       <Eye className="w-2.5 h-2.5" />
       {label}
     </span>
@@ -291,14 +291,14 @@ export default function ClientWorkspace() {
   if (loading || entityLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500" />
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-wo-info" />
       </div>
     );
   }
 
   if (!decodedName) {
     return (
-      <div className="text-center py-20 text-slate-500">Client negăsit.</div>
+      <div className="text-center py-20 text-wo-text-muted">Client negăsit.</div>
     );
   }
 
@@ -307,7 +307,7 @@ export default function ClientWorkspace() {
       {/* Back button */}
       <button
         onClick={() => navigate("/clients")}
-        className="inline-flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-slate-300 transition-colors"
+        className="inline-flex items-center gap-1.5 text-[12px] text-wo-text-muted hover:text-wo-text-primary transition-colors"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
         Înapoi la Clienți
@@ -318,22 +318,22 @@ export default function ClientWorkspace() {
         <div className="flex items-start justify-between gap-4">
           {/* Left: Client identity */}
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-600/15 flex items-center justify-center shrink-0">
-              <Building2 className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-lg bg-wo-info-muted flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5 text-wo-info" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-[17px] font-bold text-wo-text-primary">{clientInfo.name}</h1>
-                <span className="px-2 py-0.5 text-[9px] font-semibold rounded bg-emerald-900/30 text-emerald-400 border border-emerald-800/30">
+                <span className="px-2 py-0.5 text-[9px] font-semibold rounded bg-wo-success-muted text-wo-success border border-wo-success/35">
                   Activ
                 </span>
                 <span
                   className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold rounded border ${
                     clientInfo.fiscalStatus === "saved"
-                      ? "bg-emerald-900/30 text-emerald-400 border-emerald-800/30"
+                      ? "bg-wo-success-muted text-wo-success border-wo-success/35"
                       : clientInfo.fiscalStatus === "missing_cui"
-                      ? "bg-red-900/30 text-red-400 border-red-800/30"
-                      : "bg-amber-900/30 text-amber-400 border-amber-800/30"
+                      ? "bg-wo-error-muted text-wo-error border-wo-error/35"
+                      : "bg-wo-warning-muted text-wo-warning border-wo-warning/35"
                   }`}
                 >
                   {clientInfo.fiscalStatus === "saved" ? (
@@ -344,13 +344,13 @@ export default function ClientWorkspace() {
                   {getClientFiscalDisplayLabel(clientInfo.fiscalStatus)}
                 </span>
                 {clientInfo.hasEntityRecord && (
-                  <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-blue-900/30 text-blue-300 border border-blue-800/30">
+                  <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-wo-info-muted text-wo-info border border-wo-info/35">
                     Registru entități #{clientInfo.entityId}
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-4 mt-1 text-[11px] text-slate-500 flex-wrap">
-                {clientInfo.cui && <span className="font-mono text-slate-300">CUI: {clientInfo.cui}</span>}
+              <div className="flex items-center gap-4 mt-1 text-[11px] text-wo-text-muted flex-wrap">
+                {clientInfo.cui && <span className="font-mono text-wo-text-secondary">CUI: {clientInfo.cui}</span>}
                 {(clientInfo.address || clientInfo.city) && (
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
@@ -366,27 +366,27 @@ export default function ClientWorkspace() {
           {/* Right: KPI indicators */}
           <div className="flex items-center gap-2">
             <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
-              <p className="text-[15px] font-bold text-blue-400">{kpis.activeIntakes}</p>
-              <p className="text-[9px] text-slate-600 uppercase tracking-wide">Cereri</p>
+              <p className="text-[15px] font-bold text-wo-info">{kpis.activeIntakes}</p>
+              <p className="text-[9px] text-wo-text-dim uppercase tracking-wide">Cereri</p>
             </div>
             <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
-              <p className="text-[15px] font-bold text-purple-400">{kpis.openQuotes}</p>
-              <p className="text-[9px] text-slate-600 uppercase tracking-wide">Oferte</p>
+              <p className="text-[15px] font-bold text-purple-700 dark:text-purple-400">{kpis.openQuotes}</p>
+              <p className="text-[9px] text-wo-text-dim uppercase tracking-wide">Oferte</p>
             </div>
             <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
-              <p className="text-[15px] font-bold text-emerald-400">{kpis.activeOrders}</p>
-              <p className="text-[9px] text-slate-600 uppercase tracking-wide">Comenzi</p>
+              <p className="text-[15px] font-bold text-wo-success">{kpis.activeOrders}</p>
+              <p className="text-[9px] text-wo-text-dim uppercase tracking-wide">Comenzi</p>
             </div>
             {kpis.blockedItems > 0 && (
-              <div className="text-center px-3 py-1.5 rounded-lg bg-red-950/30 border border-red-900/30">
-                <p className="text-[15px] font-bold text-red-400">{kpis.blockedItems}</p>
-                <p className="text-[9px] text-red-600 uppercase tracking-wide">Blocate</p>
+              <div className="text-center px-3 py-1.5 rounded-lg bg-wo-error-muted border border-wo-error/35">
+                <p className="text-[15px] font-bold text-wo-error">{kpis.blockedItems}</p>
+                <p className="text-[9px] text-wo-error uppercase tracking-wide">Blocate</p>
               </div>
             )}
             {kpis.totalRevenue > 0 && (
               <div className="text-center px-3 py-1.5 rounded-lg bg-wo-surface-inset border border-wo-border-subtle">
-                <p className="text-[13px] font-bold text-slate-200">{formatCurrency(kpis.totalRevenue)}</p>
-                <p className="text-[9px] text-slate-600 uppercase tracking-wide">RON Total</p>
+                <p className="text-[13px] font-bold text-wo-text-primary">{formatCurrency(kpis.totalRevenue)}</p>
+                <p className="text-[9px] text-wo-text-dim uppercase tracking-wide">RON Total</p>
               </div>
             )}
           </div>
@@ -396,7 +396,7 @@ export default function ClientWorkspace() {
         <div className="flex items-center gap-2 mt-3 pt-3 border-t border-wo-border-subtle">
           <button
             onClick={() => navigate("/intake")}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-blue-700/50 bg-blue-900/20 text-blue-300 hover:bg-blue-900/40 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-wo-info/40 bg-wo-info-muted text-wo-info hover:bg-wo-hover transition-colors"
           >
             <Plus className="w-3 h-3" />
             Cerere nouă
@@ -416,8 +416,8 @@ export default function ClientWorkspace() {
             onClick={() => setActiveTab(tab.id)}
             className={`inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium transition-colors border-b-2 ${
               activeTab === tab.id
-                ? "text-blue-400 border-blue-500 bg-blue-900/10"
-                : "text-slate-500 border-transparent hover:text-slate-300 hover:bg-slate-800/30"
+                ? "text-wo-info border-wo-info bg-wo-info-muted"
+                : "text-wo-text-muted border-transparent hover:text-wo-text-primary hover:bg-wo-hover"
             }`}
           >
             {tab.icon}
@@ -524,14 +524,14 @@ function OverviewTab({
 
   if (clientEntity && clientInfo.fiscalStatus !== "saved") {
     nextActions.push({
-      icon: <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />,
+      icon: <ShieldCheck className="w-3.5 h-3.5 text-wo-info" />,
       label: "Verifică date fiscale",
       state: "read-only",
     });
   }
   if (readyForQuote.length > 0) {
     nextActions.push({
-      icon: <FileText className="w-3.5 h-3.5 text-purple-400" />,
+      icon: <FileText className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400" />,
       label: `Creează ofertă pentru ${readyForQuote[0].id}`,
       state: "disabled",
       reason: "Crearea ofertei se face din pagina Oferte — flow backend necesar",
@@ -540,7 +540,7 @@ function OverviewTab({
   for (const o of activeOrders.slice(0, 2)) {
     if (o.jobId) {
       nextActions.push({
-        icon: <Activity className="w-3.5 h-3.5 text-emerald-400" />,
+        icon: <Activity className="w-3.5 h-3.5 text-wo-success" />,
         label: `Urmărește execuția ${o.id} → ${o.jobId}`,
         state: "active",
         action: () => navigate(`/execution/${o.id}`),
@@ -549,20 +549,20 @@ function OverviewTab({
   }
   if (unpaidOrders.length > 0) {
     nextActions.push({
-      icon: <Banknote className="w-3.5 h-3.5 text-amber-400" />,
+      icon: <Banknote className="w-3.5 h-3.5 text-wo-warning" />,
       label: `Emite factură pentru ${unpaidOrders[0].id}`,
       state: "disabled",
       reason: "Modulul de facturare nu este implementat",
     });
   }
   nextActions.push({
-    icon: <MessageSquare className="w-3.5 h-3.5 text-slate-500" />,
+    icon: <MessageSquare className="w-3.5 h-3.5 text-wo-text-muted" />,
     label: "Adaugă notă internă",
     state: "disabled",
     reason: "Modulul de note nu este implementat",
   });
   nextActions.push({
-    icon: <FolderOpen className="w-3.5 h-3.5 text-slate-500" />,
+    icon: <FolderOpen className="w-3.5 h-3.5 text-wo-text-muted" />,
     label: "Atașează fișier / contract",
     state: "disabled",
     reason: "Upload de fișiere nu este implementat",
@@ -597,22 +597,22 @@ function OverviewTab({
   return (
     <div className="space-y-3">
       <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-        <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-blue-400" />
+        <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-wo-info" />
           Identificare fiscală
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
           <div>
-            <p className="text-[10px] text-slate-500 uppercase">Status</p>
-            <p className="text-slate-200">{getClientFiscalDisplayLabel(clientInfo.fiscalStatus)}</p>
+            <p className="text-[10px] text-wo-text-muted uppercase">Status</p>
+            <p className="text-wo-text-primary">{getClientFiscalDisplayLabel(clientInfo.fiscalStatus)}</p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 uppercase">CUI</p>
-            <p className="text-slate-200 font-mono">{clientInfo.cui || "—"}</p>
+            <p className="text-[10px] text-wo-text-muted uppercase">CUI</p>
+            <p className="text-wo-text-primary font-mono">{clientInfo.cui || "—"}</p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 uppercase">Tip identitate</p>
-            <p className="text-slate-200">
+            <p className="text-[10px] text-wo-text-muted uppercase">Tip identitate</p>
+            <p className="text-wo-text-primary">
               {clientInfo.identityType === "fiscal"
                 ? "Fiscal"
                 : clientInfo.identityType === "temp"
@@ -623,8 +623,8 @@ function OverviewTab({
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 uppercase">Adresă / Oraș</p>
-            <p className="text-slate-200">
+            <p className="text-[10px] text-wo-text-muted uppercase">Adresă / Oraș</p>
+            <p className="text-wo-text-primary">
               {[clientInfo.address, clientInfo.city].filter(Boolean).join(", ") || "—"}
             </p>
           </div>
@@ -641,16 +641,16 @@ function OverviewTab({
       {/* Alerts / Missing Data */}
       {alerts.length > 0 && (
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3">
-          <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1.5">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+          <h3 className="text-[11px] font-semibold text-wo-text-muted uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-wo-warning" />
             Alerte & Date Lipsă
           </h3>
           <div className="space-y-1">
             {alerts.map((alert, idx) => (
               <div key={idx} className={`flex items-center gap-2 px-2 py-1.5 rounded text-[11px] ${
-                alert.severity === "error" ? "bg-red-950/20 text-red-400" :
-                alert.severity === "warning" ? "bg-amber-950/20 text-amber-400" :
-                "bg-slate-800/30 text-slate-400"
+                alert.severity === "error" ? "bg-wo-error-muted text-wo-error" :
+                alert.severity === "warning" ? "bg-wo-warning-muted text-wo-warning" :
+                "bg-wo-surface-inset text-wo-text-muted"
               }`}>
                 {alert.icon}
                 {alert.text}
@@ -663,8 +663,8 @@ function OverviewTab({
       <div className="grid grid-cols-2 gap-3">
         {/* Work in Progress */}
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-          <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-blue-400" />
+          <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+            <Activity className="w-4 h-4 text-wo-info" />
             Work in Progress
           </h3>
           <div className="space-y-1.5">
@@ -681,44 +681,44 @@ function OverviewTab({
                       })
                     )
                   }
-                  className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-slate-800/40 cursor-pointer"
+                  className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-wo-hover cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
-                    <Inbox className="w-3.5 h-3.5 text-blue-400" />
-                    <span className="text-[11px] font-mono text-blue-400">{i.id}</span>
+                    <Inbox className="w-3.5 h-3.5 text-wo-info" />
+                    <span className="text-[11px] font-mono text-wo-info">{i.id}</span>
                     <StatusBadge label={intakeStatusConfig[i.status as IntakeStatus]?.label} cls={intakeStatusConfig[i.status as IntakeStatus]?.cls} />
                   </div>
-                  <ChevronRight className="w-3 h-3 text-slate-700" />
+                  <ChevronRight className="w-3 h-3 text-wo-text-dim" />
                 </div>
               ))
             ) : (
-              <p className="text-[11px] text-slate-600 px-2">Nu există cereri active.</p>
+              <p className="text-[11px] text-wo-text-dim px-2">Nu există cereri active.</p>
             )}
             {activeQuotes.length > 0 && activeQuotes.map((q) => (
-              <div key={q.id} onClick={() => navigate(quoteDetailPath(q.id))} className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-slate-800/40 cursor-pointer">
+              <div key={q.id} onClick={() => navigate(quoteDetailPath(q.id))} className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-wo-hover cursor-pointer">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-3.5 h-3.5 text-purple-400" />
-                  <span className="text-[11px] font-mono text-purple-400">{q.id}</span>
+                  <FileText className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400" />
+                  <span className="text-[11px] font-mono text-purple-700 dark:text-purple-400">{q.id}</span>
                   <StatusBadge label={quoteStatusConfig[q.status as QuoteStatus]?.label} cls={quoteStatusConfig[q.status as QuoteStatus]?.cls} />
-                  <span className="text-[10px] text-slate-500">{formatCurrency(q.grandTotal)} RON</span>
+                  <span className="text-[10px] text-wo-text-muted">{formatCurrency(q.grandTotal)} RON</span>
                 </div>
-                <ChevronRight className="w-3 h-3 text-slate-700" />
+                <ChevronRight className="w-3 h-3 text-wo-text-dim" />
               </div>
             ))}
             {activeOrders.length > 0 && activeOrders.map((o) => (
-              <div key={o.id} onClick={() => o.jobId ? navigate(executionDetailPath(o.id)) : navigate(orderDetailPath(o.id))} className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-slate-800/40 cursor-pointer">
+              <div key={o.id} onClick={() => o.jobId ? navigate(executionDetailPath(o.id)) : navigate(orderDetailPath(o.id))} className="flex items-center justify-between px-2 py-1.5 rounded hover:bg-wo-hover cursor-pointer">
                 <div className="flex items-center gap-2">
-                  <ClipboardList className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-[11px] font-mono text-emerald-400">{o.id}</span>
+                  <ClipboardList className="w-3.5 h-3.5 text-wo-success" />
+                  <span className="text-[11px] font-mono text-wo-success">{o.id}</span>
                   <StatusBadge label={orderStatusConfig[o.status as OrderStatus]?.label} cls={orderStatusConfig[o.status as OrderStatus]?.cls} />
-                  {o.jobId && <span className="text-[10px] text-slate-500">→ {o.jobId}</span>}
+                  {o.jobId && <span className="text-[10px] text-wo-text-muted">→ {o.jobId}</span>}
                 </div>
-                <ChevronRight className="w-3 h-3 text-slate-700" />
+                <ChevronRight className="w-3 h-3 text-wo-text-dim" />
               </div>
             ))}
             {blockedIntakes.length > 0 && (
               <div className="mt-2 pt-2 border-t border-wo-border-subtle">
-                <p className="text-[10px] text-red-500 uppercase font-semibold mb-1">Blocate</p>
+                <p className="text-[10px] text-wo-error uppercase font-semibold mb-1">Blocate</p>
                 {blockedIntakes.map((i) => (
                   <div
                     key={i.id}
@@ -731,11 +731,11 @@ function OverviewTab({
                         })
                       )
                     }
-                    className="flex items-center gap-2 px-2 py-1 rounded hover:bg-red-950/20 cursor-pointer"
+                    className="flex items-center gap-2 px-2 py-1 rounded hover:bg-wo-error-muted cursor-pointer"
                   >
-                    <AlertCircle className="w-3 h-3 text-red-400" />
-                    <span className="text-[11px] font-mono text-red-400">{i.id}</span>
-                    <span className="text-[10px] text-red-500/70 truncate">{i.notes || "Blocat"}</span>
+                    <AlertCircle className="w-3 h-3 text-wo-error" />
+                    <span className="text-[11px] font-mono text-wo-error">{i.id}</span>
+                    <span className="text-[10px] text-wo-error truncate">{i.notes || "Blocat"}</span>
                   </div>
                 ))}
               </div>
@@ -745,48 +745,48 @@ function OverviewTab({
 
         {/* Commercial Status */}
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-          <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-wo-success" />
             Status Comercial
           </h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Valoare comercială totală</span>
-              <span className="font-bold text-slate-200">{totalCommercialValue > 0 ? `${formatCurrency(totalCommercialValue)} RON` : "—"}</span>
+              <span className="text-wo-text-muted">Valoare comercială totală</span>
+              <span className="font-bold text-wo-text-primary">{totalCommercialValue > 0 ? `${formatCurrency(totalCommercialValue)} RON` : "—"}</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Oferte acceptate</span>
-              <span className="font-semibold text-emerald-400">{acceptedQuotes.length}</span>
+              <span className="text-wo-text-muted">Oferte acceptate</span>
+              <span className="font-semibold text-wo-success">{acceptedQuotes.length}</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Oferte respinse</span>
-              <span className="font-semibold text-red-400">{rejectedQuotes.length}</span>
+              <span className="text-wo-text-muted">Oferte respinse</span>
+              <span className="font-semibold text-wo-error">{rejectedQuotes.length}</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Comenzi finalizate</span>
-              <span className="font-semibold text-emerald-400">{completedOrders.length}</span>
+              <span className="text-wo-text-muted">Comenzi finalizate</span>
+              <span className="font-semibold text-wo-success">{completedOrders.length}</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Comenzi neplătite</span>
-              <span className={`font-semibold ${unpaidOrders.length > 0 ? "text-red-400" : "text-slate-600"}`}>
+              <span className="text-wo-text-muted">Comenzi neplătite</span>
+              <span className={`font-semibold ${unpaidOrders.length > 0 ? "text-wo-error" : "text-wo-text-dim"}`}>
                 {unpaidOrders.length > 0 ? unpaidOrders.length : "—"}
               </span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Facturi emise</span>
-              <span className="text-slate-600 text-[11px]">Indisponibil</span>
+              <span className="text-wo-text-muted">Facturi emise</span>
+              <span className="text-wo-text-dim text-[11px]">Indisponibil</span>
             </div>
             <div className="flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">Contracte active</span>
-              <span className="text-slate-600 text-[11px]">Indisponibil</span>
+              <span className="text-wo-text-muted">Contracte active</span>
+              <span className="text-wo-text-dim text-[11px]">Indisponibil</span>
             </div>
           </div>
         </div>
 
         {/* Next Actions */}
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-          <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-            <ArrowRightCircle className="w-4 h-4 text-amber-400" />
+          <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+            <ArrowRightCircle className="w-4 h-4 text-wo-warning" />
             Acțiuni Următoare
           </h3>
           <div className="space-y-1">
@@ -797,20 +797,20 @@ function OverviewTab({
                 title={action.state === "disabled" ? action.reason : undefined}
                 className={`flex items-center gap-2 px-2.5 py-2 rounded text-[11px] transition-colors ${
                   action.state === "active"
-                    ? "text-blue-300 hover:bg-blue-900/20 cursor-pointer"
+                    ? "text-wo-info hover:bg-wo-hover cursor-pointer"
                     : action.state === "read-only"
-                    ? "text-slate-500"
-                    : "text-slate-600 cursor-not-allowed"
+                    ? "text-wo-text-muted"
+                    : "text-wo-text-dim cursor-not-allowed"
                 }`}
               >
                 {action.icon}
                 <span className="flex-1">{action.label}</span>
-                {action.state === "active" && <ChevronRight className="w-3 h-3 text-blue-500" />}
+                {action.state === "active" && <ChevronRight className="w-3 h-3 text-wo-info" />}
                 {action.state === "disabled" && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700/50 text-slate-600">indisponibil</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-wo-surface-inset border border-wo-border-subtle text-wo-text-dim">indisponibil</span>
                 )}
                 {action.state === "read-only" && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700/50 text-slate-600">read-only</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-wo-surface-inset border border-wo-border-subtle text-wo-text-dim">read-only</span>
                 )}
               </div>
             ))}
@@ -819,25 +819,25 @@ function OverviewTab({
 
         {/* Recent Activity */}
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-          <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-            <Clock className="w-4 h-4 text-slate-400" />
+          <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-wo-text-muted" />
             Activitate Recentă
           </h3>
           {recentItems.length === 0 ? (
-            <p className="text-[11px] text-slate-600">Nicio activitate înregistrată.</p>
+            <p className="text-[11px] text-wo-text-dim">Nicio activitate înregistrată.</p>
           ) : (
             <div className="space-y-1">
               {recentItems.map((item, idx) => (
                 <div
                   key={idx}
                   onClick={() => item.route && navigate(item.route)}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-800/40 cursor-pointer transition-colors"
+                  className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-wo-hover cursor-pointer transition-colors"
                 >
-                  <span className="text-[9px] font-semibold text-slate-600 uppercase w-[48px] shrink-0">{item.type}</span>
-                  <span className="text-[11px] text-blue-400 font-mono w-[64px] shrink-0">{item.id}</span>
-                  <span className="text-[10px] text-slate-400 truncate flex-1">{item.label}</span>
-                  {item.status && <span className="text-[9px] text-slate-600">{item.status}</span>}
-                  <span className="text-[10px] text-slate-700 shrink-0">{formatDateTime(item.date)}</span>
+                  <span className="text-[9px] font-semibold text-wo-text-dim uppercase w-[48px] shrink-0">{item.type}</span>
+                  <span className="text-[11px] text-wo-info font-mono w-[64px] shrink-0">{item.id}</span>
+                  <span className="text-[10px] text-wo-text-muted truncate flex-1">{item.label}</span>
+                  {item.status && <span className="text-[9px] text-wo-text-dim">{item.status}</span>}
+                  <span className="text-[10px] text-wo-text-dim shrink-0">{formatDateTime(item.date)}</span>
                 </div>
               ))}
             </div>
@@ -875,12 +875,12 @@ function CereriTab({ intakes, quotes, navigate }: { intakes: IntakeRequest[]; qu
             placeholder="Caută cerere..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent text-[12px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+            className="bg-transparent text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full"
           />
         </div>
         <button
           onClick={() => navigate("/intake")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-blue-700/50 bg-blue-900/20 text-blue-300 hover:bg-blue-900/40 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-wo-info/40 bg-wo-info-muted text-wo-info hover:bg-wo-hover transition-colors"
         >
           <Plus className="w-3 h-3" />
           Cerere nouă
@@ -897,21 +897,21 @@ function CereriTab({ intakes, quotes, navigate }: { intakes: IntakeRequest[]; qu
             return (
               <div
                 key={intake.id}
-                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-blue-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-wo-info/40 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-mono font-semibold text-blue-400">{intake.id}</span>
+                    <span className="text-[12px] font-mono font-semibold text-wo-info">{intake.id}</span>
                     <StatusBadge label={cfg.label} cls={cfg.cls} />
-                    <span className="text-[11px] text-slate-500">{intake.productFamily}</span>
-                    <span className="text-[10px] text-slate-600">• {intake.channel}</span>
+                    <span className="text-[11px] text-wo-text-muted">{intake.productFamily}</span>
+                    <span className="text-[10px] text-wo-text-dim">• {intake.channel}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[11px] text-slate-600">{formatDate(intake.createdAt)}</span>
-                    <span className="text-[11px] text-slate-500">{intake.assignedTo}</span>
+                    <span className="text-[11px] text-wo-text-dim">{formatDate(intake.createdAt)}</span>
+                    <span className="text-[11px] text-wo-text-muted">{intake.assignedTo}</span>
                   </div>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1 truncate">{intake.description}</p>
+                <p className="text-[11px] text-wo-text-muted mt-1 truncate">{intake.description}</p>
                 {/* Cross-links and actions */}
                 <div className="flex items-center gap-2 mt-2">
                   <ActionButton
@@ -933,7 +933,7 @@ function CereriTab({ intakes, quotes, navigate }: { intakes: IntakeRequest[]; qu
                     <DisabledActionButton label="Creează ofertă" reason="Crearea ofertei necesită flow backend" />
                   ) : null}
                   {intake.status === "blocked" && intake.notes && (
-                    <span className="text-[10px] text-red-400 ml-2">⚠ {intake.notes.slice(0, 40)}</span>
+                    <span className="text-[10px] text-wo-error ml-2">⚠ {intake.notes.slice(0, 40)}</span>
                   )}
                 </div>
               </div>
@@ -972,7 +972,7 @@ function OferteTab({ quotes, orders, navigate }: { quotes: Quote[]; orders: Orde
             placeholder="Caută ofertă..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent text-[12px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+            className="bg-transparent text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full"
           />
         </div>
         <DisabledActionButton label="Ofertă nouă" reason="Crearea ofertei se face din pagina Oferte — necesită flow backend" />
@@ -988,33 +988,33 @@ function OferteTab({ quotes, orders, navigate }: { quotes: Quote[]; orders: Orde
             return (
               <div
                 key={quote.id}
-                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-purple-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-purple-300 dark:hover:border-purple-600/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-mono font-semibold text-purple-400">{quote.id}</span>
+                    <span className="text-[12px] font-mono font-semibold text-purple-700 dark:text-purple-400">{quote.id}</span>
                     <StatusBadge label={cfg.label} cls={cfg.cls} />
-                    <span className="text-[10px] text-slate-600">v{quote.version}</span>
+                    <span className="text-[10px] text-wo-text-dim">v{quote.version}</span>
                     {quote.intakeId && (
-                      <span className="text-[10px] text-slate-600">← Cerere: {quote.intakeId}</span>
+                      <span className="text-[10px] text-wo-text-dim">← Cerere: {quote.intakeId}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[13px] font-bold text-slate-200">{formatCurrency(quote.grandTotal)} RON</span>
+                    <span className="text-[13px] font-bold text-wo-text-primary">{formatCurrency(quote.grandTotal)} RON</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-1.5 text-[11px]">
-                  <span className="text-slate-500">Marjă: {quote.marginPct}%</span>
-                  <span className="text-slate-500">Discount: {quote.discountPct}%</span>
-                  <span className="text-slate-500 flex items-center gap-1">
+                  <span className="text-wo-text-muted">Marjă: {quote.marginPct}%</span>
+                  <span className="text-wo-text-muted">Discount: {quote.discountPct}%</span>
+                  <span className="text-wo-text-muted flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     Valabil: {formatDate(quote.validUntil)}
                   </span>
                   {linkedOrder && (
-                    <span className="text-emerald-400 font-semibold">→ Comandă: {linkedOrder.id}</span>
+                    <span className="text-wo-success font-semibold">→ Comandă: {linkedOrder.id}</span>
                   )}
                 </div>
-                {quote.notes && <p className="text-[10px] text-slate-600 mt-1 truncate">{quote.notes}</p>}
+                {quote.notes && <p className="text-[10px] text-wo-text-dim mt-1 truncate">{quote.notes}</p>}
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-2">
                   <ActionButton label="Vezi oferta" onClick={() => navigate(quoteDetailPath(quote.id))} icon={<Eye className="w-2.5 h-2.5" />} />
@@ -1053,7 +1053,7 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
           placeholder="Caută comandă..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-transparent text-[12px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+          className="bg-transparent text-[12px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full"
         />
       </div>
 
@@ -1067,39 +1067,39 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
             return (
               <div
                 key={order.id}
-                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-emerald-600/30 transition-all"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 hover:border-wo-success/40 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-[12px] font-mono font-bold text-emerald-400">{order.id}</span>
+                    <span className="text-[12px] font-mono font-bold text-wo-success">{order.id}</span>
                     <StatusBadge label={cfg.label} cls={cfg.cls} />
                     {payCfg && <StatusBadge label={payCfg.label} cls={payCfg.cls} />}
-                    <span className="text-[10px] text-slate-600">← Ofertă: {order.quoteId}</span>
+                    <span className="text-[10px] text-wo-text-dim">← Ofertă: {order.quoteId}</span>
                   </div>
-                  <span className="text-[13px] font-bold text-slate-200">{formatCurrency(order.totalAmount)} RON</span>
+                  <span className="text-[13px] font-bold text-wo-text-primary">{formatCurrency(order.totalAmount)} RON</span>
                 </div>
-                <p className="text-[12px] text-slate-400 mt-1">{order.productSummary}</p>
+                <p className="text-[12px] text-wo-text-muted mt-1">{order.productSummary}</p>
                 {/* Details row */}
                 <div className="flex items-center gap-4 mt-2 text-[11px]">
-                  <span className="text-slate-500 flex items-center gap-1">
+                  <span className="text-wo-text-muted flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     Livrare: {formatDate(order.promisedDelivery)}
                   </span>
-                  <span className="text-slate-500">
+                  <span className="text-wo-text-muted">
                     Execuție: {order.jobId ? (
-                      <button onClick={() => navigate(`/execution/${order.id}`)} className="text-blue-400 hover:text-blue-300 font-mono ml-0.5">{order.jobId}</button>
+                      <button onClick={() => navigate(`/execution/${order.id}`)} className="text-wo-info hover:text-wo-info font-mono ml-0.5">{order.jobId}</button>
                     ) : (
-                      <span className="text-slate-600">Lipsă</span>
+                      <span className="text-wo-text-dim">Lipsă</span>
                     )}
                   </span>
-                  <span className="text-slate-500">
-                    Document: <span className="text-slate-600">Lipsă</span>
+                  <span className="text-wo-text-muted">
+                    Document: <span className="text-wo-text-dim">Lipsă</span>
                   </span>
-                  <span className="text-slate-500">
-                    Factură: <span className="text-slate-600">{order.paymentStatus === "paid" ? "Emisă" : order.paymentStatus === "partial" ? "Draft" : "Lipsă"}</span>
+                  <span className="text-wo-text-muted">
+                    Factură: <span className="text-wo-text-dim">{order.paymentStatus === "paid" ? "Emisă" : order.paymentStatus === "partial" ? "Draft" : "Lipsă"}</span>
                   </span>
                 </div>
-                {order.notes && <p className="text-[10px] text-slate-600 mt-1">{order.notes}</p>}
+                {order.notes && <p className="text-[10px] text-wo-text-dim mt-1">{order.notes}</p>}
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-2">
                   <ActionButton label="Vezi comanda" onClick={() => navigate(orderDetailPath(order.id))} icon={<Eye className="w-2.5 h-2.5" />} />
@@ -1126,9 +1126,9 @@ function ComenziTab({ orders, navigate }: { orders: Order[]; navigate: ReturnTyp
 function FacturiTab() {
   return (
     <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
-      <Receipt className="w-8 h-8 text-slate-700 mx-auto mb-3" />
-      <p className="text-[13px] text-slate-400 font-medium">Nu există facturi asociate acestui client.</p>
-      <p className="text-[11px] text-slate-600 mt-1">Modulul de facturare nu este implementat în această versiune.</p>
+      <Receipt className="w-8 h-8 text-wo-text-dim mx-auto mb-3" />
+      <p className="text-[13px] text-wo-text-muted font-medium">Nu există facturi asociate acestui client.</p>
+      <p className="text-[11px] text-wo-text-dim mt-1">Modulul de facturare nu este implementat în această versiune.</p>
       <div className="mt-3">
         <DisabledActionButton label="Emite factură" reason="Modulul de facturare nu este implementat" />
       </div>
@@ -1142,9 +1142,9 @@ function FacturiTab() {
 function DocumenteTab() {
   return (
     <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
-      <FolderOpen className="w-8 h-8 text-slate-700 mx-auto mb-3" />
-      <p className="text-[13px] text-slate-400 font-medium">Nu există documente atașate acestui client.</p>
-      <p className="text-[11px] text-slate-600 mt-1">Upload/download de fișiere și contracte nu este implementat.</p>
+      <FolderOpen className="w-8 h-8 text-wo-text-dim mx-auto mb-3" />
+      <p className="text-[13px] text-wo-text-muted font-medium">Nu există documente atașate acestui client.</p>
+      <p className="text-[11px] text-wo-text-dim mt-1">Upload/download de fișiere și contracte nu este implementat.</p>
       <div className="mt-3 flex items-center justify-center gap-2">
         <DisabledActionButton label="Adaugă document" reason="Upload de fișiere nu este implementat" />
         <DisabledActionButton label="Adaugă contract" reason="Modulul de contracte nu este implementat" />
@@ -1159,9 +1159,9 @@ function DocumenteTab() {
 function NoteTab() {
   return (
     <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
-      <MessageSquare className="w-8 h-8 text-slate-700 mx-auto mb-3" />
-      <p className="text-[13px] text-slate-400 font-medium">Nu există note interne pentru acest client.</p>
-      <p className="text-[11px] text-slate-600 mt-1">Adăugarea de note necesită flow backend.</p>
+      <MessageSquare className="w-8 h-8 text-wo-text-dim mx-auto mb-3" />
+      <p className="text-[13px] text-wo-text-muted font-medium">Nu există note interne pentru acest client.</p>
+      <p className="text-[11px] text-wo-text-dim mt-1">Adăugarea de note necesită flow backend.</p>
       <div className="mt-3">
         <DisabledActionButton label="Adaugă notă" reason="Modulul de note nu este implementat" />
       </div>
@@ -1191,7 +1191,7 @@ function TimelineTab({
         date: i.createdAt,
         type: "intake",
         typeLabel: "CERERE",
-        icon: <Inbox className="w-3.5 h-3.5 text-blue-400" />,
+        icon: <Inbox className="w-3.5 h-3.5 text-wo-info" />,
         label: `Cerere creată — ${i.productFamily}`,
         entityId: i.id,
         status: intakeStatusConfig[i.status as IntakeStatus]?.label,
@@ -1206,7 +1206,7 @@ function TimelineTab({
           date: i.updatedAt,
           type: "intake",
           typeLabel: "CERERE",
-          icon: <FileCheck className="w-3.5 h-3.5 text-emerald-400" />,
+          icon: <FileCheck className="w-3.5 h-3.5 text-wo-success" />,
           label: `Cerere pregătită pentru ofertare`,
           entityId: i.id,
           status: "Gata pt. Ofertă",
@@ -1222,7 +1222,7 @@ function TimelineTab({
           date: i.updatedAt || i.createdAt,
           type: "intake",
           typeLabel: "CERERE",
-          icon: <AlertCircle className="w-3.5 h-3.5 text-red-400" />,
+          icon: <AlertCircle className="w-3.5 h-3.5 text-wo-error" />,
           label: `Cerere blocată${i.notes ? ` — ${i.notes.slice(0, 40)}` : ""}`,
           entityId: i.id,
           status: "Blocat",
@@ -1240,7 +1240,7 @@ function TimelineTab({
         date: q.createdAt,
         type: "quote",
         typeLabel: "OFERTĂ",
-        icon: <FileText className="w-3.5 h-3.5 text-purple-400" />,
+        icon: <FileText className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400" />,
         label: `Ofertă creată — ${formatCurrency(q.grandTotal)} RON (v${q.version})`,
         entityId: q.id,
         status: quoteStatusConfig[q.status as QuoteStatus]?.label,
@@ -1251,7 +1251,7 @@ function TimelineTab({
           date: q.createdAt,
           type: "quote",
           typeLabel: "OFERTĂ",
-          icon: <Send className="w-3.5 h-3.5 text-blue-400" />,
+          icon: <Send className="w-3.5 h-3.5 text-wo-info" />,
           label: `Ofertă trimisă clientului`,
           entityId: q.id,
           status: "Trimis",
@@ -1263,7 +1263,7 @@ function TimelineTab({
           date: q.createdAt,
           type: "quote",
           typeLabel: "OFERTĂ",
-          icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />,
+          icon: <CheckCircle2 className="w-3.5 h-3.5 text-wo-success" />,
           label: `Ofertă acceptată — ${formatCurrency(q.grandTotal)} RON`,
           entityId: q.id,
           status: "Acceptat",
@@ -1275,7 +1275,7 @@ function TimelineTab({
           date: q.createdAt,
           type: "quote",
           typeLabel: "OFERTĂ",
-          icon: <XCircle className="w-3.5 h-3.5 text-red-400" />,
+          icon: <XCircle className="w-3.5 h-3.5 text-wo-error" />,
           label: `Ofertă respinsă`,
           entityId: q.id,
           status: "Respins",
@@ -1289,7 +1289,7 @@ function TimelineTab({
         date: o.createdAt,
         type: "order",
         typeLabel: "COMANDĂ",
-        icon: <ClipboardList className="w-3.5 h-3.5 text-emerald-400" />,
+        icon: <ClipboardList className="w-3.5 h-3.5 text-wo-success" />,
         label: `Comandă creată — ${o.productSummary}`,
         entityId: o.id,
         status: orderStatusConfig[o.status as OrderStatus]?.label,
@@ -1300,7 +1300,7 @@ function TimelineTab({
           date: o.lockedAt,
           type: "order",
           typeLabel: "COMANDĂ",
-          icon: <Lock className="w-3.5 h-3.5 text-purple-400" />,
+          icon: <Lock className="w-3.5 h-3.5 text-purple-700 dark:text-purple-400" />,
           label: `Comandă înghețată (snapshot v${o.snapshotVersion})`,
           entityId: o.id,
           status: "Înghețat",
@@ -1312,7 +1312,7 @@ function TimelineTab({
           date: o.createdAt,
           type: "execution",
           typeLabel: "EXECUȚIE",
-          icon: <Activity className="w-3.5 h-3.5 text-emerald-400" />,
+          icon: <Activity className="w-3.5 h-3.5 text-wo-success" />,
           label: `Comandă în execuție — ${o.jobId}`,
           entityId: o.id,
           status: "În Execuție",
@@ -1324,7 +1324,7 @@ function TimelineTab({
           date: o.createdAt,
           type: "order",
           typeLabel: "COMANDĂ",
-          icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />,
+          icon: <CheckCircle2 className="w-3.5 h-3.5 text-wo-success" />,
           label: `Comandă finalizată — ${formatCurrency(o.totalAmount)} RON`,
           entityId: o.id,
           status: "Finalizat",
@@ -1346,19 +1346,19 @@ function TimelineTab({
         <div
           key={idx}
           onClick={() => event.route && navigate(event.route)}
-          className={`flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800/30 cursor-pointer transition-colors ${
+          className={`flex items-center gap-3 px-4 py-2.5 hover:bg-wo-hover cursor-pointer transition-colors ${
             idx < events.length - 1 ? "border-b border-wo-border-subtle/50" : ""
           }`}
         >
           <div className="shrink-0">{event.icon}</div>
-          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-600 w-[56px] shrink-0">{event.typeLabel}</span>
-          <span className="text-[11px] font-mono text-slate-500 w-[64px] shrink-0">{event.entityId}</span>
-          <span className="text-[11px] text-slate-300 flex-1 truncate">{event.label}</span>
+          <span className="text-[9px] font-bold uppercase tracking-wider text-wo-text-dim w-[56px] shrink-0">{event.typeLabel}</span>
+          <span className="text-[11px] font-mono text-wo-text-muted w-[64px] shrink-0">{event.entityId}</span>
+          <span className="text-[11px] text-wo-text-secondary flex-1 truncate">{event.label}</span>
           {event.status && (
-            <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700/50 text-slate-500 shrink-0">{event.status}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded bg-wo-surface-inset border border-wo-border-subtle text-wo-text-muted shrink-0">{event.status}</span>
           )}
-          <span className="text-[10px] text-slate-700 shrink-0 w-[90px] text-right">{formatDateTime(event.date)}</span>
-          <ExternalLink className="w-3 h-3 text-slate-700 shrink-0" />
+          <span className="text-[10px] text-wo-text-dim shrink-0 w-[90px] text-right">{formatDateTime(event.date)}</span>
+          <ExternalLink className="w-3 h-3 text-wo-text-dim shrink-0" />
         </div>
       ))}
     </div>
@@ -1371,7 +1371,7 @@ function TimelineTab({
 function EmptyState({ message }: { message: string }) {
   return (
     <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center">
-      <p className="text-[12px] text-slate-500">{message}</p>
+      <p className="text-[12px] text-wo-text-muted">{message}</p>
     </div>
   );
 }
