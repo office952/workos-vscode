@@ -156,14 +156,14 @@ export function ClientFiscalVerifyPanel({
       className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4"
       data-testid="client-fiscal-verify-panel"
     >
-      <h3 className="text-[12px] font-semibold text-slate-300 mb-3 flex items-center gap-2">
-        <ShieldCheck className="w-4 h-4 text-blue-400" />
+      <h3 className="text-[12px] font-semibold text-wo-text-secondary mb-3 flex items-center gap-2">
+        <ShieldCheck className="w-4 h-4 text-wo-info" />
         Verificare date fiscale
       </h3>
 
       <div className="flex items-center gap-3 mb-3">
-        <div className="flex items-center gap-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-blue-500/50">
-          <Search className="w-4 h-4 text-slate-500 shrink-0" />
+        <div className="flex items-center gap-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-wo-info/50">
+          <Search className="w-4 h-4 text-wo-text-muted shrink-0" />
           <input
             type="text"
             value={cui}
@@ -175,13 +175,13 @@ export function ClientFiscalVerifyPanel({
             }}
             onKeyDown={(e) => e.key === "Enter" && handleLookup()}
             placeholder="CUI client"
-            className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full font-mono"
+            className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-wo-text-dim outline-none w-full font-mono"
           />
         </div>
         <button
           onClick={handleLookup}
           disabled={loading || !cui.trim()}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg text-[12px] font-semibold transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-wo-info hover:brightness-110 disabled:bg-wo-surface-inset disabled:text-wo-text-dim text-white rounded-lg text-[12px] font-semibold transition-colors"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           {loading ? "Interogare..." : "Verifică fiscal"}
@@ -189,53 +189,53 @@ export function ClientFiscalVerifyPanel({
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <XCircle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="text-[12px] text-red-300">{error}</p>
+        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-wo-error-muted border border-wo-error/35 rounded-lg">
+          <XCircle className="w-4 h-4 text-wo-error shrink-0" />
+          <p className="text-[12px] text-wo-error">{error}</p>
         </div>
       )}
 
       {lookupInfo && (
-        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-blue-900/20 border border-blue-800/40 rounded-lg">
-          <Building2 className="w-4 h-4 text-blue-300 shrink-0" />
-          <p className="text-[12px] text-blue-200">{lookupInfo}</p>
+        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-wo-info-muted border border-wo-info/35 rounded-lg">
+          <Building2 className="w-4 h-4 text-wo-info shrink-0" />
+          <p className="text-[12px] text-wo-info">{lookupInfo}</p>
         </div>
       )}
 
       {preview && (
-        <div className="bg-wo-surface-inset border border-emerald-800/30 rounded-lg p-4 space-y-3">
+        <div className="bg-wo-surface-inset border border-wo-success/35 rounded-lg p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <p className="text-[12px] text-emerald-400 font-semibold">Preview date fiscale</p>
+            <CheckCircle2 className="w-4 h-4 text-wo-success" />
+            <p className="text-[12px] text-wo-success font-semibold">Preview date fiscale</p>
           </div>
 
           {preview.warnings?.length ? (
-            <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-amber-300 mt-0.5 shrink-0" />
-              <p className="text-[11px] text-amber-200">{preview.warnings.join(" ")}</p>
+            <div className="flex items-start gap-2 px-3 py-2 bg-wo-warning-muted border border-wo-warning/35 rounded-lg">
+              <AlertTriangle className="w-4 h-4 text-wo-warning mt-0.5 shrink-0" />
+              <p className="text-[11px] text-wo-warning">{preview.warnings.join(" ")}</p>
             </div>
           ) : null}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
             <div>
-              <p className="text-[10px] text-slate-500 uppercase">Nume firmă</p>
-              <p className="text-slate-200">{preview.companyName}</p>
+              <p className="text-[10px] text-wo-text-muted uppercase">Nume firmă</p>
+              <p className="text-wo-text-primary">{preview.companyName}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-500 uppercase">CUI</p>
-              <p className="text-slate-200 font-mono">{preview.taxId}</p>
+              <p className="text-[10px] text-wo-text-muted uppercase">CUI</p>
+              <p className="text-wo-text-primary font-mono">{preview.taxId}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-500 uppercase">Adresă</p>
-              <p className="text-slate-200">{preview.address || "—"}</p>
+              <p className="text-[10px] text-wo-text-muted uppercase">Adresă</p>
+              <p className="text-wo-text-primary">{preview.address || "—"}</p>
             </div>
             <div>
-              <p className="text-[10px] text-slate-500 uppercase">Oraș</p>
-              <p className="text-slate-200">{preview.city || "—"}</p>
+              <p className="text-[10px] text-wo-text-muted uppercase">Oraș</p>
+              <p className="text-wo-text-primary">{preview.city || "—"}</p>
             </div>
           </div>
 
-          <div className="text-[11px] text-slate-400 border-t border-wo-border-strong pt-3">
+          <div className="text-[11px] text-wo-text-muted border-t border-wo-border-strong pt-3">
             {matchStatus === "loading" && "Verific client existent după CUI..."}
             {matchStatus === "single" && "Client existent confirmat după CUI."}
             {matchStatus === "none" && "Niciun client existent cu acest CUI — actualizarea se aplică clientului curent."}
@@ -245,23 +245,23 @@ export function ClientFiscalVerifyPanel({
           </div>
 
           {persistError && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-              <XCircle className="w-4 h-4 text-red-400 shrink-0" />
-              <p className="text-[12px] text-red-300">{persistError}</p>
+            <div className="flex items-center gap-2 px-3 py-2 bg-wo-error-muted border border-wo-error/35 rounded-lg">
+              <XCircle className="w-4 h-4 text-wo-error shrink-0" />
+              <p className="text-[12px] text-wo-error">{persistError}</p>
             </div>
           )}
 
           {persistSuccess && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-emerald-900/20 border border-emerald-800/40 rounded-lg">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <p className="text-[12px] text-emerald-300">{persistSuccess}</p>
+            <div className="flex items-center gap-2 px-3 py-2 bg-wo-success-muted border border-wo-success/35 rounded-lg">
+              <CheckCircle2 className="w-4 h-4 text-wo-success shrink-0" />
+              <p className="text-[12px] text-wo-success">{persistSuccess}</p>
             </div>
           )}
 
           <button
             onClick={handleUpdateClient}
             disabled={!canUpdate}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-600 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg text-[12px] font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-wo-success hover:brightness-110 disabled:bg-wo-surface-inset disabled:text-wo-text-dim text-white rounded-lg text-[12px] font-semibold transition-colors"
           >
             {persistLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
             {persistLoading ? "Actualizare..." : "Actualizează client"}
