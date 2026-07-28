@@ -17,6 +17,11 @@ import {
 } from "@/lib/api";
 import { ClientFiscalVerifyPanel } from "@/components/clients/ClientFiscalVerifyPanel";
 import {
+  ClientActiveChip,
+  ClientFiscalStatusBadge,
+  ClientRegistryChip,
+} from "@/components/clients/ClientFiscalStatusBadge";
+import {
   Building2,
   Phone,
   Mail,
@@ -324,29 +329,10 @@ export default function ClientWorkspace() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-[17px] font-bold text-wo-text-primary">{clientInfo.name}</h1>
-                <span className="px-2 py-0.5 text-[9px] font-semibold rounded bg-wo-success-muted text-wo-success border border-wo-success/35">
-                  Activ
-                </span>
-                <span
-                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold rounded border ${
-                    clientInfo.fiscalStatus === "saved"
-                      ? "bg-wo-success-muted text-wo-success border-wo-success/35"
-                      : clientInfo.fiscalStatus === "missing_cui"
-                      ? "bg-wo-error-muted text-wo-error border-wo-error/35"
-                      : "bg-wo-warning-muted text-wo-warning border-wo-warning/35"
-                  }`}
-                >
-                  {clientInfo.fiscalStatus === "saved" ? (
-                    <CheckCircle2 className="w-2.5 h-2.5" />
-                  ) : (
-                    <AlertTriangle className="w-2.5 h-2.5" />
-                  )}
-                  {getClientFiscalDisplayLabel(clientInfo.fiscalStatus)}
-                </span>
+                <ClientActiveChip />
+                <ClientFiscalStatusBadge status={clientInfo.fiscalStatus} />
                 {clientInfo.hasEntityRecord && (
-                  <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-wo-info-muted text-wo-info border border-wo-info/35">
-                    Registru entități #{clientInfo.entityId}
-                  </span>
+                  <ClientRegistryChip label={`Registru entități #${clientInfo.entityId}`} />
                 )}
               </div>
               <div className="flex items-center gap-4 mt-1 text-[11px] text-wo-text-muted flex-wrap">

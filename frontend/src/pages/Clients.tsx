@@ -4,10 +4,13 @@ import { useBackendData } from "@/hooks/useBackendData";
 import {
   listClients,
   getClientFiscalDisplayStatus,
-  getClientFiscalDisplayLabel,
   type ClientEntity,
   type ClientFiscalDisplayStatus,
 } from "@/lib/api";
+import {
+  ClientFiscalStatusBadge,
+  ClientRegistryChip,
+} from "@/components/clients/ClientFiscalStatusBadge";
 import {
   Users,
   Search,
@@ -16,9 +19,6 @@ import {
   ClipboardList,
   Inbox,
   ChevronRight,
-  AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
 } from "lucide-react";
 
 interface ClientSummary {
@@ -88,31 +88,6 @@ function createSummaryFromEntity(entity: ClientEntity): ClientSummary {
     hasFiscalData: fiscalStatus === "saved",
     entityOnly: true,
   };
-}
-
-function FiscalStatusBadge({ status }: { status: ClientFiscalDisplayStatus }) {
-  if (status === "saved") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-800 dark:border-emerald-800/30 dark:bg-emerald-900/30 dark:text-emerald-400">
-        <CheckCircle2 className="w-2.5 h-2.5" />
-        {getClientFiscalDisplayLabel(status)}
-      </span>
-    );
-  }
-  if (status === "missing_cui") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded border border-red-300 bg-red-50 px-1.5 py-0.5 text-[9px] font-semibold text-red-800 dark:border-red-800/30 dark:bg-red-900/30 dark:text-red-400">
-        <AlertTriangle className="w-2.5 h-2.5" />
-        {getClientFiscalDisplayLabel(status)}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-900 dark:border-amber-800/30 dark:bg-amber-900/30 dark:text-amber-400">
-      <ShieldAlert className="w-2.5 h-2.5" />
-      {getClientFiscalDisplayLabel(status)}
-    </span>
-  );
 }
 
 export default function Clients() {
@@ -299,7 +274,7 @@ export default function Clients() {
       </div>
 
       {entitiesError && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-[12px] text-amber-900 dark:border-amber-800/30 dark:bg-amber-900/20 dark:text-amber-300">
+        <div className="rounded-lg border border-wo-warning/35 bg-wo-warning-muted px-3 py-2 text-[12px] text-amber-900 dark:text-wo-warning">
           {entitiesError} Lista afișează doar activitatea comercială.
         </div>
       )}
@@ -335,12 +310,8 @@ export default function Clients() {
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate text-[14px] font-semibold text-wo-text-primary">{client.name}</span>
-                      <FiscalStatusBadge status={client.fiscalStatus} />
-                      {client.entityOnly && (
-                        <span className="rounded border border-blue-300 bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold text-blue-800 dark:border-blue-800/30 dark:bg-blue-900/30 dark:text-blue-300">
-                          Registru entități
-                        </span>
-                      )}
+                      <ClientFiscalStatusBadge status={client.fiscalStatus} />
+                      {client.entityOnly && <ClientRegistryChip />}
                     </div>
                     <div className="mt-0.5 flex flex-wrap items-center gap-3">
                       <span className="text-[11px] text-wo-text-muted">{client.contactPerson}</span>
@@ -362,21 +333,21 @@ export default function Clients() {
                       <Inbox className="h-3.5 w-3.5 text-wo-text-muted" />
                       <span className="text-wo-text-secondary">{client.intakeCount}</span>
                       {client.activeIntakes > 0 && (
-                        <span className="font-semibold text-blue-700 dark:text-blue-400">({client.activeIntakes})</span>
+                        <span className="font-semibold text-wo-info">({client.activeIntakes})</span>
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-[11px]" title="Oferte">
                       <FileText className="h-3.5 w-3.5 text-wo-text-muted" />
                       <span className="text-wo-text-secondary">{client.quoteCount}</span>
                       {client.openQuotes > 0 && (
-                        <span className="font-semibold text-violet-700 dark:text-purple-400">({client.openQuotes})</span>
+                        <span className="font-semibold text-purple-700 dark:text-purple-400">({client.openQuotes})</span>
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-[11px]" title="Comenzi">
                       <ClipboardList className="h-3.5 w-3.5 text-wo-text-muted" />
                       <span className="text-wo-text-secondary">{client.orderCount}</span>
                       {client.activeOrders > 0 && (
-                        <span className="font-semibold text-emerald-700 dark:text-emerald-400">({client.activeOrders})</span>
+                        <span className="font-semibold text-wo-success">({client.activeOrders})</span>
                       )}
                     </div>
                   </div>
