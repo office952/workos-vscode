@@ -155,6 +155,14 @@ export default function ExecutionDashboard() {
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <Link
+            to="/execution/ops-graph"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md bg-wo-surface-raised hover:bg-wo-hover text-wo-text-primary border border-wo-border-strong transition-colors"
+            data-testid="execution-ops-graph-link"
+          >
+            <Activity className="w-3.5 h-3.5 text-wo-info" />
+            Ops graph (RO)
+          </Link>
+          <Link
             to="/execution/reality-review"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium rounded-md bg-wo-surface-raised hover:bg-wo-hover text-wo-text-primary border border-wo-border-strong transition-colors"
           >
