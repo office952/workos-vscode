@@ -33,6 +33,7 @@ from services.capacity_batch_04_gates import (
     scan_assignment_and_util_gates,
 )
 from services.capacity_shift_model import build_calendar_shift_capacity
+from services.dec009_materialize_gate import LIVE_DEC009_STATUS
 from services.execution_plan_task_parser import operational_tasks_only
 from services.operational_data_gaps import (
     build_operational_data_gaps,
@@ -311,7 +312,7 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         minutes_readiness=minutes_readiness,
         mapping_summary=mapping_readiness.get("summary") or {},
         gates=batch04_gates,
-        dec009="A",
+        dec009=LIVE_DEC009_STATUS,
     )
     capacity_model["minutesReadiness"] = minutes_readiness
     capacity_model["machineMappingReadiness"] = {
@@ -757,7 +758,7 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             },
             "capacityBatch04": {
                 "materialize": "BLOCKED",
-                "dec009": "A",
+                "dec009": LIVE_DEC009_STATUS,
                 "maintenanceAvailability": maint_block.get("availability") or "gap",
                 "statusOnlyMaintenanceCount": maint_block.get("statusOnlyCount") or 0,
                 "assignmentTruthCount": (batch04_gates.get("assignment") or {}).get(

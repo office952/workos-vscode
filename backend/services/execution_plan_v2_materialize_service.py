@@ -19,6 +19,7 @@ from schemas.execution_plan_v2_materialize import (
     OPERATIONAL_TASKS_VERSION,
     ExecutionPlanV2MaterializeResult,
 )
+from services.dec009_materialize_gate import enforce_dec009_materialize_gate
 from services.execution_plan_task_parser import (
     compute_activation_hash,
     materialize_operational_tasks_from_v2_envelope,
@@ -80,6 +81,9 @@ async def materialize_execution_plan_v2_operational_tasks(
     plan = plan_result.scalar_one_or_none()
     if plan is None:
         raise ExecutionPlanV2MaterializePlanNotFound()
+
+    # OD3: DEC-009 hard reject before any envelope mutation (Capacity Batch 14B).
+    enforce_dec009_materialize_gate(order_id=order.id, plan_id=plan.id)
 
     if plan.plan_source != EXECUTION_PLAN_V2_PLAN_SOURCE:
         _raise_blocked(

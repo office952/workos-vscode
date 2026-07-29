@@ -41,6 +41,13 @@ for _finder, _name, _ispkg in pkgutil.iter_modules([_models_dir]):
 from tests._db_fixture import IsolatedDBFixture
 
 
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "enforce_dec009_gate: keep OD3 DEC-009 hard reject enabled (no unit-test bypass)",
+    )
+
+
 def _seed_reference_data(fixture: IsolatedDBFixture):
     """Seed reference/lookup tables required by business logic validators."""
     from models.product_families import Product_families
@@ -143,3 +150,22 @@ def auth_client(db_fixture):
         yield c
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def _dec009_gate_bypass_for_legacy_materialize_tests(monkeypatch, request):
+    """Legacy materialize mechanic tests opt out of OD3 gate via bypass.
+
+    Tests marked ``enforce_dec009_gate`` keep the real OD3 hard-reject path and
+    must assert reject without creating operational_tasks.
+    """
+    if request.node.get_closest_marker("enforce_dec009_gate"):
+        monkeypatch.setattr(
+            "services.dec009_materialize_gate._UNIT_TEST_BYPASS",
+            False,
+        )
+        return
+    monkeypatch.setattr(
+        "services.dec009_materialize_gate._UNIT_TEST_BYPASS",
+        True,
+    )
