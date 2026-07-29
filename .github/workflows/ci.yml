@@ -65,6 +65,7 @@ jobs:
           tests/test_capacity_shift_model.py
           tests/test_capacity_batch_02_readiness.py
           tests/test_capacity_batch_04_gates.py
+          tests/test_dec009_materialize_gate.py
           tests/test_dashboard_kpi_metrics.py
           tests/test_operational_data_gaps.py
           tests/test_pricing_registry.py
