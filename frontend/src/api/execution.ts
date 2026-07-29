@@ -134,6 +134,20 @@ export interface PlannedTaskRow {
   /** Null when planning source is absent — never coerce to 0 in UI. */
   estimated_time_minutes: number | null;
   quantity: number;
+  /** Present on V2 operational_tasks — never invent when absent. */
+  display_name?: string | null;
+  technical_name?: string | null;
+  machine_code?: string | null;
+  workcenter?: string | null;
+  planning_minutes_source?: string | null;
+  assigned_employee_id?: string | null;
+  operational_status?: string | null;
+  sequence_index?: number | null;
+  warnings?: string[] | null;
+  depends_on_task_ids?: string[] | null;
+  execution_plan_id?: number | null;
+  order_id?: number | null;
+  source_operation_code?: string | null;
 }
 
 export interface ExecutionPlanResponse {
@@ -151,6 +165,87 @@ export interface ExecutionPlanResponse {
   operational_tasks_materialized?: boolean;
   plan_format?: string;
   execution_tasks_created?: boolean;
+}
+
+/** GET /execution/plan-v2/from-order/{id}/materialization-audit — read-only. */
+export interface MaterializationAuditGuards {
+  mode?: string;
+  creates_execution_tasks?: boolean;
+  creates_sessions?: boolean;
+  writes_database?: boolean;
+  uses_cost_engine?: boolean;
+  uses_price_endpoint?: boolean;
+  uses_quote_orchestrator?: boolean;
+  employee_mobile_scope?: boolean;
+  post_materialize_allowed?: boolean;
+}
+
+export interface MaterializableTaskCandidatePreview {
+  task_key: string;
+  label?: string | null;
+  canonical_task_type?: string | null;
+  source_operation_code?: string | null;
+  sequence_index?: number | null;
+  operational_status_preview?: string;
+  estimated_minutes?: number | null;
+  warnings?: string[];
+  machine_requirement?: { workcenter?: string | null } | null;
+}
+
+export interface NonOperationalItemPreview {
+  task_name: string;
+  task_type: string;
+  reason: string;
+  excluded_from?: string;
+}
+
+/** GET /execution/plan-v2/preview/{id} — read-only preview (orphaned panel contract). */
+export interface ExecutionPlanV2PreviewResponse {
+  status: string;
+  source_snapshot_code?: string | null;
+  planned_tasks: Array<{
+    task_key: string;
+    label?: string | null;
+    canonical_task_type?: string | null;
+    source_operation_code?: string | null;
+    estimated_minutes?: number | null;
+    warnings: string[];
+    machine_requirement?: { workcenter?: string | null } | null;
+  }>;
+  planned_operations: Array<{
+    operation_code: string;
+    label?: string | null;
+    source_template_code?: string | null;
+    workcenter?: string | null;
+    sequence_index?: number | null;
+    priced?: boolean;
+  }>;
+  warnings: string[];
+  blockers: string[];
+}
+
+export interface ExecutionPlanV2MaterializationAuditResponse {
+  mode: "audit_only";
+  order_id: number;
+  order_code?: string | null;
+  execution_plan_id: number;
+  source_quote_snapshot_v2_id?: number | null;
+  source_snapshot_code?: string | null;
+  plan_source?: string | null;
+  template_code?: string | null;
+  materialization_status: string;
+  dry_run_status: string;
+  planned_task_count: number;
+  operation_count: number;
+  operational_tasks_in_envelope_count: number;
+  materializable_task_candidates: MaterializableTaskCandidatePreview[];
+  non_operational_items?: NonOperationalItemPreview[];
+  blockers: string[];
+  warnings: string[];
+  activation_hash_preview?: string | null;
+  guards: MaterializationAuditGuards;
+  contract_notes?: string[];
+  message?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -440,6 +535,34 @@ export const executionApi = {
       return Promise.reject(new Error('order_id_invalid'));
     }
     return getJson<ExecutionPlanResponse>(`/execution/plan/${orderId}`);
+  },
+
+  /**
+   * Read-only V2 plan preview for an order.
+   * GET-only — never persists or materializes.
+   */
+  getExecutionPlanV2Preview(orderId: number): Promise<ExecutionPlanV2PreviewResponse> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return Promise.reject(new Error('order_id_invalid'));
+    }
+    return getJson<ExecutionPlanV2PreviewResponse>(
+      `/execution/plan-v2/preview/${orderId}`,
+    );
+  },
+
+  /**
+   * Read-only materialization audit for an order's persisted V2 plan.
+   * GET-only — never triggers POST materialize.
+   */
+  getExecutionPlanV2MaterializationAudit(
+    orderId: number,
+  ): Promise<ExecutionPlanV2MaterializationAuditResponse> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return Promise.reject(new Error('order_id_invalid'));
+    }
+    return getJson<ExecutionPlanV2MaterializationAuditResponse>(
+      `/execution/plan-v2/from-order/${orderId}/materialization-audit`,
+    );
   },
 
   /**
