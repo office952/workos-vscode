@@ -181,10 +181,10 @@ Working tree on `fix/capacity-batch-15-ops-graph-ui` (coordinated with Track B; 
 
 | Item | Status |
 |------|--------|
-| Backend regression tests | Added on `fix/capacity-batch-15-ops-graph-ui` |
-| FE tests | On same branch with Track B surface (avoid fight) |
-| Dedicated Track C PR | Prefer **push onto Track B PR** when opened; else small tests-only PR from this branch |
-| Handoff report | This file |
+| Backend regression tests | Landed on `test/capacity-batch-15-regression-guard` @ `07262fea` |
+| Track C PR | https://github.com/office952/workos-vscode/pull/31 |
+| FE tests | Remain on Track B WIP branch `fix/capacity-batch-15-ops-graph-ui` (avoid fight); green locally |
+| Handoff report | This file (+ `docs/qa/…` in PR #31) |
 
 ---
 
