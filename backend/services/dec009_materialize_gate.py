@@ -46,6 +46,34 @@ _UNIT_TEST_BYPASS = False
 
 ERROR_DEC009_MATERIALIZE_BLOCKED = "DEC009_MATERIALIZE_BLOCKED"
 
+# Runtime identity stamp (Capacity Batch 14D) — proves this process loaded OD3.
+# Agents must observe this via GET /api/v1/system/local-compatibility before
+# any controlled materialize execute; absence ⇒ stale/pre-OD3 runtime.
+OD3_GATE_MODULE = "services.dec009_materialize_gate"
+OD3_RUNTIME_IDENTITY_VERSION = "capacity-batch-14d/v1"
+# First main merge that landed OD3 DEC-009 hard reject (PR #29).
+OD3_MIN_MERGE_COMMIT = "a1b759c81355124f285b83425b93a9422f0e891e"
+
+
+def build_od3_runtime_identity() -> dict[str, Any]:
+    """Read-only OD3 gate identity for preflight / stale-runtime detection.
+
+    No DB I/O. No authorization side effects. Not an execute path.
+    """
+    return {
+        "identity_version": OD3_RUNTIME_IDENTITY_VERSION,
+        "gate_module": OD3_GATE_MODULE,
+        "gate_landed": True,
+        "min_merge_commit": OD3_MIN_MERGE_COMMIT,
+        "live_dec009": LIVE_DEC009_STATUS,
+        "live_dec009_label": LIVE_DEC009_LABEL,
+        "scoped_b_stamp": SCOPED_B_STAMP_STATUS,
+        "scoped_b_order_id": SCOPED_B_ORDER_ID,
+        "scoped_b_plan_id": SCOPED_B_PLAN_ID,
+        "scoped_b_fixture_id": SCOPED_B_FIXTURE_ID,
+        "batch_execute_materialize_authorized": BATCH_EXECUTE_MATERIALIZE_AUTHORIZED,
+    }
+
 
 def scoped_b_matches(*, order_id: int, plan_id: int | None = None) -> bool:
     if int(order_id) != SCOPED_B_ORDER_ID:

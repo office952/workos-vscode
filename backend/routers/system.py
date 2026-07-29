@@ -41,6 +41,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from dependencies.auth import get_admin_user as _get_admin_user_lazy
 from dependencies.permissions import require_permission
+from services.dec009_materialize_gate import build_od3_runtime_identity
 
 router = APIRouter(
     prefix="/api/v1/system",
@@ -318,6 +319,8 @@ LOCAL_COMPAT_CAPABILITIES: tuple[str, ...] = (
     "system.local_compatibility",
     "intake_v6.workspaces",
     "openapi.finish_setup_schema",
+    # Capacity Batch 14D — stale/pre-OD3 processes omit this capability.
+    "execution.dec009_od3_gate",
 )
 
 
@@ -326,6 +329,8 @@ async def get_local_compatibility() -> dict[str, Any]:
     """Public read-only backend identity for local DEV compatibility checks.
 
     No database. No secrets. Not a product-domain contract.
+    Includes OD3 DEC-009 gate identity so agents can prove a fresh OD3
+    runtime before controlled materialize execute (Capacity Batch 14D).
     """
     version = resolve_version_payload()
     return {
@@ -338,6 +343,7 @@ async def get_local_compatibility() -> dict[str, Any]:
         or os.getenv("ENVIRONMENT")
         or os.getenv("APP_ENV"),
         "capabilities": list(LOCAL_COMPAT_CAPABILITIES),
+        "od3_dec009_gate": build_od3_runtime_identity(),
         "observed_at": datetime.now(timezone.utc).isoformat(),
     }
 

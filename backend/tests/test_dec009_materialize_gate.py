@@ -16,10 +16,14 @@ from services.dec009_materialize_gate import (
     BATCH_EXECUTE_MATERIALIZE_AUTHORIZED,
     ERROR_DEC009_MATERIALIZE_BLOCKED,
     LIVE_DEC009_STATUS,
+    OD3_GATE_MODULE,
+    OD3_MIN_MERGE_COMMIT,
+    OD3_RUNTIME_IDENTITY_VERSION,
     SCOPED_B_FIXTURE_ID,
     SCOPED_B_ORDER_ID,
     SCOPED_B_PLAN_ID,
     SCOPED_B_STAMP_STATUS,
+    build_od3_runtime_identity,
     enforce_dec009_materialize_gate,
     evaluate_materialize_authorization,
     scoped_b_matches,
@@ -38,6 +42,18 @@ _GATE_OID = 29890
 def test_live_dec009_remains_a_blocked():
     assert LIVE_DEC009_STATUS == "A"
     assert BATCH_EXECUTE_MATERIALIZE_AUTHORIZED is False
+
+
+def test_od3_runtime_identity_stamp_for_preflight():
+    """14D: process identity proves OD3 gate module is loaded (not execute)."""
+    identity = build_od3_runtime_identity()
+    assert identity["gate_landed"] is True
+    assert identity["gate_module"] == OD3_GATE_MODULE
+    assert identity["identity_version"] == OD3_RUNTIME_IDENTITY_VERSION
+    assert identity["min_merge_commit"] == OD3_MIN_MERGE_COMMIT
+    assert identity["live_dec009"] == "A"
+    assert identity["scoped_b_stamp"] == "SCOPED_B_STAMPED"
+    assert identity["batch_execute_materialize_authorized"] is False
 
 
 def test_scoped_b_stamp_exact_scope():
