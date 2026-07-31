@@ -11,6 +11,7 @@ from services.execution_ops_graph_read_clarity import (
     FIELD_HONESTY_VERSION,
     apply_ops_graph_read_clarity_to_plan_payload,
     build_task_read_clarity,
+    classify_ops_graph_label,
     enrich_operational_tasks_for_ops_graph,
 )
 
@@ -136,6 +137,39 @@ def test_apply_to_plan_payload_adds_summary():
     assert out["tasks"][0]["operational_status"] == "pending"
 
 
+def test_or09_softens_eur_ml_commercial_phrasing_not_pricing():
+    raw = "Modelare cant profil — utilaj (EUR/ml serviciu)"
+    clarity = classify_ops_graph_label(raw)
+    assert clarity["artifact_kind"] == "misleading_commercial_unit_phrasing"
+    assert clarity["commercial_unit_phrasing_present"] is True
+    assert clarity["ops_display_label"] == "Modelare cant profil — utilaj"
+    assert "EUR/ml" not in clarity["ops_display_label"]
+    assert clarity["owner_lock"] == "PRODUCT_SYSTEM_TEMPLATE_LABEL"
+
+    bonding = classify_ops_graph_label("Lipire cant pe față (EUR/ml serviciu)")
+    assert bonding["ops_display_label"] == "Lipire cant pe față"
+
+    plain = classify_ops_graph_label("Pregatire vector / font")
+    assert plain["artifact_kind"] == "process_label"
+    assert plain["ops_display_label"] == "Pregatire vector / font"
+    assert plain["commercial_unit_phrasing_present"] is False
+
+
+def test_or09_read_clarity_keeps_raw_label_and_ops_display():
+    task = _sample_pending_task(
+        display_name="Lipire cant pe față (EUR/ml serviciu)",
+        technical_name="return_face_bonding",
+    )
+    clarity = build_task_read_clarity(task)
+    assert clarity["identity"]["label"] == "Lipire cant pe față (EUR/ml serviciu)"
+    assert clarity["identity"]["ops_display_label"] == "Lipire cant pe față"
+    assert clarity["identity"]["label_clarity"]["softened_for_ops_graph"] is True
+    assert clarity["display_hints"]["prefer_ops_display_label"] is True
+    # Unit field remains independently unknown — no invent from EUR/ml text.
+    assert clarity["unit"]["classification"] == "unknown"
+    assert clarity["unit"]["value"] is None
+
+
 def test_fix_dec009_fixture_snapshot_counts_and_honesty():
     if not FIXTURE_PLAN.is_file():
         pytest.skip("Batch 16 evidence fixture snapshot not available")
@@ -147,15 +181,22 @@ def test_fix_dec009_fixture_snapshot_counts_and_honesty():
     assert len(enriched) == 12
     assert summary["sequence"]["gaps"] == [11, 12]
     assert summary["sequence"]["observed_indices"] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14]
+    assert summary["label_policy"]["commercial_unit_phrasing_task_count"] == 2
     for task, row in zip(plan["tasks"], enriched, strict=True):
         # No invent of machine_code / workcenter / unit / minutes.
         assert row.get("machine_code") == task.get("machine_code")
         assert row.get("workcenter") == task.get("workcenter")
         assert row.get("estimated_time_minutes") == task.get("estimated_time_minutes")
         assert "unit" not in row or row.get("unit") == task.get("unit")
+        # Raw display_name never rewritten on the task row.
+        assert row.get("display_name") == task.get("display_name")
         clarity = row["read_clarity"]
         assert clarity["lifecycle"]["value"] == "pending"
         assert clarity["machine_code"]["classification"] == "owner_accepted_risk"
         assert clarity["workcenter"]["classification"] == "owner_accepted_risk"
         assert clarity["machine_type"]["classification"] == "present"
         assert clarity["unit"]["classification"] == "unknown"
+        ops_label = clarity["identity"]["ops_display_label"] or ""
+        assert "EUR/ml" not in ops_label
+        if clarity["identity"]["label_clarity"]["commercial_unit_phrasing_present"]:
+            assert "EUR/ml" in (clarity["identity"]["label"] or "")

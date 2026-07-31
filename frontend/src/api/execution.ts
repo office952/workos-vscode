@@ -141,12 +141,26 @@ export interface OpsGraphFieldHonesty {
   owner_lock?: string;
 }
 
+export interface OpsGraphLabelClarity {
+  classification: OpsGraphNullClassification | string;
+  artifact_kind: string;
+  role: string;
+  commercial_unit_phrasing_present: boolean;
+  softened_for_ops_graph: boolean;
+  note?: string;
+  owner_lock?: string;
+}
+
 export interface OpsGraphTaskReadClarity {
   version: string;
   identity: {
     task_id?: string | null;
     short_code?: string | null;
+    /** Raw template/envelope provenance label (may contain EUR/ml phrasing). */
     label?: string | null;
+    /** Capacity/ops-graph display label — commercial unit parentheticals softened. */
+    ops_display_label?: string | null;
+    label_clarity?: OpsGraphLabelClarity | null;
     technical_name?: string | null;
     source_operation_code?: string | null;
     source_task_rule_code?: string | null;
@@ -187,6 +201,8 @@ export interface OpsGraphTaskReadClarity {
     status_column: string;
     collapse_accepted_gaps: boolean;
     do_not_coalesce_machine_code_from_machine_type: boolean;
+    prefer_ops_display_label?: boolean;
+    label_column?: string;
   };
 }
 
@@ -202,6 +218,10 @@ export interface OpsGraphPlanReadClarity {
   };
   null_policy?: Record<string, string>;
   identity_rules?: Record<string, string>;
+  label_policy?: {
+    commercial_unit_phrasing_task_count?: number;
+    note?: string;
+  };
   counts_guard?: {
     note?: string;
     input_count: number;
