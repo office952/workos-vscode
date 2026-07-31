@@ -27,8 +27,11 @@ import {
   LogOut,
   Package,
   Activity,
+  Menu,
+  X,
 } from "lucide-react";
 import { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { useIsMobile } from "./hooks/use-mobile";
 import Dashboard from "./pages/Dashboard";
 import ShopFloor from "./pages/ShopFloor";
 import OperatorView from "./pages/OperatorView";
@@ -260,34 +263,88 @@ function UserMenu() {
 
 function AppShell() {
   const location = useLocation();
+  const isNarrow = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  /** Narrow viewport: nav starts closed so content (e.g. ops-graph) is first-fold. */
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   // UI-TRUTH-01C: never show mock "N critical" as real incidents.
   const criticalAlerts = resolveShellCriticalCount(isMockEnabled(), productionAlerts);
+
+  // Content-first on route change at narrow width (OR-07: ops-graph not occluded by nav).
+  useEffect(() => {
+    if (isNarrow) setNavDrawerOpen(false);
+  }, [location.pathname, isNarrow]);
+
+  const railCollapsed = isNarrow ? false : collapsed;
+  const showNavLabels = isNarrow ? true : !collapsed;
 
   return (
     <div
       className="flex h-screen bg-wo-surface-app text-wo-text-primary overflow-hidden"
       data-testid="workos-desktop-shell"
-      style={{ "--workos-sidebar-width": collapsed ? "60px" : "220px" } as React.CSSProperties}
+      data-nav-mode={isNarrow ? "drawer" : "rail"}
+      data-nav-drawer={isNarrow ? (navDrawerOpen ? "open" : "closed") : "n/a"}
+      style={
+        {
+          "--workos-sidebar-width": isNarrow
+            ? "0px"
+            : collapsed
+              ? "60px"
+              : "220px",
+        } as React.CSSProperties
+      }
     >
-      {/* Sidebar */}
+      {/* Narrow backdrop — closes drawer; does not mutate product truth */}
+      {isNarrow && navDrawerOpen && (
+        <button
+          type="button"
+          aria-label="Close navigation drawer"
+          data-testid="workos-nav-drawer-backdrop"
+          className="fixed inset-0 z-40 bg-black/40 border-0 cursor-pointer"
+          onClick={() => setNavDrawerOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — rail on desktop; overlay drawer on narrow (OR-07) */}
       <aside
         data-testid="workos-sidebar"
-        className={`relative z-30 flex shrink-0 flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-all duration-200 ${
-          collapsed ? "w-[60px]" : "w-[220px]"
-        }`}
+        data-nav-drawer-open={isNarrow ? String(navDrawerOpen) : undefined}
+        className={
+          isNarrow
+            ? `fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-transform duration-200 ${
+                navDrawerOpen ? "translate-x-0" : "-translate-x-full"
+              }`
+            : `relative z-30 flex shrink-0 flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-all duration-200 ${
+                collapsed ? "w-[60px]" : "w-[220px]"
+              }`
+        }
       >
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 h-[48px] border-b border-wo-border-subtle">
           <Zap className="w-5 h-5 text-primary shrink-0" />
-          {!collapsed && <span className="text-[15px] font-bold tracking-tight text-wo-text-primary">WorkOS</span>}
+          {showNavLabels && (
+            <span className="text-[15px] font-bold tracking-tight text-wo-text-primary">
+              WorkOS
+            </span>
+          )}
+          {isNarrow && (
+            <button
+              type="button"
+              aria-label="Close navigation"
+              data-testid="workos-nav-drawer-close"
+              className="ml-auto p-1.5 rounded text-wo-text-dim hover:text-wo-text-secondary hover:bg-wo-hover"
+              onClick={() => setNavDrawerOpen(false)}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Nav */}
         <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-thin">
           {navSections.map((section) => (
             <div key={section.title} className="mb-2">
-              {!collapsed && (
+              {showNavLabels && (
                 <p className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-wo-text-dim">
                   {section.title}
                 </p>
@@ -302,6 +359,9 @@ function AppShell() {
                       // Product System keeps prefix match for nested product routes.
                       item.to === "/product-system/products" ? false : true
                     }
+                    onClick={() => {
+                      if (isNarrow) setNavDrawerOpen(false);
+                    }}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
                         isActive
@@ -311,7 +371,7 @@ function AppShell() {
                     }
                   >
                     <item.icon className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span>{item.label}</span>}
+                    {showNavLabels && <span>{item.label}</span>}
                   </NavLink>
                 ))}
               </div>
@@ -320,38 +380,65 @@ function AppShell() {
         </nav>
 
         {/* Runtime release version indicator (Sprint #38) */}
-        <VersionBadge collapsed={collapsed} />
+        <VersionBadge collapsed={railCollapsed} />
 
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
+        {/* Collapse toggle — desktop rail only */}
+        {!isNarrow && (
+          <button
+            type="button"
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors"
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        )}
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Top bar */}
         <header
           data-testid="workos-desktop-topbar"
-          className="flex items-center justify-between h-[48px] px-4 border-b border-wo-border-subtle bg-wo-surface-shell"
+          className="flex items-center justify-between h-[48px] px-4 border-b border-wo-border-subtle bg-wo-surface-shell gap-2"
         >
-          <div className="flex items-center gap-2 bg-wo-surface-input border border-wo-border-subtle rounded-md px-3 py-1.5 w-72">
-            <Search className="w-3.5 h-3.5 text-wo-text-dim" />
-            <input
-              id="app-global-search"
-              name="app-global-search"
-              type="text"
-              placeholder="Search jobs, tasks, machines..."
-              aria-label="Search jobs, tasks, machines"
-              className="bg-transparent text-[12px] text-wo-text-secondary placeholder:text-wo-text-dim outline-none w-full"
-            />
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            {isNarrow && (
+              <button
+                type="button"
+                aria-label={navDrawerOpen ? "Close navigation drawer" : "Open navigation drawer"}
+                aria-expanded={navDrawerOpen}
+                data-testid="workos-nav-drawer-toggle"
+                className="relative z-10 shrink-0 p-1.5 rounded border border-wo-border-subtle bg-wo-surface-input text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover"
+                onClick={() => setNavDrawerOpen((open) => !open)}
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+            )}
+            {!isNarrow && (
+              <div className="flex items-center gap-2 bg-wo-surface-input border border-wo-border-subtle rounded-md px-3 py-1.5 w-full max-w-72 min-w-0">
+                <Search className="w-3.5 h-3.5 text-wo-text-dim shrink-0" />
+                <input
+                  id="app-global-search"
+                  name="app-global-search"
+                  type="text"
+                  placeholder="Search jobs, tasks, machines..."
+                  aria-label="Search jobs, tasks, machines"
+                  className="bg-transparent text-[12px] text-wo-text-secondary placeholder:text-wo-text-dim outline-none w-full min-w-0"
+                />
+              </div>
+            )}
+            {isNarrow && (
+              <p
+                className="truncate text-[12px] font-semibold text-wo-text-primary min-w-0"
+                data-testid="workos-narrow-topbar-title"
+              >
+                WorkOS
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-3">
-            {/* Compact system status — no full-width persistent strip in the work area */}
-            <EnvironmentBanner />
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Full status chip overlaps Menu at ~390px — keep desktop only (OR-07). */}
+            {!isNarrow && <EnvironmentBanner />}
             {criticalAlerts > 0 && (
               <div className="flex items-center gap-1 px-2 py-1 bg-wo-error-muted border border-wo-error/40 rounded text-wo-error text-[11px] font-semibold">
                 <AlertTriangle className="w-3 h-3" />
@@ -365,7 +452,7 @@ function AppShell() {
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-wo-error rounded-full" />
               )}
             </button>
-            <div className="pl-3 border-l border-wo-border-subtle">
+            <div className="pl-2 border-l border-wo-border-subtle">
               <UserMenu />
             </div>
           </div>
