@@ -135,6 +135,6 @@ Capture: `node docs/qa/capacity-batch-18/capture-or-07.mjs before|after [baseUrl
 |------|-------|
 | **Closed** | **Y** |
 | **Route** | `/execution/ops-graph` |
-| **PR** | _(stamped after open)_ |
-| **SHA** | _(stamped after merge/push)_ |
+| **PR** | https://github.com/office952/workos-vscode/pull/36 |
+| **SHA** | `2b36e695` |
 | **Screenshots** | `docs/qa/capacity-batch-18/screenshots/or-07/{before,after}-*` |
