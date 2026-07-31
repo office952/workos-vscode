@@ -125,6 +125,90 @@ async function getJson<T>(path: string): Promise<T> {
 //   - HTTP 422 { error: "snapshot_incomplete", field: "<dotted.path>", message }
 // ---------------------------------------------------------------------------
 
+/** Batch 17 Track B — null / presence honesty for ops-graph RO display. */
+export type OpsGraphNullClassification =
+  | 'present'
+  | 'unknown'
+  | 'not_required'
+  | 'owner_accepted_risk'
+  | 'blocked_pending_owner_truth';
+
+export interface OpsGraphFieldHonesty {
+  value: unknown;
+  classification: OpsGraphNullClassification;
+  role: string;
+  note?: string;
+  owner_lock?: string;
+}
+
+export interface OpsGraphTaskReadClarity {
+  version: string;
+  identity: {
+    task_id?: string | null;
+    short_code?: string | null;
+    label?: string | null;
+    technical_name?: string | null;
+    source_operation_code?: string | null;
+    source_task_rule_code?: string | null;
+    process_type?: string | null;
+    sequence_index?: number | null;
+    deterministic_task_key?: string | null;
+  };
+  lifecycle: {
+    value: string | null;
+    classification: OpsGraphNullClassification;
+    role: string;
+    display_label: string;
+    note?: string;
+    source_field: string;
+  };
+  quantity: OpsGraphFieldHonesty;
+  unit: OpsGraphFieldHonesty;
+  depends_on: {
+    task_ids: string[];
+    short_codes: string[];
+    classification: OpsGraphNullClassification;
+    note?: string;
+  };
+  machine_code: OpsGraphFieldHonesty;
+  machine_type: OpsGraphFieldHonesty;
+  workcenter: OpsGraphFieldHonesty;
+  estimated_time_minutes: OpsGraphFieldHonesty;
+  planning_minutes_source: OpsGraphFieldHonesty;
+  assigned_employee_id: OpsGraphFieldHonesty;
+  warnings: {
+    raw_warnings: string[];
+    accepted_gap_codes: string[];
+    active_warnings: string[];
+  };
+  display_hints: {
+    machine_column: string;
+    machine_code_column: string;
+    status_column: string;
+    collapse_accepted_gaps: boolean;
+    do_not_coalesce_machine_code_from_machine_type: boolean;
+  };
+}
+
+export interface OpsGraphPlanReadClarity {
+  version: string;
+  operational_tasks_count: number;
+  sequence: {
+    observed_indices: number[];
+    gaps: number[];
+    classification: OpsGraphNullClassification | string;
+    note?: string;
+    display_order_basis?: string;
+  };
+  null_policy?: Record<string, string>;
+  identity_rules?: Record<string, string>;
+  counts_guard?: {
+    note?: string;
+    input_count: number;
+    output_count: number;
+  };
+}
+
 export interface PlannedTaskRow {
   task_id: string;
   name: string;
@@ -148,6 +232,11 @@ export interface PlannedTaskRow {
   execution_plan_id?: number | null;
   order_id?: number | null;
   source_operation_code?: string | null;
+  /**
+   * Batch 17 Track B — GET /execution/plan display-only honesty metadata.
+   * Prefer this over coalescing machine_code from machine_type.
+   */
+  read_clarity?: OpsGraphTaskReadClarity | null;
 }
 
 export interface ExecutionPlanResponse {
@@ -165,6 +254,8 @@ export interface ExecutionPlanResponse {
   operational_tasks_materialized?: boolean;
   plan_format?: string;
   execution_tasks_created?: boolean;
+  /** Batch 17 Track B — plan-level sequence/null policy for ops-graph RO. */
+  ops_graph_read_clarity?: OpsGraphPlanReadClarity | null;
 }
 
 /** GET /execution/plan-v2/from-order/{id}/materialization-audit — read-only. */
