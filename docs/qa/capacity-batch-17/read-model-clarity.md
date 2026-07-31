@@ -133,7 +133,7 @@ UI must stop `machine_code ?? machine_type` in the Machine column.
 4. WC ← explicit `workcenter` only; null → OD1 risk, not `machine_type`.
 5. Chips ← prefer `accepted_gap_codes` (one summary) + `active_warnings`; avoid 5–6 raw chips/row.
 6. Seq gap note ← `ops_graph_read_clarity.sequence` (gaps `[11,12]`).
-7. Depends ← prefer `read_clarity.depends_on.short_codes`.
+7. Depends: prefer `read_clarity.depends_on.short_codes`.
 8. Do not invent unit / minutes / assignments.
 
 ---
@@ -170,4 +170,5 @@ Related plan GET smoke: `test_execution_plan_operational_readiness` / plan-filte
 | **API** | `GET /execution/plan/{id}` → `tasks[].read_clarity` + `ops_graph_read_clarity` |
 | **Fields honesty** | Status surfaced; machine_code ≠ machine_type; WC/minutes/unit/employee classified |
 | **Counts** | **12 / 0 / 0** unchanged |
-| **PR** | See GitHub PR from this branch |
+| **PR** | https://github.com/office952/workos-vscode/pull/33 |
+| **SHA** | `cf6a0e1a394b1f75915553b0554ca15eb6391827` |
