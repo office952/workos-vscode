@@ -1,11 +1,14 @@
 /**
- * MaterializedOpsGraph — Capacity Batch 15 Track B.
+ * MaterializedOpsGraph — Capacity Batch 15 Track B · Batch 17 Track C clarity.
  *
  * READ-ONLY admin/operator surface over already-materialized V2 operational
  * tasks. Prefer fixture FIX-DEC009-MAT-01 (order 973010 / plan 12).
  *
+ * Consumes Batch 17 Track B `read_clarity` / `ops_graph_read_clarity` when
+ * present; falls back to raw envelope fields + local gap labels otherwise.
+ *
  * MUST NOT: start / stop / assign / complete · Employee Mobile · POST materialize.
- * Null / owner-accepted gaps render as "—" + warning chips — never invented zeros.
+ * Null / owner-accepted gaps render as "—" — never invented zeros or assignment.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -24,6 +27,8 @@ import {
   type ExecutionPlanResponse,
   type ExecutionPlanV2MaterializationAuditResponse,
   type ExecutionRealityResponse,
+  type OpsGraphNullClassification,
+  type OpsGraphTaskReadClarity,
   type PlannedTaskRow,
 } from "@/api/execution";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
@@ -40,6 +45,25 @@ import { useDashboardStats } from "@/hooks/useDashboardStats";
 export const FIX_DEC009_MAT_01_ORDER_ID = 973010;
 export const FIX_DEC009_MAT_01_LABEL = "FIX-DEC009-MAT-01";
 
+type GapKind =
+  | "minutes"
+  | "planning_source"
+  | "machine_code"
+  | "workcenter"
+  | "assignee"
+  | "unit"
+  | "backend";
+
+const GAP_LABEL: Record<GapKind, string> = {
+  minutes: "min",
+  planning_source: "plan-src",
+  machine_code: "mach-code",
+  workcenter: "WC",
+  assignee: "assignee",
+  unit: "unit",
+  backend: "warn",
+};
+
 function displayText(value: string | null | undefined): string {
   if (value === null || value === undefined || value === "") return "—";
   return value;
@@ -50,27 +74,86 @@ function displayMinutes(value: number | null | undefined): string {
   return `${value}`;
 }
 
-function nullFieldWarnings(task: PlannedTaskRow): string[] {
-  const out: string[] = [];
+function shortTaskRef(taskId: string): string {
+  return taskId.split(":").slice(-1)[0] ?? taskId;
+}
+
+function isAbsentClass(c: OpsGraphNullClassification | undefined): boolean {
+  return (
+    c === "owner_accepted_risk" ||
+    c === "unknown" ||
+    c === "blocked_pending_owner_truth" ||
+    c === "not_required"
+  );
+}
+
+function honestyDisplay(field: { value: unknown; classification: OpsGraphNullClassification } | undefined): string {
+  if (!field) return "—";
+  if (isAbsentClass(field.classification)) return "—";
+  if (field.value === null || field.value === undefined || field.value === "") return "—";
+  return String(field.value);
+}
+
+function taskGapsFromClarity(rc: OpsGraphTaskReadClarity): { kinds: GapKind[]; detail: string[] } {
+  const kinds: GapKind[] = [];
+  const detail: string[] = [];
+  const push = (kind: GapKind, field: { classification: OpsGraphNullClassification; note?: string; owner_lock?: string }, label: string) => {
+    if (!isAbsentClass(field.classification) && field.classification !== "present") return;
+    if (field.classification === "present") return;
+    kinds.push(kind);
+    detail.push(
+      [label, field.classification, field.owner_lock, field.note].filter(Boolean).join(" · "),
+    );
+  };
+  push("minutes", rc.estimated_time_minutes, "estimated_time_minutes");
+  push("planning_source", rc.planning_minutes_source, "planning_minutes_source");
+  push("machine_code", rc.machine_code, "machine_code");
+  push("workcenter", rc.workcenter, "workcenter");
+  push("assignee", rc.assigned_employee_id, "assigned_employee_id");
+  push("unit", rc.unit, "unit");
+  for (const w of rc.warnings.active_warnings ?? []) {
+    if (!w) continue;
+    if (!kinds.includes("backend")) kinds.push("backend");
+    if (!detail.includes(w)) detail.push(w);
+  }
+  return { kinds, detail };
+}
+
+function taskGapsLocal(task: PlannedTaskRow): { kinds: GapKind[]; detail: string[] } {
+  const kinds: GapKind[] = [];
+  const detail: string[] = [];
+
   if (task.estimated_time_minutes === null || task.estimated_time_minutes === undefined) {
-    out.push("estimated_time_minutes=null");
+    kinds.push("minutes");
+    detail.push("estimated_time_minutes=null (owner-accepted CAP-004)");
   }
   if (task.planning_minutes_source === null || task.planning_minutes_source === undefined) {
-    out.push("planning_minutes_source=null");
+    kinds.push("planning_source");
+    detail.push("planning_minutes_source=null");
   }
   if (task.machine_code === null || task.machine_code === undefined || task.machine_code === "") {
-    out.push("machine_code=null (owner-accepted / CAP-012 gap)");
+    kinds.push("machine_code");
+    detail.push("machine_code=null (owner-accepted CAP-012)");
   }
   if (task.workcenter === null || task.workcenter === undefined || task.workcenter === "") {
-    out.push("workcenter=null (F7 OD1 owner-accepted)");
+    kinds.push("workcenter");
+    detail.push("workcenter=null (F7 OD1 owner-accepted)");
   }
   if (task.assigned_employee_id === null || task.assigned_employee_id === undefined) {
-    out.push("assigned_employee_id=null");
+    kinds.push("assignee");
+    detail.push("assigned_employee_id=null (HR out of stage)");
   }
   for (const w of task.warnings ?? []) {
-    if (w && !out.includes(w)) out.push(w);
+    if (!w) continue;
+    if (!kinds.includes("backend")) kinds.push("backend");
+    if (!detail.includes(w)) detail.push(w);
   }
-  return out;
+  return { kinds, detail };
+}
+
+function taskGaps(task: PlannedTaskRow): { kinds: GapKind[]; detail: string[] } {
+  if (task.read_clarity) return taskGapsFromClarity(task.read_clarity);
+  return taskGapsLocal(task);
 }
 
 function parseOrderId(raw: string | null): number {
@@ -78,6 +161,28 @@ function parseOrderId(raw: string | null): number {
   const n = Number(raw);
   if (!Number.isInteger(n) || n <= 0) return FIX_DEC009_MAT_01_ORDER_ID;
   return n;
+}
+
+function materializePhaseLabel(args: {
+  materializeState: string;
+  auditStatus: string | null | undefined;
+  hasOps: boolean;
+}): { envelope: string; furtherPost: string } {
+  const audit = args.auditStatus ?? "";
+  const already =
+    audit.includes("already_materialized") ||
+    (args.hasOps && audit === "");
+  return {
+    envelope: already
+      ? "already materialized (envelope)"
+      : args.hasOps
+        ? "ops present"
+        : "not materialized",
+    furtherPost:
+      args.materializeState === "OPEN"
+        ? "further POST open"
+        : "further POST blocked (DEC-009)",
+  };
 }
 
 export default function MaterializedOpsGraph() {
@@ -115,10 +220,6 @@ export default function MaterializedOpsGraph() {
       setPlan(planResult.value);
       setAudit(auditResult.status === "fulfilled" ? auditResult.value : null);
       setReality(realityResult.status === "fulfilled" ? realityResult.value : null);
-
-      if (auditResult.status === "rejected" && realityResult.status === "rejected") {
-        // Plan alone is enough for the ops list; soft-warn via banner below.
-      }
     } catch (e) {
       setPlan(null);
       setAudit(null);
@@ -138,7 +239,9 @@ export default function MaterializedOpsGraph() {
   }, [orderId]);
 
   const tasks = plan?.tasks ?? [];
+  const planClarity = plan?.ops_graph_read_clarity ?? null;
   const taskCount =
+    planClarity?.operational_tasks_count ??
     plan?.operational_tasks_count ??
     audit?.operational_tasks_in_envelope_count ??
     tasks.length;
@@ -157,15 +260,58 @@ export default function MaterializedOpsGraph() {
   const isFixture =
     orderId === FIX_DEC009_MAT_01_ORDER_ID ||
     plan?.order_code === "ORD-FIX-DEC009-MAT-01";
+  const phase = materializePhaseLabel({
+    materializeState,
+    auditStatus: audit?.materialization_status,
+    hasOps: hasOperationalTasks,
+  });
+  const executionActive = false; // RO surface — no sessions/start/complete on this page.
+  const usesTrackBClarity = Boolean(planClarity) || tasks.some((t) => Boolean(t.read_clarity));
 
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
-      const sa = a.sequence_index ?? Number.MAX_SAFE_INTEGER;
-      const sb = b.sequence_index ?? Number.MAX_SAFE_INTEGER;
+      const sa =
+        a.read_clarity?.identity.sequence_index ??
+        a.sequence_index ??
+        Number.MAX_SAFE_INTEGER;
+      const sb =
+        b.read_clarity?.identity.sequence_index ??
+        b.sequence_index ??
+        Number.MAX_SAFE_INTEGER;
       if (sa !== sb) return sa - sb;
       return a.task_id.localeCompare(b.task_id);
     });
   }, [tasks]);
+
+  const sequenceNote = useMemo(() => {
+    if (planClarity?.sequence) {
+      const seq = planClarity.sequence;
+      const observed = seq.observed_indices ?? [];
+      const gaps = seq.gaps ?? [];
+      if (gaps.length === 0) {
+        return seq.note ?? `sequence_index ${observed.join(", ") || "—"} (contiguous)`;
+      }
+      return (
+        seq.note ??
+        `sequence_index ${observed.join(", ")} · gaps ${gaps.join(", ")} absent (not invented)`
+      );
+    }
+    const seqs = sortedTasks
+      .map((t) => t.sequence_index)
+      .filter((n): n is number => typeof n === "number");
+    if (seqs.length === 0) return null;
+    const min = Math.min(...seqs);
+    const max = Math.max(...seqs);
+    const present = new Set(seqs);
+    const missing: number[] = [];
+    for (let i = min; i <= max; i += 1) {
+      if (!present.has(i)) missing.push(i);
+    }
+    if (missing.length === 0) {
+      return `sequence_index ${min}–${max} (contiguous)`;
+    }
+    return `sequence_index ${seqs.join(", ")} · gaps ${missing.join(", ")} absent (not invented)`;
+  }, [planClarity, sortedTasks]);
 
   const applyOrderId = () => {
     const next = parseOrderId(orderInput.trim());
@@ -191,19 +337,27 @@ export default function MaterializedOpsGraph() {
       <FlowBreadcrumb
         items={[
           { label: "Comenzi", to: "/orders" },
-          { label: "Producție", to: "/execution" },
-          { label: "Ops graph (read-only)", active: true },
+          { label: "Execution", to: "/execution" },
+          { label: "Ops graph (RO)", active: true },
         ]}
       />
 
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Network className="w-5 h-5 text-wo-info" />
-          <h1 className="text-[18px] font-bold text-wo-text-primary">
-            Materialized operational task graph
-          </h1>
-          <span className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded-full">
-            read-only
+          <div>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">
+              Ops graph
+            </h1>
+            <p className="text-[11px] text-wo-text-muted">
+              Operator / Admin read-only · no execution active
+            </p>
+          </div>
+          <span
+            className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded"
+            data-testid="ops-graph-ro-badge"
+          >
+            RO
           </span>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -232,7 +386,7 @@ export default function MaterializedOpsGraph() {
         data-testid="ops-graph-fixture-identity"
       >
         <p className="text-[11px] font-semibold text-wo-text-primary">
-          Fixture / order identity (GET plan + audit — no invent)
+          Identity
         </p>
         <div className="flex flex-wrap gap-2 text-[10px] font-mono text-wo-text-secondary">
           <span className="border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset">
@@ -249,6 +403,9 @@ export default function MaterializedOpsGraph() {
           </span>
           <span className="border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset">
             snapshot={displayText(audit?.source_snapshot_code)}
+          </span>
+          <span className="border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset">
+            execution={executionActive ? "active" : "not active"}
           </span>
         </div>
         <form
@@ -292,11 +449,11 @@ export default function MaterializedOpsGraph() {
         hasPreview
         hasDraftPlan={Boolean(plan)}
         hasOperationalTasks={hasOperationalTasks}
-        operationalBlocked={materializeState !== "OPEN"}
+        operationalBlocked={materializeState !== "OPEN" && !hasOperationalTasks}
       />
 
       <OwnerGoNotice
-        detail="POST materialize rămâne gated (DEC-009). Acest ecran doar citește operational_tasks[] deja materializate — fără sessions, fără Employee Mobile, fără start/stop/assign/complete."
+        detail="Further POST materialize remains DEC-009 gated. This screen only reads already-materialized operational_tasks[] — no sessions, no start/stop/assign/complete."
         compact
       />
 
@@ -307,33 +464,36 @@ export default function MaterializedOpsGraph() {
         <div className="flex items-center gap-2">
           <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
           <p className="text-[11px] font-semibold text-wo-text-primary">
-            Capacity / DEC-009 strip (read-only)
+            DEC-009 / Capacity (read-only)
           </p>
         </div>
-        <p className="text-[10px] text-wo-text-muted" data-testid="ops-graph-dec009-state">
-          DEC-009={dec009} · materialize={materializeState} · audit=
-          {displayText(audit?.materialization_status)} · dry_run=
-          {displayText(audit?.dry_run_status)}
+        <p className="text-[10px] text-wo-text-secondary" data-testid="ops-graph-dec009-state">
+          DEC-009={dec009} · {phase.furtherPost} · envelope={phase.envelope}
+          {audit?.materialization_status
+            ? ` · audit=${audit.materialization_status}`
+            : ""}
         </p>
         <p className="text-[10px] text-wo-text-muted">
           {preMat?.summary ??
             batch04?.preMaterializeSummary ??
-            "DEC-009 / capacity checklist from dashboard-stats when available."}
-          {" · "}
-          Employee Mobile:{" "}
-          {audit?.guards?.employee_mobile_scope === true ? "in scope" : "out of scope"}
+            "Capacity checklist from dashboard-stats when available."}
+        </p>
+        <p className="text-[10px] text-wo-text-dim" data-testid="ops-graph-accepted-risks">
+          Accepted risks (stage): null minutes · null WC · null machine_code · null
+          assignee — shown as — / gap tags, not invented
+          {usesTrackBClarity ? " · Track B read_clarity" : ""}.
         </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="ops-graph-metrics">
-        <MetricTile label="Operational tasks" value={loading ? "…" : taskCount} variant="default" />
+        <MetricTile label="Ops tasks" value={loading ? "…" : taskCount} variant="default" />
         <MetricTile
           label="Sessions"
           value={loading ? "…" : sessionsCount === null ? "—" : sessionsCount}
           variant="default"
         />
         <MetricTile
-          label="Actuals (reality rows)"
+          label="Actuals"
           value={loading ? "…" : actualsLabel}
           variant="default"
         />
@@ -375,7 +535,7 @@ export default function MaterializedOpsGraph() {
         >
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wo-info mx-auto mb-2" />
-            <p className="text-[12px] text-wo-text-muted">Se încarcă planul operațional…</p>
+            <p className="text-[12px] text-wo-text-muted">Loading operational plan…</p>
           </div>
         </div>
       )}
@@ -387,10 +547,10 @@ export default function MaterializedOpsGraph() {
         >
           <Activity className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
           <p className="text-[13px] text-wo-text-muted">
-            Niciun operational_task în envelope pentru order {orderId}.
+            No operational_tasks in envelope for order {orderId}.
           </p>
           <p className="text-[11px] text-wo-text-dim mt-1">
-            Plan id {plan.id} — materialize poate fi încă blocked / nematerializat.
+            Plan id {plan.id} — envelope may be empty or not yet materialized.
           </p>
         </div>
       )}
@@ -398,27 +558,63 @@ export default function MaterializedOpsGraph() {
       {sortedTasks.length > 0 && (
         <>
           <DataTableWrapper
-            title="Operational tasks (list / graph order)"
-            subtitle={`${sortedTasks.length} ops · sequence_index + depends_on`}
+            title="Operational tasks"
+            subtitle={`${sortedTasks.length} ops · ${sequenceNote ?? "sequence + depends_on"}`}
             density="compact"
           >
             <div className="overflow-x-auto" data-testid="ops-graph-task-list">
               <table className="w-full text-[12px]">
                 <thead className="bg-wo-surface-inset border-b border-wo-border-strong">
                   <tr className="text-left text-wo-text-muted uppercase text-[10px] tracking-wide">
-                    <th className="px-3 py-2 font-semibold">#</th>
+                    <th className="px-3 py-2 font-semibold">Seq</th>
+                    <th className="px-3 py-2 font-semibold">Status</th>
                     <th className="px-3 py-2 font-semibold">Task</th>
                     <th className="px-3 py-2 font-semibold">Process</th>
-                    <th className="px-3 py-2 font-semibold">Machine</th>
+                    <th className="px-3 py-2 font-semibold">Type</th>
+                    <th className="px-3 py-2 font-semibold">Code</th>
                     <th className="px-3 py-2 font-semibold">WC</th>
                     <th className="px-3 py-2 font-semibold text-right">Min</th>
                     <th className="px-3 py-2 font-semibold">Depends</th>
-                    <th className="px-3 py-2 font-semibold">Null / warnings</th>
+                    <th className="px-3 py-2 font-semibold">Gaps</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedTasks.map((task) => {
-                    const warns = nullFieldWarnings(task);
+                    const rc = task.read_clarity;
+                    const gaps = taskGaps(task);
+                    const seq =
+                      rc?.identity.sequence_index ?? task.sequence_index ?? "—";
+                    const status =
+                      rc?.lifecycle.display_label ??
+                      displayText(rc?.lifecycle.value ?? task.operational_status);
+                    const label =
+                      rc?.identity.label ??
+                      displayText(task.display_name ?? task.name);
+                    const shortCode =
+                      rc?.identity.short_code ?? shortTaskRef(task.task_id);
+                    const process =
+                      rc?.identity.process_type ?? displayText(task.process_type);
+                    const machineType = rc
+                      ? honestyDisplay(rc.machine_type)
+                      : displayText(task.machine_type);
+                    const machineCode = rc
+                      ? honestyDisplay(rc.machine_code)
+                      : displayText(task.machine_code);
+                    const workcenter = rc
+                      ? honestyDisplay(rc.workcenter)
+                      : displayText(task.workcenter);
+                    const minutes = rc
+                      ? honestyDisplay(rc.estimated_time_minutes)
+                      : displayMinutes(task.estimated_time_minutes);
+                    const depends =
+                      rc?.depends_on.short_codes?.length
+                        ? rc.depends_on.short_codes.join(", ")
+                        : (task.depends_on_task_ids ?? []).length === 0
+                          ? "—"
+                          : (task.depends_on_task_ids ?? [])
+                              .map((d) => shortTaskRef(d))
+                              .join(", ");
+
                     return (
                       <tr
                         key={task.task_id}
@@ -426,51 +622,66 @@ export default function MaterializedOpsGraph() {
                         data-testid={`ops-graph-task-row-${task.task_id}`}
                       >
                         <td className="px-3 py-2 text-wo-text-muted tabular-nums">
-                          {task.sequence_index ?? "—"}
+                          {seq}
+                        </td>
+                        <td
+                          className="px-3 py-2 font-mono text-[11px] text-wo-text-secondary"
+                          title={rc?.lifecycle.note ?? "plan lifecycle — not actuals"}
+                        >
+                          {status}
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex flex-col gap-0.5">
                             <span className="text-wo-text-primary font-semibold">
-                              {displayText(task.display_name ?? task.name)}
+                              {label}
                             </span>
-                            <span className="text-[10px] font-mono text-wo-text-muted break-all">
-                              {task.task_id}
+                            <span className="text-[10px] font-mono text-wo-text-muted">
+                              {shortCode}
                             </span>
                           </div>
                         </td>
                         <td className="px-3 py-2 text-wo-text-secondary">
-                          {displayText(task.process_type)}
+                          {process}
                         </td>
-                        <td className="px-3 py-2 font-mono text-[11px] text-wo-text-secondary">
-                          {displayText(task.machine_code ?? task.machine_type)}
+                        <td
+                          className="px-3 py-2 font-mono text-[11px] text-wo-text-secondary"
+                          title={
+                            rc?.display_hints.machine_column ??
+                            "machine_type (catalog class — not instance assignment)"
+                          }
+                        >
+                          {machineType}
+                        </td>
+                        <td
+                          className="px-3 py-2 font-mono text-[11px] text-wo-text-muted"
+                          title={
+                            rc?.display_hints.machine_code_column ??
+                            "machine_code (instance) — null = unassigned"
+                          }
+                          data-testid={`ops-graph-machine-code-${task.task_id}`}
+                        >
+                          {machineCode}
                         </td>
                         <td className="px-3 py-2 font-mono text-[11px] text-wo-text-muted">
-                          {displayText(task.workcenter)}
+                          {workcenter}
                         </td>
                         <td className="px-3 py-2 text-right tabular-nums text-wo-text-muted">
-                          {displayMinutes(task.estimated_time_minutes)}
+                          {minutes}
                         </td>
                         <td className="px-3 py-2 text-[10px] font-mono text-wo-text-muted">
-                          {(task.depends_on_task_ids ?? []).length === 0
-                            ? "—"
-                            : (task.depends_on_task_ids ?? [])
-                                .map((d) => d.split(":").slice(-1)[0] ?? d)
-                                .join(", ")}
+                          {depends || "—"}
                         </td>
                         <td className="px-3 py-2">
-                          {warns.length === 0 ? (
+                          {gaps.kinds.length === 0 ? (
                             <span className="text-wo-text-dim">—</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1">
-                              {warns.map((w) => (
-                                <span
-                                  key={w}
-                                  className="inline-block px-1.5 py-0.5 text-[9px] rounded border border-wo-warning/40 bg-wo-warning-muted text-wo-warning"
-                                >
-                                  {w}
-                                </span>
-                              ))}
-                            </div>
+                            <span
+                              className="inline-block px-1.5 py-0.5 text-[9px] rounded border border-wo-warning/40 bg-wo-warning-muted text-wo-warning"
+                              title={gaps.detail.join(" · ")}
+                              data-testid={`ops-graph-gaps-${task.task_id}`}
+                            >
+                              {gaps.kinds.map((k) => GAP_LABEL[k]).join(" · ")}
+                            </span>
                           )}
                         </td>
                       </tr>
@@ -479,6 +690,14 @@ export default function MaterializedOpsGraph() {
                 </tbody>
               </table>
             </div>
+            {sequenceNote && (
+              <p
+                className="px-3 py-2 text-[10px] text-wo-text-muted border-t border-wo-border-subtle"
+                data-testid="ops-graph-sequence-note"
+              >
+                {sequenceNote}
+              </p>
+            )}
           </DataTableWrapper>
 
           <div
@@ -486,32 +705,39 @@ export default function MaterializedOpsGraph() {
             data-testid="ops-graph-dependency-strip"
           >
             <p className="text-[11px] font-semibold text-wo-text-primary">
-              Dependency strip (sequence · depends_on)
+              Dependency order
             </p>
-            <ol className="flex flex-col gap-1.5">
-              {sortedTasks.map((task) => (
-                <li
-                  key={`dep-${task.task_id}`}
-                  className="flex flex-wrap items-baseline gap-2 text-[10px] font-mono text-wo-text-secondary"
-                >
-                  <span className="text-wo-text-muted w-6 tabular-nums">
-                    {task.sequence_index ?? "—"}
-                  </span>
-                  <span className="text-wo-text-primary">
-                    {task.source_operation_code ??
-                      task.technical_name ??
-                      task.task_id.split(":").slice(-1)[0]}
-                  </span>
-                  <span className="text-wo-text-dim">←</span>
-                  <span>
-                    {(task.depends_on_task_ids ?? []).length === 0
+            <ol className="flex flex-col gap-1">
+              {sortedTasks.map((task) => {
+                const rc = task.read_clarity;
+                const code =
+                  rc?.identity.source_operation_code ??
+                  rc?.identity.short_code ??
+                  task.source_operation_code ??
+                  task.technical_name ??
+                  shortTaskRef(task.task_id);
+                const deps =
+                  rc?.depends_on.short_codes?.length
+                    ? rc.depends_on.short_codes.join(" · ")
+                    : (task.depends_on_task_ids ?? []).length === 0
                       ? "(root)"
                       : (task.depends_on_task_ids ?? [])
-                          .map((d) => d.split(":").slice(-1)[0] ?? d)
-                          .join(" · ")}
-                  </span>
-                </li>
-              ))}
+                          .map((d) => shortTaskRef(d))
+                          .join(" · ");
+                return (
+                  <li
+                    key={`dep-${task.task_id}`}
+                    className="flex flex-wrap items-baseline gap-2 text-[10px] font-mono text-wo-text-secondary"
+                  >
+                    <span className="text-wo-text-muted w-6 tabular-nums">
+                      {rc?.identity.sequence_index ?? task.sequence_index ?? "—"}
+                    </span>
+                    <span className="text-wo-text-primary">{code}</span>
+                    <span className="text-wo-text-dim">←</span>
+                    <span>{deps}</span>
+                  </li>
+                );
+              })}
             </ol>
           </div>
         </>
@@ -524,27 +750,21 @@ export default function MaterializedOpsGraph() {
         >
           <Info className="w-3.5 h-3.5 text-wo-info mt-0.5 shrink-0" />
           <div className="text-[10px] space-y-1">
-            <p className="font-semibold">Audit warnings (backend)</p>
-            <div className="flex flex-wrap gap-1">
-              {audit?.warnings.map((w) => (
-                <span
-                  key={w}
-                  className="inline-block px-1.5 py-0.5 rounded border border-wo-info/35 bg-wo-info-muted text-wo-info font-mono"
-                >
-                  {w}
-                </span>
-              ))}
-            </div>
+            <p className="font-semibold">
+              Audit warnings ({audit?.warnings.length}) — backend, not invented
+            </p>
+            <p className="font-mono text-wo-text-secondary">
+              {(audit?.warnings ?? []).join(" · ")}
+            </p>
           </div>
         </div>
       )}
 
-      <p className="text-[10px] text-wo-text-dim italic" data-testid="ops-graph-readonly-footer">
-        Read-only visibility. No start/stop/assign/complete controls. No Employee Mobile
-        implication. Sessions/actuals shown from audit.guards + GET reality only — never
-        invented. Sources: GET /execution/plan/{"{id}"}, GET
-        /execution/plan-v2/from-order/{"{id}"}/materialization-audit, GET
-        /execution/reality/{"{id}"}, dashboard-stats capacity strip.
+      <p className="text-[10px] text-wo-text-dim" data-testid="ops-graph-readonly-footer">
+        Read-only. No start/stop/assign/complete. Sessions/actuals from audit.guards +
+        GET reality only. Sources: GET /execution/plan/{"{id}"} (Track B read_clarity),
+        GET /execution/plan-v2/from-order/{"{id}"}/materialization-audit, GET
+        /execution/reality/{"{id}"}, dashboard-stats DEC-009 strip.
       </p>
     </div>
   );
