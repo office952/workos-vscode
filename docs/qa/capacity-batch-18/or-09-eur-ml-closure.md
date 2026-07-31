@@ -128,5 +128,6 @@ Hide? **No** — process name remains. Only the commercial parenthetical is soft
 |------|-------|
 | **Closed** | **Y** (ops-graph display) — upstream template rename remains Owner optional |
 | **What changed** | Read-clarity label soften + ops-graph UI/tooltip + OR-09 note |
-| **PR / SHA** | See git / PR after push (stamp below when landed) |
+| **PR** | https://github.com/office952/workos-vscode/pull/35 |
+| **SHA** | `dda47812` |
 | **Handoff copy** | `workos-atoms-ui-chrome-handoff/docs/qa/capacity-batch-18/or-09-eur-ml-closure.md` |
