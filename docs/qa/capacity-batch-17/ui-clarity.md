@@ -164,4 +164,5 @@ Track B files (`execution_ops_graph_read_clarity.py`, API types, `read-model-cla
 | **Files** | `MaterializedOpsGraph.tsx` · `.test.tsx` · `docs/qa/capacity-batch-17/ui-clarity.md` · screenshots |
 | **RO** | **Confirmed** |
 | **Screenshots** | `docs/qa/capacity-batch-17/screenshots/{before,after}-*` |
-| **PR / SHA** | _(filled after push)_ |
+| **PR** | https://github.com/office952/workos-vscode/pull/34 (stacked on Track B #33) |
+| **SHA** | `044c2dce` |
