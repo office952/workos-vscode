@@ -50,6 +50,15 @@ function clarityStub(overrides: Partial<OpsGraphTaskReadClarity["identity"]> & {
       task_id: "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
       short_code: "vector_prep",
       label: "Pregatire vector",
+      ops_display_label: "Pregatire vector",
+      label_clarity: {
+        classification: "present",
+        artifact_kind: "process_label",
+        role: "template_provenance_not_client_price_not_capacity_unit",
+        commercial_unit_phrasing_present: false,
+        softened_for_ops_graph: false,
+        note: "Process label from template/envelope provenance.",
+      },
       process_type: "file_preparation",
       sequence_index: 1,
       ...overrides,
@@ -119,6 +128,8 @@ function clarityStub(overrides: Partial<OpsGraphTaskReadClarity["identity"]> & {
       status_column: "lifecycle",
       collapse_accepted_gaps: true,
       do_not_coalesce_machine_code_from_machine_type: true,
+      prefer_ops_display_label: true,
+      label_column: "template_provenance_label",
     },
   };
 }
@@ -386,5 +397,95 @@ describe("MaterializedOpsGraph", () => {
     });
     expect(screen.getByTestId("ops-graph-sequence-note")).toHaveTextContent(/gaps 11, 12/);
     expect(screen.getByTestId("ops-graph-sequence-note")).toHaveTextContent(/not invented/);
+  });
+
+  it("OR-09 softens EUR/ml commercial phrasing without inventing unit or price", async () => {
+    const commercialLabel = "Modelare cant profil — utilaj (EUR/ml serviciu)";
+    const softLabel = "Modelare cant profil — utilaj";
+    getExecutionPlan.mockResolvedValue({
+      id: 12,
+      order_id: FIX_DEC009_MAT_01_ORDER_ID,
+      order_code: "ORD-FIX-DEC009-MAT-01",
+      snapshot_version: 1,
+      total_estimated_time_minutes: 0,
+      operational_tasks_count: 1,
+      operational_tasks_materialized: true,
+      plan_format: "v2_envelope",
+      ops_graph_read_clarity: {
+        version: "ops_graph_read_clarity/v1",
+        operational_tasks_count: 1,
+        sequence: {
+          observed_indices: [4],
+          gaps: [],
+          classification: "contiguous",
+        },
+        label_policy: {
+          commercial_unit_phrasing_task_count: 1,
+          note: "OR-09 display soften only",
+        },
+        counts_guard: { input_count: 1, output_count: 1 },
+      },
+      tasks: [
+        {
+          task_id:
+            "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+          name: commercialLabel,
+          display_name: commercialLabel,
+          layer_id: "v2",
+          process_type: "edge_bending",
+          machine_type: "RETURN_PROFILE_MACHINE_FORMING",
+          machine_code: null,
+          workcenter: null,
+          estimated_time_minutes: null,
+          planning_minutes_source: null,
+          assigned_employee_id: null,
+          operational_status: "pending",
+          quantity: 1,
+          sequence_index: 4,
+          warnings: ["PLANNING_MINUTES_SOURCE_REQUIRED"],
+          depends_on_task_ids: [],
+          source_operation_code: "return_profile_forming",
+          read_clarity: {
+            ...clarityStub({
+              short_code: "return_profile_forming",
+              label: commercialLabel,
+              ops_display_label: softLabel,
+              label_clarity: {
+                classification: "owner_accepted_risk",
+                artifact_kind: "misleading_commercial_unit_phrasing",
+                role: "template_provenance_not_client_price_not_capacity_unit",
+                commercial_unit_phrasing_present: true,
+                softened_for_ops_graph: true,
+                note: "OR-09: template display_name embeds commercial unit phrasing",
+                owner_lock: "PRODUCT_SYSTEM_TEMPLATE_LABEL",
+              },
+              process_type: "edge_bending",
+              sequence_index: 4,
+              machineType: "RETURN_PROFILE_MACHINE_FORMING",
+            }),
+          },
+        },
+      ],
+    });
+
+    renderPage();
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(
+          "ops-graph-task-label-node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+        ),
+      ).toBeInTheDocument();
+    });
+    const labelEl = screen.getByTestId(
+      "ops-graph-task-label-node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+    );
+    expect(labelEl).toHaveTextContent(softLabel);
+    expect(labelEl).not.toHaveTextContent("EUR/ml");
+    expect(labelEl).toHaveAttribute("data-label-provenance", commercialLabel);
+    expect(screen.getByTestId("ops-graph-or09-label-note")).toHaveTextContent(/OR-09/);
+    expect(screen.getByTestId("ops-graph-or09-label-note")).toHaveTextContent(
+      /not client price/i,
+    );
   });
 });

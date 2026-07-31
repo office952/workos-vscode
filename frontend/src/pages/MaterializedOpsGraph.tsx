@@ -1,14 +1,17 @@
 /**
- * MaterializedOpsGraph — Capacity Batch 15 Track B · Batch 17 Track C clarity.
+ * MaterializedOpsGraph — Capacity Batch 15/17 clarity · Batch 18 OR-09 labels.
  *
  * READ-ONLY admin/operator surface over already-materialized V2 operational
  * tasks. Prefer fixture FIX-DEC009-MAT-01 (order 973010 / plan 12).
  *
  * Consumes Batch 17 Track B `read_clarity` / `ops_graph_read_clarity` when
  * present; falls back to raw envelope fields + local gap labels otherwise.
+ * OR-09: prefer `identity.ops_display_label` so EUR/ml commercial phrasing
+ * from template provenance does not read as client price / Capacity unit.
  *
  * MUST NOT: start / stop / assign / complete · Employee Mobile · POST materialize.
  * Null / owner-accepted gaps render as "—" — never invented zeros or assignment.
+ * MUST NOT: Pricing / CostEngine / invent unit conversion.
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -76,6 +79,41 @@ function displayMinutes(value: number | null | undefined): string {
 
 function shortTaskRef(taskId: string): string {
   return taskId.split(":").slice(-1)[0] ?? taskId;
+}
+
+/** Display-only soften when read_clarity.ops_display_label is absent (OR-09). */
+const COMMERCIAL_EUR_ML_PAREN = /\s*\([^)]*EUR\s*\/\s*ml[^)]*\)/gi;
+
+function softenCommercialEurMlLabel(raw: string): string {
+  const softened = raw
+    .replace(COMMERCIAL_EUR_ML_PAREN, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/^[\s\-—]+|[\s\-—]+$/g, "")
+    .trim();
+  return softened || raw;
+}
+
+function opsGraphTaskLabel(task: PlannedTaskRow): {
+  display: string;
+  provenance: string;
+  commercialPhrasing: boolean;
+  title?: string;
+} {
+  const rc = task.read_clarity;
+  const rawCandidate =
+    rc?.identity.label ?? task.display_name ?? task.name ?? "";
+  const raw = rawCandidate.trim() || "—";
+  const clarity = rc?.identity.label_clarity;
+  const fromClarity = rc?.identity.ops_display_label?.trim();
+  const display =
+    fromClarity || (raw !== "—" ? softenCommercialEurMlLabel(raw) : raw);
+  const commercialPhrasing =
+    clarity?.commercial_unit_phrasing_present ?? /EUR\s*\/\s*ml/i.test(raw);
+  const title = commercialPhrasing
+    ? clarity?.note ??
+      `Template provenance: ${raw} — EUR/ml phrasing is not client price, not Capacity metadata, not task.unit. Upstream rename = Product System Owner.`
+    : undefined;
+  return { display, provenance: raw, commercialPhrasing, title };
 }
 
 function isAbsentClass(c: OpsGraphNullClassification | undefined): boolean {
@@ -267,6 +305,11 @@ export default function MaterializedOpsGraph() {
   });
   const executionActive = false; // RO surface — no sessions/start/complete on this page.
   const usesTrackBClarity = Boolean(planClarity) || tasks.some((t) => Boolean(t.read_clarity));
+  const commercialLabelCount = useMemo(() => {
+    const fromPlan = planClarity?.label_policy?.commercial_unit_phrasing_task_count;
+    if (typeof fromPlan === "number") return fromPlan;
+    return tasks.filter((t) => opsGraphTaskLabel(t).commercialPhrasing).length;
+  }, [planClarity, tasks]);
 
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
@@ -483,6 +526,18 @@ export default function MaterializedOpsGraph() {
           assignee — shown as — / gap tags, not invented
           {usesTrackBClarity ? " · Track B read_clarity" : ""}.
         </p>
+        {commercialLabelCount > 0 && (
+          <p
+            className="text-[10px] text-wo-text-muted"
+            data-testid="ops-graph-or09-label-note"
+            title={planClarity?.label_policy?.note}
+          >
+            Label note (OR-09): {commercialLabelCount} task label(s) had commercial
+            EUR/ml phrasing in template provenance — ops-graph shows process wording
+            only (not client price / not Capacity unit). Hover task name for raw
+            label.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="ops-graph-metrics">
@@ -587,9 +642,7 @@ export default function MaterializedOpsGraph() {
                     const status =
                       rc?.lifecycle.display_label ??
                       displayText(rc?.lifecycle.value ?? task.operational_status);
-                    const label =
-                      rc?.identity.label ??
-                      displayText(task.display_name ?? task.name);
+                    const taskLabel = opsGraphTaskLabel(task);
                     const shortCode =
                       rc?.identity.short_code ?? shortTaskRef(task.task_id);
                     const process =
@@ -632,8 +685,17 @@ export default function MaterializedOpsGraph() {
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-wo-text-primary font-semibold">
-                              {label}
+                            <span
+                              className="text-wo-text-primary font-semibold"
+                              title={taskLabel.title}
+                              data-testid={`ops-graph-task-label-${task.task_id}`}
+                              data-label-provenance={
+                                taskLabel.commercialPhrasing
+                                  ? taskLabel.provenance
+                                  : undefined
+                              }
+                            >
+                              {taskLabel.display}
                             </span>
                             <span className="text-[10px] font-mono text-wo-text-muted">
                               {shortCode}

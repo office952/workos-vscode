@@ -1,12 +1,14 @@
-"""Capacity Batch 17 Track B — display-only ops-graph read clarity for GET plan.
+"""Capacity Batch 17 Track B / Batch 18 OR-09 — display-only ops-graph read clarity.
 
 Enriches operational task payloads with honesty metadata for operator/admin RO
 review. NEVER invents minutes, workcenter, machine_code, unit, deps, sessions,
-or actuals. NEVER mutates persisted tasks_json.
+or actuals. NEVER mutates persisted tasks_json. NEVER computes Pricing/CostEngine
+values; OR-09 only softens commercial unit phrasing embedded in template labels.
 """
 
 from __future__ import annotations
 
+import re
 from typing import Any, Literal
 
 NullClassification = Literal[
@@ -24,6 +26,15 @@ _OWNER_ACCEPTED_MACHINE_CODE = "CAP-012"
 _OWNER_ACCEPTED_WORKCENTER = "F7_OD1"
 _OWNER_ACCEPTED_MINUTES = "CAP-004"
 _OWNER_ACCEPTED_EMPLOYEE = "HR_OUT_OF_STAGE"
+_OWNER_UPSTREAM_TEMPLATE_LABEL = "PRODUCT_SYSTEM_TEMPLATE_LABEL"
+
+# Commercial unit parentheticals leaked into Product System template display_name
+# values (e.g. "(EUR/ml serviciu)"). Strip for Capacity/ops-graph display only —
+# do not invent rates, units, or hide the process name.
+_COMMERCIAL_EUR_ML_PAREN = re.compile(
+    r"\s*\([^)]*EUR\s*/\s*ml[^)]*\)",
+    re.IGNORECASE,
+)
 
 
 def _is_blank(value: Any) -> bool:
@@ -351,6 +362,73 @@ def _sequence_plan_note(tasks: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _raw_task_label(task: dict[str, Any]) -> str | None:
+    raw = task.get("display_name") or task.get("name")
+    if _is_blank(raw):
+        return None
+    return str(raw).strip()
+
+
+def _soften_commercial_eur_ml_label(raw_label: str) -> str:
+    """Remove EUR/ml parentheticals from a template label for ops-graph display."""
+    softened = _COMMERCIAL_EUR_ML_PAREN.sub("", raw_label)
+    softened = re.sub(r"\s{2,}", " ", softened).strip(" -—\t")
+    return softened or raw_label
+
+
+def classify_ops_graph_label(raw_label: str | None) -> dict[str, Any]:
+    """Classify template display_name for Capacity/ops-graph (OR-09 / V-15).
+
+    Categories (exactly one primary artifact_kind):
+    - process_label — ordinary process wording
+    - misleading_commercial_unit_phrasing — EUR/ml (or similar) embedded in
+      free-text template label; NOT pricing display, NOT capacity metadata,
+      NOT the task catalog ``unit`` field (which remains independently classified)
+
+    Softening strips commercial parentheticals for ops display only. Upstream
+    Product System / seed rename remains an Owner decision.
+    """
+    if raw_label is None:
+        return {
+            "classification": "unknown",
+            "artifact_kind": "missing_label",
+            "role": "template_provenance_not_client_price_not_capacity_unit",
+            "commercial_unit_phrasing_present": False,
+            "softened_for_ops_graph": False,
+            "ops_display_label": None,
+            "note": "display_name/name absent — show —; do not invent a process title.",
+        }
+
+    has_commercial = bool(_COMMERCIAL_EUR_ML_PAREN.search(raw_label))
+    if not has_commercial:
+        return {
+            "classification": "present",
+            "artifact_kind": "process_label",
+            "role": "template_provenance_not_client_price_not_capacity_unit",
+            "commercial_unit_phrasing_present": False,
+            "softened_for_ops_graph": False,
+            "ops_display_label": raw_label,
+            "note": "Process label from template/envelope provenance.",
+        }
+
+    ops_label = _soften_commercial_eur_ml_label(raw_label)
+    return {
+        "classification": "owner_accepted_risk",
+        "artifact_kind": "misleading_commercial_unit_phrasing",
+        "role": "template_provenance_not_client_price_not_capacity_unit",
+        "commercial_unit_phrasing_present": True,
+        "softened_for_ops_graph": ops_label != raw_label,
+        "ops_display_label": ops_label,
+        "owner_lock": _OWNER_UPSTREAM_TEMPLATE_LABEL,
+        "note": (
+            "OR-09: template display_name embeds commercial unit phrasing "
+            "(EUR/ml). Not a Pricing surface, not Capacity metadata, not task.unit. "
+            "Ops-graph shows process wording only; raw provenance retained in "
+            "identity.label. Upstream Product System rename = Owner decision."
+        ),
+    }
+
+
 def build_task_read_clarity(
     task: dict[str, Any],
     *,
@@ -367,13 +445,31 @@ def build_task_read_clarity(
     dep_shorts = [lookup.get(d, d.rsplit(":", 1)[-1] if ":" in d else d) for d in dep_ids]
     buckets = _warning_buckets(task)
     lifecycle = _classify_lifecycle(task)
+    raw_label = _raw_task_label(task)
+    label_clarity = classify_ops_graph_label(raw_label)
 
     return {
         "version": FIELD_HONESTY_VERSION,
         "identity": {
             "task_id": task.get("task_id"),
             "short_code": short,
-            "label": task.get("display_name") or task.get("name"),
+            "label": raw_label,
+            "ops_display_label": label_clarity.get("ops_display_label"),
+            "label_clarity": {
+                "classification": label_clarity["classification"],
+                "artifact_kind": label_clarity["artifact_kind"],
+                "role": label_clarity["role"],
+                "commercial_unit_phrasing_present": label_clarity[
+                    "commercial_unit_phrasing_present"
+                ],
+                "softened_for_ops_graph": label_clarity["softened_for_ops_graph"],
+                "note": label_clarity.get("note"),
+                **(
+                    {"owner_lock": label_clarity["owner_lock"]}
+                    if label_clarity.get("owner_lock")
+                    else {}
+                ),
+            },
             "technical_name": task.get("technical_name"),
             "source_operation_code": task.get("source_operation_code"),
             "source_task_rule_code": task.get("source_task_rule_code"),
@@ -407,6 +503,12 @@ def build_task_read_clarity(
             "status_column": "lifecycle.display_label",
             "collapse_accepted_gaps": True,
             "do_not_coalesce_machine_code_from_machine_type": True,
+            "prefer_ops_display_label": True,
+            "label_column": (
+                "ops_display_label_with_provenance_tooltip"
+                if label_clarity["commercial_unit_phrasing_present"]
+                else "template_provenance_label"
+            ),
         },
     }
 
@@ -429,6 +531,14 @@ def enrich_operational_tasks_for_ops_graph(
         copy["read_clarity"] = build_task_read_clarity(task, task_id_to_short=short_map)
         enriched.append(copy)
 
+    commercial_label_count = sum(
+        1
+        for row in enriched
+        if (row.get("read_clarity") or {})
+        .get("identity", {})
+        .get("label_clarity", {})
+        .get("commercial_unit_phrasing_present")
+    )
     summary = {
         "version": FIELD_HONESTY_VERSION,
         "operational_tasks_count": len(enriched),
@@ -446,6 +556,19 @@ def enrich_operational_tasks_for_ops_graph(
             "workcenter": "Only explicit workcenter field; OD1 null is owner-accepted.",
             "lifecycle": "Use operational_status via read_clarity.lifecycle — not reality.",
             "unit": "Absent → unknown; quantity alone is not a unit claim.",
+            "label": (
+                "Prefer identity.ops_display_label on Capacity/ops-graph. "
+                "EUR/ml in template display_name is misleading commercial phrasing "
+                "(OR-09) — not Pricing display, not Capacity metadata, not task.unit. "
+                "Raw identity.label retained; upstream rename = Product System Owner."
+            ),
+        },
+        "label_policy": {
+            "commercial_unit_phrasing_task_count": commercial_label_count,
+            "note": (
+                "OR-09 display soften only — no Pricing/CostEngine, no invent unit, "
+                "no hide of process name, no persist rewrite of display_name."
+            ),
         },
         "counts_guard": {
             "note": "Enrichment is display-only; task count must equal input length.",
