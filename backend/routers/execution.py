@@ -46,6 +46,9 @@ from services.execution_plan_gate_service import (
     evaluate_gate,
 )
 from schemas.auth import UserResponse
+from services.execution_ops_graph_read_clarity import (
+    apply_ops_graph_read_clarity_to_plan_payload,
+)
 from services.execution_plan_operational_readiness_service import (
     evaluate_execution_plan_operational_readiness,
     readiness_result_to_api_fields,
@@ -149,7 +152,9 @@ def _plan_row_to_dict(row: ExecutionPlan) -> dict:
         payload["execution_tasks_created"] = bool(
             parsed.envelope.get("execution_tasks_created") if parsed.envelope else False
         )
-    return payload
+    # Batch 17 Track B — display-only honesty metadata for ops-graph RO review.
+    # Does not mutate tasks_json / invent minutes / WC / machine_code / unit.
+    return apply_ops_graph_read_clarity_to_plan_payload(payload)
 
 
 def _reality_row_to_dict(row: ExecutionReality) -> dict:
