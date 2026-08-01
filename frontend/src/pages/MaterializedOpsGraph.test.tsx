@@ -295,6 +295,12 @@ describe("MaterializedOpsGraph", () => {
       /already materialized/i,
     );
     expect(screen.getByTestId("ops-graph-task-list")).toBeInTheDocument();
+    expect(screen.getByTestId("ops-graph-display-order-note")).toHaveTextContent(
+      /Display order: dependency order/i,
+    );
+    expect(screen.getByTestId("ops-graph-display-order-note")).toHaveTextContent(
+      /SEQ: original source sequence/i,
+    );
     expect(screen.getByTestId("ops-graph-task-list")).toHaveTextContent(
       "materialized_pending_execution",
     );

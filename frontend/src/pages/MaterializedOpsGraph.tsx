@@ -43,6 +43,10 @@ import {
   chromeBanner,
 } from "@/components/workos/design-system";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import {
+  OPS_GRAPH_DISPLAY_ORDER_NOTE,
+  sortTasksByDependencyDisplayOrder,
+} from "@/lib/opsGraphDisplayOrder";
 
 /** Canonical Batch 15 fixture — display default only; not invented data. */
 export const FIX_DEC009_MAT_01_ORDER_ID = 973010;
@@ -311,20 +315,11 @@ export default function MaterializedOpsGraph() {
     return tasks.filter((t) => opsGraphTaskLabel(t).commercialPhrasing).length;
   }, [planClarity, tasks]);
 
-  const sortedTasks = useMemo(() => {
-    return [...tasks].sort((a, b) => {
-      const sa =
-        a.read_clarity?.identity.sequence_index ??
-        a.sequence_index ??
-        Number.MAX_SAFE_INTEGER;
-      const sb =
-        b.read_clarity?.identity.sequence_index ??
-        b.sequence_index ??
-        Number.MAX_SAFE_INTEGER;
-      if (sa !== sb) return sa - sb;
-      return a.task_id.localeCompare(b.task_id);
-    });
-  }, [tasks]);
+  /** Display order = dependency/topo; SEQ column still shows original sequence_index. */
+  const sortedTasks = useMemo(
+    () => sortTasksByDependencyDisplayOrder(tasks),
+    [tasks],
+  );
 
   const sequenceNote = useMemo(() => {
     if (planClarity?.sequence) {
@@ -614,14 +609,27 @@ export default function MaterializedOpsGraph() {
         <>
           <DataTableWrapper
             title="Operational tasks"
-            subtitle={`${sortedTasks.length} ops · ${sequenceNote ?? "sequence + depends_on"}`}
+            subtitle={`${sortedTasks.length} ops · ${OPS_GRAPH_DISPLAY_ORDER_NOTE}${
+              sequenceNote ? ` · ${sequenceNote}` : ""
+            }`}
             density="compact"
           >
+            <p
+              className="px-3 pt-2 text-[10px] text-wo-text-muted"
+              data-testid="ops-graph-display-order-note"
+            >
+              {OPS_GRAPH_DISPLAY_ORDER_NOTE}
+            </p>
             <div className="overflow-x-auto" data-testid="ops-graph-task-list">
               <table className="w-full text-[12px]">
                 <thead className="bg-wo-surface-inset border-b border-wo-border-strong">
                   <tr className="text-left text-wo-text-muted uppercase text-[10px] tracking-wide">
-                    <th className="px-3 py-2 font-semibold">Seq</th>
+                    <th
+                      className="px-3 py-2 font-semibold"
+                      title="Original source sequence_index — not remapped to display rank"
+                    >
+                      SEQ
+                    </th>
                     <th className="px-3 py-2 font-semibold">Status</th>
                     <th className="px-3 py-2 font-semibold">Task</th>
                     <th className="px-3 py-2 font-semibold">Process</th>

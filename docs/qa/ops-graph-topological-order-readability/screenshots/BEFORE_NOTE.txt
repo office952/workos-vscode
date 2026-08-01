@@ -1,0 +1,1 @@
+﻿before: display sorted by sequence_index only (pre-GO). For 92401 main chain, dep-order coincides with SEQ order; gaps 11-12 remain visible as SEQ 13 after 10.

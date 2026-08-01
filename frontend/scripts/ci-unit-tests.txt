@@ -22,3 +22,4 @@ src/features/product-system/volumetricLettersProduction.test.ts
 src/lib/svgAnalyzer/pblLayereChildParts.regression.test.ts
 src/components/workos/intake-v6/IntakeV6OperatorUiPolish.test.tsx
 src/pages/MaterializedOpsGraph.test.tsx
+src/lib/opsGraphDisplayOrder.test.ts
