@@ -1,0 +1,6 @@
+﻿No UI materials column/section on ops-graph for 92401.
+Table headers observed: SEQ, Status, Task, Process, Type, Code, WC, Min, Depends, Gaps.
+DOM text matches: Materiale=0, Necesare=0, Consum=0, Rezerv=0, Stoc=0, Preț=0, Cost=0.
+Word 'material' appears only in materialize/materialized/DEC-009 wording (~25).
+API: all 18 operational_tasks.material_inputs = [].
+Frozen Order snapshot product_aggregate_snapshot.materials = 22 (qty all null).
