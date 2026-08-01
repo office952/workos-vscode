@@ -88,6 +88,9 @@ class FormulaId(str, Enum):
     FACE_VINYL_USED_SQM = "face_vinyl_used_sqm"
     SVG_GEOMETRY_READINESS_GATE = "svg_geometry_readiness_gate"
     MOUNTING_TEMPLATE_AREA = "mounting_template_area"
+    # Return/cant linear quantity — component-owned perimeter (ml).
+    # Demonstrated by volum_aluminiu_quantity_ownership (confirmed/legacy perimeter).
+    RETURN_PROFILE_LINEAR_METER = "return_profile_linear_meter"
 
 
 @dataclass(frozen=True)
@@ -1713,6 +1716,8 @@ FORMULA_REGISTRY: Dict[FormulaId, HandlerFn] = {
     FormulaId.FACE_VINYL_USED_SQM: _handle_face_vinyl_used_sqm,
     FormulaId.SVG_GEOMETRY_READINESS_GATE: _handle_svg_geometry_readiness_gate,
     FormulaId.MOUNTING_TEMPLATE_AREA: _handle_mounting_template_area,
+    # Same magnitude as letter perimeter (ml); depth/finish gates filter emission.
+    FormulaId.RETURN_PROFILE_LINEAR_METER: _handle_letter_perimeter,
 }
 
 

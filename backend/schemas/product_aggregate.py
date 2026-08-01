@@ -37,16 +37,37 @@ SOURCE_LAYERS: list[str] = [
 ]
 
 
+QuantityStatusValue = Literal[
+    "derived",
+    "reference_only",
+    "source_missing",
+    "legacy_unspecified",
+]
+
+QuantityModelValue = Literal["A", "B", "D"]
+
+
 class ProductAggregateMaterial(BaseModel):
     material_code: str
     label: str | None = None
     unit: str | None = None
     component_ref: str | None = None
     formula_id: str | None = None
+    # Template gate/params for active-variant filtering (not pricing).
+    formula_params: dict[str, Any] | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None
     status: str = "present"
+    # Upstream technical material requirement contract (freeze-time).
+    requirement_id: str | None = None
+    quantity: float | None = None
+    quantity_status: QuantityStatusValue | None = None
+    quantity_model: QuantityModelValue | None = None
+    variant_discriminator: str | None = None
+    quantity_formula_id: str | None = None
+    quantity_input_keys: list[str] = Field(default_factory=list)
+    owner_scope: str | None = None
 
 
 class ProductAggregateOperation(BaseModel):

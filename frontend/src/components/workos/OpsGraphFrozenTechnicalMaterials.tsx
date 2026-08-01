@@ -11,11 +11,25 @@ import type { FrozenTechnicalMaterialsProjection } from "@/api/execution";
 
 export function formatFrozenMaterialQuantity(
   quantity: number | null | undefined,
+  quantityStatus?: string | null,
+  statusLabelRo?: string | null,
 ): string {
-  if (quantity === null || quantity === undefined) {
-    return "Nespecificată";
+  if (quantity !== null && quantity !== undefined) {
+    return String(quantity);
   }
-  return String(quantity);
+  const label = statusLabelRo?.trim();
+  if (label) {
+    return label;
+  }
+  switch ((quantityStatus || "").trim()) {
+    case "reference_only":
+      return "Referință (fără cantitate)";
+    case "source_missing":
+      return "Sursă lipsă";
+    case "legacy_unspecified":
+    default:
+      return "Nespecificată";
+  }
 }
 
 type Props = {
@@ -115,16 +129,22 @@ export default function OpsGraphFrozenTechnicalMaterials({ projection }: Props) 
             </thead>
             <tbody>
               {entries.map((entry) => {
-                const qtyLabel = formatFrozenMaterialQuantity(entry.quantity);
+                const qtyLabel = formatFrozenMaterialQuantity(
+                  entry.quantity,
+                  entry.quantity_status,
+                  entry.quantity_status_label_ro,
+                );
                 const provenanceBits = [
                   entry.provenance,
                   entry.component_ref,
+                  entry.variant_discriminator,
                 ].filter(Boolean);
                 return (
                   <tr
-                    key={`ftm-${entry.entry_index}-${entry.material_code ?? "x"}`}
+                    key={`ftm-${entry.entry_index}-${entry.requirement_id ?? entry.material_code ?? "x"}`}
                     className="border-b border-wo-border-subtle last:border-b-0 align-top"
                     data-testid={`ops-graph-frozen-material-row-${entry.entry_index}`}
+                    data-quantity-status={entry.quantity_status ?? "legacy_unspecified"}
                   >
                     <td className="px-3 py-1.5 font-mono text-wo-text-secondary whitespace-nowrap">
                       {entry.material_code?.trim() || "—"}
@@ -143,6 +163,7 @@ export default function OpsGraphFrozenTechnicalMaterials({ projection }: Props) 
                           ? "true"
                           : "false"
                       }
+                      data-quantity-status={entry.quantity_status ?? "legacy_unspecified"}
                     >
                       {qtyLabel}
                     </td>

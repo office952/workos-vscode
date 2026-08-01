@@ -259,6 +259,13 @@ export interface PlannedTaskRow {
   read_clarity?: OpsGraphTaskReadClarity | null;
 }
 
+/** Quantity honesty status from upstream material contract / legacy freeze. */
+export type FrozenMaterialQuantityStatus =
+  | 'derived'
+  | 'reference_only'
+  | 'source_missing'
+  | 'legacy_unspecified';
+
 /** Allowlisted frozen technical materials from Order Snapshot V2 (ops-graph RO). */
 export interface FrozenTechnicalMaterialEntry {
   entry_index: number;
@@ -267,6 +274,12 @@ export interface FrozenTechnicalMaterialEntry {
   unit?: string | null;
   /** Null means unspecified — UI must not coerce to 0. */
   quantity?: number | null;
+  quantity_status?: FrozenMaterialQuantityStatus | string | null;
+  /** Operator-facing Romanian label for quantity_status (backend-provided). */
+  quantity_status_label_ro?: string | null;
+  quantity_model?: 'A' | 'B' | 'D' | string | null;
+  requirement_id?: string | null;
+  variant_discriminator?: string | null;
   provenance?: string | null;
   component_ref?: string | null;
   source_template_code?: string | null;

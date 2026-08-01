@@ -42,9 +42,19 @@ function projection(
 }
 
 describe("formatFrozenMaterialQuantity", () => {
-  it("renders Nespecificată for null/undefined and never zero-coerces", () => {
+  it("renders honest labels for null statuses and never zero-coerces", () => {
     expect(formatFrozenMaterialQuantity(null)).toBe("Nespecificată");
     expect(formatFrozenMaterialQuantity(undefined)).toBe("Nespecificată");
+    expect(formatFrozenMaterialQuantity(null, "legacy_unspecified")).toBe(
+      "Nespecificată",
+    );
+    expect(formatFrozenMaterialQuantity(null, "reference_only")).toBe(
+      "Referință (fără cantitate)",
+    );
+    expect(formatFrozenMaterialQuantity(null, "source_missing")).toBe("Sursă lipsă");
+    expect(
+      formatFrozenMaterialQuantity(null, "source_missing", "Sursă lipsă"),
+    ).toBe("Sursă lipsă");
     expect(formatFrozenMaterialQuantity(0)).toBe("0");
     expect(formatFrozenMaterialQuantity(3)).toBe("3");
   });

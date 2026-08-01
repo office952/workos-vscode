@@ -1,0 +1,19 @@
+# MATERIAL_FAMILY_OWNER_AND_QUANTITY_MATRIX
+
+| family / code pattern | owner component | identity owner | unit owner | quantity owner | model | input source | variant rule | formula status | null semantics | duplicate semantics | freeze path | implementation | remaining gap |
+|-----------------------|-----------------|----------------|------------|----------------|-------|--------------|--------------|----------------|----------------|----------------------|-------------|----------------|---------------|
+| Face substrate MAT-ACP-FATA-LITERE | comp_face_litere | material catalog / template | template unit mp | component formula letter_face_area | A | letter_face_area_m2 | always when face active | registered | source_missing if no area | unique | Quote→Order PA materials | **implemented** | — |
+| Face Oracal MAT-ORACAL-651 (parent) | comp_face_litere | catalog | mp | letter_face_area / face_vinyl_used_sqm | A | face area + finish | face_finish_type=oracal_651 | registered (depends on row formula_id) | source_missing if inactive filtered | vs return Oracal — different provenance | freeze filter+eval | **implemented** (gate map) | finish subtype 8500 mapping |
+| Face vinyl print / laminated | comp_face_litere | catalog | mp | letter_face_area | A | face area | printed_vinyl / printed_laminated_vinyl | registered | filtered when inactive | mutual exclusive vs Oracal | freeze | **implemented** | — |
+| Lateral generic MAT-PROFIL-LATERAL-LITERE | comp_lateral_litere | catalog | ml | letter_perimeter | A | letter_perimeter_m | suppressed when depth selected | registered | — | vs sized profiles | freeze | **implemented** | — |
+| Lateral sized 30/60/80/100MM | volum aluminum module | catalog | ml | return_profile_linear_meter → perimeter | A | letter_perimeter_m + depth | gate return_depth_mm | **registered** this build | source_missing if perim absent | size variants exclusive | freeze | **implemented** | confirmed_perimeter Product Truth bridge optional |
+| Return Oracal / Vopsea | volum aluminum | catalog | mp/buc | return_wrap_area / return_paint_consumption | A* | finish+depth | return_finish_type gate | **unregistered** → source_missing | source_missing | vs parent same code | freeze emits if gate matches | **partial** | register area/paint formulas later |
+| Return adhesive | volum aluminum | catalog | ml | return_profile_adhesive | A* | depth | FACE+CANT interface + depth | unregistered | source_missing | — | active scope + freeze | **partial** | formula handler |
+| Back PVC | comp_spate_litere | catalog | mp | letter_face_area | A | letter_face_area_m2 | back module active | registered | source_missing | — | freeze | **implemented** | — |
+| LED / PSU | comp_led_litere | catalog | buc | led_per_letter / psu_count | A | LED inputs | lighting active | registered | source_missing | — | freeze | **implemented** when inputs present | — |
+| Finish paint parent / șabloane | comp_finisaj | catalog | varies | ceil / letter_face_area | A | quote inputs | finish/mounting gates when present | mixed | source_missing / derived | — | freeze | **partial** | paint ceil inputs |
+| Consumabile / suruburi | finish / mounting | catalog | set | none | D | — | module active | none | reference_only | — | freeze | **implemented** | Owner formula later |
+| Premount bars | structura_suport | catalog | — | — | D/N/A | — | inactive module | — | excluded by scope | — | active scope | excluded when inactive | — |
+| ACM panel / cassette | mounting panel comps | catalog | mp | rectangular_panel_area / letter_face_area | A | panel / face area | mounting active | registered | source_missing | same code different component | freeze | **implemented** when inputs present | — |
+
+\* Model A intended; until formula registered, freeze keeps `quantity_status=source_missing` (honest null).

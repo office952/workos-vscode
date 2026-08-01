@@ -19,7 +19,7 @@ import json
 from typing import Any
 
 
-PROJECTION_VERSION = "ops_graph_frozen_technical_materials/v1"
+PROJECTION_VERSION = "ops_graph_frozen_technical_materials/v2"
 SOURCE_PATH = "order_snapshot_v2.product_aggregate_snapshot.materials"
 
 SEMANTIC_TITLE_RO = "Materiale tehnice conform comenzii"
@@ -34,10 +34,23 @@ _ALLOWED_ENTRY_KEYS = (
     "label",
     "unit",
     "quantity",
+    "quantity_status",
+    "quantity_model",
+    "requirement_id",
+    "variant_discriminator",
+    "quantity_formula_id",
+    "owner_scope",
     "provenance",
     "component_ref",
     "source_template_code",
 )
+
+_QUANTITY_STATUS_LABELS_RO = {
+    "derived": "Derivată",
+    "reference_only": "Referință (fără cantitate)",
+    "source_missing": "Sursă lipsă",
+    "legacy_unspecified": "Nespecificată",
+}
 
 
 def _as_optional_str(value: Any) -> str | None:
@@ -61,13 +74,37 @@ def _as_quantity(value: Any) -> float | int | None:
     return None
 
 
+def _normalize_quantity_status(
+    raw_status: Any,
+    quantity: float | int | None,
+) -> str:
+    """Map legacy rows (no status) to honest legacy_unspecified."""
+    text = _as_optional_str(raw_status)
+    if text in _QUANTITY_STATUS_LABELS_RO:
+        return text
+    if quantity is not None:
+        return "derived"
+    return "legacy_unspecified"
+
+
 def _project_entry(row: dict[str, Any], entry_index: int) -> dict[str, Any]:
+    quantity = _as_quantity(row.get("quantity"))
+    quantity_status = _normalize_quantity_status(row.get("quantity_status"), quantity)
     return {
         "entry_index": entry_index,
         "material_code": _as_optional_str(row.get("material_code")),
         "label": _as_optional_str(row.get("label")),
         "unit": _as_optional_str(row.get("unit")),
-        "quantity": _as_quantity(row.get("quantity")),
+        "quantity": quantity,
+        "quantity_status": quantity_status,
+        "quantity_status_label_ro": _QUANTITY_STATUS_LABELS_RO.get(
+            quantity_status, "Nespecificată"
+        ),
+        "quantity_model": _as_optional_str(row.get("quantity_model")),
+        "requirement_id": _as_optional_str(row.get("requirement_id")),
+        "variant_discriminator": _as_optional_str(row.get("variant_discriminator")),
+        "quantity_formula_id": _as_optional_str(row.get("quantity_formula_id")),
+        "owner_scope": _as_optional_str(row.get("owner_scope")),
         "provenance": _as_optional_str(row.get("provenance")),
         "component_ref": _as_optional_str(row.get("component_ref")),
         "source_template_code": _as_optional_str(row.get("source_template_code")),

@@ -527,6 +527,8 @@ class ProductAggregateService:
             code = _material_code(row)
             if not code:
                 continue
+            raw_params = row.get("formula_params")
+            formula_params = dict(raw_params) if isinstance(raw_params, dict) else None
             out.append(
                 ProductAggregateMaterial(
                     material_code=code,
@@ -534,6 +536,7 @@ class ProductAggregateService:
                     unit=row.get("unit"),
                     component_ref=row.get("component_ref"),
                     formula_id=row.get("formula_id"),
+                    formula_params=formula_params,
                     provenance=provenance,  # type: ignore[arg-type]
                     source_template_code=source_template_code,
                     mini_module_code=mini_module_code,

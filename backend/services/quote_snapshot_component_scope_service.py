@@ -47,6 +47,9 @@ from services.product_aggregate_active_scope_filter import filter_aggregate_by_a
 from services.product_aggregate_service import ProductAggregateService
 from services.product_aggregate_workspace_composition_service import SEGMENT_NAMESPACE_SEP
 from services.product_definition_builder_service import ProductDefinitionBuilderService
+from services.technical_material_requirement_service import (
+    apply_technical_material_requirements,
+)
 
 SCOPE_WARNING_UNMAPPED_COMPONENT = "COMPONENT_INSTANCE_CANONICAL_UNMAPPED"
 SCOPE_ERROR_PREVIEW_FREEZE_MISMATCH = "ACTIVE_SCOPE_PREVIEW_FREEZE_MISMATCH"
@@ -396,6 +399,10 @@ async def build_frozen_component_scope(
         aggregate = apply_planning_duration_resolution(aggregate, duration_facts)
     elif duration_input_keys.intersection(duration_facts.keys()):
         aggregate = apply_planning_duration_resolution(aggregate, duration_facts)
+
+    # Upstream technical material quantity & ownership (Model A/D) — freeze time.
+    # Active-variant filter + component-owned formula resolve; never inventory/pricing.
+    aggregate = apply_technical_material_requirements(aggregate, merged_payload)
 
     component_instances, scope_warnings = _derive_component_instances(aggregate, offer_scope_snapshot)
     geometry_input_snapshot = _build_geometry_snapshot(
