@@ -259,6 +259,30 @@ export interface PlannedTaskRow {
   read_clarity?: OpsGraphTaskReadClarity | null;
 }
 
+/** Allowlisted frozen technical materials from Order Snapshot V2 (ops-graph RO). */
+export interface FrozenTechnicalMaterialEntry {
+  entry_index: number;
+  material_code?: string | null;
+  label?: string | null;
+  unit?: string | null;
+  /** Null means unspecified — UI must not coerce to 0. */
+  quantity?: number | null;
+  provenance?: string | null;
+  component_ref?: string | null;
+  source_template_code?: string | null;
+}
+
+export interface FrozenTechnicalMaterialsProjection {
+  version: string;
+  source: string;
+  title: string;
+  semantic_note: string;
+  status: string;
+  entries: FrozenTechnicalMaterialEntry[];
+  entry_count: number;
+  warnings?: string[];
+}
+
 export interface ExecutionPlanResponse {
   id: number;
   order_id: number;
@@ -276,6 +300,11 @@ export interface ExecutionPlanResponse {
   execution_tasks_created?: boolean;
   /** Batch 17 Track B — plan-level sequence/null policy for ops-graph RO. */
   ops_graph_read_clarity?: OpsGraphPlanReadClarity | null;
+  /**
+   * Order/plan-level frozen technical materials (ProductAggregate snapshot).
+   * Not task inputs · not inventory · not consumption · not pricing.
+   */
+  frozen_technical_materials?: FrozenTechnicalMaterialsProjection | null;
 }
 
 /** GET /execution/plan-v2/from-order/{id}/materialization-audit — read-only. */

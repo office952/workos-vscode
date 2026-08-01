@@ -167,6 +167,27 @@ describe("MaterializedOpsGraph", () => {
         },
         counts_guard: { input_count: 12, output_count: 12 },
       },
+      frozen_technical_materials: {
+        version: "ops_graph_frozen_technical_materials/v1",
+        source: "order_snapshot_v2.product_aggregate_snapshot.materials",
+        title: "Materiale tehnice conform comenzii",
+        semantic_note:
+          "Lista provine din definiția tehnică înghețată a comenzii. Nu reprezintă stoc, rezervare sau consum.",
+        status: "present",
+        entry_count: 1,
+        entries: [
+          {
+            entry_index: 0,
+            material_code: "MAT-TEST",
+            label: "Material test",
+            unit: "mp",
+            quantity: null,
+            provenance: "parent",
+            component_ref: "comp_face",
+          },
+        ],
+        warnings: [],
+      },
       tasks: [
         {
           task_id: "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
@@ -295,6 +316,16 @@ describe("MaterializedOpsGraph", () => {
       /already materialized/i,
     );
     expect(screen.getByTestId("ops-graph-task-list")).toBeInTheDocument();
+    expect(screen.getByTestId("ops-graph-frozen-technical-materials")).toBeInTheDocument();
+    expect(screen.getByTestId("ops-graph-frozen-materials-title")).toHaveTextContent(
+      "Materiale tehnice conform comenzii",
+    );
+    expect(screen.getByTestId("ops-graph-frozen-materials-note")).toHaveTextContent(
+      /Nu reprezintă stoc, rezervare sau consum/,
+    );
+    expect(screen.getByTestId("ops-graph-frozen-materials-count")).toHaveTextContent(
+      "1 intrare",
+    );
     expect(screen.getByTestId("ops-graph-display-order-note")).toHaveTextContent(
       /Display order: dependency order/i,
     );

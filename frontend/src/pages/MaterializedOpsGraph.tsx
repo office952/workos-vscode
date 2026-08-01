@@ -36,6 +36,7 @@ import {
 } from "@/api/execution";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
+import OpsGraphFrozenTechnicalMaterials from "@/components/workos/OpsGraphFrozenTechnicalMaterials";
 import {
   MetricTile,
   DataTableWrapper,
@@ -554,6 +555,12 @@ export default function MaterializedOpsGraph() {
           className="border-t-2 border-t-wo-warning"
         />
       </div>
+
+      {!loading && !error && plan && (
+        <OpsGraphFrozenTechnicalMaterials
+          projection={plan.frozen_technical_materials}
+        />
+      )}
 
       {error && (
         <div

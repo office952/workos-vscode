@@ -46,6 +46,9 @@ from services.execution_plan_gate_service import (
     evaluate_gate,
 )
 from schemas.auth import UserResponse
+from services.ops_graph_frozen_technical_materials import (
+    attach_frozen_technical_materials_to_plan_payload,
+)
 from services.execution_ops_graph_read_clarity import (
     apply_ops_graph_read_clarity_to_plan_payload,
 )
@@ -494,7 +497,15 @@ async def create_plan_from_order(
 @router.get("/plan/{order_id}")
 async def get_plan(order_id: int, db: AsyncSession = Depends(get_db)):
     row = await _get_plan_or_404(db, order_id)
-    return _plan_row_to_dict(row)
+    payload = _plan_row_to_dict(row)
+    # Display-only: attach allowlisted frozen technical materials from Order snapshot.
+    # Does not mutate plan envelope, tasks, material_inputs, or snapshot.
+    try:
+        order = await _get_order_or_404(db, order_id)
+        snapshot_v2_json = getattr(order, "snapshot_v2_json", None)
+    except HTTPException:
+        snapshot_v2_json = None
+    return attach_frozen_technical_materials_to_plan_payload(payload, snapshot_v2_json)
 
 
 class AssignPlanTaskRequest(BaseModel):
