@@ -16,6 +16,7 @@ from services.shared_edge_cant_rules import (
     apply_edge_cant_quote_waste,
     build_edge_cant_adhesive_consumable_row,
     build_edge_cant_oracal_651_material_row,
+    compute_return_wrap_area_m2,
     edge_cant_profiles_forbidden_on_wrap,
     evaluate_edge_cant_rules,
     resolve_edge_cant_oracal_651_profile,
@@ -34,6 +35,17 @@ def test_quote_edge_length_applies_twenty_percent_waste():
     assert waste == EDGE_CANT_QUOTE_WASTE_PERCENT
     assert calc == PBL_COMBINED_RETURN_ML
     assert quote == round(PBL_COMBINED_RETURN_ML * 1.2, 4)
+
+
+def test_compute_return_wrap_area_m2_matches_pricing_geometry_without_default_depth():
+    # 10m × 1.20 × (60+10)/1000 = 0.84 — same band math as Oracal material row.
+    assert compute_return_wrap_area_m2(10.0, 60.0) == 0.84
+    row = build_edge_cant_oracal_651_material_row(
+        wrapped_calculated_ml=10.0,
+        return_depth_mm=60,
+    )
+    assert row is not None
+    assert row.quantity == 0.84
 
 
 def test_calculated_and_quote_edge_lengths_are_separate():

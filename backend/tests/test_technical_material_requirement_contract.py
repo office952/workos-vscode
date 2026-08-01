@@ -175,7 +175,7 @@ def test_same_code_different_provenance_preserved():
             material_code="MAT-ORACAL-651",
             unit="mp",
             component_ref="comp_volum",
-            formula_id="return_wrap_area",  # unregistered → source_missing if active
+            formula_id="return_wrap_area",
             formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
             provenance="linked_module",
             source_template_code="TPL-VOLUM",
@@ -187,6 +187,8 @@ def test_same_code_different_provenance_preserved():
             "face_finish_type": "oracal_651",
             "return_finish_type": "oracal_wrapped",
             "letter_face_area_m2": 2.0,
+            "letter_perimeter_m": 10.0,
+            "return_depth_mm": 60,
         },
     )
     assert len(out.materials) == 2
@@ -194,11 +196,137 @@ def test_same_code_different_provenance_preserved():
     assert out.materials[1].provenance == "linked_module"
     assert out.materials[0].requirement_id != out.materials[1].requirement_id
     assert out.materials[0].quantity == 2.0
-    assert out.materials[1].quantity is None
-    assert out.materials[1].quantity_status == "source_missing"
+    # 10m × 1.20 waste × (60+10)/1000 band = 0.84 m²
+    assert out.materials[1].quantity == 0.84
+    assert out.materials[1].quantity_status == "derived"
 
 
-def test_unknown_formula_is_source_missing_not_zero():
+def test_return_wrap_area_derives_model_a():
+    mat = ProductAggregateMaterial(
+        material_code="MAT-ORACAL-651",
+        unit="mp",
+        component_ref="comp_volum",
+        formula_id="return_wrap_area",
+        formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
+        provenance="linked_module",
+        source_template_code="TPL-VOLUM",
+    )
+    out = apply_technical_material_requirements(
+        _agg(mat),
+        {
+            "return_finish_type": "oracal_wrapped",
+            "letter_perimeter_m": 10.0,
+            "return_depth_mm": 60,
+        },
+    )
+    row = out.materials[0]
+    assert row.quantity == 0.84
+    assert row.quantity_status == "derived"
+    assert row.quantity_model == "A"
+    assert row.quantity_formula_id == "return_wrap_area"
+
+
+def test_return_wrap_area_missing_depth_stays_null_no_default_60():
+    mat = ProductAggregateMaterial(
+        material_code="MAT-ORACAL-651",
+        unit="mp",
+        component_ref="comp_volum",
+        formula_id="return_wrap_area",
+        formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
+        provenance="linked_module",
+        source_template_code="TPL-VOLUM",
+    )
+    out = apply_technical_material_requirements(
+        _agg(mat),
+        {"return_finish_type": "oracal_wrapped", "letter_perimeter_m": 10.0},
+    )
+    row = out.materials[0]
+    assert row.quantity is None
+    assert row.quantity != 0
+    assert row.quantity_status == "source_missing"
+
+
+def test_return_wrap_area_missing_perimeter_stays_null():
+    mat = ProductAggregateMaterial(
+        material_code="MAT-ORACAL-651",
+        unit="mp",
+        component_ref="comp_volum",
+        formula_id="return_wrap_area",
+        formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
+        provenance="linked_module",
+        source_template_code="TPL-VOLUM",
+    )
+    out = apply_technical_material_requirements(
+        _agg(mat),
+        {"return_finish_type": "oracal_wrapped", "return_depth_mm": 60},
+    )
+    assert out.materials[0].quantity is None
+    assert out.materials[0].quantity_status == "source_missing"
+
+
+def test_inactive_return_finish_does_not_emit_wrap():
+    mat = ProductAggregateMaterial(
+        material_code="MAT-ORACAL-651",
+        unit="mp",
+        component_ref="comp_volum",
+        formula_id="return_wrap_area",
+        formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
+        provenance="linked_module",
+        source_template_code="TPL-VOLUM",
+    )
+    out = apply_technical_material_requirements(
+        _agg(mat),
+        {
+            "return_finish_type": "stock",
+            "letter_perimeter_m": 10.0,
+            "return_depth_mm": 60,
+        },
+    )
+    assert out.materials == []
+
+
+def test_oracal_wrap_and_ral_paint_mutual_exclusion():
+    mats = [
+        ProductAggregateMaterial(
+            material_code="MAT-ORACAL-651",
+            unit="mp",
+            component_ref="comp_volum",
+            formula_id="return_wrap_area",
+            formula_params={"gate": {"return_finish_type": "oracal_wrapped"}},
+            provenance="linked_module",
+            source_template_code="TPL-VOLUM",
+        ),
+        ProductAggregateMaterial(
+            material_code="MAT-VOPSEA-RAL",
+            unit="buc",
+            component_ref="comp_volum",
+            formula_id="return_paint_consumption",
+            formula_params={"gate": {"return_finish_type": "ral_paint"}},
+            provenance="linked_module",
+            source_template_code="TPL-VOLUM",
+        ),
+    ]
+    wrap_only = apply_technical_material_requirements(
+        _agg(*mats),
+        {
+            "return_finish_type": "oracal_wrapped",
+            "letter_perimeter_m": 10.0,
+            "return_depth_mm": 60,
+        },
+    )
+    assert [m.material_code for m in wrap_only.materials] == ["MAT-ORACAL-651"]
+    assert wrap_only.materials[0].quantity == 0.84
+
+    paint_only = apply_technical_material_requirements(
+        _agg(*mats),
+        {"return_finish_type": "ral_paint", "return_depth_mm": 60},
+    )
+    assert [m.material_code for m in paint_only.materials] == ["MAT-VOPSEA-RAL"]
+    assert paint_only.materials[0].quantity is None
+    assert paint_only.materials[0].quantity_status == "source_missing"
+
+
+def test_return_paint_consumption_stays_source_missing_not_zero():
     mat = ProductAggregateMaterial(
         material_code="MAT-VOPSEA-RAL",
         unit="buc",
@@ -210,10 +338,15 @@ def test_unknown_formula_is_source_missing_not_zero():
     )
     out = apply_technical_material_requirements(
         _agg(mat),
-        {"return_finish_type": "ral_paint"},
+        {
+            "return_finish_type": "ral_paint",
+            "letter_perimeter_m": 10.0,
+            "return_depth_mm": 60,
+        },
     )
     assert len(out.materials) == 1
     assert out.materials[0].quantity is None
+    assert out.materials[0].quantity != 0
     assert out.materials[0].quantity_status == "source_missing"
 
 

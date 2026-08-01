@@ -232,6 +232,30 @@ def build_edge_cant_adhesive_consumable_row(applicable_return_perimeter_ml: floa
     )
 
 
+def compute_return_wrap_area_m2(
+    perimeter_m: float,
+    return_depth_mm: float,
+    *,
+    waste_percent: float = EDGE_CANT_QUOTE_WASTE_PERCENT,
+    band_extra_mm: float = RETURN_VINYL_BAND_EXTRA_MM,
+) -> float:
+    """Technical Oracal wrap area (m²) for return/cant band.
+
+    Same geometry as ``build_edge_cant_oracal_651_material_row`` without pricing
+    and without inventing a default depth. Callers must supply positive inputs.
+    """
+    base_ml, priced_ml, _waste_pct = apply_edge_cant_quote_waste(
+        float(perimeter_m),
+        waste_percent=waste_percent,
+    )
+    if priced_ml <= 0 or base_ml <= 0:
+        return 0.0
+    band_width_m = (float(return_depth_mm) + float(band_extra_mm)) / 1000.0
+    if band_width_m <= 0:
+        return 0.0
+    return round(priced_ml * band_width_m, 4)
+
+
 def build_edge_cant_oracal_651_material_row(
     *,
     wrapped_calculated_ml: float,
@@ -250,8 +274,11 @@ def build_edge_cant_oracal_651_material_row(
         return None
 
     depth_mm = float(return_depth_mm or 60)
-    band_width_m = (depth_mm + RETURN_VINYL_BAND_EXTRA_MM) / 1000.0
-    area_m2 = round(priced_ml * band_width_m, 4)
+    area_m2 = compute_return_wrap_area_m2(
+        wrapped_calculated_ml,
+        depth_mm,
+        waste_percent=waste_percent,
+    )
 
     owner_price = resolve_owner_oracal_price_eur_per_sqm(EDGE_CANT_ORACAL_SERIES)
     unit_price: float | None = None

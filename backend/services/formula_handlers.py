@@ -43,6 +43,12 @@ from enum import Enum
 from math import ceil
 from typing import Any, Callable, Dict, List, Mapping, Optional
 
+from services.shared_edge_cant_rules import (
+    EDGE_CANT_QUOTE_WASTE_PERCENT,
+    compute_return_wrap_area_m2,
+)
+from services.volumetric_face_vinyl_service import RETURN_VINYL_BAND_EXTRA_MM
+
 
 # ---------------------------------------------------------------------------
 # Canonical error / unit strings (do NOT hand-write elsewhere)
@@ -91,6 +97,8 @@ class FormulaId(str, Enum):
     # Return/cant linear quantity — component-owned perimeter (ml).
     # Demonstrated by volum_aluminiu_quantity_ownership (confirmed/legacy perimeter).
     RETURN_PROFILE_LINEAR_METER = "return_profile_linear_meter"
+    # Return/cant Oracal wrap area (m²) — shared_edge_cant geometry.
+    RETURN_WRAP_AREA = "return_wrap_area"
 
 
 @dataclass(frozen=True)
@@ -817,6 +825,93 @@ def _handle_letter_perimeter(
         unit=UNIT_COUNT,
         resolved=True,
         breakdown={perim_key: perim, "extra_pct": extra_pct},
+    )
+
+
+def _handle_return_wrap_area(
+    params: Mapping[str, Any],
+    quote_input: Mapping[str, Any],
+) -> FormulaResult:
+    """Oracal wrap area (m²) for return/cant band — Model A technical quantity.
+
+    Uses ``compute_return_wrap_area_m2`` (shared_edge_cant geometry + quote waste).
+    Does **not** invent default return depth (pricing helper may use 60mm).
+
+    Quote inputs:
+        - letter_perimeter_m (or params.perimeter_quote_input_key)
+        - return_depth_mm (or depth_mm when return_depth_mm absent)
+
+    Params:
+        - perimeter_quote_input_key (optional)
+        - depth_quote_input_key (default return_depth_mm)
+        - waste_percent (optional override; default EDGE_CANT_QUOTE_WASTE_PERCENT)
+    """
+    perim_key = str(
+        params.get("perimeter_quote_input_key") or "letter_perimeter_m"
+    ).strip() or "letter_perimeter_m"
+    depth_key = str(
+        params.get("depth_quote_input_key") or "return_depth_mm"
+    ).strip() or "return_depth_mm"
+    depth_lookup = depth_key
+    if quote_input.get(depth_key) is None and quote_input.get("depth_mm") is not None:
+        depth_lookup = "depth_mm"
+
+    missing: List[str] = []
+    invalid: List[str] = []
+    perim = _coerce_positive_float(quote_input, perim_key, missing, invalid)
+    depth = _coerce_positive_float(quote_input, depth_lookup, missing, invalid)
+    err = _missing_or_invalid_result(UNIT_AREA_M2, missing, invalid)
+    if err is not None:
+        return FormulaResult(
+            value=err.value,
+            unit=UNIT_AREA_M2,
+            resolved=err.resolved,
+            error=err.error,
+            breakdown=err.breakdown,
+        )
+    assert perim is not None and depth is not None
+
+    try:
+        waste_percent = float(
+            params.get("waste_percent", EDGE_CANT_QUOTE_WASTE_PERCENT)
+        )
+    except (TypeError, ValueError):
+        return _fail(
+            UNIT_AREA_M2,
+            kind=ERR_INVALID_PARAM,
+            detail="waste_percent must be numeric",
+        )
+    if waste_percent < 0:
+        return _fail(
+            UNIT_AREA_M2,
+            kind=ERR_INVALID_PARAM,
+            detail="waste_percent must be >= 0",
+        )
+
+    area = compute_return_wrap_area_m2(
+        perim,
+        depth,
+        waste_percent=waste_percent,
+        band_extra_mm=RETURN_VINYL_BAND_EXTRA_MM,
+    )
+    if area <= 0:
+        return _fail(
+            UNIT_AREA_M2,
+            kind=ERR_INVALID_INPUT,
+            detail="return_wrap_area resolved to non-positive area",
+            missing=[perim_key, depth_lookup],
+        )
+    return FormulaResult(
+        value=area,
+        unit=UNIT_AREA_M2,
+        resolved=True,
+        breakdown={
+            perim_key: perim,
+            depth_key: depth,
+            "waste_percent": waste_percent,
+            "band_extra_mm": RETURN_VINYL_BAND_EXTRA_MM,
+            "area_m2": area,
+        },
     )
 
 
@@ -1718,6 +1813,7 @@ FORMULA_REGISTRY: Dict[FormulaId, HandlerFn] = {
     FormulaId.MOUNTING_TEMPLATE_AREA: _handle_mounting_template_area,
     # Same magnitude as letter perimeter (ml); depth/finish gates filter emission.
     FormulaId.RETURN_PROFILE_LINEAR_METER: _handle_letter_perimeter,
+    FormulaId.RETURN_WRAP_AREA: _handle_return_wrap_area,
 }
 
 
