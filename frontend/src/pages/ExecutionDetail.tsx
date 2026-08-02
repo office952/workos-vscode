@@ -17,6 +17,7 @@ import { FinalResultPanel } from "@/components/execution-result/FinalResultPanel
 import { ExecutionResultHeader } from "@/components/execution-result/Header";
 import { OperationalSummary } from "@/components/execution-result/OperationalSummary";
 import { PlanActualPanel } from "@/components/execution-result/PlanActualPanel";
+import { ResourceReadinessPanel } from "@/components/execution-result/ResourceReadinessPanel";
 import { TechnicalDetails } from "@/components/execution-result/TechnicalDetails";
 import { WorkPanel } from "@/components/execution-result/WorkPanel";
 import { executionResultRole, isManagementRole } from "@/components/execution-result/executionResultWorkspace";
@@ -121,6 +122,7 @@ export default function ExecutionDetail() {
     {observability ? <>
       <OperationalSummary observability={observability} />
       <BlockersPanel observability={observability} alerts={alerts} />
+      {observability.has_plan ? <ResourceReadinessPanel orderId={orderId} /> : null}
       {!observability.has_plan ? <section className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4" data-testid="execution-primary-action"><h2 className="text-sm font-semibold text-wo-text-primary">Următorul pas</h2><p className="mt-1 text-[12px] text-wo-text-muted">Planul de execuție trebuie generat înainte de înregistrarea lucrului.</p><button type="button" data-testid="execution-plan-generate-action" onClick={() => void generatePlan()} disabled={generatingPlan} className="mt-3 rounded-md bg-blue-600 px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50">{generatingPlan ? "Se generează planul…" : "Generează plan de execuție"}</button></section> : null}
       <WorkPanel plan={plan} reality={reality} busyTaskId={actionTaskId} onStart={(taskId) => void capture(taskId, "start")} onComplete={(taskId) => void capture(taskId, "complete")} />
       <PlanActualPanel observability={observability} />

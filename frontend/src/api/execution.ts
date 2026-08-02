@@ -442,6 +442,66 @@ export interface EmployeeEligibilityReadModelResponse {
   notes?: string[];
 }
 
+/**
+ * F7C — read-only ORR allow-list ∩ machines registry resource readiness.
+ * GET-only. Never assigns machine_code, never mutates operational_tasks,
+ * never touches sessions/assignment/pricing.
+ */
+export type ResourceReadinessStatus =
+  | 'ready'
+  | 'ready_with_warnings'
+  | 'missing_workcenter'
+  | 'unknown_resource_policy'
+  | 'machine_required_but_none_compatible'
+  | 'machine_optional_no_candidate'
+  | 'workcenter_only'
+  | 'machine_unavailable'
+  | 'maintenance_conflict'
+  | 'ambiguous_mapping';
+
+export interface CompatibleMachineCandidate {
+  resource_code: string;
+  name?: string | null;
+  resource_kind: string;
+  workcenter_code?: string | null;
+  is_active: boolean;
+  is_available: boolean;
+  operational_status?: string | null;
+  is_default?: boolean;
+}
+
+export interface OperationalTaskResourceReadiness {
+  task_key?: string | null;
+  display_name?: string | null;
+  source_operation_code?: string | null;
+  canonical_task_type?: string | null;
+  workcenter_code?: string | null;
+  workcenter_registry_status: 'resolved' | 'non_canonical' | 'missing' | 'empty';
+  resource_requirement_mode: 'orr_allowlist' | 'workcenter_only' | 'unknown_resource_policy';
+  allowed_resource_codes?: string[];
+  default_resource_code?: string | null;
+  compatible_machine_candidates: CompatibleMachineCandidate[];
+  work_area_candidates: CompatibleMachineCandidate[];
+  estimated_minutes?: number | null;
+  status: ResourceReadinessStatus;
+  blockers: string[];
+  warnings: string[];
+}
+
+export interface OperationalResourceReadinessResponse {
+  mode: 'operational_resource_readiness';
+  order_id: number;
+  execution_plan_id?: number | null;
+  status: 'ok' | 'plan_not_found' | 'blocked_not_materialized';
+  operational_task_count: number;
+  ready_count: number;
+  warning_count: number;
+  blocked_count: number;
+  tasks: OperationalTaskResourceReadiness[];
+  side_effects: 'none';
+  notes: string[];
+}
+
 // ---------------------------------------------------------------------------
 // Execution Reality types (Sprint #36) — strict mirror of backend contract
 // from routers/execution.py + services/execution_reality_service.py.
@@ -771,6 +831,21 @@ export const executionApi = {
     }
     return getJson<EmployeeEligibilityReadModelResponse>(
       `/execution/plan-v2/from-order/${orderId}/employee-eligibility`,
+    );
+  },
+
+  /**
+   * F7C — read-only ORR allow-list ∩ machines registry resource readiness
+   * for materialized operational tasks. Never assigns / schedules / starts.
+   */
+  getOperationalResourceReadiness(
+    orderId: number,
+  ): Promise<OperationalResourceReadinessResponse> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return Promise.reject(new Error('order_id_invalid'));
+    }
+    return getJson<OperationalResourceReadinessResponse>(
+      `/execution/plan-v2/from-order/${orderId}/resource-readiness`,
     );
   },
 

@@ -15,8 +15,12 @@ from schemas.auth import UserResponse
 from schemas.execution_plan_v2 import ExecutionPlanV2PersistResult, ExecutionPlanV2Preview
 from schemas.execution_plan_v2_materialize import ExecutionPlanV2MaterializeResult
 from schemas.execution_plan_v2_materialization_audit import ExecutionPlanV2MaterializationAudit
+from schemas.operational_resource_readiness import OperationalResourceReadinessResult
 from services.employee_eligibility_read_model_service import (
     build_employee_eligibility_read_model,
+)
+from services.operational_resource_readiness_service import (
+    build_operational_resource_readiness,
 )
 from services.execution_plan_v2_materialization_audit_service import (
     ExecutionPlanV2MaterializationAuditOrderNotFound,
@@ -201,3 +205,25 @@ async def employee_eligibility_read_model_by_order_id(
     if order_id <= 0:
         raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
     return await build_employee_eligibility_read_model(db, order_id)
+
+
+@router.get(
+    "/plan-v2/from-order/{order_id}/resource-readiness",
+    response_model=OperationalResourceReadinessResult,
+)
+async def operational_resource_readiness_by_order_id(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.plan_generate")),
+) -> OperationalResourceReadinessResult:
+    """F7C — read-only ORR allow-list ∩ machines registry resource readiness.
+
+    Never assigns machine_code, never mutates operational_tasks, never touches
+    sessions/assignment/pricing, never reopens the DEC-009 materialization gate.
+    """
+    logger.info(
+        "GET /api/v1/execution/plan-v2/from-order/%s/resource-readiness", order_id
+    )
+    if order_id <= 0:
+        raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
+    return await build_operational_resource_readiness(db, order_id)
