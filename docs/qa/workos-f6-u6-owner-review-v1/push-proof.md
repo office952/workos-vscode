@@ -16,12 +16,13 @@ Owner Review PASS (Varianta B — encoding harden + C3 package)
 Push canonical branch only
 ```
 
-## Post-push (filled after push)
+## Post-push
 
 ```text
-local SHA     = <fill>
-remote SHA    = <fill>
-ahead/behind  = <fill>
-stash         = intact
-working tree  = understood
+local SHA     = b902607d23b39c43625f1a1da0e874b66585934d
+remote SHA    = b902607d23b39c43625f1a1da0e874b66585934d
+ahead/behind  = 0 / 0
+stash         = stash@{0}: wip-employee-unrelated intact
+working tree  = understood (unrelated untracked QA/_tmp left alone)
+PUSH PASS
 ```

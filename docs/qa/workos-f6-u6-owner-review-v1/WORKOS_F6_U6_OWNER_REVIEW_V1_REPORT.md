@@ -52,7 +52,7 @@ Platform-wide Profitability Complete remains NOT READY.
 | `2430fa8a` | Prove multi-type actual-cost pilot families | YES (F6) |
 | `4ce9f769` | Publish post-U5 application UI scorecard | YES (U6 audit) |
 | `b23cf5ed` | Record F6 pilot and U6 scorecard worklog | YES (worklog) |
-| `<corrective>` | Harden C3 owner-review evidence encoding + package | YES (docs only) |
+| `b902607d` | Harden C3 F6/U6 owner-review evidence and push gate package | YES (docs only) |
 
 ## Ownership result
 
