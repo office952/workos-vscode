@@ -1,4 +1,4 @@
-﻿# Source disposition
+# Source disposition
 
 | Source | Disposition |
 |---|---|
@@ -8,4 +8,3 @@
 | Commercial tariff | rejected |
 | Stock movement snapshot | accepted actual material cost |
 | Reservation/planned BOM | rejected as actual |
-

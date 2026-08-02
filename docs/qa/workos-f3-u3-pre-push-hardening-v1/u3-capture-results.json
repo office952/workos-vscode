@@ -1,0 +1,986 @@
+{
+  "base": "http://127.0.0.1:3038",
+  "template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "results": [
+    {
+      "id": "product-system",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/product-system/products",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <button> button \n    at button\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1997:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:188:13\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Popper (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1989:11)\n    at Tooltip (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:96:5)\n    at div\n    at div\n    at CncProcessableBadge (http://127.0.0.1:3038/src/components/workos/CncProcessableBadge.tsx:34:43)\n    at div\n    at div\n    at div\n    at button\n    at div\n    at ReadonlyStructureCard (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:749:34)\n    at div\n    at div\n    at ComponentTimelineWrap (http://127.0.0.1:3038/src/features/product-system/templateStudioPanels.tsx:878:41)\n    at div\n    at div\n    at section\n    at ProductSystemStructureReadonlyPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:936:55)\n    at main\n    at div\n    at div\n    at ProductSystemV2Workspace (http://127.0.0.1:3038/src/features/product-system/ProductSystemV2Workspace.tsx:97:44)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\product-system.png"
+    },
+    {
+      "id": "product-template-detail",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <button> button \n    at button\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1997:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:188:13\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Popper (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1989:11)\n    at Tooltip (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:96:5)\n    at div\n    at div\n    at CncProcessableBadge (http://127.0.0.1:3038/src/components/workos/CncProcessableBadge.tsx:34:43)\n    at div\n    at div\n    at div\n    at button\n    at div\n    at ReadonlyStructureCard (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:749:34)\n    at div\n    at div\n    at ComponentTimelineWrap (http://127.0.0.1:3038/src/features/product-system/templateStudioPanels.tsx:878:41)\n    at div\n    at div\n    at section\n    at ProductSystemStructureReadonlyPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:936:55)\n    at main\n    at div\n    at div\n    at ProductSystemV2Workspace (http://127.0.0.1:3038/src/features/product-system/ProductSystemV2Workspace.tsx:97:44)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\product-template-detail.png"
+    },
+    {
+      "id": "template-pricing",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/product-system/products/TPL-VOLUMETRIC-LETTERS_v2?ps_legacy=1",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-SABLON-HARTIE_comp_finisaj_litere \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-SABLON-MONTAJ_comp_finisaj_litere \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\template-pricing.png"
+    },
+    {
+      "id": "pricing-registry",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/inventory/pricing",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\pricing-registry.png"
+    },
+    {
+      "id": "utilaje",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/utilaje",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\utilaje.png"
+    },
+    {
+      "id": "settings",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/settings",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\settings.png"
+    },
+    {
+      "id": "governance",
+      "theme": "day",
+      "url": "http://127.0.0.1:3038/governance",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\day\\governance.png"
+    },
+    {
+      "id": "product-system",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/product-system/products",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <button> button \n    at button\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1997:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:188:13\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Popper (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1989:11)\n    at Tooltip (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:96:5)\n    at div\n    at div\n    at CncProcessableBadge (http://127.0.0.1:3038/src/components/workos/CncProcessableBadge.tsx:34:43)\n    at div\n    at div\n    at div\n    at button\n    at div\n    at ReadonlyStructureCard (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:749:34)\n    at div\n    at div\n    at ComponentTimelineWrap (http://127.0.0.1:3038/src/features/product-system/templateStudioPanels.tsx:878:41)\n    at div\n    at div\n    at section\n    at ProductSystemStructureReadonlyPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:936:55)\n    at main\n    at div\n    at div\n    at ProductSystemV2Workspace (http://127.0.0.1:3038/src/features/product-system/ProductSystemV2Workspace.tsx:97:44)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\product-system.png"
+    },
+    {
+      "id": "product-template-detail",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <button> button \n    at button\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:137:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:114:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:229:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1997:13\n    at http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:188:13\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at Popper (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-2DDG44T5.js?v=53890aae:1989:11)\n    at Tooltip (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:96:5)\n    at div\n    at div\n    at CncProcessableBadge (http://127.0.0.1:3038/src/components/workos/CncProcessableBadge.tsx:34:43)\n    at div\n    at div\n    at div\n    at button\n    at div\n    at ReadonlyStructureCard (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:749:34)\n    at div\n    at div\n    at ComponentTimelineWrap (http://127.0.0.1:3038/src/features/product-system/templateStudioPanels.tsx:878:41)\n    at div\n    at div\n    at section\n    at ProductSystemStructureReadonlyPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemStructureReadonlyPanel.tsx:936:55)\n    at main\n    at div\n    at div\n    at ProductSystemV2Workspace (http://127.0.0.1:3038/src/features/product-system/ProductSystemV2Workspace.tsx:97:44)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\product-template-detail.png"
+    },
+    {
+      "id": "template-pricing",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/product-system/products/TPL-VOLUMETRIC-LETTERS_v2?ps_legacy=1",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-PROFIL-LATERAL-LITERE-60MM_comp_volum_aluminiu_module \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-SABLON-HARTIE_comp_finisaj_litere \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        },
+        {
+          "type": "error",
+          "text": "Warning: Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.%s TPL-VOLUMETRIC-LETTERS_v2::internal::material_MAT-SABLON-MONTAJ_comp_finisaj_litere \n    at div\n    at section\n    at PriceBreakdownSection (http://127.0.0.1:3038/src/features/product-system/PriceBreakdownSection.tsx:261:41)\n    at div\n    at TemplatePricingStudioPanel (http://127.0.0.1:3038/src/features/product-system/TemplatePricingStudioPanel.tsx:79:46)\n    at div\n    at div\n    at ProductSystemTemplateDetailPanel (http://127.0.0.1:3038/src/features/product-system/ProductSystemTemplateDetailPanel.tsx:884:52)\n    at section\n    at div\n    at div\n    at ProductSystemCanonicalCatalog (http://127.0.0.1:3038/src/features/product-system/ProductSystemCanonicalCatalog.tsx:273:49)\n    at div\n    at div\n    at ProductSystem (http://127.0.0.1:3038/src/pages/ProductSystem.tsx:5790:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at div\n    at ProductSystemLayoutInner (http://127.0.0.1:3038/src/features/product-system/ProductSystemLayout.tsx:34:22)\n    at ProductSystemShellProvider (http://127.0.0.1:3038/src/features/product-system/ProductSystemShellContext.tsx:30:46)\n    at ProductSystemLayout\n    at ErrorBoundary (http://127.0.0.1:3038/src/components/ErrorBoundary.tsx:168:9)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3038/src/components/workos/AppShell.tsx:146:22)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Outlet (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3038/src/App.tsx:179:34)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3038/src/App.tsx:1375:36)\n    at RenderedRoute (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4131:5)\n    at Routes (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4601:5)\n    at AuthProvider (http://127.0.0.1:3038/src/contexts/AuthContext.tsx:98:32)\n    at Router (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:4544:15)\n    at BrowserRouter (http://127.0.0.1:3038/node_modules/.vite/deps/react-router-dom.js?v=0a6a5944:5290:5)\n    at Provider (http://127.0.0.1:3038/node_modules/.vite/deps/chunk-VF6AOIKT.js?v=53890aae:56:15)\n    at TooltipProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f3b7b0fd:52:5)\n    at QueryClientProvider (http://127.0.0.1:3038/node_modules/.vite/deps/@tanstack_react-query.js?v=a45e39c2:3168:3)\n    at ThemeProvider (http://127.0.0.1:3038/src/contexts/ThemeContext.tsx:40:33)\n    at App"
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\template-pricing.png"
+    },
+    {
+      "id": "pricing-registry",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/inventory/pricing",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\pricing-registry.png"
+    },
+    {
+      "id": "utilaje",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/utilaje",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\utilaje.png"
+    },
+    {
+      "id": "settings",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/settings",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\settings.png"
+    },
+    {
+      "id": "governance",
+      "theme": "dark",
+      "url": "http://127.0.0.1:3038/governance",
+      "expectOk": true,
+      "integrityBlocked": false,
+      "corsBlocked": false,
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Bluepri",
+      "consoles": [
+        {
+          "type": "warning",
+          "text": "⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition."
+        }
+      ],
+      "apiSample": [
+        {
+          "url": "/src/api/execution.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/documentationIndex.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/inventoryMaterialsAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/commercialMarkupPoliciesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/pricingRegistry.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/workcenterRatesAdmin.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/costEngine.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeeAttendance.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/employeePayments.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/integrations.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/companyCommercialSettings.ts",
+          "status": 200
+        },
+        {
+          "url": "/src/api/productFamilies.ts",
+          "status": 200
+        }
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\qa\\workos-f3-u3-pre-push-hardening-v1\\screenshots\\dark\\governance.png"
+    }
+  ]
+}

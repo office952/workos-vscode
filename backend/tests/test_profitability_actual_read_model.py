@@ -33,6 +33,23 @@ async def test_missing_labor_and_materials_not_zero(monkeypatch):
     )
     service = ProfitabilityActualReadModelService(AsyncMock())
     monkeypatch.setattr(service, "_load_order", AsyncMock(return_value=order))
+    # Awaited AsyncSession contract: return completed facts (empty labor/material/open).
+    # Do not leave bare AsyncMock() for db.execute — that creates unawaited coroutines.
+    monkeypatch.setattr(
+        service,
+        "_load_actual_cost_facts",
+        AsyncMock(
+            return_value=(
+                [],
+                {
+                    "available": False,
+                    "value": None,
+                    "reason": "actual_material_cost_missing",
+                },
+                None,
+            )
+        ),
+    )
     monkeypatch.setattr(
         "services.profitability_actual_read_model_service.build_execution_actuals_read_model",
         AsyncMock(

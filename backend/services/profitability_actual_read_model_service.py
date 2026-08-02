@@ -62,6 +62,21 @@ class ProfitabilityActualReadModelService:
             raise OrderNotFoundError(str(order_id))
         return row
 
+    async def _load_actual_cost_facts(
+        self, order_id: int
+    ) -> tuple[list[ActualLaborCostLine], dict[str, Any], ExecutionJobClosure | None]:
+        """Load frozen labor lines, material actual, and job closure (awaited Session API)."""
+        labor_result = await self.db.execute(
+            select(ActualLaborCostLine).where(ActualLaborCostLine.order_id == order_id)
+        )
+        labor_lines = list(labor_result.scalars().all())
+        material = await ActualCostPolicyRuntimeService(self.db).actual_material_cost(order_id)
+        closure_result = await self.db.execute(
+            select(ExecutionJobClosure).where(ExecutionJobClosure.order_id == order_id)
+        )
+        closure = closure_result.scalar_one_or_none()
+        return labor_lines, material, closure
+
     @staticmethod
     def _parse_snapshot_dict(order: Orders) -> dict[str, Any] | None:
         """Extract frozen commercial/EIC fields without requiring full schema validate."""
@@ -244,20 +259,7 @@ class ProfitabilityActualReadModelService:
         }
 
         # --- Actual cost truth — frozen standard role/skill policies only ---
-        try:
-            labor_lines = (
-                await self.db.execute(select(ActualLaborCostLine).where(ActualLaborCostLine.order_id == order_id))
-            ).scalars().all()
-            material = await ActualCostPolicyRuntimeService(self.db).actual_material_cost(order_id)
-            closure = (
-                await self.db.execute(select(ExecutionJobClosure).where(ExecutionJobClosure.order_id == order_id))
-            ).scalar_one_or_none()
-        except (AttributeError, TypeError):
-            # Read model remains honest and available when underlying actual-cost
-            # storage is unavailable (including lightweight legacy test doubles).
-            labor_lines = []
-            material = {"available": False, "value": None, "reason": REASON_ACTUAL_MATERIAL_COST_MISSING}
-            closure = None
+        labor_lines, material, closure = await self._load_actual_cost_facts(order_id)
         closure_status = closure.status if closure else "open"
         if labor_lines:
             labor = _available(
