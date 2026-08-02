@@ -1,8 +1,8 @@
-# WorkOS F5/U5 Owner Review V1 (C2)
+﻿# WorkOS F5/U5 Owner Review V1 (C2)
 
-**Decision path:** HARDENING COMPLETED + PUSH PASS (pending push confirmation in same round)  
-**Controller:** `C:\w\psiso` (`feat/capacity-batch-20d-scoped-b-92401`)  
-**Note:** `C:\Users\offic\workos_app_vs` was stale detached `82a713e0` — candidate chain lives on controller `C:\w\psiso`.
+**Decision path:** HARDENING COMPLETED + PUSH PASS (pending push confirmation in same round)
+**Controller:** `C:\w\psiso` (`feat/capacity-batch-20d-scoped-b-92401`)
+**Note:** `C:\Users\offic\workos_app_vs` was stale detached `82a713e0` â€” candidate chain lives on controller `C:\w\psiso`.
 
 ## Stamps
 
@@ -19,15 +19,15 @@ Production Ready            = NU
 ```text
 a9cc5157 Broaden canonical actual-cost coverage          (F5)
 ac1fdb74 Refine execution result workspace               (U5)
-38454c71 Polish U5 cost completeness labels…             (U5)
-92dae7a5 Add U5 execution-result runtime screenshot…     (U5 evidence)
+38454c71 Polish U5 cost completeness labelsâ€¦             (U5)
+92dae7a5 Add U5 execution-result runtime screenshotâ€¦     (U5 evidence)
 + corrective: Harden F5 and U5 before owner acceptance
 ```
 
 ## Hardening applied
 
 1. `execution.closure_readiness` for admin/manager/operator (GET only); close/reopen remain `execution.job_close`
-2. CostsCompletenessPanel gated to management roles (commercial/unknown → no internal cost UI)
+2. CostsCompletenessPanel gated to management roles (commercial/unknown â†’ no internal cost UI)
 3. Trailing whitespace removed from F5 report
 4. Regression test `test_closure_readiness_operator_v1.py`
 5. Full C2 screenshot matrix under `screenshots/`
@@ -48,3 +48,4 @@ ac1fdb74 Refine execution result workspace               (U5)
 - ProductSystem 404 preexisting
 - Pricing.badges flake preexisting
 - Full FE suite not declared green
+
