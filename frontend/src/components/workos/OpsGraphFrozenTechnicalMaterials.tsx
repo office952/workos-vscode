@@ -2,8 +2,8 @@
  * Ops-graph order/plan-level frozen technical materials (read-only).
  *
  * Semantic: technical requirements from frozen Order snapshot — NOT stock,
- * reservation, allocation, preparation, or consumption. Quantity null →
- * "Nespecificată" (never coerce to 0).
+ * reservation, allocation, preparation, procurement, or consumption.
+ * Quantity null stays null (never coerce to 0).
  */
 
 import { useState } from "react";
@@ -23,12 +23,31 @@ export function formatFrozenMaterialQuantity(
   }
   switch ((quantityStatus || "").trim()) {
     case "reference_only":
-      return "Referință (fără cantitate)";
+      return "De referință";
+    case "source_missing":
+      return "Sursă lipsă";
+    case "legacy_unspecified":
+      return "Legacy / nespecificată";
+    default:
+      return "Legacy / nespecificată";
+  }
+}
+
+function statusLabel(
+  quantityStatus?: string | null,
+  statusLabelRo?: string | null,
+): string {
+  if (statusLabelRo?.trim()) return statusLabelRo.trim();
+  switch ((quantityStatus || "").trim()) {
+    case "derived":
+      return "Calculată";
+    case "reference_only":
+      return "De referință";
     case "source_missing":
       return "Sursă lipsă";
     case "legacy_unspecified":
     default:
-      return "Nespecificată";
+      return "Legacy / nespecificată";
   }
 }
 
@@ -38,6 +57,7 @@ type Props = {
 
 export default function OpsGraphFrozenTechnicalMaterials({ projection }: Props) {
   const [open, setOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   if (!projection) {
     return null;
@@ -48,7 +68,7 @@ export default function OpsGraphFrozenTechnicalMaterials({ projection }: Props) 
   const title = projection.title?.trim() || "Materiale tehnice conform comenzii";
   const note =
     projection.semantic_note?.trim() ||
-    "Lista provine din definiția tehnică înghețată a comenzii. Nu reprezintă stoc, rezervare sau consum.";
+    "Necesar tehnic înghețat la acceptarea comenzii. Nu reprezintă stoc, rezervare sau recomandare de achiziție.";
   const status = projection.status ?? "unknown";
   const isEmpty =
     status === "materials_empty" ||
@@ -120,61 +140,112 @@ export default function OpsGraphFrozenTechnicalMaterials({ projection }: Props) 
           <table className="w-full text-[11px]">
             <thead className="bg-wo-surface-inset border-b border-wo-border-strong">
               <tr className="text-left text-wo-text-muted uppercase text-[9px] tracking-wide">
-                <th className="px-3 py-1.5 font-semibold">Cod</th>
                 <th className="px-3 py-1.5 font-semibold">Denumire</th>
-                <th className="px-3 py-1.5 font-semibold">Unitate</th>
+                <th className="px-3 py-1.5 font-semibold">Cod</th>
                 <th className="px-3 py-1.5 font-semibold">Cantitate</th>
-                <th className="px-3 py-1.5 font-semibold">Proveniență</th>
+                <th className="px-3 py-1.5 font-semibold">Status</th>
+                <th className="px-3 py-1.5 font-semibold">Componentă</th>
+                <th className="px-3 py-1.5 font-semibold">Explicație</th>
               </tr>
             </thead>
             <tbody>
               {entries.map((entry) => {
-                const qtyLabel = formatFrozenMaterialQuantity(
-                  entry.quantity,
+                const qtyNull =
+                  entry.quantity === null || entry.quantity === undefined;
+                const qtyDisplay = qtyNull
+                  ? "—"
+                  : `${entry.quantity}${entry.unit?.trim() ? ` ${entry.unit.trim()}` : ""}`;
+                const st = statusLabel(
                   entry.quantity_status,
                   entry.quantity_status_label_ro,
                 );
-                const provenanceBits = [
-                  entry.provenance,
-                  entry.component_ref,
-                  entry.variant_discriminator,
-                ].filter(Boolean);
+                const reason =
+                  entry.quantity_missing_reason_ro?.trim() ||
+                  (qtyNull && entry.quantity_status === "source_missing"
+                    ? "Cantitatea nu poate fi calculată încă deoarece lipsește sursa tehnică necesară."
+                    : "");
                 return (
                   <tr
                     key={`ftm-${entry.entry_index}-${entry.requirement_id ?? entry.material_code ?? "x"}`}
                     className="border-b border-wo-border-subtle last:border-b-0 align-top"
                     data-testid={`ops-graph-frozen-material-row-${entry.entry_index}`}
-                    data-quantity-status={entry.quantity_status ?? "legacy_unspecified"}
+                    data-quantity-status={
+                      entry.quantity_status ?? "legacy_unspecified"
+                    }
                   >
-                    <td className="px-3 py-1.5 font-mono text-wo-text-secondary whitespace-nowrap">
-                      {entry.material_code?.trim() || "—"}
-                    </td>
                     <td className="px-3 py-1.5 text-wo-text-primary">
                       {entry.label?.trim() || "—"}
                     </td>
-                    <td className="px-3 py-1.5 font-mono text-wo-text-muted">
-                      {entry.unit?.trim() || "—"}
+                    <td className="px-3 py-1.5 font-mono text-wo-text-secondary whitespace-nowrap">
+                      {entry.material_code?.trim() || "—"}
+                    </td>
+                    <td
+                      className="px-3 py-1.5 font-mono text-wo-text-secondary whitespace-nowrap"
+                      data-testid={`ops-graph-frozen-material-qty-${entry.entry_index}`}
+                      data-quantity-null={qtyNull ? "true" : "false"}
+                      data-quantity-status={
+                        entry.quantity_status ?? "legacy_unspecified"
+                      }
+                    >
+                      {qtyDisplay}
                     </td>
                     <td
                       className="px-3 py-1.5 text-wo-text-secondary"
-                      data-testid={`ops-graph-frozen-material-qty-${entry.entry_index}`}
-                      data-quantity-null={
-                        entry.quantity === null || entry.quantity === undefined
-                          ? "true"
-                          : "false"
-                      }
-                      data-quantity-status={entry.quantity_status ?? "legacy_unspecified"}
+                      data-testid={`ops-graph-frozen-material-status-${entry.entry_index}`}
                     >
-                      {qtyLabel}
+                      {st}
                     </td>
                     <td className="px-3 py-1.5 text-[10px] font-mono text-wo-text-dim">
-                      {provenanceBits.length > 0 ? provenanceBits.join(" · ") : "—"}
+                      {entry.component_ref?.trim() || "—"}
+                    </td>
+                    <td className="px-3 py-1.5 text-[10px] text-wo-text-muted max-w-xs">
+                      {reason || "—"}
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+
+          <div className="px-3 py-2 border-t border-wo-border-subtle">
+            <button
+              type="button"
+              className="text-[10px] font-semibold text-wo-text-secondary hover:text-wo-text-primary"
+              data-testid="ops-graph-frozen-materials-details-toggle"
+              aria-expanded={detailsOpen}
+              onClick={() => setDetailsOpen((v) => !v)}
+            >
+              {detailsOpen
+                ? "Ascunde detalii provenance"
+                : "Arată detalii provenance"}
+            </button>
+            {detailsOpen && (
+              <ul
+                className="mt-1.5 space-y-1 text-[10px] font-mono text-wo-text-dim"
+                data-testid="ops-graph-frozen-materials-details"
+              >
+                {entries.map((entry) => {
+                  const bits = [
+                    entry.provenance,
+                    entry.source_template_code,
+                    entry.variant_discriminator,
+                    entry.requirement_id,
+                    entry.quantity_formula_id,
+                  ].filter(Boolean);
+                  return (
+                    <li
+                      key={`ftm-d-${entry.entry_index}`}
+                      data-testid={`ops-graph-frozen-material-detail-${entry.entry_index}`}
+                    >
+                      #{entry.entry_index}{" "}
+                      {entry.material_code?.trim() || "—"}
+                      {bits.length > 0 ? ` · ${bits.join(" · ")}` : ""}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </section>

@@ -172,7 +172,7 @@ describe("MaterializedOpsGraph", () => {
         source: "order_snapshot_v2.product_aggregate_snapshot.materials",
         title: "Materiale tehnice conform comenzii",
         semantic_note:
-          "Lista provine din definiția tehnică înghețată a comenzii. Nu reprezintă stoc, rezervare sau consum.",
+          "Necesar tehnic înghețat la acceptarea comenzii. Nu reprezintă stoc, rezervare sau recomandare de achiziție.",
         status: "present",
         entry_count: 1,
         entries: [
@@ -321,7 +321,7 @@ describe("MaterializedOpsGraph", () => {
       "Materiale tehnice conform comenzii",
     );
     expect(screen.getByTestId("ops-graph-frozen-materials-note")).toHaveTextContent(
-      /Nu reprezintă stoc, rezervare sau consum/,
+      /Nu reprezintă stoc, rezervare sau recomandare de achiziție/
     );
     expect(screen.getByTestId("ops-graph-frozen-materials-count")).toHaveTextContent(
       "1 intrare",

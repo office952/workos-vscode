@@ -140,17 +140,17 @@ async def test_cannot_persist_if_preview_blocked_missing_product_aggregate(db_se
 
 
 @pytest.mark.asyncio
-async def test_cannot_persist_if_planned_tasks_empty(db_session):
+async def test_can_persist_draft_shell_when_task_rules_missing(db_session):
+    """Materials-RO draft: missing task rules persist as empty planned_tasks shell."""
     order = await _seed_v2_order_with_snapshot(
         db_session,
         order_id=_PERSIST_OID(5),
         include_task_rules=False,
     )
-    with pytest.raises(HTTPException) as exc:
-        await create_execution_plan_v2_from_order(db_session, order.id)
-    assert exc.value.status_code == 422
-    blockers = exc.value.detail["blockers"]
-    assert "blocked_missing_task_rules" in blockers or "planned_tasks_empty" in blockers
+    result = await create_execution_plan_v2_from_order(db_session, order.id)
+    assert result.status == "persisted"
+    assert result.execution_plan_id is not None
+    assert result.preview_status == "blocked_missing_task_rules"
 
 
 # ---------------------------------------------------------------------------

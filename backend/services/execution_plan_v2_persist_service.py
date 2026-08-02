@@ -39,6 +39,9 @@ PERSIST_ALLOWED_PREVIEW_STATUSES = frozenset(
     {
         "ready_for_owner_review",
         "partial_missing_planning_minutes",
+        # Draft shell allowed so Order Snapshot materials RO can attach to a plan
+        # without inventing task rules / materializing ops.
+        "blocked_missing_task_rules",
     }
 )
 
@@ -83,13 +86,14 @@ def _validate_preview_for_persist(preview: ExecutionPlanV2Preview) -> None:
             "Preview indicates execution_tasks_created=true.",
             ["execution_tasks_already_created"],
         )
-    if preview.status.startswith("blocked_") or preview.status not in PERSIST_ALLOWED_PREVIEW_STATUSES:
+    if preview.status not in PERSIST_ALLOWED_PREVIEW_STATUSES:
         _raise_blocked(
             "PREVIEW_STATUS_BLOCKED",
             f"Preview status {preview.status!r} is not persistable.",
             preview.blockers or [preview.status],
         )
-    if not preview.planned_tasks:
+    # Materials-RO draft shell: allow empty planned_tasks when task rules absent.
+    if not preview.planned_tasks and preview.status != "blocked_missing_task_rules":
         _raise_blocked(
             "PREVIEW_EMPTY_TASKS",
             "Preview has no planned_tasks — cannot persist.",

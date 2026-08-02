@@ -374,7 +374,7 @@ def test_ops_graph_legacy_null_maps_to_legacy_unspecified():
     out = project_frozen_technical_materials(snap)
     assert out["entries"][0]["quantity"] is None
     assert out["entries"][0]["quantity_status"] == "legacy_unspecified"
-    assert out["entries"][0]["quantity_status_label_ro"] == "Nespecificată"
+    assert out["entries"][0]["quantity_status_label_ro"] == "Legacy / nespecificată"
 
 
 def test_ops_graph_projects_derived_and_reference_statuses():
@@ -414,7 +414,7 @@ def test_ops_graph_projects_derived_and_reference_statuses():
     assert out["entries"][0]["variant_discriminator"] == "face_finish_type=oracal_651"
     assert "unit_price" not in out["entries"][0]
     assert out["entries"][1]["quantity"] is None
-    assert out["entries"][1]["quantity_status_label_ro"] == "Referință (fără cantitate)"
+    assert out["entries"][1]["quantity_status_label_ro"] == "De referință"
 
 
 def test_service_does_not_call_inventory_or_eic_heuristics():

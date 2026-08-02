@@ -206,7 +206,16 @@ def commercial_totals_from_frozen_cpp(
 	subtotal = cpp.subtotal_commercial if cpp.subtotal_commercial is not None else cpp.commercial_total
 	if subtotal is None:
 		raise ValueError("Frozen commercial subtotal missing from snapshot.")
-	totals = _official_totals_from_7g(subtotal=float(subtotal), vat_rate=float(vat_rate))
+	# Frozen snapshot totals: no live Adaos/Discount/Ajustare — only VAT from settings.
+	totals = _official_totals_from_7g(
+		subtotal=float(subtotal),
+		commercial_inputs={
+			"markup_percent": 0.0,
+			"discount_percent": 0.0,
+			"vat_percent": float(vat_rate),
+			"manual_adjustment_ron": 0.0,
+		},
+	)
 	totals["currency"] = str(cpp.currency or "RON").strip().upper()
 	totals["pricing_totals_source"] = V6_SNAPSHOT_OFFER_PRICING_SOURCE
 	return totals

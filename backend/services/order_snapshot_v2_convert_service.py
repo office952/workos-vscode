@@ -22,7 +22,7 @@ from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from models.quotes import Quotes
 from schemas.auth import UserResponse
 from schemas.order_snapshot_v2 import OrderSnapshotV2, OrderSnapshotV2ConvertResult
-from schemas.quote_snapshot_v2 import QuoteSnapshotV2
+from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry, QuoteSnapshotV2
 from services.intake_v3_guarded_convert_to_order_service import (
     IV3_ORDER_STATUS_LOCKED,
     check_existing_order_for_iv3_quote,
@@ -173,13 +173,45 @@ def _enrich_order_provenance_with_product_truth(
     parsed: QuoteSnapshotV2,
     linkage: dict[str, Any],
 ) -> dict[str, Any]:
-    """Pass through quote provenance + Product Truth revision from V6 freeze envelope."""
+    """Product Truth freeze flags for audit (bag form used by readiness dry-run)."""
     base = dict(parsed.provenance or {}) if isinstance(parsed.provenance, dict) else {}
     base["product_truth_revision"] = linkage.get("product_truth_revision")
     base["product_truth_content_hash"] = linkage.get("product_truth_content_hash")
     base["freeze_from_pinned_product_truth"] = linkage.get("freeze_from_pinned_product_truth")
     base["no_live_workspace_reread"] = True
     return base
+
+
+def _order_provenance_entries(
+    parsed: QuoteSnapshotV2,
+    linkage: dict[str, Any],
+) -> list[QuoteSnapshotProvenanceEntry]:
+    """OrderSnapshotV2.provenance is a list — never a dict bag."""
+    entries: list[QuoteSnapshotProvenanceEntry] = []
+    raw = parsed.provenance
+    if isinstance(raw, list):
+        for item in raw:
+            if isinstance(item, QuoteSnapshotProvenanceEntry):
+                entries.append(item)
+            elif isinstance(item, dict):
+                entries.append(QuoteSnapshotProvenanceEntry.model_validate(item))
+    truth_bag = {
+        "product_truth_revision": linkage.get("product_truth_revision"),
+        "product_truth_content_hash": linkage.get("product_truth_content_hash"),
+        "freeze_from_pinned_product_truth": linkage.get(
+            "freeze_from_pinned_product_truth"
+        ),
+        "no_live_workspace_reread": True,
+    }
+    for key, value in truth_bag.items():
+        entries.append(
+            QuoteSnapshotProvenanceEntry(
+                key=key,
+                source="product_truth_freeze",
+                detail="" if value is None else str(value),
+            )
+        )
+    return entries
 
 
 def _build_order_snapshot_v2(
@@ -218,7 +250,7 @@ def _build_order_snapshot_v2(
         owner_decisions_snapshot=parsed.owner_decisions_snapshot,
         warnings_snapshot=parsed.warnings_snapshot,
         blockers_snapshot=parsed.blockers_snapshot,
-        provenance=_enrich_order_provenance_with_product_truth(parsed, linkage),
+        provenance=_order_provenance_entries(parsed, linkage),
         accepted_at=accept_record.get("accepted_at"),
         accepted_by=accept_record.get("accepted_by_display_name") or accept_record.get("accepted_by_user_id"),
         converted_at=converted_at,

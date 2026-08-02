@@ -277,9 +277,13 @@ export interface FrozenTechnicalMaterialEntry {
   quantity_status?: FrozenMaterialQuantityStatus | string | null;
   /** Operator-facing Romanian label for quantity_status (backend-provided). */
   quantity_status_label_ro?: string | null;
+  /** Human explanation when quantity is null (source_missing / reference_only / legacy). */
+  quantity_missing_reason_ro?: string | null;
   quantity_model?: 'A' | 'B' | 'D' | string | null;
   requirement_id?: string | null;
   variant_discriminator?: string | null;
+  quantity_formula_id?: string | null;
+  quantity_input_keys?: string[] | null;
   provenance?: string | null;
   component_ref?: string | null;
   source_template_code?: string | null;

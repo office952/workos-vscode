@@ -24,8 +24,8 @@ SOURCE_PATH = "order_snapshot_v2.product_aggregate_snapshot.materials"
 
 SEMANTIC_TITLE_RO = "Materiale tehnice conform comenzii"
 SEMANTIC_NOTE_RO = (
-    "Lista provine din definiția tehnică înghețată a comenzii. "
-    "Nu reprezintă stoc, rezervare sau consum."
+    "Necesar tehnic înghețat la acceptarea comenzii. "
+    "Nu reprezintă stoc, rezervare sau recomandare de achiziție."
 )
 
 # Allowlisted material row fields only — never price/cost/rates.
@@ -39,6 +39,7 @@ _ALLOWED_ENTRY_KEYS = (
     "requirement_id",
     "variant_discriminator",
     "quantity_formula_id",
+    "quantity_input_keys",
     "owner_scope",
     "provenance",
     "component_ref",
@@ -46,10 +47,23 @@ _ALLOWED_ENTRY_KEYS = (
 )
 
 _QUANTITY_STATUS_LABELS_RO = {
-    "derived": "Derivată",
-    "reference_only": "Referință (fără cantitate)",
+    "derived": "Calculată",
+    "reference_only": "De referință",
     "source_missing": "Sursă lipsă",
-    "legacy_unspecified": "Nespecificată",
+    "legacy_unspecified": "Legacy / nespecificată",
+}
+
+_QUANTITY_MISSING_REASON_RO = {
+    "source_missing": (
+        "Cantitatea nu poate fi calculată încă deoarece lipsește "
+        "sursa tehnică necesară."
+    ),
+    "reference_only": (
+        "Material de referință — fără formulă de cantitate pe componentă."
+    ),
+    "legacy_unspecified": (
+        "Snapshot vechi — cantitatea nu a fost înghețată pe contractul curent."
+    ),
 }
 
 
@@ -90,6 +104,14 @@ def _normalize_quantity_status(
 def _project_entry(row: dict[str, Any], entry_index: int) -> dict[str, Any]:
     quantity = _as_quantity(row.get("quantity"))
     quantity_status = _normalize_quantity_status(row.get("quantity_status"), quantity)
+    missing_reason = None
+    if quantity is None:
+        missing_reason = _QUANTITY_MISSING_REASON_RO.get(quantity_status)
+    input_keys = row.get("quantity_input_keys")
+    if not isinstance(input_keys, list):
+        input_keys = None
+    else:
+        input_keys = [str(k) for k in input_keys if k is not None]
     return {
         "entry_index": entry_index,
         "material_code": _as_optional_str(row.get("material_code")),
@@ -98,12 +120,14 @@ def _project_entry(row: dict[str, Any], entry_index: int) -> dict[str, Any]:
         "quantity": quantity,
         "quantity_status": quantity_status,
         "quantity_status_label_ro": _QUANTITY_STATUS_LABELS_RO.get(
-            quantity_status, "Nespecificată"
+            quantity_status, "Legacy / nespecificată"
         ),
+        "quantity_missing_reason_ro": missing_reason,
         "quantity_model": _as_optional_str(row.get("quantity_model")),
         "requirement_id": _as_optional_str(row.get("requirement_id")),
         "variant_discriminator": _as_optional_str(row.get("variant_discriminator")),
         "quantity_formula_id": _as_optional_str(row.get("quantity_formula_id")),
+        "quantity_input_keys": input_keys,
         "owner_scope": _as_optional_str(row.get("owner_scope")),
         "provenance": _as_optional_str(row.get("provenance")),
         "component_ref": _as_optional_str(row.get("component_ref")),
