@@ -1,0 +1,210 @@
+{
+  "results": [
+    {
+      "theme": "day",
+      "route": "/dashboard",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\dashboard.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\shop-floor.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/operator",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\operator.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/operator/orders/880042/task-truth",
+          "status": 422
+        }
+      ],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/execution",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\execution-dashboard.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/execution/880041",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\execution-detail-u5.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ],
+      "productSystem404": true
+    },
+    {
+      "theme": "day",
+      "route": "/quotes",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\quotes.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/orders",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\orders.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/inventory",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\inventory.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/inventory/pricing",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\pricing.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/product-system/products",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\product-system.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/product-system/templates/TPL-VOLUMETRIC-LETTERS_v2/publication",
+          "status": 404
+        }
+      ],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/employees",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\employees.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/utilaje",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\utilaje.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/reports",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\reports.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/settings",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\settings.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "route": "/intake-v6/operator",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\day\\intake-v6.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/intake-v6/workspaces",
+          "status": 422
+        }
+      ],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "route": "/dashboard",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\dark\\dashboard.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "route": "/execution/880041",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\dark\\execution-detail-u5.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ],
+      "productSystem404": true
+    },
+    {
+      "theme": "dark",
+      "route": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\dark\\shop-floor.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "route": "/inventory/pricing",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u6-post-u5-application-scorecard-v1\\screenshots\\dark\\pricing.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoa",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    }
+  ]
+}
