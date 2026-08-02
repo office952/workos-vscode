@@ -31,6 +31,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { CncProcessableBadge } from "@/components/workos/CncProcessableBadge";
+import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 import { machineCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge";
 import { presentMachineUtilization } from "@/lib/machineUtilizationHonesty";
 
@@ -212,14 +213,14 @@ export default function Utilaje() {
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <Cog className="w-5 h-5 text-wo-info shrink-0" />
-            <h1 className="text-[18px] font-bold text-wo-text-primary">Utilaje (registry)</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Utilaje și capacitate</h1>
             <span className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded-full">
               {machines.length} echipamente
             </span>
             <SourceBadge source={source} />
           </div>
           <p className="text-[11px] text-wo-text-muted mt-0.5">
-            Registry intern de capacitate — nu face parte din fluxul Product Template → Structură produs → Product Compiler.
+            Registru intern de capacitate și mentenanță. Workcenter-ele indică fezabilitatea, nu prețul client.
           </p>
         </div>
         <button
@@ -232,6 +233,8 @@ export default function Utilaje() {
           Utilaj Nou (blocat)
         </button>
       </div>
+
+      <AdminTruthFlowStrip active="equipment" />
 
       <details
         className={`rounded-lg px-3 py-2 group ${chromeBanner.info}`}

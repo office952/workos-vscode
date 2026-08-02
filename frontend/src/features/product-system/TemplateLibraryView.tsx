@@ -723,10 +723,10 @@ const CATALOG_VIEWS: Array<{
   label: string;
   description: string;
 }> = [
-  { id: "overview", label: "Overview", description: "Orientare rapida" },
-  { id: "products", label: "Produse", description: "Produse ofertabile si candidate" },
+  { id: "overview", label: "Prezentare", description: "Orientare rapidă" },
+  { id: "products", label: "Produse", description: "Produse ofertabile și candidate" },
   { id: "components", label: "Module produs", description: "Module produs interne și shared — egale sub Product Template" },
-  { id: "composition", label: "Compozitii", description: "Product Template -> Module produs egale" },
+  { id: "composition", label: "Compoziții", description: "Product Template → module produs egale" },
   { id: "archived", label: "Arhivate", description: "Scoase din flow activ" },
 ];
 
@@ -1001,14 +1001,14 @@ export function TemplateLibraryView({
       <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-[14px] font-bold text-wo-text-primary">{shellContextLabel ?? "Product System Catalog"}</p>
+            <p className="text-[14px] font-bold text-wo-text-primary">{shellContextLabel ?? "Catalog produse și șabloane"}</p>
             {detailed ? (
               <p className="mt-0.5 text-[11px] text-wo-text-muted">
-                Catalog scalabil pentru produse, componente si compozitii.
+                Catalog scalabil pentru produse, module și compoziții.
               </p>
             ) : null}
           </div>
-          <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/50 p-0.5" aria-label="Afisare catalog">
+          <div className="flex items-center gap-1 rounded-lg border border-wo-border-subtle bg-wo-surface-inset p-0.5" aria-label="Afișare catalog">
             {(["compact", "detailed"] as const).map((mode) => (
               <button
                 key={mode}
@@ -1023,7 +1023,7 @@ export function TemplateLibraryView({
           </div>
         </div>
         {restrictCatalogView ? null : (
-        <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Product System catalog views">
+        <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Vederi catalog produse și șabloane">
           {CATALOG_VIEWS.map((view) => {
             const active = effectiveCatalogView === view.id;
             const count = view.id === "products" ? productRows.length : view.id === "components" ? sharedContractGroups.length || componentRows.length : view.id === "composition" ? compositionRows.length : view.id === "archived" ? archivedRows.length : allCatalogRows.length;
@@ -1037,8 +1037,8 @@ export function TemplateLibraryView({
                 onClick={() => onCatalogViewChange(view.id)}
                 className={`rounded-md border px-2.5 py-1 text-[10px] font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
                   active
-                    ? "border-purple-500/50 bg-purple-500/10 text-purple-100"
-                    : "border-slate-700 bg-slate-900/70 text-wo-text-secondary hover:border-purple-500/30 hover:text-purple-200"
+                    ? "border-wo-info/40 bg-wo-info-muted text-wo-info"
+                    : "border-wo-border-strong bg-wo-surface-inset text-wo-text-secondary hover:border-wo-info/30 hover:text-wo-text-primary"
                 }`}
               >
                 {view.label}{view.id !== "overview" ? ` ${count}` : ""}
@@ -1060,7 +1060,7 @@ export function TemplateLibraryView({
             </p> : null}
           </div>
           <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-wo-text-muted">
-            {allCatalogRows.length} catalog entries
+            {allCatalogRows.length} intrări în catalog
           </span>
         </div>
 

@@ -102,7 +102,7 @@ const PRODUCT_ADMIN_SECTIONS: Array<{
   testId: string;
 }> = [
   { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
-  { id: "pricing", label: "Prețuri template", testId: "product-system-template-detail-tab-pricing" },
+  { id: "pricing", label: "Rețetă și rate catalog", testId: "product-system-template-detail-tab-pricing" },
   { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
   { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
   { id: "runtime-preview", label: "Previzualizare runtime", testId: "product-system-template-detail-tab-runtime-preview" },
@@ -581,13 +581,13 @@ export function ProductSystemTemplateDetailPanel({
         >
           <p className="text-[12px] text-wo-text-secondary">
             <span className="font-semibold text-wo-text-primary">Centru workspace:</span>{" "}
-            Structură produs + Product Compiler + Pregătire · Module model amânat.{" "}
+            Structură produs + Product Compiler + Pregătire · șablonul nu deține ratele de catalog.{" "}
             {publicationStatus === "PUBLISHED" ? (
               <>
                 Status catalog: <span className="text-emerald-200">PUBLISHED</span> (admin).
               </>
             ) : (
-              <>Publicare și Prețuri template sunt în Admin / debug.</>
+              <>Publicare și rețeta cu rate catalog sunt în Admin / diagnostic.</>
             )}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -646,7 +646,7 @@ export function ProductSystemTemplateDetailPanel({
               className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-wo-text-muted"
               data-testid="product-system-template-admin-drawer-summary"
             >
-              Admin / debug / diagnostic
+              Administrare / diagnostic
             </summary>
             <div
               className="mt-1 flex flex-wrap gap-1"

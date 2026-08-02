@@ -41,6 +41,7 @@ import {
 } from "@/api/documentationIndex";
 import { ImportantDocumentsSection } from "@/components/workos/ImportantDocumentsSection";
 import { SectionHeader } from "@/components/workos/SharedComponents";
+import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 import {
   Shield,
   ArrowRight,
@@ -2098,6 +2099,12 @@ export default function Governance() {
           și nu înlocuiește documentele aprobate.
         </p>
       </div>
+
+      <AdminTruthFlowStrip active="settings" />
+
+      <p className="px-1 text-[11px] text-wo-text-muted">
+        Guvernanța explică limitele și autoritatea. Nu este ecranul de configurare: modificările administrative aparțin Setărilor sau fluxurilor dedicate.
+      </p>
 
       {/* Advanced Filter Chips */}
       {showFilters && (

@@ -171,6 +171,10 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
             <p className="mt-1 max-w-2xl text-[12px] leading-relaxed text-slate-400">
               {data.ownership_note_ro}
             </p>
+            <p className="mt-1 max-w-2xl text-[11px] leading-relaxed text-wo-text-muted">
+              Șablonul leagă rețeta și cantitățile; nu deține și nu poate modifica ratele din catalog.
+              Ratele sursă rămân în Registru prețuri.
+            </p>
           </div>
           <div className="flex flex-wrap gap-1.5">
             <span
@@ -212,7 +216,7 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
               </span>
             ) : null}
             <span className="rounded border border-slate-700 px-2 py-0.5 text-[10px] text-slate-400">
-              Catalog: read-only · AI: configurabil
+              Catalog: rate centrale · read-only
             </span>
           </div>
         </div>

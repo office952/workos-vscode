@@ -3836,7 +3836,7 @@ export default function ProductSystem() {
                       Catalog vechi (intern)
                     </h2>
                   ) : (
-                    <h1 className="truncate text-base font-bold leading-tight text-wo-text-primary">Product System</h1>
+                    <h1 className="truncate text-base font-bold leading-tight text-wo-text-primary">Produse și șabloane</h1>
                   )}
                   <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
                   <span
@@ -3952,7 +3952,7 @@ export default function ProductSystem() {
                 <h1 className="text-[16px] font-bold text-wo-text-primary leading-tight">
                   {shouldShowEditorScreen(screen, draft)
                     ? "ProductSystem / Editor șablon"
-                    : "Product System Catalog"}
+                    : "Catalog produse și șabloane"}
                 </h1>
                 {shouldShowEditorScreen(screen, draft) ? (
                   <p className="text-[10px] text-wo-text-muted mt-0.5">Editor pentru structura șablonului selectat.</p>
@@ -3985,7 +3985,7 @@ export default function ProductSystem() {
               <button
                 onClick={loadTemplates}
                 disabled={loading}
-                className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-wo-text-primary rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-2 border border-wo-border-strong bg-wo-surface-raised hover:bg-wo-hover text-wo-text-primary rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
               </button>

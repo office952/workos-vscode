@@ -76,6 +76,7 @@ import {
   updateCompanyCommercialSettings,
 } from "@/api/companyCommercialSettings";
 import { DEFAULT_VAT_PCT, DEFAULT_EUR_TO_RON_RATE } from "@/lib/companyCommercialSettings";
+import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 
 // ------------------------------------------------------------
 // Shared helpers
@@ -114,8 +115,16 @@ export default function Settings() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SettingsIcon className="w-5 h-5 text-muted-foreground" />
-          <h1 className="text-[18px] font-bold text-foreground">Setări</h1>
+          <h1 className="text-[18px] font-bold text-foreground">Setări administrative</h1>
         </div>
+      </div>
+
+      <AdminTruthFlowStrip active="settings" />
+
+      <div className={`rounded-lg px-3 py-2 ${chromeBanner.info}`}>
+        <p className="text-[11px]">
+          Setări configurează date, cost intern și integrări. Guvernanța păstrează politicile, ownership-ul și gate-urile read-only.
+        </p>
       </div>
 
       {/* Tabs */}

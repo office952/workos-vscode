@@ -6,6 +6,7 @@ import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStack
 import FlowBreadcrumb, { productsBreadcrumb } from "@/components/workos/FlowBreadcrumb";
 import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
 import NextStepPanel from "@/components/workos/NextStepPanel";
+import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 import { productsNextStepHint } from "@/lib/commercialFlowUi";
 
 function ProductSystemLayoutInner() {
@@ -35,6 +36,7 @@ function ProductSystemLayoutInner() {
     <div className="space-y-3" data-testid="product-system-shell" data-workspace="blank">
       <FlowBreadcrumb items={productsBreadcrumb(crumbLabel)} />
       <CommercialFlowStrip active="produse" />
+      <AdminTruthFlowStrip active="product" />
 
       <header className="flex flex-wrap items-end justify-between gap-2">
         <div className="min-w-0">
@@ -42,13 +44,13 @@ function ProductSystemLayoutInner() {
             className="text-base font-bold text-wo-text-primary"
             data-testid="product-system-shell-title"
           >
-            Produse
+            Produse și șabloane
           </h1>
           <p
             className="text-[12px] text-wo-text-muted mt-0.5"
             data-testid="product-system-shell-subtitle"
           >
-            Structură produs și template-uri — definire înainte de ofertă. Nu este preț client.
+            Structură produs și șabloane — definire înainte de ofertă. Nu stabilește preț client sau Product Truth runtime.
           </p>
         </div>
       </header>

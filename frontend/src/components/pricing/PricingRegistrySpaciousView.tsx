@@ -49,6 +49,7 @@ import {
   filterByTypedCatalogView,
   type TypedCatalogView,
 } from "@/lib/pricing/pricingTypedCatalog";
+import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 
 function fmtCost(n: number | null | undefined, currency?: string | null): string {
   if (n === null || n === undefined || Number.isNaN(n)) return "Lipsă";
@@ -273,7 +274,7 @@ export function PricingRegistrySpaciousView({
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <TrendingUp className="w-5 h-5 text-wo-info shrink-0" />
-            <h1 className="text-[18px] font-bold text-wo-text-primary">Pricing Registry</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Registru prețuri</h1>
             <SourceBadge
               source={source === "db" ? "db" : source === "loading" ? "loading" : "error"}
             />
@@ -313,6 +314,8 @@ export function PricingRegistrySpaciousView({
         </div>
       </div>
 
+      <AdminTruthFlowStrip active="pricing" />
+
       <details
         className={`rounded-lg px-3 py-2 group ${chromeBanner.info}`}
         data-testid="pricing-registry-rules"
@@ -346,6 +349,30 @@ export function PricingRegistrySpaciousView({
           />
         </div>
       </details>
+
+      <section
+        className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised px-3 py-2.5"
+        aria-label="Clasificare registre prețuri"
+        data-testid="pricing-registry-classification"
+      >
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-wo-text-muted">
+          Zone distincte în registru
+        </p>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+          {[
+            ["Materiale", "Cost de achiziție și proveniență; Inventory păstrează stocul."],
+            ["Reguli ofertă", "Adaos și reguli comerciale; oferta oficială rămâne Snapshot V2."],
+            ["Cost intern estimativ", "Manoperă și operații pentru EIC; nu reprezintă tarif client."],
+            ["Capacitate", "Workcenter și efort intern pentru fezabilitate; nu deblochează ofertarea."],
+            ["Legacy", "Date istorice sau neclasificate, vizibile fără a primi autoritate nouă."],
+          ].map(([title, description]) => (
+            <div key={title} className="rounded-md border border-wo-border-subtle bg-wo-surface-inset px-2.5 py-2">
+              <p className="text-[11px] font-semibold text-wo-text-primary">{title}</p>
+              <p className="mt-0.5 text-[10px] leading-relaxed text-wo-text-muted">{description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {error && (
         <div className={`flex items-center gap-2 rounded-lg px-3 py-2 ${chromeBanner.error}`}>
