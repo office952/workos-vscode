@@ -23,14 +23,21 @@ export async function assignExecutionPlanTask(
   orderId: number,
   taskId: string,
   assignedEmployeeId: number,
+  options?: { controlled?: boolean; allowReassign?: boolean },
 ): Promise<AssignExecutionTaskResult> {
+  const controlled = options?.controlled ?? true;
+  const allowReassign = options?.allowReassign ?? false;
   const response = await fetch(
     `${getAPIBaseURL()}/api/v1/execution/plan/${orderId}/tasks/${encodeURIComponent(taskId)}/assign`,
     {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ assigned_employee_id: assignedEmployeeId }),
+      body: JSON.stringify({
+        assigned_employee_id: assignedEmployeeId,
+        controlled,
+        allow_reassign: allowReassign,
+      }),
     },
   );
   if (!response.ok) {

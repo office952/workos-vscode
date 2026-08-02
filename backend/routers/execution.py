@@ -62,6 +62,9 @@ from services.execution_plan_service import (
     ExecutionPlanService,
     SnapshotIncompleteError,
 )
+from services.controlled_employee_assignment_service import (
+    assign_operational_task_controlled,
+)
 from services.execution_task_assignment_service import assign_plan_task
 from services.execution_task_instructions_service import update_plan_task_instructions
 from services.production_document_handoff_service import (
@@ -510,6 +513,10 @@ async def get_plan(order_id: int, db: AsyncSession = Depends(get_db)):
 
 class AssignPlanTaskRequest(BaseModel):
     assigned_employee_id: int
+    # Controlled Ops-Graph path defaults to False (first assign / idempotent only).
+    # Explicit True required for audited reassign.
+    allow_reassign: bool = False
+    controlled: bool = True
 
 
 @router.patch("/plan/{order_id}/tasks/{task_id}/assign")
@@ -518,15 +525,50 @@ async def assign_plan_task_to_employee(
     task_id: str,
     body: AssignPlanTaskRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
     _user=Depends(require_permission("execution.task_assign")),
 ):
-    """Persist assigned_employee_id on a planned task in execution_plan.tasks_json."""
+    """Persist assigned_employee_id on an operational task (eligibility-gated by default).
+
+    Controlled path (default): revalidates DEC-015 eligibility; no sessions/actuals.
+    Legacy manager path: set controlled=false (still operational_tasks only).
+    """
+    actor = str(current_user.id) if getattr(current_user, "id", None) else None
+    if body.controlled:
+        try:
+            return await assign_operational_task_controlled(
+                db,
+                order_id=order_id,
+                task_id=task_id,
+                assigned_employee_id=body.assigned_employee_id,
+                allow_reassign=body.allow_reassign,
+                actor_user_id=actor,
+            )
+        except HTTPException as exc:
+            # Normalize manager conflict wording for controlled API consumers.
+            detail = exc.detail if isinstance(exc.detail, dict) else {}
+            if detail.get("error") == "task_already_assigned":
+                raise HTTPException(
+                    status_code=409,
+                    detail={
+                        "error": "assignment_conflict",
+                        "message": detail.get("message")
+                        or "Task already assigned to another employee.",
+                    },
+                ) from exc
+            if detail.get("error") == "employee_not_assignable":
+                raise HTTPException(
+                    status_code=422,
+                    detail={"error": "inactive_employee", **detail},
+                ) from exc
+            raise
+
     return await assign_plan_task(
         db,
         order_id=order_id,
         task_id=task_id,
         assigned_employee_id=body.assigned_employee_id,
-        allow_reassign=True,
+        allow_reassign=True,  # legacy manager path keeps prior reassign semantics
         assignment_source="manager_assign",
     )
 

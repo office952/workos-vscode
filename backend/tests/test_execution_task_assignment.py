@@ -98,9 +98,10 @@ def test_assign_task_persists_in_plan_json(db_fixture, db_session, admin_client)
 
     employee_id = db_fixture.run(_setup())
 
+    # Legacy manager path: controlled=false (pre-DEC-015 planner tasks_json shape).
     response = admin_client.patch(
         "/api/v1/execution/plan/98101/tasks/T-ASSIGN/assign",
-        json={"assigned_employee_id": employee_id},
+        json={"assigned_employee_id": employee_id, "controlled": False},
     )
     assert response.status_code == 200, response.text
     body = response.json()
@@ -112,6 +113,23 @@ def test_assign_task_persists_in_plan_json(db_fixture, db_session, admin_client)
     tasks = plan.json()["tasks"]
     match = next(t for t in tasks if t["task_id"] == "T-ASSIGN")
     assert match["assigned_employee_id"] == employee_id
+
+
+def test_controlled_assign_rejects_non_materialized_plan(db_fixture, db_session, admin_client):
+    """Default controlled=True requires operational_tasks[] / eligibility RM."""
+
+    async def _setup():
+        emp = await _seed_employee(db_session, name="Blocked Legacy")
+        await _seed_plan(db_session, order_id=98111, task_id="T-LEGACY")
+        return emp.id
+
+    employee_id = db_fixture.run(_setup())
+    response = admin_client.patch(
+        "/api/v1/execution/plan/98111/tasks/T-LEGACY/assign",
+        json={"assigned_employee_id": employee_id},
+    )
+    assert response.status_code == 422, response.text
+    assert response.json()["detail"]["error"] == "task_not_materialized"
 
 
 def test_assign_task_visible_in_employee_mobile(db_fixture, db_session, admin_client):
@@ -134,7 +152,7 @@ def test_assign_task_visible_in_employee_mobile(db_fixture, db_session, admin_cl
 
     assign = admin_client.patch(
         "/api/v1/execution/plan/98102/tasks/T-MOBILE/assign",
-        json={"assigned_employee_id": employee_id},
+        json={"assigned_employee_id": employee_id, "controlled": False},
     )
     assert assign.status_code == 200, assign.text
 
@@ -176,7 +194,7 @@ def test_assign_completed_task_rejected(db_fixture, db_session, admin_client):
     employee_id = db_fixture.run(_setup())
     response = admin_client.patch(
         "/api/v1/execution/plan/98103/tasks/T-DONE/assign",
-        json={"assigned_employee_id": employee_id},
+        json={"assigned_employee_id": employee_id, "controlled": False},
     )
     assert response.status_code == 409, response.text
 
@@ -190,6 +208,6 @@ def test_assign_unknown_task_404(db_fixture, db_session, admin_client):
     employee_id = db_fixture.run(_setup())
     response = admin_client.patch(
         "/api/v1/execution/plan/98104/tasks/T-MISSING/assign",
-        json={"assigned_employee_id": employee_id},
+        json={"assigned_employee_id": employee_id, "controlled": False},
     )
     assert response.status_code == 404, response.text

@@ -9,8 +9,8 @@
  * OR-09: prefer `identity.ops_display_label` so EUR/ml commercial phrasing
  * from template provenance does not read as client price / Capacity unit.
  *
- * MUST NOT: start / stop / assign / complete · Employee Mobile · POST materialize.
- * Null / owner-accepted gaps render as "—" — never invented zeros or assignment.
+ * Controlled assignment (V1): explicit owner/operator select among eligibility
+ * candidates only — no auto-assign, sessions, start/stop, or Employee Mobile.
  * MUST NOT: Pricing / CostEngine / invent unit conversion.
  */
 
@@ -50,6 +50,7 @@ import {
   OPS_GRAPH_DISPLAY_ORDER_NOTE,
   sortTasksByDependencyDisplayOrder,
 } from "@/lib/opsGraphDisplayOrder";
+import { assignExecutionPlanTask } from "@/api/executionTaskAssignment";
 
 /** Canonical Batch 15 fixture — display default only; not invented data. */
 export const FIX_DEC009_MAT_01_ORDER_ID = 973010;
@@ -233,7 +234,7 @@ function eligibilitySummary(row: TaskEligibilityRow | undefined): {
     return {
       label: `Eligibili: ${n}`,
       title:
-        "Angajații corespund cerințelor operaționale configurate pentru acest task. Read-only — no assignment.",
+        "Angajați eligibili (read model). Assignment = selecție explicită separată.",
     };
   }
   if (status === "blocked_no_matching_employee") {
@@ -300,6 +301,9 @@ export default function MaterializedOpsGraph() {
   const [error, setError] = useState<string | null>(null);
   const [orderInput, setOrderInput] = useState(String(orderId));
   const [expandedEligibility, setExpandedEligibility] = useState<string | null>(null);
+  const [assignPickerTaskId, setAssignPickerTaskId] = useState<string | null>(null);
+  const [assignBusyTaskId, setAssignBusyTaskId] = useState<string | null>(null);
+  const [assignError, setAssignError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -561,7 +565,7 @@ export default function MaterializedOpsGraph() {
 
       {!hasOperationalTasks && (
         <OwnerGoNotice
-          detail="Further POST materialize remains DEC-009 gated. This screen only reads already-materialized operational_tasks[] — no sessions, no start/stop/assign/complete."
+          detail="Further POST materialize remains DEC-009 gated. This screen only reads already-materialized operational_tasks[] — no sessions, no start/stop/complete. Controlled assignment appears only when ops exist."
           compact
         />
       )}
@@ -857,38 +861,119 @@ export default function MaterializedOpsGraph() {
                           )}
                         </td>
                         <td className="px-3 py-2" data-testid={`ops-graph-elig-${task.task_id}`}>
-                          <button
-                            type="button"
-                            className="text-left text-[10px] font-semibold text-wo-text-secondary hover:text-wo-text-primary"
-                            title={eligUi.title}
-                            onClick={() =>
-                              setExpandedEligibility((cur) =>
-                                cur === task.task_id ? null : task.task_id,
-                              )
-                            }
-                          >
-                            {eligUi.label}
-                          </button>
-                          {expandedEligibility === task.task_id && elig && (
-                            <div className="mt-1 text-[10px] text-wo-text-muted space-y-0.5 max-w-[220px]">
-                              <p className="font-mono">{elig.eligibility_status}</p>
-                              {(elig.blockers ?? []).length > 0 && (
-                                <p>blockers: {elig.blockers.join(", ")}</p>
+                          <div className="flex flex-col gap-1 max-w-[240px]">
+                            {task.assigned_employee_id ? (
+                              <span
+                                className="text-[10px] font-semibold text-wo-text-primary"
+                                data-testid={`ops-graph-assigned-${task.task_id}`}
+                              >
+                                Asignat:{" "}
+                                {elig?.eligible_employees?.find(
+                                  (e) =>
+                                    Number(e.employee_id) ===
+                                    Number(task.assigned_employee_id),
+                                )?.display_name ?? `#${task.assigned_employee_id}`}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-wo-text-muted">Neasignat</span>
+                            )}
+                            <button
+                              type="button"
+                              className="text-left text-[10px] font-semibold text-wo-text-secondary hover:text-wo-text-primary"
+                              title={eligUi.title}
+                              onClick={() =>
+                                setExpandedEligibility((cur) =>
+                                  cur === task.task_id ? null : task.task_id,
+                                )
+                              }
+                            >
+                              {eligUi.label}
+                            </button>
+                            {(elig?.eligibility_status === "ready" ||
+                              elig?.eligibility_status === "ready_with_warnings") &&
+                              !task.assigned_employee_id && (
+                                <button
+                                  type="button"
+                                  data-testid={`ops-graph-assign-open-${task.task_id}`}
+                                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded border border-wo-info/40 bg-wo-info-muted text-wo-info w-fit"
+                                  disabled={assignBusyTaskId === task.task_id}
+                                  onClick={() => {
+                                    setAssignError(null);
+                                    setAssignPickerTaskId((cur) =>
+                                      cur === task.task_id ? null : task.task_id,
+                                    );
+                                  }}
+                                >
+                                  Alege angajat
+                                </button>
                               )}
-                              {(elig.eligible_employees ?? []).slice(0, 6).map((e) => (
-                                <p key={e.employee_id} className="font-mono">
-                                  #{e.employee_id} {e.display_name}
-                                  {e.matched_workcenter ? ` · ${e.matched_workcenter}` : ""}
-                                </p>
-                              ))}
-                              {(elig.eligible_employees ?? []).length === 0 && (
-                                <p>{eligUi.title}</p>
-                              )}
-                              <p className="text-wo-text-dim">
-                                Read-only — no Asignează / claim / start.
+                            {elig?.eligibility_status === "blocked_no_matching_employee" && (
+                              <p className="text-[10px] text-wo-warning">
+                                Niciun angajat eligibil — nu există momentan un angajat activ cu
+                                autorizările necesare.
                               </p>
-                            </div>
-                          )}
+                            )}
+                            {assignPickerTaskId === task.task_id && elig && (
+                              <div
+                                className="mt-1 rounded border border-wo-border-strong bg-wo-surface-inset p-1.5 space-y-1"
+                                data-testid={`ops-graph-assign-picker-${task.task_id}`}
+                              >
+                                <p className="text-[9px] text-wo-text-muted">
+                                  Doar candidați eligibili (backend). Fără ranking / auto-assign.
+                                </p>
+                                {(elig.eligible_employees ?? []).map((e) => (
+                                  <button
+                                    key={e.employee_id}
+                                    type="button"
+                                    className="block w-full text-left text-[10px] font-mono px-1 py-0.5 rounded hover:bg-wo-hover"
+                                    data-testid={`ops-graph-assign-pick-${task.task_id}-${e.employee_id}`}
+                                    disabled={assignBusyTaskId === task.task_id}
+                                    onClick={() => {
+                                      void (async () => {
+                                        setAssignBusyTaskId(task.task_id);
+                                        setAssignError(null);
+                                        try {
+                                          await assignExecutionPlanTask(
+                                            orderId,
+                                            task.task_id,
+                                            e.employee_id,
+                                            { controlled: true, allowReassign: false },
+                                          );
+                                          setAssignPickerTaskId(null);
+                                          await load();
+                                        } catch (err) {
+                                          setAssignError(
+                                            err instanceof Error ? err.message : "assign_failed",
+                                          );
+                                        } finally {
+                                          setAssignBusyTaskId(null);
+                                        }
+                                      })();
+                                    }}
+                                  >
+                                    {e.display_name}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                            {expandedEligibility === task.task_id && elig && (
+                              <div className="mt-1 text-[10px] text-wo-text-muted space-y-0.5">
+                                <p className="font-semibold text-wo-text-secondary">
+                                  Detalii tehnice
+                                </p>
+                                <p className="font-mono">{elig.eligibility_status}</p>
+                                {(elig.blockers ?? []).length > 0 && (
+                                  <p>blockers: {elig.blockers.join(", ")}</p>
+                                )}
+                                {(elig.warnings ?? []).length > 0 && (
+                                  <p>warnings: {elig.warnings.join(", ")}</p>
+                                )}
+                              </div>
+                            )}
+                            {assignError && assignBusyTaskId === null && assignPickerTaskId === task.task_id && (
+                              <p className="text-[10px] text-wo-danger">{assignError}</p>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -967,10 +1052,9 @@ export default function MaterializedOpsGraph() {
       )}
 
       <p className="text-[10px] text-wo-text-dim" data-testid="ops-graph-readonly-footer">
-        Read-only. No start/stop/assign/complete. Sessions/actuals from audit.guards +
-        GET reality only. Sources: GET /execution/plan/{"{id}"} (Track B read_clarity),
-        GET /execution/plan-v2/from-order/{"{id}"}/materialization-audit, GET
-        /execution/reality/{"{id}"}, dashboard-stats DEC-009 strip.
+        No start/stop/complete/sessions. Controlled assignment = PATCH assign with
+        eligibility revalidation. Sources: GET plan, eligibility RM, materialization-audit,
+        reality; dashboard-stats DEC-009 strip.
       </p>
     </div>
   );
