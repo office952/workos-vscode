@@ -66,6 +66,7 @@ import {
 import { ProfitabilityAnalysisPanel } from "@/components/execution/ProfitabilityAnalysisPanel";
 import { ProfitabilityActualReadPanel } from "@/components/execution/ProfitabilityActualReadPanel";
 import { PostJobTruthPanel } from "@/components/execution/PostJobTruthPanel";
+import { ExecutionClosurePanel } from "@/components/execution/ExecutionClosurePanel";
 import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
 import {
   indexOperatorTaskTruth,
@@ -947,6 +948,9 @@ export default function ExecutionDetail() {
           </div>
         </section>
       )}
+
+      {/* Wave 4 — closure readiness first; then post-job / profitability truth */}
+      {obs && isValidId && <ExecutionClosurePanel orderId={parsedId} />}
 
       {/* Post-job truth — actuals, reconciliation, profitability coverage */}
       {obs && isValidId && (
