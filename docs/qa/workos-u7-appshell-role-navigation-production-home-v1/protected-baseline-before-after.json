@@ -1,0 +1,14 @@
+{
+  "order_id": 973019,
+  "execution_plan_id": 21,
+  "before": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5
+  },
+  "after": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5
+  },
+  "unauthorized_drift": false,
+  "verdict": "NO UNAUTHORIZED DRIFT"
+}

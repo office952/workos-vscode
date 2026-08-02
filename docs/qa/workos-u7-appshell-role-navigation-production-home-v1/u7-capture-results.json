@@ -1,0 +1,198 @@
+{
+  "results": [
+    {
+      "theme": "day",
+      "role": "admin",
+      "path": "/",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\day\\admin-root-redirect.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "admin",
+      "path": "/dashboard",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\day\\admin-control.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "admin",
+      "path": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\day\\admin-atelier.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "admin",
+      "path": "/execution/880041",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\day\\admin-execution-detail.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ],
+      "productSystem404": true
+    },
+    {
+      "theme": "day",
+      "role": "admin",
+      "path": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\states\\admin-collapsed.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "S Staging · Sistem disponibil AP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend. Acțiune task Control producție Atelier Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe task rămâne în Acțiune task / Stații. Live DB (gol) Conectat 22:04:03 tick #2 0 active · 0 idle · 0 mentenanță Live data u",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "operator",
+      "path": "/inventory/pricing",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\states\\operator-unauthorized-pricing.png",
+      "shellRole": "operator",
+      "roleHome": "/shop-floor",
+      "body": "WorkOS PRODUCȚIE Atelier Acțiune task COMPAT Stații COMPAT RESURSE Utilaje Inventar WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil OP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend. Acțiune task Control producție Atelier Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe t",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "operator",
+      "path": "/",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\roles\\operator-home.png",
+      "shellRole": "operator",
+      "roleHome": "/shop-floor",
+      "body": "WorkOS PRODUCȚIE Atelier Acțiune task COMPAT Stații COMPAT RESURSE Utilaje Inventar WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil OP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend. Acțiune task Control producție Atelier Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe t",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "operator",
+      "path": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\roles\\operator-atelier.png",
+      "shellRole": "operator",
+      "roleHome": "/shop-floor",
+      "body": "WorkOS PRODUCȚIE Atelier Acțiune task COMPAT Stații COMPAT RESURSE Utilaje Inventar WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil OP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend. Acțiune task Control producție Atelier Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe t",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "sales",
+      "path": "/",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\roles\\sales-home.png",
+      "shellRole": "sales",
+      "roleHome": "/quotes",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare RESURSE Inventar RELAȚII Clienți Documente MANAGEMENT Control producție PREVIEW Rapoarte WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil SP Cereri Produse Oferte FLUX Cereri Produse Oferte Comenzi Oferte După produsul configurat — verifică readiness, trimite sau acceptă conform contractului existent. Live DB 19 oferte Ofertă nouă Detalii tehnice — readiness / politică backend VALOARE TOTALĂ 15.816,39 RON (cu TV",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "manager",
+      "path": "/",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\roles\\manager-home.png",
+      "shellRole": "manager",
+      "roleHome": "/shop-floor",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil MP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. ",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "day",
+      "role": "viewer",
+      "path": "/",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\roles\\viewer-home.png",
+      "shellRole": "viewer",
+      "roleHome": "/dashboard",
+      "body": "WorkOS MANAGEMENT Control producție PREVIEW WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil VP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Investighează excepțiile în Execuție / Atelier Controlul producție agregă riscuri și gap-uri. Detaliul de comandă și taskurile rămân în Execuție; acțiunea de task în Operator. Deschide Execuție Vezi Atelier Date disponibile 22:04 Adevăr operațional (Dashboard) util% = planned / shift WC • Pricing Registry: fără m",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "role": "admin",
+      "path": "/dashboard",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\dark\\admin-control.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "role": "admin",
+      "path": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\dark\\admin-atelier.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "role": "operator",
+      "path": "/shop-floor",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\dark\\operator-atelier.png",
+      "shellRole": "operator",
+      "roleHome": "/shop-floor",
+      "body": "WorkOS PRODUCȚIE Atelier Acțiune task COMPAT Stații COMPAT RESURSE Utilaje Inventar WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil OP FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Producție Shop Floor Următorul pas: Acționează pe task în Operator Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend. Acțiune task Control producție Atelier Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe t",
+      "consoles": [],
+      "failed": [],
+      "productSystem404": false
+    },
+    {
+      "theme": "dark",
+      "role": "admin",
+      "path": "/execution/880041",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-u7-appshell-role-navigation-production-home-v1\\screenshots\\dark\\admin-execution-detail.png",
+      "shellRole": "admin",
+      "roleHome": "/dashboard",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine AUDIT Demo Volumetric Preview AUDIT Intake V6 (diag) AUDIT Blueprint Dossier AUDIT Rapoarte operaționale AUDIT WorkOS BUILD_25 STAGING /",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "failed": [
+        {
+          "url": "http://127.0.0.1:8023/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ],
+      "productSystem404": true
+    }
+  ]
+}
