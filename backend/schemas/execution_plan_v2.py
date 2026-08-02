@@ -14,6 +14,9 @@ EXECUTION_PLAN_V2_PLAN_SOURCE = "order_snapshot_v2"
 EXECUTION_PLAN_V2_PERSIST_STATUS = "not_persisted"
 EXECUTION_PLAN_V2_TASKS_JSON_PLAN_VERSION = "v2.preview_to_plan.1"
 PLANNING_MINUTES_WARNING = "PLANNING_MINUTES_SOURCE_REQUIRED"
+# DEC-007 — emitted when process/catalog dependency edges cannot be resolved
+# (never invent a universal linear predecessor chain).
+DAG_PROCESS_DEPENDENCIES_UNRESOLVED = "DAG_PROCESS_DEPENDENCIES_UNRESOLVED"
 TOTAL_ESTIMATED_TIME_SOURCE_NOT_AVAILABLE = "not_available_in_v2_preview"
 # TE2E-028A — authorized provenance when minutes come from aggregate ops (template static).
 PLANNING_MINUTES_SOURCE_AGGREGATE_OPS = (

@@ -33,6 +33,7 @@ from services.canonical_template_contract_service import (
     get_canonical_template_contract_service,
 )
 from services.mini_module_registry_service import get_mini_module_registry_service
+from services.product_process_aggregate_bridge import collapse_operational_alias_rules
 from services.template_architecture_scope import normalize_template_code, resolve_template_identity
 
 logger = logging.getLogger(__name__)
@@ -704,10 +705,14 @@ class ProductAggregateService:
                     process_code=str(rule.get("process_code") or "") or None,
                 )
             )
+        # DEC-003 / DEC-004 — collapse module aliases upstream so frozen task_contract
+        # is the single operational driver (no parallel RETURN_PROFILE_*/PAINTING tasks).
+        task_rules = collapse_operational_alias_rules(task_rules)
         notes = (
             [
                 "task_contract.task_rules compiled from product_blueprint_dossier.task_rules_json for ExecutionPlan V2.",
                 "process_graph_source=dossier_legacy",
+                "operational_alias_collapse=dec003_dec004",
             ]
             if task_rules
             else [

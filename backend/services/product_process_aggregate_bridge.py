@@ -191,13 +191,14 @@ def _alias_parent_for(name_or_priced: str) -> str | None:
     return parent
 
 
-def _collapse_operational_alias_rules(
+def collapse_operational_alias_rules(
     rules: list[ProductAggregateTaskRule],
 ) -> list[ProductAggregateTaskRule]:
     """Drop module RETURN/PAINTING aliases when the parent priced op already exists.
 
     Distinct process codes that share a priced_operation mapping (e.g. multiple
     electrical_letters steps) are NOT collapsed — they are different work.
+    Single owner for DEC-003 / DEC-004 alias policy (aggregate + EP consumers).
     """
     parent_ops = {
         str(r.priced_operation or "").strip().lower()
@@ -229,6 +230,11 @@ def _collapse_operational_alias_rules(
             )
         collapsed.append(rule)
     return collapsed
+
+
+# Backward-compatible private alias used by existing imports/tests.
+_collapse_operational_alias_rules = collapse_operational_alias_rules
+alias_parent_for = _alias_parent_for
 
 
 def _rules_from_resolved(graph: ResolvedProductProcessGraph) -> list[ProductAggregateTaskRule]:

@@ -117,6 +117,36 @@ def test_dag_uses_process_deps_not_linear_chain():
     assert all(d.depends_on_task_key != d.task_key for d in deps)
 
 
+def test_dag_no_universal_linear_fallback_when_deps_absent():
+    """DEC-007 — missing process edges must not invent task[n]→task[n-1]."""
+    tasks = [
+        PlannedTaskPreview(
+            task_key="t_a",
+            label="A",
+            canonical_task_type="cnc_routing",
+            source_operation_code="face_cnc_cut",
+            source_task_rule_code="a",
+            sequence_index=1,
+        ),
+        PlannedTaskPreview(
+            task_key="t_b",
+            label="B",
+            canonical_task_type="edge_bending",
+            source_operation_code="side_forming",
+            source_task_rule_code="b",
+            sequence_index=2,
+        ),
+    ]
+    rules = {
+        "t_a": _rule("a", "face_cnc_cut", deps=[], seq=1),
+        "t_b": _rule("b", "side_forming", deps=[], seq=2),
+    }
+    deps = _build_dependencies(tasks, rules_by_task_key=rules)
+    assert deps == []
+    assert all(not t.depends_on_task_keys for t in tasks)
+    assert all("DAG_PROCESS_DEPENDENCIES_UNRESOLVED" in (t.warnings or []) for t in tasks)
+
+
 def test_cycle_detection_clears_edges():
     tasks = [
         PlannedTaskPreview(

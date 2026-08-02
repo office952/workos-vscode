@@ -157,9 +157,13 @@ PROCESS_TO_PRICED_OPERATION: dict[str, str] = {
 }
 
 # Analytical / desktop-boundary processes — never become EP operational tasks.
+# DEC-001: WorkOS must not operationalize SVG/DWG geometry analysis.
 NON_OPERATIONAL_PROCESS_CODES: frozenset[str] = frozenset(
     {
         "ANALYZE_SVG",
+        "SVG_GEOMETRY_ANALYSIS",
+        "SVG_GEOMETRY_READINESS_GATE",
+        "GEOMETRY_INPUTS_READINESS_GATE",
     }
 )
 

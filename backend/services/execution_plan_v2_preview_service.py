@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.orders import Orders
 from schemas.execution_plan_v2 import (
+    DAG_PROCESS_DEPENDENCIES_UNRESOLVED,
     EXECUTION_PLAN_V2_SOURCE,
     IGNORED_PRICING_SOURCES,
     PLANNING_MINUTES_SOURCE_AGGREGATE_OPS,
@@ -48,7 +49,7 @@ from services.execution_plan_v2_frozen_task_identity_service import (
     mark_shared_operations,
 )
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
-from services.product_process_aggregate_bridge import _alias_parent_for
+from services.product_process_aggregate_bridge import alias_parent_for as _alias_parent_for
 from services.task_dependency_rules_service import (
     PREPARATION_DEPENDENCY_RULES,
     PROCESS_DEPENDENCY_RULES,
@@ -547,21 +548,15 @@ def _build_dependencies(
             deps.append(PlannedTaskDependency(task_key=task.task_key, depends_on_task_key=prior))
 
     if not has_real_deps and len(sorted_tasks) > 1:
-        # Legacy fallback only when no process/catalog edges resolved.
-        prior_keys: list[str] = []
+        # DEC-007 — do NOT invent a universal linear chain (task[n]→task[n-1]).
+        # Leave edges empty and surface an explicit planning warning instead.
         deps = []
         for task in sorted_tasks:
-            if prior_keys:
-                immediate_prior = prior_keys[-1]
-                task.depends_on_task_keys = [immediate_prior]
-                deps.append(
-                    PlannedTaskDependency(
-                        task_key=task.task_key, depends_on_task_key=immediate_prior
-                    )
-                )
-            else:
-                task.depends_on_task_keys = []
-            prior_keys.append(task.task_key)
+            task.depends_on_task_keys = []
+            if DAG_PROCESS_DEPENDENCIES_UNRESOLVED not in (task.warnings or []):
+                task.warnings = list(task.warnings or []) + [
+                    DAG_PROCESS_DEPENDENCIES_UNRESOLVED
+                ]
 
     # Cycle detection — fail closed by clearing cyclic edges (audit reports separately).
     keys = [t.task_key for t in sorted_tasks]

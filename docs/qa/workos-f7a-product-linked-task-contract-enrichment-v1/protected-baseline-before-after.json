@@ -1,0 +1,16 @@
+{
+  "order_id": 973019,
+  "execution_plan_id": 21,
+  "probe": "sqlite://backend/dev.db read-only",
+  "before": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5
+  },
+  "after": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5
+  },
+  "unauthorized_drift": false,
+  "verdict": "NO UNAUTHORIZED DRIFT",
+  "note": "F7A did not mutate 973019; fixture uses dynamic 8807xx ids only."
+}

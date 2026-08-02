@@ -26,6 +26,10 @@ from schemas.product_aggregate import (
 )
 from schemas.quote_snapshot_v2 import QuoteSnapshotComponentInstance
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
+from services.product_process_aggregate_bridge import (
+    alias_parent_for,
+    collapse_operational_alias_rules,
+)
 
 LINKED_SEGMENT_PREFIX = "linked_segment:"
 SEGMENT_NAMESPACE_SEP = "::"
@@ -206,7 +210,10 @@ def collect_effective_task_rules(
     covered_ops: set[tuple[str, str]] = set()
     covered_rules: set[tuple[str, str, str, str]] = set()
 
-    dossier_rules = list(aggregate.task_contract.task_rules or [])
+    # DEC-003 / DEC-004 — collapse aliases before EP effective set (frozen or live).
+    dossier_rules = collapse_operational_alias_rules(
+        list(aggregate.task_contract.task_rules or [])
+    )
     dossier_rules.sort(
         key=lambda rule: (rule.sequence if rule.sequence is not None else 9999, rule.task_name)
     )
@@ -279,6 +286,15 @@ def collect_effective_task_rules(
             for op in node_ops:
                 priced_key = str(op.operation_code or "").strip().lower()
                 if not priced_key or (node.node_id, priced_key) in covered_ops:
+                    continue
+                # Module alias ops must not synthesize a second planned task.
+                parent = alias_parent_for(op.operation_code or "")
+                if parent and (node.node_id, parent.lower()) in covered_ops:
+                    continue
+                if parent and any(
+                    str(r.rule.priced_operation or "").strip().lower() == parent.lower()
+                    for r in effective
+                ):
                     continue
                 synthetic = _synthetic_rule_from_operation(
                     op,
