@@ -1,15 +1,22 @@
-"""OD3 server-side DEC-009 gate for POST materialize (Golden Pilot Task Graph V1).
+"""OD3 server-side DEC-009 gate for POST materialize (Golden Pilot / F7B).
 
 Live DEC-009 remains Owner-LOCKED **A / BLOCKED** for historical / protected
-orders. Golden Pilot authorizes materialize **conditionally**:
+orders. Materialize is authorized **conditionally** only when a next-dry
+target is explicitly registered with ``allow_materialize=True``.
+
+F7B controlled pilot (Owner resume 2026-08-02):
+- temporary open target was order ``880811`` / plan ``22`` only;
+- protected commercial baseline ``973019`` / plan ``21`` is forbidden;
+- after pilot evidence, the gate must be **closed** (no open next-dry).
 
 ```text
 BATCH_EXECUTE_MATERIALIZE_AUTHORIZED = True_CONDITIONAL
 ```
 
 Meaning:
-- protected orders (92401, 973012, 973013, 973010, …) are always rejected;
-- only the registered golden-pilot next-dry fixture may materialize;
+- protected orders never materialize;
+- only the registered next-dry fixture may materialize when open;
+- when the pilot gate is closed, every order is rejected;
 - no sessions / Employee Mobile / ExecutionActuals / CostEngine involvement.
 """
 
@@ -35,11 +42,12 @@ LIVE_DEC009_STATUS = "A"
 LIVE_DEC009_LABEL = "BLOCKED"
 
 # ---------------------------------------------------------------------------
-# Scoped B stamp — multi-fixture registry (Batch 20D + Golden Pilot)
+# Scoped B stamp — multi-fixture registry (Batch 20D + Golden Pilot + F7B)
 # ---------------------------------------------------------------------------
 SCOPED_B_STAMP_STATUS = "SCOPED_B_STAMPED"
 
 # Protected baselines — never materialize / rematerialize.
+# 973019 = Golden Pilot eligibility / commercial protected baseline (F7B).
 PROTECTED_ORDER_IDS: frozenset[int] = frozenset(
     {
         92401,
@@ -48,12 +56,12 @@ PROTECTED_ORDER_IDS: frozenset[int] = frozenset(
         973013,
         973015,  # Golden Pilot task-graph baseline — never rematerialize
         973018,  # Golden Pilot planning-truth baseline — LED ambiguous frozen
+        973019,  # Golden Pilot eligibility RM / protected commercial — never materialize
     }
 )
 
-# Explicit registry. allow_materialize=True ONLY for golden pilot next-dry.
-# order_id/plan_id for golden pilot are filled after canonical fixture create
-# via register_golden_pilot_materialize_target (or static patch in this module).
+# Explicit registry. allow_materialize=True ONLY for an open next-dry pilot.
+# FINAL COMMITTED STATE (post-F7B): next_dry closed — no order authorized.
 SCOPED_B_FIXTURES: list[ScopedBFixture] = [
     {
         "order_id": 973010,
@@ -97,20 +105,28 @@ SCOPED_B_FIXTURES: list[ScopedBFixture] = [
         "role": "protected_baseline",
         "allow_materialize": False,
     },
-    # Golden Pilot Employee Eligibility RM V1 (973019 / plan 21).
     {
         "order_id": 973019,
         "plan_id": 21,
         "fixture_id": "FIX-GOLDEN-PILOT-ELIGIBILITY-RM-V1",
+        "role": "protected_baseline",
+        "allow_materialize": False,
+    },
+    # Closed next-dry stub — F7B pilot complete; no open materialize target.
+    {
+        "order_id": 0,
+        "plan_id": 0,
+        "fixture_id": "FIX-F7B-CONTROLLED-MATERIALIZE-CLOSED",
         "role": "next_dry_target",
-        "allow_materialize": True,
+        "allow_materialize": False,
     },
 ]
 
 # Scalar aliases = next dry target only (preflight / identity honesty).
-SCOPED_B_ORDER_ID = 973019
-SCOPED_B_PLAN_ID = 21
-SCOPED_B_FIXTURE_ID = "FIX-GOLDEN-PILOT-ELIGIBILITY-RM-V1"
+# Closed: zeros + closed fixture id. Open only via register_* during pilot/tests.
+SCOPED_B_ORDER_ID = 0
+SCOPED_B_PLAN_ID = 0
+SCOPED_B_FIXTURE_ID = "FIX-F7B-CONTROLLED-MATERIALIZE-CLOSED"
 SCOPED_B_ACTION = "exactly_one_post_materialize_tasks"
 SCOPED_B_ALLOW = ("write_operational_tasks_into_v2_envelope",)
 SCOPED_B_FORBID = (
@@ -126,6 +142,8 @@ SCOPED_B_FORBID = (
     "rematerialize_973013",
     "rematerialize_973015",
     "rematerialize_973018",
+    "rematerialize_973019",
+    "rematerialize_after_f7b_gate_closed",
 )
 
 # True_CONDITIONAL — authorize path open only for registered next-dry target.
@@ -140,42 +158,93 @@ ERROR_DEC009_MATERIALIZE_BLOCKED = "DEC009_MATERIALIZE_BLOCKED"
 
 # Runtime identity stamp — proves this process loaded OD3 + current scoped-B.
 OD3_GATE_MODULE = "services.dec009_materialize_gate"
-OD3_RUNTIME_IDENTITY_VERSION = "golden-pilot-eligibility-rm-v1/v1"
+OD3_RUNTIME_IDENTITY_VERSION = "f7b-controlled-materialize-closed/v1"
 # First main merge that landed OD3 DEC-009 hard reject (PR #29).
 OD3_MIN_MERGE_COMMIT = "a1b759c81355124f285b83425b93a9422f0e891e"
 
+# F7B controlled fixture identity (Owner-authorized pair; not an open grant).
+F7B_CONTROLLED_ORDER_ID = 880811
+F7B_CONTROLLED_PLAN_ID = 22
+F7B_CONTROLLED_FIXTURE_ID = "FIX-F7B-CONTROLLED-MATERIALIZE-880811"
 
-def register_golden_pilot_materialize_target(*, order_id: int, plan_id: int) -> None:
-    """Register the sole materialize-allowed golden pilot fixture (in-process).
 
-    Call after canonical Quote→Order→persist creates the new fixture.
-    Rejects protected order IDs. Does not persist to DB — process-local only
-    (dev runtime / tests). For a restarted server, set the same IDs in
-    SCOPED_B_FIXTURES next_dry_target statically before start.
+def _next_dry_entry() -> ScopedBFixture:
+    for fixture in SCOPED_B_FIXTURES:
+        if fixture["role"] == "next_dry_target":
+            return fixture
+    raise RuntimeError("scoped-B registry missing next_dry_target")
+
+
+def _open_next_dry_fixture() -> ScopedBFixture | None:
+    fixture = _next_dry_entry()
+    if fixture["allow_materialize"] and int(fixture["order_id"]) > 0:
+        return fixture
+    return None
+
+
+def register_golden_pilot_materialize_target(
+    *,
+    order_id: int,
+    plan_id: int,
+    fixture_id: str | None = None,
+) -> None:
+    """Register the sole materialize-allowed next-dry fixture (in-process).
+
+    Call after canonical Quote→Order→persist creates the new fixture, or for
+    controlled F7B open. Rejects protected order IDs. Does not persist to DB —
+    process-local only (dev runtime / tests). For a restarted server, set the
+    same IDs in SCOPED_B_FIXTURES next_dry_target statically before start.
     """
-    global SCOPED_B_ORDER_ID, SCOPED_B_PLAN_ID
+    global SCOPED_B_ORDER_ID, SCOPED_B_PLAN_ID, SCOPED_B_FIXTURE_ID
     oid = int(order_id)
     pid = int(plan_id)
     if oid in PROTECTED_ORDER_IDS or oid <= 0 or pid <= 0:
         raise ValueError(
             f"refuse golden-pilot register for protected/invalid order={oid} plan={pid}"
         )
+    fid = fixture_id or f"FIX-PILOT-MATERIALIZE-{oid}-{pid}"
     for fixture in SCOPED_B_FIXTURES:
         if fixture["role"] == "next_dry_target":
             fixture["order_id"] = oid
             fixture["plan_id"] = pid
+            fixture["fixture_id"] = fid
             fixture["allow_materialize"] = True
             SCOPED_B_ORDER_ID = oid
             SCOPED_B_PLAN_ID = pid
+            SCOPED_B_FIXTURE_ID = fid
             return
     raise RuntimeError("scoped-B registry missing next_dry_target")
 
 
-def _next_dry_fixture() -> ScopedBFixture:
+def close_materialize_pilot_gate() -> None:
+    """Fail-closed: clear next-dry so no order may materialize.
+
+    Final F7B committed posture. Does not reopen 973019 as next_dry.
+    """
+    global SCOPED_B_ORDER_ID, SCOPED_B_PLAN_ID, SCOPED_B_FIXTURE_ID
     for fixture in SCOPED_B_FIXTURES:
-        if fixture["role"] == "next_dry_target" and fixture["allow_materialize"]:
-            return fixture
+        if fixture["role"] == "next_dry_target":
+            fixture["order_id"] = 0
+            fixture["plan_id"] = 0
+            fixture["fixture_id"] = "FIX-F7B-CONTROLLED-MATERIALIZE-CLOSED"
+            fixture["allow_materialize"] = False
+            SCOPED_B_ORDER_ID = 0
+            SCOPED_B_PLAN_ID = 0
+            SCOPED_B_FIXTURE_ID = "FIX-F7B-CONTROLLED-MATERIALIZE-CLOSED"
+            return
     raise RuntimeError("scoped-B registry missing next_dry_target")
+
+
+def open_f7b_controlled_materialize_pilot() -> None:
+    """Open exactly order 880811 / plan 22 for the controlled F7B POST window.
+
+    Must be closed via ``close_materialize_pilot_gate`` after evidence.
+    """
+    register_golden_pilot_materialize_target(
+        order_id=F7B_CONTROLLED_ORDER_ID,
+        plan_id=F7B_CONTROLLED_PLAN_ID,
+        fixture_id=F7B_CONTROLLED_FIXTURE_ID,
+    )
 
 
 def build_od3_runtime_identity() -> dict[str, Any]:
@@ -183,7 +252,8 @@ def build_od3_runtime_identity() -> dict[str, Any]:
 
     No DB I/O. No authorization side effects. Not an execute path.
     """
-    next_dry = _next_dry_fixture()
+    next_dry = _next_dry_entry()
+    open_target = _open_next_dry_fixture()
     return {
         "identity_version": OD3_RUNTIME_IDENTITY_VERSION,
         "gate_module": OD3_GATE_MODULE,
@@ -195,6 +265,7 @@ def build_od3_runtime_identity() -> dict[str, Any]:
         "scoped_b_order_id": next_dry["order_id"],
         "scoped_b_plan_id": next_dry["plan_id"],
         "scoped_b_fixture_id": next_dry["fixture_id"],
+        "pilot_gate_open": open_target is not None,
         "scoped_b_fixtures": [
             {
                 "order_id": f["order_id"],
@@ -214,24 +285,19 @@ def build_od3_runtime_identity() -> dict[str, Any]:
 def scoped_b_matches(*, order_id: int, plan_id: int | None = None) -> bool:
     """True only for the next-dry fixture that may receive an authorized POST.
 
-    Protected / historical fixtures never match.
+    Protected / historical fixtures never match. Closed gate never matches.
     """
     oid = int(order_id)
     if oid in PROTECTED_ORDER_IDS:
         return False
-    for fixture in SCOPED_B_FIXTURES:
-        if not fixture["allow_materialize"]:
-            continue
-        if fixture["role"] != "next_dry_target":
-            continue
-        if int(fixture["order_id"]) <= 0:
-            return False
-        if oid != int(fixture["order_id"]):
-            continue
-        if plan_id is not None and int(plan_id) != int(fixture["plan_id"]):
-            return False
-        return True
-    return False
+    open_target = _open_next_dry_fixture()
+    if open_target is None:
+        return False
+    if oid != int(open_target["order_id"]):
+        return False
+    if plan_id is not None and int(plan_id) != int(open_target["plan_id"]):
+        return False
+    return True
 
 
 def evaluate_materialize_authorization(
@@ -241,7 +307,8 @@ def evaluate_materialize_authorization(
 ) -> dict[str, Any]:
     """Pure authorization evaluation — no DB I/O, no writes."""
     blockers: list[str] = []
-    next_dry = _next_dry_fixture()
+    next_dry = _next_dry_entry()
+    open_target = _open_next_dry_fixture()
     oid = int(order_id)
 
     if oid in PROTECTED_ORDER_IDS:
@@ -252,9 +319,9 @@ def evaluate_materialize_authorization(
         blockers.append("batch_execute_materialize_not_authorized")
     if SCOPED_B_STAMP_STATUS != "SCOPED_B_STAMPED":
         blockers.append("scoped_b_not_stamped")
-    if int(next_dry["order_id"]) <= 0:
-        blockers.append("golden_pilot_target_unregistered")
-    if not scoped_b_matches(order_id=order_id, plan_id=plan_id):
+    if open_target is None:
+        blockers.append("pilot_gate_closed")
+    elif not scoped_b_matches(order_id=order_id, plan_id=plan_id):
         blockers.append("order_or_plan_outside_scoped_b")
 
     allowed = len(blockers) == 0
@@ -276,6 +343,7 @@ def evaluate_materialize_authorization(
         "scoped_b_order_id": next_dry["order_id"],
         "scoped_b_plan_id": next_dry["plan_id"],
         "scoped_b_fixture_id": next_dry["fixture_id"],
+        "pilot_gate_open": open_target is not None,
         "scoped_b_fixtures": fixtures_view,
         "batch_execute_materialize_authorized": BATCH_EXECUTE_MATERIALIZE_AUTHORIZED,
         "batch_execute_materialize_mode": BATCH_EXECUTE_MATERIALIZE_MODE,
@@ -301,7 +369,7 @@ def enforce_dec009_materialize_gate(
     if decision["allowed"]:
         return
 
-    next_dry = _next_dry_fixture()
+    next_dry = _next_dry_entry()
     raise HTTPException(
         status_code=422,
         detail={
@@ -321,14 +389,17 @@ def enforce_dec009_materialize_gate(
                 "plan_id": next_dry["plan_id"],
                 "fixture_id": next_dry["fixture_id"],
                 "role": next_dry["role"],
+                "allow_materialize": next_dry["allow_materialize"],
             },
             "scoped_b_fixtures": list(decision["scoped_b_fixtures"]),
             "batch_execute_materialize_authorized": BATCH_EXECUTE_MATERIALIZE_AUTHORIZED,
             "batch_execute_materialize_mode": BATCH_EXECUTE_MATERIALIZE_MODE,
             "recovery": (
-                "Golden Pilot True_CONDITIONAL: register next-dry via "
-                "register_golden_pilot_materialize_target; never materialize "
-                "protected orders 92401/973012/973013/973010."
+                "True_CONDITIONAL: open a next-dry via "
+                "register_golden_pilot_materialize_target / "
+                "open_f7b_controlled_materialize_pilot only under Owner GO; "
+                "close via close_materialize_pilot_gate after evidence; "
+                "never materialize protected orders including 973019."
             ),
         },
     )
