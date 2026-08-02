@@ -1,0 +1,224 @@
+{
+  "audit": "workos-f7d-intake-v6-acm-commercial-integrity-audit-v1",
+  "agent": "Agent B",
+  "repo_head": "43d7a3c5",
+  "date": "2026-08-03",
+  "scope": "Intake V6 / ACM finish selection commercial pricing E2E trace (read-only)",
+  "findings": [
+    {
+      "id": "AGENT-B-F001",
+      "severity": "P0",
+      "title": "Commercial total does not change when operator selects a different, materially significant finish (face Oracal series/color, cant Oracal wrap, RAL paint)",
+      "repro": "1) Open Intake V6 operator workspace, Step 2 Configurare, tab Finisaje. 2) Note 'Ofertă client' total. 3) Change face finish from any value to a different Oracal series (641/651/8500) and/or change cant finish to a different stock color, Oracal wrap, or RAL paint code. 4) Compare 'Ofertă client' total before/after.",
+      "fixture": "Live: workspace 5a5ce742-f50f-47b0-985b-32cc6f2fb6a4 (IV6-9C5D9538). API probe: synthetic held-constant geometry, TPL-VOLUMETRIC-LETTERS_v2, vector_file=test-bond-litere.svg (per Lead coordination fixture).",
+      "field": "finish_setup.letter_group_finishes[].face_finish_type / .face_oracal_code / .return_finish_type / .return_oracal_code",
+      "expected": "Total should change when switching among Oracal 641/651/8500 (internal material cost spread is 6.5/9.0/20.0 EUR/m2, a >3x difference) and when adding RAL paint (owner-documented 100 RON/color minimum) or Oracal cant wrap (owner-documented material+labor keys).",
+      "actual": "Total is identical (2.288,75 RON live; 577.50 RON in isolated API probe) across every face/cant finish variant tested. The commercial line 'finisaje_colantare_vopsire' always charges a flat 35 RON/m2 regardless of finish type or color.",
+      "delta": "0.00 RON / 0.00 EUR in all 13 face+cant scenarios tested (A1-A6, B1-B7)",
+      "root_owner": "backend/data/commercial_rules_volumetric_v2.py — CommercialRuleDefinition for line_code='finisaje_colantare_vopsire' has quantity_paths keyed only on m2 area with no material_gate_path/material_gate_value branching on face_finish_type, face_oracal_code, return_finish_type, or return_oracal_code.",
+      "code_path": "backend/data/commercial_rules_volumetric_v2.py:142-156 (rule definition); backend/services/commercial_price_proposal_service.py (rule evaluation loop); backend/routers/commercial_price_proposal.py (POST /api/v1/product-system/commercial-price-preview/{template_code})",
+      "evidence": [
+        "screenshots/agent-b-01-before-fara-finisaj-total-228875RON.png",
+        "screenshots/agent-b-02-after-oracal8500-black-total-228875RON.png",
+        "screenshots/agent-b-03-confirmare-finala-total-228875RON.png",
+        "agent-b-scenario-summary.json (scenarios A1-A6, B1-B7)",
+        "captures/A_face_finish__A1_face_oracal_651_code021.json",
+        "captures/A_face_finish__A4_face_oracal_8500.json",
+        "captures/B_return_finish__B5_return_ral_paint_9016.json",
+        "captures/D_mounting_material_control__D1_sablon_paper.json (positive control proving the material_gate_path mechanism works when authored)"
+      ]
+    },
+    {
+      "id": "AGENT-B-F002",
+      "severity": "P0",
+      "title": "Internal cost model already knows finish materials differ by >3x but the commercial (customer-facing) price never reflects it — margin exposure",
+      "repro": "Compare intake_v4_oracal_face_pricing_service.py material rates (Oracal 641=6.5 EUR/m2, 651=9.0 EUR/m2, 8500=20.0 EUR/m2) and intake_v4_ral_paint_rules_service.py (RAL paint tube costing) against the CPP finisaje_colantare_vopsire line, which is flat regardless of which of these is selected.",
+      "fixture": "Code inspection + same API probe captures as F001",
+      "field": "EIC informational material breakdown vs. CommercialPriceProposal finish line",
+      "expected": "OWNER_DECISION_REQUIRED on exact commercial markup policy, but at minimum the commercial price should not be provably insensitive to a documented >3x internal cost spread on a 'critical' pricing line.",
+      "actual": "EIC-side material differentiation exists and is computed correctly but is marked informational_only and is never consulted by CommercialPriceProposalService. A customer choosing the most expensive finish (Oracal 8500) is quoted the same total as a customer choosing the cheapest (Oracal 641) or no finish differentiation exists at all for cant Oracal/RAL.",
+      "delta": "Internal cost delta observed: 6.5 to 20.0 EUR/m2 (face material); commercial delta charged: 0.00 RON in all cases",
+      "root_owner": "Architectural separation between backend/services/intake_v4_oracal_face_pricing_service.py / intake_v4_ral_paint_rules_service.py (EIC, informational) and backend/data/commercial_rules_volumetric_v2.py (CPP, customer-facing) — no bridge exists and none is documented as forthcoming beyond the still-forbidden 'Product System' pricing activation.",
+      "code_path": "backend/services/intake_v4_oracal_face_pricing_service.py; backend/services/intake_v4_ral_paint_rules_service.py; backend/data/commercial_rules_volumetric_v2.py:142-156",
+      "evidence": [
+        "backend/services/intake_v4_oracal_face_pricing_service.py (rate constants)",
+        "backend/services/intake_v4_ral_paint_rules_service.py (rate constants)",
+        "frontend/src/features/product-system/canonicalFinishEnumMap.ts (owner-declared future pricing keys, not yet wired)"
+      ]
+    },
+    {
+      "id": "AGENT-B-F003",
+      "severity": "P1",
+      "title": "ACM-only CommercialPriceProposal preview is unconditionally blocked by a geometry validator written for letter-oriented fields",
+      "repro": "POST /api/v1/product-system/commercial-price-preview/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 with valid ACM fields (panel_width_mm, panel_height_mm, acm_thickness_mm, return_depth_mm, fold_sides) and any shell_finish variant.",
+      "fixture": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent_b_probe_scenarios.py, scenario set E (E1-E4)",
+      "field": "quote_geometry validation for TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "expected": "A structurally valid ACM panel payload should reach commercial rule evaluation (blocked or not on its own pricing merits), not be rejected purely on a geometry-shape mismatch.",
+      "actual": "All 4 ACM shell-finish scenarios tested return status=blocked, commercial_blockers=['CRITICAL_GEOMETRY_MISSING'], commercial_total=34.0 (a fixed pre-blocker line), identical regardless of shell finish — because the geometry validator expects letter_count-style fields not present (or not recognized) for a pure ACM template.",
+      "delta": "N/A — blocked before pricing rules execute",
+      "root_owner": "Geometry/quote_input validation layer feeding CommercialPriceProposalService for the ACM template — likely shared validation logic that assumes letter geometry.",
+      "code_path": "backend/services/commercial_price_proposal_service.py; backend/services/acm_quote_input_helpers.py",
+      "evidence": [
+        "captures/E_acm_shell__E1_shell_stock_plate.json",
+        "captures/E_acm_shell__E2_shell_oracal_651.json",
+        "captures/E_acm_shell__E3_shell_oracal_651_diffcolor.json",
+        "captures/E_acm_shell__E4_shell_print_laminate.json"
+      ]
+    },
+    {
+      "id": "AGENT-B-F004",
+      "severity": "P1",
+      "title": "Finish type contract fields are unconstrained free-text strings; UI and backend/canonical token vocabularies silently diverge",
+      "repro": "Submit return_finish_type='mirror_silver' (a value not offered by the live UI combobox at all) to the CPP preview endpoint.",
+      "fixture": "API probe scenario B4",
+      "field": "schemas/intake_v4.py: return_finish_type, face_finish_type, face_oracal_code",
+      "expected": "Either a validation error/warning for a value outside the live UI's actual option set, or documented confirmation that the wider vocabulary is intentionally supported server-side.",
+      "actual": "The field is declared as `str | None` with no Literal/Enum constraint. The value is silently accepted, status=ready, no warning referencing the unrecognized token. Separately, the live UI emits short tokens (white/black/gold/silver) while the schema default and canonical map use suffixed tokens (white_aluminum/black_aluminum/gold_aluminum) — no normalization layer was found bridging them.",
+      "delta": "N/A — contract/validation gap, not itself a price delta",
+      "root_owner": "backend/schemas/intake_v4.py field typing",
+      "code_path": "backend/schemas/intake_v4.py:102-105,137-141,196-200",
+      "evidence": [
+        "backend/schemas/intake_v4.py",
+        "frontend/src/features/product-system/canonicalFinishEnumMap.ts",
+        "captures/B_return_finish__B4_return_mirror_silver.json"
+      ]
+    },
+    {
+      "id": "AGENT-B-F005",
+      "severity": "P1",
+      "title": "Component inclusion contradiction: layer shown 'Selected' while a system warning says the same layer is 'standby, not entering the quote'",
+      "repro": "Open workspace 5a5ce742-f50f-47b0-985b-32cc6f2fb6a4, Step 1 'Straturi'. Observe the 'Alucobond_s0020_Casetat' layer decision card (labeled Optional / Selectat) alongside the warning banner text.",
+      "fixture": "Live workspace 5a5ce742-f50f-47b0-985b-32cc6f2fb6a4, Step 1",
+      "field": "layer/component inclusion status vs. quote-scope warning text",
+      "expected": "A component's 'selected/included' status shown in one part of the UI should not contradict a simultaneous system warning about the same component's quote inclusion.",
+      "actual": "Component card shows 'Panou Alucobond casetat — Opțional · Selectat' while the warning banner reads: \"Strat „Alucobond_s0020_Casetat\" (ACM/casetat) — standby, nu intră în quote litere volumetrice.\" (Layer — standby, does not enter the volumetric letters quote.)",
+      "delta": "Not measured — discovered incidentally, outside primary finish-pricing scope; flagged for its own investigation.",
+      "root_owner": "Unclear from this audit — likely a layer-role vs. component-confirmation state synchronization gap in the Intake V6 Step-1 'Straturi' UI/PD binding.",
+      "code_path": "Not traced in this audit (out of finish-pricing scope) — recommend a dedicated follow-up.",
+      "evidence": [
+        "screenshots/step1-p0-standby-vs-included-contradiction.png",
+        "screenshots/step1-layer-decisions-composition.png"
+      ]
+    },
+    {
+      "id": "AGENT-B-F006",
+      "severity": "P2",
+      "title": "Owner-drafted 'Product System' component-ownership decision already anticipates distinct pricing keys for cant Oracal wrap and RAL paint (including a 100 RON/color minimum) — none of it is wired into the live CPP",
+      "repro": "Compare frontend/src/features/product-system/canonicalFinishEnumMap.ts entries cant_oracal_wrap / cant_ral_paint / cant_ral_minimum_policy against backend/data/commercial_rules_volumetric_v2.py.",
+      "fixture": "Code + doc inspection: docs/worklog/owner-input/canonical_finish_enum_map_owner_decision_v1.md (2026-07-09, HEAD 0a4a346)",
+      "field": "cant_oracal_wrap, cant_ral_paint, cant_ral_minimum_policy canonical entries",
+      "expected": "N/A — this finding reclassifies F001's cant-side rows from 'silent unknown gap' to 'known/anticipated missing rule', since a specific commercial policy (100 lei/RAL color) is already owner-documented.",
+      "actual": "commercial_rules_volumetric_v2.py has no rule referencing MAT-ORACAL-641/651, MAT-VOPSEA-RAL-CANT-*, RETURN_CANT_VINYL_APPLICATION_LABOR, RETURN_CANT_RAL_PAINT_LABOR, or a 100 RON RAL minimum. Note: the owner-decision doc explicitly disclaims 'Pricing activation from Product System contracts' as still-forbidden as of its date, and describes a separate future architecture — this finding is corroborating context, not a claim that the doc itself mandates immediate CPP wiring.",
+      "delta": "N/A",
+      "root_owner": "Product/architecture sequencing — Product System canonical map (future) vs. live Intake V6 CPP (present) are two different systems that both use the word 'finish'.",
+      "code_path": "backend/data/commercial_rules_volumetric_v2.py; frontend/src/features/product-system/canonicalFinishEnumMap.ts",
+      "evidence": [
+        "frontend/src/features/product-system/canonicalFinishEnumMap.ts",
+        "docs/worklog/owner-input/canonical_finish_enum_map_owner_decision_v1.md"
+      ]
+    },
+    {
+      "id": "AGENT-B-F007",
+      "severity": "P2",
+      "title": "\"Unconfirmed finish groups\" warning implies deferred/gated pricing, but confirmed=true/false/empty/absent all produce the same ready status and same numeric total",
+      "repro": "Submit letter_group_finishes with confirmed=true, confirmed=false, an empty list, and an absent (None) field, holding all else constant.",
+      "fixture": "API probe scenario set C (C1-C4)",
+      "field": "finish_setup.letter_group_finishes[].confirmed",
+      "expected": "If the warning text 'may require owner review before numeric pricing' is accurate, an unconfirmed/empty/absent state should differ from a confirmed state (e.g., status=blocked, owner_decision_required=true, or a different total).",
+      "actual": "All four states return status=ready and commercial_total=577.50, identical to the confirmed=true baseline. Only the warning list changes slightly (extra text for empty/absent), never the numeric outcome.",
+      "delta": "0.00 across all 4 confirmation-state variants",
+      "root_owner": "backend/services/commercial_price_proposal_service.py — warning generation is decoupled from actual gating logic for the finisaje line.",
+      "code_path": "backend/services/commercial_price_proposal_service.py",
+      "evidence": [
+        "captures/C_confirm_state__C1_groups_confirmed_true.json",
+        "captures/C_confirm_state__C2_groups_confirmed_false.json",
+        "captures/C_confirm_state__C3_groups_empty_list.json",
+        "captures/C_confirm_state__C4_groups_absent_none.json"
+      ]
+    },
+    {
+      "id": "AGENT-B-F008",
+      "severity": "P3",
+      "title": "Stock cant colors (Alb/Negru/Auriu/Argintiu) zero-delta is correct-by-design — documented for completeness, not a defect",
+      "repro": "Switch return_finish_type among white/black/gold/silver, all else constant.",
+      "fixture": "API probe scenarios B1-B3 (+ B baseline)",
+      "field": "return_finish_type (stock family)",
+      "expected": "Zero delta, per owner documentation (no additional finish tariff for stock colors).",
+      "actual": "Zero delta observed, matching the documented expectation exactly.",
+      "delta": "0.00 (expected and actual match)",
+      "root_owner": "N/A — confirmed correct behavior",
+      "code_path": "frontend/src/features/product-system/canonicalFinishEnumMap.ts (cant_stock_color entry)",
+      "evidence": [
+        "captures/B_return_finish__B1_return_white_aluminum_stock.json",
+        "captures/B_return_finish__B2_return_black_aluminum_stock.json",
+        "captures/B_return_finish__B3_return_gold_aluminum_stock.json"
+      ]
+    },
+    {
+      "id": "AGENT-B-F009",
+      "severity": "P3",
+      "title": "Mounting-template material control group confirms the material-gated differential pricing mechanism exists and works correctly elsewhere in the same rule table",
+      "repro": "Switch mounting_template_material_type between paper and forex, all else constant.",
+      "fixture": "API probe scenarios D1-D2",
+      "field": "finish_setup.mounting_template_material_type",
+      "expected": "Total should differ per the distinct sablon_montaj_hartie (5 EUR/m2) vs sablon_montaj_forex (15 RON/m2 dev bridge) rules, each gated by material_gate_path/material_gate_value.",
+      "actual": "Total correctly differs: 582.50 RON (paper) vs 592.50 RON (forex), a +10.00 RON delta, matching the two distinct rule definitions exactly.",
+      "delta": "+10.00 RON (expected and actual match)",
+      "root_owner": "N/A — confirmed correct behavior; used as positive control / root-cause corroboration for F001 (proves the missing mechanism in finisaje_colantare_vopsire is an authoring gap, not a framework limitation)",
+      "code_path": "backend/data/commercial_rules_volumetric_v2.py:170-204",
+      "evidence": [
+        "captures/D_mounting_material_control__D1_sablon_paper.json",
+        "captures/D_mounting_material_control__D2_sablon_forex.json"
+      ]
+    }
+  ],
+  "test_run_summary": {
+    "note": "Read-only report per Lead instructions. No tests weakened or modified. Pre-existing failures categorized below are NOT caused by this audit (all probe traffic used the read-only /commercial-price-preview endpoint; no DB writes).",
+    "groups": [
+      {
+        "group": "G1 — Commercial Price Proposal tests",
+        "log": "_pt_g1_cpp.log",
+        "passed": 42,
+        "failed": 0,
+        "errors": 6,
+        "error_cause": "Pre-existing test-DB schema drift: sqlite3.OperationalError: no such column: product_templates.publication_status (missing migration in test fixtures) — all 6 errors are this same root cause, in tests/test_commercial_price_proposal_site_installation_binding.py."
+      },
+      {
+        "group": "G2 — Estimated Internal Cost tests",
+        "log": "_pt_g2_eic.log",
+        "passed": 40,
+        "failed": 5,
+        "errors": 11,
+        "error_cause": "11 errors: same product_templates.publication_status schema drift. 5 failures: test-infra issues (404 Not Found on endpoints under test, missing optional module 'svgpathtools') unrelated to finish-pricing logic."
+      },
+      {
+        "group": "G3 — Quote Snapshot v2 tests",
+        "log": "_pt_g3_snapshot.log",
+        "passed": 114,
+        "failed": 11,
+        "errors": 0,
+        "error_cause": "Mock/fixture drift: 'FakeDb' object has no attribute 'execute'; QuoteOutputCompositionService missing attribute '_latest_quote_snapshot_v2' (internal rename not reflected in test mocks); assorted 404s and one status-string assertion mismatch ('ready' vs 'blocked'). Pre-existing test-infrastructure debt, not newly introduced."
+      }
+    ],
+    "totals": {
+      "passed": 196,
+      "failed": 16,
+      "errors": 17
+    }
+  },
+  "return_to_lead": {
+    "p0_count": 2,
+    "p1_count": 3,
+    "p2_count": 3,
+    "p3_count": 2,
+    "commercial_integrity_blocked": true,
+    "commercial_integrity_blocked_reason": "The live Intake V6 -> CommercialPriceProposal path generates real 'Ofertă client' totals feeding the 'Creaza oferta pretuita' action, and this total is proven (live UI + 17 API probe scenarios) to be insensitive to face/cant finish selection for Oracal series, Oracal colors, and RAL paint, despite the business already owning documented internal cost differentiation (>3x) and a specific RAL commercial minimum policy (100 RON/color) that is simply not implemented in the live pricing rule table.",
+    "matrix_path": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-b-commercial-delta-matrix.md",
+    "top_root_owners": [
+      "backend/data/commercial_rules_volumetric_v2.py (finisaje_colantare_vopsire rule — single flat rate, no material_gate_path branching)",
+      "Disconnect between EIC informational cost services (intake_v4_oracal_face_pricing_service.py, intake_v4_ral_paint_rules_service.py) and CommercialPriceProposalService",
+      "ACM commercial-preview geometry validator (rejects valid ACM-only payloads with CRITICAL_GEOMETRY_MISSING)",
+      "schemas/intake_v4.py finish-type fields (unconstrained str, no enum contract)"
+    ]
+  }
+}

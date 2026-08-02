@@ -1,0 +1,433 @@
+{
+  "A_face_finish": [
+    {
+      "scenario": "A1_face_oracal_651_code021",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "A2_face_oracal_651_code032_diffcolor",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "A3_face_oracal_641_code021",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "A4_face_oracal_8500",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "A5_face_print_laminate",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "A6_face_none",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    }
+  ],
+  "B_return_finish": [
+    {
+      "scenario": "B1_return_white_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B2_return_black_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B3_return_gold_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B4_return_mirror_silver",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B5_return_ral_paint_9016",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B6_return_ral_paint_3020_red",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "B7_return_oracal_wrapped",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    }
+  ],
+  "C_confirm_state": [
+    {
+      "scenario": "C1_groups_confirmed_true",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "C2_groups_confirmed_false",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "C3_groups_empty_list",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+        "Finish groups empty — owner review recommended."
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "C4_groups_absent_none",
+      "status": "ready",
+      "commercial_total": 577.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+        "Finish groups not confirmed — numeric commercial price deferred."
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    }
+  ],
+  "D_mounting_material_control": [
+    {
+      "scenario": "D1_sablon_paper",
+      "status": "ready",
+      "commercial_total": 582.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant",
+        "sablon_montaj"
+      ]
+    },
+    {
+      "scenario": "D2_sablon_forex",
+      "status": "ready",
+      "commercial_total": 592.5,
+      "finish_line_unit_price": 35.0,
+      "finish_line_subtotal": 87.5,
+      "finish_line_warnings": [
+        "Unconfirmed finish groups may require owner review before numeric pricing.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant",
+        "sablon_montaj"
+      ]
+    }
+  ],
+  "E_acm_shell_finish": [
+    {
+      "scenario": "E1_shell_stock_plate",
+      "status": "blocked",
+      "commercial_total": 34.0,
+      "finish_line_unit_price": null,
+      "finish_line_subtotal": null,
+      "finish_line_warnings": null,
+      "blockers": [
+        "CRITICAL_GEOMETRY_MISSING"
+      ],
+      "active_modules": [
+        "structura_suport"
+      ]
+    },
+    {
+      "scenario": "E2_shell_oracal_651",
+      "status": "blocked",
+      "commercial_total": 34.0,
+      "finish_line_unit_price": null,
+      "finish_line_subtotal": null,
+      "finish_line_warnings": null,
+      "blockers": [
+        "CRITICAL_GEOMETRY_MISSING"
+      ],
+      "active_modules": [
+        "structura_suport"
+      ]
+    },
+    {
+      "scenario": "E3_shell_oracal_651_diffcolor",
+      "status": "blocked",
+      "commercial_total": 34.0,
+      "finish_line_unit_price": null,
+      "finish_line_subtotal": null,
+      "finish_line_warnings": null,
+      "blockers": [
+        "CRITICAL_GEOMETRY_MISSING"
+      ],
+      "active_modules": [
+        "structura_suport"
+      ]
+    },
+    {
+      "scenario": "E4_shell_print_laminate",
+      "status": "blocked",
+      "commercial_total": 34.0,
+      "finish_line_unit_price": null,
+      "finish_line_subtotal": null,
+      "finish_line_warnings": null,
+      "blockers": [
+        "CRITICAL_GEOMETRY_MISSING"
+      ],
+      "active_modules": [
+        "structura_suport"
+      ]
+    }
+  ]
+}

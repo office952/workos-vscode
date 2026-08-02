@@ -1,0 +1,207 @@
+{
+  "preview_version": "1.0.0",
+  "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "source": "commercial_price_proposal",
+  "status": "blocked",
+  "commercial_price_lines": [
+    {
+      "code": "acm_panel_cut",
+      "label": "Debitare panou ACM",
+      "module_code": "structura_suport",
+      "component_code": "comp_acm_panel_face",
+      "basis_type": "ml",
+      "quantity": null,
+      "unit": "ml",
+      "commercial_unit_price": 1.5,
+      "subtotal": null,
+      "pricing_rule_code": "ACM_BOXED_PANEL_CUT_LM",
+      "source": "commercial_rules_volumetric_v2:acm_panel_cut_owner_eur_lm",
+      "owner_decision_required": false,
+      "warnings": [],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "acm_v_groove",
+      "label": "Frezare V-groove ACM",
+      "module_code": "structura_suport",
+      "component_code": "comp_casetted_returns",
+      "basis_type": "ml",
+      "quantity": null,
+      "unit": "ml",
+      "commercial_unit_price": 3.0,
+      "subtotal": null,
+      "pricing_rule_code": "ACM_BOXED_V_GROOVE_LM",
+      "source": "commercial_rules_volumetric_v2:acm_v_groove_owner_eur_lm",
+      "owner_decision_required": false,
+      "warnings": [],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "acm_panel_face_material",
+      "label": "Material ACM față panou",
+      "module_code": "structura_suport",
+      "component_code": "comp_acm_panel_face",
+      "basis_type": "m2",
+      "quantity": 0.6,
+      "unit": "m2",
+      "commercial_unit_price": 15.0,
+      "subtotal": 9.0,
+      "pricing_rule_code": "ACM_BOXED_MAT_FACE_M2",
+      "source": "commercial_rules_volumetric_v2:acm_mat_face_owner_eur_m2",
+      "owner_decision_required": false,
+      "warnings": [
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "acm_return_strip_material",
+      "label": "Material ACM canturi / întoarceri",
+      "module_code": "structura_suport",
+      "component_code": "comp_casetted_returns",
+      "basis_type": "m2",
+      "quantity": null,
+      "unit": "m2",
+      "commercial_unit_price": 15.0,
+      "subtotal": null,
+      "pricing_rule_code": "ACM_BOXED_MAT_RETURN_M2",
+      "source": "commercial_rules_volumetric_v2:acm_mat_return_owner_eur_m2",
+      "owner_decision_required": false,
+      "warnings": [],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "acm_boxed_assembly",
+      "label": "Asamblare suport ACM casetat",
+      "module_code": "structura_suport",
+      "component_code": "comp_mounting_fasteners",
+      "basis_type": "m2",
+      "quantity": 0.6,
+      "unit": "m2",
+      "commercial_unit_price": 15.0,
+      "subtotal": 20.0,
+      "pricing_rule_code": "ACM_BOXED_ASSEMBLY_M2_MIN",
+      "source": "commercial_rules_volumetric_v2:acm_assembly_owner_eur_m2_min",
+      "owner_decision_required": false,
+      "warnings": [
+        "Minimum commercial charge 20.0 EUR/product when area × rate is lower.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+        "minimum_charge_applied=20.0EUR"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "acm_fasteners",
+      "label": "Suruburi / prinderi standard ACM",
+      "module_code": "structura_suport",
+      "component_code": "comp_mounting_fasteners",
+      "basis_type": "set",
+      "quantity": 1.0,
+      "unit": "set",
+      "commercial_unit_price": 5.0,
+      "subtotal": 5.0,
+      "pricing_rule_code": "ACM_BOXED_SURUBURI_SET",
+      "source": "commercial_rules_volumetric_v2:acm_suruburi_owner_eur_set",
+      "owner_decision_required": false,
+      "warnings": [],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    }
+  ],
+  "subtotal_commercial": 34.0,
+  "commercial_total": 34.0,
+  "currency": "RON",
+  "minimums_applied": [],
+  "complexity_adjustments": [],
+  "unknown_owner_decisions": [],
+  "commercial_blockers": [
+    {
+      "code": "CRITICAL_GEOMETRY_MISSING",
+      "message": "Missing critical geometry: height_mm, letter_count, letter_face_area_m2, letter_perimeter_m, vector_file, width_mm.",
+      "module_code": null
+    }
+  ],
+  "warnings": [],
+  "forbidden_hourly_usage_detected": [],
+  "provenance": [
+    {
+      "key": "product_definition",
+      "source": "product_definition_builder_service",
+      "detail": "read_only=true workspace_id=none"
+    },
+    {
+      "key": "commercial_rules",
+      "source": "commercial_rules_volumetric_v2",
+      "detail": "temporary_local_catalog_until_step_7i"
+    },
+    {
+      "key": "active_modules",
+      "source": "commercial_price_proposal_service",
+      "detail": "modules=structura_suport"
+    },
+    {
+      "key": "quote_input",
+      "source": "request_body",
+      "detail": "read_only_normalization_no_pricing_engine"
+    }
+  ],
+  "confidence": "low",
+  "quote_ready_for_commercial_review": false,
+  "notes": [
+    "Read-only CommercialPriceProposal preview — Step 7G.",
+    "Does not call /price, CostEngine, or QuoteOrchestrator.",
+    "Linked-logo print/laminate/application may bind to existing Pricing Registry operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) with company_commercial_settings EUR→RON conversion.",
+    "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD (200 EUR fixed / locatie) via the same EUR→RON path; travel outside Bucharest is not auto-added. Fail closed if the rate or FX is unavailable.",
+    "Hourly commercial basis is forbidden."
+  ],
+  "input_summary": {
+    "has_payload": true,
+    "active_modules": [
+      "structura_suport"
+    ],
+    "workspace_id": null,
+    "linked_logo_segments": [],
+    "site_install_required": false
+  }
+}

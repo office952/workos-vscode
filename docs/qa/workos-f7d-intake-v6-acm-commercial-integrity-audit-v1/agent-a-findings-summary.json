@@ -1,0 +1,146 @@
+{
+  "audit": "F7D Intake V6 / ACM Functional & UX Audit — Agent A",
+  "repo": "C:\\w\\psiso",
+  "branch": "feat/capacity-batch-20d-scoped-b-92401",
+  "head": "43d7a3c5",
+  "workspace_id": "5a5ce742-f50f-47b0-985b-32cc6f2fb6a4",
+  "workspace_code": "IV6-9C5D9538",
+  "route_used": "/intake-v6-app/5a5ce742-f50f-47b0-985b-32cc6f2fb6a4/operator",
+  "primary_fixture": "docs/worklog/realignment/audit_assets/remus_acm_letters_svg_v1/test-bond-litere.svg",
+  "coverage": {
+    "steps_walked_live": "1, 2 (all 4 tabs), 3 (up to but not including offer creation)",
+    "not_executed": "Creează oferta prețuită / Continuă către ofertă (out of write boundary)",
+    "estimate_percent": 80,
+    "coverage_basis": "All operator-facing controls reachable by this single fixture were exercised live. Controls belonging to artwork/roles not present in this fixture (Vector Logo, cutout text/logo, DXF measured upload, multi-segment panel editor) were documented from component source only, not live-clicked — see field ledger 'Not exercised (code-only)' rows and fixture inventory for untested sibling fixtures that would reach them."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P0",
+      "area": "commercial-integrity",
+      "title": "ACM panel inclusion status is described 3 contradictory ways across the same workspace state",
+      "description": "The Step 1 footer warning says the Alucobond/ACM layer is 'standby, nu intră în quote litere volumetrice' (standby, does not enter the letters quote). The Step 1 composition card chip says 'Inclus în propunere' (included in proposal). The payload's product_composition_confirmed marks the ACM item status as 'available_optional' while applied_content only ever lists 'letters'. Meanwhile the Step 2 right rail actively prices and sums 6 ACM line items (86,77 EUR) directly into the visible 2.288,75 RON total. The Step 3 final recap, the last screen before pricing an offer, does not mention the ACM panel at all.",
+      "evidence": [
+        "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step1-p0-standby-vs-included-contradiction.png",
+        "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step1-layer-decisions-composition.png",
+        "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step2-panou-carcasa-acm-priced-lines.png",
+        "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/workspace-after-step2.json"
+      ],
+      "recommendation_note": "Analysis/finding only, no fix implemented per audit boundary. Recommend a single canonical inclusion-status source rendered identically wherever the ACM panel is referenced (footer, composition card, recap).",
+      "cross_team": "Commercial-honesty overlap with Agent B pricing-authority findings — flagged for joint review."
+    },
+    {
+      "id": "F2",
+      "priority": "P1",
+      "area": "ux-clarity",
+      "title": "Product-composition confirm bundles mandatory and optional components into one undifferentiated click",
+      "description": "The single 'Confirmă' action on the Compoziție produs card confirms both the mandatory letters component and the optional ACM panel component together. There is no distinct yes/no decision point for 'do you want the optional panel in this offer'.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L24"]
+    },
+    {
+      "id": "F3",
+      "priority": "P1",
+      "area": "ux-clarity",
+      "title": "Developer-facing architecture notes render verbatim as operator UI copy",
+      "description": "Under the ACM tab's 'Avansat' section, a block header reads 'Ownership: MOUNTING → structura_suport + sablon_montaj · …' — raw internal field-ownership documentation shown directly to the operator.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L76"]
+    },
+    {
+      "id": "F4",
+      "priority": "P0",
+      "area": "ux-clarity / commercial-integrity",
+      "title": "Final pre-offer recap omits the ACM panel entirely",
+      "description": "Step 3's Recapitulare card, the last screen before 'Creează oferta prețuită', only summarizes the letters product (1 strat litere geometry/finish/LED). The ACM panel — already contributing 86,77 EUR to the visible total — is not listed anywhere in this recap.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L94"]
+    },
+    {
+      "id": "F5",
+      "priority": "P2",
+      "area": "ux-clarity",
+      "title": "Raw internal diagnostic codes leak into 3 separate operator-facing surfaces",
+      "description": "canonical_unresolved_warning:* strings (e.g. PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY, PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL, TRIGGER_FIELD_MISMATCH) and a raw pretty-printed JSON dump of the ACM component instance are shown directly to the operator in the shared warnings footer and the ACM 'Detalii tehnice' collapsible respectively.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L37,L47,L72,L85"]
+    },
+    {
+      "id": "F6",
+      "priority": "P2",
+      "area": "ux-duplication",
+      "title": "Colț service transformator decision has two entry points on the same tab",
+      "description": "The transformer/PSU service-corner selection appears both in the ACM tab's 'Avansat' section and again in the 'Alimentare și service' sub-block on the same Panou/carcasă tab, as separate controls for what is functionally one decision.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-acm-bond-matrix.md section 5"]
+    },
+    {
+      "id": "F7",
+      "priority": "P2",
+      "area": "ux-duplication",
+      "title": "Commercial adjustment controls (Adaos/Discount/TVA/Ajustare manuală) repeated identically on all 4 Configurare tabs",
+      "description": "The same 4 global commercial-adjustment widgets are rendered as tab-body content on every one of the 4 Step-2 tabs rather than living once in a persistent commercial panel.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L38"]
+    },
+    {
+      "id": "F8",
+      "priority": "P2",
+      "area": "ux-clarity",
+      "title": "'Cadru interior' checkbox shown checked+readonly next to text stating no mounting relation is confirmed",
+      "description": "The internal-frame checkbox on the ACM tab appears already checked and disabled, immediately next to the caption 'Nicio relație de montaj confirmată' (no mounting relation confirmed) — a field presented as settled and unsettled at the same time.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-acm-bond-matrix.md section 5"]
+    },
+    {
+      "id": "F9",
+      "priority": "P2",
+      "area": "ux-navigation",
+      "title": "'Ce producem?' scope mode (Produs complet / Doar față / Doar cant / Față + cant) locks once layer confirmation starts",
+      "description": "The 4-way product-scope selector becomes disabled mid-flow, so an operator who initially picked the wrong scope has no visible in-workspace path to change it without restarting.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L26"]
+    },
+    {
+      "id": "F10",
+      "priority": "P3",
+      "area": "ux-polish",
+      "title": "Float-noise in an operator-facing geometry field",
+      "description": "The ACM panel's 'Lățime (mm)' field shows 2000.001 instead of 2000, a sub-millimeter artifact of SVG-to-mm conversion surfaced verbatim in the input.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step2-panou-carcasa-acm-priced-lines.png"]
+    },
+    {
+      "id": "F11",
+      "priority": "P3",
+      "area": "ux-polish",
+      "title": "Single-option 'Module produs' combobox is not a real decision",
+      "description": "The 'Module produs (Volum aluminiu modular)' combobox has exactly one selectable option and is pre-selected; presenting it as an interactive combobox rather than static text implies a choice that doesn't exist.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md#L75"]
+    },
+    {
+      "id": "F12",
+      "priority": "P3",
+      "area": "repo-hygiene",
+      "title": "Two SVG fixture filenames reference ACM/ACP but contain no ACM layer",
+      "description": "litere-cu-fundal-acm-segmentat.svg / litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg and LITERE-VOLUMETRICE-ACP.svg all reference ACM/ACP in their filenames but contain only CNC engrave/cutout groups or a single undifferentiated layer, with no actual Alucobond/support-panel geometry.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-fixture-inventory.md"]
+    },
+    {
+      "id": "F13",
+      "priority": "P3",
+      "area": "coverage-gap",
+      "title": "Highest-value ACM composition fixture in the repo was not exercised this session",
+      "description": "frontend/src/lib/svgAnalyzer/fixtures/pbl-complex.svg combines an ACM background with two separate letter groups, a logo, and cutout text in one file — the only fixture that would exercise ACM composition/duplication logic beyond the single-letter-group case this audit covered. Time-boxed out of this session; flagged as the top follow-up fixture.",
+      "evidence": ["docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-fixture-inventory.md"]
+    }
+  ],
+  "deliverables": {
+    "field_ledger": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-field-ledger.md",
+    "acm_bond_matrix": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-acm-bond-matrix.md",
+    "fixture_inventory": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-fixture-inventory.md",
+    "ux_audit": "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/agent-a-ux-audit.md",
+    "screenshots": [
+      "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step1-layer-decisions-composition.png",
+      "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step1-p0-standby-vs-included-contradiction.png",
+      "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step2-finisaje-litere-volumetrice.png",
+      "docs/qa/workos-f7d-intake-v6-acm-commercial-integrity-audit-v1/screenshots/step2-panou-carcasa-acm-priced-lines.png"
+    ]
+  },
+  "blockers": [
+    "Did not execute 'Creează oferta prețuită' — creating a priced Offer object was judged adjacent to the 'no accepted quote/order mutation' boundary; flagged for Lead to explicitly authorize if commercial-total verification requires a real priced offer object rather than the pre-offer estimate already captured.",
+    "DXF measured-geometry upload not exercised — same native file-picker limitation as the primary SVG upload; would need the same API-injection technique applied to a second endpoint if required.",
+    "Sibling fixtures (doar-panou.svg, doar litere.svg, pbl-complex.svg, annes-store-volumetric.svg) not driven live this session — time-boxed; see agent-a-fixture-inventory.md for prioritized follow-up order."
+  ]
+}
