@@ -1,0 +1,334 @@
+{
+  "results": [
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "direct",
+      "expected": "Pregătit pentru închidere",
+      "dir": "day",
+      "name": "open",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\day\\open.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "close",
+      "expected": "Job operațional închis",
+      "dir": "day",
+      "name": "closed",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\day\\closed.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "close",
+      "expected": "Redeschide",
+      "dir": "closure",
+      "name": "closed-panel",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\closure\\closed-panel.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "after close",
+      "expected": "Cost utilaj|Neaplicabil",
+      "dir": "completeness",
+      "name": "machine",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\completeness\\machine.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "reopen+reason",
+      "expected": "Pregătit|Indisponibil",
+      "dir": "day",
+      "name": "reopened",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\day\\reopened.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "reclose+refresh",
+      "expected": "Job operațional închis",
+      "dir": "day",
+      "name": "reclosed-refresh",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\day\\reclosed-refresh.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        },
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "direct dark",
+      "expected": "închis|Închidere",
+      "dir": "dark",
+      "name": "closed",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\dark\\closed.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "dark reopen",
+      "expected": "Pregătit|închidere",
+      "dir": "dark",
+      "name": "reopened",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\dark\\reopened.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880041,
+      "clickPath": "dark open after reopen",
+      "expected": "Pregătit",
+      "dir": "dark",
+      "name": "open",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\dark\\open.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880041",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880042,
+      "clickPath": "direct 880042",
+      "expected": "blocat|Incomplet|sesiune",
+      "dir": "day",
+      "name": "blocked",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\day\\blocked.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880042",
+          "status": 404
+        }
+      ]
+    },
+    {
+      "urlBase": "http://127.0.0.1:3042",
+      "be": "http://127.0.0.1:8022",
+      "db": "qa-dbs/c2-u5-runtime.db",
+      "ports": "fe:3042 be:8022",
+      "commit": "92dae7a5",
+      "role": "admin",
+      "orderId": 880042,
+      "clickPath": "880042 costs area",
+      "expected": "Cost material|Incomplet|Indisponibil",
+      "dir": "completeness",
+      "name": "material",
+      "file": "C:\\w\\psiso\\docs\\qa\\workos-f5-u5-owner-review-v1\\screenshots\\completeness\\material.png",
+      "bodySample": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE Comenzi Execuție Atelier Control producție Următorul pas: Urmărește taskurile și realitatea sesiunilor Planificat și actual rămân separate. Pornirea lucrului necesită identitate demonstrată pe backen",
+      "cors": false,
+      "nested": false,
+      "consoles": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "failedApi": [
+        {
+          "url": "http://127.0.0.1:8022/api/v1/product_system/preview/880042",
+          "status": 404
+        }
+      ]
+    }
+  ],
+  "opProbe": {
+    "note": "operator stack probe separate"
+  }
+}

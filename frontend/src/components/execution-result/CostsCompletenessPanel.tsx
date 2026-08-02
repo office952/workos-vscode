@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { getProfitabilityActualReadModel, type ProfitabilityActualReadModel } from "@/api/profitabilityActualReadModel";
-import { formatMoney, humanReason, type ExecutionResultRole } from "./executionResultWorkspace";
+import {
+  formatMoney,
+  humanReason,
+  isManagementRole,
+  type ExecutionResultRole,
+} from "./executionResultWorkspace";
 
 const COST_REASON_RO: Record<string, string> = {
   machine_not_applicable_by_job_profile: "Cost utilaj — neaplicabil pentru acest profil de lucrare",
@@ -15,20 +20,28 @@ const COST_REASON_RO: Record<string, string> = {
 export function CostsCompletenessPanel({ orderId, role }: { orderId: number; role: ExecutionResultRole }) {
   const [model, setModel] = useState<ProfitabilityActualReadModel | null>(null);
   useEffect(() => {
+    if (!isManagementRole(role)) {
+      setModel(null);
+      return;
+    }
     void getProfitabilityActualReadModel(orderId).then(setModel).catch(() => setModel(null));
-  }, [orderId]);
-  if (role === "operator") {
-    return (
-      <section
-        className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"
-        data-testid="execution-costs-operator"
-      >
-        <h2 className="text-sm font-semibold text-wo-text-primary">Costuri realizate</h2>
-        <p className="mt-1 text-[12px] text-wo-text-muted">
-          Ratele brute și marja nu sunt expuse operatorului. Completitudinea operațională este confirmată de backend.
-        </p>
-      </section>
-    );
+  }, [orderId, role]);
+  if (!isManagementRole(role)) {
+    if (role === "operator") {
+      return (
+        <section
+          className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"
+          data-testid="execution-costs-operator"
+        >
+          <h2 className="text-sm font-semibold text-wo-text-primary">Costuri realizate</h2>
+          <p className="mt-1 text-[12px] text-wo-text-muted">
+            Ratele brute și marja nu sunt expuse operatorului. Pregătirea operațională de închidere este
+            vizibilă fără rate interne.
+          </p>
+        </section>
+      );
+    }
+    return null;
   }
   const costs = model?.actual_cost_truth as Record<string, Record<string, unknown>> | undefined;
   const currency = (model?.commercial_truth as Record<string, Record<string, unknown>> | undefined)

@@ -1,7 +1,7 @@
 # WorkOS Actual-Cost Coverage V1 (F5)
 
-**Stamp:** `PASS WITH WARNINGS`  
-**Branch:** `feat/actual-cost-coverage-v1`  
+**Stamp:** `PASS WITH WARNINGS`
+**Branch:** `feat/actual-cost-coverage-v1`
 **Base:** `c5e54eb3`
 
 ## Verdict language (binding)

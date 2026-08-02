@@ -26,6 +26,9 @@ export function executionResultRole(value: string | undefined): ExecutionResultR
       return "manager";
     case "admin":
       return "admin";
+    case "commercial":
+    case "sales":
+      return "other";
     default:
       return "other";
   }

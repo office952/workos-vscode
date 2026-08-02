@@ -181,6 +181,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "reports.view_profit": ["admin", "manager"],
     # Standard internal cost policies are management data, never operator data.
     "actual_cost_policy.manage": ["admin", "manager"],
+    # Read-only operational prep; close/reopen remain execution.job_close.
+    "execution.closure_readiness": ["admin", "manager", "operator"],
     "execution.job_close": ["admin", "manager"],
 
     # Settings

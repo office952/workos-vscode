@@ -65,7 +65,7 @@ async def finalize_labor(
 async def closure_readiness(
     order_id: int,
     db: AsyncSession = Depends(get_db),
-    _permission: UserResponse = Depends(require_permission("execution.job_close")),
+    _permission: UserResponse = Depends(require_permission("execution.closure_readiness")),
 ):
     return await ActualCostPolicyRuntimeService(db).closure_readiness(order_id)
 
