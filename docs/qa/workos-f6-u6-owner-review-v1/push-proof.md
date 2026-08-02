@@ -19,8 +19,10 @@ Push canonical branch only
 ## Post-push
 
 ```text
-local SHA     = b902607d23b39c43625f1a1da0e874b66585934d
-remote SHA    = b902607d23b39c43625f1a1da0e874b66585934d
+F6/U6+C3 package tip (pushed) = b902607d23b39c43625f1a1da0e874b66585934d
+Accepted remote after proof stamp = a010d80a2d49870a91e0a3249e152789e498e50b
+local SHA     = a010d80a2d49870a91e0a3249e152789e498e50b
+remote SHA    = a010d80a2d49870a91e0a3249e152789e498e50b
 ahead/behind  = 0 / 0
 stash         = stash@{0}: wip-employee-unrelated intact
 working tree  = understood (unrelated untracked QA/_tmp left alone)
