@@ -1,9 +1,9 @@
-﻿# 2026-08-02 â€” F6 multi-type pilot + U6 scorecard
+# 2026-08-02 — F6 multi-type pilot + U6 scorecard
 
 ## Status
 ```text
 A. F6 PASS WITH DOCUMENTED COVERAGE + U6 SCORECARD PASS
-NO PUSH â€” Owner Review
+NO PUSH — Owner Review
 ```
 
 ## Scope
@@ -13,7 +13,7 @@ NO PUSH â€” Owner Review
 
 ## Documentation drift
 - `C:\Users\offic\workos_app_vs` stale vs controller `C:\w\psiso`
-- Product families exist in catalog/PD but lack frozenâ†’closure actual-cost chains
+- Product families exist in catalog/PD but lack frozen→closure actual-cost chains
 
 ## Direction
 ~66/100%

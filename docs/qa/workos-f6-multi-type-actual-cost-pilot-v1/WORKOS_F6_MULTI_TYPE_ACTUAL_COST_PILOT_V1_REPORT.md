@@ -1,4 +1,4 @@
-﻿# WorkOS F6 â€” Multi-Type Actual-Cost Pilot V1
+# WorkOS F6 — Multi-Type Actual-Cost Pilot V1
 
 **Stamp:** `PASS WITH WARNINGS` / documented coverage
 **Base:** `4ec3d384`
@@ -17,7 +17,7 @@ Product-linked end-to-end families = PILOT_COVERAGE_BLOCKED until Owner material
 | Family | Order | Units | Tasks | Machine | Distinctness |
 |--------|------:|-------|-------|---------|--------------|
 | F6-LED | 880061 | buc | LED_WIRE | not_applicable | electrical modules |
-| F6-ACM | 880062 | mp + buc | CUT_ACM / V_GROOVE | applicable_optional â†’ unavailable | sheet ACM CNC path |
+| F6-ACM | 880062 | mp + buc | CUT_ACM / V_GROOVE | applicable_optional → unavailable | sheet ACM CNC path |
 | F6-PROFILE | 880063 | ml + buc | FORM_PROFILE / BOND | not_applicable | linear profile forming |
 
 These are service-level families proving StockMovement + labor policy + closure. They are **not** claimed as frozen ProductDefinition/ProductAggregate product proofs.
@@ -26,7 +26,7 @@ These are service-level families proving StockMovement + labor policy + closure.
 
 ```text
 eligible operational families proven in isolated tests = 3
-product-linked frozenâ†’closure families proven = 0
+product-linked frozen→closure families proven = 0
 applicable categories considered per family = labor, material, machine, other_direct, closure
 ```
 

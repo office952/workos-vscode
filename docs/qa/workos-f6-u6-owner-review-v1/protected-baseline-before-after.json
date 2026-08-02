@@ -1,0 +1,20 @@
+{
+  "order_id": 973019,
+  "execution_plan_id": 21,
+  "before": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5,
+    "closures": 0,
+    "stock_movements_for_order": 0
+  },
+  "after": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5,
+    "closures": 0,
+    "stock_movements_for_order": 0
+  },
+  "pilot_orders_isolated": [880061, 880062, 880063],
+  "pilot_orders_persisted_in_dev_db": false,
+  "unauthorized_drift": false,
+  "verdict": "NO UNAUTHORIZED DRIFT"
+}
