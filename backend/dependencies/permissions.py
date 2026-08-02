@@ -177,6 +177,9 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     # Reports
     "reports.view": ["admin", "manager", "sales"],
     "reports.view_profit": ["admin", "manager"],
+    # Standard internal cost policies are management data, never operator data.
+    "actual_cost_policy.manage": ["admin", "manager"],
+    "execution.job_close": ["admin", "manager"],
 
     # Settings
     "settings.view": ["admin"],

@@ -41,3 +41,10 @@ class StockMovement(Base):
     reason = Column(String, nullable=True)
     idempotency_key = Column(String, nullable=False, unique=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)
+    # Frozen at the actual stock movement. A reservation or planned BOM is not actual cost.
+    unit_cost_snapshot = Column(Float, nullable=True)
+    currency_snapshot = Column(String, nullable=True)
+    valuation_method = Column(String, nullable=True)
+    valuation_provenance = Column(String, nullable=True)
+    extended_cost_snapshot = Column(Float, nullable=True)
+    price_history_id_snapshot = Column(Integer, nullable=True)

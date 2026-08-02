@@ -27,6 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.execution_reality import ExecutionReality
 from models.inventory_materials import Inventory_materials
+from models.inventory_material_price_history import Inventory_material_price_history
 from models.stock_movements import StockMovement
 from services.inventory_material_eligibility import is_stock_operational_material
 
@@ -435,6 +436,20 @@ class InventoryDeductionService:
             inv_mat.stock_current = new_stock
 
             # Create stock movement record
+            price_history = (
+                await self.db.execute(
+                    select(Inventory_material_price_history)
+                    .where(Inventory_material_price_history.material_id == mat_id_int)
+                    .order_by(Inventory_material_price_history.changed_at.desc())
+                    .limit(1)
+                )
+            ).scalar_one_or_none()
+            unit_cost_snapshot = (
+                price_history.unit_cost if price_history and price_history.unit_cost is not None else inv_mat.unit_cost
+            )
+            currency_snapshot = (
+                price_history.currency if price_history and price_history.currency else inv_mat.currency
+            )
             movement = StockMovement(
                 material_id=mat_id_int,
                 source_type="execution_reality",
@@ -450,6 +465,18 @@ class InventoryDeductionService:
                 performed_at=now,
                 reason=reason or "Deducere stoc din ExecutionReality",
                 idempotency_key=idem_key,
+                unit_cost_snapshot=unit_cost_snapshot,
+                currency_snapshot=currency_snapshot,
+                valuation_method="inventory_unit_cost_at_movement" if unit_cost_snapshot is not None else None,
+                valuation_provenance=(
+                    "inventory_material_price_history" if price_history and price_history.unit_cost is not None
+                    else "inventory_materials.unit_cost" if unit_cost_snapshot is not None else None
+                ),
+                extended_cost_snapshot=(
+                    round(quantity_float * float(unit_cost_snapshot), 4)
+                    if unit_cost_snapshot is not None else None
+                ),
+                price_history_id_snapshot=price_history.id if price_history and price_history.unit_cost is not None else None,
             )
             self.db.add(movement)
 

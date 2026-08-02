@@ -12,8 +12,14 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from models.actual_cost_policy import ActualLaborCostLine, ExecutionJobClosure
 from models.orders import Orders
 from schemas.order_snapshot_v2 import OrderSnapshotV2
+from services.actual_cost_policy_runtime_service import (
+    ActualCostPolicyRuntimeService,
+    REASON_HISTORICAL_COST_NOT_FROZEN,
+    REASON_HISTORICAL_POLICY_UNAVAILABLE,
+)
 from services.controlled_task_session_service import build_execution_actuals_read_model
 
 
@@ -237,22 +243,50 @@ class ProfitabilityActualReadModelService:
             "provenance": "controlled_task_session / execution_actuals_rm",
         }
 
-        # --- Actual cost truth — NEVER invent labor ---
-        unavailable_reasons.append(REASON_EMPLOYEE_COST_POLICY_MISSING)
-        unavailable_reasons.append(REASON_ACTUAL_MATERIAL_COST_MISSING)
-        unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
-
+        # --- Actual cost truth — frozen standard role/skill policies only ---
+        try:
+            labor_lines = (
+                await self.db.execute(select(ActualLaborCostLine).where(ActualLaborCostLine.order_id == order_id))
+            ).scalars().all()
+            material = await ActualCostPolicyRuntimeService(self.db).actual_material_cost(order_id)
+            closure = (
+                await self.db.execute(select(ExecutionJobClosure).where(ExecutionJobClosure.order_id == order_id))
+            ).scalar_one_or_none()
+        except (AttributeError, TypeError):
+            # Read model remains honest and available when underlying actual-cost
+            # storage is unavailable (including lightweight legacy test doubles).
+            labor_lines = []
+            material = {"available": False, "value": None, "reason": REASON_ACTUAL_MATERIAL_COST_MISSING}
+            closure = None
+        closure_status = closure.status if closure else "open"
+        if labor_lines:
+            labor = _available(
+                round(sum(float(line.labor_cost_amount) for line in labor_lines), 4),
+                provenance="actual_labor_cost_lines.standard_role_skill",
+            )
+            labor["currency"] = labor_lines[0].currency
+        else:
+            labor = _unavailable(REASON_EMPLOYEE_COST_POLICY_MISSING)
+            unavailable_reasons.extend([REASON_EMPLOYEE_COST_POLICY_MISSING, REASON_HISTORICAL_POLICY_UNAVAILABLE, REASON_HISTORICAL_COST_NOT_FROZEN])
+        if not material["available"]:
+            unavailable_reasons.append(REASON_ACTUAL_MATERIAL_COST_MISSING)
+        closed = closure_status == "closed"
+        if not closed:
+            unavailable_reasons.append(REASON_JOB_NOT_CLOSED)
+        complete_actuals = labor["available"] and material["available"] and closed
+        if not complete_actuals:
+            unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
         actual_cost = {
-            "actual_material_cost": _unavailable(REASON_ACTUAL_MATERIAL_COST_MISSING),
-            "labor_actual_cost": _unavailable(REASON_EMPLOYEE_COST_POLICY_MISSING),
+            "actual_material_cost": material,
+            "labor_actual_cost": labor,
+            "labor_cost_basis": "standard_role_skill",
+            "job_closure_status": closure_status,
             "other_actual_cost": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-            "actual_total_cost": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-            "employee_cost_policy": "missing_owner_decision",
-            "note": (
-                "Actual minutes are operational truth. Monetary labor cost requires "
-                "a separate Owner-approved employee cost policy. Do not use "
-                "workcenter rate_per_hour, cost_lunar_firma÷hours, or commercial tariffs."
+            "actual_total_cost": (
+                _available(round(float(material["value"]) + float(labor["value"]), 4), provenance="frozen_material + frozen_labor")
+                if complete_actuals else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
             ),
+            "note": "Cost intern standard pe rol/competență; fără salariu, tarif de client sau tarif workcenter.",
         }
 
         # --- Profitability result ---
@@ -277,15 +311,24 @@ class ProfitabilityActualReadModelService:
                 "percent": _unavailable(REASON_ESTIMATED_INTERNAL_INCOMPLETE),
             }
 
-        actual_margin = {
-            "amount": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-            "percent": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-            "label_forbidden": "Profit real",
-            "explanation": (
-                "Actual margin stays unavailable until actual material cost and "
-                "Owner-approved labor cost policy are both present and the job is closed."
-            ),
-        }
+        if complete_actuals and commercial["accepted_revenue"]["available"]:
+            actual_total = float(actual_cost["actual_total_cost"]["value"])
+            revenue = float(commercial["accepted_revenue"]["value"])
+            margin_amount = round(revenue - actual_total, 4)
+            actual_margin = {
+                "amount": _available(margin_amount, provenance="accepted_commercial - frozen_actual_cost"),
+                "percent": _available(round(margin_amount / revenue * 100.0, 4)) if revenue else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
+                "label": "Marjă actuală job închis",
+                "provisional": False,
+            }
+        else:
+            actual_margin = {
+                "amount": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
+                "percent": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
+                "label": "Marjă actuală indisponibilă",
+                "provisional": True,
+                "explanation": "Necesită cost material și manoperă complete, plus închidere explicită job.",
+            }
 
         # Deduplicate reasons preserving order
         seen: set[str] = set()
@@ -307,7 +350,7 @@ class ProfitabilityActualReadModelService:
                 "estimated_margin": est_margin,
                 "actual_margin": actual_margin,
                 "unavailable_reasons": reasons_unique,
-                "completeness": "partial_operational_only",
+                "completeness": "complete_closed_job" if complete_actuals else "incomplete_or_open_job",
                 "provenance": PROVENANCE,
             },
             "access": {

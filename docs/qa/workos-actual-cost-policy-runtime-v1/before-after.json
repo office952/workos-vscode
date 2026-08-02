@@ -1,0 +1,9 @@
+﻿{
+  "order_id": 973019,
+  "baseline_snapshot_v2_sha256_before": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+  "baseline_snapshot_v2_sha256_after": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+  "baseline": "commercial snapshot unchanged; read-only baseline capture",
+  "actual_cost": "unavailable",
+  "reasons": ["historical_policy_unavailable", "historical_cost_not_frozen"]
+}
+

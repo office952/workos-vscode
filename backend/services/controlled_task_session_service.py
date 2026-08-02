@@ -239,6 +239,8 @@ async def start_controlled_task_session(
                 "actor_mode": actor_mode,
                 "actor_user_id": actor_user_id,
                 "execution_plan_id": plan.id,
+                # V1 policy eligibility is explicit. Historical sessions remain unvalued.
+                "actual_cost_policy_runtime_v1": True,
             },
         )
     except RealityInputError as exc:

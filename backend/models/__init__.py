@@ -3,6 +3,7 @@
 # BEFORE `Base.metadata.create_all(...)` runs at startup. Missing imports =
 # missing tables in the database.
 from models import auth  # noqa: F401
+from models import actual_cost_policy  # noqa: F401
 from models import clients  # noqa: F401
 from models import cost_engine_config  # noqa: F401
 from models import company_commercial_settings  # noqa: F401
