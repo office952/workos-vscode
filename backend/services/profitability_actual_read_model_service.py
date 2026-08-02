@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.actual_cost_policy import ActualLaborCostLine, ExecutionJobClosure
+from models.execution_plan import ExecutionPlan
 from models.orders import Orders
 from schemas.order_snapshot_v2 import OrderSnapshotV2
 from services.actual_cost_policy_runtime_service import (
@@ -70,6 +71,25 @@ class ProfitabilityActualReadModelService:
         if row is None:
             raise OrderNotFoundError(str(order_id))
         return row
+
+    async def _load_plan_tasks(self, order_id: int) -> list[dict[str, Any]]:
+        """Plan tasks may declare machine applicability before usage is captured."""
+        plan = (
+            await self.db.execute(
+                select(ExecutionPlan).where(ExecutionPlan.order_id == order_id)
+            )
+        ).scalar_one_or_none()
+        if plan is None or plan.tasks_json in (None, ""):
+            return []
+        try:
+            data = (
+                json.loads(plan.tasks_json)
+                if isinstance(plan.tasks_json, str)
+                else plan.tasks_json
+            )
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return []
+        return [t for t in data if isinstance(t, dict)] if isinstance(data, list) else []
 
     @staticmethod
     def _machine_cost_category(tasks: list[dict[str, Any]]) -> dict[str, Any]:
@@ -329,7 +349,8 @@ class ProfitabilityActualReadModelService:
         if not closed:
             unavailable_reasons.append(REASON_JOB_NOT_CLOSED)
 
-        machine_category = self._machine_cost_category(tasks)
+        plan_tasks = await self._load_plan_tasks(order_id)
+        machine_category = self._machine_cost_category([*tasks, *plan_tasks])
         other_direct_category = {
             "applicability": "not_applicable",
             "status": "not_applicable",

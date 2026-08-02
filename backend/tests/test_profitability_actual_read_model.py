@@ -72,6 +72,7 @@ async def test_missing_labor_and_materials_not_zero(monkeypatch):
             }
         ),
     )
+    monkeypatch.setattr(service, "_load_plan_tasks", AsyncMock(return_value=[]))
 
     model = await service.build(973019)
     assert model["actual_operational_truth"]["actual_duration_minutes"]["value"] == 40.0
