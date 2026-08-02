@@ -1,15 +1,15 @@
-# WorkOS desktop application scorecard — Wave 4 audit
+﻿# WorkOS desktop application scorecard â€” Wave 4 audit
 
-Date: 2026-08-02  
-Track: U4A (read-only audit)  
-Scope: AppShell desktop routes only; Employee Mobile standalone routes excluded.  
+Date: 2026-08-02
+Track: U4A (read-only audit)
+Scope: AppShell desktop routes only; Employee Mobile standalone routes excluded.
 Baseline: `10fca47801d3f672f0fd0811c9510550c33c8602`
 
 ## Method and scale
 
 Scores separately assess visual readiness (V) and functional readiness (F), not business completion. `0` is broken/not a product route, `1` is unsafe or lab-only, `2` is partial/expert-only, `3` is usable with material debt, `4` is solid for its intended role, and `5` is production-ready. No route earned 5: the available evidence does not support that claim.
 
-Evidence is code at the stated baseline plus Wave 0–3 reports, the full-route baseline, F3/U3 hardening, and actual-cost/profitability reports. Runtime was not recaptured: the most recent U3 runtime was blocked by incompatible API identity, so console health below is historical evidence rather than a fresh claim.
+Evidence is code at the stated baseline plus Wave 0â€“3 reports, the full-route baseline, F3/U3 hardening, and actual-cost/profitability reports. Runtime was not recaptured: the most recent U3 runtime was blocked by incompatible API identity, so console health below is historical evidence rather than a fresh claim.
 
 ## Scores by route family
 
@@ -33,7 +33,7 @@ Evidence is code at the stated baseline plus Wave 0–3 reports, the full-route 
 | `/quotes`, `/quotes/:quoteId` | 4 | 3 | Commercial flow and backend gates preserved; list-card amount versus KPI mismatch remains a trust problem. |
 | `/orders`, `/orders/:orderId` | 4 | 3 | Clear accepted-commercial-to-execution hand-off; deep detail coverage is incomplete. |
 | `/clients`, `/clients/:clientName` | 3 | 2 | List is usable; no audited navigable path to workspace detail. |
-| `/documents` | 2 | 2 | Functional surface exists, but “Document Center” conflicts with Romanian IA. |
+| `/documents` | 2 | 2 | Functional surface exists, but â€œDocument Centerâ€ conflicts with Romanian IA. |
 | `/inventory` | 3 | 3 | Operational registry is usable; stock truth remains a protected, non-commercial source. |
 | `/inventory/pricing` and pricing aliases | 3 | 2 | U3 clarifies ownership, but the pre-existing maximum-update-depth test failure and pricing complexity prevent a stronger score. |
 | `/utilaje` | 3 | 3 | Capacity/feasibility vocabulary is clearer; interior registry/diagnostic styling remains. |
@@ -43,7 +43,7 @@ Evidence is code at the stated baseline plus Wave 0–3 reports, the full-route 
 | `/attendance`, `/attendance/effects` | 3 | 3 | Usable HR workflow; secondary effects is not a broad role surface. |
 | `/employee-payments`, `/employee-advances` | 2 | 3 | Sensitive workflows work by evidence, but high-risk content needs stronger role and visual isolation. |
 | `/modules`, `/governance`, `/settings` | 2 / 2 / 3 | Admin reference surfaces; settings is the clearest operator-admin destination. |
-| `/demo/*`, Product System legacy aliases, redirects | 1–2 | n/a–2 | Retain only as explicitly labelled DEV/legacy paths; they must not be product peers. |
+| `/demo/*`, Product System legacy aliases, redirects | 1â€“2 | n/aâ€“2 | Retain only as explicitly labelled DEV/legacy paths; they must not be product peers. |
 
 ## Aggregate
 
