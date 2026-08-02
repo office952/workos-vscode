@@ -48,3 +48,5 @@ class StockMovement(Base):
     valuation_provenance = Column(String, nullable=True)
     extended_cost_snapshot = Column(Float, nullable=True)
     price_history_id_snapshot = Column(Integer, nullable=True)
+    # RETURN must point at the original ISSUE/consumption; never invent valuation.
+    reverses_movement_id = Column(Integer, nullable=True, index=True)

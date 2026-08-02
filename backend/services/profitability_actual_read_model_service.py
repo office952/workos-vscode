@@ -278,10 +278,32 @@ class ProfitabilityActualReadModelService:
         complete_actuals = labor["available"] and material["available"] and closed
         if not complete_actuals:
             unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+        material_cost_status = (
+            material.get("material_cost_status")
+            or ("complete" if material.get("available") else "incomplete")
+        )
+        material_valuation_status = (
+            material.get("material_valuation_status")
+            or ("frozen" if material.get("available") else "unavailable")
+        )
+        if complete_actuals:
+            actual_cost_status = "closed_job_operational_actual"
+            actual_margin_status = "closed_job_operational_actual"
+        elif labor["available"] or material.get("available"):
+            actual_cost_status = "provisional_operational"
+            actual_margin_status = "unavailable"
+        else:
+            actual_cost_status = "unavailable"
+            actual_margin_status = "unavailable"
         actual_cost = {
             "actual_material_cost": material,
             "labor_actual_cost": labor,
             "labor_cost_basis": "standard_role_skill",
+            "labor_cost_status": "complete" if labor["available"] else "incomplete",
+            "material_cost_status": material_cost_status,
+            "material_valuation_status": material_valuation_status,
+            "execution_closure_status": closure_status,
+            "actual_cost_status": actual_cost_status,
             "job_closure_status": closure_status,
             "other_actual_cost": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
             "actual_total_cost": (
@@ -322,6 +344,7 @@ class ProfitabilityActualReadModelService:
                 "percent": _available(round(margin_amount / revenue * 100.0, 4)) if revenue else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
                 "label": "Marjă actuală job închis",
                 "provisional": False,
+                "actual_margin_status": actual_margin_status,
             }
         else:
             actual_margin = {
@@ -329,6 +352,7 @@ class ProfitabilityActualReadModelService:
                 "percent": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
                 "label": "Marjă actuală indisponibilă",
                 "provisional": True,
+                "actual_margin_status": actual_margin_status,
                 "explanation": "Necesită cost material și manoperă complete, plus închidere explicită job.",
             }
 

@@ -140,6 +140,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "inventory.deduct_stock": ["admin", "manager"],
     "inventory.adjust_stock": ["admin", "manager"],
     "inventory.view_movements": ["admin", "manager", "operator"],
+    "inventory.material_actual.write": ["admin", "manager"],
+    "inventory.material_actual.read_valuation": ["admin", "manager"],
 
     # Product Blueprint Dossier
     "dossier.create": ["admin", "manager"],

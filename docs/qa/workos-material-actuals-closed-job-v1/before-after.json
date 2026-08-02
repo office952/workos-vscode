@@ -1,0 +1,14 @@
+{
+  "before": {
+    "material_actual_source": "consumption sum only",
+    "return_semantics": "absent",
+    "closure_material_gate": "absent",
+    "closed_job_fixture": "absent"
+  },
+  "after": {
+    "material_actual_source": "consumption + scrap - linked returns with frozen valuation",
+    "return_semantics": "reverses_movement_id required",
+    "closure_material_gate": "ready requires labor+material frozen",
+    "closed_job_fixture": "order_id 880041 suite PASS"
+  }
+}

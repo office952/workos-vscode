@@ -24,9 +24,14 @@ from models.actual_cost_policy import (
 from models.employees import Employees
 from models.execution_plan import ExecutionPlan
 from models.execution_reality import ExecutionReality
-from models.stock_movements import StockMovement
 from services.controlled_task_session_service import _parse_reality_tasks
 from services.execution_plan_task_parser import operational_tasks_only
+from services.material_actuals_service import (
+    REASON_MATERIAL_MOVEMENT_MISSING,
+    REASON_MATERIAL_VALUATION_UNAVAILABLE,
+    REASON_RETURN_UNRESOLVED,
+    MaterialActualsService,
+)
 from services.task_work_session_service import ensure_session_id, is_session_active
 
 REASON_MISSING_POLICY = "standard_role_skill_policy_unavailable"
@@ -36,6 +41,7 @@ REASON_POLICY_BOUNDARY_CROSSING = "policy_boundary_crossing_unsupported"
 REASON_ACTIVE_SESSION = "active_session_open"
 REASON_INCOMPLETE_TASKS = "required_tasks_incomplete"
 REASON_MATERIAL_COST_MISSING = "actual_material_cost_missing"
+REASON_LABOR_COST_INCOMPLETE = "actual_labor_cost_incomplete"
 REASON_JOB_NOT_CLOSED = "job_not_closed"
 
 
@@ -221,26 +227,27 @@ class ActualCostPolicyRuntimeService:
         return {"created": created, "existing": existing, "unavailable_reasons": sorted(set(reasons))}
 
     async def actual_material_cost(self, order_id: int) -> dict[str, Any]:
-        movements = (
-            await self.db.execute(
-                select(StockMovement).where(
-                    StockMovement.order_id == order_id,
-                    StockMovement.movement_type == "consumption",
-                )
-            )
-        ).scalars().all()
-        if not movements:
-            return {"available": False, "value": None, "reason": REASON_MATERIAL_COST_MISSING}
-        if any(m.extended_cost_snapshot is None for m in movements):
-            return {"available": False, "value": None, "reason": REASON_MATERIAL_COST_MISSING}
-        currencies = {m.currency_snapshot for m in movements}
-        if len(currencies) != 1 or None in currencies:
-            return {"available": False, "value": None, "reason": REASON_MATERIAL_COST_MISSING}
+        basis = await MaterialActualsService(self.db).material_actual_basis(order_id)
+        if not basis["available"]:
+            reason = basis.get("reason") or REASON_MATERIAL_COST_MISSING
+            # Preserve F3 reason code for empty movements; expose valuation/return codes otherwise.
+            if reason == REASON_MATERIAL_MOVEMENT_MISSING:
+                reason = REASON_MATERIAL_COST_MISSING
+            return {
+                "available": False,
+                "value": None,
+                "reason": reason,
+                "material_cost_status": basis.get("material_cost_status"),
+                "material_valuation_status": basis.get("material_valuation_status"),
+            }
         return {
             "available": True,
-            "value": round(sum(float(m.extended_cost_snapshot) for m in movements), 4),
-            "currency": currencies.pop(),
+            "value": basis["value"],
+            "currency": basis.get("currency"),
             "reason": None,
+            "material_cost_status": basis.get("material_cost_status"),
+            "material_valuation_status": basis.get("material_valuation_status"),
+            "provenance": basis.get("provenance"),
         }
 
     async def closure_readiness(self, order_id: int) -> dict[str, Any]:
@@ -259,7 +266,36 @@ class ActualCostPolicyRuntimeService:
         required = {str(task.get("task_id") or "") for task in operational_tasks_only(plan.tasks_json)}
         if not required or not required.issubset(task_ids):
             return {"ready": False, "reason": REASON_INCOMPLETE_TASKS}
-        return {"ready": True, "reason": None}
+
+        labor_lines = (
+            await self.db.execute(
+                select(ActualLaborCostLine).where(ActualLaborCostLine.order_id == order_id)
+            )
+        ).scalars().all()
+        if not labor_lines:
+            return {"ready": False, "reason": REASON_LABOR_COST_INCOMPLETE}
+
+        material = await self.actual_material_cost(order_id)
+        if not material["available"]:
+            reason = material.get("reason") or REASON_MATERIAL_COST_MISSING
+            if reason == REASON_MATERIAL_VALUATION_UNAVAILABLE:
+                return {"ready": False, "reason": REASON_MATERIAL_VALUATION_UNAVAILABLE}
+            if reason == REASON_RETURN_UNRESOLVED:
+                return {"ready": False, "reason": REASON_RETURN_UNRESOLVED}
+            return {"ready": False, "reason": REASON_MATERIAL_COST_MISSING}
+
+        return {
+            "ready": True,
+            "reason": None,
+            "checklist": {
+                "required_material_movements_finalized": True,
+                "all_valued_movements_frozen": True,
+                "returns_resolved": True,
+                "labor_actual_frozen": True,
+                "no_active_sessions": True,
+                "required_tasks_terminal": True,
+            },
+        }
 
     async def close_job(self, order_id: int, actor_id: str, checklist: dict[str, Any]) -> ExecutionJobClosure:
         readiness = await self.closure_readiness(order_id)
@@ -270,10 +306,17 @@ class ActualCostPolicyRuntimeService:
         closure = (
             await self.db.execute(select(ExecutionJobClosure).where(ExecutionJobClosure.order_id == order_id))
         ).scalar_one_or_none() or ExecutionJobClosure(order_id=order_id)
+        # Repeated close is idempotent when already closed.
+        if closure.status == "closed":
+            return closure
         closure.status = "closed"
         closure.closed_at = _utc_now()
         closure.closed_by = actor_id
-        closure.checklist_json = json.dumps(checklist, ensure_ascii=False)
+        merged_checklist = {
+            **(readiness.get("checklist") or {}),
+            **checklist,
+        }
+        closure.checklist_json = json.dumps(merged_checklist, ensure_ascii=False)
         self.db.add(closure)
         self.db.add(ExecutionJobClosureEvent(order_id=order_id, event_type="closed", actor_id=actor_id, checklist_json=closure.checklist_json))
         await self.db.flush()
