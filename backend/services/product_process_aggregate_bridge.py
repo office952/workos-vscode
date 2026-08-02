@@ -25,6 +25,7 @@ from services.product_process_resolve_input_adapter import (
     build_resolve_input_from_active_config,
     template_has_modular_process_contract,
 )
+from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 from services.product_process_resolver_service import (
     resolve_product_process_graph,
     resolved_graph_to_aggregate_task_rules,
@@ -157,15 +158,96 @@ def _logo_segment_rules(aggregate: ProductAggregate) -> list[ProductAggregateTas
     return out
 
 
+# Module ops are aggregate aliases of parent priced ops (DEC-003 / DEC-004).
+# Keys normalized uppercase for lookup.
+_MODULE_ALIAS_TO_PARENT: dict[str, str] = {
+    "RETURN_PROFILE_FACE_BONDING": "return_face_bonding",
+    "RETURN_PROFILE_MACHINE_FORMING": "side_forming",
+    "PAINTING": "painting",
+}
+
+
+def _alias_parent_for(name_or_priced: str) -> str | None:
+    """Return parent priced op when *name_or_priced* is a module alias token.
+
+    Canonical parents (e.g. ``painting``) must not resolve as aliases of themselves
+    just because ``painting``.upper() == ``PAINTING``.
+    """
+    raw = str(name_or_priced or "").strip()
+    if not raw:
+        return None
+    # Alias tokens are the uppercase module forms (or exact map keys).
+    if raw in _MODULE_ALIAS_TO_PARENT:
+        return _MODULE_ALIAS_TO_PARENT[raw]
+    if raw.upper() == raw and raw in _MODULE_ALIAS_TO_PARENT:
+        return _MODULE_ALIAS_TO_PARENT[raw]
+    # Lower/mixed-case module names like return_profile_face_bonding.
+    upper = raw.upper()
+    parent = _MODULE_ALIAS_TO_PARENT.get(upper)
+    if parent is None:
+        return None
+    if raw.lower() == parent.lower():
+        return None
+    return parent
+
+
+def _collapse_operational_alias_rules(
+    rules: list[ProductAggregateTaskRule],
+) -> list[ProductAggregateTaskRule]:
+    """Drop module RETURN/PAINTING aliases when the parent priced op already exists.
+
+    Distinct process codes that share a priced_operation mapping (e.g. multiple
+    electrical_letters steps) are NOT collapsed — they are different work.
+    """
+    parent_ops = {
+        str(r.priced_operation or "").strip().lower()
+        for r in rules
+        if (r.priced_operation or "").strip()
+        and str(r.priced_operation).strip() not in _MODULE_ALIAS_TO_PARENT
+        and str(r.task_name or "").strip() not in _MODULE_ALIAS_TO_PARENT
+    }
+    collapsed: list[ProductAggregateTaskRule] = []
+    for rule in rules:
+        name = str(rule.task_name or "").strip()
+        priced = str(rule.priced_operation or "").strip()
+        alias_parent = _alias_parent_for(name) or _alias_parent_for(priced)
+        if alias_parent and alias_parent.lower() in parent_ops:
+            # Alias only — do not emit a second operational task for the same work.
+            continue
+        if alias_parent and alias_parent.lower() not in parent_ops:
+            # Promote alias to parent identity when parent rule absent.
+            rule = rule.model_copy(
+                update={
+                    "task_name": alias_parent,
+                    "priced_operation": alias_parent,
+                    "trigger_condition": (
+                        f"{rule.trigger_condition}|alias_promoted_from={name or priced}"
+                        if rule.trigger_condition
+                        else f"alias_promoted_from={name or priced}"
+                    ),
+                }
+            )
+        collapsed.append(rule)
+    return collapsed
+
+
 def _rules_from_resolved(graph: ResolvedProductProcessGraph) -> list[ProductAggregateTaskRule]:
     raw = resolved_graph_to_aggregate_task_rules(graph)
     rules: list[ProductAggregateTaskRule] = []
     for row in raw:
+        priced = row.get("priced_operation")
+        priced_s = str(priced).strip() if priced else ""
+        canonical = (
+            resolve_canonical_task_type(process_id=priced_s, legacy_type="")
+            if priced_s
+            else None
+        )
         rules.append(
             ProductAggregateTaskRule(
                 task_name=str(row.get("task_name") or ""),
-                task_type=row.get("task_type"),
-                priced_operation=row.get("priced_operation"),
+                # Prefer EP-canonical type from priced op; avoid bare "process".
+                task_type=canonical or row.get("task_type"),
+                priced_operation=priced_s or None,
                 sequence=row.get("sequence"),
                 trigger_condition=row.get("trigger_condition"),
                 provenance="derived",
@@ -257,22 +339,34 @@ def apply_modular_process_graph_to_aggregate(
 
     hard_blocked = graph.readiness == "blocked" or bool(map_blockers)
     if hard_blocked:
+        # Keep dossier letters rules (pre-bridge) instead of clearing to [].
+        # Empty task_rules caused blocked_missing_task_rules on EP V2 preview.
+        dossier_letters = [
+            r
+            for r in aggregate.task_contract.task_rules
+            if not str(r.trigger_condition or "").startswith("linked_segment:")
+        ]
+        dossier_letters = _collapse_operational_alias_rules(dossier_letters)
+        fallback = list(dossier_letters) + list(logo_rules)
         logger.info(
-            "process_bridge_blocked template=%s blockers=%s",
+            "process_bridge_blocked template=%s blockers=%s dossier_fallback_rules=%s",
             aggregate.template_code,
             [b.code for b in graph.blockers] + map_blockers,
+            len(dossier_letters),
         )
         notes = [
             "process_graph_source=modular_resolver",
             "process_graph_status=blocked",
             f"contract_version={graph.contract_version}",
             f"graph_hash={graph.graph_hash}",
-            "letters_task_rules_cleared_on_block; logo linked_segment rules preserved",
+            "letters_task_rules_dossier_fallback_on_block",
+            f"dossier_fallback_rule_count={len(dossier_letters)}",
+            "logo linked_segment rules preserved",
         ]
         return aggregate.model_copy(
             update={
                 "task_contract": ProductAggregateTaskContract(
-                    task_rules=list(logo_rules),
+                    task_rules=fallback,
                     notes=notes,
                     process_graph_source=PROCESS_GRAPH_SOURCE_MODULAR,
                     process_graph_hash=graph.graph_hash,
@@ -283,7 +377,7 @@ def apply_modular_process_graph_to_aggregate(
             }
         )
 
-    modular_rules = _rules_from_resolved(graph)
+    modular_rules = _collapse_operational_alias_rules(_rules_from_resolved(graph))
     # Single letters graph — no dossier concat
     combined = list(modular_rules) + list(logo_rules)
     notes = [

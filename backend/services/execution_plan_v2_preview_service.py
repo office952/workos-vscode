@@ -48,6 +48,11 @@ from services.execution_plan_v2_frozen_task_identity_service import (
     mark_shared_operations,
 )
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
+from services.product_process_aggregate_bridge import _alias_parent_for
+from services.task_dependency_rules_service import (
+    PREPARATION_DEPENDENCY_RULES,
+    PROCESS_DEPENDENCY_RULES,
+)
 
 FORBIDDEN_IMPORT_SUBSTRINGS = (
     "quote_orchestrator",
@@ -147,6 +152,25 @@ def _is_readiness_gate_rule(rule: ProductAggregateTaskRule) -> bool:
     return task_type == READINESS_GATE_TASK_TYPE
 
 
+def _is_non_operational_rule(rule: ProductAggregateTaskRule) -> bool:
+    """Explicit non-operational classification (DEC task-contract / analyzer boundary)."""
+    if _is_readiness_gate_rule(rule):
+        return True
+    try:
+        from data.product_process.catalogs import NON_OPERATIONAL_PROCESS_CODES
+    except Exception:
+        NON_OPERATIONAL_PROCESS_CODES = frozenset()
+    for raw in (
+        rule.process_code,
+        rule.task_name,
+        rule.priced_operation,
+    ):
+        code = str(raw or "").strip().upper()
+        if code and code in NON_OPERATIONAL_PROCESS_CODES:
+            return True
+    return False
+
+
 def _blocked_preview(
     *,
     status: ExecutionPlanV2PreviewStatus,
@@ -177,11 +201,82 @@ def _operation_role_index(
     return {role.operation_code: role for role in product_definition.operation_roles}
 
 
+def _finish_context_from_product_definition(
+    product_definition: ProductDefinitionPreview,
+) -> dict[str, str]:
+    """Extract finish signals for conditional painting / vinyl task inclusion."""
+    bags = (
+        product_definition.canonical_values or {},
+        product_definition.geometry_inputs or {},
+    )
+    out: dict[str, str] = {}
+    for bag in bags:
+        if not isinstance(bag, dict):
+            continue
+        for key in (
+            "face_finish_type",
+            "paint_ral_code",
+            "return_finish_type",
+            "cant_finish_type",
+            "finish_type",
+        ):
+            val = bag.get(key)
+            if val is not None and str(val).strip() and key not in out:
+                out[key] = str(val).strip().lower()
+    return out
+
+
+def _finish_allows_priced_op(priced_op: str, finish: dict[str, str]) -> bool:
+    """Finish-aware gate for painting vs vinyl (DEC-007 conditional finishes).
+
+    When no finish signals exist on the frozen ProductDefinition, do not invent
+    exclusions (legacy snapshots keep dossier rules as-is).
+    """
+    op = (priced_op or "").strip().lower()
+    if op not in {"painting", "vinyl_application"}:
+        return True
+    if not finish:
+        return True
+
+    face = finish.get("face_finish_type") or finish.get("finish_type") or ""
+    paint = finish.get("paint_ral_code") or ""
+    return_finish = finish.get("return_finish_type") or finish.get("cant_finish_type") or ""
+
+    is_paint_finish = bool(paint) or "paint" in face or "ral" in face or return_finish == "paint"
+    is_vinyl_finish = any(
+        token in face or token in return_finish
+        for token in ("vinyl", "oracal", "foil", "folie")
+    )
+    is_none = face in {"none", "stock", "stock_color"} and not paint and not is_vinyl_finish
+
+    if op == "painting":
+        if is_vinyl_finish and not is_paint_finish:
+            return False
+        if is_none:
+            return False
+        return True
+    # vinyl_application
+    if is_paint_finish and not is_vinyl_finish:
+        return False
+    if is_none or face == "none":
+        return False
+    if is_vinyl_finish:
+        return True
+    # Explicit non-vinyl face without paint signal → exclude vinyl.
+    if face and not is_vinyl_finish:
+        return False
+    return True
+
+
 def _should_include_task_rule(
     rule: ProductAggregateTaskRule,
     *,
     owner_decision_codes: set[str],
+    finish_context: dict[str, str] | None = None,
 ) -> bool:
+    priced = (rule.priced_operation or "").strip().lower()
+    if finish_context is not None and not _finish_allows_priced_op(priced, finish_context):
+        return False
     trigger = (rule.trigger_condition or "").strip()
     if not trigger:
         return True
@@ -252,9 +347,11 @@ def _build_planned_tasks(
     op_by_code = {
         str(op.operation_code or "").strip().lower(): op for op in aggregate.operations
     }
+    finish_context = _finish_context_from_product_definition(product_definition)
     tasks: list[PlannedTaskPreview] = []
     blockers: list[str] = []
     readiness_gate_excluded = False
+    rules_by_task_key: dict[str, Any] = {}
 
     effective_rules = collect_effective_task_rules(
         aggregate,
@@ -264,17 +361,36 @@ def _build_planned_tasks(
 
     for effective in effective_rules:
         rule = effective.rule
-        if _is_readiness_gate_rule(rule):
+        if _is_non_operational_rule(rule):
             readiness_gate_excluded = True
             continue
-        if not _should_include_task_rule(rule, owner_decision_codes=owner_decision_codes):
+        if not _should_include_task_rule(
+            rule,
+            owner_decision_codes=owner_decision_codes,
+            finish_context=finish_context,
+        ):
             continue
         if not include_task_rule_for_sold_scope(rule, ctx=sold_scope):
             continue
 
+        # DEC-003 / DEC-004 — skip module alias rules when parent priced op already planned.
+        alias_parent = _alias_parent_for(rule.task_name or "") or _alias_parent_for(
+            rule.priced_operation or ""
+        )
+        if alias_parent:
+            parent_priced = {
+                str(r.rule.priced_operation or "").strip().lower()
+                for r in effective_rules
+                if str(r.rule.priced_operation or "").strip()
+            }
+            if alias_parent.lower() in parent_priced:
+                continue
+
         canonical = _resolve_canonical_type(rule)
         if canonical is None or canonical not in CANONICAL_TASK_TYPES:
-            blockers.append(f"unknown_task_type:{rule.task_name}")
+            blockers.append(
+                f"unknown_task_type:{rule.process_code or rule.task_name}"
+            )
             continue
 
         priced_op = (rule.priced_operation or "").strip()
@@ -335,6 +451,7 @@ def _build_planned_tasks(
                 frozen_identity=frozen_identity,
             )
         )
+        rules_by_task_key[frozen_identity.deterministic_task_key] = rule
 
     frozen_identities = mark_shared_operations(frozen_identities)
     identity_by_key = {ident.deterministic_task_key: ident for ident in frozen_identities}
@@ -346,24 +463,106 @@ def _build_planned_tasks(
     tasks.sort(key=lambda item: (item.sequence_index if item.sequence_index is not None else 9999, item.task_key))
 
     unknown_blocker = next((b for b in blockers if b.startswith("unknown_task_type:")), None)
-    return tasks, blockers, unknown_blocker, readiness_gate_excluded
+    return tasks, blockers, unknown_blocker, readiness_gate_excluded, rules_by_task_key
 
 
-def _build_dependencies(tasks: list[PlannedTaskPreview]) -> list[PlannedTaskDependency]:
-    deps: list[PlannedTaskDependency] = []
+def _build_dependencies(
+    tasks: list[PlannedTaskPreview],
+    *,
+    rules_by_task_key: dict[str, Any] | None = None,
+) -> list[PlannedTaskDependency]:
+    """Prefer process-graph / priced-op dependency rules; never invent a linear chain when real edges exist."""
+    from collections import deque
+
     sorted_tasks = sorted(
         tasks,
-        key=lambda item: (item.sequence_index if item.sequence_index is not None else 9999, item.task_key),
+        key=lambda item: (
+            item.sequence_index if item.sequence_index is not None else 9999,
+            item.task_key,
+        ),
     )
-    prior_keys: list[str] = []
+    by_process: dict[str, str] = {}
+    by_task_name: dict[str, str] = {}
     for task in sorted_tasks:
-        if prior_keys:
-            immediate_prior = prior_keys[-1]
-            task.depends_on_task_keys = [immediate_prior]
-            deps.append(
-                PlannedTaskDependency(task_key=task.task_key, depends_on_task_key=immediate_prior)
+        if task.source_operation_code:
+            by_process[str(task.source_operation_code).strip().lower()] = task.task_key
+        if task.source_task_rule_code:
+            by_process[str(task.source_task_rule_code).strip()] = task.task_key
+            by_task_name[str(task.source_task_rule_code).strip()] = task.task_key
+            by_process[str(task.source_task_rule_code).strip().lower()] = task.task_key
+
+    rules_by_task_key = rules_by_task_key or {}
+    deps: list[PlannedTaskDependency] = []
+    has_real_deps = False
+
+    for task in sorted_tasks:
+        rule = rules_by_task_key.get(task.task_key)
+        dep_ids: list[str] = []
+        if rule is not None:
+            dep_ids = list(getattr(rule, "depends_on_process_ids", None) or [])
+        priced = str(task.source_operation_code or "").strip().lower()
+        # Catalog is fallback only — never merge on top of process-graph edges
+        # (merging qc→assembly over ATTACH→TEST_LED created cycles).
+        if not dep_ids and priced:
+            catalog = PROCESS_DEPENDENCY_RULES.get(priced) or PREPARATION_DEPENDENCY_RULES.get(
+                priced
             )
-        prior_keys.append(task.task_key)
+            if catalog:
+                dep_ids = list(catalog.get("depends_on_process_ids") or [])
+
+        resolved: list[str] = []
+        for dep in dep_ids:
+            key = by_process.get(str(dep)) or by_process.get(str(dep).lower()) or by_task_name.get(
+                str(dep)
+            )
+            if key and key != task.task_key and key not in resolved:
+                resolved.append(key)
+                has_real_deps = True
+
+        task.depends_on_task_keys = sorted(resolved)
+        for prior in task.depends_on_task_keys:
+            deps.append(PlannedTaskDependency(task_key=task.task_key, depends_on_task_key=prior))
+
+    if not has_real_deps and len(sorted_tasks) > 1:
+        # Legacy fallback only when no process/catalog edges resolved.
+        prior_keys: list[str] = []
+        deps = []
+        for task in sorted_tasks:
+            if prior_keys:
+                immediate_prior = prior_keys[-1]
+                task.depends_on_task_keys = [immediate_prior]
+                deps.append(
+                    PlannedTaskDependency(
+                        task_key=task.task_key, depends_on_task_key=immediate_prior
+                    )
+                )
+            else:
+                task.depends_on_task_keys = []
+            prior_keys.append(task.task_key)
+
+    # Cycle detection — fail closed by clearing cyclic edges (audit reports separately).
+    keys = [t.task_key for t in sorted_tasks]
+    indeg: dict[str, int] = {k: 0 for k in keys}
+    adj: dict[str, list[str]] = {k: [] for k in keys}
+    for d in deps:
+        if d.depends_on_task_key in adj and d.task_key in indeg:
+            adj[d.depends_on_task_key].append(d.task_key)
+            indeg[d.task_key] += 1
+    q = deque(sorted([k for k, deg in indeg.items() if deg == 0]))
+    seen = 0
+    while q:
+        n = q.popleft()
+        seen += 1
+        for nxt in sorted(adj.get(n) or []):
+            indeg[nxt] -= 1
+            if indeg[nxt] == 0:
+                q.append(nxt)
+    if seen != len(keys):
+        # Drop all edges rather than emit a cyclic graph into the plan.
+        for task in sorted_tasks:
+            task.depends_on_task_keys = []
+        return []
+
     return deps
 
 
@@ -470,12 +669,14 @@ def _build_preview_from_snapshot(
             message="ProductAggregate task_contract.task_rules are required for V2 preview.",
         )
 
-    tasks, task_blockers, unknown_blocker, readiness_gate_excluded = _build_planned_tasks(
-        snapshot,
-        aggregate,
-        product_definition,
-        owner_decision_codes=owner_codes,
-        sold_scope=sold_scope,
+    tasks, task_blockers, unknown_blocker, readiness_gate_excluded, rules_by_task_key = (
+        _build_planned_tasks(
+            snapshot,
+            aggregate,
+            product_definition,
+            owner_decision_codes=owner_codes,
+            sold_scope=sold_scope,
+        )
     )
     if unknown_blocker is not None:
         return ExecutionPlanV2Preview(
@@ -500,7 +701,7 @@ def _build_preview_from_snapshot(
         _operation_role_index(product_definition),
         sold_scope=sold_scope,
     )
-    dependencies = _build_dependencies(tasks)
+    dependencies = _build_dependencies(tasks, rules_by_task_key=rules_by_task_key)
     warnings: list[str] = []
     if any(task.estimated_minutes is None for task in tasks):
         warnings.append(PLANNING_MINUTES_WARNING)

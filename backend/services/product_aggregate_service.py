@@ -656,7 +656,7 @@ class ProductAggregateService:
         if isinstance(data, list):
             return [item for item in data if isinstance(item, dict)]
         if isinstance(data, dict):
-            for key in ("rules", "items"):
+            for key in ("rules", "items", "tasks"):
                 items = data.get(key)
                 if isinstance(items, list):
                     return [item for item in items if isinstance(item, dict)]

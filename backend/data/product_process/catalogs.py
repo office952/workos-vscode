@@ -126,6 +126,7 @@ PROCESS_CODES: frozenset[str] = frozenset(
 PROCESS_TO_PRICED_OPERATION: dict[str, str] = {
     "CONFIRM_GEOMETRY": "vector_prep",
     "CUT_FACE": "face_cnc_cut",
+    "PREPARE_CANT_STRIP": "side_forming",
     "FORM_CANT_CNC": "side_forming",
     "BOND_FACE_TO_CANT": "return_face_bonding",
     "PAINT_VOLUME_RAL": "painting",
@@ -148,9 +149,19 @@ PROCESS_TO_PRICED_OPERATION: dict[str, str] = {
     "TEST_LIGHT_UNIFORMITY": "qc_letters",
     "GENERATE_INSTALLATION_TEMPLATE": "mounting_template_cnc_cut",
     "QUALITY_CONTROL": "qc_letters",
+    "CLEAN_PRODUCT": "packaging_letters",
+    "RIGIDIZE_FOR_TRANSPORT": "packaging_letters",
+    "LABEL_POWER_SUPPLY": "packaging_letters",
     "PACK_PRODUCT": "packaging_letters",
     "PACK_POWER_SUPPLY_SEPARATELY": "packaging_letters",
 }
+
+# Analytical / desktop-boundary processes — never become EP operational tasks.
+NON_OPERATIONAL_PROCESS_CODES: frozenset[str] = frozenset(
+    {
+        "ANALYZE_SVG",
+    }
+)
 
 PROCESS_TO_MINI_MODULE: dict[str, str] = {
     "CONFIRM_GEOMETRY": "geometry_svg",

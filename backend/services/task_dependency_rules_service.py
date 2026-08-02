@@ -16,6 +16,17 @@ PROCESS_DEPENDENCY_RULES: Dict[str, Dict[str, Any]] = {
             "Fețele debitate și canturile modelate sunt necesare pentru lipirea canturilor."
         ),
     },
+    # Finish branches (conditional — only present when task is active in plan).
+    "painting": {
+        "depends_on_process_ids": ["return_face_bonding"],
+        "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
+        "dependency_reason": "Vopsirea volumului urmează după lipirea feței de cant.",
+    },
+    "vinyl_application": {
+        "depends_on_process_ids": ["side_forming"],
+        "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
+        "dependency_reason": "Aplicarea foliei pe cant urmează formarea cantului.",
+    },
     "led_install_letters": {
         "depends_on_process_ids": ["back_cut"],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
@@ -29,13 +40,15 @@ PROCESS_DEPENDENCY_RULES: Dict[str, Dict[str, Any]] = {
     "assembly_letters": {
         "depends_on_process_ids": [
             "return_face_bonding",
+            "painting",
+            "vinyl_application",
             "back_cut",
             "led_install_letters",
             "electrical_letters",
         ],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
         "dependency_reason": (
-            "Asamblarea depinde de subansamblele pregătite (canturi, spate, LED, cablare)."
+            "Asamblarea depinde de subansamblele pregătite (canturi, finisaj activ, spate, LED, cablare)."
         ),
     },
     "qc_letters": {
