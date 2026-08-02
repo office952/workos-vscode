@@ -1,0 +1,62 @@
+{
+  "commit": "38454c71",
+  "ports": "fe:3040 be:8018",
+  "db": "c1-u4b-runtime.db",
+  "results": [
+    {
+      "theme": "day",
+      "dir": "day",
+      "name": "01-open-workspace",
+      "url": "http://127.0.0.1:3040/execution/880041",
+      "file": "docs\\qa\\workos-ui-wave5-execution-result-v1\\screenshots\\day\\01-open-workspace.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "theme": "dark",
+      "dir": "dark",
+      "name": "01-workspace",
+      "url": "http://127.0.0.1:3040/execution/880041",
+      "file": "docs\\qa\\workos-ui-wave5-execution-result-v1\\screenshots\\dark\\01-workspace.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "theme": "day",
+      "dir": "closure",
+      "name": "01-closure",
+      "url": "http://127.0.0.1:3040/execution/880041",
+      "file": "docs\\qa\\workos-ui-wave5-execution-result-v1\\screenshots\\closure\\01-closure.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "theme": "day",
+      "dir": "completeness",
+      "name": "01-costs",
+      "url": "http://127.0.0.1:3040/execution/880041",
+      "file": "docs\\qa\\workos-ui-wave5-execution-result-v1\\screenshots\\completeness\\01-costs.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "theme": "day",
+      "dir": "day",
+      "name": "02-blocked",
+      "url": "http://127.0.0.1:3040/execution/880042",
+      "file": "docs\\qa\\workos-ui-wave5-execution-result-v1\\screenshots\\day\\02-blocked.png",
+      "body": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Planificare Ops-Graph Atelier Control producție Shop Floor Operator OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări DEV TOOLING Demo Commercial Spine Demo Volumetric Preview Intake V6 (diag) Blueprint Dossier Rapoarte operaționale WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA FLUX EXECUȚIE",
+      "consoles": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    }
+  ]
+}

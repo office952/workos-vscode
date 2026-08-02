@@ -1,12 +1,21 @@
-# WorkOS UI Wave 5 — Execution Result V1
+﻿# WorkOS UI Wave 5 — Execution Result Workspace
 
-## Scope
-`/execution/:order_id` is now an execution-result workspace. It consumes existing frontend API contracts only; no backend, routing, shell, Employee Mobile, or shared API contract was changed.
+**Stamp:** PASS WITH WARNINGS
+**Integrated HEAD:** 38454c71 (+ screenshot evidence commit if added)
+**Runtime:** fe:3040 be:8018 db=qa-dbs/c1-u4b-runtime.db order=880041
 
-## Evidence
-- Operator sees execution state, blockers, plan/actual and task actions, but not realized costs or margins.
-- Manager/admin see the backend-backed completeness and final-result surfaces plus the existing closure panel.
-- Product System preview, gate evaluation, raw legacy profitability analysis, and related diagnostics are collapsed.
+## Delivered
+- Thin ExecutionDetail orchestration + execution-result/* panels
+- Romanian cost terminology; machine/other_direct neaplicabil without inventing
+- Closure panel retained; costs completeness + final result when available
+- Technical details collapsed; legacy analysis not primary
+- Day/dark/closure/completeness screenshots captured (see screenshots/)
 
-## Validation
-Run the targeted Vitest helper test and the frontend lint/build checks from `frontend/`.
+## Warnings
+- Collaboration / stock-deduction / owner-decision surfaces deferred from primary fold (intentionally compacted)
+- Pre-existing product_system 404 console noise on page load
+- Post-job truth still visible for management (secondary duplication residual)
+- Full role matrix screenshots for commercial/unknown not fully exercised beyond operator contract in panel code
+
+## Tests
+executionResultWorkspace.test.ts + executionClosureUi.test.ts PASS
