@@ -57,7 +57,7 @@ Intake V6 workspace
 | **Form System** | **PARTIAL** | `GET /api/v1/intake-v6/form-contract/{template}`; pilot template only; registry-derived bindings |
 | **ProductSystem (template/dossier/modules)** | **PARTIAL** | Parent row often thin; dossier + linked modules carry truth; volumetric v2 wired |
 | **ProductDefinition builder** | **VALIDATED** | `product_definition_builder_service.py`; read-only compile; fail-closed gates |
-| **ProductAggregate + task_rules** | **VALIDATED_WITH_GUARDS** | `product_aggregate_service.py`; `task_contract.task_rules` from dossier; duplicate lateral ops open (DEC-003/004) |
+| **ProductAggregate + task_rules** | **VALIDATED_WITH_GUARDS** | `product_aggregate_service.py`; `task_contract.task_rules` from dossier; F7A alias collapse (DEC-003/004); F7A.1 premount BOM-only hard ban (DEC-002=A) |
 | **CommercialPriceProposal (7G)** | **IMPLEMENTED_PREVIEW_ONLY** | `commercial_price_proposal_service.py`; mp/ml/buc rules; preview implemented, not canonical default path |
 | **EstimatedInternalCost (7H)** | **IMPLEMENTED_PREVIEW_ONLY** | `estimated_internal_cost_service.py`; separate from CPP; no CE/QO on V2 path |
 | **Quote Snapshot V2** | **VALIDATED_WITH_GUARDS** | Freeze/accept/convert validated; snapshot `QSN2-2026-0003` |
@@ -66,7 +66,7 @@ Intake V6 workspace
 | **ExecutionPlan V2 persist draft** | **VALIDATED_WITH_GUARDS** | Plan `id=2`; idempotency; HTTP fresh persist verified: POST `from-order/88002` returned `already_exists` for plan id=2; no duplicate plan, no execution_tasks, no sessions (worklog `2026-06-30_step9_http_fresh_persist_verification.md`; commit `e9f8033`; 107 pytest) |
 | **Materialization audit GET** | **IMPLEMENTED_PREVIEW_ONLY** | `GET .../materialization-audit`; dry-run only |
 | **ExecutionTasks / operational_tasks** | **BLOCKED_NEEDS_OWNER_GO** | `operational_tasks[]` empty; POST materialize not exercised |
-| **Workcenters on planned tasks** | **PARTIAL** | All 12 tasks: `workcenter` null on fixture (DEC-005) |
+| **Workcenters on planned tasks** | **PARTIAL → F7A.1 pilot PASS** | Historical 88002: WC null. Controlled F7A.1 fixture: registry-canonical WC (`WC_CNC_ROUTING` etc.) frozen on Aggregate ops and projected; non-canonical codes warned |
 | **estimated_minutes on planned tasks** | **PARTIAL** | All null; `PLANNING_MINUTES_SOURCE_REQUIRED` (DEC-006) |
 | **Employees / skills / eligibility** | **PARTIAL** | Foundation registries exist; not linked to planned graph |
 | **ExecutionActuals / sessions** | **FROZEN** | Step 11+; guards block on `v2_not_materialized` |
@@ -89,7 +89,7 @@ Intake V6 workspace
 | ProductAggregate | EstimatedInternalCost | BOM adapter + internal rules + inventory | `EstimatedInternalCostService.build_preview()` | **STRONG** | WC blockers reclassified in docs; legacy conflates |
 | CPP + EIC + PD + Aggregate | Quote Snapshot V2 | `QuoteSnapshotV2Service.build_preview()` / freeze | `POST .../quote-snapshot-v2/*` | **STRONG** | Template scope limited |
 | Quote Snapshot V2 | Order Snapshot V2 | Accept gate + `convert_accepted_quote_snapshot_v2_to_order` | Intake V6 commercial spine | **STRONG** | New quotes only on V2 path |
-| Order Snapshot V2 | ExecutionPlan V2 | Frozen `product_aggregate_snapshot.task_contract.task_rules` | `execution_plan_v2_preview_service.py` | **MEDIUM** | WC/minutes null; linear deps |
+| Order Snapshot V2 | ExecutionPlan V2 | Frozen `product_aggregate_snapshot.task_contract.task_rules` | `execution_plan_v2_preview_service.py` | **STRONG** (pilot) | Minutes null (DEC-006); WC + finish-aware DAG on F7A.1 fixture |
 | ExecutionPlan V2 | Materialization Audit | Dry-run from `planned_tasks[]` in persisted envelope | `execution_plan_v2_materialization_audit_service.py` | **STRONG** (read-only) | POST materialize blocked |
 | ExecutionPlan V2 | ExecutionTasks (`operational_tasks[]`) | `POST .../materialize-tasks/{order_id}` | `execution_plan_v2_materialize_service.py` | **MISSING** (blocked) | Owner GO + upstream fixes |
 | ExecutionTasks | Workcenters | `machine_requirement.workcenter` on task dict | Preview resolves from aggregate op / PD role | **WEAK** | All null on live fixture |
@@ -294,17 +294,17 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 | Decision ID | Topic | Options | Recommended option | Blocks materialization? | Owner answer |
 | ----------- | ----- | ------- | ------------------ | ----------------------- | ------------ |
-| **DEC-001** | `svg_geometry_analysis` orphan op | A) non-operational analytics; B) merge READINESS; C) new task_rule | **A** — non-operational analytics | No (if labeled) | **PENDING_OWNER** |
-| **DEC-002** | `premount_bar_preparation` | A) BOM-only; B) conditional task_rule when premount active | **A** default; **B** when premount selected | Yes if premount jobs need fab without rule | **PENDING_OWNER** |
-| **DEC-003** | RETURN lateral duplicate / canonical `side_forming` | A) parent canonical; B) module canonical; C) both (reject) | **A** — parent canonical; module = aggregate alias only | **Yes** | **PENDING_OWNER** |
-| **DEC-004** | `PAINTING` module duplicate | A) parent `painting`; B) module `PAINTING`; C) both | **A** — parent canonical | **Yes** | **PENDING_OWNER** |
-| **DEC-005** | Workcenter source policy | A) enrich parent at compile; B) map module alias WC; C) manual post-materialize; D) registry-only pass | **A + B** upstream before materialize | **Yes** for scheduling quality | **PENDING_OWNER** |
-| **DEC-006** | `estimated_minutes` source | A) null + warn; B) dossier time_assumptions; C) capacity registry; D) planner entry only | **B or C** long-term; **A** short-term | No for audit dry-run; **Yes** for production scheduling GO | **PENDING_OWNER** |
-| **DEC-007** | Dependency model | A) linear MVP; B) finish-aware DAG; C) parallel branches (template/premount) | **B** before production GO; **A** ok for draft audit | **Yes** for realistic shop scheduling | **PENDING_OWNER** |
-| **DEC-008** | Step 9B UI before gap fix | A) proceed with gap badges; B) wait for upstream | **A** — proceed read-only | No | **PENDING_OWNER** |
-| **DEC-009** | POST materialize | A) remain blocked; B) GO after DEC-003/004/005/007 | **A** — remain blocked until upstream | **Yes** — gate for all materialize | **PENDING_OWNER** |
+| **DEC-001** | `svg_geometry_analysis` orphan op | A) non-operational analytics; B) merge READINESS; C) new task_rule | **A** — non-operational analytics | No (if labeled) | **A — RECORDED (F7A)** |
+| **DEC-002** | `premount_bar_preparation` | A) BOM-only; B) conditional task_rule when premount active | **A** default; hard ban without activation signal | Soft after F7A.1 ban | **A — RECORDED (F7A.1 hard ban)** |
+| **DEC-003** | RETURN lateral duplicate / canonical `side_forming` | A) parent canonical; B) module canonical; C) both (reject) | **A** — parent canonical; module = aggregate alias only | Soft after F7A | **A — RECORDED (F7A)** |
+| **DEC-004** | `PAINTING` module duplicate | A) parent `painting`; B) module `PAINTING`; C) both | **A** — parent canonical | Soft after F7A | **A — RECORDED (F7A)** |
+| **DEC-005** | Workcenter source policy | A) enrich parent at compile; B) map module alias WC; C) manual post-materialize; D) registry-only pass | **A** upstream Aggregate → freeze → plan; registry codes | Soft after F7A.1 | **A — RECORDED (F7A.1 registry fidelity)** |
+| **DEC-006** | `estimated_minutes` source | A) null + warn; B) dossier time_assumptions; C) capacity registry; D) planner entry only | **A** short-term | No for audit; **Yes** for scheduling | **A — RECORDED (null + warn)** |
+| **DEC-007** | Dependency model | A) linear MVP; B) finish-aware DAG; C) parallel branches (template/premount) | **B** on EP V2 path | Soft after F7A | **B — RECORDED (F7A EP V2)** |
+| **DEC-008** | Step 9B UI before gap fix | A) proceed with gap badges; B) wait for upstream | **A** — proceed read-only | No | **A — RECORDED** |
+| **DEC-009** | POST materialize | A) remain blocked; B) GO after DEC-003/004/005/007 | **A** until Owner sets B after F7A.1 review | **Yes** | **A — REMAIN BLOCKED** |
 
-**Minimum before materialize GO:** DEC-003, DEC-004, DEC-005, DEC-007 answered; DEC-009 explicitly set to B by owner; Faza 2 enrichment validated.
+**Minimum before materialize GO:** DEC-003/004/005/007 recorded (done); F7A.1 WC+premount gaps closed; DEC-009 explicitly set to **B** by Owner written GO; controlled fixture only.
 
 ---
 

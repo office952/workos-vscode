@@ -67,7 +67,9 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 | `plan_source` | `order_snapshot_v2` |
 | `source_quote_snapshot_v2_id` | 3 (fixture) |
 
-**Planned task fields:** `task_key`, `canonical_task_type`, `source_operation_code`, `estimated_minutes` (null), `machine_requirement.workcenter` (null on fixture), `depends_on_task_keys[]` (linear chain)
+**Planned task fields:** `task_key`, `canonical_task_type`, `source_operation_code`, `estimated_minutes` (null + `PLANNING_MINUTES_SOURCE_REQUIRED`), `machine_requirement.workcenter` (from frozen Aggregate ops; registry-canonical codes required — see F7A/F7A.1), `depends_on_task_keys[]` (finish/process-aware DAG; no universal linear invent on EP V2 path)
+
+**Historical fixture note (88002):** WC null + linear deps were true for that older Snapshot V2 and remain readable for regression. **Current controlled fixture (F7A/F7A.1):** parent WC stamped with registry codes (`WC_CNC_ROUTING`, `WC_LETTER_FORMING`, `WC_METAL_FAB`, `WC_ASSEMBLY`); DAG bond←face+side; aliases collapsed.
 
 **Preview ignores:** commercial/internal pricing snapshots for task generation.
 
@@ -77,7 +79,7 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 
 | Previous | Link | Next | Link | Strength | Gap |
 | -------- | ---- | ---- | ---- | -------- | --- |
-| Order Snapshot V2 | frozen aggregate task_rules | ExecutionPlan preview | read snapshot | STRONG | WC/minutes null |
+| Order Snapshot V2 | frozen aggregate task_rules | ExecutionPlan preview | read snapshot | STRONG | Minutes still null (DEC-006); WC resolved on F7A.1 fixture |
 | ExecutionPlan persist | tasks_json | Materialization audit | dry-run | STRONG | — |
 | ExecutionPlan | materialize (blocked) | operational_tasks | envelope | MISSING | DEC-009 |
 | operational_tasks | assignment service | Employees | employee_id on task | MISSING | Not materialized |
@@ -108,11 +110,12 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 
 | Gap | Severity | Evidence | Blocks what | Recommended action |
 | --- | -------- | -------- | ----------- | ------------------ |
-| workcenter null (12/12) | CRITICAL | order 88002 | Assignment/scheduling | DEC-005 |
-| estimated_minutes null | HIGH | PLANNING_MINUTES_SOURCE_REQUIRED | Capacity | DEC-006 |
-| Linear dependencies | HIGH | `_build_dependencies` | Wrong shop order | DEC-007 |
-| Duplicate lateral ops in aggregate | HIGH | 17 ops vs 12 tasks | Double materialize | DEC-003/004 |
-| POST materialize blocked | CRITICAL | owner review | Shop runtime | DEC-009 |
+| workcenter null (historical 88002) | CRITICAL (historical) | order 88002 | Assignment/scheduling | Use new F7A.1 fixture; do not rewrite 88002 |
+| estimated_minutes null | HIGH | PLANNING_MINUTES_SOURCE_REQUIRED | Capacity / scheduling | DEC-006 remains open |
+| Linear deps (historical / unresolved families) | MEDIUM | legacy frozen-graph preview only | Wrong shop order if wrong path | EP V2 uses process DAG; DEC-007 implemented on V2 |
+| Duplicate lateral ops | CLOSED on F7A path | alias collapse DEC-003/004 | — | Keep collapse owner in bridge |
+| Premount false task | CLOSED on F7A.1 | BOM-only hard ban DEC-002=A | — | No activation signal → no task |
+| POST materialize blocked | CRITICAL | DEC-009=A | Shop runtime | Owner GO only after F7A.1 review |
 
 ---
 
@@ -120,12 +123,13 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 
 | Decision ID | Topic | Blocks materialize? | Status |
 | ----------- | ----- | ------------------- | ------ |
-| DEC-003 | RETURN canonical | Yes | PENDING_OWNER |
-| DEC-004 | painting canonical | Yes | PENDING_OWNER |
-| DEC-005 | workcenter source | Yes | PENDING_OWNER |
-| DEC-006 | planning minutes | Scheduling GO | PENDING_OWNER |
-| DEC-007 | dependency DAG | Yes (production) | PENDING_OWNER |
-| DEC-009 | POST materialize | Yes | PENDING_OWNER (remain blocked) |
+| DEC-002 | premount BOM-only | Soft for materialize | **A** — hard synthesis ban (F7A.1) |
+| DEC-003 | RETURN canonical | Soft | **A** — parent canonical; alias provenance (F7A) |
+| DEC-004 | painting canonical | Soft | **A** — parent canonical; alias provenance (F7A) |
+| DEC-005 | workcenter source | Soft | **A** — upstream Aggregate → freeze → plan; registry codes (F7A.1) |
+| DEC-006 | planning minutes | Scheduling GO | PENDING — null + warning acceptable for draft |
+| DEC-007 | dependency DAG | Soft | **B** — finish/process-aware on EP V2 (F7A) |
+| DEC-009 | POST materialize | Yes | **A** — remain blocked until Owner sets B |
 
 ---
 
@@ -142,4 +146,4 @@ cd backend; .\.venv\Scripts\python.exe -m pytest tests/test_execution_plan_v2*.p
 
 ## 13. Next safe step
 
-Owner DEC-003/004/005 first; Step 9B UI read-only with gap badges (DEC-008=A); no POST materialize.
+F7A/F7A.1 closed upstream alias/WC/premount/DAG gaps on the controlled fixture. Next: Owner DEC-009 decision only; no POST materialize until DEC-009=B.
