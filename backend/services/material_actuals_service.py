@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.inventory_materials import Inventory_materials
 from models.inventory_material_price_history import Inventory_material_price_history
 from models.stock_movements import StockMovement
+from services.closed_job_mutation_guard import assert_execution_open_for_material_mutation
 
 MOVEMENT_CONSUMPTION = "consumption"
 MOVEMENT_RETURN = "return"
@@ -135,6 +136,7 @@ class MaterialActualsService:
         existing = await self._get_by_idempotency(idempotency_key)
         if existing is not None:
             return {"status": REASON_IDEMPOTENT_REPLAY, "movement_id": existing.id}
+        await assert_execution_open_for_material_mutation(self.db, order_id)
 
         material = await self._load_material(material_id)
         mat_unit = str(getattr(material, "unit", "") or "").strip()
@@ -197,6 +199,7 @@ class MaterialActualsService:
         existing = await self._get_by_idempotency(idempotency_key)
         if existing is not None:
             return {"status": REASON_IDEMPOTENT_REPLAY, "movement_id": existing.id}
+        await assert_execution_open_for_material_mutation(self.db, order_id)
 
         original = (
             await self.db.execute(
@@ -267,6 +270,7 @@ class MaterialActualsService:
         existing = await self._get_by_idempotency(idempotency_key)
         if existing is not None:
             return {"status": REASON_IDEMPOTENT_REPLAY, "movement_id": existing.id}
+        await assert_execution_open_for_material_mutation(self.db, order_id)
 
         material = await self._load_material(material_id)
         valuation = await self._freeze_valuation(material_id)

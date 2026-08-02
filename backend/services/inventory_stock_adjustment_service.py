@@ -8,8 +8,11 @@ from typing import Any, Dict, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fastapi import HTTPException
+
 from models.inventory_materials import Inventory_materials
 from models.stock_movements import StockMovement
+from services.closed_job_mutation_guard import assert_execution_open_for_material_mutation
 from services.inventory_material_eligibility import is_stock_operational_material
 
 logger = logging.getLogger(__name__)
@@ -88,6 +91,16 @@ class InventoryStockAdjustmentService:
 
         if original.movement_type != "consumption":
             raise StockAdjustmentError("movement_not_reversible", original.movement_type or "unknown")
+
+        if original.order_id is not None:
+            try:
+                await assert_execution_open_for_material_mutation(self.db, int(original.order_id))
+            except HTTPException as exc:
+                detail = exc.detail if isinstance(exc.detail, dict) else {}
+                raise StockAdjustmentError(
+                    str(detail.get("error") or "execution_closed_mutation_blocked"),
+                    str(detail.get("message") or "execution reopen required"),
+                ) from exc
 
         existing = await self._get_existing_reversal(original.id)
         if existing is not None:

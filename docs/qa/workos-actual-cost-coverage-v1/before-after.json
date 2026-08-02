@@ -1,0 +1,15 @@
+{
+  "protected_order_id": 973019,
+  "snapshot_hash_prefix_before": "2d412e6e1234ae44",
+  "snapshot_hash_prefix_after": "2d412e6e1234ae44",
+  "commercial_snapshot_mutated": false,
+  "closed_job_write_guard": {
+    "before": "absent",
+    "after": "present_on_material_actuals_deduction_reversal"
+  },
+  "cost_category_applicability": {
+    "before": "labor_material_closure_only",
+    "after": "labor_material_machine_other_direct_execution"
+  },
+  "fixtures_demonstrated": [880051, 880052]
+}

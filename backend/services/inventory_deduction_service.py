@@ -25,10 +25,13 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fastapi import HTTPException
+
 from models.execution_reality import ExecutionReality
 from models.inventory_materials import Inventory_materials
 from models.inventory_material_price_history import Inventory_material_price_history
 from models.stock_movements import StockMovement
+from services.closed_job_mutation_guard import assert_execution_open_for_material_mutation
 from services.inventory_material_eligibility import is_stock_operational_material
 
 logger = logging.getLogger(__name__)
@@ -297,6 +300,14 @@ class InventoryDeductionService:
             raise DeductionError("order_id_invalid")
         if not performed_by or not isinstance(performed_by, str):
             raise DeductionError("performed_by_required")
+        try:
+            await assert_execution_open_for_material_mutation(self.db, order_id)
+        except HTTPException as exc:
+            detail = exc.detail if isinstance(exc.detail, dict) else {}
+            raise DeductionError(
+                str(detail.get("error") or "execution_closed_mutation_blocked"),
+                str(detail.get("message") or "execution reopen required"),
+            ) from exc
 
         reality = await self._get_reality(order_id)
         if reality is None:

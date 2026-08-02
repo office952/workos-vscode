@@ -27,10 +27,19 @@ REASON_PLANNING_MINUTES_MISSING = "planning_minutes_source_missing"
 REASON_ACTUAL_MATERIAL_COST_MISSING = "actual_material_cost_missing"
 REASON_EMPLOYEE_COST_POLICY_MISSING = "employee_cost_policy_missing"
 REASON_JOB_NOT_CLOSED = "job_not_closed"
+REASON_EXECUTION_REOPENED = "execution_reopened"
 REASON_ACTUAL_TASK_COVERAGE_INCOMPLETE = "actual_task_coverage_incomplete"
 REASON_ACCEPTED_COMMERCIAL_MISSING = "accepted_commercial_snapshot_missing"
 REASON_ESTIMATED_INTERNAL_INCOMPLETE = "estimated_internal_cost_incomplete"
 REASON_ACTUAL_TOTAL_COST_INCOMPLETE = "actual_total_cost_incomplete"
+REASON_COST_CATEGORY_REQUIRED_INCOMPLETE = "cost_category_required_incomplete"
+REASON_MACHINE_ACTUAL_NOT_CAPTURED = "machine_actual_not_captured"
+REASON_MACHINE_POLICY_MISSING = "machine_policy_missing"
+REASON_MACHINE_NOT_APPLICABLE = "machine_not_applicable_by_job_profile"
+REASON_OTHER_DIRECT_NOT_APPLICABLE = "other_direct_not_declared"
+REASON_OTHER_DIRECT_UNCLASSIFIED = "direct_cost_unclassified"
+REASON_MATERIAL_MOVEMENT_MISSING = "material_movement_missing"
+REASON_MATERIAL_VALUATION_MISSING = "material_valuation_missing"
 
 PROVENANCE = "profitability_actual_read_model_v1"
 
@@ -61,6 +70,42 @@ class ProfitabilityActualReadModelService:
         if row is None:
             raise OrderNotFoundError(str(order_id))
         return row
+
+    @staticmethod
+    def _machine_cost_category(tasks: list[dict[str, Any]]) -> dict[str, Any]:
+        """Conditional machine actuals — never invent from WC rate or planned duration."""
+        declares_machine = False
+        for task in tasks:
+            for key in (
+                "machine_id",
+                "assigned_machine_id",
+                "utilaj_id",
+                "machine_instance_id",
+            ):
+                if task.get(key) not in (None, "", 0, "0"):
+                    declares_machine = True
+                    break
+            if task.get("machine_actual_required") is True:
+                declares_machine = True
+            if declares_machine:
+                break
+        if not declares_machine:
+            return {
+                "applicability": "not_applicable",
+                "status": "not_applicable",
+                "reason": REASON_MACHINE_NOT_APPLICABLE,
+                "value": None,
+                "available": False,
+            }
+        # Declared applicable but runtime has no frozen machine usage + dated policy.
+        return {
+            "applicability": "applicable_optional",
+            "status": "unavailable",
+            "reason": REASON_MACHINE_ACTUAL_NOT_CAPTURED,
+            "secondary_reason": REASON_MACHINE_POLICY_MISSING,
+            "value": None,
+            "available": False,
+        }
 
     async def _load_actual_cost_facts(
         self, order_id: int
@@ -272,12 +317,31 @@ class ProfitabilityActualReadModelService:
             unavailable_reasons.extend([REASON_EMPLOYEE_COST_POLICY_MISSING, REASON_HISTORICAL_POLICY_UNAVAILABLE, REASON_HISTORICAL_COST_NOT_FROZEN])
         if not material["available"]:
             unavailable_reasons.append(REASON_ACTUAL_MATERIAL_COST_MISSING)
+            mat_reason = str(material.get("reason") or "")
+            if "valuation" in mat_reason:
+                unavailable_reasons.append(REASON_MATERIAL_VALUATION_MISSING)
+            elif "movement" in mat_reason or mat_reason.endswith("missing"):
+                unavailable_reasons.append(REASON_MATERIAL_MOVEMENT_MISSING)
         closed = closure_status == "closed"
+        reopened = closure_status == "reopened"
+        if reopened:
+            unavailable_reasons.append(REASON_EXECUTION_REOPENED)
         if not closed:
             unavailable_reasons.append(REASON_JOB_NOT_CLOSED)
-        complete_actuals = labor["available"] and material["available"] and closed
-        if not complete_actuals:
-            unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+
+        machine_category = self._machine_cost_category(tasks)
+        other_direct_category = {
+            "applicability": "not_applicable",
+            "status": "not_applicable",
+            "reason": REASON_OTHER_DIRECT_NOT_APPLICABLE,
+            "value": None,
+            "available": False,
+            "note": (
+                "Alte costuri directe necesită fapte clasificate (categorie, sumă, "
+                "proveniență, actor). Nu există bucket generic editabil."
+            ),
+        }
+        labor_status = "complete" if labor["available"] else "incomplete"
         material_cost_status = (
             material.get("material_cost_status")
             or ("complete" if material.get("available") else "incomplete")
@@ -286,6 +350,50 @@ class ProfitabilityActualReadModelService:
             material.get("material_valuation_status")
             or ("frozen" if material.get("available") else "unavailable")
         )
+        cost_categories = {
+            "labor": {
+                "applicability": "required",
+                "status": labor_status,
+                "reason": None if labor["available"] else REASON_EMPLOYEE_COST_POLICY_MISSING,
+            },
+            "material": {
+                "applicability": "required",
+                "status": material_cost_status,
+                "reason": None if material.get("available") else material.get("reason"),
+            },
+            "machine": machine_category,
+            "other_direct": other_direct_category,
+            "execution": {
+                "status": closure_status,
+                "final_margin_available": False,
+            },
+        }
+        # Required categories must be complete. Conditional machine/other_direct that are
+        # not_applicable never block. Unavailable optional machine is reported, not zeroed,
+        # and does not invent WC-rate actuals.
+        applicable_incomplete = [
+            key
+            for key in ("labor", "material")
+            if cost_categories[key].get("status") != "complete"
+        ]
+        if applicable_incomplete:
+            unavailable_reasons.append(REASON_COST_CATEGORY_REQUIRED_INCOMPLETE)
+        if (
+            machine_category.get("applicability") != "not_applicable"
+            and machine_category.get("status") in {"unavailable", "incomplete"}
+            and machine_category.get("reason")
+        ):
+            unavailable_reasons.append(str(machine_category["reason"]))
+
+        complete_actuals = (
+            labor["available"]
+            and material["available"]
+            and closed
+            and not applicable_incomplete
+        )
+        if not complete_actuals:
+            unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+        cost_categories["execution"]["final_margin_available"] = complete_actuals
         if complete_actuals:
             actual_cost_status = "closed_job_operational_actual"
             actual_margin_status = "closed_job_operational_actual"
@@ -299,13 +407,31 @@ class ProfitabilityActualReadModelService:
             "actual_material_cost": material,
             "labor_actual_cost": labor,
             "labor_cost_basis": "standard_role_skill",
-            "labor_cost_status": "complete" if labor["available"] else "incomplete",
+            "labor_cost_status": labor_status,
             "material_cost_status": material_cost_status,
             "material_valuation_status": material_valuation_status,
             "execution_closure_status": closure_status,
             "actual_cost_status": actual_cost_status,
             "job_closure_status": closure_status,
-            "other_actual_cost": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
+            "machine_actual_cost": {
+                "value": None,
+                "available": False,
+                "reason": machine_category.get("reason"),
+                "status": machine_category.get("status"),
+                "applicability": machine_category.get("applicability"),
+                "note": (
+                    "Cost utilaj condițional. Fără fallback workcenter.rate, "
+                    "tarif comercial sau durată planificată ca actual."
+                ),
+            },
+            "other_actual_cost": {
+                "value": None,
+                "available": False,
+                "reason": other_direct_category["reason"],
+                "status": other_direct_category["status"],
+                "applicability": other_direct_category["applicability"],
+            },
+            "cost_category_applicability": cost_categories,
             "actual_total_cost": (
                 _available(round(float(material["value"]) + float(labor["value"]), 4), provenance="frozen_material + frozen_labor")
                 if complete_actuals else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
