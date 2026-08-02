@@ -64,6 +64,7 @@ import {
   operationalReadinessLabel,
 } from "@/lib/executionOperationalReadinessDisplay";
 import { ProfitabilityAnalysisPanel } from "@/components/execution/ProfitabilityAnalysisPanel";
+import { ProfitabilityActualReadPanel } from "@/components/execution/ProfitabilityActualReadPanel";
 import { PostJobTruthPanel } from "@/components/execution/PostJobTruthPanel";
 import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
 import {
@@ -933,6 +934,7 @@ export default function ExecutionDetail() {
       )}
 
       {obs && isValidId && (
+        <ProfitabilityActualReadPanel orderId={parsedId} />
         <ProfitabilityAnalysisPanel orderId={parsedId} />
       )}
 
