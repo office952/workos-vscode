@@ -85,6 +85,9 @@ class ProductAggregateOperation(BaseModel):
     planning_duration_formula_id: str | None = None
     planning_duration_status: str | None = None
     planning_minutes_source: str | None = None
+    # DEC-010: freeze-time ORR workcenter resolution (JSON aggregate only — no DB migration).
+    workcenter_resolution_status: str | None = None
+    workcenter_mapping_source: str | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None

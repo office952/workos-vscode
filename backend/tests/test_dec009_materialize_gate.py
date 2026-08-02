@@ -43,33 +43,38 @@ def test_protected_orders_never_match():
 
 
 def test_out_of_scope_rejected_when_target_registered():
-    register_golden_pilot_materialize_target(order_id=973015, plan_id=17)
+    register_golden_pilot_materialize_target(order_id=973099, plan_id=99)
     decision = evaluate_materialize_authorization(order_id=999001, plan_id=1)
     assert decision["allowed"] is False
     assert "order_or_plan_outside_scoped_b" in decision["blockers"]
 
 
 def test_register_and_allow_only_golden_pilot():
-    register_golden_pilot_materialize_target(order_id=973015, plan_id=17)
-    assert scoped_b_matches(order_id=973015, plan_id=17) is True
-    assert scoped_b_matches(order_id=973015, plan_id=99) is False
+    register_golden_pilot_materialize_target(order_id=973099, plan_id=99)
+    assert scoped_b_matches(order_id=973099, plan_id=99) is True
+    assert scoped_b_matches(order_id=973099, plan_id=17) is False
     assert scoped_b_matches(order_id=92401, plan_id=13) is False
+    assert scoped_b_matches(order_id=973015, plan_id=17) is False  # protected baseline
 
-    decision = evaluate_materialize_authorization(order_id=973015, plan_id=17)
+    decision = evaluate_materialize_authorization(order_id=973099, plan_id=99)
     assert decision["allowed"] is True
     assert decision["blockers"] == []
 
     blocked = evaluate_materialize_authorization(order_id=92401, plan_id=13)
     assert blocked["allowed"] is False
+    blocked_old = evaluate_materialize_authorization(order_id=973015, plan_id=17)
+    assert blocked_old["allowed"] is False
 
 
 def test_register_rejects_protected():
     with pytest.raises(ValueError):
         register_golden_pilot_materialize_target(order_id=92401, plan_id=13)
+    with pytest.raises(ValueError):
+        register_golden_pilot_materialize_target(order_id=973015, plan_id=17)
 
 
 def test_od3_runtime_identity_stamp_for_preflight():
-    register_golden_pilot_materialize_target(order_id=973015, plan_id=17)
+    register_golden_pilot_materialize_target(order_id=973099, plan_id=99)
     identity = build_od3_runtime_identity()
     assert identity["gate_landed"] is True
     assert identity["gate_module"] == OD3_GATE_MODULE
@@ -80,7 +85,8 @@ def test_od3_runtime_identity_stamp_for_preflight():
     assert identity["batch_execute_materialize_authorized"] is True
     assert identity["batch_execute_materialize_mode"] == "True_CONDITIONAL"
     assert 92401 in identity["protected_order_ids"]
-    assert identity["scoped_b_order_id"] == 973015
+    assert 973015 in identity["protected_order_ids"]
+    assert identity["scoped_b_order_id"] == 973099
 
 
 def test_enforce_rejects_protected():
@@ -91,5 +97,5 @@ def test_enforce_rejects_protected():
 
 
 def test_enforce_allows_registered_pilot():
-    register_golden_pilot_materialize_target(order_id=973015, plan_id=17)
-    enforce_dec009_materialize_gate(order_id=973015, plan_id=17)
+    register_golden_pilot_materialize_target(order_id=973099, plan_id=99)
+    enforce_dec009_materialize_gate(order_id=973099, plan_id=99)

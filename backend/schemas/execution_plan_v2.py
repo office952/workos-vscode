@@ -67,6 +67,9 @@ class PlannedTaskMaterialInput(BaseModel):
 class PlannedTaskMachineRequirement(BaseModel):
     workcenter: str | None = None
     machine_type: str | None = None
+    # DEC-010 freeze provenance (optional; never invent).
+    mapping_source: str | None = None
+    resolution_status: str | None = None
 
 
 class PlannedTaskEmployeeRoleRequirement(BaseModel):

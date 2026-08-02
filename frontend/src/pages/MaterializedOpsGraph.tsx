@@ -166,21 +166,30 @@ function taskGapsLocal(task: PlannedTaskRow): { kinds: GapKind[]; detail: string
   const kinds: GapKind[] = [];
   const detail: string[] = [];
 
+  const warnings = task.warnings ?? [];
+  const wcNotRequired = warnings.includes("WORKCENTER_NOT_REQUIRED");
   if (task.estimated_time_minutes === null || task.estimated_time_minutes === undefined) {
     kinds.push("minutes");
-    detail.push("estimated_time_minutes=null (owner-accepted CAP-004)");
+    detail.push(
+      "Durată de planificare indisponibilă — standardul de timp nu este încă definit (nu înseamnă 0 minute).",
+    );
   }
   if (task.planning_minutes_source === null || task.planning_minutes_source === undefined) {
     kinds.push("planning_source");
-    detail.push("planning_minutes_source=null");
+    detail.push("planning_minutes_source=null (source_missing)");
   }
   if (task.machine_code === null || task.machine_code === undefined || task.machine_code === "") {
     kinds.push("machine_code");
     detail.push("machine_code=null (owner-accepted CAP-012)");
   }
-  if (task.workcenter === null || task.workcenter === undefined || task.workcenter === "") {
+  if (
+    !wcNotRequired &&
+    (task.workcenter === null || task.workcenter === undefined || task.workcenter === "")
+  ) {
     kinds.push("workcenter");
-    detail.push("workcenter=null (F7 OD1 owner-accepted)");
+    detail.push(
+      "Workcenter neconfigurat — nu există încă o asociere operațională canonică pentru acest task.",
+    );
   }
   if (task.assigned_employee_id === null || task.assigned_employee_id === undefined) {
     kinds.push("assignee");
@@ -491,10 +500,12 @@ export default function MaterializedOpsGraph() {
         operationalBlocked={materializeState !== "OPEN" && !hasOperationalTasks}
       />
 
-      <OwnerGoNotice
-        detail="Further POST materialize remains DEC-009 gated. This screen only reads already-materialized operational_tasks[] — no sessions, no start/stop/assign/complete."
-        compact
-      />
+      {!hasOperationalTasks && (
+        <OwnerGoNotice
+          detail="Further POST materialize remains DEC-009 gated. This screen only reads already-materialized operational_tasks[] — no sessions, no start/stop/assign/complete."
+          compact
+        />
+      )}
 
       <div
         className={`rounded-lg px-3 py-2 space-y-1.5 ${chromeBanner.neutral}`}
@@ -503,23 +514,29 @@ export default function MaterializedOpsGraph() {
         <div className="flex items-center gap-2">
           <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
           <p className="text-[11px] font-semibold text-wo-text-primary">
-            DEC-009 / Capacity (read-only)
+            {hasOperationalTasks
+              ? "Operational planning truth (read-only)"
+              : "DEC-009 / Capacity (read-only)"}
           </p>
         </div>
         <p className="text-[10px] text-wo-text-secondary" data-testid="ops-graph-dec009-state">
-          DEC-009={dec009} · {phase.furtherPost} · envelope={phase.envelope}
+          {hasOperationalTasks
+            ? `envelope=${phase.envelope} · further materialize gated`
+            : `DEC-009=${dec009} · ${phase.furtherPost} · envelope=${phase.envelope}`}
           {audit?.materialization_status
             ? ` · audit=${audit.materialization_status}`
             : ""}
         </p>
         <p className="text-[10px] text-wo-text-muted">
-          {preMat?.summary ??
-            batch04?.preMaterializeSummary ??
-            "Capacity checklist from dashboard-stats when available."}
+          {hasOperationalTasks
+            ? "Duratele sunt folosite pentru planificarea capacității. Nu reprezintă prețul clientului și nici timpul efectiv lucrat."
+            : (preMat?.summary ??
+              batch04?.preMaterializeSummary ??
+              "Capacity checklist from dashboard-stats when available.")}
         </p>
         <p className="text-[10px] text-wo-text-dim" data-testid="ops-graph-accepted-risks">
-          Accepted risks (stage): null minutes · null WC · null machine_code · null
-          assignee — shown as — / gap tags, not invented
+          Gaps: workcenter neconfigurat / durată indisponibilă remain null — never
+          invented zeros
           {usesTrackBClarity ? " · Track B read_clarity" : ""}.
         </p>
         {commercialLabelCount > 0 && (
@@ -739,10 +756,26 @@ export default function MaterializedOpsGraph() {
                         >
                           {machineCode}
                         </td>
-                        <td className="px-3 py-2 font-mono text-[11px] text-wo-text-muted">
+                        <td
+                          className="px-3 py-2 font-mono text-[11px] text-wo-text-muted"
+                          title={
+                            workcenter === "—"
+                              ? "Workcenter neconfigurat — nu există încă o asociere operațională canonică pentru acest task."
+                              : "Canonical workcenter (frozen)"
+                          }
+                          data-testid={`ops-graph-workcenter-${task.task_id}`}
+                        >
                           {workcenter}
                         </td>
-                        <td className="px-3 py-2 text-right tabular-nums text-wo-text-muted">
+                        <td
+                          className="px-3 py-2 text-right tabular-nums text-wo-text-muted"
+                          title={
+                            minutes === "—"
+                              ? "Durată de planificare indisponibilă — standardul de timp nu este încă definit. Aceasta nu înseamnă 0 minute."
+                              : "Planning minutes (capacity) — not client price / not actuals"
+                          }
+                          data-testid={`ops-graph-minutes-${task.task_id}`}
+                        >
                           {minutes}
                         </td>
                         <td className="px-3 py-2 text-[10px] font-mono text-wo-text-muted">

@@ -404,13 +404,24 @@ def _build_planned_tasks(
             label = role.label
 
         machine_req = None
+        # DEC-010: consume freeze-stamped Aggregate WC only — no live ORR re-resolve.
         workcenter = None
-        if agg_op and agg_op.workcenter:
+        wc_status = None
+        wc_source = None
+        if agg_op is not None:
             workcenter = agg_op.workcenter
+            wc_status = getattr(agg_op, "workcenter_resolution_status", None)
+            wc_source = getattr(agg_op, "workcenter_mapping_source", None)
         elif role and role.workcenter:
-            workcenter = role.workcenter
-        if workcenter:
-            machine_req = PlannedTaskMachineRequirement(workcenter=workcenter)
+            # Legacy PD role WC without ORR freeze stamp — do not invent; leave null.
+            workcenter = None
+            wc_status = "source_missing"
+        if workcenter or wc_status:
+            machine_req = PlannedTaskMachineRequirement(
+                workcenter=workcenter,
+                mapping_source=wc_source,
+                resolution_status=wc_status,
+            )
 
         frozen_identity = build_frozen_task_identity(
             snapshot=snapshot,
@@ -432,6 +443,18 @@ def _build_planned_tasks(
         task_warnings: list[str] = []
         if estimated_minutes is None:
             task_warnings.append(PLANNING_MINUTES_WARNING)
+            task_warnings.append("PLANNING_MINUTES_SOURCE_MISSING")
+        if wc_status == "ambiguous":
+            task_warnings.append("WORKCENTER_MAPPING_AMBIGUOUS")
+        elif wc_status == "source_missing":
+            task_warnings.append("WORKCENTER_MAPPING_SOURCE_MISSING")
+        elif wc_status == "not_required":
+            task_warnings.append("WORKCENTER_NOT_REQUIRED")
+        if wc_source:
+            task_provenance.append(wc_source)
+        planning_status = getattr(agg_op, "planning_duration_status", None) if agg_op else None
+        if planning_status:
+            task_provenance.append(f"planning_duration_status={planning_status}")
 
         tasks.append(
             PlannedTaskPreview(

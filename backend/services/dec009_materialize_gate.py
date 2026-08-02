@@ -46,6 +46,7 @@ PROTECTED_ORDER_IDS: frozenset[int] = frozenset(
         973010,
         973012,
         973013,
+        973015,  # Golden Pilot task-graph baseline — never rematerialize
     }
 )
 
@@ -81,20 +82,27 @@ SCOPED_B_FIXTURES: list[ScopedBFixture] = [
         "role": "protected_baseline",
         "allow_materialize": False,
     },
-    # Golden Pilot V1 live fixture (973015 / plan 17).
     {
         "order_id": 973015,
         "plan_id": 17,
         "fixture_id": "FIX-GOLDEN-PILOT-TASK-GRAPH-V1",
+        "role": "protected_baseline",
+        "allow_materialize": False,
+    },
+    # Golden Pilot Operational Planning Truth V1 (973018 / plan 20).
+    {
+        "order_id": 973018,
+        "plan_id": 20,
+        "fixture_id": "FIX-GOLDEN-PILOT-PLANNING-TRUTH-V1",
         "role": "next_dry_target",
         "allow_materialize": True,
     },
 ]
 
 # Scalar aliases = next dry target only (preflight / identity honesty).
-SCOPED_B_ORDER_ID = 973015
-SCOPED_B_PLAN_ID = 17
-SCOPED_B_FIXTURE_ID = "FIX-GOLDEN-PILOT-TASK-GRAPH-V1"
+SCOPED_B_ORDER_ID = 973018
+SCOPED_B_PLAN_ID = 20
+SCOPED_B_FIXTURE_ID = "FIX-GOLDEN-PILOT-PLANNING-TRUTH-V1"
 SCOPED_B_ACTION = "exactly_one_post_materialize_tasks"
 SCOPED_B_ALLOW = ("write_operational_tasks_into_v2_envelope",)
 SCOPED_B_FORBID = (
@@ -108,6 +116,7 @@ SCOPED_B_FORBID = (
     "rematerialize_92401_mat02",
     "rematerialize_973012",
     "rematerialize_973013",
+    "rematerialize_973015",
 )
 
 # True_CONDITIONAL — authorize path open only for registered next-dry target.
@@ -122,7 +131,7 @@ ERROR_DEC009_MATERIALIZE_BLOCKED = "DEC009_MATERIALIZE_BLOCKED"
 
 # Runtime identity stamp — proves this process loaded OD3 + current scoped-B.
 OD3_GATE_MODULE = "services.dec009_materialize_gate"
-OD3_RUNTIME_IDENTITY_VERSION = "golden-pilot-task-graph-v1/v1"
+OD3_RUNTIME_IDENTITY_VERSION = "golden-pilot-planning-truth-v1/v1"
 # First main merge that landed OD3 DEC-009 hard reject (PR #29).
 OD3_MIN_MERGE_COMMIT = "a1b759c81355124f285b83425b93a9422f0e891e"
 

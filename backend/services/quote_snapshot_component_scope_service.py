@@ -47,6 +47,11 @@ from services.product_aggregate_active_scope_filter import filter_aggregate_by_a
 from services.product_aggregate_service import ProductAggregateService
 from services.product_aggregate_workspace_composition_service import SEGMENT_NAMESPACE_SEP
 from services.product_definition_builder_service import ProductDefinitionBuilderService
+from services.operation_workcenter_resolution_service import (
+    apply_workcenter_resolution_to_aggregate,
+    load_active_workcenter_codes,
+    load_orr_mappings,
+)
 from services.technical_material_requirement_service import (
     apply_technical_material_requirements,
 )
@@ -391,6 +396,16 @@ async def build_frozen_component_scope(
                 scope=compiled,
                 payload=merged_payload,
             )
+
+    # DEC-010: freeze ORR workcenter truth onto Aggregate operations (not Pricing).
+    # Runs before duration so task-rule priced ops exist as Aggregate operations.
+    orr_mappings = await load_orr_mappings(db)
+    active_wcs = await load_active_workcenter_codes(db)
+    aggregate = apply_workcenter_resolution_to_aggregate(
+        aggregate,
+        orr_mappings,
+        active_workcenter_codes=active_wcs,
+    )
 
     # TE2E-028B: resolve formula duration from freeze-time product facts.
     duration_facts = collect_planning_duration_facts(merged_payload)

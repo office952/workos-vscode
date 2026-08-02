@@ -46,7 +46,13 @@ def collect_planning_duration_facts(
                 continue
             if isinstance(value, dict):
                 # Flatten common nested geometry bags without inventing values.
-                if key in {"geometry", "geometry_inputs", "finish_setup"}:
+                # quote_geometry is the freeze-time Product System bag for letter_count etc.
+                if key in {
+                    "geometry",
+                    "geometry_inputs",
+                    "finish_setup",
+                    "quote_geometry",
+                }:
                     for nested_key, nested_val in value.items():
                         if nested_val is not None and nested_key not in out:
                             out[str(nested_key)] = nested_val

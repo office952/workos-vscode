@@ -236,6 +236,8 @@ def materialize_operational_tasks_from_v2_envelope(
             if segment_from_identity and not linked_segment_key:
                 linked_segment_key = str(segment_from_identity).strip() or None
 
+        resolved_wc = _machine_type_from_planned(planned) or None
+        machine_req = planned.get("machine_requirement")
         operational: dict[str, Any] = {
             "task_id": task_key,
             "source_task_key": task_key,
@@ -244,7 +246,10 @@ def materialize_operational_tasks_from_v2_envelope(
             "technical_name": technical_name,
             "process_type": str(planned.get("canonical_task_type") or "").strip(),
             "process_id": source_operation_code or "",
-            "machine_type": _machine_type_from_planned(planned),
+            "machine_type": resolved_wc or "",
+            # DEC-010: explicit workcenter field for Ops-Graph / eligibility (frozen).
+            "workcenter": resolved_wc,
+            "machine_requirement": machine_req if isinstance(machine_req, dict) else None,
             "depends_on_task_ids": dep_ids,
             "sequence_index": planned.get("sequence_index"),
             "estimated_time_minutes": estimated_time_minutes,
