@@ -9,6 +9,9 @@ import type { OperatorTask } from "@/lib/mockData";
 import { SectionHeader, ProgressBar } from "@/components/workos/SharedComponents";
 import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import FlowBreadcrumb, { operatorBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
+import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
+import { operatorCompatibilityHint } from "@/lib/executionFlowUi";
 import { OperatorHint } from "@/components/workos/NextStepPanel";
 import {
   Play,
@@ -38,6 +41,7 @@ import { OperatorStructuredActionError } from "@/components/workos/OperatorStruc
 import { useAuth } from "@/contexts/AuthContext";
 import { useOperatorTaskTruth } from "@/hooks/useOperatorTaskTruth";
 import { resolveTaskTruth, taskTruthReadinessFromRuntime } from "@/lib/operatorTaskPresentation";
+import { operatorTaskPresentationKey } from "@/lib/operatorTaskPresentationKey";
 
 function ExecutionTaskStatusBadge({ status }: { status: OperatorTask["status"] }) {
   return (
@@ -222,7 +226,7 @@ export default function OperatorView() {
       return;
     }
 
-    setActionLoading(`${task.id}-${action}`);
+    setActionLoading(`${operatorTaskPresentationKey(task)}-${action}`);
     setActionError(null);
     setStructuredActionError(null);
     try {
@@ -263,7 +267,14 @@ export default function OperatorView() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-4">
-      {/* Breadcrumb */}
+      <ExecutionFlowStrip active="operator" />
+      <ExecutionFlowNextStep
+        hint={operatorCompatibilityHint(
+          orderIdFromUrl != null && Number.isInteger(orderIdFromUrl)
+            ? orderIdFromUrl
+            : null,
+        )}
+      />
       <FlowBreadcrumb items={operatorBreadcrumb()} />
 
       {/* Operator Hint */}
@@ -576,7 +587,7 @@ export default function OperatorView() {
                     : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 }`}
               >
-                {actionLoading === `${currentTask.id}-pause` ? (
+                {actionLoading === `${operatorTaskPresentationKey(currentTask)}-pause` ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Pause className="w-4 h-4" />
@@ -597,7 +608,7 @@ export default function OperatorView() {
                     : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 }`}
               >
-                {actionLoading === `${currentTask.id}-resume` ? (
+                {actionLoading === `${operatorTaskPresentationKey(currentTask)}-resume` ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <RotateCcw className="w-4 h-4" />
@@ -618,7 +629,7 @@ export default function OperatorView() {
                     : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 }`}
               >
-                {actionLoading === `${currentTask.id}-block` ? (
+                {actionLoading === `${operatorTaskPresentationKey(currentTask)}-block` ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <AlertTriangle className="w-4 h-4" />
@@ -639,7 +650,7 @@ export default function OperatorView() {
                     : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 }`}
               >
-                {actionLoading === `${currentTask.id}-unblock` ? (
+                {actionLoading === `${operatorTaskPresentationKey(currentTask)}-unblock` ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Unlock className="w-4 h-4" />
@@ -668,7 +679,7 @@ export default function OperatorView() {
                   : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
               }`}
             >
-              {actionLoading === `${currentTask.id}-complete` ? (
+              {actionLoading === `${operatorTaskPresentationKey(currentTask)}-complete` ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <CheckCircle2 className="w-4 h-4" />
@@ -728,7 +739,7 @@ export default function OperatorView() {
         <div className="space-y-2">
           {nextTasks.map((task, idx) => (
             <div
-              key={task.id}
+              key={operatorTaskPresentationKey(task)}
               className="flex items-center gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5 hover:border-blue-700/50 transition-colors cursor-pointer"
             >
               <span className="text-[12px] font-mono text-slate-600 w-5">{idx + 1}</span>
@@ -769,7 +780,7 @@ export default function OperatorView() {
                     : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 }`}
               >
-                {actionLoading === `${task.id}-start` ? (
+                {actionLoading === `${operatorTaskPresentationKey(task)}-start` ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
                 ) : (
                   <Play className="w-3 h-3" />
@@ -804,7 +815,7 @@ export default function OperatorView() {
                   : "bg-slate-600";
 
                 return (
-                  <div key={task.id} className="relative pb-4">
+                  <div key={operatorTaskPresentationKey(task)} className="relative pb-4">
                     {/* Line */}
                     {idx < arr.length - 1 && (
                       <div className="absolute left-[-16px] top-3 w-px h-full bg-wo-hover" />

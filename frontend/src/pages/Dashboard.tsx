@@ -1,6 +1,9 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
+import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
+import { controlProductionNextStepHint } from "@/lib/executionFlowUi";
 import {
   CapacityNotice,
   BoundaryBadge,
@@ -937,6 +940,8 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-5 max-w-[1600px] mx-auto pb-6">
+      <ExecutionFlowStrip active="control" />
+      <ExecutionFlowNextStep hint={controlProductionNextStepHint()} />
       {/* 1. Status + honesty */}
       <StatusHeader
         source={source}
@@ -1037,9 +1042,13 @@ export default function Dashboard() {
           <ShoppingCart className="w-3 h-3" />
           Comenzi
         </button>
+        <button onClick={() => navigate("/execution")} className={QUICK_ACTION_CLASS}>
+          <Activity className="w-3 h-3" />
+          Execuție
+        </button>
         <button onClick={() => navigate("/shop-floor")} className={QUICK_ACTION_CLASS}>
           <Factory className="w-3 h-3" />
-          Shop Floor
+          Atelier
         </button>
         <button onClick={() => navigate("/reports")} className={QUICK_ACTION_CLASS}>
           <BarChart3 className="w-3 h-3" />

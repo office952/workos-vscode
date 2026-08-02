@@ -8,6 +8,7 @@ import {
 import type { OperatorTask } from "@/lib/mockData";
 import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
 import type { OperatorTaskTruthTask } from "@/api/operatorTaskTruth";
+import { operatorTaskPresentationKey } from "@/lib/operatorTaskPresentationKey";
 
 type Props = {
   tasks: OperatorTask[];
@@ -66,9 +67,10 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
   const handleAssign = useCallback(
     async (task: OperatorTask) => {
       const orderId = extractOrderId(task);
-      const selected = selection[task.id];
+      const rowKey = operatorTaskPresentationKey(task);
+      const selected = selection[rowKey];
       if (!orderId || !selected) return;
-      setAssigning(task.id);
+      setAssigning(rowKey);
       setError(null);
       setSuccess(null);
       try {
@@ -88,8 +90,9 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
     async (task: OperatorTask) => {
       const orderId = extractOrderId(task);
       if (!orderId) return;
-      const draft = instructionDrafts[task.id] ?? task.instructions ?? "";
-      setSavingInstructions(task.id);
+      const rowKey = operatorTaskPresentationKey(task);
+      const draft = instructionDrafts[rowKey] ?? task.instructions ?? "";
+      setSavingInstructions(rowKey);
       setError(null);
       setSuccess(null);
       try {
@@ -136,16 +139,17 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
       ) : (
         <div className="space-y-2">
           {assignableTasks.map((task) => {
+            const rowKey = operatorTaskPresentationKey(task);
             const assignedLabel =
               task.assignedEmployeeName ||
               (task.assignedEmployeeId ? `Angajat #${task.assignedEmployeeId}` : "Neatribuit");
             const instructionValue =
-              instructionDrafts[task.id] ?? task.instructions ?? "";
+              instructionDrafts[rowKey] ?? task.instructions ?? "";
             return (
               <div
-                key={task.id}
+                key={rowKey}
                 className="flex flex-col gap-2 rounded-lg border border-wo-border-strong bg-wo-surface-raised px-3 py-2.5"
-                data-testid={`operator-task-assignment-row-${task.id}`}
+                data-testid={`operator-task-assignment-row-${rowKey}`}
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <div className="min-w-0 flex-1">
@@ -154,7 +158,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                       fallbackOperationName={task.operationName}
                       fallbackTaskId={task.id}
                       compact
-                      testId={`operator-assignment-task-identity-${task.id}`}
+                      testId={`operator-assignment-task-identity-${rowKey}`}
                     />
                     <p className="text-[10px] text-slate-500 mt-1">
                       {task.jobId} · {task.status} · {assignedLabel}
@@ -162,12 +166,12 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                   </div>
                   <div className="flex items-center gap-2">
                     <select
-                      value={selection[task.id] ?? String(task.assignedEmployeeId ?? "")}
+                      value={selection[rowKey] ?? String(task.assignedEmployeeId ?? "")}
                       onChange={(event) =>
-                        setSelection((prev) => ({ ...prev, [task.id]: event.target.value }))
+                        setSelection((prev) => ({ ...prev, [rowKey]: event.target.value }))
                       }
                       className="min-w-[160px] bg-[#0A1020] border border-wo-border-strong rounded-lg px-2 py-1.5 text-[12px] text-slate-200"
-                      data-testid={`operator-task-assignment-select-${task.id}`}
+                      data-testid={`operator-task-assignment-select-${rowKey}`}
                     >
                       <option value="">— Angajat —</option>
                       {employees.map((emp) => (
@@ -178,45 +182,45 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                     </select>
                     <button
                       type="button"
-                      disabled={assigning === task.id || !selection[task.id]}
+                      disabled={assigning === rowKey || !selection[rowKey]}
                       onClick={() => void handleAssign(task)}
                       className="px-3 py-1.5 rounded-lg bg-violet-700 hover:bg-violet-600 disabled:opacity-50 text-[12px] font-semibold text-white"
-                      data-testid={`operator-task-assignment-submit-${task.id}`}
+                      data-testid={`operator-task-assignment-submit-${rowKey}`}
                     >
-                      {assigning === task.id ? "…" : "Atribuie"}
+                      {assigning === rowKey ? "…" : "Atribuie"}
                     </button>
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <label
                     className="text-[10px] font-medium text-slate-400"
-                    htmlFor={`operator-task-instructions-${task.id}`}
+                    htmlFor={`operator-task-instructions-${rowKey}`}
                   >
                     Instrucțiuni execuție
                   </label>
                   <textarea
-                    id={`operator-task-instructions-${task.id}`}
+                    id={`operator-task-instructions-${rowKey}`}
                     value={instructionValue}
                     onChange={(event) =>
                       setInstructionDrafts((prev) => ({
                         ...prev,
-                        [task.id]: event.target.value,
+                        [rowKey]: event.target.value,
                       }))
                     }
                     rows={3}
                     placeholder="Opțional — vizibile pe Employee Mobile când sunt salvate."
                     className="w-full bg-[#0A1020] border border-wo-border-strong rounded-lg px-2.5 py-2 text-[12px] text-slate-200 resize-y min-h-[72px]"
-                    data-testid={`operator-task-instructions-input-${task.id}`}
+                    data-testid={`operator-task-instructions-input-${rowKey}`}
                   />
                   <div className="flex justify-end">
                     <button
                       type="button"
-                      disabled={savingInstructions === task.id}
+                      disabled={savingInstructions === rowKey}
                       onClick={() => void handleSaveInstructions(task)}
                       className="px-3 py-1.5 rounded-lg border border-wo-border-strong hover:bg-[#243047] disabled:opacity-50 text-[12px] font-medium text-slate-200"
-                      data-testid={`operator-task-instructions-save-${task.id}`}
+                      data-testid={`operator-task-instructions-save-${rowKey}`}
                     >
-                      {savingInstructions === task.id ? "…" : "Salvează instrucțiuni"}
+                      {savingInstructions === rowKey ? "…" : "Salvează instrucțiuni"}
                     </button>
                   </div>
                 </div>

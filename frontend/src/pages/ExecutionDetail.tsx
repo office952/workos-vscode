@@ -79,6 +79,9 @@ import {
 import OperatorTaskCollaborationPanel from "@/components/workos/collaboration/OperatorTaskCollaborationPanel";
 import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
 import { resolveExecutionNextAction } from "@/lib/executionNextAction";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
+import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
+import { executionDetailNextStepHint } from "@/lib/executionFlowUi";
 
 // Human-readable labels for plan-generation failure codes coming from the
 // backend. We keep the raw code visible alongside so the operator (and QA)
@@ -352,6 +355,16 @@ export default function ExecutionDetail() {
 
   return (
     <div className="space-y-4">
+      <ExecutionFlowStrip
+        active="executie"
+        orderExecutionPath={
+          isValidId && parsedId != null ? `/execution/${parsedId}` : null
+        }
+      />
+      <ExecutionFlowNextStep
+        hint={executionDetailNextStepHint(isValidId ? parsedId : null)}
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -360,7 +373,14 @@ export default function ExecutionDetail() {
             className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Dashboard
+            Execuție
+          </Link>
+          <span className="text-wo-text-dim">/</span>
+          <Link
+            to="/orders"
+            className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
+          >
+            Comenzi
           </Link>
           <span className="text-wo-text-dim">/</span>
           <ActivitySquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -934,8 +954,22 @@ export default function ExecutionDetail() {
       )}
 
       {obs && isValidId && (
-        <ProfitabilityActualReadPanel orderId={parsedId} />
-        <ProfitabilityAnalysisPanel orderId={parsedId} />
+        <>
+          <ProfitabilityActualReadPanel orderId={parsedId} />
+          <div
+            className="rounded-md border border-amber-300/50 bg-amber-50/80 px-3 py-2 dark:border-amber-700/40 dark:bg-amber-950/20"
+            data-testid="profitability-analysis-legacy-label"
+          >
+            <p className="text-[11px] font-semibold text-amber-900 dark:text-amber-200">
+              Legacy — ProfitabilityAnalysis
+            </p>
+            <p className="text-[10px] text-amber-800/90 dark:text-amber-300/80">
+              Panou vechi, încă montat pentru comparație. Nu este autoritatea Actual Cost /
+              Job Closure. Costurile și marjele reale rămân indisponibile până la decizia Owner.
+            </p>
+          </div>
+          <ProfitabilityAnalysisPanel orderId={parsedId} />
+        </>
       )}
 
       {/* BUILD 18 — Reality Quality Badge (Data Quality & Invalid Reality Marker) */}

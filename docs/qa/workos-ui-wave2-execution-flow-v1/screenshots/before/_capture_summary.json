@@ -1,0 +1,96 @@
+{
+  "phase": "before",
+  "base": "http://127.0.0.1:3031",
+  "light": [
+    {
+      "theme": "light",
+      "path": "/orders",
+      "file": "01-comenzi.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/execution",
+      "file": "02-executie.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/execution/973019",
+      "file": "03-executie-detaliu-973019.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/shop-floor",
+      "file": "04-atelier.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/dashboard",
+      "file": "05-control-productie.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/operator?orderId=973019",
+      "file": "06-operator-compat.png",
+      "ok": true
+    }
+  ],
+  "dark": [
+    {
+      "theme": "dark",
+      "path": "/orders",
+      "file": "01-comenzi.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/execution",
+      "file": "02-executie.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/execution/973019",
+      "file": "03-executie-detaliu-973019.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/shop-floor",
+      "file": "04-atelier.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/dashboard",
+      "file": "05-control-productie.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/operator?orderId=973019",
+      "file": "06-operator-compat.png",
+      "ok": true
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ]
+}

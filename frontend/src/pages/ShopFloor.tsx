@@ -10,6 +10,9 @@ import {
   AlertItem,
 } from "@/components/workos/SharedComponents";
 import FlowBreadcrumb, { shopFloorBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
+import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
+import { shopFloorNextStepHint } from "@/lib/executionFlowUi";
 import { OperatorHint } from "@/components/workos/NextStepPanel";
 import { SourceBadge } from "@/components/workos/design-system";
 import type { SourceState } from "@/components/workos/design-system";
@@ -52,30 +55,31 @@ export default function ShopFloor() {
 
   return (
     <div className="space-y-4">
-      {/* Breadcrumb */}
+      <ExecutionFlowStrip active="atelier" />
       <FlowBreadcrumb items={shopFloorBreadcrumb()} />
+      <ExecutionFlowNextStep hint={shopFloorNextStepHint()} />
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Factory className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-wo-text-primary">Shop Floor — Live</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Atelier / Shop Floor</h1>
           <SourceBadge source={mapShopFloorSourceToBadge(source)} />
           <div className="flex items-center gap-2 ml-2">
             {connectionStatus === "connected" ? (
               <span className="flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-900/20 border border-emerald-800/30 px-2 py-0.5 rounded-full">
                 <LiveDot />
-                Connected
+                Conectat
               </span>
             ) : connectionStatus === "reconnecting" ? (
               <span className="flex items-center gap-1.5 text-[11px] text-amber-400 bg-amber-900/20 border border-amber-800/30 px-2 py-0.5 rounded-full">
                 <RefreshCw className="w-3 h-3 animate-spin" />
-                Reconnecting
+                Reconectare
               </span>
             ) : (
               <span className="flex items-center gap-1.5 text-[11px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
                 <span className="w-2 h-2 rounded-full bg-slate-500 animate-pulse" />
-                Connecting
+                Conectare
               </span>
             )}
             <span className="text-[10px] text-slate-600 font-mono">
@@ -88,15 +92,15 @@ export default function ShopFloor() {
           {blockedJobs.length > 0 && (
             <span className="flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-800/50 rounded text-red-400 text-[11px] font-semibold animate-pulse">
               <AlertTriangle className="w-3 h-3" />
-              {blockedJobs.length} blocked
+              {blockedJobs.length} blocate
             </span>
           )}
           <div className="flex items-center gap-1 text-[10px] text-slate-600">
-            <span>{machines.filter((m) => m.status === "running").length} running</span>
+            <span>{machines.filter((m) => m.status === "running").length} active</span>
             <span>·</span>
             <span>{machines.filter((m) => m.status === "idle").length} idle</span>
             <span>·</span>
-            <span>{machines.filter((m) => m.status === "maintenance").length} maint.</span>
+            <span>{machines.filter((m) => m.status === "maintenance").length} mentenanță</span>
           </div>
         </div>
       </div>

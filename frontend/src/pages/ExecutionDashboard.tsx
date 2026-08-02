@@ -26,9 +26,12 @@ import {
   type AlertSeverity,
 } from "@/api/execution";
 import FlowBreadcrumb, { executionBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
+import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
 import { MetricTile, DataTableWrapper, OwnerGoNotice, chromeBanner } from "@/components/workos/design-system";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import { executionListNextStepHint } from "@/lib/executionFlowUi";
 
 // ---------------------------------------------------------------------------
 // Formatting helpers — all null-safe. They ONLY handle presentation; they
@@ -139,14 +142,14 @@ export default function ExecutionDashboard() {
 
   return (
     <div className="space-y-4">
-      {/* Breadcrumb */}
+      <ExecutionFlowStrip active="executie" />
       <FlowBreadcrumb items={executionBreadcrumb()} />
 
       {/* Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
           <Activity className="w-5 h-5 text-wo-info" />
-          <h1 className="text-[18px] font-bold text-wo-text-primary">Execution Dashboard</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Execuție</h1>
           {total !== null && (
             <span className="text-[10px] text-wo-text-muted bg-wo-surface-inset border border-wo-border-subtle px-2 py-0.5 rounded-full ml-1">
               {total} comenzi
@@ -185,6 +188,7 @@ export default function ExecutionDashboard() {
         </div>
       </div>
 
+      <ExecutionFlowNextStep hint={executionListNextStepHint()} />
       <ExecutionPlanStatesStrip hasPreview hasDraftPlan={false} hasOperationalTasks={false} operationalBlocked />
       <OwnerGoNotice
         detail="Plan operațional (materializare) blocat — necesită Owner GO. Planned tasks ≠ taskuri active în atelier."

@@ -8,6 +8,7 @@ import { SectionHeader, JobStatusBadge, ProgressBar } from "@/components/workos/
 import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import FlowBreadcrumb, { ordersBreadcrumb } from "@/components/workos/FlowBreadcrumb";
 import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
+import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
 import NextStepPanel from "@/components/workos/NextStepPanel";
 import TechnicalDetailsDisclosure from "@/components/workos/TechnicalDetailsDisclosure";
 import { chromeBanner } from "@/components/workos/design-system/chromeRecipes";
@@ -238,6 +239,10 @@ export default function Orders() {
     <div className="space-y-4" data-testid="orders-page">
       <FlowBreadcrumb items={ordersBreadcrumb()} />
       <CommercialFlowStrip active="comenzi" />
+      <ExecutionFlowStrip
+        active="comenzi"
+        orderExecutionPath={executionDetailPath}
+      />
 
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2">
