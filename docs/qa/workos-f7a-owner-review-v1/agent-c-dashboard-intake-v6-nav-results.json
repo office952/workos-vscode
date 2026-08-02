@@ -1,0 +1,106 @@
+{
+  "fe": "http://127.0.0.1:3000",
+  "startedAt": "2026-08-02T19:52:19.361Z",
+  "steps": [
+    {
+      "at": "2026-08-02T19:52:21.857Z",
+      "step": "dashboard_loaded",
+      "url": "http://127.0.0.1:3000/dashboard",
+      "beforeShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-01-dashboard-before-click.png",
+      "quickActions": [
+        {
+          "tag": "A",
+          "text": "Cereri",
+          "href": "/intake",
+          "testId": null,
+          "className": "flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors focus-visible:outline focus-visib"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Cerere Nouă",
+          "href": null,
+          "testId": null,
+          "className": "inline-flex items-center gap-1.5 rounded-md border border-wo-info/40 bg-wo-info-muted px-3 py-1.5 text-[11px] font-mediu"
+        }
+      ],
+      "navItems": [
+        {
+          "text": "Cereri",
+          "href": "/intake"
+        },
+        {
+          "text": "Control producțiepreview",
+          "href": "/dashboard"
+        }
+      ],
+      "roleBadge": "Operator",
+      "bodySnippet": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA "
+    },
+    {
+      "at": "2026-08-02T19:52:23.966Z",
+      "step": "after_cerere_noua_click",
+      "url": "http://127.0.0.1:3000/intake",
+      "afterClickShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-02-after-dashboard-cerere-noua-click.png",
+      "landedOnV6": false,
+      "landedOnLegacyList": true,
+      "is404": false,
+      "isBlank": false,
+      "bodySnippet": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA "
+    },
+    {
+      "at": "2026-08-02T19:52:26.838Z",
+      "step": "direct_intake_v6",
+      "url": "http://127.0.0.1:3000/dashboard",
+      "directShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-03-direct-intake-v6-operator.png",
+      "directOk": false,
+      "bodySnippet": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA "
+    },
+    {
+      "at": "2026-08-02T19:52:28.653Z",
+      "step": "refresh",
+      "url": "http://127.0.0.1:3000/dashboard",
+      "refreshShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-04-intake-v6-after-refresh.png"
+    },
+    {
+      "at": "2026-08-02T19:52:31.422Z",
+      "step": "history",
+      "backUrl": "http://127.0.0.1:3000/intake",
+      "backShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-05-after-back.png",
+      "forwardUrl": "http://127.0.0.1:3000/dashboard",
+      "forwardShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-06-after-forward.png"
+    },
+    {
+      "at": "2026-08-02T19:52:34.532Z",
+      "step": "dashboard_again",
+      "url": "http://127.0.0.1:3000/intake",
+      "againShot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-07-dashboard-again.png"
+    },
+    {
+      "at": "2026-08-02T19:52:40.553Z",
+      "step": "sales_role_probe",
+      "salesDashUrl": "http://127.0.0.1:3000/dashboard",
+      "salesHasCerere": true,
+      "salesAfterCerereUrl": "http://127.0.0.1:3000/intake",
+      "salesV6Url": "http://127.0.0.1:3000/dashboard",
+      "salesV6Shot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-09-sales-direct-intake-v6.png",
+      "salesDashFile": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-08-sales-dashboard.png",
+      "salesRedirectedAwayFromV6": true,
+      "salesV6Text": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINIS",
+      "salesNav": [
+        {
+          "text": "Cereri",
+          "href": "/intake"
+        }
+      ]
+    }
+  ],
+  "consoleErrors": [],
+  "networkFailures": [],
+  "verdictHints": {
+    "dashboardCtaGoesToV6": false,
+    "dashboardCtaGoesToLegacyList": true,
+    "directV6Ok": false,
+    "salesBlockedFromV6": true
+  },
+  "finishedAt": "2026-08-02T19:52:40.620Z"
+}

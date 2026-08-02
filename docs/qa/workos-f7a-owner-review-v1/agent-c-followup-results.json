@@ -1,0 +1,40 @@
+{
+  "results": {
+    "standalone": {
+      "path": "/intake-v6-app/operator",
+      "url": "http://127.0.0.1:3000/intake-v6-app/5172ce5a-64ed-420f-a3ef-9982eab859ae/operator",
+      "shot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-10-standalone-intake-v6-app.png",
+      "text": "IV6-1DA0A134 · Litere volumetrice · Straturi 1 Straturi 2 Configurare 3 Confirmare Confirmă fișierul SVG Încarcă SVG-ul corect înainte de confirmarea rolurilor. Trage SVG aici — singurul upload principal pe acest pas. Încarcă SVG Ce producem? Produs complet Doar față Doar cant Față + cant Mod ofertă Produs completDoar anumite componente Selecție confirmată Ofertă pentru produs complet Mod: Produs "
+    },
+    "shellV6": {
+      "path": "/intake-v6/operator",
+      "url": "http://127.0.0.1:3000/dashboard",
+      "shot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-11-shell-intake-v6-retry.png",
+      "text": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA "
+    },
+    "legacyId": {
+      "path": "/intake/IR-MSC6U7XU",
+      "url": "http://127.0.0.1:3000/dashboard",
+      "shot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-12-legacy-intake-id-bridge.png",
+      "text": "WorkOS LUCRĂRI Cereri Produse Oferte Comenzi PRODUCȚIE Atelier Planificare Ops-Graph AUDIT Acțiune task COMPAT Stații COMPAT OAMENI Angajați Pontaj Evidență HR RESURSE Utilaje Inventar Prețuri RELAȚII Clienți Colaboratori Documente MANAGEMENT Control producție PREVIEW Rapoarte Plăți Avansuri ADMINISTRARE Harta Guvernanță Setări WorkOS BUILD_25 STAGING /workspace/app Staging · Sistem disponibil DA "
+    },
+    "listOpen": {
+      "hasCard": true,
+      "hasEdit": true,
+      "url": "http://127.0.0.1:3000/dashboard",
+      "shot": "C:\\w\\psiso\\docs\\qa\\workos-f7a-owner-review-v1\\screenshots\\agent-c-13-from-cereri-open.png"
+    },
+    "runtimeProbe": {
+      "href": "http://127.0.0.1:3000/dashboard",
+      "sessionRole": "admin",
+      "bodyRoleHints": [
+        "Operator"
+      ],
+      "hasDevToolingText": false,
+      "cereriHref": "/intake",
+      "userChip": "DA"
+    }
+  },
+  "consoles": [],
+  "net": []
+}
