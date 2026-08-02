@@ -77,7 +77,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   viewer: ["view:dashboard"],
 
   operator: [
-    "view:dashboard",
+    // U7: operator production home is Atelier (/shop-floor); Control producție is management.
     "view:shopfloor",
     "view:operator",
     "action:task_start",
@@ -339,8 +339,9 @@ const NAV_PERMISSION_MAP: Partial<Record<NavItem, Permission>> = {
 export function canViewNav(role: Role, navItem: NavItem | string): boolean {
   if (!(role in ROLE_PERMISSIONS)) return false;
 
+  // U7: diagnostic/demo chrome only for admin when DEV auth is on — never for viewer/operator/sales.
   if (navItem === "demos") {
-    return isDevEnvironment();
+    return isDevEnvironment() && role === "admin";
   }
 
   if (navItem === "ops_graph") {

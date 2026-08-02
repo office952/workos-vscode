@@ -26,12 +26,32 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 // Dev/preview fallback user — ONLY activates when VITE_ENABLE_DEV_AUTH=true.
 // role:admin preserves full shell nav when /auth/me is unavailable (Wave 0).
-const DEV_FALLBACK_USER: AuthUser = {
-  id: 'dev-user-001',
-  name: 'Admin Preview',
-  email: 'admin@workos.local',
-  role: 'admin',
-};
+// U7: optional sessionStorage `workos-dev-role` for local role-nav proof (never production).
+const DEV_ROLE_ALLOWLIST = new Set([
+  "admin",
+  "manager",
+  "sales",
+  "operator",
+  "viewer",
+]);
+
+function getDevFallbackUser(): AuthUser {
+  let role = "admin";
+  try {
+    const override = sessionStorage.getItem("workos-dev-role");
+    if (override && DEV_ROLE_ALLOWLIST.has(override)) {
+      role = override;
+    }
+  } catch {
+    // sessionStorage unavailable — keep admin
+  }
+  return {
+    id: "dev-user-001",
+    name: `${role} Preview`,
+    email: `${role}@workos.local`,
+    role,
+  };
+}
 
 /**
  * Returns true ONLY when the explicit VITE_ENABLE_DEV_AUTH flag is "true".
@@ -68,17 +88,32 @@ function resolveAuthFromProbe(
 ): AuthResolution {
   if (timedOut) {
     if (devAuthEnabled) {
-      return { user: DEV_FALLBACK_USER, authState: "dev_auth_enabled" };
+      return { user: getDevFallbackUser(), authState: "dev_auth_enabled" };
     }
     return { user: null, authState: "unauthenticated" };
   }
 
   if (data && typeof data === "object" && ("id" in data || "email" in data || "name" in data)) {
-    return { user: data as AuthUser, authState: "authenticated" };
+    const user = data as AuthUser;
+    // DEV-only role projection override for U7 nav proof (sessionStorage workos-dev-role).
+    if (devAuthEnabled) {
+      try {
+        const override = sessionStorage.getItem("workos-dev-role");
+        if (override && DEV_ROLE_ALLOWLIST.has(override)) {
+          return {
+            user: { ...user, role: override, name: `${override} Preview` },
+            authState: "authenticated",
+          };
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return { user, authState: "authenticated" };
   }
 
   if (devAuthEnabled) {
-    return { user: DEV_FALLBACK_USER, authState: "dev_auth_enabled" };
+    return { user: getDevFallbackUser(), authState: "dev_auth_enabled" };
   }
 
   return { user: null, authState: "unauthenticated" };
@@ -90,7 +125,7 @@ function resolveAuthFromError(error: unknown, devAuthEnabled: boolean): AuthReso
     return { user: null, authState: "auth_config_missing" };
   }
   if (devAuthEnabled) {
-    return { user: DEV_FALLBACK_USER, authState: "dev_auth_enabled" };
+    return { user: getDevFallbackUser(), authState: "dev_auth_enabled" };
   }
   return { user: null, authState: "unauthenticated" };
 }

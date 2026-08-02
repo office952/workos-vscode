@@ -64,6 +64,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import LocalApiCompatibilityBanner from "./components/workos/LocalApiCompatibilityBanner";
 import AppShell from "./components/workos/AppShell";
+import RoleHomeRedirect from "./components/workos/RoleHomeRedirect";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -253,7 +254,7 @@ export function AuthenticatedAppRoutes() {
         <Route path="/employee-app-v2/*" element={<EmployeeMobileV2StandaloneRoot />} />
         <Route path="/intake-v6-app/*" element={<IntakeV6StandaloneRoot />} />
         <Route element={<AppShell />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<RoleHomeRedirect />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/shop-floor" element={<ShopFloor />} />
           <Route path="/operator" element={<OperatorView />} />
@@ -370,7 +371,7 @@ export function AuthenticatedAppRoutes() {
           <Route path="/modules" element={<ModuleChain />} />
           <Route path="/governance" element={<Governance />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<RoleHomeRedirect />} />
         </Route>
       </Route>
     </Routes>

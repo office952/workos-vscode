@@ -61,9 +61,15 @@ export default function ShopFloor() {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Factory className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-wo-text-primary">Atelier / Shop Floor</h1>
+        <div className="flex items-center gap-2 min-w-0">
+          <Factory className="w-5 h-5 text-blue-400 shrink-0" />
+          <div className="min-w-0">
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Atelier</h1>
+            <p className="text-[11px] text-wo-text-dim mt-0.5">
+              Intrare canonică producție — monitorizare pregătit / blocat. Acțiunea pe task rămâne în
+              Acțiune task / Stații.
+            </p>
+          </div>
           <SourceBadge source={mapShopFloorSourceToBadge(source)} />
           <div className="flex items-center gap-2 ml-2">
             {connectionStatus === "connected" ? (

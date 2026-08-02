@@ -25,8 +25,14 @@ import VersionBadge from "@/components/system/VersionBadge";
 import { productionAlerts } from "@/lib/mockData";
 import { isMockEnabled } from "@/lib/mockGuard";
 import { resolveShellCriticalCount } from "@/lib/shellAlertTruth";
-import { projectNavSectionsForRole } from "@/lib/shellNavigation";
+import {
+  CANONICAL_PRODUCTION_HOME,
+  getRoleHomePath,
+  navStatusLabel,
+  projectNavSectionsForRole,
+} from "@/lib/shellNavigation";
 import { useTheme } from "@/contexts/ThemeContext";
+import ShellPathGuard from "@/components/workos/ShellPathGuard";
 
 function getInitials(name?: string, email?: string): string {
   if (name && name.trim().length > 0) {
@@ -38,7 +44,7 @@ function getInitials(name?: string, email?: string): string {
   return "U";
 }
 
-function UserMenu() {
+function UserMenu({ roleLabel }: { roleLabel: string }) {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -57,24 +63,38 @@ function UserMenu() {
   return (
     <div className="relative" ref={ref}>
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white transition-colors"
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         title="Cont utilizator"
+        aria-label={`Cont utilizator, rol ${roleLabel}`}
+        aria-expanded={open}
+        aria-haspopup="menu"
       >
         {initials}
       </button>
       {open && (
-        <div className="absolute right-0 top-10 w-56 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl overflow-hidden z-50">
+        <div
+          className="absolute right-0 top-10 w-56 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl overflow-hidden z-50"
+          role="menu"
+        >
           <div className="px-3 py-2.5 border-b border-wo-border-strong">
             <p className="text-[12px] font-semibold text-wo-text-primary truncate">{displayName}</p>
-            <p className="text-[10px] text-wo-text-dim uppercase tracking-wide mt-0.5">Autentificat</p>
+            <p
+              className="text-[10px] text-wo-text-dim uppercase tracking-wide mt-0.5"
+              data-testid="workos-shell-role"
+            >
+              Rol: {roleLabel}
+            </p>
           </div>
           <button
+            type="button"
+            role="menuitem"
             onClick={() => {
               setOpen(false);
               logout();
             }}
-            className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-wo-text-secondary hover:bg-wo-error-muted hover:text-wo-error transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-wo-text-secondary hover:bg-wo-error-muted hover:text-wo-error transition-colors text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
           >
             <LogOut className="w-3.5 h-3.5" />
             Deconectare
@@ -96,6 +116,7 @@ export default function AppShell() {
   // UI-TRUTH-01C: never show mock "N critical" as real incidents.
   const criticalAlerts = resolveShellCriticalCount(isMockEnabled(), productionAlerts);
   const navSections = projectNavSectionsForRole(role);
+  const roleHome = getRoleHomePath(role);
   const dayMode = resolvedTheme === "light";
 
   // Content-first on route change at narrow width (OR-07: ops-graph not occluded by nav).
@@ -172,7 +193,12 @@ export default function AppShell() {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-thin" data-testid="workos-shell-nav">
+        <nav
+          className="flex-1 py-2 px-2 overflow-y-auto scrollbar-thin"
+          data-testid="workos-shell-nav"
+          data-role-home={roleHome}
+          aria-label="Navigare principală"
+        >
           {navSections.map((section) => (
             <div key={section.id} className="mb-2" data-nav-section={section.id}>
               {showNavLabels && (
@@ -181,26 +207,47 @@ export default function AppShell() {
                 </p>
               )}
               <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <NavLink
-                    key={`${section.id}-${item.to}`}
-                    to={item.to}
-                    end={item.end === false ? false : true}
-                    onClick={() => {
-                      if (isNarrow) setNavDrawerOpen(false);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                        isActive
-                          ? "bg-primary/15 text-primary border-l-2 border-primary"
-                          : "text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover border-l-2 border-transparent"
-                      }`
-                    }
-                  >
-                    <item.icon className="w-4 h-4 shrink-0" />
-                    {showNavLabels && <span>{item.label}</span>}
-                  </NavLink>
-                ))}
+                {section.items.map((item) => {
+                  const status = navStatusLabel(item.status);
+                  return (
+                    <NavLink
+                      key={`${section.id}-${item.to}`}
+                      to={item.to}
+                      end={item.end === false ? false : true}
+                      aria-label={
+                        status ? `${item.label} (${status})` : item.label
+                      }
+                      data-nav-primary={
+                        item.productionPrimary &&
+                        item.to === CANONICAL_PRODUCTION_HOME
+                          ? "production"
+                          : undefined
+                      }
+                      onClick={() => {
+                        if (isNarrow) setNavDrawerOpen(false);
+                      }}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                          isActive
+                            ? "bg-primary/15 text-primary border-l-2 border-primary"
+                            : "text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover border-l-2 border-transparent"
+                        }`
+                      }
+                    >
+                      <item.icon className="w-4 h-4 shrink-0" aria-hidden />
+                      {showNavLabels && (
+                        <span className="flex min-w-0 flex-1 items-center gap-1.5">
+                          <span className="truncate">{item.label}</span>
+                          {status ? (
+                            <span className="shrink-0 rounded px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-wo-text-dim bg-wo-surface-input border border-wo-border-subtle">
+                              {status}
+                            </span>
+                          ) : null}
+                        </span>
+                      )}
+                    </NavLink>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -213,8 +260,11 @@ export default function AppShell() {
         {!isNarrow && (
           <button
             type="button"
+            aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
+            aria-expanded={!collapsed}
+            data-testid="workos-nav-collapse"
             onClick={() => setCollapsed(!collapsed)}
-            className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors"
+            className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
@@ -281,14 +331,16 @@ export default function AppShell() {
               )}
             </button>
             <div className="pl-2 border-l border-wo-border-subtle">
-              <UserMenu />
+              <UserMenu roleLabel={role} />
             </div>
           </div>
         </header>
 
         {/* Content — routes owned by App.tsx */}
         <main className="relative z-0 flex-1 overflow-auto p-4">
-          <Outlet />
+          <ShellPathGuard>
+            <Outlet />
+          </ShellPathGuard>
         </main>
       </div>
     </div>

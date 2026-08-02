@@ -75,13 +75,13 @@ export function executionDetailNextStepHint(
 
 export function shopFloorNextStepHint(): ExecutionNextStepHint {
   return {
-    title: "Următorul pas: Acționează pe task în Operator",
+    title: "Următorul pas: Acționează pe task",
     description:
-      "Shop Floor este monitorizare. Start/Complete rămân pe Operator / Tablet, cu poarta de identitate pe backend.",
-    primaryLabel: "Deschide Operator",
+      "Atelierul este monitorizare. Start/Complete rămân pe Acțiune task / Stații, cu poarta de identitate pe backend. Controlul producție rămâne agregat de management.",
+    primaryLabel: "Acțiune task",
     primaryTo: "/operator",
-    secondaryLabel: "Control producție",
-    secondaryTo: "/dashboard",
+    secondaryLabel: "Stații",
+    secondaryTo: "/tablet",
   };
 }
 
