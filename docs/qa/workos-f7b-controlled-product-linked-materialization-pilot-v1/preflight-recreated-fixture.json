@@ -1,0 +1,149 @@
+{
+  "fixture_created_now": true,
+  "order_id": 880811,
+  "order_code": "ORD-F7B-880811",
+  "execution_plan_id": 22,
+  "persist_first_id": 22,
+  "persist_second_id": 22,
+  "persist_idempotent": true,
+  "commercial_total": 1847.5,
+  "snapshot_sha256": "a59b6c447d9e6afb484bae9415e85041e12fc73bf5bb20a7cf2a089bd393738b",
+  "snapshot_sha256_prefix": "a59b6c447d9e6afb",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "planned_task_count": 5,
+  "planned_tasks": [
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "source_operation_code": "face_cnc_cut",
+      "workcenter": "WC_CNC_ROUTING",
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "source_operation_code": "side_forming",
+      "workcenter": "WC_LETTER_FORMING",
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "source_operation_code": "return_face_bonding",
+      "workcenter": "WC_METAL_FAB",
+      "depends_on": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+      ],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "source_operation_code": "painting",
+      "workcenter": "WC_ASSEMBLY",
+      "depends_on": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding"
+      ],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "source_operation_code": "packaging_letters",
+      "workcenter": "WC_ASSEMBLY",
+      "depends_on": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting"
+      ],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    }
+  ],
+  "execution_tasks_created": false,
+  "operational_tasks": [],
+  "audit_mode": "audit_only",
+  "audit_materialization_status": "blocked_needs_owner_go",
+  "audit_writes_database": false,
+  "candidate_count": 5,
+  "candidates": [
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "source_operation_code": "face_cnc_cut",
+      "workcenter": null,
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "source_operation_code": "side_forming",
+      "workcenter": null,
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "source_operation_code": "return_face_bonding",
+      "workcenter": null,
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "source_operation_code": "painting",
+      "workcenter": null,
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "source_operation_code": "packaging_letters",
+      "workcenter": null,
+      "depends_on": [],
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ]
+    }
+  ],
+  "candidate_fingerprint_sha256": "cd03f9acb47afb139a2d849227d84a44328731fe806e674945b803517ce71ada",
+  "preview_status": "partial_missing_planning_minutes",
+  "protected_973019": {
+    "snapshot_sha256_prefix": "2d412e6e1234ae44",
+    "accepted_commercial_total": 847.5
+  },
+  "dec009_note": "Live SCOPED_B next_dry remains 973019/21 in process. HTTP POST for this fixture will 422 until next_dry is retargeted (production gate change or in-process register + restart).",
+  "post_status": "NOT_EXECUTED"
+}
