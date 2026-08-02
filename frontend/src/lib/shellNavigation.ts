@@ -213,13 +213,6 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
         status: "audit",
       },
       {
-        to: "/intake-v6/operator",
-        label: "Intake V6 (diag)",
-        icon: Inbox,
-        navKey: "demos",
-        status: "audit",
-      },
-      {
         to: "/product-system/blueprint-dossier",
         label: "Blueprint Dossier",
         icon: FileText,
@@ -314,7 +307,12 @@ export function pathAllowedForRole(role: Role, pathname: string): boolean {
   if (pathname.startsWith("/product-system")) {
     return canViewNav(role, "products") || canViewNav(role, "demos");
   }
-  if (pathname.startsWith("/intake-v6") || pathname.startsWith("/demo/")) {
+  // Canonical Intake V6 operator shell — same roles as Cereri list (view:intake).
+  // Not demos-gated; production entry is Dashboard CTA → /intake-v6/operator bootstrap.
+  if (pathname.startsWith("/intake-v6")) {
+    return canViewNav(role, "intake");
+  }
+  if (pathname.startsWith("/demo/")) {
     return canViewNav(role, "demos");
   }
   if (pathname.startsWith("/reports/operational")) {

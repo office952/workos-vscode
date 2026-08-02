@@ -21,6 +21,7 @@ import {
   writeDashboardBannerAcknowledged,
   writeDashboardGapsAcknowledged,
 } from "@/lib/dashboardHonestyDisclosure";
+import { buildIntakeV6Path } from "@/lib/volumetricIntakeRoute";
 import {
   AlertTriangle,
   Activity,
@@ -1028,8 +1029,9 @@ export default function Dashboard() {
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[11px] text-wo-text-muted font-medium mr-1">Acțiuni rapide:</span>
         <button
-          onClick={() => navigate("/intake")}
+          onClick={() => navigate(buildIntakeV6Path())}
           className={QUICK_ACTION_PRIMARY_CLASS}
+          data-testid="dashboard-quick-action-cerere-noua"
         >
           <Plus className="w-3 h-3" />
           Cerere Nouă

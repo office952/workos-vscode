@@ -143,6 +143,21 @@ describe("shellNavigation — U7 role projection + production home", () => {
     expect(pathAllowedForRole("operator", "/execution/880041")).toBe(false);
   });
 
+  it("pathAllowedForRole allows Intake V6 for intake roles, not demos-only", () => {
+    expect(pathAllowedForRole("sales", "/intake-v6/operator")).toBe(true);
+    expect(pathAllowedForRole("manager", "/intake-v6/ws-1/operator")).toBe(true);
+    expect(pathAllowedForRole("admin", "/intake-v6/operator")).toBe(true);
+    expect(pathAllowedForRole("operator", "/intake-v6/operator")).toBe(false);
+    expect(pathAllowedForRole("viewer", "/intake-v6/operator")).toBe(false);
+    // /demo remains demos-gated
+    expect(pathAllowedForRole("sales", "/demo/foo")).toBe(false);
+  });
+
+  it("does not expose Intake V6 (diag) under DEV tooling", () => {
+    const labels = projectedNavLabels("admin");
+    expect(labels).not.toContain("Intake V6 (diag)");
+  });
+
   it.each(["viewer", "operator", "sales", "manager", "admin"] as Role[])(
     "role %s projection is deterministic",
     (role) => {
