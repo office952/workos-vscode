@@ -33,6 +33,7 @@ from services.canonical_template_contract_service import (
     get_canonical_template_contract_service,
 )
 from services.mini_module_registry_service import get_mini_module_registry_service
+from data.product_process.catalogs import is_bom_only_without_activation
 from services.product_process_aggregate_bridge import collapse_operational_alias_rules
 from services.template_architecture_scope import normalize_template_code, resolve_template_identity
 
@@ -705,6 +706,17 @@ class ProductAggregateService:
                     process_code=str(rule.get("process_code") or "") or None,
                 )
             )
+        # DEC-002 = A — drop BOM-only ops (e.g. premount) unless activation signal exists.
+        task_rules = [
+            rule
+            for rule in task_rules
+            if not is_bom_only_without_activation(
+                priced_operation=rule.priced_operation,
+                task_name=rule.task_name,
+                process_code=rule.process_code,
+                trigger_condition=rule.trigger_condition,
+            )
+        ]
         # DEC-003 / DEC-004 — collapse module aliases upstream so frozen task_contract
         # is the single operational driver (no parallel RETURN_PROFILE_*/PAINTING tasks).
         task_rules = collapse_operational_alias_rules(task_rules)
@@ -713,6 +725,7 @@ class ProductAggregateService:
                 "task_contract.task_rules compiled from product_blueprint_dossier.task_rules_json for ExecutionPlan V2.",
                 "process_graph_source=dossier_legacy",
                 "operational_alias_collapse=dec003_dec004",
+                "bom_only_exclusion=dec002_a",
             ]
             if task_rules
             else [

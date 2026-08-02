@@ -11,6 +11,11 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from data.operational_workcenters import workcenter_registry_status
+from data.product_process.catalogs import (
+    NON_OPERATIONAL_PROCESS_CODES,
+    is_bom_only_without_activation,
+)
 from models.orders import Orders
 from schemas.execution_plan_v2 import (
     DAG_PROCESS_DEPENDENCIES_UNRESOLVED,
@@ -157,10 +162,13 @@ def _is_non_operational_rule(rule: ProductAggregateTaskRule) -> bool:
     """Explicit non-operational classification (DEC task-contract / analyzer boundary)."""
     if _is_readiness_gate_rule(rule):
         return True
-    try:
-        from data.product_process.catalogs import NON_OPERATIONAL_PROCESS_CODES
-    except Exception:
-        NON_OPERATIONAL_PROCESS_CODES = frozenset()
+    if is_bom_only_without_activation(
+        priced_operation=rule.priced_operation,
+        task_name=rule.task_name,
+        process_code=rule.process_code,
+        trigger_condition=rule.trigger_condition,
+    ):
+        return True
     for raw in (
         rule.process_code,
         rule.task_name,
@@ -451,6 +459,12 @@ def _build_planned_tasks(
             task_warnings.append("WORKCENTER_MAPPING_SOURCE_MISSING")
         elif wc_status == "not_required":
             task_warnings.append("WORKCENTER_NOT_REQUIRED")
+        # Registry fidelity — do not invent/remap; surface non-canonical stamps (e.g. WC_CNC).
+        registry_status = workcenter_registry_status(workcenter)
+        if registry_status == "non_canonical":
+            task_warnings.append("WORKCENTER_CODE_NON_CANONICAL")
+        elif registry_status == "missing" and workcenter:
+            task_warnings.append("WORKCENTER_CODE_NOT_IN_REGISTRY")
         if wc_source:
             task_provenance.append(wc_source)
         planning_status = getattr(agg_op, "planning_duration_status", None) if agg_op else None

@@ -26,6 +26,7 @@ from schemas.product_aggregate import (
 )
 from schemas.quote_snapshot_v2 import QuoteSnapshotComponentInstance
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
+from data.product_process.catalogs import is_bom_only_without_activation
 from services.product_process_aggregate_bridge import (
     alias_parent_for,
     collapse_operational_alias_rules,
@@ -169,6 +170,9 @@ def _synthetic_rule_from_operation(
     priced_op = str(operation.operation_code or "").strip()
     if not priced_op:
         return None
+    # DEC-002 = A — never synthesize BOM-only ops (premount) into task rules.
+    if is_bom_only_without_activation(operation_code=priced_op, priced_operation=priced_op):
+        return None
     task_type = _infer_task_type_for_operation(operation)
     if task_type is None:
         return None
@@ -249,6 +253,13 @@ def collect_effective_task_rules(
         return root_node
 
     for rule in dossier_rules:
+        if is_bom_only_without_activation(
+            priced_operation=rule.priced_operation,
+            task_name=rule.task_name,
+            process_code=rule.process_code,
+            trigger_condition=rule.trigger_condition,
+        ):
+            continue
         segment_key = _parse_segment_from_trigger(rule.trigger_condition)
         origin: TaskRuleOrigin = (
             "linked_segment_task_rule" if segment_key else "dossier_task_rule"

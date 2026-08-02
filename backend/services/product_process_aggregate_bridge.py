@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from data.product_process.catalogs import is_bom_only_without_activation
 from schemas.product_aggregate import (
     ProductAggregate,
     ProductAggregateConflict,
@@ -243,6 +244,15 @@ def _rules_from_resolved(graph: ResolvedProductProcessGraph) -> list[ProductAggr
     for row in raw:
         priced = row.get("priced_operation")
         priced_s = str(priced).strip() if priced else ""
+        process_code = row.get("process_code")
+        # DEC-002 = A — BOM-only ops never enter modular task_rules without activation.
+        if is_bom_only_without_activation(
+            priced_operation=priced_s,
+            task_name=str(row.get("task_name") or ""),
+            process_code=str(process_code) if process_code else None,
+            trigger_condition=row.get("trigger_condition"),
+        ):
+            continue
         canonical = (
             resolve_canonical_task_type(process_id=priced_s, legacy_type="")
             if priced_s
@@ -259,7 +269,7 @@ def _rules_from_resolved(graph: ResolvedProductProcessGraph) -> list[ProductAggr
                 provenance="derived",
                 mini_module_code=row.get("mini_module_code"),
                 depends_on_process_ids=list(row.get("depends_on_process_ids") or []),
-                process_code=row.get("process_code"),
+                process_code=process_code,
             )
         )
     return rules

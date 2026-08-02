@@ -167,6 +167,54 @@ NON_OPERATIONAL_PROCESS_CODES: frozenset[str] = frozenset(
     }
 )
 
+# DEC-002 = A — BOM-only by default. May appear on Aggregate operations[] for BOM
+# truth, but must not become task_rules / planned_tasks / materialization candidates
+# without an explicit frozen activation signal (none exists in repo today).
+BOM_ONLY_OPERATION_CODES: frozenset[str] = frozenset(
+    {
+        "PREMOUNT_BAR_PREPARATION",
+    }
+)
+
+
+def is_bom_only_operation_code(code: str | None) -> bool:
+    raw = str(code or "").strip().upper()
+    return bool(raw) and raw in BOM_ONLY_OPERATION_CODES
+
+
+def premount_activation_signal_present(
+    *,
+    trigger_condition: str | None = None,
+    process_code: str | None = None,
+    notes: list[str] | None = None,
+) -> bool:
+    """Return True only when an explicit canonical activation signal is present.
+
+    F7A.1 research: no Owner-approved activation boolean / frozen field exists for
+    ``premount_bar_preparation`` on volumetric letters. Composition of a separate
+    metal-premount *child product* is a different path and must not be inferred here.
+    """
+    del trigger_condition, process_code, notes
+    return False
+
+
+def is_bom_only_without_activation(
+    *,
+    operation_code: str | None = None,
+    priced_operation: str | None = None,
+    task_name: str | None = None,
+    process_code: str | None = None,
+    trigger_condition: str | None = None,
+) -> bool:
+    """True when code is BOM-only and no activation signal authorizes a task."""
+    for raw in (operation_code, priced_operation, task_name, process_code):
+        if is_bom_only_operation_code(raw):
+            return not premount_activation_signal_present(
+                trigger_condition=trigger_condition,
+                process_code=process_code,
+            )
+    return False
+
 PROCESS_TO_MINI_MODULE: dict[str, str] = {
     "CONFIRM_GEOMETRY": "geometry_svg",
     "ANALYZE_SVG": "geometry_svg",

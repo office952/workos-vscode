@@ -137,7 +137,7 @@ def _f7a_operations() -> list[ProductAggregateOperation]:
         ProductAggregateOperation(
             operation_code="face_cnc_cut",
             label="Face CNC Cut",
-            workcenter="WC_CNC",
+            workcenter="WC_CNC_ROUTING",
             workcenter_resolution_status="resolved",
             workcenter_mapping_source="orr_freeze",
         ),
@@ -183,7 +183,7 @@ def _f7a_operations() -> list[ProductAggregateOperation]:
         ProductAggregateOperation(
             operation_code="packaging_letters",
             label="Packaging",
-            workcenter="WC_PACK",
+            workcenter="WC_ASSEMBLY",
             workcenter_resolution_status="resolved",
             workcenter_mapping_source="orr_freeze",
         ),
