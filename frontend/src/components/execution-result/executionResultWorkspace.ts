@@ -57,6 +57,10 @@ export function statusLabel(status: ExecutionStatus): string {
       return "Critic";
     case "UNCONFIRMED":
       return "Neconfirmat";
+    default: {
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
   }
 }
 
