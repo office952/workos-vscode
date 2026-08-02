@@ -13,25 +13,25 @@ describe("productSystemBlankWorkspaceIa", () => {
     expect(PRODUCT_SYSTEM_SPINE_STEPS.some((s) => s.id === "modules")).toBe(false);
     expect(PRODUCT_SYSTEM_SPINE_STEPS.some((s) => s.id === "structure")).toBe(true);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/Product Template/);
-    expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/Structură produs/);
+    expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/StructurÄƒ produs/);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/Module produs/);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/vechi/i);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/legacy/i);
   });
 
-  it("reduces detail primary IA to Template / Structură / Compiler / Readiness", () => {
+  it("reduces detail primary IA to Template / StructurÄƒ / Compiler / Readiness", () => {
     const detail = readFileSync(
       resolve(__dirname, "ProductSystemTemplateDetailPanel.tsx"),
       "utf8",
     );
     expect(detail).toMatch(/label: "Product Template"/);
-    expect(detail).toMatch(/label: "Structură produs"/);
+    expect(detail).toMatch(/label: "StructurÄƒ produs"/);
     expect(detail).not.toMatch(/label: "Module produs"/);
     expect(detail).toMatch(/label: "Product Compiler"/);
-    expect(detail).toMatch(/label: "Pregătire"/);
+    expect(detail).toMatch(/label: "PregÄƒtire"/);
     expect(detail).toMatch(/PRODUCT_ADMIN_SECTIONS/);
     expect(detail).toMatch(/Admin \/ debug \/ diagnostic/);
-    // Laboratory closure only under admin publication drawer — not overview chrome
+    // Laboratory closure only under admin publication drawer â€” not overview chrome
     expect(detail).toMatch(/product-system-admin-lab-closure/);
     const labIdx = detail.indexOf("product-system-admin-lab-closure");
     const overviewIdx = detail.indexOf('section === "overview"');
@@ -43,7 +43,7 @@ describe("productSystemBlankWorkspaceIa", () => {
       detail.indexOf("PRODUCT_PRIMARY_SECTIONS"),
       detail.indexOf("PRODUCT_ADMIN_SECTIONS"),
     );
-    expect(primaryBlock).not.toMatch(/Prețuri template/);
+    expect(primaryBlock).not.toMatch(/PreÈ›uri template/);
     expect(primaryBlock).not.toMatch(/Publicare/);
     expect(primaryBlock).not.toMatch(/Previzualizare runtime/);
   });
@@ -56,10 +56,12 @@ describe("productSystemBlankWorkspaceIa", () => {
     expect(layout).toMatch(/data-workspace="blank"/);
   });
 
-  it("keeps a single Product System title — no stacked Workspace / subtitle chrome", () => {
+  it("keeps a single Produse title with commercial-flow continuity chrome", () => {
     const layout = readFileSync(resolve(__dirname, "ProductSystemLayout.tsx"), "utf8");
     expect(layout).toMatch(/showSectionNav = operationalNav\.length > 1/);
-    expect(layout).toMatch(/sr-only/);
+    expect(layout).toMatch(/product-system-shell-title/);
+    expect(layout).toMatch(/Produse/);
+    expect(layout).toMatch(/CommercialFlowStrip/);
     expect(layout).not.toMatch(/PRODUCT_SYSTEM_WORKSPACE_SUBTITLE/);
 
     const page = readFileSync(resolve(__dirname, "../../pages/ProductSystem.tsx"), "utf8");
@@ -68,6 +70,7 @@ describe("productSystemBlankWorkspaceIa", () => {
 
     const v2 = readFileSync(resolve(__dirname, "ProductSystemV2Workspace.tsx"), "utf8");
     expect(v2).toMatch(/ProductSystemSpineBand compact/);
+    expect(v2).toMatch(/TechnicalDetailsDisclosure/);
     expect(v2).not.toMatch(/Workspace produs/);
   });
 });

@@ -3,9 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { type IntakeRequest, type IntakeStatus, type DeliveryType, deliveryTypeLabels } from "@/lib/mockData";
 import { useBackendData } from "@/hooks/useBackendData";
 import { SectionHeader } from "@/components/workos/SharedComponents";
-import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
+import {
+  AlertBanner,
+  chromeBanner,
+  PageShell,
+  SourceBadge,
+  StatusBadge,
+} from "@/components/workos/design-system";
+import FlowBreadcrumb, { intakeBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
+import NextStepPanel from "@/components/workos/NextStepPanel";
+import TechnicalDetailsDisclosure from "@/components/workos/TechnicalDetailsDisclosure";
 import NewIntakeDialog from "@/components/workos/NewIntakeDialog";
 import { navigateToQuoteDetail } from "@/lib/commercialSpineNavigation";
+import { intakeListNextStepHint } from "@/lib/commercialFlowUi";
 import { createDraftQuoteFromIntake, updateIntakeStatus } from "@/lib/dataStore";
 import { formatIntakeProductFamilyLabel } from "@/lib/intakeProductFamilyDisplay";
 import { patchIntakeByCode } from "@/lib/intakePersistence";
@@ -37,12 +48,36 @@ import {
 } from "lucide-react";
 
 const statusConfig: Record<IntakeStatus, { label: string; cls: string; icon: React.ReactNode }> = {
-  new: { label: "Nou", cls: "bg-slate-700/60 text-slate-300 border-slate-600", icon: <Inbox className="w-3 h-3" /> },
-  in_review: { label: "În Analiză", cls: "bg-blue-900/40 text-blue-300 border-blue-700", icon: <Eye className="w-3 h-3" /> },
-  needs_info: { label: "Lipsă Info", cls: "bg-amber-900/40 text-amber-300 border-amber-700", icon: <AlertTriangle className="w-3 h-3" /> },
-  ready_for_quote: { label: "Gata pt. Ofertă", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700", icon: <CheckCircle2 className="w-3 h-3" /> },
-  blocked: { label: "Blocat", cls: "bg-red-900/40 text-red-300 border-red-700", icon: <XCircle className="w-3 h-3" /> },
-  cancelled: { label: "Anulat", cls: "bg-slate-800/60 text-slate-400 border-slate-600", icon: <XCircle className="w-3 h-3" /> },
+  new: {
+    label: "Nou",
+    cls: "bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-700/60 dark:text-slate-300 dark:border-slate-600",
+    icon: <Inbox className="w-3 h-3" />,
+  },
+  in_review: {
+    label: "În Analiză",
+    cls: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-700",
+    icon: <Eye className="w-3 h-3" />,
+  },
+  needs_info: {
+    label: "Lipsă Info",
+    cls: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-700",
+    icon: <AlertTriangle className="w-3 h-3" />,
+  },
+  ready_for_quote: {
+    label: "Gata pt. Ofertă",
+    cls: "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
+    icon: <CheckCircle2 className="w-3 h-3" />,
+  },
+  blocked: {
+    label: "Blocat",
+    cls: "bg-red-50 text-red-800 border-red-200 dark:bg-red-900/40 dark:text-red-300 dark:border-red-700",
+    icon: <XCircle className="w-3 h-3" />,
+  },
+  cancelled: {
+    label: "Anulat",
+    cls: "bg-slate-100 text-slate-500 border-slate-300 dark:bg-slate-800/60 dark:text-slate-400 dark:border-slate-600",
+    icon: <XCircle className="w-3 h-3" />,
+  },
 };
 
 const channelIcon: Record<string, React.ReactNode> = {
@@ -159,33 +194,39 @@ export default function WorkIntake() {
     count: intakeRequests.filter((r) => r.status === s).length,
   }));
 
-  return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Inbox className="w-5 h-5 text-orange-400" />
-          <h1 className="text-[18px] font-bold text-wo-text-primary">Work Intake</h1>
-          <SourceBadge source={intakeSource} />
-          <span className="text-[10px] font-medium text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded-full ml-1">
-            {intakeRequests.length} cereri
-          </span>
-        </div>
-        <button
-          onClick={() => setNewDialogOpen(true)}
-          disabled={!canMutateIntake || !canCreateIntake}
-          title={
-            !canCreateIntake
-              ? "Crearea cererilor necesită cont admin/manager/sales — folosește http://127.0.0.1:3001"
-              : undefined
-          }
-          className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Cerere Nouă
-        </button>
-      </div>
+  const listNextStep = intakeListNextStepHint(selectedRequest?.status ?? "all");
 
+  return (
+    <div className="space-y-4" data-testid="work-intake-page">
+      <FlowBreadcrumb items={intakeBreadcrumb()} />
+      <CommercialFlowStrip active="cereri" />
+
+      <PageShell
+        compact
+        title="Cereri"
+        subtitle="Cerere → Produs → Ofertă → Comandă. Selectează o cerere pentru pasul următor."
+        actions={
+          <div className="flex items-center gap-2">
+            <SourceBadge source={intakeSource} />
+            <span className="text-[10px] font-medium text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded-full">
+              {intakeRequests.length} cereri
+            </span>
+            <button
+              onClick={() => setNewDialogOpen(true)}
+              disabled={!canMutateIntake || !canCreateIntake}
+              title={
+                !canCreateIntake
+                  ? "Crearea cererilor necesită cont admin/manager/sales — folosește http://127.0.0.1:3001"
+                  : undefined
+              }
+              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Cerere Nouă
+            </button>
+          </div>
+        }
+      >
       <NewIntakeDialog
         open={newDialogOpen}
         onClose={() => setNewDialogOpen(false)}
@@ -203,30 +244,25 @@ export default function WorkIntake() {
       />
 
       {error && source !== "mock" && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="text-[12px] text-red-300">
-            Datele operaționale nu au putut fi încărcate din backend: {error}
-          </p>
-        </div>
+        <AlertBanner variant="error" compact title="Date indisponibile">
+          Datele operaționale nu au putut fi încărcate din backend: {error}
+        </AlertBanner>
       )}
 
       {!canMutateIntake && (
-        <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-[11px] text-amber-300/90">
-            Acțiunile de creare/modificare intake sunt disponibile doar pe sursă backend live.
-          </p>
+        <div className={`flex items-start gap-2 px-3 py-1.5 rounded-lg text-[11px] ${chromeBanner.warning}`}>
+          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <p>Acțiunile de creare/modificare sunt disponibile doar pe sursă backend live.</p>
         </div>
       )}
 
       {canMutateIntake && !canCreateIntake && (
-        <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-[11px] text-amber-300/90">
-            Contul curent ({typeof user?.role === "string" ? user.role : "necunoscut"}) nu poate crea cereri Work Intake.
+        <div className={`flex items-start gap-2 px-3 py-1.5 rounded-lg text-[11px] ${chromeBanner.warning}`}>
+          <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+          <p>
+            Contul curent ({typeof user?.role === "string" ? user.role : "necunoscut"}) nu poate crea cereri.
             Folosește aplicația operator/comercial pe{" "}
-            <a href="http://127.0.0.1:3001" className="underline text-amber-200">
+            <a href="http://127.0.0.1:3001" className="underline font-medium">
               http://127.0.0.1:3001
             </a>
             .
@@ -386,38 +422,38 @@ export default function WorkIntake() {
                   <IntakeStatusBadge status={selectedRequest.status} />
                 </div>
                 <h3 className="text-[16px] font-bold text-wo-text-primary">{selectedRequest.client}</h3>
-                <p className="text-[12px] text-slate-400 mt-1">{selectedRequest.contactPerson}</p>
+                <p className="text-[12px] text-wo-text-secondary mt-1">{selectedRequest.contactPerson}</p>
 
                 <div className="mt-4 space-y-3">
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Descriere</p>
-                    <p className="text-[12px] text-slate-300 leading-relaxed">{selectedRequest.description}</p>
+                    <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Descriere</p>
+                    <p className="text-[12px] text-wo-text-primary leading-relaxed">{selectedRequest.description}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Dimensiuni</p>
-                      <p className="text-[12px] text-slate-300 font-mono">{selectedRequest.dimensions}</p>
+                      <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Dimensiuni</p>
+                      <p className="text-[12px] text-wo-text-primary font-mono">{selectedRequest.dimensions}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Cantitate</p>
-                      <p className="text-[12px] text-slate-300">{selectedRequest.quantity} buc</p>
+                      <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Cantitate</p>
+                      <p className="text-[12px] text-wo-text-primary">{selectedRequest.quantity} buc</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Familie Produs</p>
-                      <p className="text-[12px] text-slate-300">
+                      <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Familie Produs</p>
+                      <p className="text-[12px] text-wo-text-primary">
                         {formatIntakeProductFamilyLabel(selectedRequest.productFamily)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Canal</p>
-                      <p className="text-[12px] text-slate-300 flex items-center gap-1">{channelIcon[selectedRequest.channel]} {selectedRequest.channel}</p>
+                      <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Canal</p>
+                      <p className="text-[12px] text-wo-text-primary flex items-center gap-1">{channelIcon[selectedRequest.channel]} {selectedRequest.channel}</p>
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Asignat</p>
-                    <p className="text-[12px] text-slate-300">{selectedRequest.assignedTo}</p>
+                    <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1">Asignat</p>
+                    <p className="text-[12px] text-wo-text-primary">{selectedRequest.assignedTo}</p>
                   </div>
                 </div>
 
@@ -425,7 +461,7 @@ export default function WorkIntake() {
                 <div className="mt-4 bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Truck className="w-3.5 h-3.5 text-blue-400" />
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
+                    <p className="text-[10px] text-wo-text-muted uppercase tracking-wide font-semibold">
                       Tip Livrare
                     </p>
                   </div>
@@ -464,37 +500,62 @@ export default function WorkIntake() {
 
                 {selectedRequest.notes && (
                   <div className="mt-3 bg-wo-surface-raised rounded-lg p-3">
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
+                    <p className="text-[10px] text-wo-text-muted uppercase tracking-wide mb-1 flex items-center gap-1">
                       <MessageSquare className="w-3 h-3" /> Note
                     </p>
-                    <p className="text-[12px] text-slate-300">{selectedRequest.notes}</p>
+                    <p className="text-[12px] text-wo-text-primary">{selectedRequest.notes}</p>
                   </div>
                 )}
               </div>
 
-              {/* Timeline */}
-              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-                <SectionHeader title="Timeline" icon={<Clock className="w-4 h-4" />} />
-                <div className="relative pl-6 space-y-3">
-                  <div className="relative">
-                    <div className="absolute left-[-20px] top-1 w-3 h-3 rounded-full bg-emerald-500" />
-                    <p className="text-[11px] text-slate-300">Creat</p>
-                    <p className="text-[10px] text-slate-500">{new Date(selectedRequest.createdAt).toLocaleString("ro-RO")}</p>
-                  </div>
-                  <div className="absolute left-[-16px] top-3 w-px h-[calc(100%-12px)] bg-wo-hover" />
-                  <div className="relative">
-                    <div className="absolute left-[-20px] top-1 w-3 h-3 rounded-full bg-blue-500" />
-                    <p className="text-[11px] text-slate-300">Ultima actualizare</p>
-                    <p className="text-[10px] text-slate-500">{new Date(selectedRequest.updatedAt).toLocaleString("ro-RO")}</p>
-                  </div>
-                </div>
-              </div>
+              <NextStepPanel
+                title={listNextStep.title}
+                description={listNextStep.description}
+                primaryAction={
+                  selectedRequest.status !== "cancelled" && listNextStep.primaryLabel
+                    ? {
+                        label:
+                          selectedRequest.status === "ready_for_quote"
+                            ? "Deschide oferte"
+                            : intakePrimaryEditLabel(
+                                selectedRequest.confirmedTemplateCode,
+                                selectedRequest.productFamily,
+                              ) || listNextStep.primaryLabel,
+                        onClick:
+                          selectedRequest.status === "ready_for_quote"
+                            ? undefined
+                            : () => navigate(resolveIntakeEditPath(selectedRequest)),
+                        to:
+                          selectedRequest.status === "ready_for_quote"
+                            ? "/quotes"
+                            : undefined,
+                      }
+                    : listNextStep.primaryLabel && listNextStep.primaryTo
+                      ? {
+                          label: listNextStep.primaryLabel,
+                          to: listNextStep.primaryTo,
+                        }
+                      : undefined
+                }
+                secondaryAction={
+                  listNextStep.secondaryLabel && listNextStep.secondaryTo
+                    ? {
+                        label: listNextStep.secondaryLabel,
+                        to: listNextStep.secondaryTo,
+                        variant: "secondary",
+                      }
+                    : {
+                        label: "Vezi produse",
+                        to: "/product-system/products",
+                        variant: "ghost",
+                      }
+                }
+              />
 
               {/* Actions */}
               <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <SectionHeader title="Acțiuni" icon={<ArrowRight className="w-4 h-4" />} />
                 <div className="space-y-2">
-                  {/* Primary action: open dedicated instrumentation page */}
                   {selectedRequest.status !== "cancelled" && (
                     <button
                       data-testid="work-intake-primary-edit"
@@ -523,7 +584,7 @@ export default function WorkIntake() {
                           setStatusActionLoading(false);
                         }
                       }}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-wo-surface-inset hover:bg-wo-hover text-wo-text-primary border border-wo-border-strong rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
                     >
                       <Eye className="w-3.5 h-3.5" /> Preia în Analiză
                     </button>
@@ -547,37 +608,37 @@ export default function WorkIntake() {
                             className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[12px] font-semibold transition-colors ${
                               canSendToQuote
                                 ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                                : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                                : "bg-wo-surface-inset text-wo-text-muted border border-wo-border-strong cursor-not-allowed"
                             }`}
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" /> Marchează Gata pt. Ofertă
                           </button>
                           {!canSendToQuote && (
-                            <div className="hidden group-hover:block absolute z-20 bottom-full left-0 right-0 mb-2 bg-wo-surface-raised border border-red-800/40 rounded-lg p-3 shadow-xl">
+                            <div className="hidden group-hover:block absolute z-20 bottom-full left-0 right-0 mb-2 bg-wo-surface-raised border border-red-200 dark:border-red-800/40 rounded-lg p-3 shadow-xl">
                               <div className="flex items-center gap-1.5 mb-2">
-                                <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                                <p className="text-[11px] text-red-300 font-semibold">
+                                <AlertTriangle className="w-3.5 h-3.5 text-red-600 dark:text-red-400 shrink-0" />
+                                <p className="text-[11px] text-red-700 dark:text-red-300 font-semibold">
                                   Câmpuri obligatorii lipsă:
                                 </p>
                               </div>
                               <ul className="space-y-1">
                                 {missingFields.map((f) => (
-                                  <li key={f} className="flex items-center gap-1.5 text-[10px] text-red-300/80">
-                                    <XCircle className="w-3 h-3 text-red-400 shrink-0" />
+                                  <li key={f} className="flex items-center gap-1.5 text-[10px] text-red-700/80 dark:text-red-300/80">
+                                    <XCircle className="w-3 h-3 text-red-500 shrink-0" />
                                     {f}
                                   </li>
                                 ))}
                               </ul>
-                              <p className="text-[9px] text-slate-500 mt-2 border-t border-slate-700 pt-2">
-                                Completați câmpurile lipsă prin "Instrumentează Comanda"
+                              <p className="text-[9px] text-wo-text-muted mt-2 border-t border-wo-border-subtle pt-2">
+                                Completați câmpurile lipsă din spațiul cererii.
                               </p>
                             </div>
                           )}
                         </div>
                         {!canSendToQuote && (
-                          <div className="flex items-start gap-1.5 px-2 py-1.5 bg-red-900/10 border border-red-800/20 rounded-lg">
-                            <AlertTriangle className="w-3 h-3 text-red-400 mt-0.5 shrink-0" />
-                            <p className="text-[10px] text-red-300/80">
+                          <div className={`flex items-start gap-1.5 px-2 py-1.5 rounded-lg ${chromeBanner.error}`}>
+                            <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
+                            <p className="text-[10px]">
                               {missingFields.length} câmp(uri) obligatoriu(e) lipsă — hover pe buton pentru detalii
                             </p>
                           </div>
@@ -643,11 +704,11 @@ export default function WorkIntake() {
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
                       >
                         <ArrowRight className="w-3.5 h-3.5" />{" "}
-                        {draftQuoteLoading ? "Se creează oferta…" : "Creează Ofertă Draft"}
+                        {draftQuoteLoading ? "Se creează oferta…" : "Creează ofertă (ciornă)"}
                       </button>
                       {draftQuoteError && (
                         <p
-                          className="text-[11px] text-red-300/90 px-1"
+                          className="text-[11px] text-red-700 dark:text-red-300 px-1"
                           data-testid="work-intake-draft-quote-error"
                         >
                           {draftQuoteError}
@@ -657,15 +718,40 @@ export default function WorkIntake() {
                   )}
                 </div>
               </div>
+
+              <TechnicalDetailsDisclosure testId="work-intake-technical-details">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="font-semibold text-wo-text-secondary">Istoric / diagnostic</span>
+                </div>
+                <p>Creat: {new Date(selectedRequest.createdAt).toLocaleString("ro-RO")}</p>
+                <p>Actualizat: {new Date(selectedRequest.updatedAt).toLocaleString("ro-RO")}</p>
+                <p className="font-mono text-[10px]">status={selectedRequest.status}</p>
+                {selectedRequest.confirmedTemplateCode ? (
+                  <p className="font-mono text-[10px]">
+                    template={selectedRequest.confirmedTemplateCode}
+                  </p>
+                ) : null}
+                <p className="font-mono text-[10px]">source={intakeSource}</p>
+              </TechnicalDetailsDisclosure>
             </>
           ) : (
-            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
-              <Inbox className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[13px] text-slate-500">Selectează o cerere pentru detalii</p>
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 space-y-3">
+              <div className="text-center">
+                <Inbox className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+                <p className="text-[13px] text-wo-text-muted">Selectează o cerere pentru detalii</p>
+              </div>
+              <NextStepPanel
+                title="Flux comercial"
+                description="Alege o cerere din listă, configurează produsul, apoi creează oferta. Comanda apare după acceptare."
+                primaryAction={{ label: "Vezi produse", to: "/product-system/products" }}
+                secondaryAction={{ label: "Vezi oferte", to: "/quotes", variant: "ghost" }}
+              />
             </div>
           )}
         </div>
       </div>
+      </PageShell>
     </div>
   );
 }

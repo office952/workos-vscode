@@ -76,9 +76,26 @@ export function intakeDetailBreadcrumb(id?: string): BreadcrumbItem[] {
   ];
 }
 
+/** Commercial spine: Cereri → Produse (product definition). */
+export function productsBreadcrumb(templateLabel?: string): BreadcrumbItem[] {
+  const items: BreadcrumbItem[] = [
+    { label: "Cereri", to: "/intake" },
+    {
+      label: "Produse",
+      to: "/product-system/products",
+      active: !templateLabel,
+    },
+  ];
+  if (templateLabel) {
+    items.push({ label: templateLabel, active: true });
+  }
+  return items;
+}
+
 export function quotesBreadcrumb(): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
+    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", active: true },
   ];
 }
@@ -86,6 +103,7 @@ export function quotesBreadcrumb(): BreadcrumbItem[] {
 export function quoteDetailBreadcrumb(id?: string): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
+    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: id ? `Ofertă ${id}` : "Detaliu Ofertă", active: true },
   ];
@@ -94,6 +112,7 @@ export function quoteDetailBreadcrumb(id?: string): BreadcrumbItem[] {
 export function ordersBreadcrumb(): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
+    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: "Comenzi", active: true },
   ];
@@ -102,6 +121,7 @@ export function ordersBreadcrumb(): BreadcrumbItem[] {
 export function orderDetailBreadcrumb(id?: string): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
+    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: "Comenzi", to: "/orders" },
     { label: id ? `Comandă ${id}` : "Detaliu Comandă", active: true },

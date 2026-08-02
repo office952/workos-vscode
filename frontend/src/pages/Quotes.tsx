@@ -47,7 +47,11 @@ import {
   summarizeVolumetricQuoteGate,
 } from "@/lib/volumetricQuoteReady";
 import FlowBreadcrumb, { quotesBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
 import NextStepPanel from "@/components/workos/NextStepPanel";
+import TechnicalDetailsDisclosure from "@/components/workos/TechnicalDetailsDisclosure";
+import { quoteStatusLabelRo } from "@/lib/commercialFlowUi";
+import { chromeBanner } from "@/components/workos/design-system/chromeRecipes";
 import QuoteCommercialDocument from "@/components/workos/QuoteCommercialDocument";
 import QuotePdfPanel from "@/components/workos/QuotePdfPanel";
 import QuoteOutputCompositionPreview from "@/components/workos/QuoteOutputCompositionPreview";
@@ -83,14 +87,14 @@ import {
 } from "lucide-react";
 
 const statusConfig: Record<QuoteStatus, { label: string }> = {
-  draft: { label: "Draft" },
-  priced: { label: "Priced" },
-  sent: { label: "Trimis" },
-  viewed: { label: "Vizualizat" },
-  negotiating: { label: "Negociere" },
-  accepted: { label: "Acceptat" },
-  rejected: { label: "Respins" },
-  expired: { label: "Expirat" },
+  draft: { label: quoteStatusLabelRo("draft") },
+  priced: { label: quoteStatusLabelRo("priced") },
+  sent: { label: quoteStatusLabelRo("sent") },
+  viewed: { label: quoteStatusLabelRo("viewed") },
+  negotiating: { label: quoteStatusLabelRo("negotiating") },
+  accepted: { label: quoteStatusLabelRo("accepted") },
+  rejected: { label: quoteStatusLabelRo("rejected") },
+  expired: { label: quoteStatusLabelRo("expired") },
 };
 
 function QuoteStatusBadge({
@@ -746,16 +750,21 @@ export default function Quotes() {
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Breadcrumb */}
+    <div className="space-y-4" data-testid="quotes-page">
       <FlowBreadcrumb items={quotesBreadcrumb()} />
+      <CommercialFlowStrip active="oferte" />
 
       {/* Header */}
-      <div className="flex items-center gap-2">
-        <FileText className="w-5 h-5 text-amber-400" />
-        <h1 className="text-[18px] font-bold text-wo-text-primary">Oferte</h1>
+      <div className="flex flex-wrap items-center gap-2">
+        <FileText className="w-5 h-5 text-amber-500" />
+        <div className="min-w-0">
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Oferte</h1>
+          <p className="text-[12px] text-wo-text-muted">
+            După produsul configurat — verifică readiness, trimite sau acceptă conform contractului existent.
+          </p>
+        </div>
         <SourceBadge source={quotesSource} />
-        <span className="text-[10px] text-wo-text-muted bg-slate-800 px-2 py-0.5 rounded-full ml-1">
+        <span className="text-[10px] text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded-full">
           {quotes.length} oferte
         </span>
         <div className="ml-auto">
@@ -790,27 +799,25 @@ export default function Quotes() {
       />
 
       {error && source !== "mock" && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="text-[12px] text-red-300">
-            Datele ofertelor nu au putut fi încărcate din backend: {error}
-          </p>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] ${chromeBanner.error}`}>
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <p>Datele ofertelor nu au putut fi încărcate din backend: {error}</p>
         </div>
       )}
 
       {quoteIdParam && quoteNotFound && !loading && (
         <div
-          className="flex items-center gap-2 px-3 py-2 bg-amber-900/20 border border-amber-800/40 rounded-lg"
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] ${chromeBanner.warning}`}
           data-testid="quote-not-found"
         >
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-          <p className="text-[12px] text-amber-300">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <p>
             Oferta <span className="font-mono">{quoteIdParam}</span> nu a fost
             găsită.{" "}
             <button
               type="button"
               onClick={() => navigate("/quotes", { replace: true })}
-              className="underline hover:text-amber-200"
+              className="underline font-medium"
             >
               Înapoi la listă
             </button>
@@ -819,12 +826,15 @@ export default function Quotes() {
       )}
 
       {!showIntakeV6CommercialSpine && (
-      <div className="flex items-start gap-2 px-3 py-2 bg-blue-900/15 border border-blue-800/30 rounded-lg">
-        <AlertTriangle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
-        <p className="text-[11px] text-blue-300/90">
-          Quote readiness este decis canonic în backend (ProductSystem/CostEngine/Quotes policy). UI afișează rezultatul backend și nu inventează statusuri de readiness.
-        </p>
-      </div>
+        <TechnicalDetailsDisclosure
+          title="Detalii tehnice — readiness / politică backend"
+          testId="quotes-readiness-policy-details"
+        >
+          <p>
+            Readiness-ul ofertei este decis canonic în backend (Product System / CostEngine /
+            politică Oferte). UI afișează rezultatul și nu inventează statusuri.
+          </p>
+        </TechnicalDetailsDisclosure>
       )}
 
       {/* Summary KPIs */}
@@ -1626,7 +1636,7 @@ export default function Quotes() {
                           : undefined,
                   }}
                   secondaryAction={{
-                    label: "Vezi Comenzi",
+                    label: "Deschide comenzi",
                     to: "/orders",
                     variant: "ghost",
                   }}
@@ -1634,9 +1644,21 @@ export default function Quotes() {
               )}
             </>
           ) : (
-            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
-              <FileText className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
-              <p className="text-[13px] text-wo-text-muted">Selectează o ofertă pentru detalii</p>
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 space-y-3">
+              <div className="text-center">
+                <FileText className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+                <p className="text-[13px] text-wo-text-muted">Selectează o ofertă pentru detalii</p>
+              </div>
+              <NextStepPanel
+                title="Flux comercial"
+                description="Oferta urmează după Cerere și Produs. Selectează o ofertă pentru readiness și acțiuni — fără auto-accept."
+                primaryAction={{ label: "Înapoi la cereri", to: "/intake", variant: "secondary" }}
+                secondaryAction={{
+                  label: "Vezi produse",
+                  to: "/product-system/products",
+                  variant: "ghost",
+                }}
+              />
               <p className="text-[11px] text-wo-text-dim mt-1">Alege o ofertă din lista din stânga pentru a vedea detaliile și acțiunile disponibile.</p>
             </div>
           )}

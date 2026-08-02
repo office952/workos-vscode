@@ -13,6 +13,7 @@ import {
 import { normalizeTemplateCode } from "@/lib/activeTemplateScope";
 import { templateEntityForAvailability } from "./productSystemCanonicalCatalogModel";
 import { ModuleModelDeferredNotice } from "@/components/workos/design-system";
+import TechnicalDetailsDisclosure from "@/components/workos/TechnicalDetailsDisclosure";
 import { ProductCompilerDisplayShell } from "./ProductCompilerDisplayShell";
 import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
 import { ProductSystemSpineBand } from "./ProductSystemSpineBand";
@@ -121,8 +122,13 @@ export function ProductSystemV2Workspace({
     >
       <header data-testid="product-system-v2-header" className="space-y-2">
         <ProductSystemSpineBand compact testId="product-system-v2-spine" />
-        <ProductSystemSurfaceTruthChips testId="product-system-v2-surface-truth-chips" />
-        <ModuleModelDeferredNotice compact />
+        <TechnicalDetailsDisclosure
+          title="Detalii tehnice — adevăr template / diagnostic"
+          testId="product-system-v2-technical-details"
+        >
+          <ProductSystemSurfaceTruthChips testId="product-system-v2-surface-truth-chips" />
+          <ModuleModelDeferredNotice compact />
+        </TechnicalDetailsDisclosure>
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
@@ -138,12 +144,12 @@ export function ProductSystemV2Workspace({
             type="search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Caută Product Template…"
+            placeholder="Caută produs sau template…"
             data-testid="product-system-v2-search"
             className="w-full rounded-md border border-wo-border-strong bg-wo-surface-input px-2.5 py-2 text-sm text-wo-text-primary outline-none placeholder:text-wo-text-dim focus:border-wo-info/50"
           />
           <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim">
-            Product Templates
+            Produse active
           </p>
           <ul
             className="mt-1.5 flex-1 space-y-1 overflow-y-auto"
@@ -153,7 +159,7 @@ export function ProductSystemV2Workspace({
               <li className="px-2 py-6 text-center text-[12px] text-wo-text-muted">Se încarcă…</li>
             ) : items.length === 0 ? (
               <li className="px-2 py-6 text-center text-[12px] text-wo-text-muted">
-                Niciun Product Template vizibil.
+                Niciun produs vizibil.
               </li>
             ) : (
               items.map((item) => {

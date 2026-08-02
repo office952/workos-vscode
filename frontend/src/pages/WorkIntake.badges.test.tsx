@@ -21,6 +21,13 @@ vi.mock("@/hooks/useBackendData", () => ({
   useBackendData: () => mockUseBackendData(),
 }));
 
+vi.mock("@/contexts/AuthContext", () => ({
+  useAuth: () => ({
+    user: { role: "admin", name: "Test Admin" },
+    isAuthenticated: true,
+  }),
+}));
+
 vi.mock("@/components/workos/NewIntakeDialog", () => ({
   default: () => null,
 }));
@@ -85,7 +92,7 @@ describe("WorkIntake design-system badges", () => {
 
     renderWorkIntake();
     expect(screen.getByText("Live DB")).toBeInTheDocument();
-    expect(screen.getByText("Work Intake")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Cereri" })).toBeInTheDocument();
   });
 
   it("shows Live DB (gol) when intakes source is empty", () => {

@@ -1,0 +1,63 @@
+{
+  "phase": "before",
+  "base": "http://127.0.0.1:3030",
+  "api": "http://127.0.0.1:8000",
+  "ids": {
+    "quoteCode": null,
+    "orderCode": null,
+    "templateCode": null
+  },
+  "light": [
+    {
+      "theme": "light",
+      "path": "/intake",
+      "file": "01-cereri.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/product-system/products",
+      "file": "02-produse.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/quotes",
+      "file": "03-oferte.png",
+      "ok": true
+    },
+    {
+      "theme": "light",
+      "path": "/orders",
+      "file": "04-comenzi.png",
+      "ok": true
+    }
+  ],
+  "dark": [
+    {
+      "theme": "dark",
+      "path": "/intake",
+      "file": "01-cereri.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/product-system/products",
+      "file": "02-produse.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/quotes",
+      "file": "03-oferte.png",
+      "ok": true
+    },
+    {
+      "theme": "dark",
+      "path": "/orders",
+      "file": "04-comenzi.png",
+      "ok": true
+    }
+  ],
+  "capturedAt": "2026-08-02T14:59:13.362Z"
+}

@@ -1,13 +1,19 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useParams } from "react-router-dom";
 import { ProductSystemShellProvider, useProductSystemShell } from "./ProductSystemShellContext";
 import { PRODUCT_SYSTEM_SHELL_NAV } from "./productSystemShellConfig";
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
 import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStackBanner";
+import FlowBreadcrumb, { productsBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
+import NextStepPanel from "@/components/workos/NextStepPanel";
+import { productsNextStepHint } from "@/lib/commercialFlowUi";
 
 function ProductSystemLayoutInner() {
   const location = useLocation();
+  const { templateCode } = useParams<{ templateCode?: string }>();
   const { canViewAdvanced } = useProductSystemShell();
   const activeNavId = productSystemShellNavIdForPath(location.pathname);
+  const nextHint = productsNextStepHint();
 
   // Planned sections stay routable but off primary chrome.
   const operationalNav = PRODUCT_SYSTEM_SHELL_NAV.filter(
@@ -21,25 +27,36 @@ function ProductSystemLayoutInner() {
     location.pathname === "/product-system" ||
     location.pathname.startsWith("/product-system/products");
 
+  const crumbLabel = templateCode
+    ? decodeURIComponent(templateCode)
+    : undefined;
+
   return (
     <div className="space-y-3" data-testid="product-system-shell" data-workspace="blank">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <h1
-          className="text-base font-bold text-wo-text-primary"
-          data-testid="product-system-shell-title"
-        >
-          Product System
-        </h1>
-        {/* Subtitle / breadcrumb / single Workspace tab removed — they duplicated the page header. */}
-        <p className="sr-only" data-testid="product-system-shell-subtitle">
-          Product Template, Structură produs, Product Compiler, Pregătire — Module model amânat
-        </p>
+      <FlowBreadcrumb items={productsBreadcrumb(crumbLabel)} />
+      <CommercialFlowStrip active="produse" />
+
+      <header className="flex flex-wrap items-end justify-between gap-2">
+        <div className="min-w-0">
+          <h1
+            className="text-base font-bold text-wo-text-primary"
+            data-testid="product-system-shell-title"
+          >
+            Produse
+          </h1>
+          <p
+            className="text-[12px] text-wo-text-muted mt-0.5"
+            data-testid="product-system-shell-subtitle"
+          >
+            Structură produs și template-uri — definire înainte de ofertă. Nu este preț client.
+          </p>
+        </div>
       </header>
 
       {showSectionNav ? (
         <div className="border-b border-wo-border-subtle pb-0.5">
           <nav
-            aria-label="Product System sections"
+            aria-label="Secțiuni produse"
             className="flex flex-wrap gap-1"
             data-testid="product-system-shell-nav"
           >
@@ -58,7 +75,7 @@ function ProductSystemLayoutInner() {
                   }`
                 }
               >
-                <span>{item.label === "Products" ? "Workspace" : item.label}</span>
+                <span>{item.label === "Products" ? "Produse" : item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -70,6 +87,27 @@ function ProductSystemLayoutInner() {
           data-single-section={onWorkspace ? "workspace" : "other"}
         />
       )}
+
+      {onWorkspace ? (
+        <NextStepPanel
+          title={nextHint.title}
+          description={nextHint.description}
+          primaryAction={
+            nextHint.primaryLabel && nextHint.primaryTo
+              ? { label: nextHint.primaryLabel, to: nextHint.primaryTo }
+              : undefined
+          }
+          secondaryAction={
+            nextHint.secondaryLabel && nextHint.secondaryTo
+              ? {
+                  label: nextHint.secondaryLabel,
+                  to: nextHint.secondaryTo,
+                  variant: "ghost",
+                }
+              : undefined
+          }
+        />
+      ) : null}
 
       <ProductSystemAuthoringStackBanner />
 

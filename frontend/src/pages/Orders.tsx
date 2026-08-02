@@ -7,7 +7,10 @@ import { executionApi, PlanGenerationError } from "@/api/execution";
 import { SectionHeader, JobStatusBadge, ProgressBar } from "@/components/workos/SharedComponents";
 import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import FlowBreadcrumb, { ordersBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
 import NextStepPanel from "@/components/workos/NextStepPanel";
+import TechnicalDetailsDisclosure from "@/components/workos/TechnicalDetailsDisclosure";
+import { chromeBanner } from "@/components/workos/design-system/chromeRecipes";
 import OrderDocumentGovernancePanel from "@/components/workos/OrderDocumentGovernancePanel";
 import FieldInstallationTeamPanel from "@/components/workos/FieldInstallationTeamPanel";
 import {
@@ -232,15 +235,20 @@ export default function Orders() {
   const isOrdersEmpty = orders.length === 0;
 
   return (
-    <div className="space-y-4">
-      {/* Breadcrumb */}
+    <div className="space-y-4" data-testid="orders-page">
       <FlowBreadcrumb items={ordersBreadcrumb()} />
+      <CommercialFlowStrip active="comenzi" />
 
       {/* Header */}
-      <div className="flex items-center gap-2">
-        <ClipboardList className="w-5 h-5 text-blue-400" />
-        <h1 className="text-[18px] font-bold text-wo-text-primary">Comenzi</h1>
-        <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <ClipboardList className="w-5 h-5 text-blue-500" />
+        <div className="min-w-0">
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Comenzi</h1>
+          <p className="text-[12px] text-wo-text-muted">
+            Snapshot acceptat și stare execuție — fără re-pricing din acest ecran.
+          </p>
+        </div>
+        <span className="text-[10px] text-wo-text-muted bg-wo-surface-raised border border-wo-border-strong px-2 py-0.5 rounded-full">
           {orders.length} comenzi
         </span>
         <SourceBadge source={ordersSource} />
@@ -248,7 +256,7 @@ export default function Orders() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded bg-slate-700 text-slate-300 hover:bg-slate-600 disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded border border-wo-border-strong bg-wo-surface-raised text-wo-text-primary hover:bg-wo-hover disabled:opacity-50 transition-colors"
           >
             <RefreshCw className={`w-3 h-3 ${refreshing ? "animate-spin" : ""}`} />
             Actualizează
@@ -257,25 +265,25 @@ export default function Orders() {
       </div>
 
       {error && source !== "mock" && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <p className="text-[12px] text-red-300">Datele comenzilor nu au putut fi încărcate din backend: {error}</p>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] ${chromeBanner.error}`}>
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <p>Datele comenzilor nu au putut fi încărcate din backend: {error}</p>
         </div>
       )}
 
       {orderIdParam && orderNotFound && !loading && (
         <div
-          className="flex items-center gap-2 px-3 py-2 bg-amber-900/20 border border-amber-800/40 rounded-lg"
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] ${chromeBanner.warning}`}
           data-testid="order-not-found"
         >
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-          <p className="text-[12px] text-amber-300">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <p>
             Comanda <span className="font-mono">{orderIdParam}</span> nu a fost
             găsită.{" "}
             <button
               type="button"
               onClick={() => navigate("/orders", { replace: true })}
-              className="underline hover:text-amber-200"
+              className="underline font-medium"
             >
               Înapoi la listă
             </button>
@@ -286,21 +294,21 @@ export default function Orders() {
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">Total Comenzi</p>
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Total Comenzi</p>
           <p className="text-[20px] font-bold text-wo-text-primary mt-1">{orders.length}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">În Execuție</p>
-          <p className="text-[20px] font-bold text-emerald-400 mt-1">{inExecCount}</p>
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">În Execuție</p>
+          <p className="text-[20px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">{inExecCount}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-purple-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">Finalizate</p>
-          <p className="text-[20px] font-bold text-purple-400 mt-1">{completedCount}</p>
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Finalizate</p>
+          <p className="text-[20px] font-bold text-purple-600 dark:text-purple-400 mt-1">{completedCount}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wide">Valoare Totală</p>
-          <p className="text-[16px] font-bold text-amber-400 mt-1">{formatCurrency(totalRevenue)}</p>
-          <p className="text-[10px] text-slate-500">RON</p>
+          <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Valoare Totală</p>
+          <p className="text-[16px] font-bold text-amber-700 dark:text-amber-400 mt-1">{formatCurrency(totalRevenue)}</p>
+          <p className="text-[10px] text-wo-text-muted">RON</p>
         </div>
       </div>
 
@@ -315,7 +323,9 @@ export default function Orders() {
               key={s}
               onClick={() => setFilterStatus(s === "all" ? "all" : s as OrderStatus)}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-                filterStatus === s ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-slate-500 border-wo-border-strong hover:border-slate-500"
+                filterStatus === s
+                  ? "bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-600/20 dark:text-blue-400 dark:border-blue-600/50"
+                  : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-wo-border-strong hover:text-wo-text-primary"
               }`}
             >
               {label} ({count})
@@ -332,9 +342,9 @@ export default function Orders() {
               className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center"
               data-testid="orders-empty-state"
             >
-              <ClipboardList className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+              <ClipboardList className="w-10 h-10 text-wo-text-dim mx-auto mb-3" />
               <h2 className="text-[15px] font-semibold text-wo-text-primary">Nu există comenzi încă</h2>
-              <p className="text-[12px] text-slate-400 mt-2 max-w-md mx-auto leading-relaxed">
+              <p className="text-[12px] text-wo-text-muted mt-2 max-w-md mx-auto leading-relaxed">
                 Comenzile apar aici după acceptarea sau conversia unei oferte.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 mt-5">
@@ -349,10 +359,10 @@ export default function Orders() {
                 <button
                   type="button"
                   onClick={() => navigate("/intake")}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-[12px] font-medium rounded-lg border border-wo-border-strong bg-wo-surface-raised text-wo-text-primary hover:bg-wo-hover transition-colors"
                 >
                   <Inbox className="w-3.5 h-3.5" />
-                  Deschide Work Intake
+                  Deschide Cereri
                 </button>
               </div>
             </div>
@@ -557,89 +567,68 @@ export default function Orders() {
                 </div>
               )}
 
-              {/* Readiness Snapshot at Acceptance */}
-              {readinessSnapshot && readinessSnapshotView ? (
-                <div className="bg-[#0D1E0D] border border-emerald-800/30 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <p className="text-[12px] text-emerald-400 font-semibold">Readiness at Acceptance</p>
-                  </div>
-                  <div className="space-y-2 text-[11px]">
-                    <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                      <span className="text-slate-400">Status</span>
-                      <span className="font-semibold text-emerald-300">
+              {/* Readiness Snapshot at Acceptance — secondary diagnostic */}
+              <TechnicalDetailsDisclosure
+                title="Detalii tehnice — readiness la acceptare"
+                testId="order-readiness-snapshot-details"
+              >
+                {readinessSnapshot && readinessSnapshotView ? (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <p className="text-[12px] font-semibold text-wo-text-primary">
+                        Snapshot readiness (acceptare)
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between rounded bg-wo-surface-raised px-2 py-1.5">
+                      <span>Status</span>
+                      <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                         {readinessSnapshotView.statusLabel}
                       </span>
                     </div>
                     {readinessSnapshotView.readyForQuote !== null && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Ready for Quote</span>
-                        <span className={readinessSnapshotView.readyForQuote ? "text-emerald-300 font-semibold" : "text-red-300"}>
-                          {readinessSnapshotView.readyForQuote ? "✓ Prêt" : "✗ Non-prêt"}
+                      <div className="flex items-center justify-between rounded bg-wo-surface-raised px-2 py-1.5">
+                        <span>Gata pentru ofertă</span>
+                        <span
+                          className={
+                            readinessSnapshotView.readyForQuote
+                              ? "font-semibold text-emerald-700 dark:text-emerald-300"
+                              : "font-semibold text-red-700 dark:text-red-300"
+                          }
+                        >
+                          {readinessSnapshotView.readyForQuote ? "Da" : "Nu"}
                         </span>
                       </div>
                     )}
                     {readinessSnapshotView.quoteStatus && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Quote status</span>
-                        <span className="text-slate-300">{readinessSnapshotView.quoteStatus}</span>
+                      <div className="flex items-center justify-between rounded bg-wo-surface-raised px-2 py-1.5">
+                        <span>Status ofertă</span>
+                        <span className="font-mono">{readinessSnapshotView.quoteStatus}</span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                      <span className="text-slate-400">Captured</span>
-                      <span className="text-slate-300">
-                        {new Date(readinessSnapshot.snapshot_at).toLocaleString("ro-RO")}
-                      </span>
+                    <div className="flex items-center justify-between rounded bg-wo-surface-raised px-2 py-1.5">
+                      <span>Capturat</span>
+                      <span>{new Date(readinessSnapshot.snapshot_at).toLocaleString("ro-RO")}</span>
                     </div>
                     {readinessSnapshotView.contractVersion && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Contract</span>
-                        <span className="text-slate-300">v{readinessSnapshotView.contractVersion}</span>
-                      </div>
-                    )}
-                    {readinessSnapshotView.requiresProductionHandoffBuild !== null && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Production handoff</span>
-                        <span className={readinessSnapshotView.requiresProductionHandoffBuild ? "text-amber-300 font-semibold" : "text-emerald-300 font-semibold"}>
-                          {readinessSnapshotView.requiresProductionHandoffBuild ? "required" : "not required"}
-                        </span>
-                      </div>
-                    )}
-                    {readinessSnapshotView.executionPlanCreated !== null && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Execution plan</span>
-                        <span className={readinessSnapshotView.executionPlanCreated ? "text-emerald-300 font-semibold" : "text-slate-300"}>
-                          {readinessSnapshotView.executionPlanCreated ? "created" : "not created"}
-                        </span>
-                      </div>
-                    )}
-                    {readinessSnapshotView.inventoryMutated !== null && (
-                      <div className="flex items-center justify-between bg-[#1A2520] px-2 py-1.5 rounded">
-                        <span className="text-slate-400">Inventory</span>
-                        <span className={readinessSnapshotView.inventoryMutated ? "text-amber-300 font-semibold" : "text-slate-300"}>
-                          {readinessSnapshotView.inventoryMutated ? "mutated" : "not mutated"}
-                        </span>
+                      <div className="flex items-center justify-between rounded bg-wo-surface-raised px-2 py-1.5">
+                        <span>Contract</span>
+                        <span className="font-mono">v{readinessSnapshotView.contractVersion}</span>
                       </div>
                     )}
                     {readinessSnapshotView.warningsAcknowledged && (
-                      <div className="bg-amber-900/20 border border-amber-700/30 rounded px-2 py-1.5">
-                        <p className="text-amber-300 font-semibold">⚠ Warnings Acknowledged</p>
-                        <p className="text-amber-400/70 text-[10px] mt-0.5">
-                          {readinessSnapshotView.warningsAcknowledgedAt && (
-                            <>
-                              Acknowledged: {new Date(readinessSnapshotView.warningsAcknowledgedAt).toLocaleString("ro-RO")}
-                            </>
-                          )}
-                        </p>
-                      </div>
+                      <p className={`rounded px-2 py-1.5 text-[10px] ${chromeBanner.warning}`}>
+                        Avertismente acknowledge:{" "}
+                        {readinessSnapshotView.warningsAcknowledgedAt
+                          ? new Date(readinessSnapshotView.warningsAcknowledgedAt).toLocaleString("ro-RO")
+                          : "da"}
+                      </p>
                     )}
                   </div>
-                </div>
-              ) : (
-                <div className="bg-[#1A1A1A] border border-slate-700/30 rounded-lg p-4">
-                  <p className="text-[11px] text-slate-500">Niciun snapshot de pregătire capturat pentru această comandă.</p>
-                </div>
-              )}
+                ) : (
+                  <p>Niciun snapshot de pregătire capturat pentru această comandă.</p>
+                )}
+              </TechnicalDetailsDisclosure>
 
               {/* Field installation team allocation (montaj teren) */}
               {selectedOrder.dbId && canUseLiveOrders && (
@@ -659,18 +648,36 @@ export default function Orders() {
               />
 
               {/* Snapshot Law */}
-              <div className="bg-wo-surface-inset border border-purple-800/30 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Lock className="w-4 h-4 text-purple-400" />
-                  <p className="text-[12px] text-purple-400 font-semibold">Regulă Snapshot</p>
+              <div className="rounded-lg border border-violet-200 bg-violet-50 p-3 dark:border-purple-800/40 dark:bg-purple-950/20">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Lock className="w-4 h-4 text-violet-700 dark:text-purple-300" />
+                  <p className="text-[12px] text-violet-800 dark:text-purple-300 font-semibold">
+                    Snapshot acceptat
+                  </p>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Această comandă conține un snapshot înghețat. Configurația, prețul și termenele nu mai pot fi modificate
-                  după blocare. Orice schimbare necesită un nou ciclu Ofertă → Comandă.
+                <p className="text-[11px] text-violet-900/80 dark:text-slate-300 leading-relaxed">
+                  Configurația, prețul și termenele nu se modifică după înghețare. Orice schimbare
+                  necesită un nou ciclu Ofertă → Comandă.
                 </p>
               </div>
 
               {/* Next Step Panel */}
+              {selectedOrder.quoteId ? (
+                <NextStepPanel
+                  title="Ofertă sursă"
+                  description="Deschide oferta acceptată care a generat această comandă (read-only contextual)."
+                  primaryAction={{
+                    label: `Vezi oferta ${selectedOrder.quoteId}`,
+                    to: `/quotes/${encodeURIComponent(selectedOrder.quoteId)}`,
+                  }}
+                  secondaryAction={{
+                    label: "Lista oferte",
+                    to: "/quotes",
+                    variant: "ghost",
+                  }}
+                />
+              ) : null}
+
               {selectedOrder.status === "created" && (
                 <NextStepPanel
                   title="Următorul pas: Confirmă comanda"
@@ -768,22 +775,39 @@ export default function Orders() {
             </>
           ) : isOrdersEmpty ? (
             <div
-              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center"
+              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 space-y-3"
               data-testid="orders-empty-detail-panel"
             >
-              <p className="text-[12px] text-slate-400 leading-relaxed">
-                Comenzile nu se creează manual din această pagină. Începe din Work Intake sau
+              <p className="text-[12px] text-wo-text-muted leading-relaxed text-center">
+                Comenzile nu se creează manual din această pagină. Începe din Cereri sau
                 convertește o ofertă acceptată.
               </p>
+              <NextStepPanel
+                title="Următorul pas: Deschide o ofertă"
+                description="Acceptarea/conversia ofertei creează comanda — fără auto-order din UI."
+                primaryAction={{ label: "Deschide oferte", to: "/quotes" }}
+                secondaryAction={{ label: "Înapoi la cereri", to: "/intake", variant: "ghost" }}
+              />
             </div>
           ) : (
-            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
-              <ClipboardList className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[13px] text-slate-500">Selectează o comandă pentru detalii</p>
-              <p className="text-[11px] text-slate-600 mt-1">
-                Alege o comandă din lista din stânga pentru a vedea detaliile și acțiunile
-                disponibile.
-              </p>
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 space-y-3">
+              <div className="text-center">
+                <ClipboardList className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+                <p className="text-[13px] text-wo-text-muted">Selectează o comandă pentru detalii</p>
+                <p className="text-[11px] text-wo-text-dim mt-1">
+                  Alege o comandă din listă pentru snapshot acceptat și starea execuției.
+                </p>
+              </div>
+              <NextStepPanel
+                title="Flux comercial"
+                description="Comanda închide lanțul Cerere → Produs → Ofertă. Selectează o comandă pentru pasul următor."
+                primaryAction={{ label: "Vezi oferte", to: "/quotes", variant: "secondary" }}
+                secondaryAction={{
+                  label: "Vezi produse",
+                  to: "/product-system/products",
+                  variant: "ghost",
+                }}
+              />
             </div>
           )}
         </div>

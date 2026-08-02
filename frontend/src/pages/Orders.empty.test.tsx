@@ -51,7 +51,7 @@ describe("Orders empty state", () => {
     expect(screen.getByTestId("orders-empty-detail-panel")).toBeTruthy();
   });
 
-  it("navighează la Oferte și Work Intake din empty state", async () => {
+  it("navighează la Oferte și Cereri din empty state", async () => {
     render(
       <MemoryRouter initialEntries={["/orders"]}>
         <Routes>
@@ -64,7 +64,7 @@ describe("Orders empty state", () => {
     fireEvent.click(screen.getByRole("button", { name: /Mergi la Oferte/i }));
     expect(mockNavigate).toHaveBeenCalledWith("/quotes");
 
-    fireEvent.click(screen.getByRole("button", { name: /Deschide Work Intake/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Deschide Cereri/i }));
     expect(mockNavigate).toHaveBeenCalledWith("/intake");
   });
 

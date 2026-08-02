@@ -12,9 +12,11 @@
  *  - Does NOT auto-create anything
  *  - Does NOT auto-approve
  *  - Only guides the operator
+ *  - Day-mode chrome via chromeBanner (no night-only slate islands)
  */
 import { ArrowRight, AlertTriangle, Info, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { chromeBanner } from "@/components/workos/design-system/chromeRecipes";
 
 interface NextStepAction {
   label: string;
@@ -47,9 +49,9 @@ function ActionButton({ action, isPrimary }: { action: NextStepAction; isPrimary
     primary:
       "bg-blue-600 hover:bg-blue-500 text-white border border-blue-500",
     secondary:
-      "bg-wo-hover hover:bg-wo-hover text-slate-300 border border-wo-border-strong",
+      "bg-wo-surface-raised hover:bg-wo-hover text-wo-text-primary border border-wo-border-strong",
     ghost:
-      "bg-transparent hover:bg-wo-hover text-slate-400 border border-transparent",
+      "bg-transparent hover:bg-wo-hover text-wo-text-secondary border border-transparent",
   };
 
   const disabledClasses = "opacity-40 cursor-not-allowed pointer-events-none";
@@ -64,7 +66,7 @@ function ActionButton({ action, isPrimary }: { action: NextStepAction; isPrimary
           <Lock className="w-3 h-3" />
         </button>
         {action.disabledReason && (
-          <span className="text-[10px] text-slate-500 ml-1">
+          <span className="text-[10px] text-wo-text-muted ml-1">
             {action.disabledReason}
           </span>
         )}
@@ -100,52 +102,43 @@ export default function NextStepPanel({
   warning,
   className = "",
 }: NextStepPanelProps) {
-  const hasBorder = blocker
-    ? "border-red-900/40"
+  const tone = blocker
+    ? chromeBanner.error
     : warning
-      ? "border-amber-900/40"
-      : "border-blue-900/30";
-
-  const hasBg = blocker
-    ? "bg-red-950/20"
-    : warning
-      ? "bg-amber-950/20"
-      : "bg-blue-950/20";
+      ? chromeBanner.warning
+      : chromeBanner.info;
 
   return (
     <div
-      className={`rounded-lg border p-4 ${hasBorder} ${hasBg} ${className}`}
+      className={`rounded-lg border p-3 ${tone} ${className}`}
+      data-testid="next-step-panel"
     >
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1.5">
         {blocker ? (
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+          <AlertTriangle className="w-4 h-4 shrink-0 opacity-90" />
         ) : warning ? (
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <AlertTriangle className="w-4 h-4 shrink-0 opacity-90" />
         ) : (
-          <Info className="w-4 h-4 text-blue-400 shrink-0" />
+          <Info className="w-4 h-4 shrink-0 opacity-90" />
         )}
-        <h4 className="text-[13px] font-semibold text-slate-200">{title}</h4>
+        <h4 className="text-[13px] font-semibold">{title}</h4>
       </div>
 
-      {/* Description */}
       {description && (
-        <p className="text-[12px] text-slate-400 mb-2 ml-6">{description}</p>
+        <p className="text-[12px] opacity-90 mb-1.5 ml-6">{description}</p>
       )}
 
-      {/* Reason */}
       {reason && (
-        <p className="text-[11px] text-slate-500 mb-3 ml-6 italic">{reason}</p>
+        <p className="text-[11px] opacity-75 mb-2 ml-6 italic">{reason}</p>
       )}
 
-      {/* Blocker */}
       {blocker && (
-        <div className="ml-6 mb-3 p-2 rounded bg-red-950/30 border border-red-900/30">
-          <p className="text-[11px] text-red-400 font-medium">{blocker}</p>
+        <div className="ml-6 mb-2 p-2 rounded border border-current/20 bg-white/40 dark:bg-black/20">
+          <p className="text-[11px] font-medium">{blocker}</p>
           {blockerDetails && blockerDetails.length > 0 && (
             <ul className="mt-1 space-y-0.5">
               {blockerDetails.map((d, i) => (
-                <li key={i} className="text-[10px] text-red-400/70 ml-2">
+                <li key={i} className="text-[10px] opacity-80 ml-2">
                   • {d}
                 </li>
               ))}
@@ -154,16 +147,14 @@ export default function NextStepPanel({
         </div>
       )}
 
-      {/* Warning */}
       {warning && !blocker && (
-        <div className="ml-6 mb-3 p-2 rounded bg-amber-950/30 border border-amber-900/30">
-          <p className="text-[11px] text-amber-400">{warning}</p>
+        <div className="ml-6 mb-2 p-2 rounded border border-current/20 bg-white/40 dark:bg-black/20">
+          <p className="text-[11px]">{warning}</p>
         </div>
       )}
 
-      {/* Actions */}
       {(primaryAction || secondaryAction) && (
-        <div className="flex items-center gap-3 ml-6 mt-3">
+        <div className="flex flex-wrap items-center gap-3 ml-6 mt-2">
           {primaryAction && (
             <ActionButton action={primaryAction} isPrimary={true} />
           )}
@@ -188,9 +179,9 @@ export function OperatorHint({
   variant?: "info" | "warning" | "success";
 }) {
   const colors = {
-    info: "text-blue-400/70 border-blue-900/20 bg-blue-950/10",
-    warning: "text-amber-400/70 border-amber-900/20 bg-amber-950/10",
-    success: "text-emerald-400/70 border-emerald-900/20 bg-emerald-950/10",
+    info: chromeBanner.info,
+    warning: chromeBanner.warning,
+    success: chromeBanner.success,
   };
 
   return (
@@ -217,19 +208,19 @@ export function AuthErrorState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-8">
-      <div className="w-16 h-16 rounded-full bg-amber-950/30 border border-amber-900/30 flex items-center justify-center mb-4">
-        <AlertTriangle className="w-8 h-8 text-amber-400" />
+      <div className="w-16 h-16 rounded-full border border-amber-200 bg-amber-50 flex items-center justify-center mb-4 dark:border-amber-800/40 dark:bg-amber-900/25">
+        <AlertTriangle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
       </div>
-      <h3 className="text-[16px] font-semibold text-slate-200 mb-2">
+      <h3 className="text-[16px] font-semibold text-wo-text-primary mb-2">
         {pageName} — Date indisponibile
       </h3>
       {error && (
-        <p className="text-[12px] text-slate-400 mb-4 text-center max-w-md">
+        <p className="text-[12px] text-wo-text-secondary mb-4 text-center max-w-md">
           {error}
         </p>
       )}
       <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 max-w-md w-full">
-        <p className="text-[11px] text-slate-500 font-medium mb-2">
+        <p className="text-[11px] text-wo-text-muted font-medium mb-2">
           Posibile cauze:
         </p>
         <ul className="space-y-1">
@@ -240,14 +231,14 @@ export function AuthErrorState({
               "Contractul API nu este disponibil încă",
             ]
           ).map((s, i) => (
-            <li key={i} className="text-[11px] text-slate-500 flex items-start gap-1.5">
-              <span className="text-slate-600 mt-0.5">•</span>
+            <li key={i} className="text-[11px] text-wo-text-muted flex items-start gap-1.5">
+              <span className="text-wo-text-dim mt-0.5">•</span>
               {s}
             </li>
           ))}
         </ul>
       </div>
-      <p className="text-[10px] text-slate-600 mt-4">
+      <p className="text-[10px] text-wo-text-dim mt-4">
         Verificați configurarea backend-ului sau folosiți paginile cu date demo disponibile.
       </p>
     </div>
