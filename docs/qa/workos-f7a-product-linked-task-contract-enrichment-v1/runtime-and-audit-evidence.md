@@ -56,5 +56,5 @@ enforce gate raises 422 for F7A fixture (outside next-dry 973019/21)
 
 ## Commercial
 
-Fixture commercial total `1847.5` unchanged after preview/persist/audit.  
+Fixture commercial total `1847.5` unchanged after preview/persist/audit.
 Protected order `973019` not touched (see `protected-baseline-before-after.json`).

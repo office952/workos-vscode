@@ -96,9 +96,10 @@ docs/worklog/realignment/2026-08-02_f7a_product_linked_task_contract_enrichment.
 
 Controlled fixture uses dynamic order id `880700 + (uuid % 200)` — not hardcoded; not 973019 / 88002.
 
-Template: `TPL-VOLUMETRIC-LETTERS_v2`  
-Commercial total on fixture (separate from protected baseline): `1847.5`  
+Template: `TPL-VOLUMETRIC-LETTERS_v2`
+Commercial total on fixture (separate from protected baseline): `1847.5`
 Proof path: in-process `OrderSnapshotV2` seed → EP V2 preview/persist/audit (canonical services).
+Commit: `31495122`
 
 ## Evidence summary
 
