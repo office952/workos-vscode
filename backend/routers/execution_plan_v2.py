@@ -15,6 +15,9 @@ from schemas.auth import UserResponse
 from schemas.execution_plan_v2 import ExecutionPlanV2PersistResult, ExecutionPlanV2Preview
 from schemas.execution_plan_v2_materialize import ExecutionPlanV2MaterializeResult
 from schemas.execution_plan_v2_materialization_audit import ExecutionPlanV2MaterializationAudit
+from services.employee_eligibility_read_model_service import (
+    build_employee_eligibility_read_model,
+)
 from services.execution_plan_v2_materialization_audit_service import (
     ExecutionPlanV2MaterializationAuditOrderNotFound,
     ExecutionPlanV2MaterializationAuditPlanNotFound,
@@ -180,3 +183,21 @@ async def materialization_audit_by_order_id(
         raise HTTPException(status_code=404, detail={"error": "order_not_found"})
     except ExecutionPlanV2MaterializationAuditPlanNotFound:
         raise HTTPException(status_code=404, detail={"error": "plan_not_found"})
+
+
+@router.get("/plan-v2/from-order/{order_id}/employee-eligibility")
+async def employee_eligibility_read_model_by_order_id(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.plan_generate")),
+) -> dict:
+    """DEC-015 — read-only employee eligibility for materialized operational_tasks[].
+
+    Never assigns, claims, starts, or creates sessions/actuals.
+    """
+    logger.info(
+        "GET /api/v1/execution/plan-v2/from-order/%s/employee-eligibility", order_id
+    )
+    if order_id <= 0:
+        raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
+    return await build_employee_eligibility_read_model(db, order_id)

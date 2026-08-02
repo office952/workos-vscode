@@ -27,12 +27,14 @@ import {
 } from "lucide-react";
 import {
   executionApi,
+  type EmployeeEligibilityReadModelResponse,
   type ExecutionPlanResponse,
   type ExecutionPlanV2MaterializationAuditResponse,
   type ExecutionRealityResponse,
   type OpsGraphNullClassification,
   type OpsGraphTaskReadClarity,
   type PlannedTaskRow,
+  type TaskEligibilityRow,
 } from "@/api/execution";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
@@ -215,6 +217,49 @@ function parseOrderId(raw: string | null): number {
   return n;
 }
 
+function eligibilitySummary(row: TaskEligibilityRow | undefined): {
+  label: string;
+  title: string;
+} {
+  if (!row) {
+    return {
+      label: "—",
+      title: "Eligibility read model unavailable for this task.",
+    };
+  }
+  const status = row.eligibility_status;
+  if (status === "ready" || status === "ready_with_warnings") {
+    const n = row.eligible_employee_count;
+    return {
+      label: `Eligibili: ${n}`,
+      title:
+        "Angajații corespund cerințelor operaționale configurate pentru acest task. Read-only — no assignment.",
+    };
+  }
+  if (status === "blocked_no_matching_employee") {
+    return {
+      label: "Niciun eligibil",
+      title:
+        "Niciun angajat eligibil — nu există momentan un angajat activ cu toate competențele configurate.",
+    };
+  }
+  if (
+    status === "blocked_missing_workcenter" ||
+    status === "blocked_ambiguous_workcenter" ||
+    status === "blocked_missing_requirements"
+  ) {
+    return {
+      label: "Elig. blocată",
+      title:
+        "Eligibilitate blocată — taskul nu are încă un workcenter sau un set complet de cerințe operaționale.",
+    };
+  }
+  if (status === "not_required") {
+    return { label: "N/A", title: "Workcenter/eligibility not required for this task." };
+  }
+  return { label: status, title: (row.blockers ?? []).join(" · ") || status };
+}
+
 function materializePhaseLabel(args: {
   materializeState: string;
   auditStatus: string | null | undefined;
@@ -249,18 +294,22 @@ export default function MaterializedOpsGraph() {
   const [plan, setPlan] = useState<ExecutionPlanResponse | null>(null);
   const [audit, setAudit] = useState<ExecutionPlanV2MaterializationAuditResponse | null>(null);
   const [reality, setReality] = useState<ExecutionRealityResponse | null>(null);
+  const [eligibility, setEligibility] =
+    useState<EmployeeEligibilityReadModelResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [orderInput, setOrderInput] = useState(String(orderId));
+  const [expandedEligibility, setExpandedEligibility] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [planResult, auditResult, realityResult] = await Promise.allSettled([
+      const [planResult, auditResult, realityResult, eligResult] = await Promise.allSettled([
         executionApi.getExecutionPlan(orderId),
         executionApi.getExecutionPlanV2MaterializationAudit(orderId),
         executionApi.getReality(orderId),
+        executionApi.getEmployeeEligibilityReadModel(orderId),
       ]);
 
       if (planResult.status === "rejected") {
@@ -272,10 +321,12 @@ export default function MaterializedOpsGraph() {
       setPlan(planResult.value);
       setAudit(auditResult.status === "fulfilled" ? auditResult.value : null);
       setReality(realityResult.status === "fulfilled" ? realityResult.value : null);
+      setEligibility(eligResult.status === "fulfilled" ? eligResult.value : null);
     } catch (e) {
       setPlan(null);
       setAudit(null);
       setReality(null);
+      setEligibility(null);
       setError(e instanceof Error ? e.message : "unknown error");
     } finally {
       setLoading(false);
@@ -324,6 +375,14 @@ export default function MaterializedOpsGraph() {
     if (typeof fromPlan === "number") return fromPlan;
     return tasks.filter((t) => opsGraphTaskLabel(t).commercialPhrasing).length;
   }, [planClarity, tasks]);
+
+  const eligibilityByTask = useMemo(() => {
+    const map = new Map<string, TaskEligibilityRow>();
+    for (const row of eligibility?.tasks ?? []) {
+      if (row.task_key) map.set(row.task_key, row);
+    }
+    return map;
+  }, [eligibility]);
 
   /** Display order = dependency/topo; SEQ column still shows original sequence_index. */
   const sortedTasks = useMemo(
@@ -663,12 +722,15 @@ export default function MaterializedOpsGraph() {
                     <th className="px-3 py-2 font-semibold text-right">Min</th>
                     <th className="px-3 py-2 font-semibold">Depends</th>
                     <th className="px-3 py-2 font-semibold">Gaps</th>
+                    <th className="px-3 py-2 font-semibold">Elig.</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sortedTasks.map((task) => {
                     const rc = task.read_clarity;
                     const gaps = taskGaps(task);
+                    const elig = eligibilityByTask.get(task.task_id);
+                    const eligUi = eligibilitySummary(elig);
                     const seq =
                       rc?.identity.sequence_index ?? task.sequence_index ?? "—";
                     const status =
@@ -792,6 +854,40 @@ export default function MaterializedOpsGraph() {
                             >
                               {gaps.kinds.map((k) => GAP_LABEL[k]).join(" · ")}
                             </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2" data-testid={`ops-graph-elig-${task.task_id}`}>
+                          <button
+                            type="button"
+                            className="text-left text-[10px] font-semibold text-wo-text-secondary hover:text-wo-text-primary"
+                            title={eligUi.title}
+                            onClick={() =>
+                              setExpandedEligibility((cur) =>
+                                cur === task.task_id ? null : task.task_id,
+                              )
+                            }
+                          >
+                            {eligUi.label}
+                          </button>
+                          {expandedEligibility === task.task_id && elig && (
+                            <div className="mt-1 text-[10px] text-wo-text-muted space-y-0.5 max-w-[220px]">
+                              <p className="font-mono">{elig.eligibility_status}</p>
+                              {(elig.blockers ?? []).length > 0 && (
+                                <p>blockers: {elig.blockers.join(", ")}</p>
+                              )}
+                              {(elig.eligible_employees ?? []).slice(0, 6).map((e) => (
+                                <p key={e.employee_id} className="font-mono">
+                                  #{e.employee_id} {e.display_name}
+                                  {e.matched_workcenter ? ` · ${e.matched_workcenter}` : ""}
+                                </p>
+                              ))}
+                              {(elig.eligible_employees ?? []).length === 0 && (
+                                <p>{eligUi.title}</p>
+                              )}
+                              <p className="text-wo-text-dim">
+                                Read-only — no Asignează / claim / start.
+                              </p>
+                            </div>
                           )}
                         </td>
                       </tr>

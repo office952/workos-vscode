@@ -405,6 +405,43 @@ export interface ExecutionPlanV2MaterializationAuditResponse {
   message?: string | null;
 }
 
+/** DEC-015 — read-only employee eligibility (no assignment). */
+export interface EligibleEmployeeRow {
+  employee_id: number;
+  display_name: string;
+  active_status: string;
+  matched_operation_capability?: string | null;
+  matched_skills?: string[];
+  matched_workcenter?: string | null;
+  match_provenance?: string[];
+  availability_status?: string;
+}
+
+export interface TaskEligibilityRow {
+  task_key: string;
+  canonical_task_type?: string | null;
+  source_operation_code?: string | null;
+  workcenter_code?: string | null;
+  eligibility_status: string;
+  eligible_employee_count: number;
+  eligible_employees: EligibleEmployeeRow[];
+  blockers: string[];
+  warnings: string[];
+}
+
+export interface EmployeeEligibilityReadModelResponse {
+  mode: string;
+  order_id: number;
+  execution_plan_id?: number;
+  status: string;
+  operational_task_count?: number;
+  ready_or_warning_count?: number;
+  blocked_count?: number;
+  tasks: TaskEligibilityRow[];
+  side_effects?: string;
+  notes?: string[];
+}
+
 // ---------------------------------------------------------------------------
 // Execution Reality types (Sprint #36) — strict mirror of backend contract
 // from routers/execution.py + services/execution_reality_service.py.
@@ -719,6 +756,21 @@ export const executionApi = {
     }
     return getJson<ExecutionPlanV2MaterializationAuditResponse>(
       `/execution/plan-v2/from-order/${orderId}/materialization-audit`,
+    );
+  },
+
+  /**
+   * DEC-015 — read-only employee eligibility for materialized operational tasks.
+   * Never assigns / claims / starts sessions.
+   */
+  getEmployeeEligibilityReadModel(
+    orderId: number,
+  ): Promise<EmployeeEligibilityReadModelResponse> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return Promise.reject(new Error('order_id_invalid'));
+    }
+    return getJson<EmployeeEligibilityReadModelResponse>(
+      `/execution/plan-v2/from-order/${orderId}/employee-eligibility`,
     );
   },
 

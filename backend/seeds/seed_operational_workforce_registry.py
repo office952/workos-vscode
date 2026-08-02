@@ -441,10 +441,14 @@ OPERATION_MAPPINGS: List[Dict[str, Any]] = [
         "authorized_employee_names": _E_WELD,
     },
     {
+        # DEC-014: single canonical WC — PROD-INT-02 matrix:
+        # Montare LED / cablare → SK_ELECTRICIAN → WC_LED_ASSEMBLY → montaj_led.
+        # WC_ASSEMBLY remains the assembly operation WC (SK_ASSEMBLY), not LED.
+        # WA-ASSEMBLY-* stay as allowed physical work-area resources only.
         "operation_code": "montaj_led",
         "authorization_mode": "hybrid",
         "required_skill_codes": ["SK_ELECTRICIAN"],
-        "allowed_workcenter_codes": ["WC_LED_ASSEMBLY", "WC_ASSEMBLY"],
+        "allowed_workcenter_codes": ["WC_LED_ASSEMBLY"],
         "allowed_resource_codes": ["WA-ASSEMBLY-01", "WA-ASSEMBLY-02"],
         "product_system_aliases": [
             "led_install_letters",
