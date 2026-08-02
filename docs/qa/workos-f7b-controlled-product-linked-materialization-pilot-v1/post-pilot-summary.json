@@ -1,0 +1,30 @@
+{
+  "verdict_partial": "POSTS_OK",
+  "first_http": 201,
+  "second_http": 409,
+  "second_status_field": null,
+  "ops": 5,
+  "keys": [
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "wcs": [
+    "WC_ASSEMBLY",
+    "WC_CNC_ROUTING",
+    "WC_LETTER_FORMING",
+    "WC_METAL_FAB"
+  ],
+  "commercial_drift": false,
+  "snapshot_drift": false,
+  "protected_drift": false,
+  "side_effects": {
+    "execution_reality": 0,
+    "execution_task_participants": 0,
+    "actual_labor_cost_lines": 0
+  },
+  "first_response_status": "materialized",
+  "execution_plan_id": 22
+}

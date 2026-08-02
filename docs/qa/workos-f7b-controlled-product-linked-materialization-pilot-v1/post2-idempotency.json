@@ -1,0 +1,73 @@
+{
+  "timestamp_utc": "2026-08-02T21:06:15.972397+00:00",
+  "url": "http://127.0.0.1:8000/api/v1/execution/plan-v2/materialize-tasks/880811",
+  "http_status": 409,
+  "response": {
+    "detail": {
+      "error": "operational_tasks_already_materialized",
+      "execution_plan_id": 22
+    }
+  },
+  "db_after": {
+    "label": "after_second_post",
+    "order_id": 880811,
+    "plan_id": 22,
+    "commercial_total": 1847.5,
+    "snapshot_sha256": "a59b6c447d9e6afb484bae9415e85041e12fc73bf5bb20a7cf2a089bd393738b",
+    "execution_tasks_created": true,
+    "planned_tasks_count": 5,
+    "operational_tasks_count": 5,
+    "operational_task_keys": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "operational_workcenters": [
+      "WC_ASSEMBLY",
+      "WC_CNC_ROUTING",
+      "WC_LETTER_FORMING",
+      "WC_METAL_FAB"
+    ],
+    "operational_ops": [
+      {
+        "task_key": null,
+        "source_operation_code": "face_cnc_cut",
+        "workcenter": "WC_CNC_ROUTING",
+        "depends_on": null
+      },
+      {
+        "task_key": null,
+        "source_operation_code": "side_forming",
+        "workcenter": "WC_LETTER_FORMING",
+        "depends_on": null
+      },
+      {
+        "task_key": null,
+        "source_operation_code": "return_face_bonding",
+        "workcenter": "WC_METAL_FAB",
+        "depends_on": null
+      },
+      {
+        "task_key": null,
+        "source_operation_code": "painting",
+        "workcenter": "WC_ASSEMBLY",
+        "depends_on": null
+      },
+      {
+        "task_key": null,
+        "source_operation_code": "packaging_letters",
+        "workcenter": "WC_ASSEMBLY",
+        "depends_on": null
+      }
+    ],
+    "side_effects": {
+      "execution_reality": 0,
+      "execution_task_participants": 0,
+      "actual_labor_cost_lines": 0
+    },
+    "protected_973019_sha256": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+    "protected_973019_prefix16": "2d412e6e1234ae44"
+  }
+}

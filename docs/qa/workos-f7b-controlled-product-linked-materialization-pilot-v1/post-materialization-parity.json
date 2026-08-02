@@ -1,0 +1,82 @@
+{
+  "plan_id": 22,
+  "execution_tasks_created": true,
+  "activation_status": "materialized",
+  "ops_count": 5,
+  "tasks": [
+    {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "source_operation_code": "face_cnc_cut",
+      "workcenter": "WC_CNC_ROUTING",
+      "depends_on_task_ids": [],
+      "provenance": [
+        "product_aggregate_snapshot.task_contract.task_rules",
+        "orr_freeze",
+        "execution_plan_v2_materialize.1"
+      ]
+    },
+    {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "source_operation_code": "side_forming",
+      "workcenter": "WC_LETTER_FORMING",
+      "depends_on_task_ids": [],
+      "provenance": [
+        "product_aggregate_snapshot.task_contract.task_rules",
+        "orr_freeze",
+        "execution_plan_v2_materialize.1"
+      ]
+    },
+    {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "source_operation_code": "return_face_bonding",
+      "workcenter": "WC_METAL_FAB",
+      "depends_on_task_ids": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+      ],
+      "provenance": [
+        "product_aggregate_snapshot.task_contract.task_rules",
+        "orr_freeze",
+        "execution_plan_v2_materialize.1"
+      ]
+    },
+    {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "source_operation_code": "painting",
+      "workcenter": "WC_ASSEMBLY",
+      "depends_on_task_ids": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding"
+      ],
+      "provenance": [
+        "product_aggregate_snapshot.task_contract.task_rules",
+        "execution_plan_v2_materialize.1"
+      ]
+    },
+    {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "source_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "source_operation_code": "packaging_letters",
+      "workcenter": "WC_ASSEMBLY",
+      "depends_on_task_ids": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting"
+      ],
+      "provenance": [
+        "product_aggregate_snapshot.task_contract.task_rules",
+        "orr_freeze",
+        "execution_plan_v2_materialize.1"
+      ]
+    }
+  ],
+  "commercial_total": 1847.5,
+  "snapshot_sha256": "a59b6c447d9e6afb484bae9415e85041e12fc73bf5bb20a7cf2a089bd393738b",
+  "protected_973019_prefix16": "2d412e6e1234ae44",
+  "sessions_assignments_actuals": {
+    "execution_reality": 0,
+    "execution_task_participants": 0,
+    "actual_labor_cost_lines": 0
+  }
+}

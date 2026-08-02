@@ -1,98 +1,92 @@
-# WORKOS F7B — Controlled product-linked materialization pilot v1
+# WORKOS F7B — Controlled product-linked materialization pilot
 
 ## Verdict
 
 ```text
-F7B = BLOCKED BEFORE MATERIALIZATION
-POST = NOT EXECUTED
-DEC-009 Owner GO = B (written) but runtime gate next_dry still 973019/21
-Production-code retarget required for HTTP POST on F7A.1 fixture → STOP per pilot rules
+F7B = PASS
+EXACT FIXTURE = 880811 / 22
+FIRST POST = MATERIALIZED
+SECOND POST = IDEMPOTENT
+OPERATIONAL TASKS = 5
+CANDIDATE PARITY = PASS
+COMMERCIAL DRIFT = ZERO
+PROTECTED BASELINE DRIFT = ZERO
+SESSIONS = ZERO
+ASSIGNMENTS = ZERO
+GATE FINAL STATE = CLOSED
 PUSH = NOT EXECUTED
 Production Ready = NU
 ```
 
-## Identity
-
-| Field | Expected | Observed |
-|-------|----------|----------|
-| Repo | `C:\w\psiso` | match |
-| Branch | `feat/capacity-batch-20d-scoped-b-92401` | match |
-| HEAD | `2ef99d6b` | match |
-| Remote | `0c8a76cd` | match |
-| Ahead/behind | `0 / 6` | match |
-| Stash | `wip-employee-unrelated` | intact |
-
-## Why POST was not executed
-
-1. **No durable original F7A/F7A.1 fixture** in `backend/dev.db` — prior proofs used ephemeral pytest DBs (`8807xx` dynamic). Hit count for commercial `1847.5` / F7A markers = **0**.
-2. Per Owner rule, recreation is allowed only as the sole safe path, then **STOP before POST**. Recreated: **order `880811` / plan `22`** (see `preflight-recreated-fixture.json`).
-3. **DEC-009 runtime next_dry** remains **`973019` / plan `21`** (`LIVE_DEC009_STATUS=A`, True_CONDITIONAL). Evaluate:
-   - `880811` → `allowed=False` (`order_or_plan_outside_scoped_b`)
-   - `973019` → `allowed=True` — **must not POST** (protected commercial baseline; already has operational_tasks)
-4. Retargeting next_dry to `880811/22` requires **production gate edit and/or backend restart** — pilot rules forbid mixing that fix into F7B. No HTTP register endpoint exists for in-process `register_golden_pilot_materialize_target` on the live uvicorn process.
-
-## Recreated fixture identity (preflight only)
+## Identity (resume start)
 
 | Field | Value |
-|-------|--------|
-| order_id | `880811` |
-| order_code | `ORD-F7B-880811` |
-| execution_plan_id | `22` |
-| template | `TPL-VOLUMETRIC-LETTERS_v2` |
-| commercial total | `1847.5` |
-| snapshot sha256 prefix | `a59b6c447d9e6afb` |
+|-------|-------|
+| Repo | `C:\w\psiso` |
+| Branch | `feat/capacity-batch-20d-scoped-b-92401` |
+| HEAD before edits | `b5d976be` |
+| Remote | `0c8a76cd` |
+| Ahead / behind | 0 / 7 |
+| Stash | `wip-employee-unrelated` intact |
+
+## Agents
+
+| Agent | Role | Result |
+|-------|------|--------|
+| Lead | Gate retarget, POST×2, close, commits | PASS |
+| A | Fixture / DB guard | PASS — 880811/22, commercial 1847.5, ops empty before |
+| B | Contract parity audit | PASS — 5 candidates, fingerprint `cd03f9ac…` |
+| C | Fresh runtime restart | PASS — open then closed verified |
+
+## Gate ownership
+
+**File:** `backend/services/dec009_materialize_gate.py`
+
+**Why 973019 was eligible before:** it was the sole `next_dry_target` with `allow_materialize=True` and was **not** in `PROTECTED_ORDER_IDS`. Gate checks both `order_id` and `plan_id` via `scoped_b_matches` / `enforce_dec009_materialize_gate` (called from `execution_plan_v2_materialize_service` with resolved plan id).
+
+**Retarget:** temporary open `880811` / `22` only; `973019` added to `PROTECTED_ORDER_IDS`. Second POST remained gate-eligible (gate does not auto-close); HTTP returned **409** `operational_tasks_already_materialized` with zero duplicate rows.
+
+**Final committed state:** `close_materialize_pilot_gate` posture — `next_dry` order/plan `0`, `allow_materialize=False`, fixture `FIX-F7B-CONTROLLED-MATERIALIZE-CLOSED`. No order authorized. `973019` remains protected. Helpers: `open_f7b_controlled_materialize_pilot`, `close_materialize_pilot_gate`, `register_golden_pilot_materialize_target` (tests / future Owner GO only).
+
+## Fixture
+
+| Field | Value |
+|-------|-------|
+| order_id | 880811 |
+| execution_plan_id | 22 |
+| commercial | 1847.5 |
+| snapshot sha256 | `a59b6c447d9e6afb484bae9415e85041e12fc73bf5bb20a7cf2a089bd393738b` |
 | planned_tasks | 5 |
-| operational_tasks before | `[]` |
-| execution_tasks_created | `false` |
-| persist | idempotent (same plan id) |
-| audit mode | `audit_only` |
-| audit status | `blocked_needs_owner_go` |
-| candidate count | 5 |
-| candidate fingerprint | `cd03f9acb47afb139a2d849227d84a44328731fe806e674945b803517ce71ada` |
+| ops before | 0 |
+| F7A.1 / blocked preflight | linked at commit `b5d976be` + `preflight-recreated-fixture.json` |
 
-### Planned workcenter matrix (registry-valid)
+## Tests
 
-| Operation | Workcenter |
-|-----------|------------|
-| face_cnc_cut | `WC_CNC_ROUTING` |
-| side_forming | `WC_LETTER_FORMING` |
-| return_face_bonding | `WC_METAL_FAB` |
-| painting | `WC_ASSEMBLY` |
-| packaging_letters | `WC_ASSEMBLY` |
+Targeted suite after closed gate: **64 passed**  
+(`test_dec009_materialize_gate`, F7A, F7A.1, DAG, materialize, step9 audit).
 
-DAG: bond ← face + side; painting ← bond; packaging ← painting. No aliases / premount / SVG in planned ops. Minutes null + `PLANNING_MINUTES_SOURCE_REQUIRED`.
-
-## Protected baseline
-
-| Field | Before | After preflight recreate |
-|-------|--------|--------------------------|
-| 973019 hash prefix | `2d412e6e1234ae44` | `2d412e6e1234ae44` |
-| accepted total | `847.5` | `847.5` |
-| plan 21 | untouched | untouched |
-
-## Pre-POST tests
-
-```text
-APP_ENV=test:
-  test_f7a_* + golden DAG + step9 audit + dec009 gate → 26 passed
-  test_f7a1_pre_materialization_truth_gap.py → 7 passed
-```
-
-Preview suite had 2 UNIQUE `snapshot_code` flakes when run earlier under polluted env; not reclassified as F7B contract failure. Full suite not run.
+Gate cases covered: 880811/22 open allow; 973019 forbid; other order forbid; wrong plan forbid; second call still gate-eligible; closed allows none.
 
 ## POST evidence
 
-```text
-FIRST POST = NOT EXECUTED
-SECOND POST = NOT EXECUTED
-```
+| Call | HTTP | Semantics |
+|------|------|-----------|
+| 1 | **201** | `status=materialized`, plan 22, ops 5, `no_sessions_created=true` |
+| 2 | **409** | `operational_tasks_already_materialized`, ops still 5, no drift |
 
-## Owner asks to unblock F7B (separate GO)
+Artifacts: `preflight-open-gate.json`, `post1-materialize.json`, `post2-idempotency.json`, `post-materialization-parity.json`, `post-pilot-summary.json`.
 
-1. Accept recreated fixture **`880811` / plan `22`** as the exact controlled pilot target (original ephemeral IDs never durable).
-2. Authorize **minimal DEC-009 next_dry retarget** (`register` or static SCOPED_B → 880811/22) + **backend restart** — **not** materialize of 973019.
-3. Re-run audit GET via HTTP on live process, then authorize the two controlled POSTs.
+## Post-materialization parity
+
+- Ops = 5; CNC = `WC_CNC_ROUTING`; bond ← face + side; aliases/premount/SVG-DWG ops absent
+- Commercial / snapshot / protected `973019` prefix `2d412e6e1234ae44` unchanged
+- Sessions / assignments / actuals / ExecutionReality = 0
+- `v2_operational_ready` = envelope only — **not** scheduled / assigned / atelier / Production Ready
 
 ## Boundaries respected
 
-No sessions, assignments, SVG processing, Pricing, UI, push, or POST materialize. No production-code commit for gate retarget.
+No 973019 POST, no third POST, no sessions/assignment/scheduling, no push, no UI/Pricing/SVG changes.
+
+## Next Owner gate
+
+Scheduling / assignment / sessions / atelier readiness remain **out of scope** until a new explicit Owner GO.

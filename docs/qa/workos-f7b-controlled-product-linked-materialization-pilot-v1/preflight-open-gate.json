@@ -1,0 +1,194 @@
+{
+  "timestamp_utc": "2026-08-02T21:06:15.693311+00:00",
+  "git_commit_compat": "b5d976be",
+  "gate": {
+    "scoped_b_order_id": 880811,
+    "scoped_b_plan_id": 22,
+    "pilot_gate_open": true,
+    "scoped_b_fixture_id": "FIX-F7B-CONTROLLED-MATERIALIZE-880811"
+  },
+  "auth_eval_880811_22": {
+    "allowed": true,
+    "blockers": []
+  },
+  "auth_eval_973019_21": {
+    "allowed": false,
+    "blockers": [
+      "protected_order_forbidden",
+      "order_or_plan_outside_scoped_b"
+    ]
+  },
+  "audit_http_status": 200,
+  "audit_body": {
+    "mode": "audit_only",
+    "order_id": 880811,
+    "order_code": "ORD-F7B-880811",
+    "execution_plan_id": 22,
+    "source_quote_snapshot_v2_id": 21,
+    "source_snapshot_code": "QSN2-F7A-880811",
+    "plan_source": "order_snapshot_v2",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "materialization_status": "blocked_needs_owner_go",
+    "dry_run_status": "ready_with_warnings",
+    "planned_task_count": 5,
+    "operation_count": 10,
+    "operational_tasks_in_envelope_count": 0,
+    "materializable_task_candidates": [
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "label": "Face CNC Cut",
+        "canonical_task_type": "cnc_routing",
+        "source_operation_code": "face_cnc_cut",
+        "sequence_index": 2,
+        "operational_status_preview": "pending",
+        "estimated_minutes": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED",
+          "PLANNING_MINUTES_SOURCE_MISSING"
+        ]
+      },
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+        "label": "Side Forming",
+        "canonical_task_type": "edge_bending",
+        "source_operation_code": "side_forming",
+        "sequence_index": 4,
+        "operational_status_preview": "pending",
+        "estimated_minutes": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED",
+          "PLANNING_MINUTES_SOURCE_MISSING"
+        ]
+      },
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+        "label": "Return Face Bonding",
+        "canonical_task_type": "volumetric_letter_assembly",
+        "source_operation_code": "return_face_bonding",
+        "sequence_index": 5,
+        "operational_status_preview": "pending",
+        "estimated_minutes": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED",
+          "PLANNING_MINUTES_SOURCE_MISSING"
+        ]
+      },
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+        "label": "Painting module (alias)",
+        "canonical_task_type": "volumetric_letter_assembly",
+        "source_operation_code": "painting",
+        "sequence_index": 7,
+        "operational_status_preview": "pending",
+        "estimated_minutes": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED",
+          "PLANNING_MINUTES_SOURCE_MISSING"
+        ]
+      },
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+        "label": "Packaging",
+        "canonical_task_type": "packaging",
+        "source_operation_code": "packaging_letters",
+        "sequence_index": 14,
+        "operational_status_preview": "pending",
+        "estimated_minutes": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED",
+          "PLANNING_MINUTES_SOURCE_MISSING"
+        ]
+      }
+    ],
+    "non_operational_items": [
+      {
+        "task_name": "svg_geometry_analysis",
+        "task_type": "READINESS_GATE",
+        "reason": "READINESS_GATE dossier rule \u2014 readiness only, not operational execution task",
+        "excluded_from": "planned_tasks_and_materialization"
+      },
+      {
+        "task_name": "cnc_face_cut",
+        "task_type": "cnc_routing",
+        "reason": "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+        "excluded_from": "planned_tasks_and_materialization"
+      },
+      {
+        "task_name": "return_profile_forming",
+        "task_type": "edge_bending",
+        "reason": "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+        "excluded_from": "planned_tasks_and_materialization"
+      },
+      {
+        "task_name": "return_face_bonding",
+        "task_type": "volumetric_letter_assembly",
+        "reason": "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+        "excluded_from": "planned_tasks_and_materialization"
+      },
+      {
+        "task_name": "painting",
+        "task_type": "volumetric_letter_assembly",
+        "reason": "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+        "excluded_from": "planned_tasks_and_materialization"
+      },
+      {
+        "task_name": "packaging",
+        "task_type": "packaging",
+        "reason": "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+        "excluded_from": "planned_tasks_and_materialization"
+      }
+    ],
+    "blockers": [],
+    "warnings": [
+      "PLANNING_MINUTES_SOURCE_REQUIRED",
+      "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
+    ],
+    "activation_hash_preview": "a8daf65ad23f899ecebe6b3698f1aeea",
+    "guards": {
+      "mode": "audit_only",
+      "creates_execution_tasks": false,
+      "creates_sessions": false,
+      "writes_database": false,
+      "uses_cost_engine": false,
+      "uses_price_endpoint": false,
+      "uses_quote_orchestrator": false,
+      "employee_mobile_scope": false,
+      "post_materialize_allowed": false
+    },
+    "contract_notes": [
+      "Primary source for materialization is execution_plan.tasks_json planned_tasks[] (frozen at persist).",
+      "orders.snapshot_v2_json is upstream provenance only \u2014 not re-read for task generation at materialize.",
+      "READINESS_GATE dossier rules are non-operational and excluded from planned_tasks[].",
+      "WorkOS V2 materialization writes operational_tasks[] inside tasks_json \u2014 no execution_tasks table in dev.",
+      "POST /plan-v2/materialize-tasks/{order_id} requires separate owner GO \u2014 audit endpoint is GET-only.",
+      "Execution sessions / ExecutionActuals are Step 11+ \u2014 out of scope."
+    ],
+    "message": "Materialization audit-only \u2014 POST materialize remains blocked until owner GO. Dry-run shows mappable operational task candidates from planned_tasks[].",
+    "input_summary": {
+      "envelope_source": "order_snapshot_v2",
+      "preview_status": "partial_missing_planning_minutes",
+      "dry_run_candidate_count": 5,
+      "non_operational_count": 6
+    }
+  },
+  "db_before": {
+    "label": "before_first_post",
+    "order_id": 880811,
+    "plan_id": 22,
+    "commercial_total": 1847.5,
+    "snapshot_sha256": "a59b6c447d9e6afb484bae9415e85041e12fc73bf5bb20a7cf2a089bd393738b",
+    "execution_tasks_created": false,
+    "planned_tasks_count": 5,
+    "operational_tasks_count": 0,
+    "operational_task_keys": [],
+    "operational_workcenters": [],
+    "operational_ops": [],
+    "side_effects": {
+      "execution_reality": 0,
+      "execution_task_participants": 0,
+      "actual_labor_cost_lines": 0
+    },
+    "protected_973019_sha256": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+    "protected_973019_prefix16": "2d412e6e1234ae44"
+  }
+}

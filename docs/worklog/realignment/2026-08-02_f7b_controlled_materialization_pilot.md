@@ -3,26 +3,31 @@
 ## Status
 
 ```text
-F7B = BLOCKED BEFORE MATERIALIZATION
-POST = NOT EXECUTED
+F7B = PASS
+EXACT FIXTURE = 880811 / 22
+FIRST POST = 201 materialized
+SECOND POST = 409 already_materialized (idempotent)
+OPERATIONAL TASKS = 5
+GATE FINAL STATE = CLOSED
 PUSH = NOT EXECUTED
+Production Ready = NU
 ```
 
-## Identity
+## Identity (resume)
 
-HEAD `2ef99d6b` · remote `0c8a76cd` · ahead 6 · stash intact.
+HEAD start `b5d976be` · remote `0c8a76cd` · ahead/behind 0/7 · stash `wip-employee-unrelated` intact.
 
-## Blockers
+## What changed
 
-1. Original F7A.1 fixture not in durable `dev.db` (pytest-ephemeral only).
-2. Recreated `880811`/`22` for preflight; STOP before POST per Owner rule.
-3. Runtime DEC-009 next_dry still `973019`/`21` — HTTP POST on 880811 would 422; POST on 973019 is forbidden (protected baseline).
-4. Retarget requires production gate change / restart — out of F7B pilot commit scope.
+1. DEC-009 gate: protect `973019`; temporary open `880811`/`22`; final fail-closed (no open next-dry).
+2. Gate unit tests for allow/deny/closed/idempotency eligibility.
+3. Controlled POST×2 on live `:8000` after fresh restart.
+4. QA pack + this worklog.
 
-## Preflight artifact
+## Evidence
 
 `docs/qa/workos-f7b-controlled-product-linked-materialization-pilot-v1/`
 
-## Next Owner GO
+## Remaining
 
-Accept fixture `880811`/`22` + authorize next_dry retarget + restart → then F7B POST×2 only.
+No scheduling, assignment, sessions, or atelier start. Waiting for Owner review.
