@@ -35,8 +35,8 @@
 
     --radius: 0.5rem;
 
-    /* ─── Sidebar (Light) ─── */
-    --sidebar-background: 0 0% 99%;
+    /* ─── Sidebar (Light) — day mode: no dark island ─── */
+    --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222.2 47.4% 11.2%;
     --sidebar-primary: 221.2 83.2% 53.3%;
     --sidebar-primary-foreground: 0 0% 100%;
@@ -45,20 +45,20 @@
     --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-ring: 221.2 83.2% 53.3%;
 
-    /* ─── WorkOS Semantic Tokens (Light) ─── */
+    /* ─── WorkOS Semantic Tokens (Light / Day) ─── */
     --wo-surface-app: 210 20% 97%;
     --wo-surface-shell: 0 0% 100%;
     --wo-surface-raised: 0 0% 100%;
-    --wo-surface-inset: 210 20% 95%;
+    --wo-surface-inset: 210 16% 96%;
     --wo-surface-input: 0 0% 100%;
 
     --wo-border-subtle: 214.3 31.8% 91.4%;
-    --wo-border-strong: 214.3 20% 85%;
+    --wo-border-strong: 214.3 22% 86%;
 
-    --wo-text-primary: 222.2 84% 4.9%;
-    --wo-text-secondary: 215 20% 30%;
-    --wo-text-muted: 215.4 16.3% 46.9%;
-    --wo-text-dim: 215 14% 60%;
+    --wo-text-primary: 222.2 47.4% 11.2%;
+    --wo-text-secondary: 215 20% 32%;
+    --wo-text-muted: 215.4 16.3% 42%;
+    --wo-text-dim: 215 14% 52%;
 
     /* ─── Status Semantic (Light) ─── */
     --wo-success: 142 76% 36%;
@@ -169,6 +169,22 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /*
+   * Wave 0 day-mode shell: force light sidebar/topbar when html.light
+   * so chrome cannot remain a cool/dark island against the content canvas.
+   */
+  html.light .workos-app-sidebar,
+  html.light .workos-app-topbar,
+  html.light [data-day-shell="true"] {
+    background-color: hsl(var(--wo-surface-shell));
+    color: hsl(var(--wo-text-primary));
+    border-color: hsl(var(--wo-border-subtle));
+  }
+
+  html.light .workos-app-sidebar {
+    background-color: #ffffff;
   }
 }
 

@@ -2,36 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, NavLink, Navigate, Outlet, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Factory,
-  User,
-  GitBranch,
-  Shield,
-  Bell,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  AlertTriangle,
-  Zap,
-  Inbox,
-  FileText,
-  ClipboardList,
-  Warehouse,
-  BarChart3,
-  Users,
-  Cog,
-  Handshake,
-  Settings,
-  LogOut,
-  Package,
-  Activity,
-  Menu,
-  X,
-} from "lucide-react";
-import { useState, useRef, useEffect, lazy, Suspense } from "react";
-import { useIsMobile } from "./hooks/use-mobile";
+import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Dashboard from "./pages/Dashboard";
 import ShopFloor from "./pages/ShopFloor";
 import OperatorView from "./pages/OperatorView";
@@ -90,14 +62,8 @@ import LogoutCallbackPage from "./pages/LogoutCallbackPage";
 import LoginGate from "./components/LoginGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { ThemeToggle } from "./components/workos/design-system/ThemeToggle";
-import { productionAlerts } from "./lib/mockData";
-import { isMockEnabled } from "./lib/mockGuard";
-import { resolveShellCriticalCount } from "./lib/shellAlertTruth";
-import VersionBadge from "./components/system/VersionBadge";
-import EnvironmentBanner from "./components/workos/EnvironmentBanner";
 import LocalApiCompatibilityBanner from "./components/workos/LocalApiCompatibilityBanner";
-import { personalNavItems } from "./lib/personalNavigation";
+import AppShell from "./components/workos/AppShell";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -112,11 +78,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-interface NavSection {
-  title: string;
-  items: { to: string; label: string; icon: React.ComponentType<{ className?: string }> }[];
-}
 
 const DEV_GUARD_BYPASS_KEY = "WORKOS_DEV_GUARD_BYPASS";
 
@@ -156,434 +117,6 @@ function isAllowedByDevAllowlist(pathname: string, allowlist: string[]): boolean
     if (allowedPath === pathname) return true;
     return pathname.startsWith(`${allowedPath}/`);
   });
-}
-
-const navSections: NavSection[] = [
-  {
-    title: "Operațiuni",
-    items: [
-      { to: "/dashboard", label: "Control Tower", icon: LayoutDashboard },
-      { to: "/shop-floor", label: "Shop Floor", icon: Factory },
-      { to: "/operator", label: "Operator", icon: User },
-      { to: "/tablet", label: "Atelier Tablet", icon: Zap },
-    ],
-  },
-  {
-    title: "Comercial",
-    items: [
-      { to: "/clients", label: "Clienți", icon: Users },
-      { to: "/intake", label: "Work Intake", icon: Inbox },
-      { to: "/quotes", label: "Oferte", icon: FileText },
-      { to: "/orders", label: "Comenzi", icon: ClipboardList },
-      { to: "/execution", label: "Execuție", icon: Activity },
-      { to: "/documents", label: "Documente", icon: FileText },
-    ],
-  },
-  {
-    title: "Resurse",
-    items: [
-      { to: "/inventory", label: "Inventar & OC", icon: Warehouse },
-      { to: "/inventory/pricing", label: "Pricing (registry)", icon: BarChart3 },
-      { to: "/product-system/products", label: "Product System", icon: Package },
-      { to: "/colaboratori", label: "Colaboratori", icon: Handshake },
-      { to: "/utilaje", label: "Utilaje (registry)", icon: Cog },
-      { to: "/reports", label: "Rapoarte", icon: BarChart3 },
-    ],
-  },
-  {
-    title: "Personal",
-    items: personalNavItems,
-  },
-  {
-    title: "Sistem",
-    items: [
-      { to: "/modules", label: "Harta sistemelor", icon: GitBranch },
-      { to: "/governance", label: "Guvernanța sistemului", icon: Shield },
-      { to: "/settings", label: "Setări", icon: Settings },
-    ],
-  },
-];
-
-function getInitials(name?: string, email?: string): string {
-  if (name && name.trim().length > 0) {
-    const parts = name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return parts[0].slice(0, 2).toUpperCase();
-  }
-  if (email) return email.slice(0, 2).toUpperCase();
-  return "U";
-}
-
-function UserMenu() {
-  const { user, logout } = useAuth();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  const initials = getInitials(user?.name, user?.email);
-  const displayName = user?.name || user?.email?.split("@")[0] || "Utilizator";
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 hover:bg-blue-500 text-[11px] font-bold text-white transition-colors"
-        title="Cont utilizator"
-      >
-        {initials}
-      </button>
-      {open && (
-        <div className="absolute right-0 top-10 w-56 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl overflow-hidden z-50">
-          <div className="px-3 py-2.5 border-b border-wo-border-strong">
-            <p className="text-[12px] font-semibold text-wo-text-primary truncate">{displayName}</p>
-            <p className="text-[10px] text-wo-text-dim uppercase tracking-wide mt-0.5">Autentificat</p>
-          </div>
-          <button
-            onClick={() => {
-              setOpen(false);
-              logout();
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-wo-text-secondary hover:bg-wo-error-muted hover:text-wo-error transition-colors text-left"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Deconectare
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function AppShell() {
-  const location = useLocation();
-  const isNarrow = useIsMobile();
-  const [collapsed, setCollapsed] = useState(false);
-  /** Narrow viewport: nav starts closed so content (e.g. ops-graph) is first-fold. */
-  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
-  // UI-TRUTH-01C: never show mock "N critical" as real incidents.
-  const criticalAlerts = resolveShellCriticalCount(isMockEnabled(), productionAlerts);
-
-  // Content-first on route change at narrow width (OR-07: ops-graph not occluded by nav).
-  useEffect(() => {
-    if (isNarrow) setNavDrawerOpen(false);
-  }, [location.pathname, isNarrow]);
-
-  const railCollapsed = isNarrow ? false : collapsed;
-  const showNavLabels = isNarrow ? true : !collapsed;
-
-  return (
-    <div
-      className="flex h-screen bg-wo-surface-app text-wo-text-primary overflow-hidden"
-      data-testid="workos-desktop-shell"
-      data-nav-mode={isNarrow ? "drawer" : "rail"}
-      data-nav-drawer={isNarrow ? (navDrawerOpen ? "open" : "closed") : "n/a"}
-      style={
-        {
-          "--workos-sidebar-width": isNarrow
-            ? "0px"
-            : collapsed
-              ? "60px"
-              : "220px",
-        } as React.CSSProperties
-      }
-    >
-      {/* Narrow backdrop — closes drawer; does not mutate product truth */}
-      {isNarrow && navDrawerOpen && (
-        <button
-          type="button"
-          aria-label="Close navigation drawer"
-          data-testid="workos-nav-drawer-backdrop"
-          className="fixed inset-0 z-40 bg-black/40 border-0 cursor-pointer"
-          onClick={() => setNavDrawerOpen(false)}
-        />
-      )}
-
-      {/* Sidebar — rail on desktop; overlay drawer on narrow (OR-07) */}
-      <aside
-        data-testid="workos-sidebar"
-        data-nav-drawer-open={isNarrow ? String(navDrawerOpen) : undefined}
-        className={
-          isNarrow
-            ? `fixed inset-y-0 left-0 z-50 flex w-[220px] flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-transform duration-200 ${
-                navDrawerOpen ? "translate-x-0" : "-translate-x-full"
-              }`
-            : `relative z-30 flex shrink-0 flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-all duration-200 ${
-                collapsed ? "w-[60px]" : "w-[220px]"
-              }`
-        }
-      >
-        {/* Logo */}
-        <div className="flex items-center gap-2 px-4 h-[48px] border-b border-wo-border-subtle">
-          <Zap className="w-5 h-5 text-primary shrink-0" />
-          {showNavLabels && (
-            <span className="text-[15px] font-bold tracking-tight text-wo-text-primary">
-              WorkOS
-            </span>
-          )}
-          {isNarrow && (
-            <button
-              type="button"
-              aria-label="Close navigation"
-              data-testid="workos-nav-drawer-close"
-              className="ml-auto p-1.5 rounded text-wo-text-dim hover:text-wo-text-secondary hover:bg-wo-hover"
-              onClick={() => setNavDrawerOpen(false)}
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 py-2 px-2 overflow-y-auto scrollbar-thin">
-          {navSections.map((section) => (
-            <div key={section.title} className="mb-2">
-              {showNavLabels && (
-                <p className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-wo-text-dim">
-                  {section.title}
-                </p>
-              )}
-              <div className="space-y-0.5">
-                {section.items.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={
-                      // Inventar must be exact so /inventory/pricing only highlights Pricing.
-                      // Product System keeps prefix match for nested product routes.
-                      item.to === "/product-system/products" ? false : true
-                    }
-                    onClick={() => {
-                      if (isNarrow) setNavDrawerOpen(false);
-                    }}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
-                        isActive
-                          ? "bg-primary/15 text-primary border-l-2 border-primary"
-                          : "text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover border-l-2 border-transparent"
-                      }`
-                    }
-                  >
-                    <item.icon className="w-4 h-4 shrink-0" />
-                    {showNavLabels && <span>{item.label}</span>}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          ))}
-        </nav>
-
-        {/* Runtime release version indicator (Sprint #38) */}
-        <VersionBadge collapsed={railCollapsed} />
-
-        {/* Collapse toggle — desktop rail only */}
-        {!isNarrow && (
-          <button
-            type="button"
-            onClick={() => setCollapsed(!collapsed)}
-            className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors"
-          >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
-        )}
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Top bar */}
-        <header
-          data-testid="workos-desktop-topbar"
-          className="flex items-center justify-between h-[48px] px-4 border-b border-wo-border-subtle bg-wo-surface-shell gap-2"
-        >
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            {isNarrow && (
-              <button
-                type="button"
-                aria-label={navDrawerOpen ? "Close navigation drawer" : "Open navigation drawer"}
-                aria-expanded={navDrawerOpen}
-                data-testid="workos-nav-drawer-toggle"
-                className="relative z-10 shrink-0 p-1.5 rounded border border-wo-border-subtle bg-wo-surface-input text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover"
-                onClick={() => setNavDrawerOpen((open) => !open)}
-              >
-                <Menu className="w-4 h-4" />
-              </button>
-            )}
-            {!isNarrow && (
-              <div className="flex items-center gap-2 bg-wo-surface-input border border-wo-border-subtle rounded-md px-3 py-1.5 w-full max-w-72 min-w-0">
-                <Search className="w-3.5 h-3.5 text-wo-text-dim shrink-0" />
-                <input
-                  id="app-global-search"
-                  name="app-global-search"
-                  type="text"
-                  placeholder="Search jobs, tasks, machines..."
-                  aria-label="Search jobs, tasks, machines"
-                  className="bg-transparent text-[12px] text-wo-text-secondary placeholder:text-wo-text-dim outline-none w-full min-w-0"
-                />
-              </div>
-            )}
-            {isNarrow && (
-              <p
-                className="truncate text-[12px] font-semibold text-wo-text-primary min-w-0"
-                data-testid="workos-narrow-topbar-title"
-              >
-                WorkOS
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Full status chip overlaps Menu at ~390px — keep desktop only (OR-07). */}
-            {!isNarrow && <EnvironmentBanner />}
-            {criticalAlerts > 0 && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-wo-error-muted border border-wo-error/40 rounded text-wo-error text-[11px] font-semibold">
-                <AlertTriangle className="w-3 h-3" />
-                {criticalAlerts} critical
-              </div>
-            )}
-            <ThemeToggle compact className="text-wo-text-muted" />
-            <button className="relative p-1.5 rounded hover:bg-wo-hover transition-colors">
-              <Bell className="w-4 h-4 text-wo-text-muted" />
-              {criticalAlerts > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-wo-error rounded-full" />
-              )}
-            </button>
-            <div className="pl-2 border-l border-wo-border-subtle">
-              <UserMenu />
-            </div>
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="relative z-0 flex-1 overflow-auto p-4">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/shop-floor" element={<ShopFloor />} />
-            <Route path="/operator" element={<OperatorView />} />
-            <Route path="/tablet" element={<TabletStationSelector />} />
-            <Route path="/tablet/:stationId" element={<TabletStationQueue />} />
-            <Route path="/tablet/:stationId/:taskId" element={<TabletTaskDetail />} />
-            <Route path="/clients" element={<Clients />} />
-              <Route path="/clients/:clientName" element={<ClientWorkspace />} />
-              <Route path="/documents" element={<DocumentCenter />} />
-              <Route path="/intake" element={<WorkIntake />} />
-              <Route path="/intake/:id" element={<IntakeLegacyRoute />} />
-              <Route path="/quotes/:quoteId" element={<ErrorBoundary fallbackTitle="Eroare în Oferte"><Quotes /></ErrorBoundary>} />
-              <Route path="/quotes" element={<ErrorBoundary fallbackTitle="Eroare în Oferte"><Quotes /></ErrorBoundary>} />
-              <Route path="/orders/:orderId" element={<ErrorBoundary fallbackTitle="Eroare în Comenzi"><Orders /></ErrorBoundary>} />
-              <Route path="/orders" element={<ErrorBoundary fallbackTitle="Eroare în Comenzi"><Orders /></ErrorBoundary>} />
-              <Route path="/execution" element={<ExecutionDashboard />} />
-              <Route path="/execution/reality-review" element={<OperationalRealityReview />} />
-              <Route path="/execution/ops-graph" element={<MaterializedOpsGraph />} />
-              <Route path="/execution/:order_id" element={<ExecutionDetail />} />
-              <Route path="/demo/commercial-spine" element={<CommercialSpineDemo />} />
-              <Route path="/demo/volumetric-letter-preview" element={<VolumetricLetterPreviewDemo />} />
-              {/* V6 is the only active intake operator flow. */}
-              <Route path="/intake-v6/operator" element={<IntakeV6OperatorWorkspaceApp />} />
-              <Route path="/intake-v6/:workspaceId/operator" element={<IntakeV6OperatorWorkspaceApp />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/inventory/pricing" element={<Pricing />} />
-              <Route path="/inventory/material-price-registry" element={<Navigate to="/inventory/pricing" replace />} />
-              <Route path="/inventory/commercial-markup-policy" element={<Navigate to="/inventory/pricing" replace />} />
-              <Route path="/inventory/productsystem-pricing-preview" element={<Navigate to="/inventory/pricing" replace />} />
-              <Route path="/product-system" element={
-                  <ErrorBoundary fallbackTitle="Eroare în ProductSystem">
-                    <ProductSystemLayout />
-                  </ErrorBoundary>
-                }
-              >
-                <Route index element={<ProductSystemIndexRedirect />} />
-                <Route path="products" element={<ProductSystem />} />
-                <Route path="products/:templateCode" element={<ProductSystem />} />
-                <Route
-                  path="products/:templateCode/structure/vizual-fata"
-                  element={<LettersFaceStructureDetailPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/volum-aluminiu"
-                  element={<LettersVolumeAluminumStructureDetailPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/capac-spate"
-                  element={<LettersBackForexStructureDetailPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/sistem-led"
-                  element={<LettersLedStructureDetailPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/conexiune-litere-acm-preturi"
-                  element={<LettersAcmCompositionConnectionPricesPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/composer-litere-acm"
-                  element={<LettersAcmComposerIaMockPage />}
-                />
-                <Route
-                  path="products/:templateCode/structure/:stepId"
-                  element={<AcmBoxedStructureDetailPage />}
-                />
-                <Route path="components" element={<ProductSystemPlannedSectionPage section="components" />} />
-                <Route path="resources" element={<ProductSystemPlannedSectionPage section="resources" />} />
-                <Route path="operations" element={<ProductSystemPlannedSectionPage section="operations" />} />
-                <Route path="dependencies" element={<ProductSystemPlannedSectionPage section="dependencies" />} />
-                <Route path="validation" element={<ProductSystemPlannedSectionPage section="validation" />} />
-                <Route path="advanced" element={<ProductSystemPlannedSectionPage section="advanced" />} />
-              </Route>
-              <Route
-                path="/product-system/blueprint-dossier"
-                element={
-                  <ErrorBoundary fallbackTitle="Eroare în Blueprint Dossier Studio">
-                    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" /></div>}>
-                      <BlueprintDossierStudio />
-                    </Suspense>
-                  </ErrorBoundary>
-                }
-              />
-              {/* Legacy Dossier completion → single canonical Blueprint Dossier */}
-              <Route
-                path="/product-system/dossier-completion"
-                element={<Navigate to="/product-system/blueprint-dossier" replace />}
-              />
-              <Route path="/pricing" element={<Navigate to="/inventory/pricing" replace />} />
-              <Route
-                path="/product-system/output-blocks-preview"
-                element={
-                  <ErrorBoundary fallbackTitle="Eroare în Output Blocks Preview">
-                    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" /></div>}>
-                      <OutputBlocksPreview />
-                    </Suspense>
-                  </ErrorBoundary>
-                }
-              />
-              <Route path="/products" element={<Navigate to="/product-system/products" replace />} />
-              <Route path="/templates" element={<Navigate to="/product-system/products" replace />} />
-              <Route path="/personal" element={<Navigate to="/employees" replace />} />
-              <Route path="/employees" element={<Employees />} />
-              <Route path="/employees-records" element={<EmployeesRecords />} />
-              <Route path="/employees-records/:employeeId" element={<EmployeeProfile />} />
-              <Route path="/attendance" element={<Attendance />} />
-              <Route path="/attendance/effects" element={<EmployeeAttendanceEffects />} />
-              <Route path="/employee-payments" element={<EmployeePayments />} />
-              <Route path="/employee-advances" element={<EmployeeAdvances />} />
-              <Route path="/colaboratori" element={<Colaboratori />} />
-              <Route path="/utilaje" element={<Utilaje />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/reports/operational" element={<OperationalReports />} />
-              <Route path="/modules" element={<ModuleChain />} />
-              <Route path="/governance" element={<Governance />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </main>
-      </div>
-    </div>
-  );
 }
 
 function RuntimeStatePanel({
@@ -719,7 +252,126 @@ export function AuthenticatedAppRoutes() {
         <Route path="/employee-app/*" element={<EmployeeMobileStandaloneRoot />} />
         <Route path="/employee-app-v2/*" element={<EmployeeMobileV2StandaloneRoot />} />
         <Route path="/intake-v6-app/*" element={<IntakeV6StandaloneRoot />} />
-        <Route path="*" element={<AppShell />} />
+        <Route element={<AppShell />}>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/shop-floor" element={<ShopFloor />} />
+          <Route path="/operator" element={<OperatorView />} />
+          <Route path="/tablet" element={<TabletStationSelector />} />
+          <Route path="/tablet/:stationId" element={<TabletStationQueue />} />
+          <Route path="/tablet/:stationId/:taskId" element={<TabletTaskDetail />} />
+          <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/:clientName" element={<ClientWorkspace />} />
+          <Route path="/documents" element={<DocumentCenter />} />
+          <Route path="/intake" element={<WorkIntake />} />
+          <Route path="/intake/:id" element={<IntakeLegacyRoute />} />
+          <Route path="/quotes/:quoteId" element={<ErrorBoundary fallbackTitle="Eroare în Oferte"><Quotes /></ErrorBoundary>} />
+          <Route path="/quotes" element={<ErrorBoundary fallbackTitle="Eroare în Oferte"><Quotes /></ErrorBoundary>} />
+          <Route path="/orders/:orderId" element={<ErrorBoundary fallbackTitle="Eroare în Comenzi"><Orders /></ErrorBoundary>} />
+          <Route path="/orders" element={<ErrorBoundary fallbackTitle="Eroare în Comenzi"><Orders /></ErrorBoundary>} />
+          <Route path="/execution" element={<ExecutionDashboard />} />
+          <Route path="/execution/reality-review" element={<OperationalRealityReview />} />
+          <Route path="/execution/ops-graph" element={<MaterializedOpsGraph />} />
+          <Route path="/execution/:order_id" element={<ExecutionDetail />} />
+          <Route path="/demo/commercial-spine" element={<CommercialSpineDemo />} />
+          <Route path="/demo/volumetric-letter-preview" element={<VolumetricLetterPreviewDemo />} />
+          {/* V6 is the only active intake operator flow. */}
+          <Route path="/intake-v6/operator" element={<IntakeV6OperatorWorkspaceApp />} />
+          <Route path="/intake-v6/:workspaceId/operator" element={<IntakeV6OperatorWorkspaceApp />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/inventory/pricing" element={<Pricing />} />
+          <Route path="/inventory/material-price-registry" element={<Navigate to="/inventory/pricing" replace />} />
+          <Route path="/inventory/commercial-markup-policy" element={<Navigate to="/inventory/pricing" replace />} />
+          <Route path="/inventory/productsystem-pricing-preview" element={<Navigate to="/inventory/pricing" replace />} />
+          <Route path="/product-system" element={
+              <ErrorBoundary fallbackTitle="Eroare în ProductSystem">
+                <ProductSystemLayout />
+              </ErrorBoundary>
+            }
+          >
+            <Route index element={<ProductSystemIndexRedirect />} />
+            <Route path="products" element={<ProductSystem />} />
+            <Route path="products/:templateCode" element={<ProductSystem />} />
+            <Route
+              path="products/:templateCode/structure/vizual-fata"
+              element={<LettersFaceStructureDetailPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/volum-aluminiu"
+              element={<LettersVolumeAluminumStructureDetailPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/capac-spate"
+              element={<LettersBackForexStructureDetailPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/sistem-led"
+              element={<LettersLedStructureDetailPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/conexiune-litere-acm-preturi"
+              element={<LettersAcmCompositionConnectionPricesPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/composer-litere-acm"
+              element={<LettersAcmComposerIaMockPage />}
+            />
+            <Route
+              path="products/:templateCode/structure/:stepId"
+              element={<AcmBoxedStructureDetailPage />}
+            />
+            <Route path="components" element={<ProductSystemPlannedSectionPage section="components" />} />
+            <Route path="resources" element={<ProductSystemPlannedSectionPage section="resources" />} />
+            <Route path="operations" element={<ProductSystemPlannedSectionPage section="operations" />} />
+            <Route path="dependencies" element={<ProductSystemPlannedSectionPage section="dependencies" />} />
+            <Route path="validation" element={<ProductSystemPlannedSectionPage section="validation" />} />
+            <Route path="advanced" element={<ProductSystemPlannedSectionPage section="advanced" />} />
+          </Route>
+          <Route
+            path="/product-system/blueprint-dossier"
+            element={
+              <ErrorBoundary fallbackTitle="Eroare în Blueprint Dossier Studio">
+                <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" /></div>}>
+                  <BlueprintDossierStudio />
+                </Suspense>
+              </ErrorBoundary>
+            }
+          />
+          {/* Legacy Dossier completion → single canonical Blueprint Dossier */}
+          <Route
+            path="/product-system/dossier-completion"
+            element={<Navigate to="/product-system/blueprint-dossier" replace />}
+          />
+          <Route path="/pricing" element={<Navigate to="/inventory/pricing" replace />} />
+          <Route
+            path="/product-system/output-blocks-preview"
+            element={
+              <ErrorBoundary fallbackTitle="Eroare în Output Blocks Preview">
+                <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" /></div>}>
+                  <OutputBlocksPreview />
+                </Suspense>
+              </ErrorBoundary>
+            }
+          />
+          <Route path="/products" element={<Navigate to="/product-system/products" replace />} />
+          <Route path="/templates" element={<Navigate to="/product-system/products" replace />} />
+          <Route path="/personal" element={<Navigate to="/employees" replace />} />
+          <Route path="/employees" element={<Employees />} />
+          <Route path="/employees-records" element={<EmployeesRecords />} />
+          <Route path="/employees-records/:employeeId" element={<EmployeeProfile />} />
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/attendance/effects" element={<EmployeeAttendanceEffects />} />
+          <Route path="/employee-payments" element={<EmployeePayments />} />
+          <Route path="/employee-advances" element={<EmployeeAdvances />} />
+          <Route path="/colaboratori" element={<Colaboratori />} />
+          <Route path="/utilaje" element={<Utilaje />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports/operational" element={<OperationalReports />} />
+          <Route path="/modules" element={<ModuleChain />} />
+          <Route path="/governance" element={<Governance />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Route>
       </Route>
     </Routes>
   );

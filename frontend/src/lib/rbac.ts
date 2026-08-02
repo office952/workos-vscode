@@ -57,6 +57,18 @@ export type Permission =
   | "view:governance"
   // Modules
   | "view:modules"
+  // Wave 0 — shell nav surfaces (route URLs unchanged)
+  | "view:products"
+  | "view:execution"
+  | "view:clients"
+  | "view:documents"
+  | "view:employees"
+  | "view:hr"
+  | "view:payments"
+  | "view:advances"
+  | "view:colaboratori"
+  | "view:utilaje"
+  | "view:pricing"
   // Reality Quality (BUILD 18)
   | "reality.invalidate"
   | "reality.restore_valid";
@@ -73,23 +85,25 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "action:task_block",
     "view:inventory",
     "view:stock_movements",
+    "view:utilaje",
   ],
 
   sales: [
     "view:dashboard",
-    "view:shopfloor",
-    "view:operator",
     "view:intake",
     "edit:intake",
+    "view:products",
     "view:quotes",
     "edit:quotes",
     "accept:quote",
     "view:orders",
     "create:order_from_quote",
+    "view:execution",
+    "view:clients",
+    "view:documents",
     "view:inventory",
     "view:stock_movements",
     "view:reports",
-    "view:modules",
   ],
 
   manager: [
@@ -101,6 +115,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "action:task_block",
     "view:intake",
     "edit:intake",
+    "view:products",
     "view:quotes",
     "edit:quotes",
     "accept:quote",
@@ -109,13 +124,20 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "edit:orders",
     "lock:order",
     "create:order_from_quote",
+    "view:execution",
+    "view:clients",
+    "view:documents",
     "view:inventory",
     "edit:inventory",
     "action:deduct_stock",
     "view:stock_movements",
+    "view:utilaje",
+    "view:colaboratori",
+    "view:employees",
+    "view:hr",
+    "view:payments",
     "view:reports",
     "view:reports_profit",
-    "view:modules",
     "reality.invalidate",
   ],
 
@@ -128,6 +150,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "action:task_block",
     "view:intake",
     "edit:intake",
+    "view:products",
     "view:quotes",
     "edit:quotes",
     "accept:quote",
@@ -136,10 +159,20 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "edit:orders",
     "lock:order",
     "create:order_from_quote",
+    "view:execution",
+    "view:clients",
+    "view:documents",
     "view:inventory",
     "edit:inventory",
     "action:deduct_stock",
     "view:stock_movements",
+    "view:utilaje",
+    "view:colaboratori",
+    "view:employees",
+    "view:hr",
+    "view:payments",
+    "view:advances",
+    "view:pricing",
     "view:reports",
     "view:reports_profit",
     "view:settings",
@@ -239,43 +272,121 @@ export function getPermissions(role: Role): Permission[] {
 
 /**
  * Navigation items visibility per role.
+ * Unknown keys fail closed (no entry → not visible).
  */
 export type NavItem =
   | "dashboard"
   | "shopfloor"
   | "operator"
+  | "tablet"
+  | "execution"
+  | "ops_graph"
   | "intake"
+  | "products"
   | "quotes"
   | "orders"
+  | "clients"
+  | "documents"
   | "inventory"
+  | "pricing"
+  | "utilaje"
+  | "colaboratori"
+  | "employees"
+  | "employees_records"
+  | "attendance"
+  | "payments"
+  | "advances"
   | "reports"
   | "settings"
-  | "modules";
+  | "modules"
+  | "governance"
+  | "demos";
 
-const NAV_PERMISSION_MAP: Record<NavItem, Permission> = {
+const NAV_PERMISSION_MAP: Partial<Record<NavItem, Permission>> = {
   dashboard: "view:dashboard",
   shopfloor: "view:shopfloor",
   operator: "view:operator",
+  tablet: "view:shopfloor",
+  execution: "view:execution",
+  ops_graph: "view:execution",
   intake: "view:intake",
+  products: "view:products",
   quotes: "view:quotes",
   orders: "view:orders",
+  clients: "view:clients",
+  documents: "view:documents",
   inventory: "view:inventory",
+  pricing: "view:pricing",
+  utilaje: "view:utilaje",
+  colaboratori: "view:colaboratori",
+  employees: "view:employees",
+  employees_records: "view:hr",
+  attendance: "view:hr",
+  payments: "view:payments",
+  advances: "view:advances",
   reports: "view:reports",
   settings: "view:settings",
   modules: "view:modules",
+  governance: "view:governance",
+  // demos: gated by isDevEnvironment() in canViewNav (not a Permission)
 };
 
-export function canViewNav(role: Role, navItem: NavItem): boolean {
-  const requiredPermission = NAV_PERMISSION_MAP[navItem];
+/**
+ * Wave 0 — unknown nav keys and missing permissions fail closed.
+ * DEV tooling (`demos`) is visible only when VITE_ENABLE_DEV_AUTH is on (non-prod).
+ * Ops-Graph stays under Planificare but is manager/admin only.
+ */
+export function canViewNav(role: Role, navItem: NavItem | string): boolean {
+  if (!(role in ROLE_PERMISSIONS)) return false;
+
+  if (navItem === "demos") {
+    return isDevEnvironment();
+  }
+
+  if (navItem === "ops_graph") {
+    return (
+      (role === "manager" || role === "admin") && can(role, "view:execution")
+    );
+  }
+
+  if (!(navItem in NAV_PERMISSION_MAP)) return false;
+  const requiredPermission = NAV_PERMISSION_MAP[navItem as NavItem];
   if (!requiredPermission) return false;
   return can(role, requiredPermission);
 }
+
+const ALL_NAV_ITEMS: NavItem[] = [
+  "dashboard",
+  "shopfloor",
+  "operator",
+  "tablet",
+  "execution",
+  "ops_graph",
+  "intake",
+  "products",
+  "quotes",
+  "orders",
+  "clients",
+  "documents",
+  "inventory",
+  "pricing",
+  "utilaje",
+  "colaboratori",
+  "employees",
+  "employees_records",
+  "attendance",
+  "payments",
+  "advances",
+  "reports",
+  "settings",
+  "modules",
+  "governance",
+  "demos",
+];
 
 /**
  * Get visible nav items for a role.
  */
 export function getVisibleNavItems(role: Role): NavItem[] {
-  return (Object.keys(NAV_PERMISSION_MAP) as NavItem[]).filter((item) =>
-    canViewNav(role, item)
-  );
+  return ALL_NAV_ITEMS.filter((item) => canViewNav(role, item));
 }

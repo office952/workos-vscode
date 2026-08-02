@@ -24,11 +24,13 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-// Dev/preview fallback user — ONLY activates when VITE_ENABLE_DEV_AUTH=true
+// Dev/preview fallback user — ONLY activates when VITE_ENABLE_DEV_AUTH=true.
+// role:admin preserves full shell nav when /auth/me is unavailable (Wave 0).
 const DEV_FALLBACK_USER: AuthUser = {
   id: 'dev-user-001',
   name: 'Admin Preview',
   email: 'admin@workos.local',
+  role: 'admin',
 };
 
 /**

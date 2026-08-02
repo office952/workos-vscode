@@ -9,7 +9,15 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { resolveRole, can, canAll, canAny, getPermissions, getVisibleNavItems } from "./rbac";
+import {
+  resolveRole,
+  can,
+  canAll,
+  canAny,
+  getPermissions,
+  getVisibleNavItems,
+  canViewNav,
+} from "./rbac";
 
 // Helper to mock import.meta.env
 const originalEnv = { ...import.meta.env };
@@ -110,20 +118,57 @@ describe("BUILD 24 — Frontend RBAC Hardening", () => {
   });
 
   describe("Navigation visibility", () => {
-    it("admin sees all nav items", () => {
+    it("admin sees settings, pricing, governance, HR", () => {
       const items = getVisibleNavItems("admin");
       expect(items).toContain("settings");
       expect(items).toContain("dashboard");
+      expect(items).toContain("pricing");
+      expect(items).toContain("governance");
+      expect(items).toContain("employees_records");
+      expect(items).toContain("advances");
     });
 
-    it("viewer only sees dashboard", () => {
+    it("viewer only sees dashboard (fail-closed)", () => {
       const items = getVisibleNavItems("viewer");
       expect(items).toEqual(["dashboard"]);
     });
 
-    it("operator does not see settings", () => {
+    it("operator does not see settings, pricing, HR, or commercial intake", () => {
       const items = getVisibleNavItems("operator");
       expect(items).not.toContain("settings");
+      expect(items).not.toContain("pricing");
+      expect(items).not.toContain("intake");
+      expect(items).not.toContain("employees_records");
+      expect(items).toContain("tablet");
+      expect(items).toContain("shopfloor");
+    });
+
+    it("sales sees Lucrări + Relații but not HR/money/governance", () => {
+      const items = getVisibleNavItems("sales");
+      expect(items).toContain("intake");
+      expect(items).toContain("quotes");
+      expect(items).toContain("clients");
+      expect(items).not.toContain("employees");
+      expect(items).not.toContain("payments");
+      expect(items).not.toContain("governance");
+      expect(items).not.toContain("pricing");
+      expect(items).not.toContain("shopfloor");
+    });
+
+    it("manager sees HR and payments but not advances/pricing/settings", () => {
+      const items = getVisibleNavItems("manager");
+      expect(items).toContain("employees");
+      expect(items).toContain("payments");
+      expect(items).toContain("ops_graph");
+      expect(items).not.toContain("advances");
+      expect(items).not.toContain("pricing");
+      expect(items).not.toContain("settings");
+      expect(items).not.toContain("governance");
+    });
+
+    it("unknown nav key fails closed", () => {
+      // @ts-expect-error intentional unknown key
+      expect(canViewNav("admin", "not_a_real_nav_key")).toBe(false);
     });
   });
 });

@@ -7,13 +7,17 @@ export interface PersonalNavItem {
   icon: LucideIcon;
 }
 
-/** Sidebar entries under Personal — operational registry vs HR demo are separate. */
+/**
+ * People / money entries used by shell (Oameni + Management).
+ * Labels are Romanian-first; no "(registry)" chrome.
+ * HR demo must not use the generic "Angajați" label — that points at /employees.
+ */
 export const personalNavItems: PersonalNavItem[] = [
-  { to: "/employees", label: "Angajați operaționali", icon: Users },
-  { to: "/employees-records", label: "Evidență internă HR", icon: FileText },
-  { to: "/attendance", label: "Pontaj (registry intern)", icon: Activity },
-  { to: "/employee-payments", label: "Plăți angajați", icon: BarChart3 },
-  { to: "/employee-advances", label: "Avansuri / Datorii", icon: Warehouse },
+  { to: "/employees", label: "Angajați", icon: Users },
+  { to: "/employees-records", label: "Evidență HR", icon: FileText },
+  { to: "/attendance", label: "Pontaj", icon: Activity },
+  { to: "/employee-payments", label: "Plăți", icon: BarChart3 },
+  { to: "/employee-advances", label: "Avansuri", icon: Warehouse },
 ];
 
 export function findPersonalNavItem(label: string): PersonalNavItem | undefined {

@@ -2,30 +2,34 @@ import { describe, expect, it } from "vitest";
 import { findPersonalNavItem, personalNavItems } from "./personalNavigation";
 
 describe("personalNavigation", () => {
-  it("links Angajați operaționali to /employees", () => {
-    const item = findPersonalNavItem("Angajați operaționali");
+  it("links Angajați to /employees (operational, not HR demo)", () => {
+    const item = findPersonalNavItem("Angajați");
     expect(item?.to).toBe("/employees");
   });
 
-  it("links Evidență internă HR to /employees-records", () => {
-    const item = findPersonalNavItem("Evidență internă HR");
+  it("links Evidență HR to /employees-records", () => {
+    const item = findPersonalNavItem("Evidență HR");
     expect(item?.to).toBe("/employees-records");
   });
 
-  it("links Plăți angajați to /employee-payments", () => {
-    const item = findPersonalNavItem("Plăți angajați");
+  it("links Plăți to /employee-payments", () => {
+    const item = findPersonalNavItem("Plăți");
     expect(item?.to).toBe("/employee-payments");
   });
 
-  it("does not expose a generic Angajați label pointing at demo HR", () => {
-    const generic = personalNavItems.find((item) => item.label === "Angajati" || item.label === "Angajați");
-    expect(generic).toBeUndefined();
+  it("does not point Angajați at the HR records route", () => {
+    const item = findPersonalNavItem("Angajați");
+    expect(item?.to).not.toBe("/employees-records");
   });
 
-  it("lists operational registry before HR demo", () => {
+  it("lists operational Angajați before Evidență HR", () => {
     const labels = personalNavItems.map((item) => item.label);
-    expect(labels.indexOf("Angajați operaționali")).toBeLessThan(
-      labels.indexOf("Evidență internă HR")
-    );
+    expect(labels.indexOf("Angajați")).toBeLessThan(labels.indexOf("Evidență HR"));
+  });
+
+  it("drops registry chrome from labels", () => {
+    for (const item of personalNavItems) {
+      expect(item.label.toLowerCase()).not.toContain("registry");
+    }
   });
 });
