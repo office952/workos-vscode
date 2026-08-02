@@ -1,0 +1,144 @@
+{
+  "before": {
+    "92401": {
+      "snap": "f8447379a4d85a4dfb3a59d37aec1e6c24cfa7a1c6663831739bec24fe54c70c",
+      "plan_id": 13,
+      "tasks": "02c70f7dbf963bc8cd8653a2b7a77c066a02cd6c684dd5c81f3bab5bb2e7b0bb",
+      "ops": 18,
+      "assigns": [],
+      "reality": null
+    },
+    "973010": {
+      "snap": "d48fd74b7bef3570103b3adb7cb4f9204e6f9ebd39b2ef6de2e95d76723e94e5",
+      "plan_id": 12,
+      "tasks": "e75e216042b46bcd8f16d2a71a3e6bd397d3423dee523ff3eb349d51d3f1c8ad",
+      "ops": 12,
+      "assigns": [],
+      "reality": {
+        "id": 8,
+        "tasks": "8c0a5b3367151a574a1d39afcdb5538597266924753745b4100ac8f78ea1078f",
+        "total": 0.0
+      }
+    },
+    "973012": {
+      "snap": "2884c54f06f12992e1d78accbad31d7c8a3833fabca11cd3a933c1f832230f4a",
+      "plan_id": 15,
+      "tasks": "1b73b6ebc85df2d93e65a4c5a5600ae7fc66dbee37856e9afa3047ae3e76577c",
+      "ops": 0,
+      "assigns": [],
+      "reality": null
+    },
+    "973013": {
+      "snap": "74922aa7b25e2953c94f70a188a8b89693fef1d9b54f476992faca58fc20c3ca",
+      "plan_id": 16,
+      "tasks": "264c5ad13f5a5f5664206bd3cfe951542e1419ef9fe7b43a92a29919fbaa7e16",
+      "ops": 0,
+      "assigns": [],
+      "reality": null
+    },
+    "973015": {
+      "snap": "e28aa9fd927406c174277dcfb4be0cbc9106a3788e9c8f215d6e75a989c1b9cc",
+      "plan_id": 17,
+      "tasks": "a21bcd6f692355f6c7718ed0a27d4c5e2babd3a4873ccfb90d766ae490c8c367",
+      "ops": 18,
+      "assigns": [],
+      "reality": null
+    },
+    "973018": {
+      "snap": "1c507f2fb471c115665382379a51c6d0aed9981b914cfc0505c54cddbbe3ebd4",
+      "plan_id": 20,
+      "tasks": "8975ec104cfb6c538c33ef6a91db32d341437121d6daf7b52f49c37c4ac7a313",
+      "ops": 18,
+      "assigns": [],
+      "reality": null
+    },
+    "973019": {
+      "snap": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+      "plan_id": 21,
+      "tasks": "75933211c1c180d421648bd3c54a96493716ba4c92262f42032c522486b9ff59",
+      "ops": 18,
+      "assigns": [
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+          "assigned_employee_id": 7
+        }
+      ],
+      "reality": null
+    }
+  },
+  "after": {
+    "protected_hashes": {
+      "92401": {
+        "snap": "f8447379a4d85a4dfb3a59d37aec1e6c24cfa7a1c6663831739bec24fe54c70c",
+        "tasks": "02c70f7dbf963bc8cd8653a2b7a77c066a02cd6c684dd5c81f3bab5bb2e7b0bb"
+      },
+      "973018": {
+        "snap": "1c507f2fb471c115665382379a51c6d0aed9981b914cfc0505c54cddbbe3ebd4",
+        "tasks": "8975ec104cfb6c538c33ef6a91db32d341437121d6daf7b52f49c37c4ac7a313"
+      },
+      "973019": {
+        "snap": "2d412e6e1234ae44a4bf00f023375b2a454d4bc82ee2d41cb9c63df12611703e",
+        "tasks": "75933211c1c180d421648bd3c54a96493716ba4c92262f42032c522486b9ff59"
+      }
+    },
+    "session_proof": {
+      "start": {
+        "status": "ok",
+        "already_active": false,
+        "order_id": 973019,
+        "execution_plan_id": 21,
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "employee_id": 7,
+        "employee_name": "Andrei Goghi",
+        "session_id": "ws-dd6ccd91a955",
+        "started_at": "2026-08-02T12:00:00+00:00",
+        "controlled": true,
+        "actor_mode": "supervisor",
+        "actor_user_id": "qa-sessions-v1",
+        "source": "controlled_task_session_v1",
+        "planned_minutes": null,
+        "sessions_created": 1,
+        "commercial_mutated": false,
+        "inventory_mutated": false,
+        "hr_cost_calculated": false
+      },
+      "end": {
+        "status": "ok",
+        "already_ended": false,
+        "order_id": 973019,
+        "execution_plan_id": 21,
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "employee_id": 7,
+        "session_id": "ws-dd6ccd91a955",
+        "started_at": "2026-08-02T12:00:00+00:00",
+        "ended_at": "2026-08-02T12:40:00+00:00",
+        "duration_minutes": 40,
+        "duration_seconds": 2400,
+        "controlled": true,
+        "actor_mode": "supervisor",
+        "actor_user_id": null,
+        "source": "controlled_task_session_v1",
+        "task_auto_completed": false,
+        "planned_minutes": null,
+        "variance_available": false,
+        "variance_reason": "planning_minutes_source_missing",
+        "commercial_mutated": false,
+        "inventory_mutated": false,
+        "hr_cost_calculated": false
+      },
+      "actuals": {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "assigned_employee_id": 7,
+        "session_count": 1,
+        "active_session": false,
+        "total_actual_duration_minutes": 40,
+        "first_started_at": "2026-08-02T12:00:00+00:00",
+        "last_ended_at": "2026-08-02T12:40:00+00:00",
+        "planned_minutes": null,
+        "variance_minutes": null,
+        "variance_reason": "planning_minutes_source_missing",
+        "provenance": "controlled_task_session_v1"
+      }
+    }
+  }
+}

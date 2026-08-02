@@ -65,6 +65,12 @@ from services.execution_plan_service import (
 from services.controlled_employee_assignment_service import (
     assign_operational_task_controlled,
 )
+from services.controlled_task_session_service import (
+    build_execution_actuals_read_model,
+    end_controlled_task_session,
+    start_controlled_task_session,
+)
+from services.employee_mobile_identity import resolve_employee_for_user
 from services.execution_task_assignment_service import assign_plan_task
 from services.execution_task_instructions_service import update_plan_task_instructions
 from services.production_document_handoff_service import (
@@ -575,6 +581,121 @@ async def assign_plan_task_to_employee(
 
 class UpdatePlanTaskInstructionsRequest(BaseModel):
     instructions: str = ""
+
+
+class ControlledSessionRequest(BaseModel):
+    """Supervisor path may name the assigned employee; self path omits it.
+
+    Backend never trusts an employee_id that does not match assignment.
+    """
+
+    employee_id: Optional[int] = None
+
+
+async def _resolve_controlled_session_employee(
+    db: AsyncSession,
+    *,
+    current_user: UserResponse,
+    body_employee_id: int | None,
+) -> tuple[int, str]:
+    """Return (employee_id, actor_mode).
+
+    Self: linked employee (body omitted or equal).
+    Supervisor: explicit body employee_id when actor has start permission
+    (permission already enforced by route dependency). Assignment match is
+    revalidated in the domain service — never trust arbitrary labor IDs.
+    """
+    linked = None
+    try:
+        linked = await resolve_employee_for_user(db, current_user)
+    except HTTPException as exc:
+        detail = exc.detail if isinstance(exc.detail, dict) else {}
+        if detail.get("error") not in {"employee_link_missing", "employee_link_ambiguous"}:
+            raise
+
+    if body_employee_id is None:
+        if linked is None:
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "error": "actor_not_authorized",
+                    "message": (
+                        "No employee link for actor; supervisor mode requires "
+                        "employee_id matching the task assignment."
+                    ),
+                },
+            )
+        return int(linked.id), "self"
+
+    target = int(body_employee_id)
+    if target <= 0:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "inactive_employee"},
+        )
+    if linked is not None and int(linked.id) == target:
+        return target, "self"
+    # Supervisor attribution — route already required execution.task_start.
+    return target, "supervisor"
+
+
+@router.post("/plan/{order_id}/tasks/{task_id}/sessions/start")
+async def start_controlled_operational_task_session(
+    order_id: int,
+    task_id: str,
+    body: ControlledSessionRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+    _perm=Depends(require_permission("execution.task_start")),
+):
+    """Controlled start: operational task + assignment + server timestamps."""
+    employee_id, actor_mode = await _resolve_controlled_session_employee(
+        db, current_user=current_user, body_employee_id=body.employee_id
+    )
+    return await start_controlled_task_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=employee_id,
+        actor_user_id=str(current_user.id) if current_user.id else None,
+        actor_mode=actor_mode,
+    )
+
+
+@router.post("/plan/{order_id}/tasks/{task_id}/sessions/end")
+async def end_controlled_operational_task_session(
+    order_id: int,
+    task_id: str,
+    body: ControlledSessionRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+    _perm=Depends(require_permission("execution.task_start")),
+):
+    """Controlled end: matching active session; duration from timestamps."""
+    employee_id, actor_mode = await _resolve_controlled_session_employee(
+        db, current_user=current_user, body_employee_id=body.employee_id
+    )
+    return await end_controlled_task_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=employee_id,
+        actor_user_id=str(current_user.id) if current_user.id else None,
+        actor_mode=actor_mode,
+    )
+
+
+@router.get("/plan/{order_id}/execution-actuals")
+async def get_execution_actuals_read_model(
+    order_id: int,
+    task_id: Optional[str] = None,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.production_blueprint")),
+):
+    """Read-only ExecutionActuals projection (planned minutes preserved separately)."""
+    return await build_execution_actuals_read_model(
+        db, order_id=order_id, task_id=task_id
+    )
 
 
 @router.patch("/plan/{order_id}/tasks/{task_id}/instructions")
