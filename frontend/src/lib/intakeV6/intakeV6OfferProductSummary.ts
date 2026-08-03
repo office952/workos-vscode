@@ -9,6 +9,8 @@ export const OFFER_CURRENCY_MIX_MESSAGE =
   "Tarife comerciale în monede diferite (EUR și RON). Nu convertim automat — cere Owner-ului tarifele comerciale în EUR sau un curs cu proveniență.";
 export const OFFER_PRODUCT_BLOCKED_MESSAGE =
   "Un produs din ofertă este blocat comercial. Rezolvă blockerul înainte de total.";
+export const OFFER_PRESENTATION_CURRENCY_UNAVAILABLE_MESSAGE =
+  "Totalul ofertei nu poate fi afișat: o linie comercială nu respectă moneda de prezentare (EUR). Nu redenumim și nu convertim automat.";
 export const OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE =
   "Totalul complet al ofertei nu poate fi exprimat onest. Verifică blockerii comerciali.";
 export const OFFER_TAX_EXCLUSIVE_NOTE = "Prețuri fără TVA";
@@ -78,6 +80,9 @@ function buildProductRow(product: IntakeV6CommercialProductSubtotal): OfferProdu
 
 function unavailableMessage(reasonCode: string | null, currencyMixDetected: boolean): string {
   if (reasonCode === "COMMERCIAL_CURRENCY_MIX_UNRESOLVED") return OFFER_CURRENCY_MIX_MESSAGE;
+  if (reasonCode === "COMMERCIAL_PRESENTATION_CURRENCY_UNAVAILABLE") {
+    return OFFER_PRESENTATION_CURRENCY_UNAVAILABLE_MESSAGE;
+  }
   if (reasonCode === "COMMERCIAL_PRODUCT_BLOCKED") return OFFER_PRODUCT_BLOCKED_MESSAGE;
   if (currencyMixDetected) return OFFER_CURRENCY_MIX_MESSAGE;
   return OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE;

@@ -238,7 +238,8 @@ async def test_dev_bridge_readiness_not_dual_blocked(volumetric_v2_db):
         quote_input=_step8_qa_quote_input(mounting_template_material_type="paper"),
     )
     assert snapshot is not None
-    assert snapshot.commercial_price_proposal_snapshot.status == "blocked"
+    # F7H: unpublished EUR sell rates keep commercial as partial (not dual-blocked conflict).
+    assert snapshot.commercial_price_proposal_snapshot.status in ("partial", "blocked")
     assert snapshot.estimated_internal_cost_snapshot.status in ("partial", "ready")
     assert snapshot.readiness == "partial_with_owner_decisions"
     assert snapshot.readiness != "blocked_snapshot_conflict"
@@ -315,7 +316,9 @@ async def test_owner_decisions_carried(snapshot_service: QuoteSnapshotV2Service)
     sources = {d.source for d in snapshot.owner_decisions_snapshot}
     assert "commercial_price_proposal" in sources
     assert "estimated_internal_cost" in sources
-    assert any(d.code == "DEBITARE_SPATE_BASIS_ML_VS_M2" for d in snapshot.owner_decisions_snapshot)
+    assert any(
+        d.code == "DEBITARE_SPATE_COMMERCIAL_EUR_M2" for d in snapshot.owner_decisions_snapshot
+    )
 
 
 # 11. provenance present

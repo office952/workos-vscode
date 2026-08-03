@@ -257,13 +257,16 @@ async def test_commercial_product_breakdown_separates_letters_and_acm(acm_rates_
     assert breakdown.tax_status == "tax_exclusive"
     assert breakdown.vat_rate_percent is None
 
-    # This scenario still mixes registry RON lines with Owner EUR rates. Without a
-    # provenance-bearing exchange rate CPP has no authority to fuse them into one number.
-    assert breakdown.currency_mix_detected is True
-    assert breakdown.complete_offer_total is None
-    assert breakdown.complete_offer_total_currency is None
-    assert breakdown.complete_offer_total_unavailable_reason == "COMMERCIAL_CURRENCY_MIX_UNRESOLVED"
-    assert {bucket.currency for bucket in breakdown.subtotals_by_currency} == {"EUR", "RON"}
+    # F7H: volumetric+ACM presentation is EUR-native. Priced lines share EUR; unpublished
+    # rates stay pending (partial total) — never fused with legacy RON via FX rename.
+    assert breakdown.presentation_currency == "EUR"
+    assert breakdown.currency_mix_detected is False
+    assert {bucket.currency for bucket in breakdown.subtotals_by_currency} == {"EUR"}
+    assert breakdown.complete_offer_total is not None
+    assert breakdown.complete_offer_total_currency == "EUR"
+    assert breakdown.complete_offer_total_unavailable_reason is None
+    # Unpublished critical rates (e.g. back CNC EUR/m²) keep the total honestly partial.
+    assert breakdown.complete_offer_total_is_partial is True or bool(breakdown.pending_line_codes)
 
     # Owner-pending lines are reported, never silently dropped from the offer story.
     assert set(breakdown.pending_line_codes) == set(by_key["letters"].pending_line_codes) | set(
@@ -306,7 +309,9 @@ async def test_single_currency_offer_exposes_one_complete_total(acm_rates_seeded
         blockers=[],
         vat_rate_percent=None,
         vat_policy_source=None,
+        presentation_currency="EUR",
     )
+    assert breakdown.presentation_currency == "EUR"
     assert breakdown.currency_mix_detected is False
     assert breakdown.complete_offer_total == pytest.approx(16.9)
     assert breakdown.complete_offer_total_currency == "EUR"

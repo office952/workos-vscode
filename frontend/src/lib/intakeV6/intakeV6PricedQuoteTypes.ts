@@ -102,6 +102,8 @@ export interface IntakeV6CommercialProductBreakdown {
 	products: IntakeV6CommercialProductSubtotal[];
 	subtotals_by_currency: IntakeV6CommercialCurrencyBucket[];
 	currency_mix_detected: boolean;
+	/** Scoped presentation currency from CPP (EUR for volumetric+ACM pilot). */
+	presentation_currency?: string | null;
 	complete_offer_total: number | null;
 	complete_offer_total_currency: string | null;
 	/** e.g. "COMMERCIAL_CURRENCY_MIX_UNRESOLVED", "COMMERCIAL_PRODUCT_BLOCKED". */

@@ -346,12 +346,14 @@ async def build_linked_logo_commercial_lines(
     db: AsyncSession,
     payload: dict[str, Any],
     pd_linked_segments: Any,
+    presentation_currency: str | None = None,
 ) -> tuple[list[CommercialPriceLine], list[CommercialOwnerDecision]]:
     """Emit per-logo commercial lines once; never uses EIC totals or hourly rates."""
     segments = _linked_logo_segments(pd_linked_segments, payload)
     if not segments:
         return [], []
 
+    presentation = (presentation_currency or "").strip().upper() or None
     segment_keys = [_text(segment.get("segment_key")) for segment in segments if _text(segment.get("segment_key"))]
     lines: list[CommercialPriceLine] = []
     owner_decisions: list[CommercialOwnerDecision] = []
@@ -384,7 +386,13 @@ async def build_linked_logo_commercial_lines(
             source = rule.source
             registry_code: str | None = None
             source_currency: str | None = rule.documented_unit_price_currency
-            cpp_currency: str | None = "RON" if unit_price is not None else None
+            # Documented EUR stays EUR under volumetric presentation; never rename as RON.
+            if unit_price is not None and str(source_currency or "").upper() == "EUR" and presentation == "EUR":
+                cpp_currency: str | None = "EUR"
+            elif unit_price is not None and str(source_currency or "").upper() == "RON":
+                cpp_currency = "RON"
+            else:
+                cpp_currency = None
             fx_rate: float | None = None
             fx_source: str | None = None
 
@@ -395,41 +403,66 @@ async def build_linked_logo_commercial_lines(
                     registry_cache[mapped_code] = await _load_registry_operation_rate(db, mapped_code)
                 resolved = registry_cache[mapped_code]
                 if resolved is None:
-                    unit_price = None
-                    owner_required = True
-                    warnings.append(
-                        f"registry_lookup_missed:{mapped_code};configure_at=/inventory/pricing"
-                    )
-                    source = f"{rule.source}:registry_unresolved"
-                else:
-                    ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
-                        db,
-                        unit_price=resolved.unit_price_source,
-                        source_currency=resolved.source_currency,
-                    )
-                    if ron_price is None:
+                    if unit_price is not None and str(source_currency or "").upper() == "EUR" and presentation == "EUR":
+                        owner_required = False
+                        cpp_currency = "EUR"
+                        warnings.append(
+                            f"registry_lookup_missed:{mapped_code};"
+                            "using_documented_eur_catalog_fallback;configure_at=/inventory/pricing"
+                        )
+                        source = f"{rule.source}:documented_eur_fallback"
+                    else:
                         unit_price = None
                         owner_required = True
                         warnings.append(
-                            f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                            f"registry_lookup_missed:{mapped_code};configure_at=/inventory/pricing"
                         )
-                        source = f"{rule.source}:currency_gate_blocked"
-                        source_currency = resolved.source_currency
-                        cpp_currency = None
-                    else:
-                        unit_price = ron_price
+                        source = f"{rule.source}:registry_unresolved"
+                else:
+                    resolved_currency = str(resolved.source_currency or "").upper()
+                    if presentation == "EUR" and resolved_currency == "EUR":
+                        unit_price = float(resolved.unit_price_source)
                         owner_required = False
-                        source_currency = resolved.source_currency
-                        cpp_currency = "RON"
-                        source = (
-                            f"pricing_registry:operation:{resolved.pricing_code}"
-                            f":{resolved.source_currency}->{cpp_currency}"
-                        )
+                        source_currency = "EUR"
+                        cpp_currency = "EUR"
+                        fx_rate = None
+                        fx_source = None
+                        source = f"pricing_registry:operation:{resolved.pricing_code}:EUR"
                         warnings.append(
                             f"registry_bound={resolved.pricing_code};"
                             f"source_unit_price={resolved.unit_price_source};"
-                            f"rate_basis={resolved.rate_basis}"
+                            f"rate_basis={resolved.rate_basis};"
+                            "presentation_currency=EUR;no_fx_normalization"
                         )
+                    else:
+                        ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
+                            db,
+                            unit_price=resolved.unit_price_source,
+                            source_currency=resolved.source_currency,
+                        )
+                        if ron_price is None:
+                            unit_price = None
+                            owner_required = True
+                            warnings.append(
+                                f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                            )
+                            source = f"{rule.source}:currency_gate_blocked"
+                            source_currency = resolved.source_currency
+                            cpp_currency = None
+                        else:
+                            unit_price = ron_price
+                            owner_required = False
+                            source_currency = resolved.source_currency
+                            cpp_currency = "RON"
+                            source = (
+                                f"pricing_registry:operation:{resolved.pricing_code}"
+                                f":{resolved.source_currency}->{cpp_currency}"
+                            )
+                            warnings.append(
+                                f"registry_bound={resolved.pricing_code};"
+                                f"source_unit_price={resolved.unit_price_source};"
+                                f"rate_basis={resolved.rate_basis}"
+                            )
 
             line = _build_segment_line(
                 rule,

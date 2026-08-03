@@ -1,0 +1,39 @@
+{
+  "workspace_code": "IV6-9C5D9538",
+  "workspace_id": "5a5ce742-f50f-47b0-985b-32cc6f2fb6a4",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED",
+  "presentation_currency": "EUR",
+  "complete_offer_total": 467.8552,
+  "complete_offer_total_currency": "EUR",
+  "currency_mix_detected": false,
+  "complete_offer_total_is_partial": true,
+  "pending_line_codes": [
+    "ambalare",
+    "debitare_spate",
+    "sistem_led_module",
+    "sursa_led"
+  ],
+  "products": [
+    {
+      "product_key": "letters",
+      "label": "Litere volumetrice",
+      "subtotal_eur": 277.0707
+    },
+    {
+      "product_key": "acm_panel",
+      "label": "Panou ACM",
+      "subtotal_eur": 190.7845
+    }
+  ],
+  "vat_rate_percent": 21.0,
+  "tax_status": "tax_exclusive",
+  "blockers_sample": [
+    "MISSING_RETURN_PAINT_COLOR",
+    "DEBITARE_SPATE_COMMERCIAL_EUR_M2",
+    "LED_MODULE_COMMERCIAL_EUR_BUC",
+    "PSU_COMMERCIAL_EUR_BUC",
+    "V6_PRICED_DRY_RUN_COMMERCIAL_REVIEW_NOT_READY"
+  ],
+  "note": "Process dry-run via db_manager; no workspace write; no accept/convert."
+}

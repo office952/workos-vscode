@@ -1,7 +1,8 @@
 """SITE_INSTALLATION_STANDARD binds montaj once per job via Pricing Registry.
 
 Owner decision WORKOS-SITE-INSTALLATION-STANDARD-TARIFF-BINDING-V1:
-200 EUR + VAT, fixed per location/job, company EUR→RON, no travel line.
+200 EUR + VAT, fixed per location/job. F7H volumetric presentation keeps EUR natively
+(no company FX rename). No travel line.
 """
 
 from __future__ import annotations
@@ -36,8 +37,7 @@ pytest_plugins = ["tests.test_product_aggregate_volumetric_v2"]
 ROOT = "TPL-VOLUMETRIC-LETTERS_v2"
 SITE_CODE = "SITE_INSTALLATION_STANDARD"
 SITE_EUR = 200.0
-FX = 5.0
-EXPECTED_RON = round(SITE_EUR * FX, 6)
+FX = 5.0  # company setting may exist; volumetric presentation must not apply it
 
 
 async def _persist_workspace(db, payload: dict[str, Any]) -> IntakeV6WorkspaceRecord:
@@ -123,7 +123,7 @@ async def test_site_install_fail_closed_without_registry_rate(cpp_service, site_
 
 
 @pytest.mark.asyncio
-async def test_site_install_binds_once_per_job_with_eur_to_ron(cpp_service, site_binding_db):
+async def test_site_install_binds_once_per_job_native_eur(cpp_service, site_binding_db):
     await _upsert_site_installation_rate(site_binding_db)
     payload = _two_logo_quote_input(site_install=True)
     record = await _persist_workspace(site_binding_db, payload)
@@ -138,10 +138,10 @@ async def test_site_install_binds_once_per_job_with_eur_to_ron(cpp_service, site
     assert montaj.basis_type == "fixed"
     assert montaj.registry_pricing_code == SITE_CODE
     assert montaj.source_currency == "EUR"
-    assert montaj.cpp_currency == "RON"
-    assert montaj.currency_conversion_rate == FX
-    assert montaj.commercial_unit_price == EXPECTED_RON
-    assert montaj.subtotal == round(EXPECTED_RON, 4)
+    assert montaj.cpp_currency == "EUR"
+    assert montaj.currency_conversion_rate is None
+    assert montaj.commercial_unit_price == SITE_EUR
+    assert montaj.subtotal == round(SITE_EUR, 4)
     assert montaj.owner_decision_required is False
     assert not any(d.code == "MONTAJ_COMMERCIAL_RULE" for d in preview.unknown_owner_decisions)
 
@@ -153,8 +153,9 @@ async def test_site_install_binds_once_per_job_with_eur_to_ron(cpp_service, site
     ]
     assert travelish == []
 
-    assert preview.quote_ready_for_commercial_review is True
-    assert preview.status == "ready"
+    # Montaj binds in native EUR; unpublished sell rates (LED/back) may keep the offer partial.
+    assert montaj.owner_decision_required is False
+    assert preview.status in {"ready", "partial"}
 
 
 @pytest.mark.asyncio
@@ -206,11 +207,13 @@ async def test_letters_and_logo_lines_unchanged_when_site_install_binds(cpp_serv
             if line.code.startswith("logo_print::")
         ]
         assert len(print_lines) == 1
-        assert print_lines[0].commercial_unit_price == 42.5
+        assert print_lines[0].commercial_unit_price == pytest.approx(8.5)
+        assert print_lines[0].cpp_currency == "EUR"
 
 
 @pytest.mark.asyncio
-async def test_currency_fail_closed_when_eur_rate_unset(cpp_service, site_binding_db):
+async def test_native_eur_montaj_does_not_require_company_fx(cpp_service, site_binding_db):
+    """F7H: volumetric presentation EUR keeps SITE_INSTALLATION_STANDARD natively — FX unset is OK."""
     await _upsert_site_installation_rate(site_binding_db)
     from models.company_commercial_settings import CompanyCommercialSettings
 
@@ -226,10 +229,11 @@ async def test_currency_fail_closed_when_eur_rate_unset(cpp_service, site_bindin
     preview = await cpp_service.build_preview(ROOT, workspace_id=record.id, quote_input=payload)
     assert preview is not None
     montaj = next(line for line in preview.commercial_price_lines if line.code == "montaj")
-    assert montaj.commercial_unit_price is None
-    assert montaj.owner_decision_required is True
-    assert any("BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION" in (w or "") for w in montaj.warnings)
-    assert preview.quote_ready_for_commercial_review is False
+    assert montaj.commercial_unit_price == SITE_EUR
+    assert montaj.cpp_currency == "EUR"
+    assert montaj.currency_conversion_rate is None
+    assert montaj.owner_decision_required is False
+    assert not any("BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION" in (w or "") for w in montaj.warnings)
 
 
 @pytest.mark.asyncio
@@ -295,7 +299,8 @@ async def test_dry_run_ready_with_one_installation_line_and_vat(site_binding_db)
         if item.get("code") == "montaj"
     ]
     assert len(montaj_items) == 1, result.get("blockers")
-    assert montaj_items[0].get("subtotal") == round(EXPECTED_RON, 4)
+    assert montaj_items[0].get("subtotal") == round(SITE_EUR, 4)
+    assert montaj_items[0].get("cpp_currency") in (None, "EUR")
     assert not any(
         (b.get("code") if isinstance(b, dict) else getattr(b, "code", None)) == "MONTAJ_COMMERCIAL_RULE"
         for b in (result.get("blockers") or [])
@@ -313,6 +318,6 @@ async def test_dry_run_ready_with_one_installation_line_and_vat(site_binding_db)
             for b in (result.get("blockers") or [])
         ]
         assert "MONTAJ_COMMERCIAL_RULE" not in codes
-        assert montaj_items[0].get("commercial_unit_price") == EXPECTED_RON or montaj_items[0].get(
+        assert montaj_items[0].get("commercial_unit_price") == SITE_EUR or montaj_items[0].get(
             "subtotal"
-        ) == round(EXPECTED_RON, 4)
+        ) == round(SITE_EUR, 4)

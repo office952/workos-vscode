@@ -1,0 +1,18 @@
+{
+  "mode": "sqlite_ro",
+  "db": "backend/dev.db",
+  "order_880811": {
+    "total_amount": 1847.5,
+    "snapshot_v2_sha256_prefix": "a59b6c44",
+    "plan_id": 22,
+    "planned_tasks": 5,
+    "order_snapshot_hash_prefix": "a59b6c44"
+  },
+  "order_973019": {
+    "total_amount": 847.5,
+    "snapshot_v2_sha256_prefix": "2d412e6e",
+    "plan_id": 21,
+    "order_snapshot_hash_prefix": "2d412e6e"
+  },
+  "verdict": "PASS"
+}

@@ -56,13 +56,13 @@ def _blocker(code: str, message: str) -> dict[str, str]:
 	return {"code": code, "message": message}
 
 
-def _empty_totals(*, vat_rate: float | None = None) -> dict[str, Any]:
+def _empty_totals(*, vat_rate: float | None = None, currency: str = "RON") -> dict[str, Any]:
 	return {
 		"subtotal_net": None,
 		"vat_rate": vat_rate,
 		"vat_amount": None,
 		"total_gross": None,
-		"currency": "RON",
+		"currency": currency,
 		"commercial_base_subtotal": None,
 		"commercial_adjustment_trace": None,
 	}
@@ -130,6 +130,7 @@ def _apply_commercial_adjustments_to_base(
 		"vat_rate": vat_percent,
 		"vat_amount": vat_amount,
 		"total_gross": total_gross,
+		# Currency stamped by caller from CPP presentation (EUR for volumetric pilot).
 		"currency": "RON",
 		"commercial_base_subtotal": base,
 		"commercial_adjustment_trace": {
@@ -678,7 +679,6 @@ async def build_intake_v6_priced_quote_dry_run(
 		record.template_code,
 		workspace_id=workspace_id_str,
 		quote_input=quote_input,
-		currency="RON",
 	)
 	internal_preview = await EstimatedInternalCostService(db).build_preview(
 		record.template_code,
@@ -742,8 +742,17 @@ async def build_intake_v6_priced_quote_dry_run(
 	pricing_authority: str | None = None
 	diagnostic_cost_plus: dict[str, Any] | None = None
 
+	# F7H: presentation currency comes from CPP (EUR for volumetric+ACM pilot). Never force RON label.
+	presentation_currency = None
+	if commercial_preview is not None:
+		breakdown = getattr(commercial_preview, "commercial_product_breakdown", None)
+		presentation_currency = getattr(breakdown, "presentation_currency", None) or getattr(
+			commercial_preview, "currency", None
+		)
+	totals_currency = str(presentation_currency or "RON").upper()
+
 	if blockers:
-		totals = _empty_totals(vat_rate=vat_rate)
+		totals = _empty_totals(vat_rate=vat_rate, currency=totals_currency)
 	elif subtotal is None or subtotal <= 0:
 		blockers.append(
 			_blocker(
@@ -751,13 +760,14 @@ async def build_intake_v6_priced_quote_dry_run(
 				"CommercialPriceProposal produced no official subtotal; V6 cannot expose a synthetic commercial total.",
 			)
 		)
-		totals = _empty_totals(vat_rate=vat_rate)
+		totals = _empty_totals(vat_rate=vat_rate, currency=totals_currency)
 	else:
 		# Operator Adaos/Discount/Ajustare adjust the official 7G commercial base.
 		totals = _official_totals_from_7g(
 			subtotal=subtotal,
 			commercial_inputs=commercial_inputs,
 		)
+		totals["currency"] = totals_currency
 		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	if internal_cost_total is not None or eic_internal_total is not None:

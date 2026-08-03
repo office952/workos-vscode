@@ -145,7 +145,7 @@ async def test_logo_print_resolves_large_format_print(cpp_service, logo_binding_
         assert line.owner_decision_required is False
         assert "SVC-LAMINATION" not in (line.source or "")
         assert line.source_currency == "EUR"
-        assert (line.cpp_currency or preview.currency) == "RON"
+        assert (line.cpp_currency or preview.currency) == "EUR"
 
 
 @pytest.mark.asyncio
@@ -211,32 +211,34 @@ async def test_no_hardcoded_tariff_values_or_eic_or_hourly(cpp_service, logo_bin
             # Must come from registry mapping, not invented VOL_V2 documented constants.
             assert line.registry_pricing_code in CANONICAL.values()
             assert "owner_pending" not in (line.source or "")
-            assert line.currency_conversion_source == "company_commercial_settings.eur_to_ron_rate"
+            # F7H volumetric presentation keeps registry EUR natively — no company FX rename.
+            assert line.cpp_currency == "EUR"
+            assert line.currency_conversion_source is None
         assert "pricing_registry:operation:" in (line.source or "")
 
 
 @pytest.mark.asyncio
-async def test_currency_conversion_uses_company_settings_rate(cpp_service, logo_binding_db):
-    rate = await get_eur_to_ron_rate(logo_binding_db)
-    assert rate == pytest.approx(5.0)
+async def test_logo_finish_rates_stay_native_eur(cpp_service, logo_binding_db):
     payload = _two_logo_quote_input()
     payload["finish_setup"]["artwork_finishes"][0]["estimated_area_m2"] = 1.0
     payload["finish_setup"]["artwork_finishes"][1]["estimated_area_m2"] = 1.0
-    # Keep only logo 1 print-like path by still having both; check unit prices.
     record = await _persist_workspace(logo_binding_db, payload)
     preview = await cpp_service.build_preview(ROOT, workspace_id=record.id, quote_input=payload)
     assert preview is not None
     print_line = _finish_lines(preview, "logo_instance_001", "logo_print")[0]
-    assert print_line.commercial_unit_price == pytest.approx(8.5 * rate, rel=1e-6)
-    assert print_line.currency_conversion_rate == pytest.approx(rate)
+    assert print_line.commercial_unit_price == pytest.approx(8.5)
+    assert print_line.cpp_currency == "EUR"
+    assert print_line.currency_conversion_rate is None
     lam = _finish_lines(preview, "logo_instance_001", "logo_laminate")[0]
-    assert lam.commercial_unit_price == pytest.approx(5.0 * rate, rel=1e-6)
+    assert lam.commercial_unit_price == pytest.approx(5.0)
+    assert lam.cpp_currency == "EUR"
     app = _finish_lines(preview, "logo_instance_001", "logo_application")[0]
-    assert app.commercial_unit_price == pytest.approx(5.0 * rate, rel=1e-6)
+    assert app.commercial_unit_price == pytest.approx(5.0)
+    assert app.cpp_currency == "EUR"
 
 
 @pytest.mark.asyncio
-async def test_currency_gate_fails_closed_without_canonical_rate(logo_binding_db):
+async def test_logo_native_eur_does_not_require_company_fx(logo_binding_db):
     from models.company_commercial_settings import CompanyCommercialSettings
     from sqlalchemy import select
 
@@ -256,10 +258,10 @@ async def test_currency_gate_fails_closed_without_canonical_rate(logo_binding_db
     )
     assert preview is not None
     print_line = _finish_lines(preview, "logo_instance_001", "logo_print")[0]
-    assert print_line.commercial_unit_price is None
-    assert print_line.subtotal is None
-    assert print_line.owner_decision_required is True
-    assert any("BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION" in (w or "") for w in print_line.warnings)
+    assert print_line.commercial_unit_price == pytest.approx(8.5)
+    assert print_line.cpp_currency == "EUR"
+    assert print_line.owner_decision_required is False
+    assert not any("BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION" in (w or "") for w in print_line.warnings)
 
 
 @pytest.mark.asyncio
@@ -336,9 +338,13 @@ async def test_letter_and_logo_body_lines_unchanged(cpp_service, logo_binding_db
         assert a.subtotal == b.subtotal
     for segment in ("logo_instance_001", "logo_instance_002"):
         face = _finish_lines(with_logos, segment, "logo_face_cnc")[0]
-        assert face.commercial_unit_price == 25.0
+        # F7H: Owner-documented CNC_ROUTER EUR/ml (legacy RON DEV_BRIDGE 25 retired, not renamed).
+        assert face.commercial_unit_price == pytest.approx(1.5)
+        assert face.cpp_currency == "EUR"
         led = _finish_lines(with_logos, segment, "logo_led_modules")[0]
-        assert led.commercial_unit_price == 5.0
+        # LED module sell EUR is unpublished — fail-closed, never invent from install labor.
+        assert led.commercial_unit_price is None
+        assert led.owner_decision_required is True
 
 
 @pytest.mark.asyncio

@@ -49,6 +49,8 @@ class CommercialPriceLine(BaseModel):
     currency_conversion_source: str | None = None
     # Commercial product ownership (F7F) — letters and the ACM panel are separate products.
     commercial_product_key: str | None = None
+    # F7H — publication honesty for configurable rates (never invent Owner-final status).
+    rate_publication_status: Literal["owner_confirmed", "provisional", "unpublished"] | None = None
 
 
 class CommercialMinimumApplied(BaseModel):
@@ -113,6 +115,8 @@ class CommercialProductBreakdown(BaseModel):
     products: list[CommercialProductSubtotal] = Field(default_factory=list)
     subtotals_by_currency: list[CommercialCurrencyBucket] = Field(default_factory=list)
     currency_mix_detected: bool = False
+    # F7H scoped presentation currency (EUR for volumetric+ACM pilot; never a global default).
+    presentation_currency: str | None = None
     complete_offer_total: float | None = None
     complete_offer_total_currency: str | None = None
     complete_offer_total_unavailable_reason: str | None = None

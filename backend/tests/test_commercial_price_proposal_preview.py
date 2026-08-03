@@ -1,4 +1,4 @@
-"""Tests for read-only CommercialPriceProposal preview (Step 7G)."""
+﻿"""Tests for read-only CommercialPriceProposal preview (Step 7G)."""
 
 from __future__ import annotations
 
@@ -183,28 +183,28 @@ async def test_sablon_hartie_documented_price(cpp_service: CommercialPricePropos
 
 
 @pytest.mark.asyncio
-async def test_debitare_spate_dev_bridge_m2_price(cpp_service: CommercialPriceProposalService):
+async def test_debitare_spate_unpublished_eur_m2_fail_closed(cpp_service: CommercialPriceProposalService):
+    """F7H: back CNC keeps mÂ² basis; sell EUR/mÂ² is unpublished â€” fail-closed, no invented rate."""
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=_full_quote_input())
     assert preview is not None
     back = next(line for line in preview.commercial_price_lines if line.code == "debitare_spate")
     assert back.basis_type == "m2"
-    assert back.owner_decision_required is False
-    assert back.commercial_unit_price == 20.0
-    assert back.subtotal == pytest.approx(24.0)
+    assert back.unit == "m2"
+    assert back.owner_decision_required is True
+    assert back.commercial_unit_price is None
+    assert back.subtotal is None
+    assert back.source_currency == "EUR"
+    assert any(d.code == "DEBITARE_SPATE_COMMERCIAL_EUR_M2" for d in preview.unknown_owner_decisions)
 
 
 @pytest.mark.asyncio
-async def test_volumetric_v2_dev_bridge_reaches_ready_status(cpp_service: CommercialPriceProposalService):
+async def test_volumetric_presentation_currency_is_eur(cpp_service: CommercialPriceProposalService):
+    """F7H: volumetric pilot presentation currency is scoped EUR (not a global app default)."""
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=_full_quote_input())
     assert preview is not None
-    assert preview.status == "ready"
-    assert preview.quote_ready_for_commercial_review is True
-    assert preview.subtotal_commercial is not None
-    assert preview.subtotal_commercial > 0
-    assert not any(
-        d.code in {"DEBITARE_SPATE_BASIS_ML_VS_M2", "SABLON_FOREX_COMMERCIAL_PRICE"}
-        for d in preview.unknown_owner_decisions
-    )
+    assert preview.currency == "EUR"
+    assert preview.commercial_product_breakdown is not None
+    assert preview.commercial_product_breakdown.presentation_currency == "EUR"
 
 
 @pytest.mark.asyncio
@@ -313,7 +313,7 @@ async def _upsert_operation_rate(
                 currency=currency,
                 status="active",
                 is_active=True,
-                notes="F7E test fixture — owner-confirmed registry rate row.",
+                notes="F7E test fixture â€” owner-confirmed registry rate row.",
             )
         )
     else:
@@ -326,7 +326,7 @@ async def _upsert_operation_rate(
         await CompanyCommercialSettingsService(db).update_settings(eur_to_ron_rate=fx_rate)
 
 
-# --- F7E Agent B — commercial rule scenario matrix (Lead GO 2026-08-03) ---
+# --- F7E Agent B â€” commercial rule scenario matrix (Lead GO 2026-08-03) ---
 
 
 @pytest.mark.asyncio
@@ -341,8 +341,8 @@ async def test_face_finish_none_does_not_charge_flat_finish_line(
     codes = {line.code for line in preview.commercial_price_lines}
     assert "finisaje_colantare_vopsire" not in codes
     assert not any(b.code == "COMMERCIAL_RULE_MISSING" for b in preview.commercial_blockers)
-    assert preview.status == "ready"
-    assert preview.quote_ready_for_commercial_review is True
+    # F7H: unpublished back CNC / LED sell rates keep the offer honestly partial.
+    assert preview.status in {"ready", "partial"}
 
 
 @pytest.mark.asyncio
@@ -397,12 +397,12 @@ async def test_face_print_laminate_owner_rate_activated(cpp_service: CommercialP
     )
     assert application.commercial_unit_price == 3.0
     assert application.subtotal == pytest.approx(3.6)
-    assert preview.status == "ready"
+    assert preview.status in {"ready", "partial"}
 
 
 @pytest.mark.asyncio
 async def test_stock_cant_colors_zero_delta_preserved(cpp_service: CommercialPriceProposalService):
-    """Stock cant colors (white/black/gold/standard aluminum) stay zero-delta by design —
+    """Stock cant colors (white/black/gold/standard aluminum) stay zero-delta by design â€”
     no finisaje_cant_* line should ever fire for them (regression guard)."""
     for token in ("white_aluminum", "black_aluminum", "gold_aluminum", "standard_aluminum"):
         payload = _full_quote_input()
@@ -451,7 +451,7 @@ async def test_cant_oracal_wrap_material_and_labor_pricing(
     assert labor.commercial_unit_price == pytest.approx(3.0)
     assert labor.source_currency == "EUR"
     assert labor.subtotal == pytest.approx(2.25)
-    assert preview.status == "ready"
+    assert preview.status in {"ready", "partial"}
 
 
 @pytest.mark.asyncio
@@ -469,11 +469,17 @@ async def test_cant_oracal_wrap_641_series_resolves_lower_material_rate(
 
 
 @pytest.mark.asyncio
-async def test_cant_ral_paint_minimum_charge_applies_below_floor(
-    cpp_service: CommercialPriceProposalService,
+async def test_cant_ral_paint_minimum_unpublished_no_invented_top_up(
+    cpp_service: CommercialPriceProposalService, volumetric_v2_db
 ):
-    """RAL cant paint under the 100 RON/color floor (labor registry rate unresolved here) —
-    combined material+labor is topped up to the owner-documented minimum."""
+    """F7H: legacy 100 RON/color is not converted or applied; unpublished EUR floor invents nothing."""
+    await _upsert_operation_rate(
+        volumetric_v2_db,
+        code="RETURN_CANT_RAL_PAINT_LABOR",
+        amount=1.0,
+        currency="EUR",
+        fx_rate=5.0,
+    )
     payload = _full_quote_input()
     payload["finish_setup"]["return_finish_type"] = "ral_paint"
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
@@ -481,15 +487,24 @@ async def test_cant_ral_paint_minimum_charge_applies_below_floor(
     material = next(
         line for line in preview.commercial_price_lines if line.code == "finisaje_cant_ral_material"
     )
-    assert material.subtotal == pytest.approx(100.0)
-    assert any("minimum_charge_applied=100.0RON_per_color" in w for w in material.warnings)
+    # 12.5 ml Ã— 2.5 EUR/ml â€” material stays native EUR; no RON floor mutation.
+    assert material.subtotal == pytest.approx(31.25)
+    assert material.cpp_currency == "EUR"
+    assert not any(line.code == "finisaje_cant_ral_minimum_top_up" for line in preview.commercial_price_lines)
+    assert any("ral_minimum_eur_unpublished" in w for w in material.warnings)
+    assert not any("minimum_charge_applied" in w for w in material.warnings)
 
 
 @pytest.mark.asyncio
-async def test_cant_ral_paint_pricing_above_minimum_floor(
-    cpp_service: CommercialPriceProposalService, volumetric_v2_db
+async def test_cant_ral_paint_pricing_above_injected_eur_minimum(
+    cpp_service: CommercialPriceProposalService, volumetric_v2_db, monkeypatch
 ):
-    """Large enough RAL cant job clears the 100 RON floor on its own — no top-up applied."""
+    """With an explicit EUR floor injected for the test, a large job needs no top-up line."""
+    import data.commercial_rules_volumetric_v2 as rules_mod
+    import services.commercial_price_proposal_service as cpp_mod
+
+    monkeypatch.setattr(rules_mod, "CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR", 100.0)
+    monkeypatch.setattr(cpp_mod, "CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR", 100.0)
     await _upsert_operation_rate(
         volumetric_v2_db,
         code="RETURN_CANT_RAL_PAINT_LABOR",
@@ -509,11 +524,12 @@ async def test_cant_ral_paint_pricing_above_minimum_floor(
         line for line in preview.commercial_price_lines if line.code == "finisaje_cant_ral_labor"
     )
     assert material.commercial_unit_price == pytest.approx(2.5)  # 60mm tier
-    assert material.subtotal == pytest.approx(200.0)  # 80ml x 2.5 EUR/ml, no floor top-up
-    assert labor.commercial_unit_price == pytest.approx(5.0)  # 1 EUR/ml x FX 5.0
-    assert labor.subtotal == pytest.approx(400.0)
-    assert not any("minimum_charge_applied" in w for w in material.warnings)
-    assert preview.status == "ready"
+    assert material.subtotal == pytest.approx(200.0)  # 80ml x 2.5 EUR/ml
+    assert labor.commercial_unit_price == pytest.approx(1.0)  # native EUR â€” no FX rename
+    assert labor.cpp_currency == "EUR"
+    assert labor.subtotal == pytest.approx(80.0)
+    assert not any(line.code == "finisaje_cant_ral_minimum_top_up" for line in preview.commercial_price_lines)
+    assert any("ral_minimum_cleared" in w for w in material.warnings)
 
 
 @pytest.mark.asyncio
@@ -556,7 +572,7 @@ async def test_face_oracal_641_651_8500_pricing_no_color_tier(
         )
         assert application.commercial_unit_price == pytest.approx(3.0)
         assert application.subtotal == pytest.approx(3.6)
-        assert preview.status == "ready"
+        assert preview.status in {"ready", "partial"}
 
     # No color-tier differentiation is authorized: an arbitrary color code on the same series
     # must not change the resolved material rate (documented, not invented).
@@ -582,7 +598,7 @@ async def test_face_oracal_8500_rate_requires_confirmed_roll_width(
     cpp_service: CommercialPriceProposalService,
 ):
     """Owner F7F: 8500 is 17 EUR/m2 at 1000 mm and 13.5 EUR/m2 at 1260 mm. Without a confirmed
-    width the preview blocks — it never guesses the cheaper or the more expensive tier."""
+    width the preview blocks â€” it never guesses the cheaper or the more expensive tier."""
     payload = _full_quote_input()
     payload["finish_setup"]["face_finish_type"] = "oracal_8500"
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
@@ -618,7 +634,7 @@ async def test_face_oracal_8500_rate_requires_confirmed_roll_width(
         assert not any(
             b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
         ), width
-        assert preview.status == "ready", width
+        assert preview.status in {"ready", "partial"}, width
 
     unsupported = _full_quote_input()
     unsupported["finish_setup"]["face_finish_type"] = "oracal_8500"
@@ -675,7 +691,7 @@ async def test_oracal_8500_blocks_on_unconfirmed_or_disagreeing_letter_groups(
     cpp_service: CommercialPriceProposalService,
 ):
     """A seeded default width is not a confirmation, and two 8500 groups on different rolls have
-    no single resolvable rate — both fail closed rather than picking a tier."""
+    no single resolvable rate â€” both fail closed rather than picking a tier."""
     unconfirmed = _oracal_8500_group_payload(
         [
             {
@@ -723,7 +739,7 @@ async def test_sablon_forex_preserves_plus_10_ron_delta_vs_paper(
     cpp_service: CommercialPriceProposalService,
 ):
     """Regression guard for the proven paper<->Forex differential-pricing control
-    (AGENT-B-F009, +10.00 RON/m2 delta) — must not shift while G1 branches are added."""
+    (AGENT-B-F009, +10.00 RON/m2 delta) â€” must not shift while G1 branches are added."""
     paper_payload = _full_quote_input()
     paper_payload["finish_setup"]["mounting_template_material_type"] = "paper"
     forex_payload = _full_quote_input()

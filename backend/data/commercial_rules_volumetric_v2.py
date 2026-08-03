@@ -54,15 +54,37 @@ class CommercialRuleDefinition:
 # Owner-documented exception: hartie (paper) sablon montaj — 5 EUR/m² when selected.
 SABLON_HARTIE_DOCUMENTED_EUR_M2 = 5.0
 
-# Step 8 dev bridge — interim RON commercial unit prices for live V6 QA only.
-# NOT production Pricing Registry (Step 7I). Owner must replace before official rollout.
-DEV_BRIDGE_DEBITARE_FATA_RON_ML = 25.0
-DEV_BRIDGE_MODELARE_CANT_RON_ML = 30.0
-DEV_BRIDGE_DEBITARE_SPATE_RON_M2 = 20.0
-DEV_BRIDGE_LED_MODULE_RON_BUC = 5.0
-DEV_BRIDGE_PSU_RON_BUC = 150.0
+# F7H — native EUR commercial catalog for volumetric letters + ACM.
+# Legacy Step 8 RON DEV_BRIDGE constants retired from the commercial path (not renamed to EUR).
+# Rates below are OWNER_DOCUMENTED EUR registry sources, or unpublished (None) fail-closed.
+# Final commercial level remains deferred to the dedicated final pricing pass.
+
+# Owner-documented CNC face cut — seed_volumetric_workcenter_rates CNC_ROUTER (1.5 EUR/ml).
+FACE_CNC_COMMERCIAL_EUR_ML = 1.5
+FACE_CNC_REGISTRY_CODE = "CNC_ROUTER"
+# Owner-documented return profile machine forming — RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml).
+# Bonding (RETURN_PROFILE_FACE_BONDING) remains a separate registry op, not fused here.
+RETURN_PROFILE_COMMERCIAL_EUR_ML = 5.0
+RETURN_PROFILE_REGISTRY_CODE = "RETURN_PROFILE_MACHINE_FORMING"
+# Back cut commercial sell EUR/m² — NOT_FOUND in Owner EUR catalog (CNC registry is ml-based).
+# Unpublished: fail-closed until Owner publishes a commercial EUR/m² (or ml) rate.
+BACK_CNC_COMMERCIAL_EUR_M2: float | None = None
+# LED module / PSU commercial sell EUR — NOT_FOUND as client sell rates.
+# LED_ASSEMBLY 0.05 EUR is install labor, not module sell price — do not reuse as sell.
+LED_MODULE_COMMERCIAL_EUR_BUC: float | None = None
+PSU_COMMERCIAL_EUR_BUC: float | None = None
+
+# Retained only for non-commercial / legacy finish flat line until separately retired.
 DEV_BRIDGE_FINISH_RON_M2 = 35.0
 DEV_BRIDGE_SABLON_FOREX_RON_M2 = 15.0
+
+# Presentation currency for the volumetric letters + ACM commercial pilot (F7H).
+# Scoped — does not change global app defaults or unrelated RON products.
+VOLUMETRIC_PRESENTATION_CURRENCY = "EUR"
+VOLUMETRIC_PRESENTATION_TEMPLATE_PREFIXES = (
+    "TPL-VOLUMETRIC-LETTERS",
+    "TPL-ACM-BOXED-MOUNTING",
+)
 
 # --- F7E G1 — return-cant Oracal wrap / RAL paint, face Oracal (Lead GO 2026-08-03) ---
 # Face finish tokens handled by dedicated rules below — must not double-charge the flat
@@ -158,10 +180,16 @@ CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM: dict[int, float] = {
     80: 3.0,
     100: 4.0,
 }
-# Owner commercial policy (canonicalFinishEnumMap.ts cant_ral_minimum_policy) — 100 RON/color
-# floor on material+labor combined. NOT a Pricing Registry value; no automatic RON<->EUR
-# conversion (matches the existing sablon_montaj_hartie EUR-passthrough pattern).
+# RAL commercial minimum — Owner historically documented "100 lei pe culoare RAL"
+# (LEGACY_RON in canonicalFinishEnumMap cant_ral_minimum_policy). F7H retires the RON
+# numeric floor from CPP (cross-currency mix was a defect). EUR minimum is configurable
+# and unpublished until Owner publishes an EUR floor in the final pricing pass.
+# When None: no top-up is invented; material+labor stay native EUR.
+CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR: float | None = None
+# Legacy constant retained for docs/history references only — never used in F7H CPP math.
 CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR = 100.0
+RAL_MINIMUM_TOP_UP_LINE_CODE = "finisaje_cant_ral_minimum_top_up"
+RAL_MINIMUM_TOP_UP_RULE_CODE = "VOL_V2_CANT_RAL_MINIMUM_TOP_UP_EUR"
 
 VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
     CommercialRuleDefinition(
@@ -173,10 +201,15 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="ml",
         quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
         unit="ml",
-        source="commercial_rules_volumetric_v2:face_perimeter_ml",
+        source="owner_commercial_decision:f7h_cnc_router_eur_ml",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_DEBITARE_FATA_RON_ML,
-        documented_unit_price_currency="RON",
+        documented_unit_price=FACE_CNC_COMMERCIAL_EUR_ML,
+        documented_unit_price_currency="EUR",
+        registry_pricing_code=FACE_CNC_REGISTRY_CODE,
+        warnings=(
+            "F7H: commercial EUR/ml from Owner-documented CNC_ROUTER registry rate (1.5 EUR/ml). "
+            "Legacy RON DEV_BRIDGE 25 was retired, not renamed.",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="modelare_cant_aluminiu",
@@ -187,11 +220,16 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="ml",
         quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
         unit="ml",
-        source="commercial_rules_volumetric_v2:return_profile_ml",
+        source="owner_commercial_decision:f7h_return_profile_forming_eur_ml",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_MODELARE_CANT_RON_ML,
-        documented_unit_price_currency="RON",
-        warnings=("Technical inputs: letter_perimeter_m, return_depth_mm — not minutes.",),
+        documented_unit_price=RETURN_PROFILE_COMMERCIAL_EUR_ML,
+        documented_unit_price_currency="EUR",
+        registry_pricing_code=RETURN_PROFILE_REGISTRY_CODE,
+        warnings=(
+            "Technical inputs: letter_perimeter_m, return_depth_mm — not minutes.",
+            "F7H: commercial EUR/ml from Owner-documented RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml). "
+            "Legacy RON DEV_BRIDGE 30 was retired, not renamed. Bonding stays a separate op.",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="debitare_spate",
@@ -202,12 +240,20 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="m2",
         quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
         unit="m2",
-        source="commercial_rules_volumetric_v2:back_m2_dev_bridge",
+        source="commercial_rules_volumetric_v2:back_m2_unpublished_eur",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_DEBITARE_SPATE_RON_M2,
-        documented_unit_price_currency="RON",
+        documented_unit_price=BACK_CNC_COMMERCIAL_EUR_M2,
+        documented_unit_price_currency="EUR",
+        owner_decision_required=True,
+        owner_decision_code="DEBITARE_SPATE_COMMERCIAL_EUR_M2",
+        owner_decision_detail=(
+            "F7H: no Owner-documented commercial EUR/m² sell rate for back CNC was found "
+            "(CNC_ROUTER is EUR/ml). Basis stays m². Configure EUR/m² at commercial registry "
+            "before this line can price. Fail-closed — no invented rate, no RON rename."
+        ),
         warnings=(
-            "Step 8 dev bridge: interim m² basis until owner formalizes ml vs m² in Pricing Registry.",
+            "F7H unpublished commercial EUR/m² — fail-closed until Owner publishes the rate. "
+            "m² basis preserved (not changed to ml for uniformity).",
         ),
     ),
     CommercialRuleDefinition(
@@ -225,11 +271,17 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
             "led_module_count",
         ),
         unit="buc",
-        source="commercial_rules_volumetric_v2:letter_led_module_count",
+        source="commercial_rules_volumetric_v2:letter_led_module_unpublished_eur",
         criticality="critical",
         module_gate="sistem_led",
-        documented_unit_price=DEV_BRIDGE_LED_MODULE_RON_BUC,
-        documented_unit_price_currency="RON",
+        documented_unit_price=LED_MODULE_COMMERCIAL_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        owner_decision_required=True,
+        owner_decision_code="LED_MODULE_COMMERCIAL_EUR_BUC",
+        owner_decision_detail=(
+            "F7H: no Owner-documented commercial EUR/buc sell rate for LED modules was found. "
+            "LED_ASSEMBLY 0.05 EUR is install labor, not module sell price. Fail-closed."
+        ),
     ),
     CommercialRuleDefinition(
         line_code="sursa_led",
@@ -240,11 +292,18 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="piece",
         quantity_paths=(),
         unit="buc",
-        source="commercial_rules_volumetric_v2:psu_piece_dev_bridge",
+        source="commercial_rules_volumetric_v2:psu_unpublished_eur",
         criticality="critical",
         module_gate="sistem_led",
-        documented_unit_price=DEV_BRIDGE_PSU_RON_BUC,
-        documented_unit_price_currency="RON",
+        documented_unit_price=PSU_COMMERCIAL_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        owner_decision_required=True,
+        owner_decision_code="PSU_COMMERCIAL_EUR_BUC",
+        owner_decision_detail=(
+            "F7H: no Owner-documented commercial EUR/buc sell rate for PSU was found. "
+            "Fail-closed until published in commercial registry. "
+            "Commercial sells one PSU unit; selected_psu_watts is reference only."
+        ),
         warnings=("Commercial sells one PSU unit; selected_psu_watts is reference only.",),
     ),
     CommercialRuleDefinition(
@@ -312,8 +371,9 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         criticality="critical",
         module_gate="finisaje",
         warnings=(
-            f"Minimum commercial charge {CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR} RON/color on "
-            "material+labor combined (owner policy cant_ral_minimum_policy).",
+            "F7H: RAL material is EUR. Commercial minimum/top-up is EUR-only when "
+            "CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR is published; legacy 100 RON/color is not "
+            "converted or applied as EUR.",
         ),
     ),
     CommercialRuleDefinition(
@@ -760,9 +820,8 @@ VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM: tuple[CommercialRuleDefinition, ...] = 
 )
 
 # Linked-child logo commercial rule *templates* (expanded per segment in CPP).
-# Body construction reuses the same owner-documented DEV_BRIDGE commercial classes as letters.
-# Print / laminate / application stay fail-closed until owner configures commercial tariffs
-# (do NOT copy EIC internal rates into CPP).
+# Body construction reuses the same F7H EUR commercial classes as letters (not EIC).
+# Print / laminate / application stay fail-closed until owner configures commercial tariffs.
 LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...] = (
     CommercialRuleDefinition(
         line_code="logo_face_cnc",
@@ -773,10 +832,11 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="ml",
         quantity_paths=(),
         unit="ml",
-        source="commercial_rules_volumetric_v2:logo_face_perimeter_ml",
+        source="owner_commercial_decision:f7h_cnc_router_eur_ml",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_DEBITARE_FATA_RON_ML,
-        documented_unit_price_currency="RON",
+        documented_unit_price=FACE_CNC_COMMERCIAL_EUR_ML,
+        documented_unit_price_currency="EUR",
+        registry_pricing_code=FACE_CNC_REGISTRY_CODE,
     ),
     CommercialRuleDefinition(
         line_code="logo_return_cant",
@@ -787,10 +847,11 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="ml",
         quantity_paths=(),
         unit="ml",
-        source="commercial_rules_volumetric_v2:logo_return_perimeter_ml",
+        source="owner_commercial_decision:f7h_return_profile_forming_eur_ml",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_MODELARE_CANT_RON_ML,
-        documented_unit_price_currency="RON",
+        documented_unit_price=RETURN_PROFILE_COMMERCIAL_EUR_ML,
+        documented_unit_price_currency="EUR",
+        registry_pricing_code=RETURN_PROFILE_REGISTRY_CODE,
     ),
     CommercialRuleDefinition(
         line_code="logo_back_cnc",
@@ -801,10 +862,15 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="m2",
         quantity_paths=(),
         unit="m2",
-        source="commercial_rules_volumetric_v2:logo_back_m2_dev_bridge",
+        source="commercial_rules_volumetric_v2:logo_back_m2_unpublished_eur",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_DEBITARE_SPATE_RON_M2,
-        documented_unit_price_currency="RON",
+        documented_unit_price=BACK_CNC_COMMERCIAL_EUR_M2,
+        documented_unit_price_currency="EUR",
+        owner_decision_required=True,
+        owner_decision_code="DEBITARE_SPATE_COMMERCIAL_EUR_M2",
+        owner_decision_detail=(
+            "F7H: logo back CNC commercial EUR/m² unpublished — same Owner gap as letters."
+        ),
     ),
     CommercialRuleDefinition(
         line_code="logo_print",
@@ -875,12 +941,29 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="piece",
         quantity_paths=(),
         unit="buc",
-        source="commercial_rules_volumetric_v2:logo_led_module_count",
+        source="commercial_rules_volumetric_v2:logo_led_module_unpublished_eur",
         criticality="critical",
-        documented_unit_price=DEV_BRIDGE_LED_MODULE_RON_BUC,
-        documented_unit_price_currency="RON",
+        documented_unit_price=LED_MODULE_COMMERCIAL_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        owner_decision_required=True,
+        owner_decision_code="LED_MODULE_COMMERCIAL_EUR_BUC",
+        owner_decision_detail=(
+            "F7H: logo LED module commercial EUR/buc unpublished — same Owner gap as letters."
+        ),
     ),
 )
+
+
+def volumetric_presentation_currency(template_code: str | None) -> str | None:
+    """EUR presentation for volumetric letters + ACM pilot only; None = no forced presentation."""
+    code = (template_code or "").strip()
+    if not code:
+        return None
+    for prefix in VOLUMETRIC_PRESENTATION_TEMPLATE_PREFIXES:
+        if code.startswith(prefix):
+            return VOLUMETRIC_PRESENTATION_CURRENCY
+    return None
+
 
 RULES_BY_TEMPLATE: dict[str, tuple[CommercialRuleDefinition, ...]] = {
     PILOT_TEMPLATE: VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM,

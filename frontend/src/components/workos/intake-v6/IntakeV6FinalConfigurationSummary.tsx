@@ -328,6 +328,15 @@ export default function IntakeV6FinalConfigurationSummary({
 								<OfferTotalBlock total={offerCard.total} />
 							</div>
 
+							{offerCard.total.kind === "available" && offerCard.total.partial ? (
+								<p
+									className="mb-2 text-[11px] text-amber-200/90"
+									data-testid="intake-v6-offer-provisional-note"
+								>
+									{OFFER_TOTAL_PARTIAL_MESSAGE} Nu este preț comercial final.
+								</p>
+							) : null}
+
 							<p className="mb-2 text-[11px] text-slate-400" data-testid="intake-v6-offer-tax-note">
 								{offerCard.taxNote}
 							</p>

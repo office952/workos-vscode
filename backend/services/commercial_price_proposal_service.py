@@ -22,7 +22,7 @@ from data.commercial_rules_volumetric_v2 import (
     CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE,
     CANT_RAL_PAINT_GATE_VALUES,
     CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM,
-    CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR,
+    CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR,
     COMMERCIAL_PRODUCT_LABELS,
     CRITICAL_MODULE_CODES,
     FACE_FINISH_NONE_VALUES,
@@ -33,8 +33,11 @@ from data.commercial_rules_volumetric_v2 import (
     LETTERS_ACM_PACK_MIN_EUR,
     ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM,
     ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM,
+    RAL_MINIMUM_TOP_UP_LINE_CODE,
+    RAL_MINIMUM_TOP_UP_RULE_CODE,
     RULES_BY_TEMPLATE,
     CommercialRuleDefinition,
+    volumetric_presentation_currency,
 )
 from schemas.commercial_price_proposal import (
     COMMERCIAL_PRICE_PROPOSAL_SOURCE,
@@ -649,6 +652,7 @@ async def _build_line(
     *,
     measurement_qty: float | None = None,
     measurement_source: str | None = None,
+    presentation_currency: str | None = None,
 ) -> CommercialPriceLine:
     from services.linked_logo_commercial_price_service import (
         _load_registry_operation_rate,
@@ -656,6 +660,7 @@ async def _build_line(
     )
 
     warnings = list(rule.warnings)
+    presentation = (presentation_currency or "").strip().upper() or None
     # LETTERS_CANONICAL_PRODUCT_SLICE_V1: prefer Aggregate commercial measurements.
     if measurement_qty is not None:
         quantity = float(measurement_qty)
@@ -788,41 +793,69 @@ async def _build_line(
     if registry_pricing_code:
         resolved = await _load_registry_operation_rate(db, registry_pricing_code)
         if resolved is None:
-            unit_price = None
-            owner_required = True
-            warnings.append(
-                f"registry_lookup_missed:{registry_pricing_code};configure_at=/inventory/pricing"
-            )
-            source = f"{rule.source}:registry_unresolved"
-        else:
-            ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
-                db,
-                unit_price=resolved.unit_price_source,
-                source_currency=resolved.source_currency,
-            )
-            if ron_price is None:
+            # Fall back to documented EUR catalog rate when registry row is absent
+            # (keeps Owner-documented CNC/forming usable in tests without inventing FX).
+            if unit_price is not None and str(source_currency or "").upper() == "EUR":
+                owner_required = False
+                cpp_currency = "EUR" if presentation == "EUR" else None
+                warnings.append(
+                    f"registry_lookup_missed:{registry_pricing_code};"
+                    "using_documented_eur_catalog_fallback;configure_at=/inventory/pricing"
+                )
+                source = f"{rule.source}:documented_eur_fallback"
+            else:
                 unit_price = None
                 owner_required = True
                 warnings.append(
-                    f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                    f"registry_lookup_missed:{registry_pricing_code};configure_at=/inventory/pricing"
                 )
-                source = f"{rule.source}:currency_gate_blocked"
-                source_currency = resolved.source_currency
-                cpp_currency = None
-            else:
-                unit_price = ron_price
+                source = f"{rule.source}:registry_unresolved"
+        else:
+            resolved_currency = str(resolved.source_currency or "").upper()
+            # F7H: volumetric/ACM presentation EUR keeps registry EUR natively — no company FX.
+            if presentation == "EUR" and resolved_currency == "EUR":
+                unit_price = float(resolved.unit_price_source)
                 owner_required = False
-                source_currency = resolved.source_currency
-                cpp_currency = "RON"
-                source = (
-                    f"pricing_registry:operation:{resolved.pricing_code}"
-                    f":{resolved.source_currency}->{cpp_currency}"
-                )
+                source_currency = "EUR"
+                cpp_currency = "EUR"
+                fx_rate = None
+                fx_source = None
+                source = f"pricing_registry:operation:{resolved.pricing_code}:EUR"
                 warnings.append(
                     f"registry_bound={resolved.pricing_code};"
                     f"source_unit_price={resolved.unit_price_source};"
-                    f"rate_basis={resolved.rate_basis}"
+                    f"rate_basis={resolved.rate_basis};"
+                    "presentation_currency=EUR;no_fx_normalization"
                 )
+            else:
+                ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
+                    db,
+                    unit_price=resolved.unit_price_source,
+                    source_currency=resolved.source_currency,
+                )
+                if ron_price is None:
+                    unit_price = None
+                    owner_required = True
+                    warnings.append(
+                        f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                    )
+                    source = f"{rule.source}:currency_gate_blocked"
+                    source_currency = resolved.source_currency
+                    cpp_currency = None
+                else:
+                    unit_price = ron_price
+                    owner_required = False
+                    source_currency = resolved.source_currency
+                    cpp_currency = "RON"
+                    source = (
+                        f"pricing_registry:operation:{resolved.pricing_code}"
+                        f":{resolved.source_currency}->{cpp_currency}"
+                    )
+                    warnings.append(
+                        f"registry_bound={resolved.pricing_code};"
+                        f"source_unit_price={resolved.unit_price_source};"
+                        f"rate_basis={resolved.rate_basis}"
+                    )
 
     if quantity is None and unit_price is not None:
         if basis_type in ("piece", "fixed", "set"):
@@ -842,6 +875,23 @@ async def _build_line(
 
     if basis_type == "unknown":
         owner_required = True
+
+    # F7H publication honesty — never label an unpublished gap as Owner-final.
+    rate_status: str | None = None
+    if unit_price is None and owner_required:
+        rate_status = "unpublished"
+    elif "owner_commercial_decision:f7f" in (source or "") or "owner_commercial_decision:f7h" in (
+        source or ""
+    ):
+        rate_status = "owner_confirmed"
+    elif "pricing_registry:operation:" in (source or ""):
+        rate_status = "owner_confirmed"
+    elif unit_price is not None:
+        rate_status = "provisional"
+
+    # When presentation currency is EUR, keep native EUR lines labeled as EUR.
+    if presentation == "EUR" and str(source_currency or "").upper() == "EUR" and cpp_currency is None:
+        cpp_currency = "EUR"
 
     return CommercialPriceLine(
         code=rule.line_code,
@@ -863,6 +913,7 @@ async def _build_line(
         currency_conversion_rate=fx_rate,
         currency_conversion_source=fx_source,
         commercial_product_key=rule.commercial_product_key,
+        rate_publication_status=rate_status,  # type: ignore[arg-type]
     )
 
 
@@ -928,8 +979,30 @@ def _missing_critical_geometry(
     return missing
 
 
-def _apply_cant_ral_paint_minimum(lines: list[CommercialPriceLine]) -> None:
-    """Owner policy cant_ral_minimum_policy: 100 RON/color floor on material+labor combined."""
+_RAL_MINIMUM_EUR_UNSET = object()
+
+
+def _apply_cant_ral_paint_minimum_eur(
+    lines: list[CommercialPriceLine],
+    *,
+    blockers: list[CommercialBlocker],
+    minimum_eur_per_color: float | None | object = _RAL_MINIMUM_EUR_UNSET,
+) -> None:
+    """F7H: RAL commercial minimum as EUR-only explicit top-up (never mutates other lines).
+
+    Legacy Owner text documented 100 RON/color — that RON figure is not converted to EUR and
+    is not applied here. When the catalog EUR floor is unpublished (None), no top-up is
+    invented. Eligible lines must share currency EUR; otherwise fail-closed.
+    Scope: per RAL color (canonicalFinishEnumMap cant_ral_minimum_policy) — one color scope
+    per return-cant RAL selection in this CPP slice.
+    """
+    # Read catalog live so test monkeypatches and config updates are honored (do not bind
+    # the default argument at import time).
+    floor = (
+        CANT_RAL_PAINT_MINIMUM_EUR_PER_COLOR
+        if minimum_eur_per_color is _RAL_MINIMUM_EUR_UNSET
+        else minimum_eur_per_color
+    )
     material = next(
         (line for line in lines if line.pricing_rule_code == "VOL_V2_CANT_RAL_MATERIAL_ML"),
         None,
@@ -940,14 +1013,78 @@ def _apply_cant_ral_paint_minimum(lines: list[CommercialPriceLine]) -> None:
         (line for line in lines if line.pricing_rule_code == "VOL_V2_CANT_RAL_LABOR_ML"),
         None,
     )
-    labor_subtotal = labor.subtotal if labor is not None and labor.subtotal is not None else 0.0
-    combined = round(material.subtotal + labor_subtotal, 4)
-    if combined <= 0 or combined >= CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR:
+    eligible = [material]
+    if labor is not None and labor.subtotal is not None:
+        eligible.append(labor)
+
+    currencies = {_line_currency(line) for line in eligible}
+    if None in currencies or len(currencies) != 1:
+        blockers.append(
+            CommercialBlocker(
+                code="COMMERCIAL_MINIMUM_CURRENCY_MISMATCH",
+                message=(
+                    "RAL minimum/top-up refused: eligible RAL material/labor lines do not share "
+                    "a single currency. Cross-currency numeric floors are forbidden."
+                ),
+                module_code="finisaje",
+            )
+        )
         return
-    material.subtotal = round(CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR - labor_subtotal, 4)
-    material.warnings.append(
-        f"minimum_charge_applied={CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR}RON_per_color;"
-        f"combined_before_minimum={combined}"
+    currency = next(iter(currencies))
+    if currency != "EUR":
+        blockers.append(
+            CommercialBlocker(
+                code="COMMERCIAL_MINIMUM_CURRENCY_MISMATCH",
+                message=(
+                    f"RAL minimum/top-up refused: expected EUR eligible lines, got {currency}."
+                ),
+                module_code="finisaje",
+            )
+        )
+        return
+
+    if floor is None:
+        material.warnings.append(
+            "ral_minimum_eur_unpublished;no_top_up_invented;legacy_100_RON_not_applied"
+        )
+        return
+
+    if float(floor) <= 0:
+        return
+
+    eligible_subtotal = round(sum(float(line.subtotal or 0.0) for line in eligible), 4)
+    top_up = round(max(0.0, float(floor) - eligible_subtotal), 4)
+    if top_up <= 0:
+        material.warnings.append(
+            f"ral_minimum_cleared minimum_eur={floor};"
+            f"eligible_subtotal_eur={eligible_subtotal}"
+        )
+        return
+
+    lines.append(
+        CommercialPriceLine(
+            code=RAL_MINIMUM_TOP_UP_LINE_CODE,
+            label="Finisaje — minim comercial RAL (top-up)",
+            module_code="finisaje",
+            component_code="comp_finisaj_litere",
+            basis_type="minimum",
+            quantity=1.0,
+            unit="culoare",
+            commercial_unit_price=top_up,
+            subtotal=top_up,
+            pricing_rule_code=RAL_MINIMUM_TOP_UP_RULE_CODE,
+            source="owner_commercial_policy:f7h_ral_minimum_top_up_eur",
+            owner_decision_required=False,
+            warnings=[
+                f"ral_minimum_top_up_eur={top_up};"
+                f"minimum_eur_per_color={floor};"
+                f"eligible_subtotal_eur={eligible_subtotal};scope=per_ral_color"
+            ],
+            source_currency="EUR",
+            cpp_currency="EUR",
+            commercial_product_key=material.commercial_product_key or "letters",
+            rate_publication_status="owner_confirmed",
+        )
     )
 
 
@@ -973,11 +1110,14 @@ def _build_commercial_product_breakdown(
     blockers: list[CommercialBlocker],
     vat_rate_percent: float | None,
     vat_policy_source: str | None,
+    presentation_currency: str | None = None,
 ) -> CommercialProductBreakdown:
-    """F7F: per-product subtotals plus one complete offer total, or an honest refusal.
+    """F7F/F7H: per-product subtotals plus one complete offer total, or an honest refusal.
 
     Mixed currencies are never fused. Without an explicit provenance-bearing exchange rate this
     engine has no authority to convert, so it reports the mix instead of inventing a total.
+    When ``presentation_currency`` is set (EUR for volumetric+ACM pilot), the complete total is
+    emitted only if every summable line matches that currency.
     """
     ordered_keys: list[str] = []
     per_product: dict[str, list[CommercialPriceLine]] = {}
@@ -991,6 +1131,7 @@ def _build_commercial_product_breakdown(
     # Blockers are offer-wide today, so every product inherits them. Owner-pending lines are a
     # different, softer state: the total still stands, but it is explicitly partial.
     global_blocker_codes = sorted({blocker.code for blocker in blockers})
+    presentation = (presentation_currency or "").strip().upper() or None
 
     products: list[CommercialProductSubtotal] = []
     all_pairs: list[tuple[str, float]] = []
@@ -1000,6 +1141,7 @@ def _build_commercial_product_breakdown(
         pairs: list[tuple[str, float]] = []
         pending: list[str] = []
         unknown_currency = False
+        presentation_mismatch = False
         for line in product_lines:
             if line.subtotal is None:
                 if line.owner_decision_required:
@@ -1009,6 +1151,8 @@ def _build_commercial_product_breakdown(
             if currency is None:
                 unknown_currency = True
                 continue
+            if presentation and currency != presentation:
+                presentation_mismatch = True
             pairs.append((currency, float(line.subtotal)))
         all_pairs.extend(pairs)
         all_pending.extend(pending)
@@ -1016,6 +1160,8 @@ def _build_commercial_product_breakdown(
         blocker_codes = list(global_blocker_codes)
         if unknown_currency:
             blocker_codes.append("COMMERCIAL_LINE_CURRENCY_UNKNOWN")
+        if presentation_mismatch:
+            blocker_codes.append("COMMERCIAL_RULE_CURRENCY_MISMATCH")
         products.append(
             CommercialProductSubtotal(
                 product_key=key,
@@ -1035,10 +1181,18 @@ def _build_commercial_product_breakdown(
     unavailable_reason: str | None = None
     if any(product.blocked for product in products):
         unavailable_reason = "COMMERCIAL_PRODUCT_BLOCKED"
+        if currency_mix:
+            unavailable_reason = "COMMERCIAL_CURRENCY_MIX_UNRESOLVED"
+        elif presentation and any(
+            "COMMERCIAL_RULE_CURRENCY_MISMATCH" in product.blocker_codes for product in products
+        ):
+            unavailable_reason = "COMMERCIAL_PRESENTATION_CURRENCY_UNAVAILABLE"
     elif currency_mix:
         unavailable_reason = "COMMERCIAL_CURRENCY_MIX_UNRESOLVED"
     elif not buckets:
         unavailable_reason = "COMMERCIAL_TOTAL_NOT_PRICED"
+    elif presentation and buckets[0].currency != presentation:
+        unavailable_reason = "COMMERCIAL_PRESENTATION_CURRENCY_UNAVAILABLE"
     else:
         total = buckets[0].subtotal
         total_currency = buckets[0].currency
@@ -1047,6 +1201,7 @@ def _build_commercial_product_breakdown(
         products=products,
         subtotals_by_currency=buckets,
         currency_mix_detected=currency_mix,
+        presentation_currency=presentation,
         complete_offer_total=total,
         complete_offer_total_currency=total_currency,
         complete_offer_total_unavailable_reason=unavailable_reason,
@@ -1170,6 +1325,10 @@ class CommercialPriceProposalService:
             quote_input=quote_input,
         )
         rules = RULES_BY_TEMPLATE[rules_key]
+        presentation_currency = volumetric_presentation_currency(rules_key)
+        # Scoped presentation currency for the volumetric+ACM pilot — never a global default.
+        if presentation_currency:
+            currency = presentation_currency
 
         lines: list[CommercialPriceLine] = []
         blockers: list[CommercialBlocker] = []
@@ -1231,6 +1390,7 @@ class CommercialPriceProposalService:
                 payload,
                 measurement_qty=m_qty,
                 measurement_source=m_src,
+                presentation_currency=presentation_currency,
             )
             lines.append(line)
             if line.owner_decision_required and rule.owner_decision_code:
@@ -1250,8 +1410,35 @@ class CommercialPriceProposalService:
                         module_code=line.module_code,
                     )
                 )
+            # Universal currency guard — priced line must declare a currency; presentation
+            # mismatch is fail-closed (never rename RON as EUR).
+            if line.subtotal is not None:
+                line_ccy = _line_currency(line)
+                if line_ccy is None:
+                    blockers.append(
+                        CommercialBlocker(
+                            code="COMMERCIAL_LINE_CURRENCY_UNKNOWN",
+                            message=(
+                                f"Priced line {line.code} has no resolvable currency "
+                                f"(rule={line.pricing_rule_code})."
+                            ),
+                            module_code=line.module_code,
+                        )
+                    )
+                elif presentation_currency and line_ccy != presentation_currency:
+                    blockers.append(
+                        CommercialBlocker(
+                            code="COMMERCIAL_RULE_CURRENCY_MISMATCH",
+                            message=(
+                                f"Line {line.code} currency {line_ccy} does not match "
+                                f"presentation currency {presentation_currency} "
+                                f"(rule={line.pricing_rule_code})."
+                            ),
+                            module_code=line.module_code,
+                        )
+                    )
 
-        _apply_cant_ral_paint_minimum(lines)
+        _apply_cant_ral_paint_minimum_eur(lines, blockers=blockers)
 
         # Selection-granularity fail-closed (F7E cross-cutting recommendation): a commercially
         # relevant face finish selection with no owner-priced CPP rule must block "ready" —
@@ -1329,10 +1516,34 @@ class CommercialPriceProposalService:
                 db=self._db,
                 payload=payload,
                 pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
+                presentation_currency=presentation_currency,
             )
             for logo_line in logo_lines:
                 # Linked logo segments are sold under the letters product, not the ACM panel.
                 logo_line.commercial_product_key = "letters"
+                if logo_line.subtotal is not None and presentation_currency:
+                    logo_ccy = _line_currency(logo_line)
+                    if logo_ccy is None:
+                        blockers.append(
+                            CommercialBlocker(
+                                code="COMMERCIAL_LINE_CURRENCY_UNKNOWN",
+                                message=(
+                                    f"Priced logo line {logo_line.code} has no resolvable currency."
+                                ),
+                                module_code=logo_line.module_code,
+                            )
+                        )
+                    elif logo_ccy != presentation_currency:
+                        blockers.append(
+                            CommercialBlocker(
+                                code="COMMERCIAL_RULE_CURRENCY_MISMATCH",
+                                message=(
+                                    f"Logo line {logo_line.code} currency {logo_ccy} does not match "
+                                    f"presentation currency {presentation_currency}."
+                                ),
+                                module_code=logo_line.module_code,
+                            )
+                        )
             lines.extend(logo_lines)
             owner_decisions.extend(logo_owner_decisions)
         elif getattr(pd, "linked_template_runtime_segments", None):
@@ -1371,17 +1582,17 @@ class CommercialPriceProposalService:
             site_install_required=site_install_required,
         )
 
-        subtotals = [line.subtotal for line in lines if line.subtotal is not None]
-        subtotal_commercial = round(sum(subtotals), 4) if subtotals else None
-
-        # F7F: honest per-product / per-currency view. CPP stays tax-exclusive — the fiscal
+        # F7F/F7H: honest per-product / per-currency view. CPP stays tax-exclusive — the fiscal
         # policy (VAT) is a separate owner and is filled in downstream, never guessed here.
+        # Never fuse mixed-currency line subtotals into a single legacy number.
         product_breakdown = _build_commercial_product_breakdown(
             lines=lines,
             blockers=blockers,
             vat_rate_percent=None,
             vat_policy_source=None,
+            presentation_currency=presentation_currency,
         )
+        subtotal_commercial = product_breakdown.complete_offer_total
 
         provenance = [
             CommercialProvenanceEntry(
@@ -1418,14 +1629,20 @@ class CommercialPriceProposalService:
             )
 
         notes = [
-            "Read-only CommercialPriceProposal preview — Step 7G.",
+            "Read-only CommercialPriceProposal preview — Step 7G / F7H.",
             "Does not call /price, CostEngine, or QuoteOrchestrator.",
-            "Linked-logo print/laminate/application may bind to existing Pricing Registry "
-            "operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) "
-            "with company_commercial_settings EUR→RON conversion.",
+            "Does not consume EstimatedInternalCost, HR, machine hourly, or inventory unit_cost "
+            "as client price.",
+            (
+                "Volumetric letters + ACM presentation currency is EUR (scoped). Registry EUR "
+                "rates stay native EUR — no company FX, no live/online/inferred FX, no RON rename."
+                if presentation_currency == "EUR"
+                else "Registry EUR rates for non-pilot templates may normalize via company "
+                "EUR→RON settings when presentation is not EUR."
+            ),
             "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD "
-            "(200 EUR fixed / locatie) via the same EUR→RON path; travel outside Bucharest "
-            "is not auto-added. Fail closed if the rate or FX is unavailable.",
+            "(200 EUR fixed / locatie). Travel outside Bucharest is not auto-added. "
+            "Fail closed if the rate is unavailable.",
             "Hourly commercial basis is forbidden.",
         ]
 
