@@ -60,26 +60,90 @@ Research follow-up: CNC/forming EUR are workcenter sources reused provisionally 
 | FE Vitest Step3 / offer summary | 31 passed |
 | Quote snapshot endpoint / FakeDb suites | pre-existing failures (404 router / FakeDb.execute) — not F7H currency regressions |
 
-## Runtime proof
+## Runtime proof (pre-restart / process)
 
 - Process dry-run on `IV6-9C5D9538` (`5a5ce742-…`):  
   `presentation_currency=EUR`, Litere `277.0707 EUR`, ACM `190.7845 EUR`,  
   `complete_offer_total=467.8552 EUR`, `mix=false`, `partial=true`  
-  (pending: ambalare, debitare_spate, sistem_led_module, sursa_led).  
-  Blockers include `MISSING_RETURN_PAINT_COLOR` (acceptance) + unpublished sell rates.
-- UI: Step 2 shows EUR product estimates; FE reports backend contract mismatch on `:8000` (health ok, OpenAPI/version incomplete — ghost/stale listener). No port kill without Owner GO. Step 3 canonical total UI proof limited by that runtime identity issue.
-- Screenshots: `screenshots/f7h-01-step2-eur-product-estimates.png`, `screenshots/f7h-02-step2-acm-eur-panel.png`.
+  (pending: ambalare, debitare_spate, sistem_led_module, sursa_led).
+- Pre-restart UI was limited by stale `:8000` (health ok; `/api/v1/system/version` 404).
+- Screenshots (Step 2 era): `screenshots/f7h-01-step2-eur-product-estimates.png`, `screenshots/f7h-02-step2-acm-eur-panel.png`.
+
+## F7H-RUNTIME-CLOSURE-V1 (fresh canonical stack)
+
+**Runtime verdict:** `PASS_WITH_UI_WARNING`  
+**Rounding:** `EXPECTED_RAW_PRECISION_ROUNDING` (primary) with operator-visible `DISPLAY_RECONCILIATION_DEBT` of 0.01 EUR  
+**Push readiness:** `READY_NOT_PUSHED`  
+**Implementation HEAD lineage:** `7575e2c6` → honesty `6492cd15` (current verified runtime `git_commit`)
+
+### Listener stop + restart
+
+| Item | Evidence |
+| --- | --- |
+| Old :8000 | PID 27932 listen; reloader parent `C:\w\psiso\backend\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload`; started 2026-08-03 00:06; health 200; `/api/v1/system/version` 404 |
+| Authorization | Owner GO for stop of demonstrated WorkOS stale listener |
+| Stop | `.\scripts\stop-dev.ps1` then residual spawn PID 23944 stopped after proven uvicorn tree |
+| Start | `.\scripts\dev-detached.ps1` |
+| Fresh BE | Listen PID 23500; reloader `C:\w\psiso\backend\.venv\…\python.exe -m uvicorn …`; `/health` 200; `/api/v1/system/version` `git_commit=6492cd15`; local-compatibility 200 `pilot_gate_open=false` |
+| Fresh FE | Vite PID 31596 `C:\w\psiso\frontend\…\vite.js --host 127.0.0.1 --port 3000` |
+
+### Fresh dry-run + rounding
+
+See `evidence/runtime-dry-run-fresh-summary.json`.
+
+| Value | Raw (backend) | Display (2 dp) |
+| --- | ---: | ---: |
+| Litere | 277.0707 | 277.07 |
+| ACM | 190.7845 | 190.78 |
+| Sum of displays | — | **467.85** |
+| Grand total (backend sum of raws) | 467.8552 | **467.86** |
+
+Formula: backend keeps ~4 dp line/product subtotals; `complete_offer_total` = sum of product raw EUR; UI `formatOfferMoney` formats backend total once — FE does **not** sum displayed subtotals. Classification: `EXPECTED_RAW_PRECISION_ROUNDING`. Operator who adds the two displayed subtotals sees −0.01 → documented as display reconciliation debt (not a FE fix-by-sum).
+
+### Scenario A (real unpublished state)
+
+- Label: **Total ofertă (parțial)** `467,86 EUR` — not “Total final”.
+- Partial note lists unpublished codes; “Nu este preț comercial final”.
+- TVA note separate (`tax_exclusive`, 21%).
+- Handoff / “Creează oferta prețuită” / “Continuă către ofertă” disabled.
+- Fresh dry-run / handoff: **`MISSING_RETURN_PAINT_COLOR` not present** (entry report claimed it; current blockers are unpublished rates + operator confirmation / handoff blockers). Acceptance still not falsely allowed.
+
+### Scenario B (fail-closed)
+
+Runtime DB write avoided. Controlled test `test_f7h_mixed_eur_ron_fail_closed` **PASS** (currency mix → total unavailable, no 0, no FX).
+
+### Screenshots (runtime closure)
+
+| Filename | URL | Workspace | Section | Expected | Actual | Verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| `evidence/screenshots-runtime-closure/01-step3-full.png` | `/intake-v6/5a5ce742-…/operator` step 3 | IV6-9C5D9538 | full Step 3 | partial EUR total + blockers | 467,86 EUR partial; handoff blocked | PASS |
+| `evidence/screenshots-runtime-closure/02-offer-totals.png` | same | same | Ofertă client | Litere/ACM/total | 277,07 / 190,78 / 467,86 | PASS |
+| `evidence/screenshots-runtime-closure/03-handoff-blockers.png` | same | same | handoff strip | blocked | 1 blocant; Continuă disabled | PASS |
+
+Owner route: open URL → click **3 Confirmare** → read Ofertă client + footer status.
+
+### Fresh tests (this verification)
+
+| Command | Result |
+| --- | --- |
+| `pytest tests/test_f7h_owner_eur_functional_closure.py` | 12 passed |
+| `pytest tests/test_commercial_price_proposal_preview.py` | 32 passed |
+| `pytest tests/test_f7f_owner_commercial_law_step3_total.py` | 9 passed (run separately; combined session fixture clash is pre-existing harness noise) |
+| Vitest offer summary + FinalConfigurationSummary | 31 passed |
 
 ## Protected baselines (SQLite mode=ro)
 
-| Fixture | Expected | Actual |
-| --- | --- | --- |
-| order 880811 total | 1847.5 | 1847.5 PASS |
-| plan 22 planned_tasks | 5 | 5 PASS |
-| snapshot hash prefix | a59b6c44… | a59b6c44… PASS |
-| order 973019 total | 847.5 | 847.5 PASS |
-| plan 21 | intact | intact PASS |
-| snapshot hash prefix | 2d412e6e… | 2d412e6e… PASS |
+| Fixture | Expected | Before | After restart |
+| --- | --- | --- | --- |
+| order 880811 total | 1847.5 | PASS | PASS |
+| plan 22 planned_tasks | 5 | PASS | PASS |
+| snapshot hash prefix | a59b6c44… | PASS | PASS |
+| order 973019 total | 847.5 | PASS | PASS |
+| plan 21 | intact | PASS | PASS |
+| snapshot hash prefix | 2d412e6e… | PASS | PASS |
+| pilot_gate_open | false | PASS | PASS |
+
+Evidence: `evidence/protected-baselines.json`, `evidence/protected-baselines-after.json`.
 
 ## Gates
 
@@ -89,15 +153,19 @@ Research follow-up: CNC/forming EUR are workcenter sources reused provisionally 
 | No mixed currency math | PASS |
 | RAL minimum | PASS (EUR-only / unpublished floor) |
 | Snapshot immutability | PASS (tests) |
+| Canonical backend :8000 | PASS (fresh) |
+| Rounding reconciliation | PASS (expected raw) / UI WARNING (0.01 display sum) |
+| Partial/unpublished truth | PASS |
+| Acceptance readiness | PASS (not falsely open) |
 | Final prices | DEFERRED — NON-BLOCKING |
 | A-F3 | DEFERRED |
 | A-F4 | CLOSED structural |
 | Materialization | CLOSED |
 | Scheduling | HOLD |
-| Push | NOT EXECUTED |
+| Push | READY_NOT_PUSHED — not executed |
 
 ## Next
 
-1. Owner final pricing pass for unpublished EUR rates + RAL EUR floor.  
-2. Fresh canonical backend restart (Owner GO) for Step 3 UI screenshot closure.  
-3. Push only after Owner GO.
+1. Owner decision for **push** of F7H commits (mechanism), separate from final tariff audit.  
+2. Optional polish GO: display reconciliation note for 0.01 / duplicate EUR label on product rows (no FE sum fix).  
+3. Dedicated final pricing pass for unpublished EUR rates + RAL EUR floor.

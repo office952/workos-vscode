@@ -1,0 +1,27 @@
+{
+  "mode": "sqlite_ro",
+  "phase": "after_runtime_restart",
+  "db": "backend/dev.db",
+  "order_880811": {
+    "id": 880811,
+    "code": "ORD-F7B-880811",
+    "total_amount": 1847.5,
+    "plan_id": 22,
+    "plan_intact": true,
+    "planned_tasks": 5,
+    "order_snapshot_hash_prefix": "a59b6c44",
+    "ok": true
+  },
+  "order_973019": {
+    "id": 973019,
+    "code": "ORD-IV6-V2-1785676969-19",
+    "total_amount": 847.5,
+    "plan_id": 21,
+    "plan_intact": true,
+    "planned_tasks": 18,
+    "order_snapshot_hash_prefix": "2d412e6e",
+    "ok": true
+  },
+  "pilot_gate_open": false,
+  "verdict": "PASS"
+}

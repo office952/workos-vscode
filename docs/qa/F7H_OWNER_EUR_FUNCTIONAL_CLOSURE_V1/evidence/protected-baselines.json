@@ -1,6 +1,7 @@
 {
   "mode": "sqlite_ro",
   "db": "backend/dev.db",
+  "phase": "after_runtime_restart",
   "order_880811": {
     "total_amount": 1847.5,
     "snapshot_v2_sha256_prefix": "a59b6c44",
@@ -14,5 +15,6 @@
     "plan_id": 21,
     "order_snapshot_hash_prefix": "2d412e6e"
   },
+  "pilot_gate_open": false,
   "verdict": "PASS"
 }

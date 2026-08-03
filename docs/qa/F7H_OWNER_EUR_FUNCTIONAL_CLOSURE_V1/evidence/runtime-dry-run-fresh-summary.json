@@ -1,0 +1,39 @@
+{
+  "workspace_code": "IV6-9C5D9538",
+  "workspace_id": "5a5ce742-f50f-47b0-985b-32cc6f2fb6a4",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED",
+  "presentation_currency": "EUR",
+  "currency_mix_detected": false,
+  "complete_offer_total_is_partial": true,
+  "pending_line_codes": [
+    "ambalare",
+    "debitare_spate",
+    "sistem_led_module",
+    "sursa_led"
+  ],
+  "letters_raw": 277.0707,
+  "acm_raw": 190.7845,
+  "grand_total_raw": 467.8552,
+  "letters_display": 277.07,
+  "acm_display": 190.78,
+  "grand_total_display": 467.86,
+  "sum_of_display_subtotals": 467.85,
+  "sum_of_raw_subtotals": 467.8552,
+  "rounding_policy": "backend sums product raw subtotals at 4dp then FE formats complete_offer_total with toLocaleString 2dp; FE does not sum displayed subtotals",
+  "classification": "EXPECTED_RAW_PRECISION_ROUNDING",
+  "operator_display_perception": "DISPLAY_RECONCILIATION_DEBT (0.01 when summing displayed 2dp subtotals)",
+  "vat_rate_percent": 21.0,
+  "tax_status": "tax_exclusive",
+  "commercial_totals_currency": "EUR",
+  "blocker_codes": [
+    "DEBITARE_SPATE_COMMERCIAL_EUR_M2",
+    "LED_MODULE_COMMERCIAL_EUR_BUC",
+    "PSU_COMMERCIAL_EUR_BUC",
+    "V6_PRICED_DRY_RUN_COMMERCIAL_REVIEW_NOT_READY"
+  ],
+  "can_write_quote_totals": false,
+  "can_create_quote_snapshot": false,
+  "MISSING_RETURN_PAINT_COLOR_present": false,
+  "note": "Fresh GET /api/v1/intake-v6/workspaces/{id}/priced-quote-dry-run after canonical restart; no workspace write; no accept/convert."
+}
