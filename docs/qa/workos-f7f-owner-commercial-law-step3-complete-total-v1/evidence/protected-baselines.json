@@ -1,0 +1,36 @@
+{
+  "db": "C:\\w\\psiso\\backend\\dev.db",
+  "tables_present": [
+    "execution_plan",
+    "order_output_snapshot_references",
+    "orders",
+    "quote_output_snapshots",
+    "quote_snapshots_v2",
+    "rendered_output_snapshots"
+  ],
+  "order_880811": [
+    {
+      "id": 880811,
+      "code": "ORD-F7B-880811",
+      "status": "locked",
+      "total_amount": 1847.5,
+      "quote_snapshot_v2_id": 21,
+      "snapshot_code": "QSN2-F7B-880811",
+      "content_hash": "f7b00880811hash",
+      "snapshot_status": "frozen"
+    }
+  ],
+  "order_973019": [],
+  "execution_plan_22": [
+    {
+      "id": 22,
+      "order_id": 880811,
+      "order_code": "ORD-F7B-880811",
+      "plan_source": "order_snapshot_v2",
+      "source_snapshot_code": "QSN2-F7A-880811",
+      "source_content_hash": "f7a00880811hashf7ahashf7ahashf7a",
+      "tasks_json_len": 26497
+    }
+  ],
+  "execution_plan_22_ops_count": 0
+}

@@ -1,0 +1,879 @@
+[
+  {
+    "scenario": "F1_face_none",
+    "status": "ready",
+    "subtotal_commercial": 490.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": false,
+      "complete_offer_total": 490.0,
+      "complete_offer_total_currency": "RON",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": true,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F2_face_oracal_651",
+    "status": "ready",
+    "subtotal_commercial": 510.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_651_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 5.0,
+        "currency": "EUR",
+        "subtotal": 12.5,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_651_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 20.0
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 20.0
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F2b_face_oracal_651_other_color",
+    "status": "ready",
+    "subtotal_commercial": 510.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_651_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 5.0,
+        "currency": "EUR",
+        "subtotal": 12.5,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_651_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 20.0
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 20.0
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F3_face_oracal_641",
+    "status": "ready",
+    "subtotal_commercial": 513.75,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_641_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 6.5,
+        "currency": "EUR",
+        "subtotal": 16.25,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_641_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 23.75
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 23.75
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F4_face_oracal_8500_no_width",
+    "status": "blocked",
+    "subtotal_commercial": 497.5,
+    "currency": "RON",
+    "blockers": [
+      {
+        "code": "COMMERCIAL_CONFIGURATION_INCOMPLETE",
+        "message": "Oracal 8500 requires a confirmed face_vinyl_roll_width_mm (1000 or 1260 mm) before a commercial rate can be resolved."
+      }
+    ],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_8500_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": null,
+        "currency": "EUR",
+        "subtotal": null,
+        "owner_decision_required": true
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_8500_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 7.5
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": true,
+          "blocker_codes": [
+            "COMMERCIAL_CONFIGURATION_INCOMPLETE"
+          ],
+          "pending_line_codes": [
+            "finisaje_oracal_8500_material",
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 7.5
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_PRODUCT_BLOCKED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare",
+        "finisaje_oracal_8500_material"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F4a_face_oracal_8500_w1000",
+    "status": "ready",
+    "subtotal_commercial": 540.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_8500_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 17.0,
+        "currency": "EUR",
+        "subtotal": 42.5,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_8500_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 50.0
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 50.0
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F4b_face_oracal_8500_w1260",
+    "status": "ready",
+    "subtotal_commercial": 531.25,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_oracal_8500_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 13.5,
+        "currency": "EUR",
+        "subtotal": 33.75,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_oracal_8500_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 41.25
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 41.25
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F5_face_print_laminate",
+    "status": "ready",
+    "subtotal_commercial": 522.5,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_print_laminate_material",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 10.0,
+        "currency": "EUR",
+        "subtotal": 25.0,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "product": "letters",
+        "qty": 2.5,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 7.5,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_print_laminate_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 32.5
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 32.5
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "F6_face_printed_vinyl_unpriced",
+    "status": "blocked",
+    "subtotal_commercial": 490.0,
+    "currency": "RON",
+    "blockers": [
+      {
+        "code": "COMMERCIAL_RULE_MISSING",
+        "message": "No commercial rule catalog entry for face_finish_type=printed_vinyl."
+      }
+    ],
+    "watched_lines": [],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": true,
+          "blocker_codes": [
+            "COMMERCIAL_RULE_MISSING"
+          ],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": false,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_PRODUCT_BLOCKED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "R1_return_white_aluminum_stock",
+    "status": "ready",
+    "subtotal_commercial": 490.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": false,
+      "complete_offer_total": 490.0,
+      "complete_offer_total_currency": "RON",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": true,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "R2_return_ral_paint",
+    "status": "ready",
+    "subtotal_commercial": 590.0,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_cant_ral_material",
+        "product": "letters",
+        "qty": 8,
+        "unit_price": 4.0,
+        "currency": "EUR",
+        "subtotal": 60.0,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_cant_ral_labor",
+        "product": "letters",
+        "qty": 8,
+        "unit_price": 5.0,
+        "currency": "EUR",
+        "subtotal": 40.0,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_cant_ral_material",
+            "finisaje_cant_ral_labor",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 60.0
+            },
+            {
+              "currency": "RON",
+              "subtotal": 530.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 60.0
+        },
+        {
+          "currency": "RON",
+          "subtotal": 530.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  },
+  {
+    "scenario": "R3_return_oracal_wrapped",
+    "status": "ready",
+    "subtotal_commercial": 496.4,
+    "currency": "RON",
+    "blockers": [],
+    "watched_lines": [
+      {
+        "code": "finisaje_cant_oracal_material",
+        "product": "letters",
+        "qty": 0.8,
+        "unit_price": 5.0,
+        "currency": "EUR",
+        "subtotal": 4.0,
+        "owner_decision_required": false
+      },
+      {
+        "code": "finisaje_cant_oracal_labor",
+        "product": "letters",
+        "qty": 0.8,
+        "unit_price": 3.0,
+        "currency": "EUR",
+        "subtotal": 2.4,
+        "owner_decision_required": false
+      }
+    ],
+    "product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "finisaje_cant_oracal_material",
+            "finisaje_cant_oracal_labor",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 6.4
+            },
+            {
+              "currency": "RON",
+              "subtotal": 490.0
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": [
+            "ambalare"
+          ]
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 6.4
+        },
+        {
+          "currency": "RON",
+          "subtotal": 490.0
+        }
+      ],
+      "currency_mix_detected": true,
+      "complete_offer_total": null,
+      "complete_offer_total_currency": null,
+      "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [
+        "ambalare"
+      ],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  }
+]
