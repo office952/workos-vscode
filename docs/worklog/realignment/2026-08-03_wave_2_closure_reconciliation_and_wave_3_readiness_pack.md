@@ -172,12 +172,10 @@ Step 12 impact: none
 ```text
 WAVE_2_IMPLEMENTATION_STATUS = COMPLETE
 DOCUMENTATION_TRUTH = RECONCILED
-CONTROLLED_WAVE_2_FIXTURE = TEST_DB_EPHEMERAL_VERIFIED
-CONTROLLED_WAVE_2_FIXTURE_DURABLE_RUNTIME = MISSING
-LIGHT_DAY_1920 = PASS (protected RO Step 9B; not Wave2-only fixture)
-LIGHT_DAY_1366 = PASS (same)
-WAVE_3_READINESS_PACK = NOT_READY
-BLOCKER = durable non-production Wave2 fixture order/snapshot/plan identities absent from runtime; Owner GO required to create/persist dedicated QA fixture before DEC-009=B discussion can be fully evidence-backed in browser
+CONTROLLED_WAVE_2_FIXTURE = TEST_DB_EPHEMERAL_VERIFIED (historical at reconciliation time)
+CONTROLLED_WAVE_2_FIXTURE_DURABLE_RUNTIME = see follow-up worklog 2026-08-03_wave2_durable_qa_fixture_and_wave3_readiness_pack.md (order 880750)
+LIGHT_DAY_1920 / 1366 on durable fixture = see follow-up worklog
+WAVE_3_READINESS_PACK = see follow-up worklog (READY_FOR_OWNER_REVIEW after durable fixture GO)
 DEC_009 = A
 MATERIALIZATION = CLOSED
 ```

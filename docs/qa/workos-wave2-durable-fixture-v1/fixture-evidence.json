@@ -1,0 +1,207 @@
+{
+  "timestamp_utc": "2026-08-03T22:12:27.745925+00:00",
+  "non_production": {
+    "APP_ENV": "development",
+    "ENVIRONMENT": "development",
+    "DATABASE_URL": "sqlite+aiosqlite:///./dev.db",
+    "db_file": "C:\\w\\psiso\\backend\\dev.db",
+    "host": "127.0.0.1"
+  },
+  "fixture_name": "WAVE2-DURABLE-QA-880750",
+  "created_order": true,
+  "order_id": 880750,
+  "order_code": "ORD-WAVE2-QA-880750",
+  "quote_id": 880750,
+  "quote_snapshot_v2_id": 23,
+  "snapshot_code": "QSN2-WAVE2-880750",
+  "snapshot_sha256": "dc998518d7fb7a8ea755f75969962c5e6765245ff20b791104a1427b8332643e",
+  "accepted_commercial_total": 1925.0,
+  "execution_plan_id": 23,
+  "persist_first": {
+    "execution_plan_id": 23,
+    "status": "persisted"
+  },
+  "persist_second": {
+    "execution_plan_id": 23,
+    "status": "already_exists"
+  },
+  "idempotent": true,
+  "preview": {
+    "status": "partial_missing_planning_minutes",
+    "no_write": true,
+    "execution_tasks_created": false,
+    "planned_tasks": 13,
+    "planned_operations": 18
+  },
+  "envelope": {
+    "execution_tasks_created": false,
+    "operational_tasks_count": 0,
+    "planned_tasks_count": 13
+  },
+  "audit": {
+    "post_materialize_allowed": false,
+    "operational_tasks_in_envelope_count": 0,
+    "materialization_status": "blocked_needs_owner_go",
+    "candidate_ops": [
+      "assembly_letters",
+      "back_cut",
+      "electrical_letters",
+      "face_cnc_cut",
+      "led_install_letters",
+      "mounting_template_cnc_cut",
+      "packaging_letters",
+      "painting",
+      "qc_letters",
+      "return_face_bonding",
+      "side_forming",
+      "vector_prep",
+      "vinyl_application"
+    ]
+  },
+  "ownership": {
+    "alias_ops_absent_from_planned": {
+      "return_profile_face_bonding": true,
+      "return_profile_machine_forming": true,
+      "PAINTING": true
+    },
+    "parent_ops_present": {
+      "side_forming": true,
+      "return_face_bonding": true,
+      "painting": true
+    }
+  },
+  "foil_dag": {
+    "vinyl_present": true,
+    "vinyl_depends_on_task_keys": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding"
+    ]
+  },
+  "workcenters": {
+    "vector_prep": {
+      "workcenter": "WC_PREPRESS",
+      "mapping_source": "operation_resource_requirements:alias:prepress->WC_PREPRESS|alias=vector_prep|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "face_cnc_cut": {
+      "workcenter": "WC_CNC_ROUTING",
+      "mapping_source": "operation_resource_requirements:alias:cnc_cutting->WC_CNC_ROUTING|alias=face_cnc_cut|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "back_cut": {
+      "workcenter": "WC_CNC_ROUTING",
+      "mapping_source": "operation_resource_requirements:alias:cnc_cutting->WC_CNC_ROUTING|alias=back_cut|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "side_forming": {
+      "workcenter": "WC_LETTER_FORMING",
+      "mapping_source": "operation_resource_requirements:alias:cant_modelare->WC_LETTER_FORMING|alias=side_forming|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "return_face_bonding": {
+      "workcenter": "WC_METAL_FAB",
+      "mapping_source": "operation_resource_requirements:alias:welding->WC_METAL_FAB|alias=return_face_bonding|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "painting": {
+      "workcenter": "WC_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:assembly->WC_ASSEMBLY|alias=painting|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "led_install_letters": {
+      "workcenter": "WC_LED_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:montaj_led->WC_LED_ASSEMBLY|alias=led_install_letters|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "electrical_letters": {
+      "workcenter": "WC_LED_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:montaj_led->WC_LED_ASSEMBLY|alias=electrical_letters|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "assembly_letters": {
+      "workcenter": "WC_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:assembly->WC_ASSEMBLY|alias=assembly_letters|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "vinyl_application": {
+      "workcenter": "WC_VINYL_APPLICATION",
+      "mapping_source": "operation_resource_requirements:alias:colantare->WC_VINYL_APPLICATION|alias=vinyl_application|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "mounting_template_cnc_cut": {
+      "workcenter": "WC_CNC_ROUTING",
+      "mapping_source": "operation_resource_requirements:alias:cnc_cutting->WC_CNC_ROUTING|alias=mounting_template_cnc_cut|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "qc_letters": {
+      "workcenter": "WC_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:quality_control->WC_ASSEMBLY|alias=qc_letters|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    },
+    "packaging_letters": {
+      "workcenter": "WC_ASSEMBLY",
+      "mapping_source": "operation_resource_requirements:alias:packaging->WC_ASSEMBLY|alias=packaging_letters|orr/v1",
+      "resolution_status": "resolved",
+      "estimated_minutes": null
+    }
+  },
+  "protected_baselines_before": {
+    "880811": {
+      "order_id": 880811,
+      "present": true,
+      "code": "ORD-F7B-880811",
+      "total_amount": 1847.5,
+      "quote_snapshot_v2_id": 21,
+      "accepted_commercial_total": 1847.5,
+      "snapshot_sha256_prefix": "a59b6c44",
+      "plan_id": 22
+    },
+    "973019": {
+      "order_id": 973019,
+      "present": true,
+      "code": "ORD-IV6-V2-1785676969-19",
+      "total_amount": 847.5,
+      "quote_snapshot_v2_id": 20,
+      "accepted_commercial_total": 847.5,
+      "snapshot_sha256_prefix": "2d412e6e",
+      "plan_id": 21
+    }
+  },
+  "protected_baselines_after": {
+    "880811": {
+      "order_id": 880811,
+      "present": true,
+      "code": "ORD-F7B-880811",
+      "total_amount": 1847.5,
+      "quote_snapshot_v2_id": 21,
+      "accepted_commercial_total": 1847.5,
+      "snapshot_sha256_prefix": "a59b6c44",
+      "plan_id": 22
+    },
+    "973019": {
+      "order_id": 973019,
+      "present": true,
+      "code": "ORD-IV6-V2-1785676969-19",
+      "total_amount": 847.5,
+      "quote_snapshot_v2_id": 20,
+      "accepted_commercial_total": 847.5,
+      "snapshot_sha256_prefix": "2d412e6e",
+      "plan_id": 21
+    }
+  },
+  "protected_unchanged": true,
+  "dec009": "A",
+  "materialize_called": false
+}

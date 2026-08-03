@@ -353,7 +353,8 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 - Faza 0–2 are complete at commits `134eef7e` (Wave 1) and `788171b4` (Wave 2).
 - Materialization remains **BLOCKED_NEEDS_OWNER_GO** (`DEC-009=A`).
 - Canonical ownership, ORR compile freeze, finish-aware DAG, and Step 9B read-only are in place.
-- Wave 3 must still prove controlled materialization + idempotency + audit on a durable non-production fixture, with zero sessions/assignment.
+- Durable non-production Wave 2 QA fixture exists for readiness evidence: order **`880750`** / `ORD-WAVE2-QA-880750` / plan **`23`** / snapshot `QSN2-WAVE2-880750` (local `dev.db` only; evidence worklog `2026-08-03_wave2_durable_qa_fixture_and_wave3_readiness_pack.md`). Pytest ephemeral `8807xx` remains secondary.
+- Wave 3 must still prove controlled materialization + idempotency + audit on that (or an Owner-approved) fixture, with zero sessions/assignment.
 
 **Do not** reopen DEC-003/004/005 as if unanswered. **Do not** start Wave 3 without Owner GO.
 
