@@ -349,6 +349,59 @@ describe("buildIntakeV6ConfirmSummary compat contract", () => {
     expect(summary.warnings[0]?.message).toMatch(/Layer_x0020_1/);
   });
 
+  it("F7E A-F4: acm is null when the workspace has no ACM/support component", () => {
+    const summary = buildIntakeV6ConfirmSummary({
+      payload: pblPayload,
+      layerCount: 3,
+      materialBreakdown,
+      nestingPreview,
+    });
+
+    expect(summary.acm).toBeNull();
+  });
+
+  it("F7E A-F4: recap never silently omits a priced ACM/support panel", () => {
+    const summary = buildIntakeV6ConfirmSummary({
+      payload: {
+        ...pblPayload,
+        finish_setup: {
+          ...(pblPayload.finish_setup as Record<string, unknown>),
+          mounting_solution: { template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" },
+          applied_content: "letters",
+        },
+        product_composition_recommendation: {
+          composition_items: [{ component_role: "support_panel", template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" }],
+        },
+      },
+      layerCount: 3,
+      materialBreakdown,
+      nestingPreview,
+    });
+
+    expect(summary.acm).not.toBeNull();
+    expect(summary.acm?.inclusionState).toBe("active_priced");
+    expect(summary.acm?.tone).toBe("ok");
+    expect(summary.acm?.inclusionStateLabel).toMatch(/inclus activ în ofertă/i);
+  });
+
+  it("F7E A-F4: recap shows the un-priced state honestly instead of hiding the ACM component", () => {
+    const summary = buildIntakeV6ConfirmSummary({
+      payload: {
+        ...pblPayload,
+        product_composition_recommendation: {
+          composition_items: [{ component_role: "support_panel", template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" }],
+        },
+      },
+      layerCount: 3,
+      materialBreakdown,
+      nestingPreview,
+    });
+
+    expect(summary.acm).not.toBeNull();
+    expect(summary.acm?.inclusionState).toBe("selected_incomplete");
+    expect(summary.acm?.tone).toBe("pending");
+  });
+
   it("surfaces unclassified vector decision warning", () => {
     const summary = buildIntakeV6ConfirmSummary({
       payload: pblPayload,

@@ -123,6 +123,49 @@ async def test_standalone_cpp_emits_six_acm_lines_with_assembly_min(acm_standalo
 
 
 @pytest.mark.asyncio
+async def test_standalone_cpp_not_letter_blocked_by_acm_geometry(acm_standalone_seeded_db) -> None:
+    """AGENT-B-F003: TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 has ACM-shaped geometry
+    (panel_width_mm/panel_height_mm/acm_thickness_mm/return_depth_mm/fold_sides), never
+    letter-shaped (letter_count/letter_face_area_m2/vector_file). A valid standalone ACM
+    payload must not trip CRITICAL_GEOMETRY_MISSING for the letter-only keys, and must not
+    invent any ACM shell finish price to get there."""
+    session = acm_standalone_seeded_db
+    preview = await CommercialPriceProposalService(session).build_preview(
+        TEMPLATE_CODE,
+        quote_input=_standalone_quote_input(),
+    )
+    assert preview is not None
+    assert not any(b.code == "CRITICAL_GEOMETRY_MISSING" for b in preview.commercial_blockers)
+    codes = {line.code for line in preview.commercial_price_lines}
+    finish_shell_codes = {c for c in codes if "shell" in c or "mass_color" in c or "mirror" in c}
+    assert finish_shell_codes == set()
+
+
+@pytest.mark.asyncio
+async def test_standalone_cpp_geometry_check_uses_acm_keys_not_letter_keys(
+    acm_standalone_seeded_db,
+) -> None:
+    """AGENT-B-F003 branch dispatch: the standalone ACM root must be validated against
+    ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS, never the letter-shaped CRITICAL_GEOMETRY_KEYS
+    (letter_count/letter_face_area_m2/letter_perimeter_m/width_mm/height_mm/vector_file) —
+    none of those letter-only fields exist in this payload, yet the preview is not blocked."""
+    from services.acm_quote_input_helpers import ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS
+
+    letter_only_keys = {"letter_count", "letter_face_area_m2", "letter_perimeter_m", "width_mm", "height_mm"}
+    quote_input = _standalone_quote_input()
+    assert not (letter_only_keys & set(quote_input.keys()))
+    assert set(ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS) <= set(quote_input.keys())
+
+    session = acm_standalone_seeded_db
+    preview = await CommercialPriceProposalService(session).build_preview(
+        TEMPLATE_CODE,
+        quote_input=quote_input,
+    )
+    assert preview is not None
+    assert not any(b.code == "CRITICAL_GEOMETRY_MISSING" for b in preview.commercial_blockers)
+
+
+@pytest.mark.asyncio
 async def test_standalone_eic_capacity_hints(acm_standalone_seeded_db) -> None:
     session = acm_standalone_seeded_db
     preview = await EstimatedInternalCostService(session).build_preview(

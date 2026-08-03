@@ -13,8 +13,18 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from data.commercial_rules_volumetric_v2 import (
+    ACM_BOXED_ASSEMBLY_MIN_EUR,
+    CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES,
+    CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE,
+    CANT_RAL_PAINT_GATE_VALUES,
+    CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM,
+    CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR,
     CRITICAL_MODULE_CODES,
+    FACE_FINISH_NONE_VALUES,
+    FACE_FINISH_ORACAL_TOKENS,
+    FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS,
     FORBIDDEN_HOURLY_TOKENS,
+    LETTERS_ACM_PACK_MIN_EUR,
     RULES_BY_TEMPLATE,
     CommercialRuleDefinition,
 )
@@ -28,6 +38,10 @@ from schemas.commercial_price_proposal import (
     CommercialProvenanceEntry,
 )
 from schemas.product_definition import ProductDefinitionPreview
+from services.acm_quote_input_helpers import (
+    ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS,
+    is_acm_boxed_mounting_standalone_root_template,
+)
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
 from services.linked_logo_commercial_price_service import build_linked_logo_commercial_lines
 from services.product_definition_builder_service import (
@@ -76,6 +90,10 @@ def _get_by_path(root: Any, path: str) -> Any:
             return None
         cur = cur.get(part)
     return cur
+
+
+def _lower_str(value: Any) -> str:
+    return str(value or "").strip().lower()
 
 
 def _positive_number(raw: Any) -> float | None:
@@ -450,6 +468,26 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
         ):
             return False
 
+    if rule.line_code == "finisaje_colantare_vopsire":
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        face_token = _lower_str(finish.get("face_finish_type") or payload.get("face_finish_type"))
+        if (
+            face_token in FACE_FINISH_NONE_VALUES
+            or face_token in FACE_FINISH_ORACAL_TOKENS
+            or face_token in FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS
+        ):
+            return False
+
+    if rule.line_code.startswith("finisaje_cant_oracal_"):
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        cant_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+        return cant_token in CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE
+
+    if rule.line_code.startswith("finisaje_cant_ral_"):
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        cant_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+        return cant_token in CANT_RAL_PAINT_GATE_VALUES
+
     if rule.line_code.startswith("sablon_montaj"):
         # ACM composition uses bundled letters_acm_conn_sablon_process @ 20 EUR/mp.
         if is_letters_acm_composition_active(payload):
@@ -537,7 +575,45 @@ async def _build_line(
         elif isinstance(groups, list) and not groups:
             warnings.append("Finish groups empty — owner review recommended.")
 
-    unit_price = rule.documented_unit_price
+    dynamic_unit_price: float | None = None
+    dynamic_unit_price_currency: str | None = None
+
+    if rule.line_code == "finisaje_cant_oracal_material":
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        cant_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+        series = CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE.get(cant_token)
+        dynamic_unit_price = CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES.get(series) if series else None
+        if dynamic_unit_price is not None:
+            dynamic_unit_price_currency = "EUR"
+            warnings.append(f"cant_oracal_series_resolved={series}")
+        perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
+        depth_mm = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
+        if perimeter is not None and depth_mm is not None:
+            quantity = round(float(perimeter) * (float(depth_mm) / 1000.0), 6)
+            warnings.append("quantity_source=perimeter_m_x_return_depth_mm_to_m2")
+        else:
+            quantity = None
+
+    if rule.line_code == "finisaje_cant_ral_material":
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        depth_raw = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
+        depth_tier = int(depth_raw) if depth_raw is not None and float(depth_raw).is_integer() else None
+        dynamic_unit_price = (
+            CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM.get(depth_tier) if depth_tier else None
+        )
+        if dynamic_unit_price is not None:
+            dynamic_unit_price_currency = "EUR"
+            warnings.append(f"cant_ral_depth_tier_resolved={depth_tier}mm")
+
+    if rule.line_code in ("finisaje_cant_oracal_material", "finisaje_cant_ral_material") and (
+        dynamic_unit_price is None
+    ):
+        owner_required = True
+        warnings.append(f"{rule.pricing_rule_code}:unresolved_dynamic_unit_price")
+
+    unit_price = dynamic_unit_price if dynamic_unit_price is not None else rule.documented_unit_price
+    if dynamic_unit_price_currency is not None:
+        source_currency = dynamic_unit_price_currency
     if unit_price is not None and source_currency:
         cpp_currency = "RON" if str(source_currency).upper() == "RON" else None
 
@@ -589,14 +665,10 @@ async def _build_line(
         subtotal = round(float(quantity) * float(unit_price), 4)
 
     if rule.pricing_rule_code == "ACM_BOXED_ASSEMBLY_M2_MIN" and unit_price is not None and quantity is not None:
-        from data.commercial_rules_volumetric_v2 import ACM_BOXED_ASSEMBLY_MIN_EUR
-
         subtotal = round(max(float(quantity) * float(unit_price), ACM_BOXED_ASSEMBLY_MIN_EUR), 4)
         warnings.append(f"minimum_charge_applied={ACM_BOXED_ASSEMBLY_MIN_EUR}EUR")
 
     if rule.pricing_rule_code == "LETTERS_ACM_PACK_M2_MIN" and unit_price is not None and quantity is not None:
-        from data.commercial_rules_volumetric_v2 import LETTERS_ACM_PACK_MIN_EUR
-
         subtotal = round(max(float(quantity) * float(unit_price), LETTERS_ACM_PACK_MIN_EUR), 4)
         warnings.append(f"minimum_charge_applied={LETTERS_ACM_PACK_MIN_EUR}EUR")
 
@@ -646,8 +718,26 @@ def scan_forbidden_hourly_usage(lines: list[CommercialPriceLine]) -> list[str]:
     return hits
 
 
-def _missing_critical_geometry(payload: dict[str, Any], active_modules: set[str]) -> list[str]:
-    missing: list[str] = []
+def _missing_critical_geometry(
+    payload: dict[str, Any],
+    active_modules: set[str],
+    rules_key: str | None = None,
+) -> list[str]:
+    # AGENT-B-F003: TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 standalone root has ACM-shaped geometry
+    # (panel_width_mm/panel_height_mm/acm_thickness_mm/return_depth_mm/fold_sides) — never
+    # letter-shaped (letter_count/letter_face_area_m2/.../vector_file). Do not invent ACM shell
+    # finish prices here; this only validates presence of the required geometry inputs.
+    if rules_key is not None and is_acm_boxed_mounting_standalone_root_template(rules_key):
+        missing: list[str] = []
+        for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS:
+            if key == "fold_sides":
+                if not _read_string(payload.get(key)):
+                    missing.append(key)
+            elif _positive_number(payload.get(key)) is None:
+                missing.append(key)
+        return missing
+
+    missing = []
     geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
     client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
     merged = {**client, **geometry, **{k: payload[k] for k in payload if k in CRITICAL_GEOMETRY_KEYS}}
@@ -667,6 +757,29 @@ def _missing_critical_geometry(payload: dict[str, Any], active_modules: set[str]
         missing.append("vector_file")
 
     return missing
+
+
+def _apply_cant_ral_paint_minimum(lines: list[CommercialPriceLine]) -> None:
+    """Owner policy cant_ral_minimum_policy: 100 RON/color floor on material+labor combined."""
+    material = next(
+        (line for line in lines if line.pricing_rule_code == "VOL_V2_CANT_RAL_MATERIAL_ML"),
+        None,
+    )
+    if material is None or material.subtotal is None:
+        return
+    labor = next(
+        (line for line in lines if line.pricing_rule_code == "VOL_V2_CANT_RAL_LABOR_ML"),
+        None,
+    )
+    labor_subtotal = labor.subtotal if labor is not None and labor.subtotal is not None else 0.0
+    combined = round(material.subtotal + labor_subtotal, 4)
+    if combined <= 0 or combined >= CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR:
+        return
+    material.subtotal = round(CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR - labor_subtotal, 4)
+    material.warnings.append(
+        f"minimum_charge_applied={CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR}RON_per_color;"
+        f"combined_before_minimum={combined}"
+    )
 
 
 def _compute_status(
@@ -857,6 +970,25 @@ class CommercialPriceProposalService:
                     )
                 )
 
+        _apply_cant_ral_paint_minimum(lines)
+
+        # Selection-granularity fail-closed (F7E cross-cutting recommendation): a commercially
+        # relevant face finish selection with no owner-priced CPP rule must block "ready" —
+        # never silently fall back to the flat finisaje_colantare_vopsire rate.
+        if str(rules_key or "").startswith("TPL-VOLUMETRIC-LETTERS") and "finisaje" in active_modules:
+            finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+            face_token = _lower_str(finish.get("face_finish_type") or payload.get("face_finish_type"))
+            if face_token in FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS:
+                blockers.append(
+                    CommercialBlocker(
+                        code="COMMERCIAL_RULE_MISSING",
+                        message=(
+                            f"No commercial rule catalog entry for face_finish_type={face_token}."
+                        ),
+                        module_code="finisaje",
+                    )
+                )
+
         # Linked logo commercial is composition/full-product only — not part of
         # Letters Slice 1 component_subset (RETURN-CANT / FACE / BACK / LIGHTING).
         from services.active_scope_resolver_service import compile_active_scope
@@ -882,7 +1014,9 @@ class CommercialPriceProposalService:
                 "(Logo remains BLOCKED for standalone sold scope)."
             )
 
-        missing_geometry = _missing_critical_geometry(payload, active_modules) if has_payload else []
+        missing_geometry = (
+            _missing_critical_geometry(payload, active_modules, rules_key=rules_key) if has_payload else []
+        )
         if missing_geometry:
             blockers.append(
                 CommercialBlocker(

@@ -55,6 +55,57 @@ DEV_BRIDGE_PSU_RON_BUC = 150.0
 DEV_BRIDGE_FINISH_RON_M2 = 35.0
 DEV_BRIDGE_SABLON_FOREX_RON_M2 = 15.0
 
+# --- F7E G1 — return-cant Oracal wrap / RAL paint, face Oracal (Lead GO 2026-08-03) ---
+# Face finish tokens handled by dedicated rules below — must not double-charge the flat
+# finisaje_colantare_vopsire line (AGENT-B-F001 fix: "Fără finisaj" must not charge).
+FACE_FINISH_NONE_VALUES = frozenset({"none", ""})
+FACE_FINISH_ORACAL_TOKENS = frozenset({"oracal_641", "oracal_651", "oracal_8500"})
+# Commercially relevant face selections with no owner-priced CPP rule yet — fail closed
+# (COMMERCIAL_RULE_MISSING). Never silently priced at the flat finisaje_colantare_vopsire rate.
+FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS = frozenset(
+    {"print_laminate", "printed_vinyl", "printed_laminated_vinyl"}
+)
+
+# Face Oracal materials — legacy CPP only (F7E Owner GO; Product System FINISH workshop for
+# face vinyl remains separately "blocked" in canonicalFinishEnumMap.ts — this exception is
+# scoped to this legacy engine only, per Lead authorization). EUR/m², sourced from
+# seed_volumetric_owner_confirmed_prices.py MAT-ORACAL-* purchase rows. Same series/color stays
+# one commercial line — no color-tier differentiation authorized.
+FACE_ORACAL_641_EUR_M2 = 6.5
+FACE_ORACAL_651_EUR_M2 = 9.0
+FACE_ORACAL_8500_EUR_M2 = 20.0
+
+# Return-cant Oracal wrap material, resolved by series (same seed rows as face; cant wrap does
+# not offer 8500). Canonical intake tokens per canonicalFinishEnumMap.ts cant_oracal_wrap
+# ("oracal_wrapped", "oracal_651", "vinyl") plus the 641 aliases already recognized by
+# services/return_cant_product_truth_bridge.py (VINYL_FINISH_TO_SERIES) to reach MAT-ORACAL-641.
+CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE: dict[str, str] = {
+    "oracal_wrapped": "651",
+    "oracal_651": "651",
+    "651": "651",
+    "vinyl": "651",
+    "oracal_641": "641",
+    "641": "641",
+}
+CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES: dict[str, float] = {
+    "641": FACE_ORACAL_641_EUR_M2,
+    "651": FACE_ORACAL_651_EUR_M2,
+}
+
+# Return-cant RAL paint material, depth-tiered EUR/ml (seed_volumetric_owner_confirmed_prices.py
+# MAT-VOPSEA-RAL-CANT-*MM). Canonical intake tokens per canonicalFinishEnumMap.ts cant_ral_paint.
+CANT_RAL_PAINT_GATE_VALUES = frozenset({"ral_paint", "painted", "paint"})
+CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM: dict[int, float] = {
+    30: 2.0,
+    60: 2.5,
+    80: 3.0,
+    100: 4.0,
+}
+# Owner commercial policy (canonicalFinishEnumMap.ts cant_ral_minimum_policy) — 100 RON/color
+# floor on material+labor combined. NOT a Pricing Registry value; no automatic RON<->EUR
+# conversion (matches the existing sablon_montaj_hartie EUR-passthrough pattern).
+CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR = 100.0
+
 VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
     CommercialRuleDefinition(
         line_code="debitare_fata",
@@ -153,6 +204,168 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         documented_unit_price=DEV_BRIDGE_FINISH_RON_M2,
         documented_unit_price_currency="RON",
         warnings=("Unconfirmed finish groups may require owner review before numeric pricing.",),
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_cant_oracal_material",
+        label="Finisaje — autocolant Oracal cant (material)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_CANT_ORACAL_MATERIAL_M2",
+        basis_type="m2",
+        quantity_paths=(),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:cant_oracal_wrap_material",
+        criticality="critical",
+        module_gate="finisaje",
+        warnings=(
+            "Quantity = letter_perimeter_m x return_depth_mm (developed wrap area, m2). "
+            "Series (641/651) resolved from finish_setup.return_finish_type; same series/color "
+            "stays one commercial line.",
+        ),
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_cant_oracal_labor",
+        label="Finisaje — aplicare Oracal cant (manoperă)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_CANT_ORACAL_LABOR_ML",
+        basis_type="ml",
+        quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:cant_oracal_wrap_labor",
+        criticality="critical",
+        module_gate="finisaje",
+        registry_pricing_code="RETURN_CANT_VINYL_APPLICATION_LABOR",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_cant_ral_material",
+        label="Finisaje — vopsit RAL cant (material)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_CANT_RAL_MATERIAL_ML",
+        basis_type="ml",
+        quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:cant_ral_paint_material",
+        criticality="critical",
+        module_gate="finisaje",
+        warnings=(
+            f"Minimum commercial charge {CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR} RON/color on "
+            "material+labor combined (owner policy cant_ral_minimum_policy).",
+        ),
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_cant_ral_labor",
+        label="Finisaje — vopsit RAL cant (manoperă)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_CANT_RAL_LABOR_ML",
+        basis_type="ml",
+        quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:cant_ral_paint_labor",
+        criticality="critical",
+        module_gate="finisaje",
+        registry_pricing_code="RETURN_CANT_RAL_PAINT_LABOR",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_641_material",
+        label="Finisaje — Oracal 641 față (material)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_641_MATERIAL_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_641_material",
+        criticality="critical",
+        documented_unit_price=FACE_ORACAL_641_EUR_M2,
+        documented_unit_price_currency="EUR",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_641",
+        module_gate="finisaje",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_641_labor",
+        label="Finisaje — Oracal 641 față (manoperă)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_641_LABOR_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_641_labor",
+        criticality="critical",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_641",
+        module_gate="finisaje",
+        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_651_material",
+        label="Finisaje — Oracal 651 față (material)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_651_MATERIAL_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_651_material",
+        criticality="critical",
+        documented_unit_price=FACE_ORACAL_651_EUR_M2,
+        documented_unit_price_currency="EUR",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_651",
+        module_gate="finisaje",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_651_labor",
+        label="Finisaje — Oracal 651 față (manoperă)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_651_LABOR_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_651_labor",
+        criticality="critical",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_651",
+        module_gate="finisaje",
+        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_8500_material",
+        label="Finisaje — Oracal 8500 față (material)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_8500_MATERIAL_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_8500_material",
+        criticality="critical",
+        documented_unit_price=FACE_ORACAL_8500_EUR_M2,
+        documented_unit_price_currency="EUR",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_8500",
+        module_gate="finisaje",
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_oracal_8500_labor",
+        label="Finisaje — Oracal 8500 față (manoperă)",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_ORACAL_8500_LABOR_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:face_oracal_8500_labor",
+        criticality="critical",
+        material_gate_path="finish_setup.face_finish_type",
+        material_gate_value="oracal_8500",
+        module_gate="finisaje",
+        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
     ),
     CommercialRuleDefinition(
         line_code="sablon_montaj",

@@ -12,7 +12,25 @@ import type {
 import type { IntakeV6ConfirmSummaryViewModel } from "@/lib/intakeV6/intakeV6ConfirmSummary";
 import { collectArtworkUndecidedWarnings } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
 import { formatConfirmSummaryM, formatConfirmSummaryM2 } from "@/lib/intakeV6/intakeV6ConfirmSummary";
+import type { AcmInclusionTone } from "@/lib/intakeV6/acmPanel/inclusionState";
 import { v6 } from "./atoms/intakeV6Presentation";
+
+function acmToneTextClass(tone: AcmInclusionTone): string {
+  switch (tone) {
+    case "ok":
+      return "text-emerald-300";
+    case "blocker":
+      return "text-rose-300";
+    case "pending":
+      return "text-amber-300";
+    case "muted":
+      return "text-slate-500";
+    default: {
+      const exhaustive: never = tone;
+      return exhaustive;
+    }
+  }
+}
 
 function NestingMiniThumb({ preview }: { preview: IntakeV6NestingPreviewResponse }) {
   const activeSheet = preview.sheets.find((sheet) => sheet.is_active_for_breakdown) ?? preview.sheets[0];
@@ -202,6 +220,14 @@ export default function IntakeV6ConfirmDashboard({
         <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-confirm-finish-compact">
           <h3 className="mb-1.5 text-[11px] font-semibold text-slate-200">Finisaje — rezumat</h3>
           <p className="text-[11px] leading-relaxed text-slate-300">{finishLine}</p>
+          {summary.acm ? (
+            <p
+              className={`mt-1.5 text-[11px] leading-relaxed ${acmToneTextClass(summary.acm.tone)}`}
+              data-testid="intake-v6-confirm-acm-inclusion"
+            >
+              {summary.acm.label} — {summary.acm.inclusionStateLabel}
+            </p>
+          ) : null}
         </div>
 
         {nestingPreview ? (

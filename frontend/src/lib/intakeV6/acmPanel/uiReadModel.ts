@@ -13,6 +13,7 @@ import type {
   ComponentRelation,
 } from "./types";
 import { ACM_PANEL_TEMPLATE_CODE } from "./types";
+import { resolveAcmInclusionState, type AcmInclusionState } from "./inclusionState";
 
 export type AcmOperatorTone = "ok" | "pending" | "blocker" | "muted" | "info";
 
@@ -81,6 +82,8 @@ export type AcmPanelUiReadModel = {
   unresolvedConfirmations: string[];
   issues: AcmPanelIssue[];
   compositionHonesty: AcmCompositionHonesty;
+  /** Single ACM inclusion-state truth — see ./inclusionState.ts. Consume this, do not re-derive. */
+  inclusionState: AcmInclusionState;
   geometryRelations: ComponentRelation[];
   mountingRelations: ComponentRelation[];
   criticalFieldsOperatorConfirmed: boolean;
@@ -410,6 +413,11 @@ export function buildAcmPanelUiReadModel(
   });
 
   const blockerCount = issues.filter((i) => i.severity === "blocker").length;
+  const inclusion = resolveAcmInclusionState({
+    payload,
+    hasComponent: hasAcm,
+    blocked: blockerCount > 0 || compositionHonesty.inconsistency,
+  });
   let primaryStatus = association;
   if (!instance) {
     primaryStatus = { label: "Neaplicabil", tone: "muted" };
@@ -481,6 +489,7 @@ export function buildAcmPanelUiReadModel(
     unresolvedConfirmations,
     issues,
     compositionHonesty,
+    inclusionState: inclusion.state,
     geometryRelations,
     mountingRelations,
     criticalFieldsOperatorConfirmed,

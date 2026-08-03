@@ -9,6 +9,11 @@ import {
   operatorCompositionRoleLabelRo,
 } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import { buildAcmPanelUiReadModel } from "@/lib/intakeV6/acmPanel/uiReadModel";
+import {
+  acmInclusionStateLabelRo,
+  acmInclusionStateTone,
+  type AcmInclusionState,
+} from "@/lib/intakeV6/acmPanel/inclusionState";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 
 type CompositionItem = {
@@ -141,6 +146,18 @@ function compositionLabel(type: string | undefined): string {
   return "Compoziție produs";
 }
 
+function isAcmCompositionItem(item: CompositionItem): boolean {
+  return item.component_role === "support_panel" || item.template_code === ACM_SUPPORT_TEMPLATE;
+}
+
+function acmInclusionLineClassName(state: AcmInclusionState): string {
+  const tone = acmInclusionStateTone(state);
+  if (tone === "ok") return "mt-0.5 text-[10px] text-emerald-300";
+  if (tone === "blocker") return "mt-0.5 text-[10px] text-rose-300";
+  if (tone === "pending") return "mt-0.5 text-[10px] text-amber-300";
+  return "mt-0.5 text-[10px] text-slate-600";
+}
+
 function formatSourceLayerIds(items: CompositionItem[]): Map<string, string> {
   const logoLabelMap = buildOperatorLogoLabelMap(
     items.flatMap((item) =>
@@ -219,6 +236,16 @@ function IntakeV6ProductCompositionPanelReady({
   // Keep L1 compact: expand only for blockers; confirm CTA stays outside details.
   const [open, setOpen] = useState(() => blockers.length > 0 || honesty.inconsistency);
 
+  // A-F2: optional ACM/support component gets its own yes/no decision, not a
+  // silent bundle into the mandatory (letters/logo) confirm click. Default
+  // stays "included" so an unattended confirm click keeps today's behaviour;
+  // the operator can explicitly opt the optional component out before confirming.
+  const acmItem = items.find(isAcmCompositionItem) ?? null;
+  const [acmIncludedInConfirm, setAcmIncludedInConfirm] = useState(true);
+  const confirmItems = acmItem && !acmIncludedInConfirm
+    ? items.filter((item) => item !== acmItem)
+    : items;
+
   const componentSummary = items.map((item) => roleLabel(item.component_role, item.template_code)).join(" · ");
   const statusLabel = honesty.productBadgeLabel;
   const badgeOk = honesty.productBadgeTone === "ok";
@@ -274,12 +301,26 @@ function IntakeV6ProductCompositionPanelReady({
             aria-hidden
           />
         </button>
+        {canConfirm && acmItem ? (
+          <label
+            className="flex shrink-0 items-center gap-1 text-[10px] text-slate-400"
+            data-testid="intake-v6-product-composition-acm-include-toggle"
+          >
+            <input
+              type="checkbox"
+              className="h-3 w-3 accent-cyan-500"
+              checked={acmIncludedInConfirm}
+              onChange={(event) => setAcmIncludedInConfirm(event.target.checked)}
+            />
+            Alucobond casetat inclus
+          </label>
+        ) : null}
         {canConfirm && onConfirm ? (
           <button
             type="button"
             className={`${v6.btnPrimary} inline-flex shrink-0 items-center gap-1 px-2.5 py-1 text-[11px]`}
             data-testid="intake-v6-confirm-product-composition"
-            onClick={() => onConfirm(items as Array<Record<string, unknown>>)}
+            onClick={() => onConfirm(confirmItems as Array<Record<string, unknown>>)}
           >
             <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
             Confirmă
@@ -310,6 +351,13 @@ function IntakeV6ProductCompositionPanelReady({
             </p>
             {item.status === "pending_template" ? (
               <p className="mt-1 text-[10px] text-amber-300">Template suport în așteptare</p>
+            ) : isAcmCompositionItem(item) ? (
+              <p
+                className={acmInclusionLineClassName(acmModel.inclusionState)}
+                data-testid="intake-v6-product-composition-acm-inclusion-status"
+              >
+                {acmInclusionStateLabelRo(acmModel.inclusionState)}
+              </p>
             ) : (
               <p className="mt-0.5 text-[10px] text-slate-600">Inclus în propunere</p>
             )}

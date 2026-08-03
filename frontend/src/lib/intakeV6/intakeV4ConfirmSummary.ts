@@ -11,6 +11,13 @@ import {
 } from "./intakeV4BackingMode";
 import type { IntakeV4QuoteGeometry } from "./intakeV4QuoteGeometry";
 import { readQuoteGeometryFromPayload } from "./intakeV4QuoteGeometry";
+import { buildAcmPanelUiReadModel } from "./acmPanel/uiReadModel";
+import {
+  acmInclusionStateLabelRo,
+  acmInclusionStateTone,
+  type AcmInclusionState,
+  type AcmInclusionTone,
+} from "./acmPanel/inclusionState";
 import { SVG_ARTWORK_EXECUTION_OPTIONS } from "@/lib/svgArtworkContracts";
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { resolveIntakeV6StoredLayerDisplayLabel } from "./intakeV6LayerDisplayLabel";
@@ -98,6 +105,18 @@ export interface IntakeV4ConfirmSummaryViewModel {
     artworkParts: number | null;
     stockConsumed: boolean;
   };
+  /**
+   * F7E A-F4: Recapitulare must never silently omit the ACM/support panel
+   * when it is present in the composition. `null` only when there is no
+   * ACM/support component at all for this workspace.
+   */
+  acm: {
+    label: string;
+    inclusionState: AcmInclusionState;
+    inclusionStateLabel: string;
+    tone: AcmInclusionTone;
+    dimensionsSummary: string | null;
+  } | null;
   warnings: Array<{ code: string; message: string }>;
 }
 
@@ -480,6 +499,17 @@ export function buildIntakeV4ConfirmSummary(args: {
     targetTotalM: effectiveReturnPerimeterM,
   }).groups;
 
+  const acmModel = buildAcmPanelUiReadModel({ payload: args.payload ?? null });
+  const acmSummary = acmModel.compositionHonesty.hasAcmInRecommendation
+    ? {
+        label: acmModel.label,
+        inclusionState: acmModel.inclusionState,
+        inclusionStateLabel: acmInclusionStateLabelRo(acmModel.inclusionState),
+        tone: acmInclusionStateTone(acmModel.inclusionState),
+        dimensionsSummary: acmModel.dimensionsSummary,
+      }
+    : null;
+
   return {
     structure: {
       layerCount: args.layerCount,
@@ -548,6 +578,7 @@ export function buildIntakeV4ConfirmSummary(args: {
       artworkParts: nestingSummary?.artwork_parts ?? null,
       stockConsumed: nestingBoundary?.consumes_stock === true || args.materialBreakdown?.stock_consumption === true,
     },
+    acm: acmSummary,
     warnings,
   };
 }

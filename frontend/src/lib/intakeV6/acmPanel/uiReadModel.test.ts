@@ -181,6 +181,89 @@ describe("acmPanel uiReadModel", () => {
     expect(model.technicalReady).toBe(false);
   });
 
+  it("inclusionState is inactive when no ACM component exists", () => {
+    const model = buildAcmPanelUiReadModel({ finishSetup: {}, payload: {} });
+    expect(model.inclusionState).toBe("inactive");
+  });
+
+  it("inclusionState is selected_incomplete when the component exists but CPP does not price it (no applied_content=letters)", () => {
+    const model = buildAcmPanelUiReadModel({
+      finishSetup: { acm_panel_instance: baseInstance() },
+      payload: {
+        product_composition_recommendation: {
+          composition_items: [
+            { component_role: "support_panel", template_code: ACM_PANEL_TEMPLATE_CODE },
+          ],
+        },
+      },
+    });
+    expect(model.inclusionState).toBe("selected_incomplete");
+  });
+
+  it("inclusionState is active_priced when CPP prices the ACM connection lines with no blockers", () => {
+    const model = buildAcmPanelUiReadModel({
+      finishSetup: {
+        acm_panel_instance: baseInstance({
+          role_status: "confirmed",
+          association_status: "confirmed",
+          technical_configuration_status: "confirmed",
+          composition_status: "confirmed",
+          configuration: {
+            ...baseInstance().configuration,
+            field_authority: {
+              panel_geometry: "operator_confirmed",
+              fold_count: "operator_confirmed",
+              l1_mm: "operator_confirmed",
+              l2_mm: "operator_confirmed",
+              finished_depth_mm: "operator_confirmed",
+              acm_thickness_mm: "operator_confirmed",
+              internal_frame: "operator_confirmed",
+            },
+          },
+          relations: [],
+        }),
+        segmented_background: { status: "CONFIRMED", panels: [] },
+        mounting_solution: { template_code: ACM_PANEL_TEMPLATE_CODE },
+        applied_content: "letters",
+      },
+      payload: {
+        finish_setup: {
+          mounting_solution: { template_code: ACM_PANEL_TEMPLATE_CODE },
+          applied_content: "letters",
+        },
+        product_composition_recommendation: {
+          composition_items: [
+            { component_role: "support_panel", template_code: ACM_PANEL_TEMPLATE_CODE },
+          ],
+        },
+        product_composition_confirmed: { confirmed: true },
+      },
+    });
+    expect(model.inclusionState).toBe("active_priced");
+  });
+
+  it("inclusionState is active_blocked when CPP would price it but critical fields/composition are still unresolved", () => {
+    const model = buildAcmPanelUiReadModel({
+      finishSetup: {
+        acm_panel_instance: baseInstance(),
+        mounting_solution: { template_code: ACM_PANEL_TEMPLATE_CODE },
+        applied_content: "letters",
+      },
+      payload: {
+        finish_setup: {
+          mounting_solution: { template_code: ACM_PANEL_TEMPLATE_CODE },
+          applied_content: "letters",
+        },
+        product_composition_recommendation: {
+          composition_items: [
+            { component_role: "support_panel", template_code: ACM_PANEL_TEMPLATE_CODE },
+          ],
+        },
+      },
+    });
+    expect(model.inclusionState).toBe("active_blocked");
+  });
+
   it("separates geometry vs mounting relations", () => {
     const model = buildAcmPanelUiReadModel({
       finishSetup: {

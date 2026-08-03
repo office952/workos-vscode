@@ -55,6 +55,92 @@ const linkedSegments = {
   ],
 };
 
+const lettersPlusAcmPayload = {
+  product_composition_recommendation: {
+    status: "needs_confirmation",
+    composition_type: "letters_plus_support",
+    composition_items: [
+      {
+        composition_item_id: "letters",
+        template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+        component_role: "volumetric_letters",
+        source_layer_ids: ["letters"],
+      },
+      {
+        composition_item_id: "support",
+        template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        component_role: "support_panel",
+        source_layer_ids: ["fundal-acm"],
+      },
+    ],
+    warnings: [],
+    blockers: [],
+  },
+  product_composition_confirmed: { confirmed: false },
+};
+
+describe("IntakeV6ProductCompositionPanel — F7E ACM inclusion honesty", () => {
+  it("never shows the mandatory 'Inclus în propunere' copy for the ACM/support item", () => {
+    render(<IntakeV6ProductCompositionPanel payload={lettersPlusAcmPayload} />);
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
+
+    expect(screen.getByTestId("intake-v6-product-composition-acm-inclusion-status")).toBeInTheDocument();
+    expect(screen.queryAllByText("Inclus în propunere")).toHaveLength(1); // only the letters item
+  });
+
+  it("labels the ACM item as not yet priced when the payload does not price it into the offer", () => {
+    render(<IntakeV6ProductCompositionPanel payload={lettersPlusAcmPayload} />);
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
+
+    expect(screen.getByTestId("intake-v6-product-composition-acm-inclusion-status")).toHaveTextContent(
+      /nu este încă inclus în ofertă/i,
+    );
+  });
+
+  it("labels the ACM item as actively priced when the payload prices it into the offer", () => {
+    const payload = {
+      ...lettersPlusAcmPayload,
+      finish_setup: {
+        mounting_solution: { template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" },
+        applied_content: "letters",
+      },
+    };
+    render(<IntakeV6ProductCompositionPanel payload={payload} />);
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
+
+    expect(screen.getByTestId("intake-v6-product-composition-acm-inclusion-status")).toHaveTextContent(
+      /inclus activ în ofertă/i,
+    );
+  });
+
+  it("A-F2: gives the optional ACM component its own include/exclude decision, separate from the mandatory confirm", () => {
+    const onConfirm = vi.fn();
+    render(<IntakeV6ProductCompositionPanel payload={lettersPlusAcmPayload} onConfirm={onConfirm} />);
+
+    const toggle = screen.getByTestId("intake-v6-product-composition-acm-include-toggle").querySelector("input")!;
+    expect(toggle).toBeChecked();
+
+    fireEvent.click(toggle);
+    expect(toggle).not.toBeChecked();
+
+    fireEvent.click(screen.getByTestId("intake-v6-confirm-product-composition"));
+
+    const confirmedItems = onConfirm.mock.calls[0][0] as Array<Record<string, unknown>>;
+    expect(confirmedItems.some((item) => item.component_role === "support_panel")).toBe(false);
+    expect(confirmedItems.some((item) => item.component_role === "volumetric_letters")).toBe(true);
+  });
+
+  it("A-F2: keeps the ACM component in the confirm payload when the operator leaves it included", () => {
+    const onConfirm = vi.fn();
+    render(<IntakeV6ProductCompositionPanel payload={lettersPlusAcmPayload} onConfirm={onConfirm} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-confirm-product-composition"));
+
+    const confirmedItems = onConfirm.mock.calls[0][0] as Array<Record<string, unknown>>;
+    expect(confirmedItems.some((item) => item.component_role === "support_panel")).toBe(true);
+  });
+});
+
 describe("IntakeV6ProductCompositionPanel", () => {
   it("labels ACM panel-alone as Panou Alucobond casetat", () => {
     const supportOnly = {

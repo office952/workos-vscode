@@ -26,6 +26,59 @@ LayerSetupStatus = Literal["missing", "partial", "complete"]
 WorkspaceDraftStatus = Literal["draft", "collecting_data", "blocked", "ready_for_quote_preview", "archived"]
 SvgUploadStatus = Literal["missing", "analyzed", "failed"]
 
+# Canonical face/return finish-type vocabulary (AGENT-B-F004 remediation, F7E G4).
+# Source of truth cross-checked against:
+#   - live UI option lists: frontend/src/lib/intakeV6/intakeV4FaceFinishOptions.ts
+#     (INTAKE_V4_FACE_FINISH_OPTIONS), frontend/src/lib/intakeV6/intakeV6ReturnFinishRules.ts
+#     (INTAKE_V6_RETURN_FINISH_UI_OPTIONS + UI_TO_INTERNAL adapter — short UI tokens
+#     white/black/gold/silver already normalize to the *_aluminum/mirror_silver tokens below
+#     before reaching this schema)
+#   - backend dossier contract: services/intake_v4_template_option_contract_service.py
+#     (V4_FACE_FINISH_TO_TEMPLATE, V4_RETURN_FINISH_TO_TEMPLATE)
+#   - backend normalization adapter: services/intake_v4_finish_adapter.py
+#     (_map_v4_face_finish, _RETURN_PAINTED/_RETURN_WRAPPED/_RETURN_RAW)
+# The trailing block on each Literal is legacy/internal aliases that are not offered by
+# the live UI combobox but are already recognized elsewhere in this codebase (adapter
+# alias sets, dossier canonical values, or pre-existing persisted/characterization
+# payloads read back through IntakeV4WorkspacePayload.model_validate on quote accept /
+# material breakdown / EIC preview). They stay accepted so this constraint closes off
+# arbitrary free text (AGENT-B-F004) without breaking those already-documented reads.
+# A value outside this set is rejected at the API boundary (422) instead of being
+# silently accepted and later marked commercially "ready" with no warning.
+FaceFinishTypeToken = Literal[
+    "none",
+    "oracal_641",
+    "oracal_651",
+    "oracal_8500",
+    "print_laminate",
+    # legacy/internal aliases (dossier canonical + pre-existing fixtures) — see note above
+    "printed_vinyl",
+    "printed_laminated_vinyl",
+    "plexiglas_clear",
+]
+ReturnFinishTypeToken = Literal[
+    "none",
+    "same_as_face",
+    "white_aluminum",
+    "black_aluminum",
+    "gold_aluminum",
+    "mirror_silver",
+    "standard_aluminum",
+    "oracal_wrapped",
+    "ral_paint",
+    # legacy/internal aliases (intake_v4_finish_adapter.py _RETURN_PAINTED/_RETURN_WRAPPED/
+    # _RETURN_RAW + pre-existing fixtures) — see note above
+    "oracal_651",
+    "vinyl",
+    "painted",
+    "paint",
+    "raw_material",
+    "raw",
+    "prefinished",
+    "ral",
+    "stock",
+]
+
 
 class IntakeV4ClientRequest(BaseModel):
     client_name: str | None = None
@@ -98,10 +151,10 @@ class IntakeV4LetterGroupFinish(BaseModel):
     face_area_m2: float | None = None
     perimeter_m: float | None = None
     element_count: int | None = None
-    face_finish_type: str | None = "oracal_651"
+    face_finish_type: FaceFinishTypeToken | None = "oracal_651"
     face_oracal_code: str | None = None
     face_oracal_name: str | None = None
-    return_finish_type: str | None = "white_aluminum"
+    return_finish_type: ReturnFinishTypeToken | None = "white_aluminum"
     return_oracal_code: str | None = None
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
@@ -136,7 +189,7 @@ class IntakeV4ArtworkFinish(BaseModel):
     estimated_area_m2: float | None = None
     element_count: int | None = None
     distinct_fill_count: int | None = None
-    return_finish_type: str | None = "white_aluminum"
+    return_finish_type: ReturnFinishTypeToken | None = "white_aluminum"
     return_oracal_code: str | None = None
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
@@ -192,10 +245,10 @@ class IntakeV4MountingSolution(BaseModel):
 
 
 class IntakeV4FinishSetup(BaseModel):
-    face_finish_type: str | None = None
+    face_finish_type: FaceFinishTypeToken | None = None
     face_vinyl_roll_width_mm: float | None = None
     finish_target: Literal["face", "cant", "artwork", "back", "all"] | None = None
-    return_finish_type: str | None = None
+    return_finish_type: ReturnFinishTypeToken | None = None
     volum_aluminum_module_template_code: str | None = None
     return_oracal_code: str | None = None
     return_oracal_name: str | None = None

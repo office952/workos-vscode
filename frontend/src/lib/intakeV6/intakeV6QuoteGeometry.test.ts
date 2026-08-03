@@ -121,28 +121,48 @@ describe("extractQuoteGeometryFromAnalyzer", () => {
 });
 
 describe("findOutOfScopeLayerWarnings", () => {
-  it("warns on ACM and slogan layers", () => {
-    const warnings = findOutOfScopeLayerWarnings(
-      mockConfirmation([
-        {
-          layerKey: "fundal",
-          layerName: "fundal-acm",
-          autoRole: "support_panel",
-          autoConfidence: "high",
-          confirmedRole: "support_panel",
-          confirmationState: "confirmed",
-        },
-        {
-          layerKey: "slogan",
-          layerName: "slogan-texte-decupate",
-          autoRole: "inner_hole",
-          autoConfidence: "medium",
-          confirmedRole: "inner_hole",
-          confirmationState: "confirmed",
-        },
-      ]),
-    );
+  const acmLayerConfirmation = mockConfirmation([
+    {
+      layerKey: "fundal",
+      layerName: "fundal-acm",
+      autoRole: "support_panel",
+      autoConfidence: "high",
+      confirmedRole: "support_panel",
+      confirmationState: "confirmed",
+    },
+    {
+      layerKey: "slogan",
+      layerName: "slogan-texte-decupate",
+      autoRole: "inner_hole",
+      autoConfidence: "medium",
+      confirmedRole: "inner_hole",
+      confirmationState: "confirmed",
+    },
+  ]);
+
+  it("warns on ACM and slogan layers when no payload is provided (conservative default)", () => {
+    const warnings = findOutOfScopeLayerWarnings(acmLayerConfirmation);
     expect(warnings.length).toBe(2);
+  });
+
+  it("still warns on ACM layer when the payload does not price it into the offer (F7E F1/B-F005)", () => {
+    const warnings = findOutOfScopeLayerWarnings(acmLayerConfirmation, {
+      finish_setup: { mounting_solution: { template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" } },
+    });
+    expect(warnings.some((w) => w.includes("ACM/casetat"))).toBe(true);
+  });
+
+  it("does not warn ACM 'standby' when the payload actually prices it into the offer (F7E F1/B-F005)", () => {
+    const warnings = findOutOfScopeLayerWarnings(acmLayerConfirmation, {
+      finish_setup: {
+        mounting_solution: { template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" },
+        applied_content: "letters",
+      },
+    });
+    expect(warnings.some((w) => w.includes("ACM/casetat"))).toBe(false);
+    // Unrelated slogan warning is untouched by ACM inclusion state.
+    expect(warnings.some((w) => w.includes("litere slogan"))).toBe(true);
+    expect(warnings.length).toBe(1);
   });
 });
 

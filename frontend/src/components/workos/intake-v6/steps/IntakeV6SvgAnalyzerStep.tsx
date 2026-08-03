@@ -85,9 +85,12 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			}),
 		[report, confirmation, state.workspace?.payload, state.localFileHash],
 	);
-	const scopeWarnings = useMemo(() => findOutOfScopeLayerWarnings(confirmation), [confirmation]);
-
 	const payload = state.workspace?.payload as Record<string, unknown> | undefined;
+	const scopeWarnings = useMemo(
+		() => findOutOfScopeLayerWarnings(confirmation, payload),
+		[confirmation, payload],
+	);
+
 	const templateCode =
 		payload?.product_binding != null &&
 		typeof payload.product_binding === "object" &&

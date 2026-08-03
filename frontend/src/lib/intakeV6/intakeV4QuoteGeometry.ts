@@ -5,6 +5,7 @@
 
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { classifyLetterPartsFromAnalysis } from "./intakeV4LetterPartClassification";
+import { isAcmPricedIntoOffer } from "./acmPanel/inclusionState";
 
 export interface IntakeV4ArtworkBox {
   layer_key: string;
@@ -488,17 +489,27 @@ export function readLetterPerimeterMFromSources(
   return live.letter_perimeter_m;
 }
 
+/**
+ * F7E F1/B-F005: this warning must not contradict the composition-panel chip
+ * or the CPP total — only fire the "standby, not in quote" message when the
+ * ACM/support layer is genuinely not priced into the offer. See
+ * ./acmPanel/inclusionState.ts for the single inclusion-state source of truth.
+ */
 export function findOutOfScopeLayerWarnings(
   confirmation: LayerRoleConfirmation | null | undefined,
+  payload?: Record<string, unknown> | null,
 ): string[] {
   if (!confirmation) return [];
   const warnings: string[] = [];
+  const acmPricedIntoOffer = isAcmPricedIntoOffer(payload);
   for (const layer of confirmation.layers) {
     if (layer.confirmationState === "ignored") continue;
     const role = layer.confirmedRole ?? layer.autoRole;
     const name = layer.layerName ?? layer.layerKey;
     if (role === "support_panel" || role === "bond_panel") {
-      warnings.push(`Strat „${name}” (ACM/casetat) — standby, nu intră în quote litere volumetrice.`);
+      if (!acmPricedIntoOffer) {
+        warnings.push(`Strat „${name}” (ACM/casetat) — standby, nu intră în quote litere volumetrice.`);
+      }
     }
     if (role === "inner_hole" && /slogan|texte-decupate/i.test(name)) {
       warnings.push(`Strat „${name}” (litere slogan) — standby până la template dedicat.`);
