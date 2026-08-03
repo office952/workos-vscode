@@ -357,10 +357,25 @@ class ProductAggregateService:
             if isinstance(raw_pd, dict):
                 pd_canonical = raw_pd
 
-        return apply_modular_process_graph_to_aggregate(
+        aggregate = apply_modular_process_graph_to_aggregate(
             aggregate,
             workspace_payload=process_bridge_payload,
             product_definition_canonical_values=pd_canonical,
+        )
+        # DEC-005=E / Wave 2: resolve ORR workcenters at compile/aggregate build.
+        # Snapshot freeze re-applies the same stamp; EP reads frozen values only.
+        from services.operation_workcenter_resolution_service import (
+            apply_workcenter_resolution_to_aggregate,
+            load_active_workcenter_codes,
+            load_orr_mappings,
+        )
+
+        orr_mappings = await load_orr_mappings(self._db)
+        active_wcs = await load_active_workcenter_codes(self._db)
+        return apply_workcenter_resolution_to_aggregate(
+            aggregate,
+            orr_mappings,
+            active_workcenter_codes=active_wcs,
         )
 
     async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:

@@ -240,6 +240,7 @@ export function ExecutionPlanV2TruthPanel({
                     <th className="text-left px-3 py-1.5">Task</th>
                     <th className="text-left px-3 py-1.5">Op source</th>
                     <th className="text-left px-3 py-1.5">Workcenter</th>
+                    <th className="text-left px-3 py-1.5">WC source</th>
                     <th className="text-right px-3 py-1.5">Minutes</th>
                     <th className="text-left px-3 py-1.5">Depends</th>
                     <th className="text-left px-3 py-1.5">Warnings</th>
@@ -264,6 +265,12 @@ export function ExecutionPlanV2TruthPanel({
                             MISSING_WORKCENTER
                           </span>
                         )}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
+                        <div>{task.machine_requirement?.mapping_source ?? "unknown"}</div>
+                        <div className="text-[9px] opacity-80">
+                          {task.machine_requirement?.resolution_status ?? "unknown"}
+                        </div>
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
                         {task.estimated_minutes === null || task.estimated_minutes === undefined ? (
@@ -307,6 +314,27 @@ export function ExecutionPlanV2TruthPanel({
                 <span key={op.operation_code} className="font-mono text-[10px] px-2 py-0.5 rounded border border-amber-800/50 bg-amber-900/30">
                   {op.operation_code}
                 </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {(preview.dependencies?.length ?? 0) > 0 ? (
+          <div
+            className="rounded-md border border-wo-border-strong bg-card px-3 py-2 text-[11px]"
+            data-testid="execution-plan-v2-dependency-edges"
+          >
+            <p className="font-semibold text-foreground uppercase tracking-wide text-[10px]">
+              Finish-aware dependencies ({preview.dependencies?.length})
+            </p>
+            <div className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+              {preview.dependencies?.map((edge) => (
+                <div
+                  key={`${edge.task_key}->${edge.depends_on_task_key}`}
+                  className="font-mono text-[10px] text-muted-foreground"
+                >
+                  {edge.depends_on_task_key} → {edge.task_key}
+                </div>
               ))}
             </div>
           </div>

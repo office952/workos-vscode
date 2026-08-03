@@ -22,10 +22,16 @@ PROCESS_DEPENDENCY_RULES: Dict[str, Dict[str, Any]] = {
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
         "dependency_reason": "Vopsirea volumului urmează după lipirea feței de cant.",
     },
+    # DEC-007 / Wave 2 Owner: foil may be prepared/printed early, but APPLICATION
+    # on letters waits until face↔return bonding AND body↔Forex-back assembly.
+    # Do not depend only on side_forming (that allowed premature application).
     "vinyl_application": {
-        "depends_on_process_ids": ["side_forming"],
+        "depends_on_process_ids": ["return_face_bonding", "assembly_letters"],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
-        "dependency_reason": "Aplicarea foliei pe cant urmează formarea cantului.",
+        "dependency_reason": (
+            "Aplicarea foliei pe litere urmează lipirea feței de cant și "
+            "prinderea corpului de spatele din Forex."
+        ),
     },
     "led_install_letters": {
         "depends_on_process_ids": ["back_cut"],
@@ -41,20 +47,22 @@ PROCESS_DEPENDENCY_RULES: Dict[str, Dict[str, Any]] = {
         "depends_on_process_ids": [
             "return_face_bonding",
             "painting",
-            "vinyl_application",
             "back_cut",
             "led_install_letters",
             "electrical_letters",
         ],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
         "dependency_reason": (
-            "Asamblarea depinde de subansamblele pregătite (canturi, finisaj activ, spate, LED, cablare)."
+            "Asamblarea (inclusiv prinderea corpului de spatele Forex) depinde de "
+            "subansamblele pregătite; aplicarea foliei vine după asamblare."
         ),
     },
     "qc_letters": {
-        "depends_on_process_ids": ["assembly_letters"],
+        "depends_on_process_ids": ["assembly_letters", "vinyl_application"],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
-        "dependency_reason": "Verificarea finală se face după asamblare.",
+        "dependency_reason": (
+            "Verificarea finală urmează asamblării și, dacă este activă, aplicării foliei."
+        ),
     },
     "packaging_letters": {
         "depends_on_process_ids": ["qc_letters"],
@@ -79,6 +87,12 @@ PREPARATION_DEPENDENCY_RULES: Dict[str, Dict[str, Any]] = {
         "depends_on_process_ids": ["vector_prep"],
         "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
         "dependency_reason": "Vector prep necesar înainte de CNC șablon Forex.",
+    },
+    # Early foil/vinyl prep may run in parallel; distinct from vinyl_application.
+    "face_vinyl_cut": {
+        "depends_on_process_ids": ["vector_prep"],
+        "dependency_mode": DEPENDENCY_MODE_ALL_FINISHED,
+        "dependency_reason": "Pregătirea/tăierea foliei poate rula după vector prep, înainte de aplicare.",
     },
 }
 

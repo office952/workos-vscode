@@ -375,7 +375,11 @@ export interface ExecutionPlanV2PreviewResponse {
     planning_minutes_source?: string | null;
     depends_on_task_keys?: string[];
     warnings: string[];
-    machine_requirement?: { workcenter?: string | null } | null;
+    machine_requirement?: {
+      workcenter?: string | null;
+      mapping_source?: string | null;
+      resolution_status?: string | null;
+    } | null;
   }>;
   planned_operations: Array<{
     operation_code: string;

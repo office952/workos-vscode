@@ -277,8 +277,8 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | Phase | Entry criteria | Allowed changes | Forbidden changes | Exit criteria | Owner GO required |
 | ----- | -------------- | --------------- | ----------------- | ------------- | ----------------- |
 | **0 — Owner decisions** | Full Flow + Step 9 semantic audits complete | Docs, decision table updates | Any runtime / POST materialize | DEC-003/004/005/007/009 recorded | **Yes** (decisions themselves) |
-| **1 — Step 9B UI read-only** | Plan persist validated; DEC-008=A | Read-only UI panels, badges | Materialize, sessions, assignment, pricing | UI shows 12 tasks, gaps labeled | **Yes** for UI scope |
-| **2 — Upstream enrichment** | DEC-003/004/005/007 answered | Aggregate/dossier/task_rules, snapshot re-freeze on new quotes | Retroactive quote reprice; `/price`; CE rewrite | New fixture: WC on parent ops; no duplicate materialization candidates | **Yes** |
+| **1 — Step 9B UI read-only** | Plan persist validated; DEC-008=A | Read-only UI panels, badges | Materialize, sessions, assignment, pricing | UI shows gaps labeled — **COMPLETE (Wave 1)** | Done |
+| **2 — Upstream enrichment** | DEC-003/004/005/007 = A/A/E/B Owner-approved | Aggregate ORR stamp, alias collapse, finish-aware DAG, new fixture | Retroactive quote reprice; `/price`; CE rewrite; materialize | New fixture: WC frozen; no RETURN/painting duplicates; foil after assembly | **Yes** (Wave 2) |
 | **3 — Materialization GO** | Faza 2 exit + DEC-009=B | POST materialize on fixture; pytest | Sessions, Employee Mobile, pricing | `operational_tasks[]` populated; readiness `v2_operational_ready` | **Yes** |
 | **4 — WC / utilaje** | Faza 3 exit | WC on ops, utilaje linkage, capacity metadata | Commercial hourly pricing | WC resolvable on all materialized tasks | **Yes** |
 | **5 — Employees / eligibility** | Faza 4 exit | Eligibility read models, role/skill maps | Forced assignment without rules | Eligibility query per operational task | **Yes** |
@@ -298,11 +298,11 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | **DEC-002** | `premount_bar_preparation` | A) BOM-only; B) conditional task_rule when premount active | **A** default; hard ban without activation signal | Soft after F7A.1 ban | **A — RECORDED (F7A.1 hard ban)** |
 | **DEC-003** | RETURN lateral duplicate / canonical `side_forming` | A) parent canonical; B) module canonical; C) both (reject) | **A** — parent canonical; module = aggregate alias only | Soft after F7A | **A — RECORDED (F7A)** |
 | **DEC-004** | `PAINTING` module duplicate | A) parent `painting`; B) module `PAINTING`; C) both | **A** — parent canonical | Soft after F7A | **A — RECORDED (F7A)** |
-| **DEC-005** | Workcenter source policy | A) enrich parent at compile; B) map module alias WC; C) manual post-materialize; D) registry-only pass | **A** upstream Aggregate → freeze → plan; registry codes | Soft after F7A.1 | **A — RECORDED (F7A.1 registry fidelity)** |
+| **DEC-005** | Workcenter source policy | A) enrich parent at compile; B) map module alias WC; C) manual post-materialize; D) registry-only pass; E) A+D controlled | **E** ORR resolve at Aggregate compile + Snapshot freeze; EP reads frozen | Soft | **E — RECORDED (Wave 2 Owner GO 2026-08-03)** |
 | **DEC-006** | `estimated_minutes` source | A) null + warn; B) dossier time_assumptions; C) capacity registry; D) planner entry only | **A** short-term | No for audit; **Yes** for scheduling | **A — RECORDED (null + warn)** |
-| **DEC-007** | Dependency model | A) linear MVP; B) finish-aware DAG; C) parallel branches (template/premount) | **B** on EP V2 path | Soft after F7A | **B — RECORDED (F7A EP V2)** |
+| **DEC-007** | Dependency model | A) linear MVP; B) finish-aware DAG; C) parallel branches (template/premount) | **B** finish-aware DAG; foil after bonding+assembly | Soft | **B — RECORDED (Wave 2 Owner GO; foil sequencing corrected)** |
 | **DEC-008** | Step 9B UI before gap fix | A) proceed with gap badges; B) wait for upstream | **A** — proceed read-only | No | **A — RECORDED** |
-| **DEC-009** | POST materialize | A) remain blocked; B) GO after DEC-003/004/005/007 | **A** until Owner sets B after F7A.1 review | **Yes** | **A — REMAIN BLOCKED** |
+| **DEC-009** | POST materialize | A) remain blocked; B) GO after Wave 2 validated | **A** until separate Wave 3 Owner GO | **Yes** | **A — REMAIN BLOCKED** |
 
 **Minimum before materialize GO:** DEC-003/004/005/007 recorded (done); F7A.1 WC+premount gaps closed; DEC-009 explicitly set to **B** by Owner written GO; controlled fixture only.
 
