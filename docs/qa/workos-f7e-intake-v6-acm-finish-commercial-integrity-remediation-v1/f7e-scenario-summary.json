@@ -1,0 +1,271 @@
+{
+  "F_face_finish": [
+    {
+      "scenario": "F1_face_none",
+      "status": "ready",
+      "commercial_total": 490.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "F2_face_oracal_651_code021",
+      "status": "ready",
+      "commercial_total": 575.0,
+      "finish_lines": [
+        {
+          "code": "finisaje_oracal_651_material",
+          "subtotal": 22.5,
+          "unit_price": 9.0
+        },
+        {
+          "code": "finisaje_oracal_651_labor",
+          "subtotal": 62.5,
+          "unit_price": 25.0
+        }
+      ],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "F3_face_oracal_641_code021",
+      "status": "ready",
+      "commercial_total": 568.75,
+      "finish_lines": [
+        {
+          "code": "finisaje_oracal_641_material",
+          "subtotal": 16.25,
+          "unit_price": 6.5
+        },
+        {
+          "code": "finisaje_oracal_641_labor",
+          "subtotal": 62.5,
+          "unit_price": 25.0
+        }
+      ],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "F4_face_oracal_8500",
+      "status": "ready",
+      "commercial_total": 602.5,
+      "finish_lines": [
+        {
+          "code": "finisaje_oracal_8500_material",
+          "subtotal": 50.0,
+          "unit_price": 20.0
+        },
+        {
+          "code": "finisaje_oracal_8500_labor",
+          "subtotal": 62.5,
+          "unit_price": 25.0
+        }
+      ],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "F5_face_print_laminate",
+      "status": "blocked",
+      "commercial_total": 490.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [
+        "COMMERCIAL_RULE_MISSING"
+      ],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    }
+  ],
+  "R_return_finish": [
+    {
+      "scenario": "R1_return_white_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 490.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "R2_return_black_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 490.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "R3_return_gold_aluminum_stock",
+      "status": "ready",
+      "commercial_total": 490.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "R4_return_ral_paint_9016",
+      "status": "ready",
+      "commercial_total": 590.0,
+      "finish_lines": [
+        {
+          "code": "finisaje_cant_ral_material",
+          "subtotal": 60.0,
+          "unit_price": 4.0
+        },
+        {
+          "code": "finisaje_cant_ral_labor",
+          "subtotal": 40.0,
+          "unit_price": 5.0
+        }
+      ],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    },
+    {
+      "scenario": "R5_return_oracal_wrapped",
+      "status": "ready",
+      "commercial_total": 537.2,
+      "finish_lines": [
+        {
+          "code": "finisaje_cant_oracal_material",
+          "subtotal": 7.2,
+          "unit_price": 9.0
+        },
+        {
+          "code": "finisaje_cant_oracal_labor",
+          "subtotal": 40.0,
+          "unit_price": 5.0
+        }
+      ],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant"
+      ]
+    }
+  ],
+  "M_mounting_material_control": [
+    {
+      "scenario": "M1_sablon_paper",
+      "status": "ready",
+      "commercial_total": 495.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant",
+        "sablon_montaj"
+      ]
+    },
+    {
+      "scenario": "M2_sablon_forex",
+      "status": "ready",
+      "commercial_total": 505.0,
+      "finish_lines": [],
+      "unknown_owner_decisions": [
+        "AMBALARE_COMMERCIAL_RULE"
+      ],
+      "blockers": [],
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant",
+        "sablon_montaj"
+      ]
+    }
+  ]
+}

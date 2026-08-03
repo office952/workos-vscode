@@ -1,0 +1,168 @@
+{
+  "preview_version": "1.0.0",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "source": "commercial_price_proposal",
+  "status": "ready",
+  "commercial_price_lines": [
+    {
+      "code": "debitare_fata",
+      "label": "Debitare față litere",
+      "module_code": "debitare_fata",
+      "component_code": "comp_face_litere",
+      "basis_type": "ml",
+      "quantity": 8,
+      "unit": "ml",
+      "commercial_unit_price": 25.0,
+      "subtotal": 200.0,
+      "pricing_rule_code": "VOL_V2_FACE_CNC_ML",
+      "source": "commercial_rules_volumetric_v2:face_perimeter_ml",
+      "owner_decision_required": false,
+      "warnings": [
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "RON",
+      "cpp_currency": "RON",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "modelare_cant_aluminiu",
+      "label": "Modelare cant aluminiu",
+      "module_code": "modelare_cant",
+      "component_code": "comp_lateral_litere",
+      "basis_type": "ml",
+      "quantity": 8,
+      "unit": "ml",
+      "commercial_unit_price": 30.0,
+      "subtotal": 240.0,
+      "pricing_rule_code": "VOL_V2_RETURN_PROFILE_ML",
+      "source": "commercial_rules_volumetric_v2:return_profile_ml",
+      "owner_decision_required": false,
+      "warnings": [
+        "Technical inputs: letter_perimeter_m, return_depth_mm — not minutes.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "RON",
+      "cpp_currency": "RON",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "debitare_spate",
+      "label": "Debitare spate litere",
+      "module_code": "debitare_spate",
+      "component_code": "comp_spate_litere",
+      "basis_type": "m2",
+      "quantity": 2.5,
+      "unit": "m2",
+      "commercial_unit_price": 20.0,
+      "subtotal": 50.0,
+      "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+      "source": "commercial_rules_volumetric_v2:back_m2_dev_bridge",
+      "owner_decision_required": false,
+      "warnings": [
+        "Step 8 dev bridge: interim m² basis until owner formalizes ml vs m² in Pricing Registry.",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "RON",
+      "cpp_currency": "RON",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    },
+    {
+      "code": "ambalare",
+      "label": "Ambalare",
+      "module_code": "ambalare_livrare_montaj",
+      "component_code": "comp_finisaj_litere",
+      "basis_type": "fixed",
+      "quantity": null,
+      "unit": "set",
+      "commercial_unit_price": null,
+      "subtotal": null,
+      "pricing_rule_code": "VOL_V2_PACKAGING_PENDING",
+      "source": "commercial_rules_volumetric_v2:packaging_rule_pending",
+      "owner_decision_required": true,
+      "warnings": [],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": null,
+      "cpp_currency": null,
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null
+    }
+  ],
+  "subtotal_commercial": 490.0,
+  "commercial_total": 490.0,
+  "currency": "RON",
+  "minimums_applied": [],
+  "complexity_adjustments": [],
+  "unknown_owner_decisions": [
+    {
+      "code": "AMBALARE_COMMERCIAL_RULE",
+      "label": "Ambalare",
+      "module_code": "ambalare_livrare_montaj",
+      "detail": "Commercial packaging rule (fixed/set) not yet owner-defined."
+    }
+  ],
+  "commercial_blockers": [],
+  "warnings": [],
+  "forbidden_hourly_usage_detected": [],
+  "provenance": [
+    {
+      "key": "product_definition",
+      "source": "product_definition_builder_service",
+      "detail": "read_only=true workspace_id=none"
+    },
+    {
+      "key": "commercial_rules",
+      "source": "commercial_rules_volumetric_v2",
+      "detail": "temporary_local_catalog_until_step_7i"
+    },
+    {
+      "key": "active_modules",
+      "source": "commercial_price_proposal_service",
+      "detail": "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant"
+    },
+    {
+      "key": "quote_input",
+      "source": "request_body",
+      "detail": "read_only_normalization_no_pricing_engine"
+    }
+  ],
+  "confidence": "high",
+  "quote_ready_for_commercial_review": true,
+  "notes": [
+    "Read-only CommercialPriceProposal preview — Step 7G.",
+    "Does not call /price, CostEngine, or QuoteOrchestrator.",
+    "Linked-logo print/laminate/application may bind to existing Pricing Registry operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) with company_commercial_settings EUR→RON conversion.",
+    "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD (200 EUR fixed / locatie) via the same EUR→RON path; travel outside Bucharest is not auto-added. Fail closed if the rate or FX is unavailable.",
+    "Hourly commercial basis is forbidden."
+  ],
+  "input_summary": {
+    "has_payload": true,
+    "active_modules": [
+      "ambalare_livrare_montaj",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje",
+      "modelare_cant"
+    ],
+    "workspace_id": null,
+    "linked_logo_segments": [],
+    "site_install_required": false
+  }
+}

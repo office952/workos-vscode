@@ -1,0 +1,198 @@
+{
+  "proof_id": "F7E_LEAD_RUNTIME_PROOF_2026-08-03",
+  "repo": "C:\\w\\psiso",
+  "observed_at_utc": "2026-08-03T04:23:02Z_to_04:31:24Z",
+  "backend_reload_note": "No restart performed or required. Backend already had F7E rule files (commercial_rules_volumetric_v2.py 07:07, commercial_price_proposal_service.py 07:18) loaded live via uvicorn --reload before this proof began; confirmed indirectly because probe results already reflect the new remediation rules (Oracal face material/labor split, RAL/wrap cant pricing, print_laminate COMMERCIAL_RULE_MISSING). stop-dev.ps1 / dev-detached.ps1 were NOT invoked.",
+  "stack_health": {
+    "frontend_3000_http_status": 200,
+    "backend_8000_docs_http_status": 200,
+    "checked_before": true,
+    "checked_after": true,
+    "result": "healthy_no_restart_needed"
+  },
+  "materialization_gate": {
+    "endpoint": "GET /api/v1/system/local-compatibility",
+    "pilot_gate_open": false,
+    "live_dec009": "A",
+    "live_dec009_label": "BLOCKED",
+    "batch_execute_materialize_authorized": true,
+    "batch_execute_materialize_mode": "True_CONDITIONAL",
+    "protected_order_ids": [92401, 973010, 973012, 973013, 973015, 973018, 973019],
+    "verdict": "CLOSED_CONFIRMED",
+    "checked_before": "2026-08-03T04:23:02.217110+00:00",
+    "checked_after": "2026-08-03T04:31:24.792142+00:00",
+    "drift": false
+  },
+  "protected_baselines": {
+    "source": "backend/dev.db (sqlite, read-only SELECT only, no writes)",
+    "method": "orders.total_amount + sha256(orders.snapshot_v2_json)[:16] + execution_plan (latest by order_id) id/tasks_json.operational_tasks length",
+    "order_880811": {
+      "before": {
+        "commercial_total": 1847.5,
+        "snapshot_sha256_prefix16": "a59b6c447d9e6afb",
+        "snapshot_sha256_prefix8": "a59b6c44",
+        "plan_id": 22,
+        "ops": 5,
+        "status": "locked"
+      },
+      "after": {
+        "commercial_total": 1847.5,
+        "snapshot_sha256_prefix16": "a59b6c447d9e6afb",
+        "snapshot_sha256_prefix8": "a59b6c44",
+        "plan_id": 22,
+        "ops": 5,
+        "status": "locked"
+      },
+      "matches_expected": true,
+      "unauthorized_drift": false
+    },
+    "order_973019": {
+      "before": {
+        "commercial_total": 847.5,
+        "snapshot_sha256_prefix16": "2d412e6e1234ae44",
+        "snapshot_sha256_prefix8": "2d412e6e",
+        "plan_id": 21,
+        "ops": 18,
+        "status": "locked"
+      },
+      "after": {
+        "commercial_total": 847.5,
+        "snapshot_sha256_prefix16": "2d412e6e1234ae44",
+        "snapshot_sha256_prefix8": "2d412e6e",
+        "plan_id": 21,
+        "ops": 18,
+        "status": "locked"
+      },
+      "matches_expected": true,
+      "unauthorized_drift": false
+    },
+    "overall_verdict": "NO_DRIFT — both protected orders byte-identical before/after this proof session"
+  },
+  "live_commercial_proof": {
+    "method": "POST /api/v1/product-system/commercial-price-preview/TPL-VOLUMETRIC-LETTERS_v2 (read-only CPP preview; no /price, no CostEngine, no persistence); synthetic-but-held-constant geometry (letter_count=9, letter_face_area_m2=2.5, letter_perimeter_m=8.0), currency RON",
+    "probe_script": "docs/qa/workos-f7e-intake-v6-acm-finish-commercial-integrity-remediation-v1/_f7e_probe_scenarios.py",
+    "raw_captures_dir": "docs/qa/workos-f7e-intake-v6-acm-finish-commercial-integrity-remediation-v1/captures/",
+    "raw_summary": "docs/qa/workos-f7e-intake-v6-acm-finish-commercial-integrity-remediation-v1/f7e-scenario-summary.json",
+    "matrix": [
+      {
+        "check": "none finish: no flat 35 finish charge",
+        "scenario": "F1_face_none",
+        "commercial_total": 490.0,
+        "finish_lines": [],
+        "status": "ready",
+        "verdict": "PASS — no finisaje_colantare_vopsire line, no flat 35 RON/m2 charge for 'Fara finisaj'"
+      },
+      {
+        "check": "Oracal 8500 face vs none or vs 641: TOTAL MUST CHANGE",
+        "scenario_none": "F1_face_none",
+        "total_none": 490.0,
+        "scenario_641": "F3_face_oracal_641_code021",
+        "total_641": 568.75,
+        "scenario_8500": "F4_face_oracal_8500",
+        "total_8500": 602.5,
+        "delta_8500_vs_none": 112.5,
+        "delta_8500_vs_641": 33.75,
+        "verdict": "PASS — total changes both vs none (+112.50 RON) and vs 641 (+33.75 RON); no zero-delta"
+      },
+      {
+        "check": "stock cant colors still zero-delta vs each other",
+        "scenarios": ["R1_return_white_aluminum_stock", "R2_return_black_aluminum_stock", "R3_return_gold_aluminum_stock"],
+        "totals": [490.0, 490.0, 490.0],
+        "verdict": "PASS — zero-delta preserved by design (owner-documented: no additional tariff for stock cant colors)"
+      },
+      {
+        "check": "RAL or oracal_wrapped cant: priced or explicit COMMERCIAL_RULE_MISSING (not silent flat 35)",
+        "scenario_ral": "R4_return_ral_paint_9016",
+        "total_ral": 590.0,
+        "ral_lines": [
+          {"code": "finisaje_cant_ral_material", "subtotal": 60.0, "unit_price": 4.0},
+          {"code": "finisaje_cant_ral_labor", "subtotal": 40.0, "unit_price": 5.0}
+        ],
+        "delta_ral_vs_stock": 100.0,
+        "scenario_wrap": "R5_return_oracal_wrapped",
+        "total_wrap": 537.2,
+        "wrap_lines": [
+          {"code": "finisaje_cant_oracal_material", "subtotal": 7.2, "unit_price": 9.0},
+          {"code": "finisaje_cant_oracal_labor", "subtotal": 40.0, "unit_price": 5.0}
+        ],
+        "delta_wrap_vs_stock": 47.2,
+        "verdict": "PASS — both RAL and Oracal-wrap cant now have dedicated material+labor lines, both non-zero-delta vs stock baseline (490.0); no silent flat-35 charge on either"
+      },
+      {
+        "check": "print_laminate: COMMERCIAL_RULE_MISSING blocked",
+        "scenario": "F5_face_print_laminate",
+        "status": "blocked",
+        "commercial_total": 490.0,
+        "blockers": ["COMMERCIAL_RULE_MISSING"],
+        "verdict": "PASS — fails closed with explicit blocker, not silently priced at flat finisaje rate"
+      },
+      {
+        "check": "paper->Forex still +10",
+        "scenario_paper": "M1_sablon_paper",
+        "total_paper": 495.0,
+        "scenario_forex": "M2_sablon_forex",
+        "total_forex": 505.0,
+        "delta": 10.0,
+        "verdict": "PASS — control mechanism (sablon_montaj_hartie -> sablon_montaj_forex) unchanged, +10 RON preserved"
+      }
+    ],
+    "additional_observations": [
+      "F2_face_oracal_651_code021 total=575.0 (material 22.5 + labor 62.5), F3_face_oracal_641 total=568.75 (material 16.25 + labor 62.5) — different EUR/m2 material rates now produce distinct totals per Oracal series (641 < 651 < 8500), matching the owner-documented purchase-cost ordering; this closes AGENT-B-F001/F002.",
+      "unknown_owner_decisions AMBALARE_COMMERCIAL_RULE present on every scenario (packaging rule still owner-pending) — unrelated to this remediation scope, unchanged from F7D."
+    ]
+  },
+  "ui_proof": {
+    "workspace_id": "5a5ce742-f50f-47b0-985b-32cc6f2fb6a4",
+    "intake_code": "IV6-9C5D9538",
+    "workspace_status_at_check": "ready_for_quote_preview",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "route": "/intake-v6-app/5a5ce742-f50f-47b0-985b-32cc6f2fb6a4/operator",
+    "screenshots_dir": "docs/qa/workos-f7e-intake-v6-acm-finish-commercial-integrity-remediation-v1/screenshots/",
+    "screenshots": [
+      {
+        "file": "step1-straturi-full.png",
+        "step": "1 Straturi",
+        "observation": "Two detected layers: 'Alucobond Casetat' (Panou Alucobond casetat, Optional - Selectat) and 'Litere Volumetrice' (Fata litere volumetrice, Obligatoriu - Confirmat). No 'standby' language observed on this step."
+      },
+      {
+        "file": "step2-configurare-full.png",
+        "step": "2 Configurare (Finisaje tab)",
+        "observation": "Sidebar 'Estimari pe produs' itemizes Litere 249,98 EUR and Panou Alucobond 86,77 EUR as separate lines plus 'Legaturi Litere<->Bond 7 linii'. 'Cost intern estimativ' headline = 249,98 EUR (Litere-only subset, not a combined total) - same figure on Step 3, see gap noted below."
+      },
+      {
+        "file": "step2-panou-carcasa-full.png",
+        "step": "2 Configurare (Panou / carcasa tab)",
+        "observation": "ACM panel (Alucobond casetat) shown as a first-class configurable module with 'Confirma panoul Alucobond' action, not hidden or marked standby."
+      },
+      {
+        "file": "step2-compozitie-inclusion-status.png",
+        "step": "2 Configurare (Compozitie produs drawer)",
+        "observation": "Explicit, consistent labels: 'Litere volumetrice -> Inclus in propunere' and 'Alucobond casetat -> Inclus activ in oferta'. No contradictory standby-vs-included language found."
+      },
+      {
+        "file": "step3-confirmare-detalii-linii.png",
+        "step": "3 Confirmare (Detalii linii drawer)",
+        "observation": "Line-item breakdown drawer lists ONLY Litere-scope lines (plexiglas, Forex, Oracal 8500, Vopsea RAL, Cant/volum, Module LED, CNC operations, etc.) - zero Alucobond/ACM line items appear in this specific drawer."
+      },
+      {
+        "file": "step3-confirmare-recapitulare-acm.png",
+        "step": "3 Confirmare (Recapitulare si diagnostic tehnic, expanded)",
+        "observation": "'Finisaje - rezumat' card explicitly states 'Alucobond casetat - Inclus activ in oferta' (same wording as Step 2 Compozitie drawer - consistent, no contradiction). Headline 'Cost intern estimativ' above it = 249,98 EUR, i.e. still only the Litere subset."
+      }
+    ],
+    "acm_inclusion_honesty_verdict": {
+      "no_standby_vs_included_contradiction": true,
+      "acm_visible_in_step3_recap_text": true,
+      "detail": "The specific F1/B-F005 defect (ACM inclusion status contradicted as 'standby' on some surfaces and 'included' on others) is NOT reproduced anywhere in this pass: Step 1 layer card, Step 2 Compozitie drawer, and Step 3 Recapitulare card all agree the ACM panel is actively included ('Inclus activ in oferta' / 'Inclus in propunere'). No 'standby' string appears anywhere on the page.",
+      "residual_gap_found": "Step 3's single 'Cost intern estimativ' headline number (249,98 EUR) is identical to Step 2's and reflects only the Litere subset, not Litere+Panou Alucobond (336,75 EUR combined per Step 2's own itemized 'Estimari pe produs' list). Step 3 also drops the itemized per-product breakdown ('Estimari pe produs': Litere / Panou Alucobond / Legaturi) that Step 2 shows in its sidebar - the 'Detalii linii' drawer on Step 3 only lists Litere-scope lines, and the Alucobond panel's 86,77 EUR estimate is not reachable from Step 3 except as a qualitative status label. This is a narrower version of A-F4 (recap text now correctly says ACM is included, but the recap TOTAL and itemized line list do not carry the ACM estimate forward) — recommend as a small follow-up, not a P0 blocker, since it is a display-completeness gap rather than a status contradiction."
+    }
+  },
+  "no_side_effects": {
+    "post_materialize_performed": false,
+    "real_offers_created_or_accepted": false,
+    "ports_killed": false,
+    "db_writes": false,
+    "temp_files_cleaned_up": ["backend/_f7e_baseline_check.py (deleted after use)"]
+  },
+  "overall_verdict": "READY_FOR_LEAD_COMMIT"
+}
