@@ -183,18 +183,20 @@ async def test_sablon_hartie_documented_price(cpp_service: CommercialPricePropos
 
 
 @pytest.mark.asyncio
-async def test_debitare_spate_unpublished_eur_m2_fail_closed(cpp_service: CommercialPriceProposalService):
-    """F7H: back CNC keeps mÂ² basis; sell EUR/mÂ² is unpublished â€” fail-closed, no invented rate."""
+async def test_debitare_spate_owner_provisional_eur_m2(cpp_service: CommercialPriceProposalService):
+    """F7I.1: back CNC keeps m² basis; Owner-confirmed provisional 15 EUR/m² is consumable."""
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=_full_quote_input())
     assert preview is not None
     back = next(line for line in preview.commercial_price_lines if line.code == "debitare_spate")
     assert back.basis_type == "m2"
     assert back.unit == "m2"
-    assert back.owner_decision_required is True
-    assert back.commercial_unit_price is None
-    assert back.subtotal is None
+    assert back.owner_decision_required is False
+    assert back.commercial_unit_price == pytest.approx(15.0)
+    assert back.subtotal is not None
     assert back.source_currency == "EUR"
-    assert any(d.code == "DEBITARE_SPATE_COMMERCIAL_EUR_M2" for d in preview.unknown_owner_decisions)
+    assert back.cpp_currency == "EUR"
+    assert back.rate_publication_status == "provisional"
+    assert not any(d.code == "DEBITARE_SPATE_COMMERCIAL_EUR_M2" for d in preview.unknown_owner_decisions)
 
 
 @pytest.mark.asyncio
@@ -341,7 +343,7 @@ async def test_face_finish_none_does_not_charge_flat_finish_line(
     codes = {line.code for line in preview.commercial_price_lines}
     assert "finisaje_colantare_vopsire" not in codes
     assert not any(b.code == "COMMERCIAL_RULE_MISSING" for b in preview.commercial_blockers)
-    # F7H: unpublished back CNC / LED sell rates keep the offer honestly partial.
+    # F7I.1: former unpublished back/LED rates are Owner provisional; status may be ready/partial.
     assert preview.status in {"ready", "partial"}
 
 

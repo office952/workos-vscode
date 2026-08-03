@@ -13,7 +13,7 @@ export function commercialReferenceLabel(
     case "ACTIVE_PUBLISHED":
       return "Publicat (catalog)";
     case "ACTIVE_PROVISIONAL":
-      return "Provizoriu (reutilizare WC)";
+      return "Tarif provizoriu";
     case "ACTIVE_MISSING_RATE":
       return "Lipsă tarif Owner";
     case "BLOCKED_BY_POLICY":

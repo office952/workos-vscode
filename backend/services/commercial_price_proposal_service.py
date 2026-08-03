@@ -890,7 +890,11 @@ async def _build_line(
         rate_status = "unpublished"
     elif "owner_commercial_decision:f7f" in (source or ""):
         rate_status = "owner_confirmed"
-    elif "f7h_provisional" in (source or "") or "documented_eur_fallback" in (source or ""):
+    elif (
+        "f7h_provisional" in (source or "")
+        or "owner_confirmed_provisional" in (source or "")
+        or "documented_eur_fallback" in (source or "")
+    ):
         rate_status = "provisional"
     elif (registry_pricing_code or "") in _owner_confirmed_commercial_registry:
         rate_status = "owner_confirmed"

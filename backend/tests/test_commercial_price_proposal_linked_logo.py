@@ -394,7 +394,8 @@ async def test_installation_commercial_line_when_included(cpp_service: Commercia
     assert montaj.commercial_unit_price is None
     assert preview.status in {"partial", "blocked"}
     ambalare = next(line for line in preview.commercial_price_lines if line.code == "ambalare")
-    assert ambalare.owner_decision_required is True
+    assert ambalare.owner_decision_required is False
+    assert ambalare.commercial_unit_price == pytest.approx(20.0)
 
 
 # --- 15, 23. PSU / VAT handled at dry-run; CPP currency RON ---

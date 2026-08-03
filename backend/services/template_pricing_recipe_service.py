@@ -11,6 +11,7 @@ from data.commercial_rules_volumetric_v2 import (
     LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES,
     RULES_BY_TEMPLATE,
     CommercialRuleDefinition,
+    OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES,
     classify_commercial_rule_publication,
 )
 from data.internal_cost_rules_volumetric_v2 import (
@@ -442,7 +443,12 @@ class TemplatePricingRecipeService:
             rate_pub = "unpublished"
         elif ref_status == "ACTIVE_PROVISIONAL":
             status = "warning"
-            warnings.append("PROVISIONAL_WORKCENTER_REUSE_NOT_OWNER_FINAL_SELL")
+            if rule.line_code in OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES:
+                warnings.append(
+                    "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE_FINAL_REVIEW_REQUIRED"
+                )
+            else:
+                warnings.append("PROVISIONAL_WORKCENTER_REUSE_NOT_OWNER_FINAL_SELL")
             rate_pub = "provisional"
         elif ref_status == "ACTIVE_PUBLISHED":
             rate_pub = "owner_confirmed"
@@ -502,7 +508,11 @@ class TemplatePricingRecipeService:
             cost_label_ro=(
                 "Tarif comercial nepublicat — Owner"
                 if ref_status == "ACTIVE_MISSING_RATE"
-                else "Rată comercială (referință catalog)"
+                else (
+                    "Tarif provizoriu aprobat — Owner 2026-08-03"
+                    if rule.line_code in OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES
+                    else "Rată comercială (referință catalog)"
+                )
             ),
             unit=rule.unit,
             current_value=value,

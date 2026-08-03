@@ -302,8 +302,9 @@ async def test_packaging_deferred_and_sablon_not_doubled(cpp_service, logo_bindi
     sablon = [line for line in preview.commercial_price_lines if line.code.startswith("sablon_montaj")]
     assert len(sablon) == 1
     ambalare = next(line for line in preview.commercial_price_lines if line.code == "ambalare")
-    assert ambalare.owner_decision_required is True
-    assert ambalare.commercial_unit_price is None
+    assert ambalare.owner_decision_required is False
+    assert ambalare.commercial_unit_price == pytest.approx(20.0)
+    assert ambalare.rate_publication_status == "provisional"
 
 
 @pytest.mark.asyncio
@@ -342,9 +343,11 @@ async def test_letter_and_logo_body_lines_unchanged(cpp_service, logo_binding_db
         assert face.commercial_unit_price == pytest.approx(1.5)
         assert face.cpp_currency == "EUR"
         led = _finish_lines(with_logos, segment, "logo_led_modules")[0]
-        # LED module sell EUR is unpublished — fail-closed, never invent from install labor.
-        assert led.commercial_unit_price is None
-        assert led.owner_decision_required is True
+        # F7I.1: Owner-confirmed provisional LED sell (not LED_ASSEMBLY install labor).
+        assert led.commercial_unit_price == pytest.approx(1.5)
+        assert led.owner_decision_required is False
+        # Linked-logo clone may omit rate_publication_status; letters path carries provisional.
+        assert led.rate_publication_status in {None, "provisional"}
 
 
 @pytest.mark.asyncio

@@ -132,7 +132,7 @@ async def test_f7h_presentation_currency_eur_scoped(cpp):
 
 
 @pytest.mark.asyncio
-async def test_f7h_five_former_dev_bridge_routes_eur_or_unpublished(cpp):
+async def test_f7h_five_former_dev_bridge_routes_eur_or_owner_provisional(cpp):
     preview = await cpp.build_preview(TEMPLATE, quote_input=_eur_letters_payload(illuminated=True))
     assert preview is not None
     by_code = {line.code: line for line in preview.commercial_price_lines}
@@ -153,18 +153,20 @@ async def test_f7h_five_former_dev_bridge_routes_eur_or_unpublished(cpp):
     back = by_code["debitare_spate"]
     assert back.basis_type == "m2"
     assert back.unit == "m2"
-    assert back.commercial_unit_price is None
-    assert back.owner_decision_required is True
-    assert back.rate_publication_status == "unpublished"
+    # F7I.1: Owner-confirmed provisional commercial sell (not final).
+    assert back.commercial_unit_price == pytest.approx(15.0)
+    assert back.owner_decision_required is False
+    assert back.rate_publication_status == "provisional"
 
     led = by_code["sistem_led_module"]
-    assert led.commercial_unit_price is None
-    assert led.owner_decision_required is True
-    assert led.rate_publication_status == "unpublished"
+    assert led.commercial_unit_price == pytest.approx(1.5)
+    assert led.owner_decision_required is False
+    assert led.rate_publication_status == "provisional"
 
     psu = by_code["sursa_led"]
-    assert psu.commercial_unit_price is None
-    assert psu.owner_decision_required is True
+    assert psu.commercial_unit_price == pytest.approx(35.0)
+    assert psu.owner_decision_required is False
+    assert psu.rate_publication_status == "provisional"
 
 
 @pytest.mark.asyncio

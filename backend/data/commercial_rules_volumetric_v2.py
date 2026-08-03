@@ -70,13 +70,17 @@ FACE_CNC_COMMERCIAL_EUR_ML = 1.5
 FACE_CNC_REGISTRY_CODE = "CNC_ROUTER"
 RETURN_PROFILE_COMMERCIAL_EUR_ML = 5.0
 RETURN_PROFILE_REGISTRY_CODE = "RETURN_PROFILE_MACHINE_FORMING"
-# Back cut commercial sell EUR/m² — NOT_FOUND in Owner EUR catalog (CNC registry is ml-based).
-# Unpublished: fail-closed until Owner publishes a commercial EUR/m² (or ml) rate.
-BACK_CNC_COMMERCIAL_EUR_M2: float | None = None
-# LED module / PSU commercial sell EUR — NOT_FOUND as client sell rates.
-# LED_ASSEMBLY 0.05 EUR is install labor, not module sell price — do not reuse as sell.
-LED_MODULE_COMMERCIAL_EUR_BUC: float | None = None
-PSU_COMMERCIAL_EUR_BUC: float | None = None
+# F7I.1 — Owner-confirmed provisional commercial sell (2026-08-03), tax-exclusive EUR.
+# Explicit Owner GO; not inferred from EIC/inventory/hourly/FX. Final pricing review deferred.
+OWNER_CONFIRMED_PROVISIONAL_SOURCE = (
+    "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03"
+)
+OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE = "2026-08-03"
+BACK_CNC_COMMERCIAL_EUR_M2: float = 15.0
+# LED module / PSU commercial sell — Owner provisional; not LED_ASSEMBLY install labor (0.05).
+LED_MODULE_COMMERCIAL_EUR_BUC: float = 1.5
+PSU_COMMERCIAL_EUR_BUC: float = 35.0
+AMBALARE_COMMERCIAL_EUR_SET: float = 20.0
 
 # Retained only for non-commercial / legacy finish flat line until separately retired.
 DEV_BRIDGE_FINISH_RON_M2 = 35.0
@@ -245,20 +249,19 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="m2",
         quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
         unit="m2",
-        source="commercial_rules_volumetric_v2:back_m2_unpublished_eur",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="critical",
         documented_unit_price=BACK_CNC_COMMERCIAL_EUR_M2,
         documented_unit_price_currency="EUR",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="DEBITARE_SPATE_COMMERCIAL_EUR_M2",
         owner_decision_detail=(
-            "F7H: no Owner-documented commercial EUR/m² sell rate for back CNC was found "
-            "(CNC_ROUTER is EUR/ml). Basis stays m². Configure EUR/m² at commercial registry "
-            "before this line can price. Fail-closed — no invented rate, no RON rename."
+            "F7I.1 Owner-confirmed provisional commercial sell 15.00 EUR/m² (2026-08-03), "
+            "tax-exclusive. Not final; pending complete pricing review. Basis stays m²."
         ),
         warnings=(
-            "F7H unpublished commercial EUR/m² — fail-closed until Owner publishes the rate. "
-            "m² basis preserved (not changed to ml for uniformity).",
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
         ),
     ),
     CommercialRuleDefinition(
@@ -276,16 +279,20 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
             "led_module_count",
         ),
         unit="buc",
-        source="commercial_rules_volumetric_v2:letter_led_module_unpublished_eur",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="critical",
         module_gate="sistem_led",
         documented_unit_price=LED_MODULE_COMMERCIAL_EUR_BUC,
         documented_unit_price_currency="EUR",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="LED_MODULE_COMMERCIAL_EUR_BUC",
         owner_decision_detail=(
-            "F7H: no Owner-documented commercial EUR/buc sell rate for LED modules was found. "
-            "LED_ASSEMBLY 0.05 EUR is install labor, not module sell price. Fail-closed."
+            "F7I.1 Owner-confirmed provisional commercial sell 1.50 EUR/buc (2026-08-03), "
+            "tax-exclusive. Not LED_ASSEMBLY install labor. Final pricing review required."
+        ),
+        warnings=(
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
         ),
     ),
     CommercialRuleDefinition(
@@ -297,19 +304,22 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="piece",
         quantity_paths=(),
         unit="buc",
-        source="commercial_rules_volumetric_v2:psu_unpublished_eur",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="critical",
         module_gate="sistem_led",
         documented_unit_price=PSU_COMMERCIAL_EUR_BUC,
         documented_unit_price_currency="EUR",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="PSU_COMMERCIAL_EUR_BUC",
         owner_decision_detail=(
-            "F7H: no Owner-documented commercial EUR/buc sell rate for PSU was found. "
-            "Fail-closed until published in commercial registry. "
-            "Commercial sells one PSU unit; selected_psu_watts is reference only."
+            "F7I.1 Owner-confirmed provisional commercial sell 35.00 EUR/buc (2026-08-03), "
+            "tax-exclusive. Commercial sells one PSU unit; selected_psu_watts is reference only."
         ),
-        warnings=("Commercial sells one PSU unit; selected_psu_watts is reference only.",),
+        warnings=(
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
+            "Commercial sells one PSU unit; selected_psu_watts is reference only.",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="finisaje_colantare_vopsire",
@@ -545,14 +555,21 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="fixed",
         quantity_paths=(),
         unit="set",
-        source="commercial_rules_volumetric_v2:packaging_rule_pending",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="optional",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="AMBALARE_COMMERCIAL_RULE",
-        owner_decision_detail="Commercial packaging rule (fixed/set) not yet owner-defined.",
-        documented_unit_price=None,
+        owner_decision_detail=(
+            "F7I.1 Owner-confirmed provisional commercial sell 20.00 EUR/set (2026-08-03), "
+            "tax-exclusive. Final pricing review required."
+        ),
+        documented_unit_price=AMBALARE_COMMERCIAL_EUR_SET,
         documented_unit_price_currency="EUR",
         module_gate="ambalare_livrare_montaj",
+        warnings=(
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="montaj",
@@ -869,14 +886,19 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="m2",
         quantity_paths=(),
         unit="m2",
-        source="commercial_rules_volumetric_v2:logo_back_m2_unpublished_eur",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="critical",
         documented_unit_price=BACK_CNC_COMMERCIAL_EUR_M2,
         documented_unit_price_currency="EUR",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="DEBITARE_SPATE_COMMERCIAL_EUR_M2",
         owner_decision_detail=(
-            "F7H: logo back CNC commercial EUR/m² unpublished — same Owner gap as letters."
+            "F7I.1: logo back CNC uses the same Owner-confirmed provisional 15.00 EUR/m² "
+            "as letters debitare_spate (2026-08-03)."
+        ),
+        warnings=(
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
         ),
     ),
     CommercialRuleDefinition(
@@ -948,14 +970,19 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="piece",
         quantity_paths=(),
         unit="buc",
-        source="commercial_rules_volumetric_v2:logo_led_module_unpublished_eur",
+        source=OWNER_CONFIRMED_PROVISIONAL_SOURCE,
         criticality="critical",
         documented_unit_price=LED_MODULE_COMMERCIAL_EUR_BUC,
         documented_unit_price_currency="EUR",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="LED_MODULE_COMMERCIAL_EUR_BUC",
         owner_decision_detail=(
-            "F7H: logo LED module commercial EUR/buc unpublished — same Owner gap as letters."
+            "F7I.1: logo LED modules use the same Owner-confirmed provisional 1.50 EUR/buc "
+            "as letters sistem_led_module (2026-08-03)."
+        ),
+        warnings=(
+            "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
+            f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
         ),
     ),
 )
@@ -1006,8 +1033,8 @@ FORBIDDEN_HOURLY_TOKENS = frozenset(
     }
 )
 
-# F7I — explicit publication states for template references / Owner Rate Decision Pack.
-# ACTIVE_PROVISIONAL = documented EUR reused from workcenter (not Owner-final sell).
+# F7I / F7I.1 — publication states for template references.
+# ACTIVE_PROVISIONAL = WC reuse OR Owner-confirmed provisional (not final sell).
 CommercialReferenceStatus = Literal[
     "ACTIVE_PUBLISHED",
     "ACTIVE_PROVISIONAL",
@@ -1017,22 +1044,33 @@ CommercialReferenceStatus = Literal[
     "NOT_APPLICABLE",
 ]
 
-# Canonical Owner gaps known from F7H runtime (fail-closed; do not invent).
-OWNER_MISSING_COMMERCIAL_RATE_CODES = frozenset(
+# F7I.1 closed the former Owner gaps with provisional rates — keep empty for regression.
+OWNER_MISSING_COMMERCIAL_RATE_CODES: frozenset[str] = frozenset()
+
+# Owner-confirmed provisional sell (F7I.1, 2026-08-03) — consumable in CPP, not final.
+OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES = frozenset(
     {
         "ambalare",
         "debitare_spate",
         "sistem_led_module",
         "sursa_led",
+        "logo_back_cnc",
+        "logo_led_modules",
     }
 )
 
 # Workcenter-reuse provisional sell (honest until final pricing pass).
-PROVISIONAL_COMMERCIAL_LINE_CODES = frozenset(
+WORKCENTER_REUSE_PROVISIONAL_COMMERCIAL_LINE_CODES = frozenset(
     {
         "debitare_fata",
         "modelare_cant_aluminiu",
     }
+)
+
+# Union used by classify → ACTIVE_PROVISIONAL.
+PROVISIONAL_COMMERCIAL_LINE_CODES = (
+    WORKCENTER_REUSE_PROVISIONAL_COMMERCIAL_LINE_CODES
+    | OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES
 )
 
 
@@ -1092,6 +1130,24 @@ def inventory_commercial_rules_for_template(
                     f"în {rule.documented_unit_price_currency or 'EUR'}/{rule.unit}, fără TVA?"
                     if status == "ACTIVE_MISSING_RATE"
                     else None
+                ),
+                "provisional_nature": (
+                    "owner_confirmed_provisional"
+                    if rule.line_code in OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES
+                    else (
+                        "workcenter_reuse_provisional"
+                        if rule.line_code in WORKCENTER_REUSE_PROVISIONAL_COMMERCIAL_LINE_CODES
+                        else None
+                    )
+                ),
+                "confirmation_date": (
+                    OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE
+                    if rule.line_code in OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES
+                    else None
+                ),
+                "final_pricing_review_required": (
+                    rule.line_code in OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_LINE_CODES
+                    or rule.line_code in WORKCENTER_REUSE_PROVISIONAL_COMMERCIAL_LINE_CODES
                 ),
             }
         )
