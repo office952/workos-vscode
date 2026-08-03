@@ -1,12 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, FileSearch, ShieldAlert } from "lucide-react";
 import type {
   ExecutionPlanV2MaterializationAuditResponse,
   ExecutionPlanV2PreviewResponse,
 } from "@/api/execution";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
+import {
+  countMissingMinutes,
+  countMissingWorkcenters,
+  deriveOrphanOperations,
+  hasOperationalTasksInEnvelope,
+  planLifecycleLabel,
+} from "@/components/execution/executionPlanV2Readiness";
 import { EXECUTION_PLAN_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
-import { OwnerGoNotice } from "@/components/workos/design-system";
+import { AuditOnlyNotice, OwnerGoNotice } from "@/components/workos/design-system";
 
 interface ExecutionPlanV2TruthPanelProps {
   preview: ExecutionPlanV2PreviewResponse;
@@ -27,10 +34,19 @@ function toneForStatus(status: string): string {
 
 function warningBadgeLabel(code: string): string {
   if (code === "PLANNING_MINUTES_SOURCE_REQUIRED") {
-    return "Planning minutes source required";
+    return "MISSING_ESTIMATED_MINUTES";
   }
   if (code === "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW") {
-    return "Readiness gate excluded";
+    return "ORPHAN_NON_OPERATIONAL";
+  }
+  if (code.includes("WORKCENTER")) {
+    return "MISSING_WORKCENTER";
+  }
+  if (code.includes("DEPENDENC") || code.includes("DAG")) {
+    return "DEPENDENCY_REVIEW_REQUIRED";
+  }
+  if (code.includes("DUPLICATE")) {
+    return "DUPLICATE_OPERATION_RISK";
   }
   return code;
 }
@@ -45,8 +61,30 @@ export function ExecutionPlanV2TruthPanel({
   const [opsExpanded, setOpsExpanded] = useState(false);
   const [auditExpanded, setAuditExpanded] = useState(true);
 
+  const operationalPresent = hasOperationalTasksInEnvelope(audit);
+  const orphans = useMemo(
+    () => deriveOrphanOperations(preview.planned_operations, preview.planned_tasks),
+    [preview.planned_operations, preview.planned_tasks],
+  );
+  const missingWc = countMissingWorkcenters(preview.planned_tasks);
+  const missingMinutes = countMissingMinutes(preview.planned_tasks);
+  const dependencyCount =
+    preview.dependencies?.length ??
+    preview.planned_tasks.reduce((n, task) => n + (task.depends_on_task_keys?.length ?? 0), 0);
+  const lifecycle = planLifecycleLabel({
+    hasPreview: true,
+    audit,
+    persistStatus: preview.persist_status,
+  });
+  const materializationBadge = operationalPresent
+    ? "MATERIALIZED_IN_ENVELOPE · SESSIONS_FROZEN"
+    : lifecycle.materializationLabel;
+
   return (
-    <section className="bg-wo-surface-raised border border-wo-border-strong rounded-lg">
+    <section
+      className="bg-wo-surface-raised border border-wo-border-strong rounded-lg"
+      data-testid="execution-plan-v2-truth-panel"
+    >
       <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
         <div className="flex items-center gap-2">
           <FileSearch className="w-4 h-4 text-cyan-400" />
@@ -54,44 +92,106 @@ export function ExecutionPlanV2TruthPanel({
             {EXECUTION_PLAN_LABEL}
           </h2>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={`inline-block px-2.5 py-0.5 text-[11px] font-bold rounded border ${toneForStatus(preview.status)}`}>
+        <div className="flex items-center gap-2 flex-wrap justify-end">
+          <span
+            className={`inline-block px-2.5 py-0.5 text-[11px] font-bold rounded border ${toneForStatus(preview.status)}`}
+            data-testid="execution-plan-v2-preview-status"
+          >
             {preview.status}
           </span>
-          <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-muted text-muted-foreground border-border">
-            read-only
+          <span
+            className="inline-block px-2 py-0.5 text-[10px] rounded border bg-amber-900/30 text-amber-200 border-amber-800/50"
+            data-testid="execution-plan-v2-draft-badge"
+          >
+            {operationalPresent ? "AUDIT_ONLY" : "DRAFT"}
+          </span>
+          <span
+            className="inline-block px-2 py-0.5 text-[10px] rounded border bg-muted text-muted-foreground border-border"
+            data-testid="execution-plan-v2-not-materialized-badge"
+          >
+            {materializationBadge}
           </span>
         </div>
       </header>
 
       <div className="p-4 space-y-4">
+        <AuditOnlyNotice
+          compact
+          detail="Previzualizare read-only · planned_tasks ≠ taskuri de atelier"
+        />
+        <div
+          className="rounded-md border border-cyan-800/40 bg-cyan-950/20 px-3 py-2 text-[12px] text-cyan-100"
+          data-testid="execution-plan-v2-lifecycle-banner"
+        >
+          <p className="font-semibold">{lifecycle.draftLabel}</p>
+          <p className="mt-1 text-[11px] text-cyan-100/80">{lifecycle.nextStepLabel}</p>
+        </div>
+
         <ExecutionPlanStatesStrip
           hasPreview
-          hasDraftPlan={Boolean(preview.planned_tasks.length)}
-          hasOperationalTasks={false}
-          operationalBlocked
+          hasDraftPlan={Boolean(preview.planned_tasks.length) || audit?.execution_plan_id != null}
+          hasOperationalTasks={operationalPresent}
+          operationalBlocked={!operationalPresent}
         />
         <OwnerGoNotice
-          detail="Plan operațional (materializare) blocat — necesită Owner GO. Planned tasks ≠ taskuri active în atelier. Sessions / Employee Mobile nu sunt active."
+          detail="Lansarea în producție este blocată (DEC-009=A). Nu există acțiune Materializează / Asignează / Pornește pe această suprafață."
           compact
         />
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-[11px]">
           <div className="bg-card rounded px-2.5 py-2 border border-border">
-            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Draft Plan · tasks</p>
-            <p className="mt-1 text-cyan-300 font-bold">{preview.planned_tasks.length}</p>
+            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">order_id</p>
+            <p className="mt-1 text-foreground font-mono" data-testid="execution-plan-v2-order-id">
+              {preview.order_id ?? "unknown"}
+            </p>
           </div>
           <div className="bg-card rounded px-2.5 py-2 border border-border">
-            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Preview · ops</p>
-            <p className="mt-1 text-cyan-300 font-bold">{preview.planned_operations.length}</p>
+            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">execution_plan_id</p>
+            <p className="mt-1 text-foreground font-mono" data-testid="execution-plan-v2-plan-id">
+              {audit?.execution_plan_id ?? "not_persisted"}
+            </p>
           </div>
           <div className="bg-card rounded px-2.5 py-2 border border-border">
-            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Operational Plan</p>
-            <p className="mt-1 text-muted-foreground font-semibold">{audit?.materialization_status ?? "blocked"}</p>
+            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">planned_tasks</p>
+            <p className="mt-1 text-cyan-300 font-bold" data-testid="execution-plan-v2-task-count">
+              {preview.planned_tasks.length}
+            </p>
           </div>
           <div className="bg-card rounded px-2.5 py-2 border border-border">
-            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Snapshot source</p>
-            <p className="mt-1 text-muted-foreground font-mono text-[10px]">{preview.source_snapshot_code ?? "—"}</p>
+            <p className="text-muted-foreground uppercase text-[9px] tracking-wide">planned_operations</p>
+            <p className="mt-1 text-cyan-300 font-bold" data-testid="execution-plan-v2-op-count">
+              {preview.planned_operations.length}
+            </p>
           </div>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5" data-testid="execution-plan-v2-gap-badges">
+          <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-muted text-muted-foreground border-border">
+            persist: {preview.persist_status ?? (audit?.execution_plan_id != null ? "persisted_draft" : "not_persisted")}
+          </span>
+          <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-muted text-muted-foreground border-border">
+            dependencies: {dependencyCount}
+          </span>
+          {orphans.length > 0 ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/50">
+              ORPHAN_NON_OPERATIONAL · {orphans.length}
+            </span>
+          ) : null}
+          {missingWc > 0 ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-red-900/30 text-red-300 border-red-800/50">
+              MISSING_WORKCENTER · {missingWc}
+            </span>
+          ) : null}
+          {missingMinutes > 0 ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/50">
+              MISSING_ESTIMATED_MINUTES · {missingMinutes}
+            </span>
+          ) : null}
+          {audit?.guards?.post_materialize_allowed === false ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-red-900/30 text-red-300 border-red-800/50">
+              MATERIALIZATION · CLOSED
+            </span>
+          ) : null}
         </div>
 
         {(preview.warnings.length > 0 || preview.blockers.length > 0) && (
@@ -141,6 +241,7 @@ export function ExecutionPlanV2TruthPanel({
                     <th className="text-left px-3 py-1.5">Op source</th>
                     <th className="text-left px-3 py-1.5">Workcenter</th>
                     <th className="text-right px-3 py-1.5">Minutes</th>
+                    <th className="text-left px-3 py-1.5">Depends</th>
                     <th className="text-left px-3 py-1.5">Warnings</th>
                   </tr>
                 </thead>
@@ -153,25 +254,30 @@ export function ExecutionPlanV2TruthPanel({
                         <div className="text-[10px] text-muted-foreground">{task.canonical_task_type}</div>
                       </td>
                       <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
-                        {task.source_operation_code ?? "—"}
+                        {task.source_operation_code ?? "unknown"}
                       </td>
                       <td className="px-3 py-2">
                         {task.machine_requirement?.workcenter ? (
                           <span className="font-mono text-muted-foreground text-[10px]">{task.machine_requirement.workcenter}</span>
                         ) : (
                           <span className="inline-block px-1.5 py-0.5 text-[10px] rounded border bg-red-900/30 text-red-300 border-red-800/50">
-                            missing
+                            MISSING_WORKCENTER
                           </span>
                         )}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums">
-                        {task.estimated_minutes === null ? (
+                        {task.estimated_minutes === null || task.estimated_minutes === undefined ? (
                           <span className="inline-block px-1.5 py-0.5 text-[10px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/50">
-                            null
+                            MISSING_ESTIMATED_MINUTES
                           </span>
                         ) : (
                           <span className="text-foreground">{task.estimated_minutes.toFixed(1)}</span>
                         )}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">
+                        {(task.depends_on_task_keys?.length ?? 0) > 0
+                          ? task.depends_on_task_keys?.join(", ")
+                          : "none"}
                       </td>
                       <td className="px-3 py-2">
                         <div className="flex flex-wrap gap-1">
@@ -179,7 +285,7 @@ export function ExecutionPlanV2TruthPanel({
                             <span key={warning} className="inline-block px-1.5 py-0.5 text-[9px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/40">
                               {warningBadgeLabel(warning)}
                             </span>
-                          )) : <span className="text-muted-foreground">—</span>}
+                          )) : <span className="text-muted-foreground">none</span>}
                         </div>
                       </td>
                     </tr>
@@ -189,6 +295,22 @@ export function ExecutionPlanV2TruthPanel({
             </div>
           )}
         </div>
+
+        {orphans.length > 0 ? (
+          <div
+            className="rounded-md border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-[11px] text-amber-100"
+            data-testid="execution-plan-v2-orphan-ops"
+          >
+            <p className="font-semibold">Operații fără planned_task (orphan)</p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {orphans.map((op) => (
+                <span key={op.operation_code} className="font-mono text-[10px] px-2 py-0.5 rounded border border-amber-800/50 bg-amber-900/30">
+                  {op.operation_code}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div className="border border-wo-border-strong rounded-md overflow-hidden">
           <button
@@ -215,15 +337,15 @@ export function ExecutionPlanV2TruthPanel({
                     <tr key={`${op.operation_code}-${op.sequence_index ?? "na"}`} className="border-t border-border hover:bg-card/40">
                       <td className="px-3 py-2">
                         <div className="font-mono text-foreground">{op.operation_code}</div>
-                        <div className="text-muted-foreground">{op.label ?? "—"}</div>
+                        <div className="text-muted-foreground">{op.label ?? "unknown"}</div>
                       </td>
-                      <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">{op.source_template_code ?? "—"}</td>
+                      <td className="px-3 py-2 font-mono text-[10px] text-muted-foreground">{op.source_template_code ?? "unknown"}</td>
                       <td className="px-3 py-2">
                         {op.workcenter ? (
                           <span className="font-mono text-[10px] text-muted-foreground">{op.workcenter}</span>
                         ) : (
                           <span className="inline-block px-1.5 py-0.5 text-[10px] rounded border bg-muted text-muted-foreground border-border">
-                            null
+                            unknown
                           </span>
                         )}
                       </td>
@@ -234,9 +356,9 @@ export function ExecutionPlanV2TruthPanel({
                               non-priced
                             </span>
                           )}
-                          {op.workcenter === null && (
+                          {op.workcenter == null && (
                             <span className="inline-block px-1.5 py-0.5 text-[9px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/40">
-                              missing workcenter
+                              MISSING_WORKCENTER
                             </span>
                           )}
                         </div>
@@ -261,9 +383,14 @@ export function ExecutionPlanV2TruthPanel({
           {auditExpanded && (
             <div className="border-t border-wo-border-strong p-3 space-y-3">
               {loading && !audit ? (
-                <p className="text-[11px] text-muted-foreground">Se încarcă auditul V2...</p>
+                <p className="text-[11px] text-muted-foreground" data-testid="execution-plan-v2-audit-loading">
+                  Se încarcă auditul V2...
+                </p>
               ) : auditError ? (
-                <div className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2">
+                <div
+                  className="flex items-start gap-2 bg-amber-900/20 border border-amber-800/60 rounded-md px-3 py-2"
+                  data-testid="execution-plan-v2-audit-error"
+                >
                   <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <div className="text-[12px] text-amber-300">
                     <p className="font-semibold">Audit indisponibil</p>
@@ -283,11 +410,11 @@ export function ExecutionPlanV2TruthPanel({
                     </div>
                     <div className="bg-card rounded px-2.5 py-2 border border-border">
                       <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Non-operational</p>
-                      <p className="mt-1 text-muted-foreground font-bold">{audit.non_operational_items.length}</p>
+                      <p className="mt-1 text-muted-foreground font-bold">{audit.non_operational_items?.length ?? 0}</p>
                     </div>
                     <div className="bg-card rounded px-2.5 py-2 border border-border">
-                      <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Writes DB</p>
-                      <p className="mt-1 text-muted-foreground font-semibold">{audit.guards.writes_database ? "yes" : "no"}</p>
+                      <p className="text-muted-foreground uppercase text-[9px] tracking-wide">Ops in envelope</p>
+                      <p className="mt-1 text-muted-foreground font-semibold">{audit.operational_tasks_in_envelope_count}</p>
                     </div>
                   </div>
 
@@ -325,7 +452,7 @@ export function ExecutionPlanV2TruthPanel({
                           <div className="flex items-center justify-between gap-2">
                             <div>
                               <div className="font-mono text-foreground">{candidate.task_key}</div>
-                              <div className="text-muted-foreground">{candidate.label ?? candidate.canonical_task_type ?? "—"}</div>
+                              <div className="text-muted-foreground">{candidate.label ?? candidate.canonical_task_type ?? "unknown"}</div>
                             </div>
                             <div className="flex flex-wrap gap-1 justify-end">
                               <span className="inline-block px-1.5 py-0.5 text-[9px] rounded border bg-muted text-muted-foreground border-border">
@@ -333,7 +460,7 @@ export function ExecutionPlanV2TruthPanel({
                               </span>
                               {candidate.estimated_minutes === null && (
                                 <span className="inline-block px-1.5 py-0.5 text-[9px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/40">
-                                  null minutes
+                                  MISSING_ESTIMATED_MINUTES
                                 </span>
                               )}
                             </div>
@@ -352,11 +479,11 @@ export function ExecutionPlanV2TruthPanel({
                     </div>
                   </div>
 
-                  {audit.non_operational_items.length > 0 && (
+                  {(audit.non_operational_items?.length ?? 0) > 0 && (
                     <div className="space-y-2">
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Non-operational items</div>
                       <div className="space-y-2">
-                        {audit.non_operational_items.map((item) => (
+                        {audit.non_operational_items?.map((item) => (
                           <div key={`${item.task_name}-${item.task_type}`} className="bg-card border border-border rounded-md px-3 py-2 text-[11px]">
                             <div className="font-mono text-foreground">{item.task_name}</div>
                             <div className="text-muted-foreground">{item.task_type}</div>

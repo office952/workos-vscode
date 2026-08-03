@@ -1,15 +1,27 @@
 /**
  * Execution Result Workspace.
  * Orchestrates backend facts and explicit operator actions; it does not calculate cost.
+ * Wave 1 / Step 9B: surfaces ExecutionPlan V2 draft readiness read-only before work panels.
  */
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { executionApi, PlanGenerationError, RealityActionError, type AlertsResponse, type ExecutionPlanResponse, type ExecutionRealityResponse, type ObservabilityReport } from "@/api/execution";
+import {
+  executionApi,
+  PlanGenerationError,
+  RealityActionError,
+  type AlertsResponse,
+  type ExecutionPlanResponse,
+  type ExecutionRealityResponse,
+  type ObservabilityReport,
+} from "@/api/execution";
 import { ExecutionClosurePanel } from "@/components/execution/ExecutionClosurePanel";
+import { ExecutionPlanV2TruthPanel } from "@/components/execution/ExecutionPlanV2TruthPanel";
+import { allowExecutionSessionActions } from "@/components/execution/executionPlanV2Readiness";
 import { PostJobTruthPanel } from "@/components/execution/PostJobTruthPanel";
 import ExecutionFlowNextStep from "@/components/workos/ExecutionFlowNextStep";
 import ExecutionFlowStrip from "@/components/workos/ExecutionFlowStrip";
 import { useAuth } from "@/contexts/AuthContext";
+import { useExecutionPlanV2Truth } from "@/hooks/useExecutionPlanV2Truth";
 import { executionDetailNextStepHint } from "@/lib/executionFlowUi";
 import { BlockersPanel } from "@/components/execution-result/BlockersPanel";
 import { CostsCompletenessPanel } from "@/components/execution-result/CostsCompletenessPanel";
@@ -48,6 +60,9 @@ export default function ExecutionDetail() {
   const [message, setMessage] = useState<string | null>(null);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
 
+  const v2Truth = useExecutionPlanV2Truth(validOrderId ? orderId : null, validOrderId);
+  const allowSessionActions = allowExecutionSessionActions(v2Truth.audit);
+
   const load = useCallback(async () => {
     if (!validOrderId) {
       setMessage("ID-ul comenzii este invalid.");
@@ -82,7 +97,9 @@ export default function ExecutionDetail() {
     }
   }, [orderId, validOrderId]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const generatePlan = async () => {
     if (!validOrderId || generatingPlan) return;
@@ -91,6 +108,7 @@ export default function ExecutionDetail() {
     try {
       await executionApi.generatePlan(orderId);
       await load();
+      await v2Truth.refresh();
     } catch (error) {
       setMessage(errorMessage(error));
     } finally {
@@ -99,7 +117,7 @@ export default function ExecutionDetail() {
   };
 
   const capture = async (taskId: string, action: "start" | "complete") => {
-    if (!validOrderId) return;
+    if (!validOrderId || !allowSessionActions) return;
     setActionTaskId(taskId);
     setMessage(null);
     try {
@@ -113,25 +131,100 @@ export default function ExecutionDetail() {
     }
   };
 
-  return <div className="space-y-4">
-    <ExecutionFlowStrip active="executie" orderExecutionPath={validOrderId ? `/execution/${orderId}` : null} />
-    <ExecutionFlowNextStep hint={executionDetailNextStepHint(validOrderId ? orderId : null)} />
-    <ExecutionResultHeader observability={observability} refreshedAt={refreshedAt} loading={loading} onRefresh={() => void load()} />
-    {message ? <p role="alert" className="rounded-md border border-wo-danger/40 bg-wo-danger/10 px-3 py-2 text-[12px] text-wo-danger">{message}</p> : null}
-    {loading && !observability ? <p className="py-12 text-center text-[12px] text-wo-text-muted">Se încarcă rezultatul execuției…</p> : null}
-    {observability ? <>
-      <OperationalSummary observability={observability} />
-      <BlockersPanel observability={observability} alerts={alerts} />
-      {observability.has_plan ? <ResourceReadinessPanel orderId={orderId} /> : null}
-      {!observability.has_plan ? <section className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4" data-testid="execution-primary-action"><h2 className="text-sm font-semibold text-wo-text-primary">Următorul pas</h2><p className="mt-1 text-[12px] text-wo-text-muted">Planul de execuție trebuie generat înainte de înregistrarea lucrului.</p><button type="button" data-testid="execution-plan-generate-action" onClick={() => void generatePlan()} disabled={generatingPlan} className="mt-3 rounded-md bg-blue-600 px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50">{generatingPlan ? "Se generează planul…" : "Generează plan de execuție"}</button></section> : null}
-      <WorkPanel plan={plan} reality={reality} busyTaskId={actionTaskId} onStart={(taskId) => void capture(taskId, "start")} onComplete={(taskId) => void capture(taskId, "complete")} />
-      <PlanActualPanel observability={observability} />
-      <CostsCompletenessPanel orderId={orderId} role={role} />
-      <FinalResultPanel orderId={orderId} role={role} />
-      <ExecutionClosurePanel orderId={orderId} onChanged={() => void load()} />
-      {isManagementRole(role) ? <PostJobTruthPanel orderId={orderId} /> : null}
-      <TechnicalDetails orderId={orderId} />
-      <p className="text-[10px] italic text-wo-text-muted">Toate valorile sunt fapte backend. Interfața nu calculează și nu completează valori lipsă.</p>
-    </> : null}
-  </div>;
+  return (
+    <div className="space-y-4">
+      <ExecutionFlowStrip active="executie" orderExecutionPath={validOrderId ? `/execution/${orderId}` : null} />
+      <ExecutionFlowNextStep hint={executionDetailNextStepHint(validOrderId ? orderId : null)} />
+      <ExecutionResultHeader
+        observability={observability}
+        refreshedAt={refreshedAt}
+        loading={loading}
+        onRefresh={() => {
+          void load();
+          void v2Truth.refresh();
+        }}
+      />
+      {message ? (
+        <p role="alert" className="rounded-md border border-wo-danger/40 bg-wo-danger/10 px-3 py-2 text-[12px] text-wo-danger">
+          {message}
+        </p>
+      ) : null}
+      {loading && !observability ? (
+        <p className="py-12 text-center text-[12px] text-wo-text-muted">Se încarcă rezultatul execuției…</p>
+      ) : null}
+
+      {validOrderId ? (
+        <div data-testid="execution-plan-v2-truth-slot">
+          {v2Truth.loading && !v2Truth.preview ? (
+            <p className="rounded-md border border-wo-border-subtle bg-wo-surface px-3 py-2 text-[12px] text-wo-text-muted">
+              Se încarcă planul de execuție (draft / audit)…
+            </p>
+          ) : null}
+          {v2Truth.previewError && !v2Truth.preview ? (
+            <div
+              className="rounded-md border border-amber-800/50 bg-amber-950/20 px-3 py-2 text-[12px] text-amber-100"
+              data-testid="execution-plan-v2-preview-error"
+            >
+              <p className="font-semibold">Previzualizare ExecutionPlan V2 indisponibilă</p>
+              <p className="mt-1 text-[11px] text-amber-100/80">{v2Truth.previewError}</p>
+            </div>
+          ) : null}
+          {v2Truth.preview ? (
+            <ExecutionPlanV2TruthPanel
+              preview={v2Truth.preview}
+              audit={v2Truth.audit}
+              auditError={v2Truth.auditError}
+              loading={v2Truth.loading}
+            />
+          ) : null}
+        </div>
+      ) : null}
+
+      {observability ? (
+        <>
+          <OperationalSummary observability={observability} />
+          <BlockersPanel observability={observability} alerts={alerts} />
+          {observability.has_plan ? <ResourceReadinessPanel orderId={orderId} /> : null}
+          {!observability.has_plan ? (
+            <section
+              className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"
+              data-testid="execution-primary-action"
+            >
+              <h2 className="text-sm font-semibold text-wo-text-primary">Următorul pas</h2>
+              <p className="mt-1 text-[12px] text-wo-text-muted">
+                Dacă comanda are Order Snapshot V2, folosește traseul V2 (previzualizare de mai sus). Generarea de mai jos
+                este calea legacy și poate fi respinsă pentru comenzi V2.
+              </p>
+              <button
+                type="button"
+                data-testid="execution-plan-generate-action"
+                onClick={() => void generatePlan()}
+                disabled={generatingPlan}
+                className="mt-3 rounded-md bg-blue-600 px-3 py-1.5 text-[12px] font-semibold text-white disabled:opacity-50"
+              >
+                {generatingPlan ? "Se generează planul…" : "Generează plan de execuție (legacy)"}
+              </button>
+            </section>
+          ) : null}
+          <WorkPanel
+            plan={plan}
+            reality={reality}
+            busyTaskId={actionTaskId}
+            allowSessionActions={allowSessionActions}
+            onStart={(taskId) => void capture(taskId, "start")}
+            onComplete={(taskId) => void capture(taskId, "complete")}
+          />
+          <PlanActualPanel observability={observability} />
+          <CostsCompletenessPanel orderId={orderId} role={role} />
+          <FinalResultPanel orderId={orderId} role={role} />
+          <ExecutionClosurePanel orderId={orderId} onChanged={() => void load()} />
+          {isManagementRole(role) ? <PostJobTruthPanel orderId={orderId} /> : null}
+          <TechnicalDetails orderId={orderId} />
+          <p className="text-[10px] italic text-wo-text-muted">
+            Toate valorile sunt fapte backend. Interfața nu calculează și nu completează valori lipsă.
+          </p>
+        </>
+      ) : null}
+    </div>
+  );
 }

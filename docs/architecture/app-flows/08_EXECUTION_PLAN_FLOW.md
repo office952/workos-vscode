@@ -21,10 +21,11 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 | Route/Page | Component/File | Role | Reads | Writes | Status | Risk |
 | ---------- | -------------- | ---- | ----- | ------ | ------ | ---- |
 | `/execution` | `ExecutionDashboard` | Plan list/overview | execution APIs | — | PARTIAL | — |
-| `/execution/:order_id` | `ExecutionDetail` | Order execution detail | plan, profitability panel | assignment if materialized | PARTIAL | Profitability MVP read-only |
+| `/execution/:order_id` | `ExecutionDetail` | Order execution detail + Step 9B V2 draft truth | plan, V2 preview/audit, profitability panel | legacy generate only; sessions gated | PROVEN_WITH_GUARDS | Draft ≠ operational |
+| `/execution/ops-graph` | `MaterializedOpsGraph` | DEC-008 RO ops envelope | plan + audit + eligibility | controlled assign when materialized | PROVEN_WITH_GUARDS | Materialize absent |
 | `/execution/reality-review` | `OperationalRealityReview` | Reality review | read models | — | IMPLEMENTED_PREVIEW_ONLY | — |
 
-**Step 9B UI (Faza 1):** NOT_STARTED — planned read-only plan + gap badges.
+**Step 9B UI (Faza 1):** IMPLEMENTED — read-only draft/audit on `/execution/:order_id` (`ExecutionPlanV2TruthPanel`) + ops-graph RO; materialize/session actions absent or gated.
 
 ---
 

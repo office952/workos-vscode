@@ -356,16 +356,24 @@ export interface NonOperationalItemPreview {
   excluded_from?: string;
 }
 
-/** GET /execution/plan-v2/preview/{id} — read-only preview (orphaned panel contract). */
+/** POST /execution/plan-v2/preview/{id} — read-only preview (no_write=true; never materializes). */
 export interface ExecutionPlanV2PreviewResponse {
   status: string;
+  order_id?: number | null;
+  order_code?: string | null;
   source_snapshot_code?: string | null;
+  persist_status?: string | null;
+  no_write?: boolean;
+  execution_plan_created?: boolean;
+  execution_tasks_created?: boolean;
   planned_tasks: Array<{
     task_key: string;
     label?: string | null;
     canonical_task_type?: string | null;
     source_operation_code?: string | null;
     estimated_minutes?: number | null;
+    planning_minutes_source?: string | null;
+    depends_on_task_keys?: string[];
     warnings: string[];
     machine_requirement?: { workcenter?: string | null } | null;
   }>;
@@ -376,6 +384,10 @@ export interface ExecutionPlanV2PreviewResponse {
     workcenter?: string | null;
     sequence_index?: number | null;
     priced?: boolean;
+  }>;
+  dependencies?: Array<{
+    task_key: string;
+    depends_on_task_key: string;
   }>;
   warnings: string[];
   blockers: string[];
@@ -793,15 +805,22 @@ export const executionApi = {
 
   /**
    * Read-only V2 plan preview for an order.
-   * GET-only — never persists or materializes.
+   * Backend contract is POST with no_write=true — never persists or materializes.
    */
-  getExecutionPlanV2Preview(orderId: number): Promise<ExecutionPlanV2PreviewResponse> {
+  async getExecutionPlanV2Preview(orderId: number): Promise<ExecutionPlanV2PreviewResponse> {
     if (!Number.isInteger(orderId) || orderId <= 0) {
-      return Promise.reject(new Error('order_id_invalid'));
+      throw new Error('order_id_invalid');
     }
-    return getJson<ExecutionPlanV2PreviewResponse>(
-      `/execution/plan-v2/preview/${orderId}`,
-    );
+    const path = `/execution/plan-v2/preview/${orderId}`;
+    const res = await fetch(`${getAPIBase()}${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) {
+      throw new Error(`POST ${path} failed: ${res.status} ${res.statusText}`);
+    }
+    return (await res.json()) as ExecutionPlanV2PreviewResponse;
   },
 
   /**

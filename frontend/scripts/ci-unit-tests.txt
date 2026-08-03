@@ -27,5 +27,8 @@ src/features/product-system/templatePricingCommercialReference.test.ts
 src/lib/svgAnalyzer/pblLayereChildParts.regression.test.ts
 src/components/workos/intake-v6/IntakeV6OperatorUiPolish.test.tsx
 src/pages/MaterializedOpsGraph.test.tsx
+src/pages/ExecutionDetail.step9b.test.tsx
+src/components/execution/executionPlanV2Readiness.test.ts
+src/components/execution/ExecutionPlanV2TruthPanel.test.tsx
 src/lib/opsGraphDisplayOrder.test.ts
 src/components/workos/OpsGraphFrozenTechnicalMaterials.test.tsx

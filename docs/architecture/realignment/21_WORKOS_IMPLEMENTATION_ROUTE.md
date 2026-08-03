@@ -73,7 +73,7 @@ Intake V6 workspace
 | **ProfitabilityAnalysis** | **PARTIAL** | MVP GET + ExecutionDetail panel; `actual_margin_*` null |
 | **UI labels (Step 11)** | **PARTIAL** | Step 9B read-only truth layer and some doc/runtime labels are aligned; broader labeling sweep still pending |
 | **Legacy `/price` path** | **DEAD_LEGACY_RISK** | Callable; cost-plus / per_hour — not canonical V2 |
-| **Pricing Registry separation (7I)** | **NOT_STARTED** | Unified hub still active for legacy |
+| **Pricing Registry separation (7I / F7I)** | **PROVEN_WITH_GUARDS (F7I.1)** | Commercial catalog honesty + Owner provisional rates active; full hub/tab legacy cleanup still incomplete (Step 12) |
 | **Step 12 cleanup** | **FROZEN** | After canonical route stable; per-piece owner GO |
 
 ---
@@ -266,7 +266,7 @@ Also track (non-blocking for materialize by default): **DEC-001** (svg_geometry_
 | ---- | ----- | ------ | ---------------------------- |
 | **7G** | CPP as default commercial path | Preview exists | Already in Step 8 snapshot; extend coverage |
 | **7H** | EIC non-hourly in CE separation | Preview exists | Side B of snapshot |
-| **7I** | Pricing Registry tab separation | NOT STARTED | Reduces legacy `/price` temptation |
+| **7I / F7I.1** | Pricing Registry honesty + Owner provisional rates | COMPLETE (provisional); hub cleanup PARTIAL | Final pricing review deferred; legacy `/price` still Step 12 |
 
 Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is default for all new quotes.
 
