@@ -5,6 +5,10 @@ import IntakeV6FinalConfigurationSummary from "./IntakeV6FinalConfigurationSumma
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { IntakeV6WorkspaceHeaderStatusProvider } from "./IntakeV6WorkspaceHeaderStatusContext";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
+import type {
+  IntakeV6CommercialProductBreakdown,
+  IntakeV6PricedQuoteDryRunResponse,
+} from "@/lib/intakeV6/intakeV6PricedQuoteTypes";
 
 vi.mock("@/lib/intakeV6/useModularFormContract", () => ({
   useModularFormContract: () => ({
@@ -253,6 +257,250 @@ function renderSummary(
     </MemoryRouter>,
   );
 }
+
+function buildProductBreakdown(
+  overrides: Partial<IntakeV6CommercialProductBreakdown> = {},
+): IntakeV6CommercialProductBreakdown {
+  return {
+    products: [
+      {
+        product_key: "letters",
+        label: "Litere volumetrice",
+        line_codes: ["commercial.letters_face"],
+        subtotals_by_currency: [{ currency: "EUR", subtotal: 1200.5 }],
+        blocked: false,
+        blocker_codes: [],
+      },
+      {
+        product_key: "acm_panel",
+        label: "Panou ACM",
+        line_codes: ["commercial.acm_face"],
+        subtotals_by_currency: [{ currency: "EUR", subtotal: 86.77 }],
+        blocked: false,
+        blocker_codes: [],
+      },
+    ],
+    subtotals_by_currency: [{ currency: "EUR", subtotal: 1287.27 }],
+    currency_mix_detected: false,
+    complete_offer_total: 1287.27,
+    complete_offer_total_currency: "EUR",
+    complete_offer_total_unavailable_reason: null,
+    tax_status: "tax_exclusive",
+    vat_policy_source: null,
+    vat_rate_percent: null,
+    ...overrides,
+  };
+}
+
+function mockDryRunWithBreakdown(
+  breakdown: IntakeV6CommercialProductBreakdown | null,
+  totalsOverrides: Partial<IntakeV6PricedQuoteDryRunResponse["commercial_totals"]> = {},
+) {
+  mockedPricedDryRun.mockResolvedValue({
+    pricing_status: "V6_PRICED_DRY_RUN_READY",
+    workspace_id: "0f300dcf-0b77-4fc1-affd-6e2a20329804",
+    pricing_source: "intake_v6_backend_priced_dry_run",
+    commercial_totals: {
+      subtotal_net: 1287.27,
+      vat_rate: null,
+      vat_amount: null,
+      total_gross: 1287.27,
+      currency: "EUR",
+      ...totalsOverrides,
+    },
+    commercial_product_breakdown: breakdown,
+    blockers: [],
+    commercial_line_items: [],
+    pricing_hash: "hash-f7f",
+  });
+}
+
+describe("IntakeV6FinalConfigurationSummary — Ofertă client (product breakdown)", () => {
+  it("shows one subtotal row per product and a single backend-owned complete total", async () => {
+    mockDryRunWithBreakdown(buildProductBreakdown());
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-product-row-letters")).toBeInTheDocument();
+    });
+
+    const lettersRow = screen.getByTestId("intake-v6-offer-product-row-letters");
+    expect(lettersRow).toHaveTextContent("Litere volumetrice");
+    expect(lettersRow).toHaveTextContent("Subtotal Litere");
+    expect(lettersRow).toHaveTextContent("1.200,50 EUR");
+    expect(lettersRow).not.toHaveTextContent(/Total ofertă/);
+
+    const acmRow = screen.getByTestId("intake-v6-offer-product-row-acm_panel");
+    expect(acmRow).toHaveTextContent("Panou ACM");
+    expect(acmRow).toHaveTextContent("Subtotal Panou ACM");
+    expect(acmRow).toHaveTextContent("86,77 EUR");
+
+    expect(screen.getByTestId("intake-v6-offer-total")).toHaveTextContent("1.287,27 EUR");
+    expect(screen.queryByTestId("intake-v6-offer-total-unavailable")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-create-priced-quote")).toBeInTheDocument();
+  });
+
+  it("keeps every product currency bucket on its own line", async () => {
+    mockDryRunWithBreakdown(
+      buildProductBreakdown({
+        products: [
+          {
+            product_key: "letters",
+            label: "Litere volumetrice",
+            line_codes: [],
+            subtotals_by_currency: [
+              { currency: "EUR", subtotal: 1200.5 },
+              { currency: "RON", subtotal: 430 },
+            ],
+            blocked: false,
+            blocker_codes: [],
+          },
+        ],
+      }),
+    );
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-product-row-letters")).toBeInTheDocument();
+    });
+
+    const lettersRow = screen.getByTestId("intake-v6-offer-product-row-letters");
+    expect(lettersRow).toHaveTextContent("1.200,50 EUR");
+    expect(lettersRow).toHaveTextContent("430,00 RON");
+  });
+
+  it("refuses a misleading total when commercial currencies are mixed", async () => {
+    mockDryRunWithBreakdown(
+      buildProductBreakdown({
+        subtotals_by_currency: [
+          { currency: "EUR", subtotal: 1200.5 },
+          { currency: "RON", subtotal: 430 },
+        ],
+        currency_mix_detected: true,
+        complete_offer_total: null,
+        complete_offer_total_currency: null,
+        complete_offer_total_unavailable_reason: "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+      }),
+    );
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-total-unavailable")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("intake-v6-offer-total-unavailable")).toHaveTextContent(
+      "Total ofertă indisponibil",
+    );
+    expect(screen.getByTestId("intake-v6-offer-total-unavailable")).toHaveTextContent(
+      /Nu convertim automat/i,
+    );
+    expect(screen.queryByTestId("intake-v6-offer-total")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-create-priced-quote")).toBeInTheDocument();
+  });
+
+  it("refuses a total and surfaces the blocker codes when a product is blocked", async () => {
+    mockDryRunWithBreakdown(
+      buildProductBreakdown({
+        products: [
+          {
+            product_key: "letters",
+            label: "Litere volumetrice",
+            line_codes: [],
+            subtotals_by_currency: [{ currency: "EUR", subtotal: 1200.5 }],
+            blocked: false,
+            blocker_codes: [],
+          },
+          {
+            product_key: "acm_panel",
+            label: "Panou ACM",
+            line_codes: [],
+            subtotals_by_currency: [],
+            blocked: true,
+            blocker_codes: ["ACM_PANEL_MOUNTING_RATE_MISSING"],
+          },
+        ],
+        complete_offer_total: null,
+        complete_offer_total_currency: null,
+        complete_offer_total_unavailable_reason: "COMMERCIAL_PRODUCT_BLOCKED",
+      }),
+    );
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-total-unavailable")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("intake-v6-offer-product-row-acm_panel")).toHaveTextContent(
+      "ACM_PANEL_MOUNTING_RATE_MISSING",
+    );
+    expect(screen.queryByTestId("intake-v6-offer-total")).not.toBeInTheDocument();
+  });
+
+  it("labels prices as tax-exclusive without inventing a VAT rate", async () => {
+    mockDryRunWithBreakdown(buildProductBreakdown());
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-tax-note")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("intake-v6-offer-tax-note")).toHaveTextContent("Prețuri fără TVA");
+    expect(screen.getByTestId("intake-v6-offer-tax-note")).not.toHaveTextContent(/\d/);
+    expect(screen.queryByText(/TVA \(19/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/TVA \(21/)).not.toBeInTheDocument();
+  });
+
+  it("shows the fiscal-policy VAT rate when the backend resolved one", async () => {
+    mockDryRunWithBreakdown(
+      buildProductBreakdown({
+        vat_rate_percent: 21,
+        vat_policy_source: "company_commercial_settings.default_vat_pct",
+      }),
+      { vat_rate: 21, vat_amount: 270.33 },
+    );
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-tax-note")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("intake-v6-offer-tax-note")).toHaveTextContent(
+      "Prețuri fără TVA (TVA 21% conform politicii fiscale)",
+    );
+    expect(screen.getByTestId("intake-v6-confirm-offer-totals-breakdown")).toHaveTextContent(
+      "270,33 EUR",
+    );
+  });
+
+  it("degrades to the reported currency when the backend sends no product breakdown", async () => {
+    mockDryRunWithBreakdown(null, { currency: "EUR", vat_rate: 21, vat_amount: 270.33 });
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-total")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("intake-v6-offer-product-breakdown")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-total")).toHaveTextContent("1.287,27 EUR");
+    expect(screen.getByTestId("intake-v6-offer-total")).not.toHaveTextContent(/RON/);
+    expect(screen.getByTestId("intake-v6-confirm-offer-totals-breakdown")).not.toHaveTextContent(
+      /RON/,
+    );
+  });
+
+  it("refuses to assume RON when no breakdown and no reported currency exist", async () => {
+    mockDryRunWithBreakdown(null, { currency: "" });
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-offer-total-unavailable")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("intake-v6-offer-total")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-priced-quote-cta-card")).not.toHaveTextContent(/RON/);
+    expect(screen.queryByTestId("intake-v6-confirm-offer-totals-breakdown")).not.toBeInTheDocument();
+  });
+});
 
 describe("IntakeV6FinalConfigurationSummary", () => {
   it("is collapsed by default in embedded variant", async () => {

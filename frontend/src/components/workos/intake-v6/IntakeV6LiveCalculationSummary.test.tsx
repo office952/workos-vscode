@@ -821,6 +821,8 @@ describe("IntakeV6LiveCalculationSummary", () => {
             total_gross: 2975,
             vat_rate: 19,
             vat_amount: 475,
+            // Currency is now required to render offer money — no assumed RON fallback.
+            currency: "EUR",
             commercial_base_subtotal: 2500,
             commercial_adjustment_trace: { markup_percent: 0 },
           },
@@ -872,6 +874,61 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-offer-net")).toHaveTextContent(/2[,.]?837/);
     expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/3[,.]?433/);
     expect(screen.getByTestId("intake-v6-live-offer-adaos")).toHaveTextContent(/50/);
+  });
+
+  it("renders the offer in the currency the backend reported, not an assumed RON", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
+          pricing_source: "intake_v6_backend_priced_dry_run",
+          workspace_id: "ws",
+          commercial_totals: {
+            subtotal_net: 1000,
+            total_gross: 1210,
+            vat_rate: 21,
+            vat_amount: 210,
+            currency: "EUR",
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/€|EUR/);
+    expect(screen.getByTestId("intake-v6-live-offer-gross")).not.toHaveTextContent(/RON|lei/i);
+    expect(screen.getByTestId("intake-v6-live-offer-net")).not.toHaveTextContent(/RON|lei/i);
+    expect(screen.getByTestId("intake-v6-live-offer-vat")).not.toHaveTextContent(/RON|lei/i);
+  });
+
+  it("refuses to invent RON when the backend reported no offer currency", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
+          pricing_source: "intake_v6_backend_priced_dry_run",
+          workspace_id: "ws",
+          commercial_totals: {
+            subtotal_net: 1000,
+            total_gross: 1210,
+            vat_rate: 21,
+            vat_amount: 210,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.queryByTestId("intake-v6-live-offer-gross")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-estimate-unavailable")).toHaveTextContent(
+      /nu presupunem RON/i,
+    );
   });
 
   it("shows incomplete estimate message instead of a false gross total", () => {

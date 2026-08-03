@@ -47,6 +47,8 @@ class CommercialPriceLine(BaseModel):
     cpp_currency: str | None = None
     currency_conversion_rate: float | None = None
     currency_conversion_source: str | None = None
+    # Commercial product ownership (F7F) — letters and the ACM panel are separate products.
+    commercial_product_key: str | None = None
 
 
 class CommercialMinimumApplied(BaseModel):
@@ -81,6 +83,46 @@ class CommercialProvenanceEntry(BaseModel):
     detail: str
 
 
+class CommercialCurrencyBucket(BaseModel):
+    """One honest per-currency subtotal. Currencies are never fused without an explicit rate."""
+
+    currency: str
+    subtotal: float
+
+
+class CommercialProductSubtotal(BaseModel):
+    product_key: str
+    label: str
+    line_codes: list[str] = Field(default_factory=list)
+    subtotals_by_currency: list[CommercialCurrencyBucket] = Field(default_factory=list)
+    blocked: bool = False
+    blocker_codes: list[str] = Field(default_factory=list)
+    # Lines that carry no price yet because an Owner decision is pending. They do not block the
+    # offer, but any subtotal that omits them is partial and must be labelled as such.
+    pending_line_codes: list[str] = Field(default_factory=list)
+
+
+class CommercialProductBreakdown(BaseModel):
+    """F7F Step 3 contract: per-product subtotals plus one honest complete offer total.
+
+    `complete_offer_total` is emitted only when every priced line resolves to a single
+    currency and no product is blocked. Mixed currencies are never summed: there is no
+    automatic EUR->RON conversion, no live FX and no default rate in this engine.
+    """
+
+    products: list[CommercialProductSubtotal] = Field(default_factory=list)
+    subtotals_by_currency: list[CommercialCurrencyBucket] = Field(default_factory=list)
+    currency_mix_detected: bool = False
+    complete_offer_total: float | None = None
+    complete_offer_total_currency: str | None = None
+    complete_offer_total_unavailable_reason: str | None = None
+    complete_offer_total_is_partial: bool = False
+    pending_line_codes: list[str] = Field(default_factory=list)
+    tax_status: Literal["tax_exclusive"] = "tax_exclusive"
+    vat_policy_source: str | None = None
+    vat_rate_percent: float | None = None
+
+
 class CommercialPriceProposalPreview(BaseModel):
     preview_version: str = COMMERCIAL_PRICE_PROPOSAL_PREVIEW_VERSION
     template_code: str
@@ -101,3 +143,7 @@ class CommercialPriceProposalPreview(BaseModel):
     quote_ready_for_commercial_review: bool = False
     notes: list[str] = Field(default_factory=list)
     input_summary: dict[str, Any] = Field(default_factory=dict)
+    # F7F: per-product subtotals + honest complete offer total. `subtotal_commercial` /
+    # `commercial_total` above stay as the pre-F7F fused figure for backwards compatibility;
+    # operator-facing surfaces must read `commercial_product_breakdown`.
+    commercial_product_breakdown: CommercialProductBreakdown | None = None

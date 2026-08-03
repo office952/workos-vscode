@@ -266,9 +266,30 @@ def _commercial_line_items(commercial_preview: Any) -> list[dict[str, Any]]:
 				"cpp_currency": getattr(line, "cpp_currency", None),
 				"currency_conversion_rate": getattr(line, "currency_conversion_rate", None),
 				"currency_conversion_source": getattr(line, "currency_conversion_source", None),
+				"commercial_product_key": getattr(line, "commercial_product_key", None),
 			}
 		)
 	return items
+
+
+def _commercial_product_breakdown(
+	commercial_preview: Any,
+	*,
+	settings_vat_percent: float | None,
+) -> dict[str, Any] | None:
+	"""F7F Step 3 contract: per-product subtotals + one complete offer total, straight from CPP.
+
+	CPP itself stays tax-exclusive; the VAT rate is stamped here from the canonical fiscal policy
+	(company commercial settings) so no layer has to hardcode a percentage.
+	"""
+	breakdown = getattr(commercial_preview, "commercial_product_breakdown", None)
+	if breakdown is None:
+		return None
+	payload = breakdown.model_dump(mode="json")
+	if settings_vat_percent is not None:
+		payload["vat_rate_percent"] = float(settings_vat_percent)
+		payload["vat_policy_source"] = "company_commercial_settings.default_vat_pct"
+	return payload
 
 
 def _build_acm_panel_commercial_preview(
@@ -777,6 +798,10 @@ async def build_intake_v6_priced_quote_dry_run(
 		"pricing_mode": pricing_mode,
 		"commercial_totals": totals,
 		"commercial_line_items": line_items,
+		"commercial_product_breakdown": _commercial_product_breakdown(
+			commercial_preview,
+			settings_vat_percent=settings_vat_percent,
+		),
 		"acm_panel_commercial_preview": acm_panel_commercial_preview,
 		"internal_cost_trace": _material_trace(material_breakdown, material_warning),
 		"estimated_internal_cost_trace": _estimated_internal_cost_trace(internal_preview),

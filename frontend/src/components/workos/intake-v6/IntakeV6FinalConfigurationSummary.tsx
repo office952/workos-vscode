@@ -3,6 +3,21 @@ import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace"
 import { useIntakeV6FinalHandoff } from "@/lib/intakeV6/useIntakeV6FinalHandoff";
 import { formatWorkspaceReadinessLabel } from "@/lib/intakeV6/intakeV6OperatorUiDisplay";
 import { isAcmPanelOnlyComposition } from "@/lib/intakeV6/acmPanel/acmPanelOnlyComposition";
+import type {
+	OfferProductRow,
+	OfferTotalState,
+} from "@/lib/intakeV6/intakeV6OfferProductSummary";
+import {
+	OFFER_TOTAL_AVAILABLE_LABEL,
+	OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE,
+	OFFER_TOTAL_PARTIAL_LABEL,
+	OFFER_TOTAL_PARTIAL_MESSAGE,
+	OFFER_TOTAL_UNAVAILABLE_LABEL,
+	buildOfferProductSummary,
+	formatOfferMoney,
+	offerSubtotalLabel,
+	offerTaxNote,
+} from "@/lib/intakeV6/intakeV6OfferProductSummary";
 import { v6 } from "./atoms/intakeV6Presentation";
 import IntakeV6ConfirmDashboard from "./IntakeV6ConfirmDashboard";
 import IntakeV6ConfirmHandoffPanel from "./IntakeV6ConfirmHandoffPanel";
@@ -58,6 +73,106 @@ function ConsolidatedBlockersList({
 	);
 }
 
+interface OfferCardModel {
+	products: OfferProductRow[];
+	total: OfferTotalState;
+	taxNote: string;
+	net: { amount: number; currency: string } | null;
+	vat: { amount: number; currency: string; ratePercent: number } | null;
+	adaosPercent: number | null;
+}
+
+function normalizeReportedCurrency(raw: unknown): string | null {
+	if (typeof raw !== "string") return null;
+	const value = raw.trim().toUpperCase();
+	return value.length > 0 ? value : null;
+}
+
+function OfferProductBreakdownList({ products }: { products: OfferProductRow[] }) {
+	if (products.length === 0) return null;
+	return (
+		<ul className="mb-2 space-y-1.5" data-testid="intake-v6-offer-product-breakdown">
+			{products.map((product) => (
+				<li
+					key={product.productKey}
+					className="rounded border border-wo-border-strong/60 bg-wo-surface-input/40 px-2.5 py-2"
+					data-testid={`intake-v6-offer-product-row-${product.productKey}`}
+					data-blocked={product.blocked ? "true" : "false"}
+				>
+					<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+						<span className="text-[12px] font-medium text-wo-text-secondary">{product.label}</span>
+						<span className="text-[11px] text-wo-text-muted">
+							{offerSubtotalLabel(product.productKey, product.label)}
+						</span>
+					</div>
+					{product.amounts.length > 0 ? (
+						<ul className="mt-1 space-y-0.5">
+							{product.amounts.map((amount) => (
+								<li
+									key={`${product.productKey}-${amount.currency}`}
+									className="flex items-baseline justify-between gap-2 text-[12px]"
+								>
+									<span className="text-wo-text-dim">{amount.currency}</span>
+									<span className="tabular-nums text-wo-text-primary">
+										{formatOfferMoney(amount.subtotal, amount.currency)}
+									</span>
+								</li>
+							))}
+						</ul>
+					) : (
+						<p className="mt-1 text-[11px] text-wo-text-muted">Subtotal indisponibil</p>
+					)}
+					{product.blocked ? (
+						<p className="mt-1 text-[11px] leading-relaxed text-rose-200">
+							Blocat comercial
+							{product.blockerCodes.length > 0 ? `: ${product.blockerCodes.join(", ")}` : ""}
+						</p>
+					) : null}
+				</li>
+			))}
+		</ul>
+	);
+}
+
+function OfferTotalBlock({ total }: { total: OfferTotalState }) {
+	if (total.kind === "available") {
+		return (
+			<div data-testid="intake-v6-offer-total-block" data-partial={total.partial ? "true" : "false"}>
+				<div className="flex flex-wrap items-baseline justify-between gap-2">
+					<span className="text-[12px] font-semibold text-wo-text-secondary">
+						{total.partial ? OFFER_TOTAL_PARTIAL_LABEL : OFFER_TOTAL_AVAILABLE_LABEL}
+					</span>
+					<span
+						className={`text-[20px] font-bold tabular-nums ${total.partial ? "text-amber-200" : "text-emerald-200"}`}
+						data-testid="intake-v6-offer-total"
+					>
+						{formatOfferMoney(total.amount, total.currency)}
+					</span>
+				</div>
+				{total.partial ? (
+					<p
+						className="mt-1 text-[11px] leading-relaxed text-amber-100/85"
+						data-testid="intake-v6-offer-total-partial-note"
+					>
+						{OFFER_TOTAL_PARTIAL_MESSAGE}
+						{total.pendingLineCodes.length > 0 ? ` (${total.pendingLineCodes.join(", ")})` : ""}
+					</p>
+				) : null}
+			</div>
+		);
+	}
+	return (
+		<div
+			className="rounded-md border border-amber-500/30 bg-amber-500/5 px-2.5 py-2"
+			data-testid="intake-v6-offer-total-unavailable"
+			data-reason-code={total.reasonCode ?? ""}
+		>
+			<p className="text-[12px] font-semibold text-amber-100">{OFFER_TOTAL_UNAVAILABLE_LABEL}</p>
+			<p className="mt-1 text-[11px] leading-relaxed text-amber-100/85">{total.message}</p>
+		</div>
+	);
+}
+
 export default function IntakeV6FinalConfigurationSummary({
 	hook,
 	defaultExpanded = true,
@@ -71,6 +186,59 @@ export default function IntakeV6FinalConfigurationSummary({
 			),
 		[handoff.ws?.payload],
 	);
+
+	const offerCard = useMemo<OfferCardModel | null>(() => {
+		const dryRun = handoff.pricedQuoteDryRun;
+		if (!dryRun) return null;
+		const breakdown = dryRun.commercial_product_breakdown ?? null;
+		const summary = buildOfferProductSummary(breakdown);
+		const totals = dryRun.commercial_totals ?? null;
+		const reportedCurrency = normalizeReportedCurrency(totals?.currency);
+		// Canonical breakdown owns VAT truth; legacy responses fall back to dry-run totals.
+		const vatRatePercent =
+			summary != null
+				? summary.vatRatePercent
+				: typeof totals?.vat_rate === "number" && Number.isFinite(totals.vat_rate)
+					? totals.vat_rate
+					: null;
+		const netAmount = totals?.subtotal_net;
+		const vatAmount = totals?.vat_amount;
+		const grossAmount = handoff.pricedQuoteDryRunTotal;
+		const fallbackTotal: OfferTotalState =
+			reportedCurrency != null && grossAmount != null && Number.isFinite(grossAmount)
+				? {
+						kind: "available",
+						amount: grossAmount,
+						currency: reportedCurrency,
+						partial: false,
+						pendingLineCodes: [],
+					}
+				: {
+						kind: "unavailable",
+						reasonCode: null,
+						message: OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE,
+					};
+		return {
+			products: summary?.products ?? [],
+			total: summary?.total ?? fallbackTotal,
+			taxNote: summary != null ? summary.taxNote : offerTaxNote(vatRatePercent),
+			net:
+				reportedCurrency != null && typeof netAmount === "number" && Number.isFinite(netAmount)
+					? { amount: netAmount, currency: reportedCurrency }
+					: null,
+			vat:
+				reportedCurrency != null &&
+				typeof vatAmount === "number" &&
+				Number.isFinite(vatAmount) &&
+				vatRatePercent != null
+					? { amount: vatAmount, currency: reportedCurrency, ratePercent: vatRatePercent }
+					: null,
+			adaosPercent:
+				typeof totals?.commercial_adjustment_trace?.markup_percent === "number"
+					? totals.commercial_adjustment_trace.markup_percent
+					: null,
+		};
+	}, [handoff.pricedQuoteDryRun, handoff.pricedQuoteDryRunTotal]);
 
 	// Confirmare first paint always exposes the checklist / handoff purpose.
 	const showHandoffPanel =
@@ -144,66 +312,56 @@ export default function IntakeV6FinalConfigurationSummary({
 					/>
 				) : null}
 
-				{handoff.pricedQuoteDryRunTotal != null ? (
+				{offerCard != null && (handoff.pricedQuoteDryRunTotal != null || offerCard.products.length > 0) ? (
 					<div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-priced-quote-cta-card">
 						<div className="mb-2">
-							<div className="mb-2 flex flex-wrap items-start justify-between gap-2">
-								<div>
-									<h3 className={v6.sectionTitle}>Ofertă client — total</h3>
-									<p className="mt-1 text-[11px] text-slate-400">
-										Total comercial pe ofertă — fără comandă sau stoc.
-									</p>
-								</div>
-								<span
-									className="text-[20px] font-bold tabular-nums text-emerald-200"
-									data-testid="intake-v6-priced-quote-total"
-								>
-									{`${handoff.pricedQuoteDryRunTotal.toLocaleString("ro-RO", {
-										minimumFractionDigits: 2,
-										maximumFractionDigits: 2,
-									})} ${handoff.pricedQuoteDryRun?.commercial_totals?.currency ?? "RON"}`}
-								</span>
+							<div className="mb-2">
+								<h3 className={v6.sectionTitle}>Ofertă client</h3>
+								<p className="mt-1 text-[11px] text-slate-400">
+									Subtotaluri pe produs și total comercial din backend — fără comandă sau stoc.
+								</p>
 							</div>
-							{handoff.pricedQuoteDryRun?.commercial_totals?.subtotal_net != null ? (
+
+							<OfferProductBreakdownList products={offerCard.products} />
+
+							<div className="mb-2">
+								<OfferTotalBlock total={offerCard.total} />
+							</div>
+
+							<p className="mb-2 text-[11px] text-slate-400" data-testid="intake-v6-offer-tax-note">
+								{offerCard.taxNote}
+							</p>
+
+							{offerCard.net || offerCard.vat || offerCard.adaosPercent != null ? (
 								<dl
 									className="grid grid-cols-2 gap-x-3 gap-y-1 rounded border border-wo-border-strong/60 bg-wo-surface-input/50 px-2.5 py-2 text-[11px]"
 									data-testid="intake-v6-confirm-offer-totals-breakdown"
 								>
-									<div className="flex justify-between gap-2 text-slate-400">
-										<dt>Net</dt>
-										<dd className="tabular-nums text-slate-200">
-											{handoff.pricedQuoteDryRun.commercial_totals.subtotal_net.toLocaleString("ro-RO", {
-												minimumFractionDigits: 2,
-												maximumFractionDigits: 2,
-											})}{" "}
-											RON
-										</dd>
-									</div>
-									<div className="flex justify-between gap-2 text-slate-400">
-										<dt>
-											TVA
-											{handoff.pricedQuoteDryRun.commercial_totals.vat_rate != null
-												? ` (${handoff.pricedQuoteDryRun.commercial_totals.vat_rate}%)`
-												: ""}
-										</dt>
-										<dd className="tabular-nums text-slate-200">
-											{(handoff.pricedQuoteDryRun.commercial_totals.vat_amount ?? 0).toLocaleString("ro-RO", {
-												minimumFractionDigits: 2,
-												maximumFractionDigits: 2,
-											})}{" "}
-											RON
-										</dd>
-									</div>
-									{handoff.pricedQuoteDryRun.commercial_totals.commercial_adjustment_trace
-										?.markup_percent != null ? (
+									{offerCard.net ? (
+										<div className="flex justify-between gap-2 text-slate-400">
+											<dt>Net</dt>
+											<dd className="tabular-nums text-slate-200">
+												{formatOfferMoney(offerCard.net.amount, offerCard.net.currency)}
+											</dd>
+										</div>
+									) : null}
+									{offerCard.vat ? (
+										<div className="flex justify-between gap-2 text-slate-400">
+											<dt>
+												{`TVA (${offerCard.vat.ratePercent.toLocaleString("ro-RO", {
+													maximumFractionDigits: 2,
+												})}%)`}
+											</dt>
+											<dd className="tabular-nums text-slate-200">
+												{formatOfferMoney(offerCard.vat.amount, offerCard.vat.currency)}
+											</dd>
+										</div>
+									) : null}
+									{offerCard.adaosPercent != null ? (
 										<div className="col-span-2 flex justify-between gap-2 text-slate-400">
 											<dt>Adaos comercial</dt>
 											<dd className="tabular-nums text-slate-200">
-												{Number(
-													handoff.pricedQuoteDryRun.commercial_totals.commercial_adjustment_trace
-														.markup_percent,
-												).toLocaleString("ro-RO", { maximumFractionDigits: 2 })}
-												%
+												{offerCard.adaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
 											</dd>
 										</div>
 									) : null}

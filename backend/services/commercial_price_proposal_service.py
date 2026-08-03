@@ -14,32 +14,44 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from data.commercial_rules_volumetric_v2 import (
     ACM_BOXED_ASSEMBLY_MIN_EUR,
+    ACM_SHEET_ENVIRONMENT_EXTERIOR,
+    ACM_SHEET_MATERIAL_EUR_M2_BY_VARIANT,
+    ACM_SHEET_MIRROR_VARIANTS,
+    ACM_SHEET_VARIANT_WHEN_ABSENT,
     CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES,
     CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE,
     CANT_RAL_PAINT_GATE_VALUES,
     CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM,
     CANT_RAL_PAINT_MINIMUM_RON_PER_COLOR,
+    COMMERCIAL_PRODUCT_LABELS,
     CRITICAL_MODULE_CODES,
     FACE_FINISH_NONE_VALUES,
     FACE_FINISH_ORACAL_TOKENS,
+    FACE_FINISH_PRINT_LAMINATE_TOKENS,
     FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS,
     FORBIDDEN_HOURLY_TOKENS,
     LETTERS_ACM_PACK_MIN_EUR,
+    ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM,
+    ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM,
     RULES_BY_TEMPLATE,
     CommercialRuleDefinition,
 )
 from schemas.commercial_price_proposal import (
     COMMERCIAL_PRICE_PROPOSAL_SOURCE,
     CommercialBlocker,
+    CommercialCurrencyBucket,
     CommercialOwnerDecision,
     CommercialPriceLine,
     CommercialPriceProposalPreview,
+    CommercialProductBreakdown,
+    CommercialProductSubtotal,
     CommercialProposalStatus,
     CommercialProvenanceEntry,
 )
 from schemas.product_definition import ProductDefinitionPreview
 from services.acm_quote_input_helpers import (
     ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS,
+    is_acm_boxed_mounting_payload,
     is_acm_boxed_mounting_standalone_root_template,
 )
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
@@ -94,6 +106,115 @@ def _get_by_path(root: Any, path: str) -> Any:
 
 def _lower_str(value: Any) -> str:
     return str(value or "").strip().lower()
+
+
+# Face selections that carry an Owner-priced vinyl material rule and therefore also carry the
+# single Owner vinyl-application line. "none" and stock cant never appear here.
+FACE_FINISH_VINYL_APPLIED_TOKENS = FACE_FINISH_ORACAL_TOKENS | FACE_FINISH_PRINT_LAMINATE_TOKENS
+# Canonical root key first (services/volumetric_face_vinyl_service.resolve_face_vinyl_roll_width_mm),
+# then the finish_setup aliases the Intake V6 artwork-finish rows persist.
+ORACAL_8500_ROLL_WIDTH_PATHS = (
+    "face_vinyl_roll_width_mm",
+    "finish_setup.face_vinyl_roll_width_mm",
+    "finish_setup.face_roll_width_mm",
+    "face_roll_width_mm",
+)
+# Canonical operator capture (F7F): acm_sheet_material_v1. Read from the ACM panel instance
+# (letters + ACM composition) and from the standalone ACM root payload / mounting configuration.
+ACM_SHEET_MATERIAL_PATHS = (
+    "finish_setup.acm_panel_instance.sheet_material",
+    "acm_panel_instance.sheet_material",
+    "finish_setup.mounting_solution.configuration.acm_panel_instance.sheet_material",
+    "finish_setup.mounting_solution.configuration.acm_sheet_material",
+    "finish_setup.acm_sheet_material",
+    "acm_sheet_material",
+)
+
+
+def _face_finish_token(payload: dict[str, Any]) -> str:
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    return _lower_str(finish.get("face_finish_type") or payload.get("face_finish_type"))
+
+
+def _letter_group_finishes(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    groups = finish.get("letter_group_finishes") or payload.get("letter_group_finishes")
+    if not isinstance(groups, list):
+        return []
+    return [group for group in groups if isinstance(group, dict)]
+
+
+def _supported_8500_width(raw: Any) -> int | None:
+    width = _positive_number(raw)
+    if width is None:
+        return None
+    candidate = int(round(width))
+    return candidate if candidate in ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM else None
+
+
+def _confirmed_oracal_8500_roll_width_mm(payload: dict[str, Any]) -> int | None:
+    """Owner F7F: rate by SKU + CONFIRMED roll width. Never guess, never default a tier.
+
+    The job-level `face_vinyl_roll_width_mm` is a *derived dominant-value projection* of the
+    per-group captures, so on a mixed-face job it can go null (or carry a width belonging to a
+    different face) while an 8500 group really exists. The per-group capture is the operator's
+    actual selection, so it wins whenever any group carries the 8500 face; groups that disagree,
+    or that are not operator-confirmed, resolve to nothing and the caller fails closed.
+    """
+    oracal_8500_groups = [
+        group
+        for group in _letter_group_finishes(payload)
+        if _lower_str(group.get("face_finish_type")) == "oracal_8500"
+    ]
+    if oracal_8500_groups:
+        widths = {
+            _supported_8500_width(group.get("face_vinyl_roll_width_mm"))
+            for group in oracal_8500_groups
+            if group.get("confirmed") is True
+        }
+        if len(widths) == 1 and None not in widths:
+            return widths.pop()
+        return None
+
+    for path in ORACAL_8500_ROLL_WIDTH_PATHS:
+        raw = _get_by_path(payload, path)
+        if raw is None and "." not in path:
+            raw = payload.get(path)
+        width = _positive_number(raw)
+        if width is None:
+            continue
+        candidate = int(round(width))
+        if candidate in ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM:
+            return candidate
+    return None
+
+
+def _acm_sheet_material(payload: dict[str, Any]) -> dict[str, Any]:
+    for path in ACM_SHEET_MATERIAL_PATHS:
+        raw = _get_by_path(payload, path)
+        if isinstance(raw, dict):
+            return raw
+    return {}
+
+
+def _acm_sheet_variant_token(payload: dict[str, Any]) -> str:
+    """Absent variant keeps the owner-confirmed standard bond sheet; unknown fails closed."""
+    token = _lower_str(_acm_sheet_material(payload).get("variant"))
+    return token or ACM_SHEET_VARIANT_WHEN_ABSENT
+
+
+def _acm_sheet_variant_is_known(payload: dict[str, Any]) -> bool:
+    return _acm_sheet_variant_token(payload) in ACM_SHEET_MATERIAL_EUR_M2_BY_VARIANT
+
+
+def _acm_mirror_exterior_unproven(payload: dict[str, Any]) -> bool:
+    material = _acm_sheet_material(payload)
+    variant = _lower_str(material.get("variant"))
+    if variant not in ACM_SHEET_MIRROR_VARIANTS:
+        return False
+    if _lower_str(material.get("environment")) != ACM_SHEET_ENVIRONMENT_EXTERIOR:
+        return False
+    return not _read_string(material.get("exterior_sku"))
 
 
 def _positive_number(raw: Any) -> float | None:
@@ -469,14 +590,20 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
             return False
 
     if rule.line_code == "finisaje_colantare_vopsire":
-        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
-        face_token = _lower_str(finish.get("face_finish_type") or payload.get("face_finish_type"))
+        face_token = _face_finish_token(payload)
         if (
             face_token in FACE_FINISH_NONE_VALUES
-            or face_token in FACE_FINISH_ORACAL_TOKENS
+            or face_token in FACE_FINISH_VINYL_APPLIED_TOKENS
             or face_token in FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS
         ):
             return False
+
+    if rule.line_code == "finisaje_print_laminate_material":
+        return _face_finish_token(payload) in FACE_FINISH_PRINT_LAMINATE_TOKENS
+
+    if rule.line_code == "finisaje_aplicare_autocolant_fata":
+        # Charged once, only when a priced vinyl/print material actually covers the face.
+        return _face_finish_token(payload) in FACE_FINISH_VINYL_APPLIED_TOKENS
 
     if rule.line_code.startswith("finisaje_cant_oracal_"):
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
@@ -577,15 +704,22 @@ async def _build_line(
 
     dynamic_unit_price: float | None = None
     dynamic_unit_price_currency: str | None = None
+    # When a dynamic rate is required but unresolvable, the documented rate must not silently
+    # stand in for it (fail closed instead of quietly pricing the wrong material).
+    suppress_documented_fallback = False
 
-    if rule.line_code == "finisaje_cant_oracal_material":
+    if rule.line_code.startswith("finisaje_cant_oracal_"):
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
-        cant_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
-        series = CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE.get(cant_token)
-        dynamic_unit_price = CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES.get(series) if series else None
-        if dynamic_unit_price is not None:
-            dynamic_unit_price_currency = "EUR"
-            warnings.append(f"cant_oracal_series_resolved={series}")
+        if rule.line_code == "finisaje_cant_oracal_material":
+            cant_token = _lower_str(
+                finish.get("return_finish_type") or payload.get("return_finish_type")
+            )
+            series = CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE.get(cant_token)
+            dynamic_unit_price = CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES.get(series) if series else None
+            if dynamic_unit_price is not None:
+                dynamic_unit_price_currency = "EUR"
+                warnings.append(f"cant_oracal_series_resolved={series}")
+        # Material and application share the same proven applied surface: the developed wrap area.
         perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
         depth_mm = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
         if perimeter is not None and depth_mm is not None:
@@ -593,6 +727,35 @@ async def _build_line(
             warnings.append("quantity_source=perimeter_m_x_return_depth_mm_to_m2")
         else:
             quantity = None
+
+    if rule.line_code == "finisaje_oracal_8500_material":
+        roll_width_mm = _confirmed_oracal_8500_roll_width_mm(payload)
+        dynamic_unit_price = (
+            ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM.get(roll_width_mm) if roll_width_mm else None
+        )
+        if dynamic_unit_price is not None:
+            dynamic_unit_price_currency = "EUR"
+            warnings.append(f"oracal_8500_roll_width_confirmed={roll_width_mm}mm")
+        else:
+            owner_required = True
+            warnings.append(
+                "COMMERCIAL_CONFIGURATION_INCOMPLETE:face_vinyl_roll_width_mm_not_confirmed;"
+                f"supported={'/'.join(str(w) for w in ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM)}"
+            )
+
+    if rule.line_code in ("acm_panel_face_material", "acm_return_strip_material"):
+        variant = _acm_sheet_variant_token(payload)
+        dynamic_unit_price = ACM_SHEET_MATERIAL_EUR_M2_BY_VARIANT.get(variant)
+        if dynamic_unit_price is not None:
+            dynamic_unit_price_currency = "EUR"
+            warnings.append(f"acm_sheet_variant_resolved={variant}")
+            if variant in ACM_SHEET_MIRROR_VARIANTS:
+                # Replacement rate — never the standard rate plus a mirror surcharge.
+                warnings.append("acm_mirror_rate_is_replacement_not_surcharge")
+        else:
+            owner_required = True
+            suppress_documented_fallback = True
+            warnings.append(f"COMMERCIAL_RULE_MISSING:acm_sheet_variant={variant}")
 
     if rule.line_code == "finisaje_cant_ral_material":
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
@@ -611,7 +774,12 @@ async def _build_line(
         owner_required = True
         warnings.append(f"{rule.pricing_rule_code}:unresolved_dynamic_unit_price")
 
-    unit_price = dynamic_unit_price if dynamic_unit_price is not None else rule.documented_unit_price
+    if dynamic_unit_price is not None:
+        unit_price = dynamic_unit_price
+    elif suppress_documented_fallback:
+        unit_price = None
+    else:
+        unit_price = rule.documented_unit_price
     if dynamic_unit_price_currency is not None:
         source_currency = dynamic_unit_price_currency
     if unit_price is not None and source_currency:
@@ -694,6 +862,7 @@ async def _build_line(
         cpp_currency=cpp_currency,
         currency_conversion_rate=fx_rate,
         currency_conversion_source=fx_source,
+        commercial_product_key=rule.commercial_product_key,
     )
 
 
@@ -782,6 +951,112 @@ def _apply_cant_ral_paint_minimum(lines: list[CommercialPriceLine]) -> None:
     )
 
 
+def _line_currency(line: CommercialPriceLine) -> str | None:
+    """The currency a line's subtotal is actually expressed in — never assumed."""
+    resolved = line.cpp_currency or line.source_currency
+    return str(resolved).upper() if resolved else None
+
+
+def _currency_buckets(pairs: list[tuple[str, float]]) -> list[CommercialCurrencyBucket]:
+    totals: dict[str, float] = {}
+    for currency, amount in pairs:
+        totals[currency] = round(totals.get(currency, 0.0) + amount, 4)
+    return [
+        CommercialCurrencyBucket(currency=currency, subtotal=totals[currency])
+        for currency in sorted(totals)
+    ]
+
+
+def _build_commercial_product_breakdown(
+    *,
+    lines: list[CommercialPriceLine],
+    blockers: list[CommercialBlocker],
+    vat_rate_percent: float | None,
+    vat_policy_source: str | None,
+) -> CommercialProductBreakdown:
+    """F7F: per-product subtotals plus one complete offer total, or an honest refusal.
+
+    Mixed currencies are never fused. Without an explicit provenance-bearing exchange rate this
+    engine has no authority to convert, so it reports the mix instead of inventing a total.
+    """
+    ordered_keys: list[str] = []
+    per_product: dict[str, list[CommercialPriceLine]] = {}
+    for line in lines:
+        key = line.commercial_product_key or "letters"
+        if key not in per_product:
+            per_product[key] = []
+            ordered_keys.append(key)
+        per_product[key].append(line)
+
+    # Blockers are offer-wide today, so every product inherits them. Owner-pending lines are a
+    # different, softer state: the total still stands, but it is explicitly partial.
+    global_blocker_codes = sorted({blocker.code for blocker in blockers})
+
+    products: list[CommercialProductSubtotal] = []
+    all_pairs: list[tuple[str, float]] = []
+    all_pending: list[str] = []
+    for key in ordered_keys:
+        product_lines = per_product[key]
+        pairs: list[tuple[str, float]] = []
+        pending: list[str] = []
+        unknown_currency = False
+        for line in product_lines:
+            if line.subtotal is None:
+                if line.owner_decision_required:
+                    pending.append(line.code)
+                continue
+            currency = _line_currency(line)
+            if currency is None:
+                unknown_currency = True
+                continue
+            pairs.append((currency, float(line.subtotal)))
+        all_pairs.extend(pairs)
+        all_pending.extend(pending)
+
+        blocker_codes = list(global_blocker_codes)
+        if unknown_currency:
+            blocker_codes.append("COMMERCIAL_LINE_CURRENCY_UNKNOWN")
+        products.append(
+            CommercialProductSubtotal(
+                product_key=key,
+                label=COMMERCIAL_PRODUCT_LABELS.get(key, key),
+                line_codes=[line.code for line in product_lines],
+                subtotals_by_currency=_currency_buckets(pairs),
+                blocked=bool(blocker_codes),
+                blocker_codes=sorted(set(blocker_codes)),
+                pending_line_codes=pending,
+            )
+        )
+
+    buckets = _currency_buckets(all_pairs)
+    currency_mix = len(buckets) > 1
+    total: float | None = None
+    total_currency: str | None = None
+    unavailable_reason: str | None = None
+    if any(product.blocked for product in products):
+        unavailable_reason = "COMMERCIAL_PRODUCT_BLOCKED"
+    elif currency_mix:
+        unavailable_reason = "COMMERCIAL_CURRENCY_MIX_UNRESOLVED"
+    elif not buckets:
+        unavailable_reason = "COMMERCIAL_TOTAL_NOT_PRICED"
+    else:
+        total = buckets[0].subtotal
+        total_currency = buckets[0].currency
+
+    return CommercialProductBreakdown(
+        products=products,
+        subtotals_by_currency=buckets,
+        currency_mix_detected=currency_mix,
+        complete_offer_total=total,
+        complete_offer_total_currency=total_currency,
+        complete_offer_total_unavailable_reason=unavailable_reason,
+        complete_offer_total_is_partial=total is not None and bool(all_pending),
+        pending_line_codes=sorted(set(all_pending)),
+        vat_policy_source=vat_policy_source,
+        vat_rate_percent=vat_rate_percent,
+    )
+
+
 def _compute_status(
     *,
     lines: list[CommercialPriceLine],
@@ -798,7 +1073,13 @@ def _compute_status(
         return "blocked", False, "low"
 
     critical_blocker_codes = frozenset(
-        {"CRITICAL_GEOMETRY_MISSING", "COMMERCIAL_RULE_MISSING", "COMMERCIAL_BASIS_UNKNOWN"}
+        {
+            "CRITICAL_GEOMETRY_MISSING",
+            "COMMERCIAL_RULE_MISSING",
+            "COMMERCIAL_BASIS_UNKNOWN",
+            "COMMERCIAL_CONFIGURATION_INCOMPLETE",
+            "TECHNICAL_MATERIAL_COMPATIBILITY_REQUIRED",
+        }
     )
     if any(b.code in critical_blocker_codes for b in blockers):
         return "blocked", False, "low"
@@ -976,8 +1257,7 @@ class CommercialPriceProposalService:
         # relevant face finish selection with no owner-priced CPP rule must block "ready" —
         # never silently fall back to the flat finisaje_colantare_vopsire rate.
         if str(rules_key or "").startswith("TPL-VOLUMETRIC-LETTERS") and "finisaje" in active_modules:
-            finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
-            face_token = _lower_str(finish.get("face_finish_type") or payload.get("face_finish_type"))
+            face_token = _face_finish_token(payload)
             if face_token in FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS:
                 blockers.append(
                     CommercialBlocker(
@@ -986,6 +1266,50 @@ class CommercialPriceProposalService:
                             f"No commercial rule catalog entry for face_finish_type={face_token}."
                         ),
                         module_code="finisaje",
+                    )
+                )
+            # Owner F7F: Oracal 8500 is priced by SKU + confirmed roll width. A missing or
+            # unsupported width must block — never resolve to the cheaper or dearer tier.
+            if (
+                face_token == "oracal_8500"
+                and _confirmed_oracal_8500_roll_width_mm(payload) is None
+            ):
+                blockers.append(
+                    CommercialBlocker(
+                        code="COMMERCIAL_CONFIGURATION_INCOMPLETE",
+                        message=(
+                            "Oracal 8500 requires one confirmed face_vinyl_roll_width_mm "
+                            f"({' or '.join(str(w) for w in ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM)} mm) "
+                            "before a commercial rate can be resolved. Letter groups that carry the "
+                            "8500 face must be confirmed and must agree on one width."
+                        ),
+                        module_code="finisaje",
+                    )
+                )
+
+        # Owner F7F ACM sheet law: unknown variant fails closed; mirror on an exterior
+        # installation needs a proven supplier SKU before any technical compatibility claim.
+        if is_acm_boxed_mounting_payload(payload):
+            if not _acm_sheet_variant_is_known(payload):
+                blockers.append(
+                    CommercialBlocker(
+                        code="COMMERCIAL_RULE_MISSING",
+                        message=(
+                            "No commercial rule catalog entry for acm_sheet_variant="
+                            f"{_acm_sheet_variant_token(payload)}."
+                        ),
+                        module_code="structura_suport",
+                    )
+                )
+            if _acm_mirror_exterior_unproven(payload):
+                blockers.append(
+                    CommercialBlocker(
+                        code="TECHNICAL_MATERIAL_COMPATIBILITY_REQUIRED",
+                        message=(
+                            "Mirror ACM is interior by default. An exterior installation requires "
+                            "a proven supplier SKU before technical compatibility is claimed."
+                        ),
+                        module_code="structura_suport",
                     )
                 )
 
@@ -1006,6 +1330,9 @@ class CommercialPriceProposalService:
                 payload=payload,
                 pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
             )
+            for logo_line in logo_lines:
+                # Linked logo segments are sold under the letters product, not the ACM panel.
+                logo_line.commercial_product_key = "letters"
             lines.extend(logo_lines)
             owner_decisions.extend(logo_owner_decisions)
         elif getattr(pd, "linked_template_runtime_segments", None):
@@ -1046,6 +1373,15 @@ class CommercialPriceProposalService:
 
         subtotals = [line.subtotal for line in lines if line.subtotal is not None]
         subtotal_commercial = round(sum(subtotals), 4) if subtotals else None
+
+        # F7F: honest per-product / per-currency view. CPP stays tax-exclusive — the fiscal
+        # policy (VAT) is a separate owner and is filled in downstream, never guessed here.
+        product_breakdown = _build_commercial_product_breakdown(
+            lines=lines,
+            blockers=blockers,
+            vat_rate_percent=None,
+            vat_policy_source=None,
+        )
 
         provenance = [
             CommercialProvenanceEntry(
@@ -1100,6 +1436,7 @@ class CommercialPriceProposalService:
             commercial_price_lines=lines,
             subtotal_commercial=subtotal_commercial,
             commercial_total=subtotal_commercial,
+            commercial_product_breakdown=product_breakdown,
             currency=currency,
             unknown_owner_decisions=owner_decisions,
             commercial_blockers=blockers,

@@ -349,20 +349,55 @@ async def test_face_finish_none_does_not_charge_flat_finish_line(
 async def test_face_finish_unpriced_commercial_token_fails_closed(
     cpp_service: CommercialPriceProposalService,
 ):
-    """Selection-granularity fail-closed: print_laminate has no CPP rule -> COMMERCIAL_RULE_MISSING,
-    never a silent fall-back to the flat 35 RON/m2 line (no OWNER_RULE leftover)."""
+    """Selection-granularity fail-closed: printed_vinyl (print WITHOUT laminate) carries no Owner
+    rate -> COMMERCIAL_RULE_MISSING, never a silent fall-back to the flat 35 RON/m2 line, and
+    never borrowing the Owner print+laminate rate."""
     payload = _full_quote_input()
-    payload["finish_setup"]["face_finish_type"] = "print_laminate"
+    payload["finish_setup"]["face_finish_type"] = "printed_vinyl"
     preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
     assert preview is not None
     codes = {line.code for line in preview.commercial_price_lines}
     assert "finisaje_colantare_vopsire" not in codes
+    assert "finisaje_print_laminate_material" not in codes
     assert any(
-        b.code == "COMMERCIAL_RULE_MISSING" and "print_laminate" in b.message
+        b.code == "COMMERCIAL_RULE_MISSING" and "printed_vinyl" in b.message
         for b in preview.commercial_blockers
     )
     assert preview.status == "blocked"
     assert preview.quote_ready_for_commercial_review is False
+
+
+@pytest.mark.asyncio
+async def test_face_print_laminate_owner_rate_activated(cpp_service: CommercialPriceProposalService):
+    """Owner F7F: print + laminate is 10 EUR/m2 tax-exclusive, plus the separate 3 EUR/m2
+    application on the same proven face surface. The F7E COMMERCIAL_RULE_MISSING is gone."""
+    payload = _full_quote_input()
+    payload["finish_setup"]["face_finish_type"] = "print_laminate"
+    preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
+    assert preview is not None
+    assert not any(
+        b.code == "COMMERCIAL_RULE_MISSING" and "print_laminate" in b.message
+        for b in preview.commercial_blockers
+    )
+    material = next(
+        line
+        for line in preview.commercial_price_lines
+        if line.code == "finisaje_print_laminate_material"
+    )
+    assert material.owner_decision_required is False
+    assert material.commercial_unit_price == 10.0
+    assert material.source_currency == "EUR"
+    assert material.quantity == pytest.approx(1.2)
+    assert material.subtotal == pytest.approx(12.0)
+
+    application = next(
+        line
+        for line in preview.commercial_price_lines
+        if line.code == "finisaje_aplicare_autocolant_fata"
+    )
+    assert application.commercial_unit_price == 3.0
+    assert application.subtotal == pytest.approx(3.6)
+    assert preview.status == "ready"
 
 
 @pytest.mark.asyncio
@@ -383,8 +418,9 @@ async def test_stock_cant_colors_zero_delta_preserved(cpp_service: CommercialPri
 async def test_cant_oracal_wrap_material_and_labor_pricing(
     cpp_service: CommercialPriceProposalService, volumetric_v2_db
 ):
-    """Oracal cant wrap: material MAT-ORACAL-651 (9.0 EUR/m2, developed wrap area) + labor
-    RETURN_CANT_VINYL_APPLICATION_LABOR (registry rate, EUR->RON)."""
+    """Owner F7F Oracal cant wrap: material 651 @ 5 EUR/m2 on the developed wrap area, plus the
+    3 EUR/m2 application on that same distinct surface. A seeded operation rate must NOT be able
+    to displace the Owner application rate."""
     await _upsert_operation_rate(
         volumetric_v2_db,
         code="RETURN_CANT_VINYL_APPLICATION_LABOR",
@@ -401,17 +437,20 @@ async def test_cant_oracal_wrap_material_and_labor_pricing(
         line for line in preview.commercial_price_lines if line.code == "finisaje_cant_oracal_material"
     )
     assert material.owner_decision_required is False
-    assert material.commercial_unit_price == 9.0
+    assert material.commercial_unit_price == 5.0
+    assert material.source_currency == "EUR"
     assert material.quantity == pytest.approx(0.75)  # 12.5 ml x 60mm depth
-    assert material.subtotal == pytest.approx(6.75)
+    assert material.subtotal == pytest.approx(3.75)
 
     labor = next(
         line for line in preview.commercial_price_lines if line.code == "finisaje_cant_oracal_labor"
     )
     assert labor.owner_decision_required is False
-    assert labor.quantity == pytest.approx(12.5)
-    assert labor.commercial_unit_price == pytest.approx(5.0)  # 1 EUR/ml x FX 5.0
-    assert labor.subtotal == pytest.approx(62.5)
+    assert labor.basis_type == "m2"
+    assert labor.quantity == pytest.approx(0.75)
+    assert labor.commercial_unit_price == pytest.approx(3.0)
+    assert labor.source_currency == "EUR"
+    assert labor.subtotal == pytest.approx(2.25)
     assert preview.status == "ready"
 
 
@@ -481,8 +520,9 @@ async def test_cant_ral_paint_pricing_above_minimum_floor(
 async def test_face_oracal_641_651_8500_pricing_no_color_tier(
     cpp_service: CommercialPriceProposalService, volumetric_v2_db
 ):
-    """Face Oracal 641/651/8500 (legacy CPP only, F7E Owner GO): material by series,
-    labor via FACE_VINYL_APPLICATION_LABOR. Same series stays one line regardless of color code."""
+    """Owner F7F face vinyl: material by series (641 = 6.5, 651 = 5.0 EUR/m2), one shared
+    3 EUR/m2 application line, and no per-series registry labor. A seeded FACE_VINYL_APPLICATION_
+    LABOR rate must not resurface as a commercial line."""
     await _upsert_operation_rate(
         volumetric_v2_db,
         code="FACE_VINYL_APPLICATION_LABOR",
@@ -490,7 +530,7 @@ async def test_face_oracal_641_651_8500_pricing_no_color_tier(
         currency="EUR",
         fx_rate=5.0,
     )
-    expected_material_eur = {"oracal_641": 6.5, "oracal_651": 9.0, "oracal_8500": 20.0}
+    expected_material_eur = {"oracal_641": 6.5, "oracal_651": 5.0}
     for face_token, expected_price in expected_material_eur.items():
         payload = _full_quote_input()
         payload["finish_setup"]["face_finish_type"] = face_token
@@ -498,6 +538,7 @@ async def test_face_oracal_641_651_8500_pricing_no_color_tier(
         assert preview is not None
         codes = {line.code for line in preview.commercial_price_lines}
         assert "finisaje_colantare_vopsire" not in codes
+        assert f"finisaje_{face_token}_labor" not in codes
 
         material = next(
             line
@@ -505,13 +546,16 @@ async def test_face_oracal_641_651_8500_pricing_no_color_tier(
             if line.code == f"finisaje_{face_token}_material"
         )
         assert material.commercial_unit_price == expected_price
+        assert material.source_currency == "EUR"
         assert material.subtotal == pytest.approx(expected_price * 1.2)  # letter_face_area_m2
 
-        labor = next(
-            line for line in preview.commercial_price_lines if line.code == f"finisaje_{face_token}_labor"
+        application = next(
+            line
+            for line in preview.commercial_price_lines
+            if line.code == "finisaje_aplicare_autocolant_fata"
         )
-        assert labor.commercial_unit_price == pytest.approx(25.0)  # 5 EUR/m2 x FX 5.0
-        assert labor.subtotal == pytest.approx(30.0)
+        assert application.commercial_unit_price == pytest.approx(3.0)
+        assert application.subtotal == pytest.approx(3.6)
         assert preview.status == "ready"
 
     # No color-tier differentiation is authorized: an arbitrary color code on the same series
@@ -530,7 +574,148 @@ async def test_face_oracal_641_651_8500_pricing_no_color_tier(
     material_b = next(
         line for line in preview_b.commercial_price_lines if line.code == "finisaje_oracal_651_material"
     )
-    assert material_a.commercial_unit_price == material_b.commercial_unit_price == 9.0
+    assert material_a.commercial_unit_price == material_b.commercial_unit_price == 5.0
+
+
+@pytest.mark.asyncio
+async def test_face_oracal_8500_rate_requires_confirmed_roll_width(
+    cpp_service: CommercialPriceProposalService,
+):
+    """Owner F7F: 8500 is 17 EUR/m2 at 1000 mm and 13.5 EUR/m2 at 1260 mm. Without a confirmed
+    width the preview blocks — it never guesses the cheaper or the more expensive tier."""
+    payload = _full_quote_input()
+    payload["finish_setup"]["face_finish_type"] = "oracal_8500"
+    preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
+    assert preview is not None
+    material = next(
+        line
+        for line in preview.commercial_price_lines
+        if line.code == "finisaje_oracal_8500_material"
+    )
+    assert material.commercial_unit_price is None
+    assert material.subtotal is None
+    assert material.owner_decision_required is True
+    assert any(
+        b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
+    )
+    assert preview.status == "blocked"
+    assert preview.quote_ready_for_commercial_review is False
+
+    for width, expected_price in ((1000, 17.0), (1260, 13.5)):
+        confirmed = _full_quote_input()
+        confirmed["finish_setup"]["face_finish_type"] = "oracal_8500"
+        confirmed["finish_setup"]["face_vinyl_roll_width_mm"] = width
+        preview = await cpp_service.build_preview(TEMPLATE, quote_input=confirmed)
+        assert preview is not None
+        material = next(
+            line
+            for line in preview.commercial_price_lines
+            if line.code == "finisaje_oracal_8500_material"
+        )
+        assert material.commercial_unit_price == expected_price, width
+        assert material.source_currency == "EUR"
+        assert material.subtotal == pytest.approx(expected_price * 1.2), width
+        assert not any(
+            b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
+        ), width
+        assert preview.status == "ready", width
+
+    unsupported = _full_quote_input()
+    unsupported["finish_setup"]["face_finish_type"] = "oracal_8500"
+    unsupported["finish_setup"]["face_vinyl_roll_width_mm"] = 1370
+    preview = await cpp_service.build_preview(TEMPLATE, quote_input=unsupported)
+    assert preview is not None
+    assert any(
+        b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
+    )
+
+
+def _oracal_8500_group_payload(groups: list[dict]) -> dict:
+    """Job-level width deliberately wrong/absent so only the per-group capture can satisfy it."""
+    payload = _full_quote_input()
+    payload["finish_setup"]["face_finish_type"] = "oracal_8500"
+    payload["finish_setup"]["letter_group_finishes"] = groups
+    return payload
+
+
+@pytest.mark.asyncio
+async def test_oracal_8500_width_comes_from_confirmed_letter_groups_not_the_projection(
+    cpp_service: CommercialPriceProposalService,
+):
+    """The job-level face_vinyl_roll_width_mm is a derived dominant-value projection that can be
+    null or belong to another face on a mixed-face job. The operator's per-group capture wins."""
+    payload = _oracal_8500_group_payload(
+        [
+            {
+                "group_key": "A",
+                "face_finish_type": "oracal_8500",
+                "face_vinyl_roll_width_mm": 1260,
+                "confirmed": True,
+            },
+            {"group_key": "B", "face_finish_type": "none", "confirmed": True},
+        ]
+    )
+    # Dominant projection points at the other tier; the 8500 group must still decide.
+    payload["finish_setup"]["face_vinyl_roll_width_mm"] = 1000
+    preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
+    assert preview is not None
+    material = next(
+        line
+        for line in preview.commercial_price_lines
+        if line.code == "finisaje_oracal_8500_material"
+    )
+    assert material.commercial_unit_price == 13.5
+    assert not any(
+        b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
+    )
+
+
+@pytest.mark.asyncio
+async def test_oracal_8500_blocks_on_unconfirmed_or_disagreeing_letter_groups(
+    cpp_service: CommercialPriceProposalService,
+):
+    """A seeded default width is not a confirmation, and two 8500 groups on different rolls have
+    no single resolvable rate — both fail closed rather than picking a tier."""
+    unconfirmed = _oracal_8500_group_payload(
+        [
+            {
+                "group_key": "A",
+                "face_finish_type": "oracal_8500",
+                "face_vinyl_roll_width_mm": 1000,
+                "confirmed": False,
+            }
+        ]
+    )
+    disagreeing = _oracal_8500_group_payload(
+        [
+            {
+                "group_key": "A",
+                "face_finish_type": "oracal_8500",
+                "face_vinyl_roll_width_mm": 1000,
+                "confirmed": True,
+            },
+            {
+                "group_key": "B",
+                "face_finish_type": "oracal_8500",
+                "face_vinyl_roll_width_mm": 1260,
+                "confirmed": True,
+            },
+        ]
+    )
+    for label, payload in (("unconfirmed", unconfirmed), ("disagreeing", disagreeing)):
+        preview = await cpp_service.build_preview(TEMPLATE, quote_input=payload)
+        assert preview is not None, label
+        material = next(
+            line
+            for line in preview.commercial_price_lines
+            if line.code == "finisaje_oracal_8500_material"
+        )
+        assert material.commercial_unit_price is None, label
+        assert material.subtotal is None, label
+        assert any(
+            b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE" for b in preview.commercial_blockers
+        ), label
+        assert preview.status == "blocked", label
 
 
 @pytest.mark.asyncio

@@ -19,6 +19,8 @@ src/lib/quoteCommercialGuidance.test.ts
 src/lib/quoteIntakeCommercialGuard.test.ts
 src/lib/volumetricCommercialPreview.test.ts
 src/lib/intakeV6/intakeV6OfficialPricing.test.ts
+src/lib/intakeV6/intakeV6OfferProductSummary.test.ts
+src/lib/intakeV6/acmPanel/acmSheetMaterial.test.ts
 src/api/productReadiness.test.ts
 src/features/product-system/volumetricLettersProduction.test.ts
 src/lib/svgAnalyzer/pblLayereChildParts.regression.test.ts

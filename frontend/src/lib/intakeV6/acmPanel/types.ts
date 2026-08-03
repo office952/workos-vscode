@@ -116,6 +116,11 @@ export interface AcmPanelComponentInstance {
    * Shape: acm_shell_finish_v1 (see shellFinish.ts). Not letter finishes.
    */
   shell_finish?: unknown;
+  /**
+   * ACM sheet material — plate variant + installation environment. Optional.
+   * Shape: acm_sheet_material_v1 (see acmSheetMaterial.ts). Operator truth, not pricing.
+   */
+  sheet_material?: unknown;
   svg_source_hash: string | null;
   updated_at: string;
 }

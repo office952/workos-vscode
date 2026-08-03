@@ -1,11 +1,27 @@
 /**
- * ACM shell foil — operator-simple capture on acm_panel_instance.shell_finish.
- * Primary: how foil is applied + față/cant checkboxes. Workshop fields stay collapsed.
+ * ACM sheet material + shell foil — operator capture on acm_panel_instance.
+ * Plate variant / installation environment first, then how foil is applied.
+ * Workshop fields stay collapsed.
  */
 import { useEffect, useMemo, useState } from "react";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 import { resolveAcmPanelInstance } from "@/lib/intakeV6/acmPanel/resolveInstance";
-import { buildAcmPanelShellFinishPatch } from "@/lib/intakeV6/acmPanel/operatorPatch";
+import {
+  buildAcmPanelSheetMaterialPatch,
+  buildAcmPanelShellFinishPatch,
+} from "@/lib/intakeV6/acmPanel/operatorPatch";
+import {
+  ACM_SHEET_ENVIRONMENT_OPTIONS,
+  ACM_SHEET_VARIANT_OPTIONS,
+  acmSheetMaterialIssues,
+  emptyAcmSheetMaterialContract,
+  isAcmMirrorVariant,
+  normalizeAcmSheetMaterial,
+  readAcmSheetMaterial,
+  type AcmInstallationEnvironment,
+  type AcmSheetMaterialContract,
+  type AcmSheetVariant,
+} from "@/lib/intakeV6/acmPanel/acmSheetMaterial";
 import {
   ACM_SHELL_FOIL_STRATEGY_OPTIONS,
   ACM_SHELL_ZONE_KIND_OPTIONS,
@@ -120,6 +136,95 @@ function AtelierZoneFields({
     </div>
   );
 }
+function SheetMaterialFields({
+  contract,
+  onChange,
+}: {
+  contract: AcmSheetMaterialContract;
+  onChange: (next: AcmSheetMaterialContract) => void;
+}) {
+  const issues = acmSheetMaterialIssues(contract);
+  const showExteriorSku =
+    isAcmMirrorVariant(contract.variant) && contract.environment === "exterior";
+  return (
+    <div className="space-y-1.5 rounded border border-wo-border-strong/60 bg-wo-surface-inset/40 px-2 py-2">
+      <p className="text-[11px] font-semibold text-slate-300">Placa ACM</p>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="block text-[10px] text-slate-500">
+          Tip placă ACM
+          <select
+            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
+            value={contract.variant ?? ""}
+            onChange={(e) =>
+              onChange({
+                ...contract,
+                variant: (e.target.value || null) as AcmSheetVariant | null,
+                operator_confirmed: false,
+              })
+            }
+            data-testid="intake-v6-acm-sheet-variant"
+          >
+            <option value="">— alege —</option>
+            {ACM_SHEET_VARIANT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.labelRo}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block text-[10px] text-slate-500">
+          Mediu montaj
+          <select
+            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
+            value={contract.environment ?? ""}
+            onChange={(e) =>
+              onChange({
+                ...contract,
+                environment: (e.target.value || null) as AcmInstallationEnvironment | null,
+                operator_confirmed: false,
+              })
+            }
+            data-testid="intake-v6-acm-sheet-environment"
+          >
+            <option value="">— alege —</option>
+            {ACM_SHEET_ENVIRONMENT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.labelRo}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {showExteriorSku ? (
+        <label className="block text-[10px] text-slate-500">
+          SKU furnizor (oglindă exterior)
+          <input
+            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
+            value={contract.exterior_sku ?? ""}
+            onChange={(e) =>
+              onChange({
+                ...contract,
+                exterior_sku: e.target.value.trim() || null,
+                operator_confirmed: false,
+              })
+            }
+            placeholder="ex. SKU furnizor dovedit"
+            data-testid="intake-v6-acm-sheet-exterior-sku"
+          />
+        </label>
+      ) : null}
+      {issues.length ? (
+        <ul className="space-y-0.5" data-testid="intake-v6-acm-sheet-issues">
+          {issues.map((issue) => (
+            <li key={issue} className="text-[10px] text-amber-200/90">
+              {issue}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
 export default function IntakeV6AcmShellFinishPanel({
   finishSetup,
   onApplyFinishPatch,
@@ -136,11 +241,19 @@ export default function IntakeV6AcmShellFinishPanel({
         : normalizeAcmShellFinish(null),
     [instance],
   );
+  const persistedSheet = useMemo(
+    () => (instance ? readAcmSheetMaterial(instance) : emptyAcmSheetMaterialContract()),
+    [instance],
+  );
   const [draft, setDraft] = useState<AcmShellFinishContract>(persisted);
+  const [sheetDraft, setSheetDraft] = useState<AcmSheetMaterialContract>(persistedSheet);
   const [atelierOpen, setAtelierOpen] = useState(false);
   useEffect(() => {
     setDraft(persisted);
   }, [persisted]);
+  useEffect(() => {
+    setSheetDraft(persistedSheet);
+  }, [persistedSheet]);
   const applyMode: FoilApplyMode = shellNeedsFoil(draft) ? "after_frame" : "none";
   const faceOn = zoneNeedsFoil(draft.face);
   const volumeOn = zoneNeedsFoil(draft.volume);
@@ -151,6 +264,16 @@ export default function IntakeV6AcmShellFinishPanel({
       finishSetup,
       shellFinish: normalized,
       confirm,
+    });
+    if (patch) onApplyFinishPatch(patch);
+  };
+  /** Normalize on every edit — a now-irrelevant exterior_sku is dropped, not persisted. */
+  const applySheet = (next: AcmSheetMaterialContract) => {
+    const normalized = normalizeAcmSheetMaterial(next) ?? emptyAcmSheetMaterialContract();
+    setSheetDraft(normalized);
+    const patch = buildAcmPanelSheetMaterialPatch({
+      finishSetup,
+      sheetMaterial: normalized,
     });
     if (patch) onApplyFinishPatch(patch);
   };
@@ -213,6 +336,7 @@ export default function IntakeV6AcmShellFinishPanel({
   }
   return (
     <div className="space-y-3" data-testid="intake-v6-acm-shell-finish-panel">
+      <SheetMaterialFields contract={sheetDraft} onChange={applySheet} />
       <label className="block text-[11px] text-slate-400">
         Cum aplici folia
         <select

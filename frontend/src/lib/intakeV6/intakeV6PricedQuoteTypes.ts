@@ -76,6 +76,46 @@ export type AcmPanelCommercialPreview = {
   hourly_commercial_detected?: boolean;
 };
 
+export interface IntakeV6CommercialCurrencyBucket {
+	currency: string;
+	subtotal: number;
+}
+
+export interface IntakeV6CommercialProductSubtotal {
+	/** "letters" | "acm_panel" — backend product ownership key. */
+	product_key: string;
+	label: string;
+	line_codes: string[];
+	subtotals_by_currency: IntakeV6CommercialCurrencyBucket[];
+	blocked: boolean;
+	blocker_codes: string[];
+	/** Lines awaiting an Owner decision — priced at nothing, so any subtotal is partial. */
+	pending_line_codes?: string[];
+}
+
+/**
+ * Canonical backend commercial product breakdown (CPP).
+ * The frontend only formats what the backend decided — it never sums lines
+ * into a second commercial total and never converts between currencies.
+ */
+export interface IntakeV6CommercialProductBreakdown {
+	products: IntakeV6CommercialProductSubtotal[];
+	subtotals_by_currency: IntakeV6CommercialCurrencyBucket[];
+	currency_mix_detected: boolean;
+	complete_offer_total: number | null;
+	complete_offer_total_currency: string | null;
+	/** e.g. "COMMERCIAL_CURRENCY_MIX_UNRESOLVED", "COMMERCIAL_PRODUCT_BLOCKED". */
+	complete_offer_total_unavailable_reason: string | null;
+	/** True when a total exists but omits Owner-pending lines. */
+	complete_offer_total_is_partial?: boolean;
+	pending_line_codes?: string[];
+	tax_status: "tax_exclusive";
+	/** null when no canonical fiscal policy value was resolved. */
+	vat_policy_source: string | null;
+	/** null when unknown — never substitute a default VAT rate. */
+	vat_rate_percent: number | null;
+}
+
 export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_status: "V6_PRICED_DRY_RUN_READY" | "V6_PRICED_DRY_RUN_BLOCKED" | string;
   pricing_authority?: string | null;
@@ -86,8 +126,10 @@ export type IntakeV6PricedQuoteDryRunResponse = {
   template_code?: string | null;
   pricing_source: string;
   pricing_mode?: string;
-  commercial_totals: IntakeV6CommercialTotals;
-  commercial_line_items?: Array<Record<string, unknown>>;
+	commercial_totals: IntakeV6CommercialTotals;
+	/** Optional — absent on older responses and on blocked previews. */
+	commercial_product_breakdown?: IntakeV6CommercialProductBreakdown | null;
+	commercial_line_items?: Array<Record<string, unknown>>;
   acm_panel_commercial_preview?: AcmPanelCommercialPreview | null;
   internal_cost_trace?: Record<string, unknown>;
   estimated_internal_cost_trace?: Record<string, unknown>;

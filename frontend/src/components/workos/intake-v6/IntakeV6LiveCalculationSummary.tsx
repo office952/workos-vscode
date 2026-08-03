@@ -62,6 +62,9 @@ export const INTAKE_V6_LIVE_CALC_ADAOS_LABEL = "Adaos comercial";
 export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = COST_INTERN_ESTIMATIV_LABEL;
 export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
   "Oferta client necesită completarea configurației curente.";
+/** No FX, no assumed RON — the operator must get a commercial rate with an explicit currency. */
+export const INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING =
+  "Oferta client nu are monedă raportată de backend — nu presupunem RON. Cere Owner-ului tariful comercial cu monedă explicită.";
 export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Ofertă client — detalii estimate";
 export const INTAKE_V6_LIVE_CALC_BOUNDARY_HINT = OFERTA_VS_COST_BOUNDARY_HELP;
 
@@ -801,6 +804,33 @@ function LiveCalcPreviewHeader({ compact = false }: { compact?: boolean }) {
   );
 }
 
+/** Currency reported by the backend for the client offer — never defaulted. */
+function resolveLiveCalcOfferCurrency(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const value = raw.trim().toUpperCase();
+  return value.length > 0 ? value : null;
+}
+
+/**
+ * Client offer amounts are presentable only when the backend reported a currency.
+ * Without one we show the honest unavailable state instead of assuming RON.
+ */
+function resolveLiveCalcOfferMoney({
+  artworkOnlyBlocked,
+  displayGrossRon,
+  displayNetRon,
+  offerCurrency,
+}: {
+  artworkOnlyBlocked: boolean;
+  displayGrossRon: number | null;
+  displayNetRon: number | null;
+  offerCurrency: string | null;
+}): { gross: number; net: number; currency: string } | null {
+  if (artworkOnlyBlocked) return null;
+  if (displayGrossRon == null || displayNetRon == null || offerCurrency == null) return null;
+  return { gross: displayGrossRon, net: displayNetRon, currency: offerCurrency };
+}
+
 function LiveCalcEstimateTotalsBlock({
   displayGrossRon,
   displayNetRon,
@@ -809,6 +839,7 @@ function LiveCalcEstimateTotalsBlock({
   displayAdaosPercent,
   total,
   currency,
+  offerCurrency,
   artworkOnlyBlocked,
   officialPricingBlocker = null,
   emphasis = "balanced",
@@ -821,14 +852,21 @@ function LiveCalcEstimateTotalsBlock({
   displayAdaosPercent?: number | null;
   total: number | null;
   currency: string;
+  /** Currency the backend actually reported for the client offer — null when unknown. */
+  offerCurrency: string | null;
   artworkOnlyBlocked: boolean;
   officialPricingBlocker?: string | null;
   emphasis?: "balanced" | "compact" | "sidebar";
   /** When VL breakdown is empty on ACM-only, total is AcmPanel provisional EUR. */
   acmPanelCostFallback?: boolean;
 }) {
-  const showCommercialEstimate =
-    !artworkOnlyBlocked && displayGrossRon != null && displayNetRon != null;
+  const offerMoney = resolveLiveCalcOfferMoney({
+    artworkOnlyBlocked,
+    displayGrossRon,
+    displayNetRon,
+    offerCurrency,
+  });
+  const showCommercialEstimate = offerMoney != null;
   const grossClassName =
     emphasis === "compact"
       ? "text-[14px] font-semibold tabular-nums leading-none text-slate-200"
@@ -842,11 +880,11 @@ function LiveCalcEstimateTotalsBlock({
 
   return (
     <div className={containerClassName} data-testid="intake-v6-live-totals-summary">
-      {showCommercialEstimate ? (
+      {offerMoney ? (
         <>
           <span className="block text-[11px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
           <span className={grossClassName} data-testid="intake-v6-live-offer-gross">
-            {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+            {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
           </span>
           <div
             className={joinClassNames(
@@ -856,7 +894,7 @@ function LiveCalcEstimateTotalsBlock({
           >
             <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
             <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-net">
-              {formatFaceBackPrepMoney(displayNetRon, "RON")}
+              {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
             </span>
           </div>
           {displayVatRon != null ? (
@@ -869,7 +907,7 @@ function LiveCalcEstimateTotalsBlock({
                   : INTAKE_V6_LIVE_CALC_VAT_LABEL}
               </span>
               <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-vat">
-                {formatFaceBackPrepMoney(displayVatRon, "RON")}
+                {formatFaceBackPrepMoney(displayVatRon, offerMoney.currency)}
               </span>
             </div>
           ) : null}
@@ -884,7 +922,10 @@ function LiveCalcEstimateTotalsBlock({
         </>
       ) : !artworkOnlyBlocked ? (
         <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
-          {shortenOperatorPricingBlocker(officialPricingBlocker) ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+          {displayGrossRon != null && offerCurrency == null
+            ? INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING
+            : shortenOperatorPricingBlocker(officialPricingBlocker) ??
+              INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
         </p>
       ) : null}
       <div
@@ -1129,6 +1170,13 @@ export default function IntakeV6LiveCalculationSummary({
   const displayVatRon = resolvedOfferTotals?.vat ?? null;
   const displayVatRate = resolvedOfferTotals?.vatRate ?? null;
   const displayAdaosPercent = resolvedOfferTotals?.adaosPercent ?? null;
+  const offerCurrency = resolveLiveCalcOfferCurrency(officialTotals?.currency);
+  const offerMoney = resolveLiveCalcOfferMoney({
+    artworkOnlyBlocked,
+    displayGrossRon,
+    displayNetRon,
+    offerCurrency,
+  });
   const includedRows = useMemo(() => rows.filter((row) => row.displayBucket === "included"), [rows]);
   // Legacy/atelier rows stay out of the primary "necesită configurare" scare list.
   const diagnosticRows = useMemo(
@@ -1308,22 +1356,22 @@ export default function IntakeV6LiveCalculationSummary({
         >
           <LiveCalcPreviewHeader compact />
 
-          {displayGrossRon != null && displayNetRon != null && !artworkOnlyBlocked ? (
+          {offerMoney ? (
             <div className="min-w-0 border-l border-wo-border-strong/60 pl-3" data-testid="intake-v6-live-totals-summary">
               <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
               <span
                 className="text-[16px] font-semibold tabular-nums leading-none text-emerald-200"
                 data-testid="intake-v6-live-offer-gross"
               >
-                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+                {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
               </span>
               <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[10px] tabular-nums text-slate-400">
                 <span data-testid="intake-v6-live-offer-net">
-                  Net {formatFaceBackPrepMoney(displayNetRon, "RON")}
+                  Net {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
                 </span>
                 {displayVatRon != null ? (
                   <span data-testid="intake-v6-live-offer-vat">
-                    · TVA {formatFaceBackPrepMoney(displayVatRon, "RON")}
+                    · TVA {formatFaceBackPrepMoney(displayVatRon, offerMoney.currency)}
                   </span>
                 ) : null}
                 {displayAdaosPercent != null ? (
@@ -1333,6 +1381,13 @@ export default function IntakeV6LiveCalculationSummary({
                 ) : null}
               </div>
             </div>
+          ) : !artworkOnlyBlocked && displayGrossRon != null && offerCurrency == null ? (
+            <p
+              className="min-w-0 border-l border-wo-border-strong/60 pl-3 text-[10px] leading-relaxed text-slate-400"
+              data-testid="intake-v6-live-estimate-unavailable"
+            >
+              {INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING}
+            </p>
           ) : null}
 
           <div className="min-w-0 border-l border-wo-border-strong/60 pl-3">
@@ -1385,8 +1440,7 @@ export default function IntakeV6LiveCalculationSummary({
   }
 
   if (isRightPanel) {
-    const showCommercialEstimate =
-      !artworkOnlyBlocked && displayGrossRon != null && displayNetRon != null;
+    const showCommercialEstimate = offerMoney != null;
     const operatorBlocker = shortenOperatorPricingBlocker(officialPricingBlocker);
     const acmPreviewVisible = acmPanelPreviewIsVisible(acmPanelCommercialPreview);
     const lettersInternalTotal =
@@ -1434,7 +1488,7 @@ export default function IntakeV6LiveCalculationSummary({
           data-testid="intake-v6-live-totals-summary"
           data-offer-hero="true"
         >
-          {showCommercialEstimate ? (
+          {offerMoney ? (
             <>
               <span className="block text-[10px] font-semibold uppercase tracking-wide text-emerald-200/80">
                 {INTAKE_V6_LIVE_CALC_GROSS_LABEL}
@@ -1443,13 +1497,13 @@ export default function IntakeV6LiveCalculationSummary({
                 className="mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-200"
                 data-testid="intake-v6-live-offer-gross"
               >
-                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+                {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
               </span>
               <div className="mt-1.5 space-y-1 border-t border-wo-border-strong/50 pt-1.5 text-[11px]">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
                   <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-net">
-                    {formatFaceBackPrepMoney(displayNetRon, "RON")}
+                    {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
                   </span>
                 </div>
                 {displayVatRon != null ? (
@@ -1462,7 +1516,7 @@ export default function IntakeV6LiveCalculationSummary({
                         : INTAKE_V6_LIVE_CALC_VAT_LABEL}
                     </span>
                     <span className="tabular-nums text-slate-300" data-testid="intake-v6-live-offer-vat">
-                      {formatFaceBackPrepMoney(displayVatRon, "RON")}
+                      {formatFaceBackPrepMoney(displayVatRon, offerMoney.currency)}
                     </span>
                   </div>
                 ) : null}
@@ -1480,7 +1534,9 @@ export default function IntakeV6LiveCalculationSummary({
             <div data-testid="intake-v6-live-estimate-unavailable">
               <p className="text-[12px] font-medium leading-snug text-slate-200">Încă indisponibilă</p>
               <p className="mt-0.5 text-[10px] leading-relaxed text-slate-500">
-                {operatorBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+                {displayGrossRon != null && offerCurrency == null
+                  ? INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING
+                  : operatorBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
               </p>
             </div>
           )}
@@ -1682,6 +1738,7 @@ export default function IntakeV6LiveCalculationSummary({
         displayAdaosPercent={displayAdaosPercent}
         total={total}
         currency={internalCurrency}
+        offerCurrency={offerCurrency}
         artworkOnlyBlocked={artworkOnlyBlocked}
         officialPricingBlocker={officialPricingBlocker}
         emphasis="sidebar"

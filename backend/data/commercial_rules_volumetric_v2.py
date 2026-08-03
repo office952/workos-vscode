@@ -6,7 +6,7 @@ no CostEngine totals, no invented RON prices except owner-documented exceptions.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Literal
 
 from schemas.commercial_price_proposal import CommercialBasisType
@@ -14,6 +14,14 @@ from schemas.commercial_price_proposal import CommercialBasisType
 PILOT_TEMPLATE = "TPL-VOLUMETRIC-LETTERS_v2"
 
 Criticality = Literal["critical", "optional"]
+
+# Commercial product ownership (F7F). TPL-VOLUMETRIC-LETTERS is letters-only; the ACM panel is a
+# separate commercial product. Step 3 presents one subtotal per product plus one complete total.
+CommercialProductKey = Literal["letters", "acm_panel"]
+COMMERCIAL_PRODUCT_LABELS: dict[str, str] = {
+    "letters": "Litere volumetrice",
+    "acm_panel": "Panou ACM",
+}
 
 
 @dataclass(frozen=True)
@@ -39,6 +47,7 @@ class CommercialRuleDefinition:
     material_gate_value: str | None = None
     module_gate: str | None = None
     always_include: bool = False
+    commercial_product_key: CommercialProductKey = "letters"
     warnings: tuple[str, ...] = field(default_factory=tuple)
 
 
@@ -60,20 +69,68 @@ DEV_BRIDGE_SABLON_FOREX_RON_M2 = 15.0
 # finisaje_colantare_vopsire line (AGENT-B-F001 fix: "Fără finisaj" must not charge).
 FACE_FINISH_NONE_VALUES = frozenset({"none", ""})
 FACE_FINISH_ORACAL_TOKENS = frozenset({"oracal_641", "oracal_651", "oracal_8500"})
-# Commercially relevant face selections with no owner-priced CPP rule yet — fail closed
-# (COMMERCIAL_RULE_MISSING). Never silently priced at the flat finisaje_colantare_vopsire rate.
-FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS = frozenset(
-    {"print_laminate", "printed_vinyl", "printed_laminated_vinyl"}
-)
 
-# Face Oracal materials — legacy CPP only (F7E Owner GO; Product System FINISH workshop for
-# face vinyl remains separately "blocked" in canonicalFinishEnumMap.ts — this exception is
-# scoped to this legacy engine only, per Lead authorization). EUR/m², sourced from
-# seed_volumetric_owner_confirmed_prices.py MAT-ORACAL-* purchase rows. Same series/color stays
-# one commercial line — no color-tier differentiation authorized.
-FACE_ORACAL_641_EUR_M2 = 6.5
-FACE_ORACAL_651_EUR_M2 = 9.0
-FACE_ORACAL_8500_EUR_M2 = 20.0
+# --- F7F Owner commercial law activation (Owner decision 2026-08-03) ---
+# Every rate below is a classified commercial_price_rule sourced from an explicit Owner
+# decision. Tax-exclusive. No EUR->RON conversion is performed here and none is implied.
+OWNER_COMMERCIAL_LAW_SOURCE = "owner_commercial_decision:f7f_2026_08_03"
+
+# Face print + laminate — Owner F7F: 10 EUR/m2 tax-exclusive.
+FACE_PRINT_LAMINATE_EUR_M2 = 10.0
+# Canonical + documented-alias tokens the Owner print+laminate rate covers.
+FACE_FINISH_PRINT_LAMINATE_TOKENS = frozenset({"print_laminate", "printed_laminated_vinyl"})
+# Commercially relevant face selections with no owner-priced CPP rule — fail closed
+# (COMMERCIAL_RULE_MISSING). Never silently priced at the flat finisaje_colantare_vopsire rate.
+# "printed_vinyl" (print without laminate) is deliberately NOT covered by the Owner
+# print+laminate rate — a separate Owner decision is required for unlaminated print.
+FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS = frozenset({"printed_vinyl"})
+
+# Vinyl material rates, EUR/m2, tax-exclusive. Series-level: same series, same rate for every
+# colour code (Owner F7F: "all colors same series same rate; no color-tier"). The same series
+# rate applies to face and to return-cant wrap — it is one material.
+# Owner F7F set Oracal 651 = 5 EUR/m2 (supersedes the F7E seed-derived 9.0).
+ORACAL_651_MATERIAL_EUR_M2 = 5.0
+# Oracal 641 was NOT part of the Owner F7F rate list. The F7E value derived from the
+# seed_volumetric_owner_confirmed_prices.py MAT-ORACAL-641 purchase row is retained unchanged;
+# it is reported to the Owner as an open commercial decision, not re-derived here.
+ORACAL_641_MATERIAL_EUR_M2 = 6.5
+# Oracal 8500 is priced by SKU + CONFIRMED roll width (Owner F7F). Never guess a width and
+# never fall back to the cheaper or the more expensive tier — fail closed instead.
+ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM: dict[int, float] = {
+    1000: 17.0,
+    1260: 13.5,
+}
+# Kept as the canonical accepted-width set so the blocker message can name the real options.
+ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM = tuple(sorted(ORACAL_8500_MATERIAL_EUR_M2_BY_ROLL_WIDTH_MM))
+
+# Backwards-compatible aliases (face-scoped names used by the F7E rule rows).
+FACE_ORACAL_641_EUR_M2 = ORACAL_641_MATERIAL_EUR_M2
+FACE_ORACAL_651_EUR_M2 = ORACAL_651_MATERIAL_EUR_M2
+
+# Vinyl application labour — Owner F7F: 3 EUR/m2, charged ONCE on the actual applied surface.
+# Not on waste, not on stock cant, not when no vinyl is selected, never duplicated for the same
+# token. Face and cant may carry separate application lines only because they are distinct
+# proven surfaces (face area vs developed wrap area).
+VINYL_APPLICATION_EUR_M2 = 3.0
+
+# ACM sheet commercial material — Owner F7F, EUR/m2 tax-exclusive.
+# "oglinda" is a REPLACEMENT rate (40), never 15 + a 25 surcharge, and never both.
+ACM_SHEET_VARIANT_STANDARD = "standard"
+ACM_SHEET_VARIANT_COLORAT = "colorat"
+ACM_SHEET_MIRROR_VARIANTS = frozenset({"oglinda_gold", "oglinda_antracit"})
+ACM_SHEET_MATERIAL_EUR_M2_BY_VARIANT: dict[str, float] = {
+    ACM_SHEET_VARIANT_STANDARD: 15.0,
+    ACM_SHEET_VARIANT_COLORAT: 15.0,
+    "oglinda_gold": 40.0,
+    "oglinda_antracit": 40.0,
+}
+# Absent variant = not yet captured by the operator. The owner-confirmed default sheet for this
+# template is the standard 3 mm bond (MAT-ACM-BOND-3MM @ 15 EUR/m2), so an absent variant keeps
+# the standard rate. An UNKNOWN token is a different thing and fails closed.
+ACM_SHEET_VARIANT_WHEN_ABSENT = ACM_SHEET_VARIANT_STANDARD
+# Mirror gold / anthracite are interior by default. Exterior needs a proven supplier SKU.
+ACM_SHEET_ENVIRONMENT_INTERIOR = "interior"
+ACM_SHEET_ENVIRONMENT_EXTERIOR = "exterior"
 
 # Return-cant Oracal wrap material, resolved by series (same seed rows as face; cant wrap does
 # not offer 8500). Canonical intake tokens per canonicalFinishEnumMap.ts cant_oracal_wrap
@@ -88,8 +145,8 @@ CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE: dict[str, str] = {
     "641": "641",
 }
 CANT_ORACAL_MATERIAL_EUR_M2_BY_SERIES: dict[str, float] = {
-    "641": FACE_ORACAL_641_EUR_M2,
-    "651": FACE_ORACAL_651_EUR_M2,
+    "641": ORACAL_641_MATERIAL_EUR_M2,
+    "651": ORACAL_651_MATERIAL_EUR_M2,
 }
 
 # Return-cant RAL paint material, depth-tiered EUR/ml (seed_volumetric_owner_confirmed_prices.py
@@ -225,17 +282,22 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
     ),
     CommercialRuleDefinition(
         line_code="finisaje_cant_oracal_labor",
-        label="Finisaje — aplicare Oracal cant (manoperă)",
+        label="Finisaje — aplicare autocolant cant",
         module_code="finisaje",
         component_code="comp_finisaj_litere",
-        pricing_rule_code="VOL_V2_CANT_ORACAL_LABOR_ML",
-        basis_type="ml",
-        quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
-        unit="ml",
-        source="commercial_rules_volumetric_v2:cant_oracal_wrap_labor",
+        pricing_rule_code="VOL_V2_CANT_VINYL_APPLICATION_M2",
+        basis_type="m2",
+        quantity_paths=(),
+        unit="m2",
+        source=f"{OWNER_COMMERCIAL_LAW_SOURCE}:vinyl_application",
         criticality="critical",
         module_gate="finisaje",
-        registry_pricing_code="RETURN_CANT_VINYL_APPLICATION_LABOR",
+        documented_unit_price=VINYL_APPLICATION_EUR_M2,
+        documented_unit_price_currency="EUR",
+        warnings=(
+            "Owner F7F: aplicare autocolant 3 EUR/mp pe suprafata efectiv aplicata. "
+            "Cantul este o suprafata distincta de fata (arie desfasurata perimetru x adancime).",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="finisaje_cant_ral_material",
@@ -286,22 +348,6 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         module_gate="finisaje",
     ),
     CommercialRuleDefinition(
-        line_code="finisaje_oracal_641_labor",
-        label="Finisaje — Oracal 641 față (manoperă)",
-        module_code="finisaje",
-        component_code="comp_finisaj_litere",
-        pricing_rule_code="VOL_V2_FACE_ORACAL_641_LABOR_M2",
-        basis_type="m2",
-        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
-        unit="m2",
-        source="commercial_rules_volumetric_v2:face_oracal_641_labor",
-        criticality="critical",
-        material_gate_path="finish_setup.face_finish_type",
-        material_gate_value="oracal_641",
-        module_gate="finisaje",
-        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
-    ),
-    CommercialRuleDefinition(
         line_code="finisaje_oracal_651_material",
         label="Finisaje — Oracal 651 față (material)",
         module_code="finisaje",
@@ -319,22 +365,6 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         module_gate="finisaje",
     ),
     CommercialRuleDefinition(
-        line_code="finisaje_oracal_651_labor",
-        label="Finisaje — Oracal 651 față (manoperă)",
-        module_code="finisaje",
-        component_code="comp_finisaj_litere",
-        pricing_rule_code="VOL_V2_FACE_ORACAL_651_LABOR_M2",
-        basis_type="m2",
-        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
-        unit="m2",
-        source="commercial_rules_volumetric_v2:face_oracal_651_labor",
-        criticality="critical",
-        material_gate_path="finish_setup.face_finish_type",
-        material_gate_value="oracal_651",
-        module_gate="finisaje",
-        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
-    ),
-    CommercialRuleDefinition(
         line_code="finisaje_oracal_8500_material",
         label="Finisaje — Oracal 8500 față (material)",
         module_code="finisaje",
@@ -343,29 +373,55 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="m2",
         quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
         unit="m2",
-        source="commercial_rules_volumetric_v2:face_oracal_8500_material",
+        source=f"{OWNER_COMMERCIAL_LAW_SOURCE}:face_oracal_8500_material_by_roll_width",
         criticality="critical",
-        documented_unit_price=FACE_ORACAL_8500_EUR_M2,
+        # Resolved at build time from the confirmed roll width (1000 -> 17, 1260 -> 13.5).
+        # Never defaulted: an unconfirmed width blocks with COMMERCIAL_CONFIGURATION_INCOMPLETE.
+        documented_unit_price=None,
         documented_unit_price_currency="EUR",
         material_gate_path="finish_setup.face_finish_type",
         material_gate_value="oracal_8500",
         module_gate="finisaje",
+        warnings=(
+            "Owner F7F: tarif pe SKU + latime rola confirmata "
+            f"({'/'.join(str(w) for w in ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM)} mm). "
+            "Fara latime confirmata nu se estimeaza niciun pret.",
+        ),
     ),
     CommercialRuleDefinition(
-        line_code="finisaje_oracal_8500_labor",
-        label="Finisaje — Oracal 8500 față (manoperă)",
+        line_code="finisaje_print_laminate_material",
+        label="Finisaje — print + laminare față (material)",
         module_code="finisaje",
         component_code="comp_finisaj_litere",
-        pricing_rule_code="VOL_V2_FACE_ORACAL_8500_LABOR_M2",
+        pricing_rule_code="VOL_V2_FACE_PRINT_LAMINATE_MATERIAL_M2",
         basis_type="m2",
         quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
         unit="m2",
-        source="commercial_rules_volumetric_v2:face_oracal_8500_labor",
+        source=f"{OWNER_COMMERCIAL_LAW_SOURCE}:face_print_laminate_material",
         criticality="critical",
-        material_gate_path="finish_setup.face_finish_type",
-        material_gate_value="oracal_8500",
+        documented_unit_price=FACE_PRINT_LAMINATE_EUR_M2,
+        documented_unit_price_currency="EUR",
         module_gate="finisaje",
-        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
+        warnings=("Owner F7F: print + laminare 10 EUR/mp, fara TVA.",),
+    ),
+    CommercialRuleDefinition(
+        line_code="finisaje_aplicare_autocolant_fata",
+        label="Finisaje — aplicare autocolant față",
+        module_code="finisaje",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="VOL_V2_FACE_VINYL_APPLICATION_M2",
+        basis_type="m2",
+        quantity_paths=("quote_geometry.letter_face_area_m2", "letter_face_area_m2"),
+        unit="m2",
+        source=f"{OWNER_COMMERCIAL_LAW_SOURCE}:vinyl_application",
+        criticality="critical",
+        documented_unit_price=VINYL_APPLICATION_EUR_M2,
+        documented_unit_price_currency="EUR",
+        module_gate="finisaje",
+        warnings=(
+            "Owner F7F: aplicare autocolant 3 EUR/mp, o singura data pe suprafata fetei. "
+            "Nu se aplica pe deseu, pe cant stoc sau cand nu exista folie.",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="sablon_montaj",
@@ -680,6 +736,21 @@ LETTERS_ACM_COMPOSITION_CONNECTION_RULES: tuple[CommercialRuleDefinition, ...] =
             f"Minimum commercial charge {LETTERS_ACM_PACK_MIN_EUR} EUR when area × rate is lower.",
         ),
     ),
+)
+
+def _own_commercial_product(
+    rules: tuple[CommercialRuleDefinition, ...],
+    product_key: CommercialProductKey,
+) -> tuple[CommercialRuleDefinition, ...]:
+    """Assign commercial product ownership to a whole rule family (F7F product separation)."""
+    return tuple(replace(rule, commercial_product_key=product_key) for rule in rules)
+
+
+# The ACM structura rows and the Litere<->ACM connection sheet are all work on the bond panel
+# body, so they belong to the "Panou ACM" commercial product, not to the letters product.
+ACM_STRUCTURA_COMMERCIAL_RULES = _own_commercial_product(ACM_STRUCTURA_COMMERCIAL_RULES, "acm_panel")
+LETTERS_ACM_COMPOSITION_CONNECTION_RULES = _own_commercial_product(
+    LETTERS_ACM_COMPOSITION_CONNECTION_RULES, "acm_panel"
 )
 
 VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM: tuple[CommercialRuleDefinition, ...] = (

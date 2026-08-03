@@ -26,6 +26,10 @@ import {
   normalizeAcmShellFinish,
   type AcmShellFinishContract,
 } from "./shellFinish";
+import {
+  normalizeAcmSheetMaterial,
+  type AcmSheetMaterialContract,
+} from "./acmSheetMaterial";
 
 export type AcmOperatorFieldKey =
   | "acm_thickness_mm"
@@ -265,11 +269,33 @@ export function buildAcmPanelShellFinishPatch(args: {
   return syncInstanceIntoFinish(finish, instance);
 }
 
+/** Persist ACM sheet material contract on acm_panel_instance.sheet_material. */
+export function buildAcmPanelSheetMaterialPatch(args: {
+  finishSetup: unknown;
+  sheetMaterial: AcmSheetMaterialContract | Record<string, unknown>;
+  confirm?: boolean;
+}): Partial<IntakeV6FinishSetup> | null {
+  const ctx = requireInstance(args.finishSetup);
+  if (!ctx) return null;
+  const next = normalizeAcmSheetMaterial(args.sheetMaterial);
+  if (!next) return null;
+  const { finish, instance } = ctx;
+  if (args.confirm) {
+    next.operator_confirmed = true;
+  }
+  instance.sheet_material = next;
+  instance.updated_at = new Date().toISOString();
+  return syncInstanceIntoFinish(finish, instance);
+}
+
 export type AcmPanelConfirmAction =
   | { kind: "confirm_geometry" }
   | { kind: "confirm_construction" }
   | { kind: "confirm_technical" }
-  /** Geometry + construction + shell finish — single operator confirm for ACM panel form. */
+  /**
+   * Geometry + construction + shell finish + sheet material —
+   * single operator confirm for ACM panel form.
+   */
   | { kind: "confirm_panel" }
   | { kind: "confirm_relation"; relationId: string; status?: ComponentRelationStatus };
 
@@ -301,6 +327,14 @@ function applyShellFinishConfirmOnInstance(instance: AcmPanelComponentInstance):
   const next = normalizeAcmShellFinish(raw as Record<string, unknown>);
   next.operator_confirmed = true;
   instance.shell_finish = next;
+}
+
+/** Confirm sheet material only when the operator actually made both selections. */
+function applySheetMaterialConfirmOnInstance(instance: AcmPanelComponentInstance): void {
+  const next = normalizeAcmSheetMaterial(instance.sheet_material);
+  if (!next || !next.variant || !next.environment) return;
+  next.operator_confirmed = true;
+  instance.sheet_material = next;
 }
 
 /**
@@ -345,6 +379,7 @@ export function buildAcmPanelConfirmActionWithUpdatesPatch(args: {
   } else if (args.action.kind === "confirm_panel") {
     applyTechnicalConfirmOnInstance(instance);
     applyShellFinishConfirmOnInstance(instance);
+    applySheetMaterialConfirmOnInstance(instance);
   } else if (args.action.kind === "confirm_relation") {
     const status = args.action.status ?? "confirmed";
     const relationId = args.action.relationId;
@@ -412,7 +447,7 @@ export function buildAcmPanelConfirmTechnicalPatch(args: {
   });
 }
 
-/** One end-of-form confirm: technical construction + shell finish. */
+/** One end-of-form confirm: technical construction + shell finish + sheet material. */
 export function buildAcmPanelConfirmPanelPatch(args: {
   finishSetup: unknown;
   updates?: AcmPanelFieldUpdateInput[];
