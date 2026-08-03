@@ -10,9 +10,10 @@ Product Template / PD / PA do not own rates. Pricing Registry + commercial catal
 
 ## Tariff research
 
-Owner-documented EUR reused: CNC face 1.5/ml, return forming 5/ml, RAL labor 1/ml, montaj 200/location.  
+Owner-confirmed commercial EUR: RAL labor 1/ml, montaj 200/location.  
+Provisional commercial reuse of workcenter EUR (not dedicated sell decisions): CNC_ROUTER 1.5/ml, RETURN_PROFILE_MACHINE_FORMING 5/ml.  
 Unpublished (fail-closed): back CNC EUR/m², LED module sell, PSU sell, RAL EUR minimum floor.  
-Legacy 100 RON/color not converted.
+Legacy 100 RON/color not converted. Research agent confirmed contradictions vs retired RON DEV_BRIDGE; no merge invented.
 
 ## Changes
 

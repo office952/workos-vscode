@@ -141,11 +141,14 @@ async def test_f7h_five_former_dev_bridge_routes_eur_or_unpublished(cpp):
     assert face.cpp_currency == "EUR"
     assert face.commercial_unit_price == pytest.approx(1.5)
     assert face.unit == "ml"
+    # Workcenter EUR reused as commercial — provisional, not Owner-final sell.
+    assert face.rate_publication_status == "provisional"
 
     forming = by_code["modelare_cant_aluminiu"]
     assert forming.cpp_currency == "EUR"
     assert forming.commercial_unit_price == pytest.approx(5.0)
     assert forming.unit == "ml"
+    assert forming.rate_publication_status == "provisional"
 
     back = by_code["debitare_spate"]
     assert back.basis_type == "m2"
@@ -180,10 +183,12 @@ async def test_f7h_ral_labor_and_montaj_native_eur(cpp, f7h_db):
     assert labor.cpp_currency == "EUR"
     assert labor.commercial_unit_price == pytest.approx(1.0)
     assert labor.currency_conversion_rate is None
+    assert labor.rate_publication_status == "owner_confirmed"
     montaj = next(line for line in preview.commercial_price_lines if line.code == "montaj")
     assert montaj.cpp_currency == "EUR"
     assert montaj.commercial_unit_price == pytest.approx(200.0)
     assert montaj.unit == "locatie"
+    assert montaj.rate_publication_status == "owner_confirmed"
 
 
 @pytest.mark.asyncio

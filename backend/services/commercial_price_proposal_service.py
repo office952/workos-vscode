@@ -876,14 +876,26 @@ async def _build_line(
     if basis_type == "unknown":
         owner_required = True
 
-    # F7H publication honesty — never label an unpublished gap as Owner-final.
+    # F7H publication honesty — never label an unpublished gap or workcenter-reuse as Owner-final sell.
+    # SITE_INSTALLATION_STANDARD / RETURN_CANT_RAL_PAINT_LABOR are Owner-confirmed commercial tariffs.
+    # CNC_ROUTER / RETURN_PROFILE_MACHINE_FORMING are EUR workcenter sources reused provisionally.
+    _owner_confirmed_commercial_registry = frozenset(
+        {"SITE_INSTALLATION_STANDARD", "RETURN_CANT_RAL_PAINT_LABOR"}
+    )
+    _provisional_workcenter_reuse = frozenset(
+        {"CNC_ROUTER", "RETURN_PROFILE_MACHINE_FORMING"}
+    )
     rate_status: str | None = None
     if unit_price is None and owner_required:
         rate_status = "unpublished"
-    elif "owner_commercial_decision:f7f" in (source or "") or "owner_commercial_decision:f7h" in (
-        source or ""
-    ):
+    elif "owner_commercial_decision:f7f" in (source or ""):
         rate_status = "owner_confirmed"
+    elif "f7h_provisional" in (source or "") or "documented_eur_fallback" in (source or ""):
+        rate_status = "provisional"
+    elif (registry_pricing_code or "") in _owner_confirmed_commercial_registry:
+        rate_status = "owner_confirmed"
+    elif (registry_pricing_code or "") in _provisional_workcenter_reuse:
+        rate_status = "provisional"
     elif "pricing_registry:operation:" in (source or ""):
         rate_status = "owner_confirmed"
     elif unit_price is not None:

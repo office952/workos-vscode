@@ -28,16 +28,16 @@ Owner GO for E2E native EUR commercial policy for Litere volumetrice + Panou ACM
 
 | Rule | Value | Currency | Unit | Classification | Action |
 | --- | ---: | --- | --- | --- | --- |
-| debitare_fata | 1.5 | EUR | ml | OWNER_DOCUMENTED / EUR_SOURCE_EXISTING (CNC_ROUTER) | reuse |
-| modelare_cant_aluminiu | 5.0 | EUR | ml | OWNER_DOCUMENTED (RETURN_PROFILE_MACHINE_FORMING) | reuse |
-| debitare_spate | — | EUR | m² | NOT_FOUND | unpublished fail-closed; m² preserved |
-| sistem_led_module | — | EUR | buc | NOT_FOUND (LED_ASSEMBLY 0.05 is install, not sell) | unpublished |
-| sursa_led | — | EUR | buc | NOT_FOUND | unpublished |
-| finisaje_cant_ral_labor | 1.0 | EUR | ml | EUR_SOURCE_EXISTING (RETURN_CANT_RAL_PAINT_LABOR) | native EUR |
-| montaj | 200 | EUR | locație | EUR_SOURCE_EXISTING (SITE_INSTALLATION_STANDARD) | native EUR |
-| RAL minimum | 100 | RON | /culoare | LEGACY_RON | not converted; EUR floor unpublished |
+| debitare_fata | 1.5 | EUR | ml | EUR_SOURCE_EXISTING (CNC_ROUTER workcenter — not dedicated commercial sell) | provisional commercial reuse |
+| modelare_cant_aluminiu | 5.0 | EUR | ml | EUR_SOURCE_EXISTING (RETURN_PROFILE_MACHINE_FORMING only; bonding separate) | provisional commercial reuse |
+| debitare_spate | — | EUR | m² | NOT_FOUND (CNC is EUR/ml, not EUR/m² sell) | unpublished fail-closed; m² preserved |
+| sistem_led_module | — | EUR | buc | NOT_FOUND (0.5 purchase / 0.05 install ≠ sell) | unpublished |
+| sursa_led | — | EUR | buc | NOT_FOUND (wattage purchase rows ≠ flat CPP sell) | unpublished |
+| finisaje_cant_ral_labor | 1.0 | EUR | ml | OWNER_DOCUMENTED + EUR_SOURCE_EXISTING | native EUR |
+| montaj | 200 | EUR | locație | OWNER_DOCUMENTED + EUR_SOURCE_EXISTING | native EUR |
+| RAL minimum | 100 | RON | /culoare | LEGACY_RON / OWNER_DOCUMENTED | not converted; EUR floor unpublished |
 
-No invented values. No RON→EUR conversion. No FX as offer truth for volumetric presentation.
+Research follow-up: CNC/forming EUR are workcenter sources reused provisionally — not Owner-final commercial sell. No invented values. No RON→EUR conversion. No FX as offer truth for volumetric presentation.
 
 ## Implementation
 

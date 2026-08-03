@@ -59,11 +59,13 @@ SABLON_HARTIE_DOCUMENTED_EUR_M2 = 5.0
 # Rates below are OWNER_DOCUMENTED EUR registry sources, or unpublished (None) fail-closed.
 # Final commercial level remains deferred to the dedicated final pricing pass.
 
-# Owner-documented CNC face cut — seed_volumetric_workcenter_rates CNC_ROUTER (1.5 EUR/ml).
+# F7H commercial EUR reuse from existing workcenter registry (EUR_SOURCE_EXISTING).
+# These are NOT a dedicated Owner-confirmed commercial sell decision for VOL_V2_* lines —
+# CNC_ROUTER 1.5 EUR/ml and RETURN_PROFILE_MACHINE_FORMING 5 EUR/ml are production/registry
+# labor rates. Reused as provisional configurable commercial EUR until the final pricing pass.
+# Bonding (RETURN_PROFILE_FACE_BONDING) remains a separate registry op, not fused here.
 FACE_CNC_COMMERCIAL_EUR_ML = 1.5
 FACE_CNC_REGISTRY_CODE = "CNC_ROUTER"
-# Owner-documented return profile machine forming — RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml).
-# Bonding (RETURN_PROFILE_FACE_BONDING) remains a separate registry op, not fused here.
 RETURN_PROFILE_COMMERCIAL_EUR_ML = 5.0
 RETURN_PROFILE_REGISTRY_CODE = "RETURN_PROFILE_MACHINE_FORMING"
 # Back cut commercial sell EUR/m² — NOT_FOUND in Owner EUR catalog (CNC registry is ml-based).
@@ -201,14 +203,14 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="ml",
         quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
         unit="ml",
-        source="owner_commercial_decision:f7h_cnc_router_eur_ml",
+        source="commercial_rules_volumetric_v2:f7h_provisional_cnc_router_eur_ml",
         criticality="critical",
         documented_unit_price=FACE_CNC_COMMERCIAL_EUR_ML,
         documented_unit_price_currency="EUR",
         registry_pricing_code=FACE_CNC_REGISTRY_CODE,
         warnings=(
-            "F7H: commercial EUR/ml from Owner-documented CNC_ROUTER registry rate (1.5 EUR/ml). "
-            "Legacy RON DEV_BRIDGE 25 was retired, not renamed.",
+            "F7H provisional commercial EUR/ml reused from CNC_ROUTER workcenter registry (1.5 EUR/ml). "
+            "Not an Owner-final commercial sell decision. Legacy RON DEV_BRIDGE 25 retired, not renamed.",
         ),
     ),
     CommercialRuleDefinition(
@@ -220,15 +222,16 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         basis_type="ml",
         quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
         unit="ml",
-        source="owner_commercial_decision:f7h_return_profile_forming_eur_ml",
+        source="commercial_rules_volumetric_v2:f7h_provisional_return_profile_forming_eur_ml",
         criticality="critical",
         documented_unit_price=RETURN_PROFILE_COMMERCIAL_EUR_ML,
         documented_unit_price_currency="EUR",
         registry_pricing_code=RETURN_PROFILE_REGISTRY_CODE,
         warnings=(
             "Technical inputs: letter_perimeter_m, return_depth_mm — not minutes.",
-            "F7H: commercial EUR/ml from Owner-documented RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml). "
-            "Legacy RON DEV_BRIDGE 30 was retired, not renamed. Bonding stays a separate op.",
+            "F7H provisional commercial EUR/ml reused from RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml). "
+            "Not an Owner-final commercial sell decision; bonding stays a separate op. "
+            "Legacy RON DEV_BRIDGE 30 retired, not renamed.",
         ),
     ),
     CommercialRuleDefinition(
@@ -832,7 +835,7 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="ml",
         quantity_paths=(),
         unit="ml",
-        source="owner_commercial_decision:f7h_cnc_router_eur_ml",
+        source="commercial_rules_volumetric_v2:f7h_provisional_cnc_router_eur_ml",
         criticality="critical",
         documented_unit_price=FACE_CNC_COMMERCIAL_EUR_ML,
         documented_unit_price_currency="EUR",
@@ -847,7 +850,7 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="ml",
         quantity_paths=(),
         unit="ml",
-        source="owner_commercial_decision:f7h_return_profile_forming_eur_ml",
+        source="commercial_rules_volumetric_v2:f7h_provisional_return_profile_forming_eur_ml",
         criticality="critical",
         documented_unit_price=RETURN_PROFILE_COMMERCIAL_EUR_ML,
         documented_unit_price_currency="EUR",
