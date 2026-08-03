@@ -346,17 +346,16 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 3 Readiness Pack Owner review** — keep `DEC-009=A` until an explicit Owner decision sets `DEC-009=B` and issues a separate Wave 3 GO.
+**Owner review of Finalization Wave 3** — `DEC-009=B` recorded (`docs/decisions/DEC-009_CONTROLLED_OPERATIONAL_MATERIALIZATION_B.md`). Controlled materialization is authorized only for the OD3 next-dry durable QA fixture **`880750`** / plan **`23`**.
 
 **Why:**
 
 - Faza 0–2 are complete at commits `134eef7e` (Wave 1) and `788171b4` (Wave 2).
-- Materialization remains **BLOCKED_NEEDS_OWNER_GO** (`DEC-009=A`).
-- Canonical ownership, ORR compile freeze, finish-aware DAG, and Step 9B read-only are in place.
-- Durable non-production Wave 2 QA fixture exists for readiness evidence: order **`880750`** / `ORD-WAVE2-QA-880750` / plan **`23`** / snapshot `QSN2-WAVE2-880750` (local `dev.db` only; evidence worklog `2026-08-03_wave2_durable_qa_fixture_and_wave3_readiness_pack.md`). Pytest ephemeral `8807xx` remains secondary.
-- Wave 3 must still prove controlled materialization + idempotency + audit on that (or an Owner-approved) fixture, with zero sessions/assignment.
+- Wave 3 exercises POST materialize under fail-closed True_CONDITIONAL scope; assignment / sessions / scheduling remain closed.
+- Canonical ownership, ORR compile freeze, finish-aware DAG, and Step 9B read-only remain in place.
+- Durable fixture: order **`880750`** / `ORD-WAVE2-QA-880750` / plan **`23`** / snapshot `QSN2-WAVE2-880750`.
 
-**Do not** reopen DEC-003/004/005 as if unanswered. **Do not** start Wave 3 without Owner GO.
+**Do not** start assignment, sessions, scheduling, or Employee Mobile without a separate Owner GO.
 
 ---
 
@@ -374,7 +373,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | Quote / Order Snapshot V2 | VALIDATED_WITH_GUARDS | Freeze WC + DAG + warnings on new snapshots |
 | ExecutionPlan V2 draft | VALIDATED_WITH_GUARDS | Reads frozen snapshot only |
 | Step 9B UI | COMPLETE (Wave 1/2) | Read-only; local WC provenance only |
-| Materialization | BLOCKED_NEEDS_OWNER_GO | Owner DEC-009=B + Wave 3 GO |
+| Materialization | DEC-009=B SCOPED (880750 next-dry) | Owner review Wave 3; Wave 4 eligibility RO only |
 | Workcenters on tasks | VALIDATED_WITH_GUARDS (new freeze path) | Historical 88002 may still show null WC |
 | Employees / skills | PARTIAL | Faza 5 after materialize |
 | Sessions / actuals | FROZEN | Faza 6 after materialize GO |

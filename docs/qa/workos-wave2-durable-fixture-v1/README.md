@@ -8,7 +8,7 @@ Local non-production fixture for Finalization Wave 2 runtime/UI proof.
 | Plan | `23` |
 | Snapshot | `QSN2-WAVE2-880750` (DB quote_snapshot_v2 id `23`) |
 | Environment | `APP_ENV=development`, `backend/dev.db`, `127.0.0.1` |
-| Materialize | **forbidden** (`DEC-009=A`) |
+| Materialize | **exercised Wave 3** (`DEC-009=B` scoped next-dry) — `operational_tasks=13`, `execution_tasks_created=true`; assignment/sessions still closed |
 
 Create/recreate (does not materialize; does not touch `880811` / `973019`):
 

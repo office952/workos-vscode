@@ -1,0 +1,630 @@
+﻿{
+    "order":  {
+                  "mode":  "audit_only",
+                  "order_id":  880750,
+                  "order_code":  "ORD-WAVE2-QA-880750",
+                  "execution_plan_id":  23,
+                  "source_quote_snapshot_v2_id":  23,
+                  "source_snapshot_code":  "QSN2-WAVE2-880750",
+                  "plan_source":  "order_snapshot_v2",
+                  "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                  "materialization_status":  "scoped_materialize_authorized",
+                  "dry_run_status":  "ready_with_warnings",
+                  "planned_task_count":  13,
+                  "operation_count":  18,
+                  "operational_tasks_in_envelope_count":  0,
+                  "materializable_task_candidates":  [
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+                                                             "label":  "Vector Prep",
+                                                             "canonical_task_type":  "file_preparation",
+                                                             "source_operation_code":  "vector_prep",
+                                                             "sequence_index":  1,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+                                                             "label":  "Face CNC Cut",
+                                                             "canonical_task_type":  "cnc_routing",
+                                                             "source_operation_code":  "face_cnc_cut",
+                                                             "sequence_index":  2,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:back_cut",
+                                                             "label":  "Back CNC Cut",
+                                                             "canonical_task_type":  "cnc_routing",
+                                                             "source_operation_code":  "back_cut",
+                                                             "sequence_index":  3,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+                                                             "label":  "Side Forming",
+                                                             "canonical_task_type":  "edge_bending",
+                                                             "source_operation_code":  "side_forming",
+                                                             "sequence_index":  4,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+                                                             "label":  "Return Face Bonding",
+                                                             "canonical_task_type":  "volumetric_letter_assembly",
+                                                             "source_operation_code":  "return_face_bonding",
+                                                             "sequence_index":  5,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+                                                             "label":  "Painting module (alias)",
+                                                             "canonical_task_type":  "volumetric_letter_assembly",
+                                                             "source_operation_code":  "painting",
+                                                             "sequence_index":  7,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+                                                             "label":  "LED Install",
+                                                             "canonical_task_type":  "led_assembly",
+                                                             "source_operation_code":  "led_install_letters",
+                                                             "sequence_index":  8,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_letters",
+                                                             "label":  "Electrical",
+                                                             "canonical_task_type":  "led_wiring",
+                                                             "source_operation_code":  "electrical_letters",
+                                                             "sequence_index":  9,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+                                                             "label":  "Assembly Letters",
+                                                             "canonical_task_type":  "volumetric_letter_assembly",
+                                                             "source_operation_code":  "assembly_letters",
+                                                             "sequence_index":  10,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+                                                             "label":  "Vinyl Application",
+                                                             "canonical_task_type":  "vinyl_cutting",
+                                                             "source_operation_code":  "vinyl_application",
+                                                             "sequence_index":  11,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template_cnc_cut",
+                                                             "label":  "Mounting Template CNC",
+                                                             "canonical_task_type":  "cnc_routing",
+                                                             "source_operation_code":  "mounting_template_cnc_cut",
+                                                             "sequence_index":  12,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_letters",
+                                                             "label":  "QC Letters",
+                                                             "canonical_task_type":  "quality_control",
+                                                             "source_operation_code":  "qc_letters",
+                                                             "sequence_index":  13,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         },
+                                                         {
+                                                             "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+                                                             "label":  "Packaging",
+                                                             "canonical_task_type":  "packaging",
+                                                             "source_operation_code":  "packaging_letters",
+                                                             "sequence_index":  14,
+                                                             "operational_status_preview":  "pending",
+                                                             "estimated_minutes":  null,
+                                                             "warnings":  [
+                                                                              "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                              "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                          ]
+                                                         }
+                                                     ],
+                  "non_operational_items":  [
+                                                {
+                                                    "task_name":  "svg_geometry_analysis",
+                                                    "task_type":  "READINESS_GATE",
+                                                    "reason":  "READINESS_GATE dossier rule â readiness only, not operational execution task",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "vector_prep",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "cnc_face_cut",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "back_cut",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "return_profile_forming",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "return_face_bonding",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "painting",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "led_install_letters",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "electrical_letters",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "assembly_letters",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "vinyl_application",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "mounting_template_cnc_cut",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "qc_letters",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                },
+                                                {
+                                                    "task_name":  "packaging",
+                                                    "task_type":  "process",
+                                                    "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                    "excluded_from":  "planned_tasks_and_materialization"
+                                                }
+                                            ],
+                  "blockers":  [
+
+                               ],
+                  "warnings":  [
+                                   "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                   "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
+                               ],
+                  "activation_hash_preview":  "b043e307b3b1474e233473d0c643504d",
+                  "guards":  {
+                                 "mode":  "audit_only",
+                                 "creates_execution_tasks":  false,
+                                 "creates_sessions":  false,
+                                 "writes_database":  false,
+                                 "uses_cost_engine":  false,
+                                 "uses_price_endpoint":  false,
+                                 "uses_quote_orchestrator":  false,
+                                 "employee_mobile_scope":  false,
+                                 "post_materialize_allowed":  true
+                             },
+                  "contract_notes":  [
+                                         "Primary source for materialization is execution_plan.tasks_json planned_tasks[] (frozen at persist).",
+                                         "orders.snapshot_v2_json is upstream provenance only â not re-read for task generation at materialize.",
+                                         "READINESS_GATE dossier rules are non-operational and excluded from planned_tasks[].",
+                                         "WorkOS V2 materialization writes operational_tasks[] inside tasks_json â no execution_tasks table in dev.",
+                                         "POST /plan-v2/materialize-tasks/{order_id} is fail-closed via OD3 DEC-009 gate; only the registered next-dry fixture may materialize.",
+                                         "DEC-009=B authorizes controlled scoped materialize only â not assignment, sessions, scheduling, or Employee Mobile.",
+                                         "Audit endpoint is GET-only and never writes.",
+                                         "Execution sessions / ExecutionActuals remain out of scope until a separate Owner GO."
+                                     ],
+                  "message":  "Materialization audit-only â DEC-009=B scoped POST allowed for this next-dry fixture. Audit GET never writes. Assignment / sessions / scheduling remain forbidden.",
+                  "input_summary":  {
+                                        "envelope_source":  "order_snapshot_v2",
+                                        "preview_status":  "partial_missing_planning_minutes",
+                                        "dry_run_candidate_count":  13,
+                                        "non_operational_count":  14,
+                                        "live_dec009":  "B",
+                                        "pilot_gate_open":  true,
+                                        "gate_blockers":  [
+
+                                                          ],
+                                        "envelope_materialization_audit":  null
+                                    }
+              },
+    "plan":  {
+                 "mode":  "audit_only",
+                 "order_id":  880750,
+                 "order_code":  "ORD-WAVE2-QA-880750",
+                 "execution_plan_id":  23,
+                 "source_quote_snapshot_v2_id":  23,
+                 "source_snapshot_code":  "QSN2-WAVE2-880750",
+                 "plan_source":  "order_snapshot_v2",
+                 "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                 "materialization_status":  "scoped_materialize_authorized",
+                 "dry_run_status":  "ready_with_warnings",
+                 "planned_task_count":  13,
+                 "operation_count":  18,
+                 "operational_tasks_in_envelope_count":  0,
+                 "materializable_task_candidates":  [
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+                                                            "label":  "Vector Prep",
+                                                            "canonical_task_type":  "file_preparation",
+                                                            "source_operation_code":  "vector_prep",
+                                                            "sequence_index":  1,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+                                                            "label":  "Face CNC Cut",
+                                                            "canonical_task_type":  "cnc_routing",
+                                                            "source_operation_code":  "face_cnc_cut",
+                                                            "sequence_index":  2,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:back_cut",
+                                                            "label":  "Back CNC Cut",
+                                                            "canonical_task_type":  "cnc_routing",
+                                                            "source_operation_code":  "back_cut",
+                                                            "sequence_index":  3,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+                                                            "label":  "Side Forming",
+                                                            "canonical_task_type":  "edge_bending",
+                                                            "source_operation_code":  "side_forming",
+                                                            "sequence_index":  4,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+                                                            "label":  "Return Face Bonding",
+                                                            "canonical_task_type":  "volumetric_letter_assembly",
+                                                            "source_operation_code":  "return_face_bonding",
+                                                            "sequence_index":  5,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+                                                            "label":  "Painting module (alias)",
+                                                            "canonical_task_type":  "volumetric_letter_assembly",
+                                                            "source_operation_code":  "painting",
+                                                            "sequence_index":  7,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+                                                            "label":  "LED Install",
+                                                            "canonical_task_type":  "led_assembly",
+                                                            "source_operation_code":  "led_install_letters",
+                                                            "sequence_index":  8,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_letters",
+                                                            "label":  "Electrical",
+                                                            "canonical_task_type":  "led_wiring",
+                                                            "source_operation_code":  "electrical_letters",
+                                                            "sequence_index":  9,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+                                                            "label":  "Assembly Letters",
+                                                            "canonical_task_type":  "volumetric_letter_assembly",
+                                                            "source_operation_code":  "assembly_letters",
+                                                            "sequence_index":  10,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+                                                            "label":  "Vinyl Application",
+                                                            "canonical_task_type":  "vinyl_cutting",
+                                                            "source_operation_code":  "vinyl_application",
+                                                            "sequence_index":  11,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template_cnc_cut",
+                                                            "label":  "Mounting Template CNC",
+                                                            "canonical_task_type":  "cnc_routing",
+                                                            "source_operation_code":  "mounting_template_cnc_cut",
+                                                            "sequence_index":  12,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_letters",
+                                                            "label":  "QC Letters",
+                                                            "canonical_task_type":  "quality_control",
+                                                            "source_operation_code":  "qc_letters",
+                                                            "sequence_index":  13,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "task_key":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+                                                            "label":  "Packaging",
+                                                            "canonical_task_type":  "packaging",
+                                                            "source_operation_code":  "packaging_letters",
+                                                            "sequence_index":  14,
+                                                            "operational_status_preview":  "pending",
+                                                            "estimated_minutes":  null,
+                                                            "warnings":  [
+                                                                             "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                                                             "PLANNING_MINUTES_SOURCE_MISSING"
+                                                                         ]
+                                                        }
+                                                    ],
+                 "non_operational_items":  [
+                                               {
+                                                   "task_name":  "svg_geometry_analysis",
+                                                   "task_type":  "READINESS_GATE",
+                                                   "reason":  "READINESS_GATE dossier rule â readiness only, not operational execution task",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "vector_prep",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "cnc_face_cut",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "back_cut",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "return_profile_forming",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "return_face_bonding",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "painting",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "led_install_letters",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "electrical_letters",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "assembly_letters",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "vinyl_application",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "mounting_template_cnc_cut",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "qc_letters",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               },
+                                               {
+                                                   "task_name":  "packaging",
+                                                   "task_type":  "process",
+                                                   "reason":  "Present in aggregate task_rules but excluded from planned_tasks (trigger/owner filter)",
+                                                   "excluded_from":  "planned_tasks_and_materialization"
+                                               }
+                                           ],
+                 "blockers":  [
+
+                              ],
+                 "warnings":  [
+                                  "PLANNING_MINUTES_SOURCE_REQUIRED",
+                                  "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
+                              ],
+                 "activation_hash_preview":  "b043e307b3b1474e233473d0c643504d",
+                 "guards":  {
+                                "mode":  "audit_only",
+                                "creates_execution_tasks":  false,
+                                "creates_sessions":  false,
+                                "writes_database":  false,
+                                "uses_cost_engine":  false,
+                                "uses_price_endpoint":  false,
+                                "uses_quote_orchestrator":  false,
+                                "employee_mobile_scope":  false,
+                                "post_materialize_allowed":  true
+                            },
+                 "contract_notes":  [
+                                        "Primary source for materialization is execution_plan.tasks_json planned_tasks[] (frozen at persist).",
+                                        "orders.snapshot_v2_json is upstream provenance only â not re-read for task generation at materialize.",
+                                        "READINESS_GATE dossier rules are non-operational and excluded from planned_tasks[].",
+                                        "WorkOS V2 materialization writes operational_tasks[] inside tasks_json â no execution_tasks table in dev.",
+                                        "POST /plan-v2/materialize-tasks/{order_id} is fail-closed via OD3 DEC-009 gate; only the registered next-dry fixture may materialize.",
+                                        "DEC-009=B authorizes controlled scoped materialize only â not assignment, sessions, scheduling, or Employee Mobile.",
+                                        "Audit endpoint is GET-only and never writes.",
+                                        "Execution sessions / ExecutionActuals remain out of scope until a separate Owner GO."
+                                    ],
+                 "message":  "Materialization audit-only â DEC-009=B scoped POST allowed for this next-dry fixture. Audit GET never writes. Assignment / sessions / scheduling remain forbidden.",
+                 "input_summary":  {
+                                       "envelope_source":  "order_snapshot_v2",
+                                       "preview_status":  "partial_missing_planning_minutes",
+                                       "dry_run_candidate_count":  13,
+                                       "non_operational_count":  14,
+                                       "live_dec009":  "B",
+                                       "pilot_gate_open":  true,
+                                       "gate_blockers":  [
+
+                                                         ],
+                                       "envelope_materialization_audit":  null
+                                   }
+             }
+}

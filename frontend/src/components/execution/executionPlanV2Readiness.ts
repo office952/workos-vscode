@@ -75,7 +75,8 @@ export function planLifecycleLabel(args: {
     return {
       draftLabel: "Plan operațional (envelope)",
       materializationLabel: "MATERIALIZED_IN_ENVELOPE",
-      nextStepLabel: "Taskurile operaționale există în envelope — sesiunile rămân blocate fără Owner GO.",
+      nextStepLabel:
+        "Taskurile operaționale există în envelope — assignment, sesiuni și scheduling rămân blocate fără Owner GO separat.",
     };
   }
 

@@ -518,11 +518,17 @@ def build_pre_materialize_checklist(
         {
             "id": "DEC-009",
             "label": "POST materialize GO (DEC-009)",
-            "status": "BLOCKED" if dec009 == "A" else "OPEN",
+            "status": "BLOCKED" if dec009 == "A" else "SCOPED_OPEN",
             "blocking": True,
             "detail": (
-                "DEC-009=A — materialize remains BLOCKED until Owner sets B "
-                "and blockers above clear."
+                f"DEC-009={dec009} — OD3 True_CONDITIONAL next-dry only "
+                "(Wave 3: durable QA fixture). Assignment/sessions remain closed. "
+                "Capacity Batch 04 never POSTs materialize."
+                if dec009 == "B"
+                else (
+                    "DEC-009=A — materialize remains BLOCKED until Owner sets B "
+                    "and blockers above clear."
+                )
             ),
         },
         {
@@ -533,7 +539,7 @@ def build_pre_materialize_checklist(
             "detail": "Policy locked — overload/minutes warns do not block offers.",
         },
     ]
-    blockers = [i for i in items if i["blocking"] and i["status"] not in (LABEL_READY, "OPEN")]
+    blockers = [i for i in items if i["blocking"] and i["status"] not in (LABEL_READY, "OPEN", "SCOPED_OPEN")]
     return {
         "materialize": MATERIALIZE_BLOCKED,
         "dec009": dec009,
@@ -541,7 +547,7 @@ def build_pre_materialize_checklist(
         "blockerCount": len(blockers),
         "items": items,
         "summary": (
-            f"DEC-009 blocked — {len(blockers)} capacity/route blockers still open. "
-            "No POST materialize from Capacity Batch 04."
+            f"DEC-009={dec009} — {len(blockers)} capacity/route blockers still open. "
+            "POST materialize only via OD3 scoped next-dry gate; not from Capacity Batch 04."
         ),
     }

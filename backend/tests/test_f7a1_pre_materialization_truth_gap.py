@@ -205,7 +205,7 @@ async def test_f7a1_fixture_preview_wc_premount_dag_audit(db_session):
     reality_after = await db_session.scalar(select(func.count()).select_from(ExecutionReality))
     assert plans_after == plans_before
     assert reality_after == reality_before
-    assert LIVE_DEC009_STATUS == "A"
+    assert LIVE_DEC009_STATUS == "B"
 
     await db_session.refresh(order)
     assert json.loads(order.snapshot_v2_json)["accepted_commercial_total"] == COMMERCIAL_TOTAL

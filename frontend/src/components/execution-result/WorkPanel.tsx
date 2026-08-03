@@ -23,7 +23,9 @@ export function WorkPanel({
       <h2 className="text-sm font-semibold text-wo-text-primary">Lucru în execuție</h2>
       {!allowSessionActions ? (
         <p className="mt-1 text-[11px] text-amber-200" data-testid="execution-work-panel-sessions-blocked">
-          Sesiunile sunt blocate: taskurile operaționale nu sunt materializate (sau sessions rămân FROZEN). Lista de mai jos este read-only.
+          {plan.operational_tasks_materialized || (plan.operational_tasks_count ?? 0) > 0
+            ? "Sesiunile rămân blocate (FROZEN) — materializarea nu autorizează Start/Stop. Lista de mai jos este read-only."
+            : "Sesiunile sunt blocate: taskurile operaționale nu sunt materializate (sau sessions rămân FROZEN). Lista de mai jos este read-only."}
         </p>
       ) : (
         <p className="mt-1 text-[11px] text-wo-text-muted">Înregistrările sunt confirmate prin backend înainte de reîncărcare.</p>

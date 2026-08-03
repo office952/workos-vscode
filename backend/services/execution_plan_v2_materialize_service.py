@@ -6,10 +6,11 @@ No ExecutionReality writes, no sessions, no Employee Mobile wiring.
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.execution_plan import ExecutionPlan
@@ -19,7 +20,12 @@ from schemas.execution_plan_v2_materialize import (
     OPERATIONAL_TASKS_VERSION,
     ExecutionPlanV2MaterializeResult,
 )
-from services.dec009_materialize_gate import enforce_dec009_materialize_gate
+from services.dec009_materialize_gate import (
+    LIVE_DEC009_LABEL,
+    LIVE_DEC009_STATUS,
+    OD3_RUNTIME_IDENTITY_VERSION,
+    enforce_dec009_materialize_gate,
+)
 from services.execution_plan_task_parser import (
     compute_activation_hash,
     materialize_operational_tasks_from_v2_envelope,
@@ -70,8 +76,6 @@ async def materialize_execution_plan_v2_operational_tasks(
     prepared_by_user_id: str | None = None,
 ) -> ExecutionPlanV2MaterializeResult:
     """Materialize operational_tasks[] into V2 plan envelope — planned tasks only."""
-    _ = prepared_by_user_id  # reserved for audit metadata; not persisted in 9.3.4.a
-
     order = await db.get(Orders, order_id)
     if order is None:
         raise ExecutionPlanV2MaterializeOrderNotFound()
@@ -101,6 +105,8 @@ async def materialize_execution_plan_v2_operational_tasks(
         )
 
     envelope: dict[str, Any] = dict(parsed.envelope)
+    # Optimistic concurrency token — reject lost updates / double-submit races.
+    tasks_json_token = plan.tasks_json
     preview_status = str(envelope.get("preview_status") or "").strip()
     if preview_status.startswith("blocked_"):
         _raise_blocked(
@@ -139,6 +145,7 @@ async def materialize_execution_plan_v2_operational_tasks(
         )
 
     activation_hash = compute_activation_hash(envelope)
+    planned_count = len(envelope.get("planned_tasks") or [])
     envelope["operational_tasks"] = operational_tasks
     envelope["execution_tasks_created"] = True
     envelope["operational_tasks_version"] = OPERATIONAL_TASKS_VERSION
@@ -146,6 +153,31 @@ async def materialize_execution_plan_v2_operational_tasks(
     envelope["activation_status"] = "materialized"
     envelope["materialization_warnings"] = warnings
     envelope["materialization_blockers"] = []
+    # Durable audit trail inside the existing V2 envelope (no schema / migration).
+    envelope["materialization_audit"] = {
+        "dec009": LIVE_DEC009_STATUS,
+        "dec009_label": LIVE_DEC009_LABEL,
+        "authorized_by": f"DEC-009={LIVE_DEC009_STATUS}",
+        "wave": "FINALIZATION_WAVE_3",
+        "order_id": order.id,
+        "execution_plan_id": plan.id,
+        "source_quote_snapshot_v2_id": plan.source_quote_snapshot_v2_id,
+        "source_snapshot_code": plan.source_snapshot_code,
+        "source_planned_task_count": planned_count,
+        "operational_task_count": len(operational_tasks),
+        "before_execution_tasks_created": False,
+        "after_execution_tasks_created": True,
+        "materialized_at_utc": datetime.now(timezone.utc).isoformat(),
+        "idempotency": "first_materialization",
+        "gate_identity_version": OD3_RUNTIME_IDENTITY_VERSION,
+        "prepared_by_user_id": prepared_by_user_id,
+        "no_assignments": True,
+        "no_machine_assignments": True,
+        "no_sessions": True,
+        "no_scheduling": True,
+        "no_capacity_allocation": True,
+        "source_contract": "planned_tasks_only",
+    }
 
     planned_tasks_after = json.dumps(envelope.get("planned_tasks") or [], sort_keys=True)
     if planned_tasks_after != planned_tasks_before:
@@ -157,7 +189,35 @@ async def materialize_execution_plan_v2_operational_tasks(
 
     snapshot_v2_json_before = getattr(order, "snapshot_v2_json", None)
     _ = snapshot_v2_json_before  # order snapshot must not be mutated; tests verify
-    plan.tasks_json = json.dumps(envelope, ensure_ascii=False)
+    new_tasks_json = json.dumps(envelope, ensure_ascii=False)
+
+    # Atomic compare-and-swap on tasks_json — second concurrent writer gets rowcount 0.
+    cas = await db.execute(
+        update(ExecutionPlan)
+        .where(
+            ExecutionPlan.id == plan.id,
+            ExecutionPlan.tasks_json == tasks_json_token,
+        )
+        .values(tasks_json=new_tasks_json)
+    )
+    if cas.rowcount != 1:
+        await db.rollback()
+        refreshed = await db.get(ExecutionPlan, plan.id)
+        if refreshed is not None:
+            again = parse_tasks_json_raw(refreshed.tasks_json)
+            if again.envelope is not None and _already_materialized(again.envelope):
+                raise HTTPException(
+                    status_code=409,
+                    detail={
+                        "error": "operational_tasks_already_materialized",
+                        "execution_plan_id": plan.id,
+                    },
+                )
+        _raise_blocked(
+            "MATERIALIZATION_CONCURRENT_UPDATE",
+            "Execution plan changed during materialization; no partial write persisted.",
+            ["concurrent_update"],
+        )
 
     readiness_snapshot = getattr(order, "readiness_snapshot", None)
     if isinstance(readiness_snapshot, dict):

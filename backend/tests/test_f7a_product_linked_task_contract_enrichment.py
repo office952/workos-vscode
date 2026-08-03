@@ -428,8 +428,8 @@ async def test_f7a_snapshot_preview_persist_audit_chain(db_session):
     assert plans_after == plans_before
     assert reality_after == reality_before
 
-    # DEC-009 gate still A
-    assert LIVE_DEC009_STATUS == "A"
+    # DEC-009=B is live, but this fixture is outside the Wave 3 next-dry target.
+    assert LIVE_DEC009_STATUS == "B"
     with pytest.raises(HTTPException) as blocked:
         enforce_dec009_materialize_gate(order_id=oid, plan_id=plan.id)
     assert blocked.value.status_code == 422

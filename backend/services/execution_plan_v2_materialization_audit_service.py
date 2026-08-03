@@ -21,6 +21,10 @@ from schemas.execution_plan_v2_materialization_audit import (
     NonOperationalItemPreview,
 )
 from schemas.order_snapshot_v2 import OrderSnapshotV2
+from services.dec009_materialize_gate import (
+    LIVE_DEC009_STATUS,
+    evaluate_materialize_authorization,
+)
 from services.execution_plan_task_parser import (
     compute_activation_hash,
     materialize_operational_tasks_from_v2_envelope,
@@ -41,8 +45,10 @@ CONTRACT_NOTES = [
     "orders.snapshot_v2_json is upstream provenance only — not re-read for task generation at materialize.",
     "READINESS_GATE dossier rules are non-operational and excluded from planned_tasks[].",
     "WorkOS V2 materialization writes operational_tasks[] inside tasks_json — no execution_tasks table in dev.",
-    "POST /plan-v2/materialize-tasks/{order_id} requires separate owner GO — audit endpoint is GET-only.",
-    "Execution sessions / ExecutionActuals are Step 11+ — out of scope.",
+    "POST /plan-v2/materialize-tasks/{order_id} is fail-closed via OD3 DEC-009 gate; only the registered next-dry fixture may materialize.",
+    "DEC-009=B authorizes controlled scoped materialize only — not assignment, sessions, scheduling, or Employee Mobile.",
+    "Audit endpoint is GET-only and never writes.",
+    "Execution sessions / ExecutionActuals remain out of scope until a separate Owner GO.",
 ]
 
 
@@ -54,7 +60,20 @@ class ExecutionPlanV2MaterializationAuditOrderNotFound(Exception):
     """Raised when order row does not exist."""
 
 
-def _guards() -> MaterializationAuditGuards:
+def _guards(
+    *,
+    order_id: int,
+    plan_id: int,
+    already_materialized: bool,
+    dry_run_ok: bool,
+) -> MaterializationAuditGuards:
+    """Honest POST allowance: gate open + dry-run ok + not already materialized.
+
+    ``post_materialize_allowed`` never unlocks sessions — only whether the first
+    POST materialize would clear the DEC-009 OD3 gate for this order/plan.
+    """
+    decision = evaluate_materialize_authorization(order_id=order_id, plan_id=plan_id)
+    post_allowed = bool(decision["allowed"] and dry_run_ok and not already_materialized)
     return MaterializationAuditGuards(
         mode="audit_only",
         creates_execution_tasks=False,
@@ -64,7 +83,7 @@ def _guards() -> MaterializationAuditGuards:
         uses_price_endpoint=False,
         uses_quote_orchestrator=False,
         employee_mobile_scope=False,
-        post_materialize_allowed=False,
+        post_materialize_allowed=post_allowed,
     )
 
 
@@ -184,6 +203,8 @@ async def _build_audit_from_plan(
     warnings: list[str] = list(envelope.get("warnings") or [])
     candidates: list[MaterializableTaskCandidatePreview] = []
     activation_hash_preview: str | None = None
+    already_materialized = False
+    dry_run_ok = False
 
     if plan.plan_source != EXECUTION_PLAN_V2_PLAN_SOURCE:
         blockers.append(f"wrong_plan_source:{plan.plan_source}")
@@ -191,6 +212,7 @@ async def _build_audit_from_plan(
         blockers.append("invalid_plan_envelope")
 
     if operational_in_envelope and envelope.get("execution_tasks_created") is True:
+        already_materialized = True
         materialization_status = "already_materialized_in_envelope"
         dry_run_status = "already_materialized"
         candidates = _candidate_previews(operational_in_envelope)
@@ -206,12 +228,47 @@ async def _build_audit_from_plan(
         if mat_blockers:
             dry_run_status = "blocked"
             blockers.extend(mat_blockers)
+            materialization_status = "dry_run_blocked"
         elif mat_warnings:
             dry_run_status = "ready_with_warnings"
+            dry_run_ok = True
             candidates = _candidate_previews(operational)
+            materialization_status = "dry_run_ready_with_warnings"
         else:
             dry_run_status = "ready"
+            dry_run_ok = True
             candidates = _candidate_previews(operational)
+            materialization_status = "dry_run_ready_with_warnings"
+
+    gate = evaluate_materialize_authorization(order_id=order.id, plan_id=plan.id)
+    guards = _guards(
+        order_id=order.id,
+        plan_id=plan.id,
+        already_materialized=already_materialized,
+        dry_run_ok=dry_run_ok,
+    )
+    if already_materialized:
+        message = (
+            "Materialization audit-only — operational_tasks[] already present in envelope. "
+            "Assignment, sessions, and scheduling remain closed without a separate Owner GO."
+        )
+    elif guards.post_materialize_allowed:
+        materialization_status = "scoped_materialize_authorized"
+        message = (
+            f"Materialization audit-only — DEC-009={LIVE_DEC009_STATUS} scoped POST allowed "
+            "for this next-dry fixture. Audit GET never writes. "
+            "Assignment / sessions / scheduling remain forbidden."
+        )
+    else:
+        if dry_run_status == "blocked":
+            materialization_status = "dry_run_blocked"
+        else:
+            materialization_status = "blocked_needs_owner_go"
+        message = (
+            f"Materialization audit-only — DEC-009={LIVE_DEC009_STATUS}; "
+            f"POST blocked ({', '.join(gate.get('blockers') or ['gate_closed'])}). "
+            "Dry-run shows mappable operational task candidates from planned_tasks[]."
+        )
 
     return ExecutionPlanV2MaterializationAudit(
         order_id=order.id,
@@ -231,16 +288,17 @@ async def _build_audit_from_plan(
         blockers=blockers,
         warnings=warnings,
         activation_hash_preview=activation_hash_preview,
-        guards=_guards(),
+        guards=guards,
         contract_notes=CONTRACT_NOTES,
-        message=(
-            "Materialization audit-only — POST materialize remains blocked until owner GO. "
-            "Dry-run shows mappable operational task candidates from planned_tasks[]."
-        ),
+        message=message,
         input_summary={
             "envelope_source": envelope.get("source"),
             "preview_status": envelope.get("preview_status"),
             "dry_run_candidate_count": len(candidates),
             "non_operational_count": len(non_operational),
+            "live_dec009": LIVE_DEC009_STATUS,
+            "pilot_gate_open": gate.get("pilot_gate_open"),
+            "gate_blockers": list(gate.get("blockers") or []),
+            "envelope_materialization_audit": envelope.get("materialization_audit"),
         },
     )

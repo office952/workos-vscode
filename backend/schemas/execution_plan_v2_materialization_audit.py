@@ -13,6 +13,7 @@ MaterializationAuditStatus = Literal[
     "already_materialized_in_envelope",
     "dry_run_blocked",
     "dry_run_ready_with_warnings",
+    "scoped_materialize_authorized",
 ]
 
 DryRunMaterializationStatus = Literal[

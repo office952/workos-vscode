@@ -708,7 +708,7 @@ async def test_f7c_five_task_fixture_matches_stage_a_readiness_matrix(db_session
     await db_session.refresh(order)
     assert json.loads(order.snapshot_v2_json)["accepted_commercial_total"] == COMMERCIAL_TOTAL
 
-    assert LIVE_DEC009_STATUS == "A"
+    assert LIVE_DEC009_STATUS == "B"
     gate_after = evaluate_materialize_authorization(
         order_id=order.id, plan_id=materialize_result.execution_plan_id
     )

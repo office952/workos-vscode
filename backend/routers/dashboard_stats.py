@@ -66,8 +66,8 @@ NOTICE_MINUTES_NULL_WARN = (
 )
 
 NOTICE_MATERIALIZE_BLOCKED = (
-    "Materialize rămâne blocat (DEC-009=A) — Capacity Batch 04 = gates only "
-    "(maintenance_windows · assignment truth · machine util gated · checklist)."
+    f"Materialize gated by DEC-009={LIVE_DEC009_STATUS} — Capacity Batch 04 = gates only "
+    "(OD3 next-dry scoped POST · assignment truth · machine util gated · checklist)."
 )
 
 NOTICE_MACHINE_UTIL_GATED = (

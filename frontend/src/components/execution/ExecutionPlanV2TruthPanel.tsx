@@ -134,7 +134,13 @@ export function ExecutionPlanV2TruthPanel({
           operationalBlocked={!operationalPresent}
         />
         <OwnerGoNotice
-          detail="Lansarea în producție este blocată (DEC-009=A). Nu există acțiune Materializează / Asignează / Pornește pe această suprafață."
+          detail={
+            operationalPresent
+              ? "DEC-009=B: taskuri operaționale materializate controlat în envelope. Assignment / sesiuni / scheduling rămân blocate. Nu există acțiune Asignează / Pornește pe această suprafață."
+              : audit?.guards?.post_materialize_allowed
+                ? "DEC-009=B: materializare controlată autorizată pe fixture scoped (next-dry). Această suprafață nu oferă buton Materializează / Asignează / Pornește."
+                : "Lansarea în producție este blocată (DEC-009). Nu există acțiune Materializează / Asignează / Pornește pe această suprafață."
+          }
           compact
         />
 
@@ -187,11 +193,19 @@ export function ExecutionPlanV2TruthPanel({
               MISSING_ESTIMATED_MINUTES · {missingMinutes}
             </span>
           ) : null}
-          {audit?.guards?.post_materialize_allowed === false ? (
+          {operationalPresent ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-emerald-900/30 text-emerald-300 border-emerald-800/50">
+              MATERIALIZATION · ENVELOPE · SESSIONS_CLOSED
+            </span>
+          ) : audit?.guards?.post_materialize_allowed ? (
+            <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-amber-900/30 text-amber-300 border-amber-800/50">
+              MATERIALIZATION · SCOPED_B_AUTHORIZED
+            </span>
+          ) : (
             <span className="inline-block px-2 py-0.5 text-[10px] rounded border bg-red-900/30 text-red-300 border-red-800/50">
               MATERIALIZATION · CLOSED
             </span>
-          ) : null}
+          )}
         </div>
 
         {(preview.warnings.length > 0 || preview.blockers.length > 0) && (
