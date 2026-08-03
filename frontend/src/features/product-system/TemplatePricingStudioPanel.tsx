@@ -12,6 +12,10 @@ import {
   type TemplatePricingRecipeResponse,
   type TemplateRecipeKind,
 } from "@/api/templatePricingRecipe";
+import {
+  commercialReferenceLabel,
+  shouldDisplayCommercialRateValue,
+} from "./templatePricingCommercialReference";
 import { AiOperationalDefaultsSection } from "./AiOperationalDefaultsSection";
 import { PriceBreakdownSection } from "./PriceBreakdownSection";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
@@ -216,7 +220,7 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
               </span>
             ) : null}
             <span className="rounded border border-slate-700 px-2 py-0.5 text-[10px] text-slate-400">
-              Catalog: rate centrale · read-only
+              Catalog deține valorile · template doar referă · read-only
             </span>
           </div>
         </div>
@@ -532,10 +536,17 @@ function RecipeRow({ row }: { row: TemplatePricingRecipeItem }) {
     row.source_links.pricing_manopera ||
     row.source_links.pricing_registry ||
     row.source_links.inventory;
+  const refLabel = commercialReferenceLabel(row.commercial_reference_status);
+  const showValue = shouldDisplayCommercialRateValue({
+    currentValue: row.current_value,
+    commercialReferenceStatus: row.commercial_reference_status,
+    status: row.status,
+  });
 
   return (
     <div
       data-testid={`template-pricing-row-${row.stable_code}`}
+      data-commercial-reference-status={row.commercial_reference_status || ""}
       className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_auto] gap-2 border-b border-slate-800/50 px-3 py-2.5 text-[12px] text-slate-200 last:border-b-0"
     >
       <div className="min-w-0">
@@ -546,6 +557,9 @@ function RecipeRow({ row }: { row: TemplatePricingRecipeItem }) {
             ? ` → ${row.catalog_code}`
             : ""}
         </p>
+        {row.catalog_owner ? (
+          <p className="mt-0.5 text-[10px] text-slate-500">Owner: {row.catalog_owner}</p>
+        ) : null}
         {primaryLink ? (
           <Link
             to={primaryLink}
@@ -561,11 +575,21 @@ function RecipeRow({ row }: { row: TemplatePricingRecipeItem }) {
       <div>
         <p className="text-[11px] text-slate-300">
           {row.cost_label_ro || "—"}
-          {row.current_value != null
+          {showValue
             ? `: ${row.current_value}${row.currency ? ` ${row.currency}` : ""}`
-            : ""}
+            : row.commercial_reference_status === "ACTIVE_MISSING_RATE"
+              ? ": —"
+              : ""}
         </p>
         <p className="mt-0.5 text-[10px] text-slate-500">{row.unit || "—"}</p>
+        {refLabel ? (
+          <p
+            data-testid={`template-pricing-ref-status-${row.stable_code}`}
+            className="mt-0.5 text-[10px] text-sky-200/85"
+          >
+            {refLabel}
+          </p>
+        ) : null}
       </div>
       <div>
         <p className="font-mono text-[10px] text-slate-400">

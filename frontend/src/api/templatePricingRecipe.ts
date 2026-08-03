@@ -15,6 +15,16 @@ export type TemplateRecipeKind =
   | "adjustment"
   | "unknown";
 
+/** F7I — template shows reference readiness; catalog owns the numeric rate. */
+export type CommercialReferenceStatus =
+  | "ACTIVE_PUBLISHED"
+  | "ACTIVE_PROVISIONAL"
+  | "ACTIVE_MISSING_RATE"
+  | "BLOCKED_BY_POLICY"
+  | "LEGACY_NOT_USED"
+  | "NOT_APPLICABLE"
+  | "INVALID_REFERENCE";
+
 export interface TemplatePricingRecipeItem {
   recipe_item_id: string;
   recipe_kind: TemplateRecipeKind;
@@ -41,6 +51,9 @@ export interface TemplatePricingRecipeItem {
   data_quality_message_ro?: string | null;
   technical_ready: boolean;
   commercial_ready: boolean;
+  catalog_owner?: string | null;
+  commercial_reference_status?: CommercialReferenceStatus | null;
+  rate_publication_status?: "owner_confirmed" | "provisional" | "unpublished" | null;
   blockers: string[];
   warnings: string[];
   editable: boolean;

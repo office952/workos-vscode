@@ -1,7 +1,9 @@
-"""Temporary local read-only commercial price rules for volumetric letters v2 (Step 7G).
+"""Commercial price rules for volumetric letters + ACM (catalog owner until DB 7I).
 
-NOT the official Pricing Registry (Step 7I). No workcenter_rates, no rate_per_hour,
-no CostEngine totals, no invented RON prices except owner-documented exceptions.
+Owns configurable commercial sell values and publication honesty for the V2 pilot.
+Pricing Registry / workcenter_rates may supply *references* (registry_pricing_code)
+but do not become client sell by silent fallback when a rate is unpublished.
+No rate_per_hour, no CostEngine totals, no invented RON→EUR, no inventory unit_cost as sell.
 """
 
 from __future__ import annotations
@@ -548,6 +550,8 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         owner_decision_required=True,
         owner_decision_code="AMBALARE_COMMERCIAL_RULE",
         owner_decision_detail="Commercial packaging rule (fixed/set) not yet owner-defined.",
+        documented_unit_price=None,
+        documented_unit_price_currency="EUR",
         module_gate="ambalare_livrare_montaj",
     ),
     CommercialRuleDefinition(
@@ -1001,3 +1005,94 @@ FORBIDDEN_HOURLY_TOKENS = frozenset(
         "per_hour",
     }
 )
+
+# F7I — explicit publication states for template references / Owner Rate Decision Pack.
+# ACTIVE_PROVISIONAL = documented EUR reused from workcenter (not Owner-final sell).
+CommercialReferenceStatus = Literal[
+    "ACTIVE_PUBLISHED",
+    "ACTIVE_PROVISIONAL",
+    "ACTIVE_MISSING_RATE",
+    "BLOCKED_BY_POLICY",
+    "LEGACY_NOT_USED",
+    "NOT_APPLICABLE",
+]
+
+# Canonical Owner gaps known from F7H runtime (fail-closed; do not invent).
+OWNER_MISSING_COMMERCIAL_RATE_CODES = frozenset(
+    {
+        "ambalare",
+        "debitare_spate",
+        "sistem_led_module",
+        "sursa_led",
+    }
+)
+
+# Workcenter-reuse provisional sell (honest until final pricing pass).
+PROVISIONAL_COMMERCIAL_LINE_CODES = frozenset(
+    {
+        "debitare_fata",
+        "modelare_cant_aluminiu",
+    }
+)
+
+
+def classify_commercial_rule_publication(
+    rule: CommercialRuleDefinition,
+) -> CommercialReferenceStatus:
+    """Map a catalog rule to template/operator publication honesty (no invent)."""
+    if rule.documented_unit_price_currency == "RON":
+        return "LEGACY_NOT_USED"
+    if rule.owner_decision_required and rule.documented_unit_price is None:
+        return "ACTIVE_MISSING_RATE"
+    if rule.line_code in PROVISIONAL_COMMERCIAL_LINE_CODES:
+        return "ACTIVE_PROVISIONAL"
+    if rule.documented_unit_price is not None and rule.documented_unit_price_currency == "EUR":
+        if rule.owner_decision_required and rule.line_code == "montaj":
+            # Montaj has Owner EUR when registry binds; still gate-required until site install path resolves.
+            return "ACTIVE_PUBLISHED"
+        return "ACTIVE_PUBLISHED"
+    if rule.owner_decision_required:
+        return "ACTIVE_MISSING_RATE"
+    return "NOT_APPLICABLE"
+
+
+def inventory_commercial_rules_for_template(
+    template_code: str | None,
+) -> list[dict[str, object]]:
+    """Compact commercial inventory for QA / Owner Rate Decision Pack (read-only)."""
+    code = (template_code or "").strip()
+    rules = RULES_BY_TEMPLATE.get(code)
+    if rules is None:
+        needle = code.upper()
+        for key, value in RULES_BY_TEMPLATE.items():
+            if str(key).upper() == needle:
+                rules = value
+                break
+    if not rules:
+        return []
+    out: list[dict[str, object]] = []
+    for rule in rules:
+        status = classify_commercial_rule_publication(rule)
+        out.append(
+            {
+                "canonical_rule_code": rule.line_code,
+                "pricing_rule_code": rule.pricing_rule_code,
+                "label": rule.label,
+                "module_code": rule.module_code,
+                "pricing_unit": rule.unit,
+                "currency": rule.documented_unit_price_currency,
+                "current_rate": rule.documented_unit_price,
+                "publication_state": status,
+                "catalog_owner": "commercial_rules_volumetric_v2",
+                "registry_pricing_code": rule.registry_pricing_code,
+                "criticality": rule.criticality,
+                "owner_decision_code": rule.owner_decision_code,
+                "owner_question": (
+                    f"Care este tariful comercial publicat pentru `{rule.line_code}`, "
+                    f"în {rule.documented_unit_price_currency or 'EUR'}/{rule.unit}, fără TVA?"
+                    if status == "ACTIVE_MISSING_RATE"
+                    else None
+                ),
+            }
+        )
+    return out

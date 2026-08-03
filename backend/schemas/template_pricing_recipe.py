@@ -6,7 +6,17 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-TEMPLATE_PRICING_RECIPE_VERSION = "1.2.0"
+TEMPLATE_PRICING_RECIPE_VERSION = "1.3.0"
+
+CommercialReferenceStatus = Literal[
+    "ACTIVE_PUBLISHED",
+    "ACTIVE_PROVISIONAL",
+    "ACTIVE_MISSING_RATE",
+    "BLOCKED_BY_POLICY",
+    "LEGACY_NOT_USED",
+    "NOT_APPLICABLE",
+    "INVALID_REFERENCE",
+]
 
 LaborClass = Literal[
     "LABOR_INTERNAL",
@@ -102,6 +112,12 @@ class TemplatePricingRecipeItem(BaseModel):
     data_quality_message_ro: Optional[str] = None
     technical_ready: bool = False
     commercial_ready: bool = False
+    # F7I — catalog owns the value; template shows reference readiness (never invents rates).
+    catalog_owner: Optional[str] = None
+    commercial_reference_status: Optional[CommercialReferenceStatus] = None
+    rate_publication_status: Optional[
+        Literal["owner_confirmed", "provisional", "unpublished"]
+    ] = None
     blockers: list[str] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     editable: bool = False

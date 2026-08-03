@@ -102,7 +102,7 @@ const PRODUCT_ADMIN_SECTIONS: Array<{
   testId: string;
 }> = [
   { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
-  { id: "pricing", label: "Rețetă și rate catalog", testId: "product-system-template-detail-tab-pricing" },
+  { id: "pricing", label: "Prețuri template", testId: "product-system-template-detail-tab-pricing" },
   { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
   { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
   { id: "runtime-preview", label: "Previzualizare runtime", testId: "product-system-template-detail-tab-runtime-preview" },

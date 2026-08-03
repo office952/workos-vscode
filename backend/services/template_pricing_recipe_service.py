@@ -11,6 +11,7 @@ from data.commercial_rules_volumetric_v2 import (
     LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES,
     RULES_BY_TEMPLATE,
     CommercialRuleDefinition,
+    classify_commercial_rule_publication,
 )
 from data.internal_cost_rules_volumetric_v2 import (
     RULES_BY_TEMPLATE as EIC_RULES_BY_TEMPLATE,
@@ -214,28 +215,16 @@ class TemplatePricingRecipeService:
         )
         ai_decisions = [AiOperationalDecisionItem.model_validate(x) for x in ai_raw]
 
-        # Demote artificial commercial packaging blocker when AI packaging applies.
+        # F7I: AI operational defaults must NOT demote missing commercial sell rates
+        # (ambalare remains ACTIVE_MISSING_RATE / fail-closed until Owner publishes).
         demoted_blockers: list[str] = list(demoted_from_labor)
         if any(d.domain == "packaging" for d in ai_decisions):
             for item in recipe:
-                if item.recipe_kind != "commercial_line":
+                if str(item.cpp_line_code or "").lower() != "ambalare":
                     continue
-                if "AMBALARE" not in str(item.stable_code or "").upper() and str(
-                    item.cpp_line_code or ""
-                ).lower() not in {"ambalare", "packaging"}:
-                    if "AMBALARE_COMMERCIAL_RULE" not in (item.blockers or []):
-                        continue
-                if "AMBALARE_COMMERCIAL_RULE" in (item.blockers or []) or item.status == "blocked":
-                    item.blockers = [
-                        b for b in item.blockers if b != "AMBALARE_COMMERCIAL_RULE"
-                    ]
-                    item.warnings = list(item.warnings or []) + [
-                        "AI_DEFAULT_DEMOTES:AMBALARE_COMMERCIAL_RULE"
-                    ]
-                    if item.status == "blocked":
-                        item.status = "warning"  # type: ignore[assignment]
-                    item.commercial_ready = True
-                    demoted_blockers.append("AMBALARE_COMMERCIAL_RULE")
+                item.warnings = list(item.warnings or []) + [
+                    "AI_PACKAGING_DEFAULT_DOES_NOT_PUBLISH_COMMERCIAL_SELL_RATE"
+                ]
 
         labor_recipes = [TemplateLaborRecipeItem.model_validate(x) for x in labor_raw]
         labor_summary = TemplateLaborRecipeSummary(
@@ -427,14 +416,47 @@ class TemplatePricingRecipeService:
         flags = list((catalog or {}).get("data_quality_flags") or [])
         blockers: list[str] = []
         warnings: list[str] = list(rule.warnings or ())
+        ref_status = classify_commercial_rule_publication(rule)
+        # Montaj: Owner sell binds from Pricing Registry SITE_INSTALLATION_STANDARD when present.
+        # Do not treat registry bind as inventing a rate for unpublished Owner gaps (LED/back/pack).
+        if (
+            rule.line_code == "montaj"
+            and rule.registry_pricing_code
+            and catalog
+            and catalog.get("base_cost") is not None
+            and str(catalog.get("typed_catalog") or "") != "material"
+            and _status_from_registry_item(catalog) != "missing"
+        ):
+            ref_status = "ACTIVE_PUBLISHED"
         status = "active"
-        if rule.owner_decision_required:
-            status = "blocked"
-            blockers.append(rule.owner_decision_code or "OWNER_DECISION_REQUIRED")
-        if catalog_code and not catalog:
-            # commercial documented price may still exist without registry mapping
+        rate_pub: str | None = None
+        if ref_status == "ACTIVE_MISSING_RATE":
+            status = "missing"
+            blockers.append("COMMERCIAL_RATE_MISSING")
+            if rule.owner_decision_code:
+                blockers.append(rule.owner_decision_code)
+            rate_pub = "unpublished"
+        elif ref_status == "LEGACY_NOT_USED":
+            status = "inactive"
+            warnings.append("LEGACY_RON_NOT_USED_ON_EUR_PRESENTATION_PATH")
+            rate_pub = "unpublished"
+        elif ref_status == "ACTIVE_PROVISIONAL":
+            status = "warning"
+            warnings.append("PROVISIONAL_WORKCENTER_REUSE_NOT_OWNER_FINAL_SELL")
+            rate_pub = "provisional"
+        elif ref_status == "ACTIVE_PUBLISHED":
+            rate_pub = "owner_confirmed"
+        if rule.owner_decision_required and ref_status == "ACTIVE_PUBLISHED":
+            # Montaj / site-install still needs registry bind at runtime when selected.
+            if rule.line_code == "montaj":
+                warnings.append("SITE_INSTALL_REQUIRES_REGISTRY_BIND_WHEN_SELECTED")
+        if catalog_code and not catalog and ref_status == "ACTIVE_PUBLISHED":
             pass
-        if catalog and _status_from_registry_item(catalog) == "missing":
+        if (
+            catalog
+            and _status_from_registry_item(catalog) == "missing"
+            and ref_status not in {"ACTIVE_MISSING_RATE", "LEGACY_NOT_USED"}
+        ):
             status = "missing" if status == "active" else status
             blockers.append("MISSING_CATALOG_RATE")
         if "rate_basis_column_mismatch" in flags:
@@ -444,10 +466,21 @@ class TemplatePricingRecipeService:
         value = rule.documented_unit_price
         currency = rule.documented_unit_price_currency
         rate_source = "documented_commercial"
-        if catalog and catalog.get("base_cost") is not None and not value:
+        # F7I: never fill a missing/unpublished commercial sell from registry/workcenter
+        # or inventory unit_cost — that would invent a client price.
+        if (
+            ref_status in {"ACTIVE_PUBLISHED", "ACTIVE_PROVISIONAL"}
+            and catalog
+            and catalog.get("base_cost") is not None
+            and value is None
+            and str((catalog or {}).get("typed_catalog") or "") != "material"
+        ):
             value = catalog.get("base_cost")
             currency = catalog.get("currency")
             rate_source = "pricing_registry"
+        if ref_status == "ACTIVE_MISSING_RATE":
+            value = None
+            rate_source = "unpublished_commercial_catalog"
 
         return TemplatePricingRecipeItem(
             recipe_item_id=_recipe_id(template_code, "commercial_line", rule.line_code),
@@ -466,7 +499,11 @@ class TemplatePricingRecipeService:
             },
             rate_source=rate_source,
             cost_or_rate="commercial_documented",
-            cost_label_ro="Rată comercială documentată",
+            cost_label_ro=(
+                "Tarif comercial nepublicat — Owner"
+                if ref_status == "ACTIVE_MISSING_RATE"
+                else "Rată comercială (referință catalog)"
+            ),
             unit=rule.unit,
             current_value=value,
             currency=currency,
@@ -474,23 +511,29 @@ class TemplatePricingRecipeService:
             provenance=rule.source,
             cpp_line_code=rule.line_code,
             cpp_pricing_rule_code=rule.pricing_rule_code,
-            typed_catalog=str(typed) if typed else None,
+            typed_catalog="commercial_price_rule",
             machine_family=(catalog or {}).get("machine_family"),
             data_quality_flags=flags,
             data_quality_message_ro=(catalog or {}).get("data_quality_message_ro"),
             technical_ready=bool(rule.quantity_paths) or rule.always_include or rule.basis_type == "set",
-            commercial_ready=value is not None and status == "active",
+            commercial_ready=value is not None and status in {"active", "warning"},
+            catalog_owner="commercial_rules_volumetric_v2",
+            commercial_reference_status=ref_status,  # type: ignore[arg-type]
+            rate_publication_status=rate_pub,  # type: ignore[arg-type]
             blockers=blockers,
             warnings=warnings,
             editable=False,
-            editability_reason_ro=_EDITABILITY_RO,
+            editability_reason_ro=(
+                "Tariful se publică în catalogul comercial / Pricing Registry — "
+                "template-ul doar referă regula."
+            ),
             source_links=_source_links_for_catalog(
                 catalog_code=catalog_code,
-                typed_catalog=str(typed) if typed else None,
+                typed_catalog=str(typed) if typed else "commercial_price_rule",
                 template_code=template_code,
             ),
-            legacy=legacy,
-            confidence="high" if value is not None else "low",
+            legacy=legacy or ref_status == "LEGACY_NOT_USED",
+            confidence="high" if value is not None and ref_status == "ACTIVE_PUBLISHED" else "low",
         )
 
     def _items_from_volum_aluminiu(
