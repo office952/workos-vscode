@@ -92,7 +92,7 @@ Intake V6 workspace
 | Order Snapshot V2 | ExecutionPlan V2 | Frozen `product_aggregate_snapshot.task_contract.task_rules` | `execution_plan_v2_preview_service.py` | **STRONG** (pilot) | Minutes null (DEC-006); WC + finish-aware DAG on F7A.1 fixture |
 | ExecutionPlan V2 | Materialization Audit | Dry-run from `planned_tasks[]` in persisted envelope | `execution_plan_v2_materialization_audit_service.py` | **STRONG** (read-only) | POST materialize blocked |
 | ExecutionPlan V2 | ExecutionTasks (`operational_tasks[]`) | `POST .../materialize-tasks/{order_id}` | `execution_plan_v2_materialize_service.py` | **MISSING** (blocked) | Owner GO + upstream fixes |
-| ExecutionTasks | Workcenters | `machine_requirement.workcenter` on task dict | Preview resolves from aggregate op / PD role | **WEAK** | All null on live fixture |
+| ExecutionTasks / planned_tasks | Workcenters | `machine_requirement.workcenter` on task dict | Frozen Aggregate op stamps (ORR at compile/freeze); EP does not live-resolve | **STRONG** on new freeze path | Historical `88002` may still show null WC; Wave 2 pytest fixture stamps WC |
 | ExecutionTasks | Employees | `execution_task_assignment_service.assign_plan_task` | Requires materialized `operational_tasks[]` | **MISSING** | No eligibility model on planned graph |
 | Workcenters | Machines / utilaje | Foundation registry + `/utilaje` UI | `foundation_workcenters`; capacity boundary doc 14 | **PARTIAL** | Not wired to frozen snapshot ops |
 | ExecutionActuals | ProfitabilityAnalysis | Session minutes vs quoted/estimated baselines | `profitability_analysis_service.py` | **MISSING** (runtime) | Actuals null in MVP |

@@ -209,6 +209,27 @@ Recommended unauthorized-next build after Owner GO:
 FINALIZATION_WAVE_3 = controlled operational task materialization + idempotency + audit trail + new-fixture runtime validation + zero sessions + zero assignment
 ```
 
+## Post-reconciliation agent follow-up (docs only)
+
+Explore confirmations after commit `f6dfe4e3`:
+
+- Fixture discovery: Wave 2 fixture remains **pytest-ephemeral** (`880700–880899`); no durable runtime IDs — aligns with `WAVE_3_READINESS_PACK = NOT_READY`.
+- Docs stale map: residual SoT in `10_EXECUTION_PLAN_TASK_GRAPH.md` (`task_rules` “not driver”) and one WC “all null” row in `21` corrected in this follow-up.
+- Truth audit nuances (**not repaired** — code changes forbidden in this GO):
+
+| ID | Class | Note |
+| -- | ----- | ---- |
+| U1 | NUANCE | Composition-graph child ops can still synthesize planned rules via `_synthetic_rule_from_operation` (not a full root `operations[]` dump). |
+| U2 | TEST_COVERAGE_GAP | LED / mounting_template DAG edges exist in catalog; Wave 2 tests emphasize foil. |
+| U3 | SOFT GAP | EP `_build_dependencies` silently drops missing individual predecessors (cycle + empty-edge paths covered). |
+| U4 | COSMETIC | Fixture `orr_freeze` vs live `operation_resource_requirements:…` mapping_source strings. |
+| U5 | NOT_A_DEFECT | Minutes emit both `PLANNING_MINUTES_SOURCE_REQUIRED` and `PLANNING_MINUTES_SOURCE_MISSING`. |
+
+```text
+CODE_DEFECT_DISCOVERED = none blocking Wave 2 Owner GO
+Recommended remediation wave = optional hardening before or with Wave 3 (separate GO)
+```
+
 ## Method / opinion
 
 Implementation claims at `788171b4` hold under code/tests. The incomplete pieces were documentation lag, missing durable fixture identity, and unfinished light/day proof. This task closed docs + light/day on the protected RO surface, and honestly classified the Wave2 fixture as pytest-ephemeral — which correctly blocks a full READY_FOR_OWNER_REVIEW for Wave 3 until Owner authorizes a durable QA fixture.

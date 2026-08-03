@@ -1,16 +1,16 @@
 # ExecutionPlan — Task Graph & Operational Scheduling
 
-**Version:** 1.0.2  
-**Status:** Target architecture + **Step 9 preview + persist draft VALIDATED_WITH_GUARDS** (2026-06-30)  
-**Step:** 9 — preview **VALIDATED**; persist draft **VALIDATED_WITH_GUARDS**; materialize/sessions **BLOCKED**
+**Version:** 1.0.3  
+**Status:** Target architecture + **Step 9 preview + persist draft VALIDATED_WITH_GUARDS**; Wave 1 Step 9B + Wave 2 upstream enrichment recorded (2026-08-03)  
+**Step:** 9 — preview **VALIDATED**; persist draft **VALIDATED_WITH_GUARDS**; materialize/sessions **BLOCKED** (`DEC-009=A`)
 
 ---
 
 ## 1. Rolul sistemului
 
-ExecutionPlan transformă **graful tehnic înghețat** (din Order snapshot / ProductDefinition processes) în **taskuri operaționale reale**: ordine, dependențe, paralelizare, asignare, resurse, utilaje, pregătire execuție.
+ExecutionPlan V2 transformă **graful tehnic înghețat** din Order Snapshot V2 — în special `product_aggregate_snapshot.task_contract.task_rules[]` — în **planned_tasks[]** (draft de planificare). Materializarea în `operational_tasks[]` rămâne blocată până la Owner GO (`DEC-009=B`).
 
-**Regulă:** ExecutionPlan vine **după** Quote/Order. Nu generează prețul clientului. Nu decide produsul. Nu inventează taskuri din catalog paralel.
+**Regulă:** ExecutionPlan vine **după** Quote/Order. Nu generează prețul clientului. Nu decide produsul. Nu inventează taskuri din catalog paralel V3, live Intake, Pricing Registry sau live ORR după freeze.
 
 ---
 
@@ -48,11 +48,13 @@ ExecutionPlan transformă **graful tehnic înghețat** (din Order snapshot / Pro
 
 | Sursă | Date |
 |-------|------|
-| Order snapshot | snapshot_line_items, product_definition |
-| Frozen processes[] | From priced/accepted quote path |
-| Operational registry | Skills, workcenters (partial today) |
-| Machines/utilaje | Capability matching |
-| Template task_rules | **Reference only** — not parallel driver |
+| Order Snapshot V2 | `orders.snapshot_v2_json` (frozen) |
+| Frozen `task_contract.task_rules[]` | **Canonical driver** for `planned_tasks[]` (Wave 1/2) |
+| Frozen Aggregate ops | Workcenter stamps / orphan audit context (`planned_operations[]`) |
+| Frozen ProductDefinition | Finish gates / labels — **not** task invent |
+| Operational registry (ORR) | Resolved **at Aggregate compile + Snapshot freeze**; EP reads frozen only |
+| Machines/utilaje | Capability matching (post-materialize / Faza 4) — not Wave 2 |
+| Historical `processes[]` path | Legacy / DOC_STATUS_STALE as EP V2 driver — do not revive |
 
 **API (canonical V2 path):**
 
@@ -81,20 +83,24 @@ ExecutionPlan transformă **graful tehnic înghețat** (din Order snapshot / Pro
 
 | Aspect | Status |
 |--------|--------|
-| Operational task list | **ExecutionPlan** post-order |
-| Product structure | Order snapshot — **upstream frozen** |
+| Planned task list (draft) | **ExecutionPlan** `planned_tasks[]` from frozen Aggregate `task_rules` |
+| Operational shop tasks | `operational_tasks[]` — empty until materialize GO |
+| Product structure | Order Snapshot V2 — **upstream frozen** |
 | Task preview (Intake) | **NOT** truth — ephemeral |
-| V3 operation catalog | **DEVIATED** — parallel source |
-| dossier task_rules | Documentation — **not** driver |
+| V3 operation catalog | **DEVIATED** — may inform dependency fallback only; not task invent |
+| dossier → Aggregate `task_rules` | **ACTIVE_CANONICAL** driver after freeze (Wave 1/2) |
 
 ---
 
 ## 7. Conexiuni cu celelalte sisteme
 
 ```
-Quote/Order snapshot (product_definition.processes)
+Order Snapshot V2
+  (product_aggregate_snapshot.task_contract.task_rules[])
     ↓
-ExecutionPlan (THIS)
+ExecutionPlan V2 planned_tasks[] (THIS — draft)
+    ↓
+operational_tasks[] (Wave 3+ materialize GO only)
     ↓
 ExecutionActuals (task start/stop, real minutes)
     ↓
@@ -228,7 +234,7 @@ ProfitabilityAnalysis (time estimated vs real)
 |----------|
 | Generate plan from Intake workspace directly (production) |
 | Generate tasks from Cost Engine output |
-| Use dossier task_rules as runtime driver without snapshot |
+| Use live dossier / PD `processes[]` as EP driver (bypass frozen Aggregate `task_rules`) |
 | Plan modifies commercial price |
 | Plan invents tasks not in product graph |
 | Silent produce_order fallback |
