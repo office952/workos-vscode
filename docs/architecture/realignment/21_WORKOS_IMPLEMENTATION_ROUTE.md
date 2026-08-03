@@ -109,20 +109,20 @@ Phases are **sequential with explicit gates**. Parallel work is allowed only whe
 
 ### Faza 0 — Owner decision cleanup before materialization
 
-Resolve open semantic decisions from Step 9 owner review:
+**Status (2026-08-03):** **COMPLETE** — Owner answers recorded (Wave 1 Decision Pack + Wave 2 GO). See §7 decision table.
 
-| ID | Topic |
-| -- | ----- |
-| **DEC-003** | RETURN lateral duplicate — parent `side_forming` / `return_face_bonding` canonical vs module `RETURN_PROFILE_*` |
-| **DEC-004** | Painting canonical — parent `painting` vs module `PAINTING` |
-| **DEC-005** | Workcenter source policy — enrich parent aggregate at compile vs module alias WC vs manual post-materialize |
-| **DEC-006** | `estimated_minutes` source — dossier time assumptions vs capacity registry vs null-with-warn |
-| **DEC-007** | Dependencies / DAG — linear MVP vs finish-aware parallel branches |
-| **DEC-009** | POST materialize remains **blocked** until DEC-003/004/005/007 resolved |
+| ID | Topic | Recorded answer |
+| -- | ----- | --------------- |
+| **DEC-003** | RETURN lateral duplicate | **A** parent canonical |
+| **DEC-004** | Painting canonical | **A** parent canonical |
+| **DEC-005** | Workcenter source policy | **E** ORR → Aggregate compile → Snapshot freeze → EP reads frozen |
+| **DEC-006** | `estimated_minutes` source | **A** null + warning |
+| **DEC-007** | Dependencies / DAG | **B** finish-aware DAG (foil after bonding+assembly) |
+| **DEC-009** | POST materialize | **A** remain blocked until separate Wave 3 Owner GO |
 
-Also track (non-blocking for materialize by default): **DEC-001** (svg_geometry_analysis), **DEC-002** (premount_bar_preparation).
+Also recorded: **DEC-001=A** (svg_geometry_analysis non-operational), **DEC-002=A** (premount BOM-only), **DEC-008=A** (Step 9B read-only).
 
-**Exit:** Owner answers recorded; DEC-009 stays blocked until minimum DEC-003, DEC-004, DEC-005, DEC-007 answered.
+**Exit:** Met. DEC-009 stays **A** until Owner sets **B** with a separate Wave 3 GO.
 
 ---
 
@@ -130,14 +130,12 @@ Also track (non-blocking for materialize by default): **DEC-001** (svg_geometry_
 
 **Goal:** Operator sees plan truth with gaps visible — no writes.
 
-**Current state:** Implemented on ExecutionDetail for the validated fixture path; adjacent surfaces still pending.
+**Current state:** **COMPLETE (Wave 1, commit `134eef7e`)** — `ExecutionPlanV2TruthPanel` on `/execution/:order_id`.
 
-- Show persisted `planned_tasks[]`, `planned_operations[]`, orphan ops
-- Badge: workcenter null, minutes null, duplicate lateral warnings, audit-only
+- Show planned_tasks / planned_operations / orphan ops / WC source / dependencies
+- Badges: minutes null, materialization closed, audit-only
 - **No** materialize button, **no** sessions, **no** Employee Mobile
-- Safe per DEC-008 recommendation (`SAFE_FOR_UI_READONLY_ONLY`)
-
-**Depends on:** Faza 0 decisions documented (can proceed in parallel with owner filling DEC table).
+- Safe per DEC-008 (`SAFE_FOR_UI_READONLY_ONLY`)
 
 ---
 
@@ -145,15 +143,17 @@ Also track (non-blocking for materialize by default): **DEC-001** (svg_geometry_
 
 **Goal:** Fix snapshot-at-freeze quality so new orders carry correct operational metadata.
 
+**Current state:** **COMPLETE (Wave 2, commit `788171b4`)** — validated on pytest controlled fixture pattern `880700–880899` (excludes protected `880811`/`973019`); not a durable runtime order without separate fixture GO.
+
 - Parent `task_rules` canonical; module codes as aggregate aliases only
-- Workcenter populated on parent-priced operations at aggregate compile
-- Operation role mapping aligned with dossier + mini-modules
-- Dependency model beyond immediate-predecessor linear chain
-- Exclude module duplicate rows from ever becoming operational tasks
+- Workcenter stamped from ORR at Aggregate compile + Snapshot freeze
+- Finish-aware DAG; foil application after `return_face_bonding` + `assembly_letters`
+- Module duplicate rows excluded from planned/materializable candidates
+- Historical fixture `88002` remains readable regression evidence (may show null WC / older deps) — not Wave 2 primary proof
 
-**Systems touched (future GO):** `product_aggregate_service`, dossier JSON, possibly `product_definition_builder`, snapshot re-freeze on **new** quotes only — never retroactive reprice.
+**Systems touched:** `product_aggregate_service`, `task_dependency_rules_service`, Step 9B WC provenance fields. Never retroactive reprice.
 
-**Exit:** New fixture order shows non-null WC on planned tasks (where policy defines source); no duplicate lateral in materialization audit.
+**Exit:** Met for compile/freeze/DAG/duplicate-prevention on controlled test fixture. Persistent QA order for browser Wave-2-only proof remains Owner-gated.
 
 ---
 
@@ -346,17 +346,16 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner decisions DEC-003 / DEC-004 / DEC-005 first** (with DEC-007 and DEC-009 explicitly kept blocked until answered).
+**Wave 3 Readiness Pack Owner review** — keep `DEC-009=A` until an explicit Owner decision sets `DEC-009=B` and issues a separate Wave 3 GO.
 
 **Why:**
 
-- Materialization is **BLOCKED_NEEDS_OWNER_GO** (DEC-009=A today).
-- Step 9B UI read-only is **safe** but does **not** resolve duplicate lateral ops or null workcenters — it only surfaces them.
-- Without DEC-003/004, materialize risks **double execution** (parent + module lateral).
-- Without DEC-005, materialized tasks have **no authoritative workcenter** for scheduling or later assignment.
-- Faza 2 upstream enrichment depends on these decisions; implementation before owner answers risks rework.
+- Faza 0–2 are complete at commits `134eef7e` (Wave 1) and `788171b4` (Wave 2).
+- Materialization remains **BLOCKED_NEEDS_OWNER_GO** (`DEC-009=A`).
+- Canonical ownership, ORR compile freeze, finish-aware DAG, and Step 9B read-only are in place.
+- Wave 3 must still prove controlled materialization + idempotency + audit on a durable non-production fixture, with zero sessions/assignment.
 
-**After owner answers:** Either Faza 1 (Step 9B UI read-only with gap badges) in parallel with Faza 2 scoping, or Faza 2 directly if owner prefers fix-before-UI.
+**Do not** reopen DEC-003/004/005 as if unanswered. **Do not** start Wave 3 without Owner GO.
 
 ---
 
@@ -366,21 +365,22 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | ---- | -------------- | ----------- |
 | Intake V6 product truth | VALIDATED_WITH_GUARDS | Extend only with new template GO |
 | Form System | PARTIAL | Pilot bindings sufficient for volumetric |
-| ProductSystem template/dossier | PARTIAL | Dossier task_rules + module dedup policy (DEC-003/004) |
-| ProductDefinition | VALIDATED | No change until Faza 2 GO |
-| ProductAggregate + task_rules | VALIDATED_WITH_GUARDS | Upstream WC + alias policy (Faza 2) |
-| CommercialPriceProposal | IMPLEMENTED_PREVIEW_ONLY | 7G extend; docs sync |
-| EstimatedInternalCost | IMPLEMENTED_PREVIEW_ONLY | 7H/7I separation |
-| Quote / Order Snapshot V2 | VALIDATED_WITH_GUARDS | Default for new volumetric quotes |
-| ExecutionPlan V2 draft | VALIDATED_WITH_GUARDS | Step 9B UI or hold for Faza 0 |
-| Materialization | BLOCKED_NEEDS_OWNER_GO | Owner DEC-003/004/005/007/009 |
-| Workcenters on tasks | PARTIAL | DEC-005 → Faza 2/4 |
+| ProductSystem template/dossier | PARTIAL | Keep dossier task_rules + alias policy |
+| ProductDefinition | VALIDATED | Technical config only; no pricing |
+| ProductAggregate + task_rules | VALIDATED_WITH_GUARDS | Wave 2 complete; driver for planned_tasks |
+| CommercialPriceProposal | IMPLEMENTED_PREVIEW_ONLY | Keep separate from EIC |
+| EstimatedInternalCost | IMPLEMENTED_PREVIEW_ONLY | Keep separate from CPP |
+| Quote / Order Snapshot V2 | VALIDATED_WITH_GUARDS | Freeze WC + DAG + warnings on new snapshots |
+| ExecutionPlan V2 draft | VALIDATED_WITH_GUARDS | Reads frozen snapshot only |
+| Step 9B UI | COMPLETE (Wave 1/2) | Read-only; local WC provenance only |
+| Materialization | BLOCKED_NEEDS_OWNER_GO | Owner DEC-009=B + Wave 3 GO |
+| Workcenters on tasks | VALIDATED_WITH_GUARDS (new freeze path) | Historical 88002 may still show null WC |
 | Employees / skills | PARTIAL | Faza 5 after materialize |
 | Sessions / actuals | FROZEN | Faza 6 after materialize GO |
 | ProfitabilityAnalysis | PARTIAL | Faza 7 after actuals |
-| UI labels | NOT_STARTED | Faza 1 + 8 |
+| UI labels (global Step 11) | PARTIAL | Broader labeling still pending; Step 9B done |
 | Legacy `/price` | DEAD_LEGACY_RISK | Deprecate in Faza 8–9 |
-| Employee Mobile | FROZEN | Faza 10 final-final |
+| Employee Mobile | FROZEN_FINAL_FINAL | Faza 10 |
 
 ---
 
@@ -388,9 +388,9 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 | Question | Safe when | Not safe now because |
 | -------- | --------- | -------------------- |
-| **Materialize tasks?** | DEC-003/004/005/007 answered; Faza 2 validated; DEC-009=B; controlled fixture | Duplicates + null WC + blocked GO |
-| **Link employees to tasks?** | Faza 3 materialized + Faza 5 eligibility defined | `operational_tasks[]` empty; no eligibility |
-| **Link utilaje/workcenters?** | Faza 4 after WC on frozen ops (DEC-005 applied) | Parent ops WC null on order 88002 |
+| **Materialize tasks?** | DEC-003/004/005/007 recorded; Faza 2 validated; DEC-009=B; durable controlled fixture | DEC-009 still A; Wave 2 fixture is pytest-ephemeral |
+| **Link employees to tasks?** | Faza 3 materialized + Faza 5 eligibility defined | `operational_tasks[]` empty on non-materialized path |
+| **Link utilaje/workcenters?** | Faza 4 after WC on frozen ops (DEC-005=E applied on new freeze path) | Historical 88002 may still show null WC |
 | **Start sessions / actuals?** | Faza 6 GO; `v2_operational_ready` on order | Guards block `v2_not_materialized` |
 | **Employee Mobile?** | Faza 10 — all of Faza 3–6 + 8 stable | Mobile before materialize forbidden |
 

@@ -127,10 +127,10 @@ Transform **frozen Order Snapshot V2** technical graph into **execution plan dra
 | DEC-002 | premount BOM-only | Soft for materialize | **A** — hard synthesis ban (F7A.1) |
 | DEC-003 | RETURN canonical | Soft | **A** — parent canonical; alias provenance (F7A) |
 | DEC-004 | painting canonical | Soft | **A** — parent canonical; alias provenance (F7A) |
-| DEC-005 | workcenter source | Soft | **A** — upstream Aggregate → freeze → plan; registry codes (F7A.1) |
-| DEC-006 | planning minutes | Scheduling GO | PENDING — null + warning acceptable for draft |
-| DEC-007 | dependency DAG | Soft | **B** — finish/process-aware on EP V2 (F7A) |
-| DEC-009 | POST materialize | Yes | **A** — remain blocked until Owner sets B |
+| DEC-005 | workcenter source | Soft | **E** — ORR resolve at Aggregate compile + Snapshot freeze; EP reads frozen (Wave 2 Owner GO) |
+| DEC-006 | planning minutes | Scheduling GO | **A** — null + `PLANNING_MINUTES_SOURCE_REQUIRED` (no invention) |
+| DEC-007 | dependency DAG | Soft | **B** — finish-aware; foil after bonding+assembly (Wave 2) |
+| DEC-009 | POST materialize | Yes | **A** — remain blocked until separate Wave 3 Owner GO sets B |
 
 ---
 
@@ -147,4 +147,4 @@ cd backend; .\.venv\Scripts\python.exe -m pytest tests/test_execution_plan_v2*.p
 
 ## 13. Next safe step
 
-F7A/F7A.1 closed upstream alias/WC/premount/DAG gaps on the controlled fixture. Next: Owner DEC-009 decision only; no POST materialize until DEC-009=B.
+Wave 2 (`788171b4`) closed ORR compile stamp + foil finish-aware DAG on the pytest controlled fixture (`880700–880899`, excluding protected baselines). Historical `88002` remains regression evidence only. Next: Owner Wave 3 readiness review; keep DEC-009=A until a separate Owner GO sets B.

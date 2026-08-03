@@ -100,10 +100,11 @@
 
 | Gap | Severity | Evidence | Blocks what | Recommended action |
 | --- | -------- | -------- | ----------- | ------------------ |
-| Duplicate lateral ops | HIGH | semantic audit order 88002 | Materialize | DEC-003/004 |
-| 5 ops without task_rule | MEDIUM | 17 ops vs 12 tasks | Operator expectation | DEC-001/002 |
-| Parent op workcenter null | CRITICAL | all planned tasks | Scheduling | DEC-005; Faza 2 |
-| Stale code note "V3 catalog" | LOW | aggregate `_build_task_contract` notes | Doc drift | Comment sync |
+| Duplicate lateral ops (historical 88002) | CLOSED on F7A/Wave 2 path | alias collapse DEC-003/004 | — | Keep bridge owner |
+| Ops without task_rule / orphans | MEDIUM | planned_operations audit context | Operator expectation | Keep non-operational separation |
+| Parent op workcenter null (historical 88002) | CLOSED on new freeze path | Wave 2 ORR compile stamp DEC-005=E | — | Do not rewrite historical snapshots |
+| Durable Wave 2 QA fixture for browser | HIGH for Wave 3 readiness | pytest ephemeral `880700–880899` only | DEC-009=B evidence pack | Owner GO for durable QA fixture |
+| Stale code note "V3 catalog" | LOW | aggregate `_build_task_contract` notes | Doc drift | Comment sync (Step 12) |
 
 ---
 
@@ -111,22 +112,28 @@
 
 | Decision ID | Topic | Recommended | Status |
 | ----------- | ----- | ----------- | ------ |
-| DEC-003 | RETURN lateral | parent canonical | PENDING_OWNER |
-| DEC-004 | painting | parent canonical | PENDING_OWNER |
-| DEC-001 | svg_geometry_analysis | non-operational | PENDING_OWNER |
-| DEC-002 | premount | BOM-only default | PENDING_OWNER |
+| DEC-001 | svg_geometry_analysis | non-operational | **A — RECORDED** |
+| DEC-002 | premount | BOM-only default | **A — RECORDED** |
+| DEC-003 | RETURN lateral | parent canonical | **A — RECORDED** |
+| DEC-004 | painting | parent canonical | **A — RECORDED** |
+| DEC-005 | workcenter source | ORR compile → freeze → EP frozen | **E — RECORDED (Wave 2)** |
+| DEC-006 | estimated minutes | null + warning | **A — RECORDED** |
+| DEC-007 | dependency DAG | finish-aware | **B — RECORDED (Wave 2)** |
+| DEC-009 | POST materialize | remain blocked | **A — REMAIN BLOCKED** |
 
 ---
 
 ## 12. Verification checklist
 
 ```powershell
-# Fixture order 88002 snapshot keys (read-only DB or API)
+# Historical fixture 88002 remains regression evidence only.
+# Wave 2 controlled fixture is pytest-ephemeral (_f7a_oid 880700–880899, excludes 880811/973019).
 Select-String -Path backend\services\execution_plan_v2_preview_service.py -Pattern "task_contract"
+cd backend; .\.venv\Scripts\python.exe -m pytest tests/test_finalization_wave2_upstream_task_contract.py -q
 ```
 
 ---
 
 ## 13. Next safe step
 
-Owner DEC-003/004/005; upstream enrich parent operations with workcenter before new freezes intended for materialization.
+Wave 2 upstream enrichment is complete at `788171b4`. Next: Owner Wave 3 readiness review; keep DEC-009=A until a separate Owner GO authorizes durable QA fixture evidence and sets DEC-009=B.
