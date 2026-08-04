@@ -6,7 +6,8 @@
 | Task | `FINALIZATION_WAVE_6_MINIMAL_SAFE_ASSIGNMENT_COMMAND_HARDENING` |
 | Status | **`FINALIZATION_WAVE_6 = PASS`** |
 | Starting HEAD | `ed153898` |
-| Implementation commit | (see git after commit) |
+| Implementation commit | `4a72025e` |
+| Final HEAD | `4a72025e` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Pre-existing tracked changes | none |
