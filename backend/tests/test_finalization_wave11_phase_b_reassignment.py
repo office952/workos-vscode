@@ -53,6 +53,9 @@ TASK = "t_led"
 
 @pytest.fixture(autouse=True)
 def _phase_b_clear_guards(monkeypatch):
+    # CLEAR accepted only when APP_ENV=test (conftest sets APP_ENV/ENVIRONMENT=test).
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("ENVIRONMENT", "test")
     monkeypatch.setenv("WORKOS_PHASE_B_RESOURCE_GUARDS", "CLEAR")
     yield
     monkeypatch.delenv("WORKOS_PHASE_B_RESOURCE_GUARDS", raising=False)

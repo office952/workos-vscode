@@ -9,7 +9,6 @@ No schema changes. Mobile / UI not wired.
 
 from __future__ import annotations
 
-import json
 import logging
 import uuid
 from datetime import date, datetime, timezone
@@ -51,7 +50,11 @@ from services.execution_plan_operational_readiness_service import (
     assert_operational_mutation_allowed,
 )
 from services.execution_plan_task_parser import serialize_operational_tasks_to_plan_json
-from services.phase_b_resource_guard_service import evaluate_resource_guards
+from services.phase_b_resource_guard_service import (
+    dec015_test_fixture_allowed,
+    evaluate_resource_guards,
+)
+from services.phase_b_session_history_guard import probe_task_execution_history
 
 logger = logging.getLogger(__name__)
 
@@ -93,25 +96,27 @@ def _assert_actor_authorized(*, actor_role: str | None, permission: str) -> str:
     return role
 
 
-def _reality_has_any_session_history(raw: str | None, task_id: str) -> bool:
-    """NO_SESSION_HISTORY_REQUIRED — any started_at (open or closed) blocks."""
-    if not raw:
-        return False
-    try:
-        parsed = json.loads(raw)
-    except (TypeError, ValueError, json.JSONDecodeError):
-        # Incomplete / unreadable evidence → fail closed as history present.
-        return True
-    if not isinstance(parsed, list):
-        return True
-    for item in parsed:
-        if not isinstance(item, dict):
-            continue
-        if str(item.get("task_id")) != task_id:
-            continue
-        if item.get("started_at"):
-            return True
-    return False
+def _dec015_fixture_eligibility(
+    task_id: str, employee_ids: list[int]
+) -> dict[str, Any]:
+    """TEST_ONLY fixture — never used outside APP_ENV=test + READY env."""
+    ids = sorted({int(i) for i in employee_ids if i is not None})
+    return {
+        "status": "ok",
+        "tasks": [
+            {
+                "task_key": task_id,
+                "eligibility_status": "ready_with_warnings",
+                "eligible_employee_count": len(ids),
+                "eligible_employees": [
+                    {"employee_id": eid, "display_name": f"E{eid}"} for eid in ids
+                ],
+                "blockers": [],
+                "warnings": ["phase_b_dec015_test_fixture"],
+                "requirement_version": "eligibility-rm/v1",
+            }
+        ],
+    }
 
 
 def _transition_to_mapping(row: ExecutionTaskAssignmentTransition) -> dict[str, Any]:
@@ -364,16 +369,23 @@ async def _reassign_or_unassign(
                 current_assigned_employee_id=embedded,
             )
 
-        # Pre-start / session-history guards via ExecutionReality evidence.
+        # Session / execution history — any canonical evidence blocks.
+        history_probe = await probe_task_execution_history(
+            db, order_id=order_id, task_id=tid
+        )
+        if history_probe.has_history:
+            raise _conflict(
+                "task_has_execution_history",
+                sources=list(history_probe.sources),
+                detail=history_probe.detail,
+            )
+
         reality = (
             await db.execute(
                 select(ExecutionReality).where(ExecutionReality.order_id == order_id)
             )
         ).scalar_one_or_none()
         reality_raw = reality.tasks_json if reality else None
-        if _reality_has_any_session_history(reality_raw, tid):
-            raise _conflict("task_has_execution_history")
-
         rt = _reality_task_lookup(reality_raw).get(tid, {})
         if rt.get("ended_at"):
             raise _conflict("task_not_pre_start", reason="task_already_completed")
@@ -393,7 +405,8 @@ async def _reassign_or_unassign(
         if block:
             logger.info(
                 "%s_BLOCKED_STATE code=%s order_id=%s plan_id=%s task_id=%s "
-                "scheduling=%s reservation=%s capacity=%s actor_user_id=%s",
+                "scheduling=%s reservation=%s capacity=%s actor_user_id=%s "
+                "override_rejected=%s",
                 event_prefix,
                 block,
                 order_id,
@@ -403,6 +416,7 @@ async def _reassign_or_unassign(
                 guards.machine_reservation_state,
                 guards.capacity_allocation_state,
                 actor_user_id,
+                guards.override_rejected,
             )
             raise _conflict(
                 block,
@@ -430,7 +444,12 @@ async def _reassign_or_unassign(
                         "status": emp.status,
                     },
                 )
-            eligibility = await build_employee_eligibility_read_model(db, order_id)
+            if dec015_test_fixture_allowed():
+                eligibility = _dec015_fixture_eligibility(
+                    tid, [int(expected_current_employee_id), int(new_employee_id)]
+                )
+            else:
+                eligibility = await build_employee_eligibility_read_model(db, order_id)
             if eligibility.get("status") == "blocked_not_materialized":
                 raise HTTPException(
                     status_code=422, detail={"error": "task_not_materialized"}
@@ -467,9 +486,10 @@ async def _reassign_or_unassign(
 
         previous = int(embedded)
         now = datetime.now(timezone.utc)
+        plan_id = int(plan.id)
         row = ExecutionTaskAssignmentTransition(
             transition_id=tid_uuid,
-            execution_plan_id=int(plan.id),
+            execution_plan_id=plan_id,
             order_id=order_id,
             task_key=tid,
             transition_type=operation,
@@ -503,11 +523,11 @@ async def _reassign_or_unassign(
 
             # Post-write consistency inside the same transaction.
             hist2 = await repo.list_for_task(
-                execution_plan_id=int(plan.id), task_key=tid
+                execution_plan_id=plan_id, task_key=tid
             )
             emb2 = _normalize_employee_id(task_entry.get("assigned_employee_id"))
             post = evaluate_task_consistency(
-                execution_plan_id=int(plan.id),
+                execution_plan_id=plan_id,
                 order_id=order_id,
                 task_key=tid,
                 embedded_assigned_employee_id=emb2,
@@ -528,11 +548,12 @@ async def _reassign_or_unassign(
             raise
         except Exception:
             await db.rollback()
+            # Use captured scalars only — plan attrs are expired after rollback.
             logger.exception(
                 "%s persist failed order_id=%s plan_id=%s task_id=%s",
                 event_prefix,
                 order_id,
-                plan.id,
+                plan_id,
                 tid,
             )
             raise HTTPException(
@@ -546,7 +567,7 @@ async def _reassign_or_unassign(
             "actor_user_id=%s role=%s",
             event_prefix,
             order_id,
-            plan.id,
+            plan_id,
             tid,
             tid_uuid,
             previous,
@@ -561,7 +582,7 @@ async def _reassign_or_unassign(
             previous_employee_id=previous,
             new_employee_id=new_employee_id,
             order_id=order_id,
-            plan_id=int(plan.id),
+            plan_id=plan_id,
             task_id=tid,
         )
 

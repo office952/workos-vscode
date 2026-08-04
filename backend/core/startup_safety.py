@@ -338,6 +338,34 @@ def run_startup_safety_checks() -> EnvironmentReadinessReport:
             )
         )
 
+    # --- Check 7: Phase B TEST_ONLY resource / DEC-015 overrides ---
+    try:
+        from services.phase_b_resource_guard_service import (
+            validate_phase_b_test_overrides_at_startup,
+        )
+
+        pb_status, pb_message = validate_phase_b_test_overrides_at_startup()
+        # development/local: WARNING only (do not kill Owner stack).
+        # staging/production/live: BLOCKED prevents startup when CLEAR/READY set.
+        # test: PASS when overrides are intentionally set.
+        if pb_status == "BLOCKED" and not is_strict:
+            pb_status = "WARNING"
+        report.add(
+            SafetyCheckResult(
+                name="PHASE_B_TEST_ONLY_OVERRIDES",
+                status=pb_status,  # type: ignore[arg-type]
+                message=pb_message,
+            )
+        )
+    except Exception as exc:  # noqa: BLE001
+        report.add(
+            SafetyCheckResult(
+                name="PHASE_B_TEST_ONLY_OVERRIDES",
+                status="WARNING" if not is_strict else "BLOCKED",
+                message=f"Phase B override startup check failed: {exc}",
+            )
+        )
+
     return report
 
 
