@@ -4,7 +4,7 @@
 **Date:** 2026-08-04  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `02dcab8f`  
-**Closure commits:** `22d6193b` (code/tests), docs commit follows  
+**Closure commits:** `22d6193b` (code/tests), `8222f716` (evidence worklog)  
 **Worktree:** `C:\w\psiso` (gitdir → `workos_app_vs/.git/worktrees/psiso`)
 
 ---
