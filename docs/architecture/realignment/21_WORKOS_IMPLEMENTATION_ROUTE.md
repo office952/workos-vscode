@@ -361,6 +361,9 @@ RESOURCE_GUARD_OVERRIDE = TEST_ONLY_VERIFIED
 PHASE_C = NOT_AUTHORIZED
 PHASE_C_QA_READINESS = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
+PHASE_C_RESOURCE_GUARD_STRATEGY_AUDIT = COMPLETE
+RECOMMENDED_STRATEGY = OPTION_D_PHASE_C_REMAINS_BLOCKED
+OWNER_DECISION_RECORDED = NO
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
@@ -369,15 +372,18 @@ Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISI
 Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
 Phase B worklog: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
 Wave 11 closure: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_runtime_and_guard_closure.md`  
+Phase C resource-guard strategy audit: `docs/architecture/PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY.md`  
+Strategy worklog: `docs/worklog/realignment/2026-08-04_phase_c_resource_guard_proof_strategy_audit.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
 - Expand-only history + Phase B dual-write verified on isolated SQLite (ASGI + process).
 - Resource CLEAR override is TEST_ONLY; production-like startup blocks unsafe CLEAR; QA fail-closed.
-- Phase C blocked until Owner decides `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY`.
+- Strategy audit: no canonical CLEAR source for scheduling / reservation / capacity — Phase C remains blocked.
 
-**Next Owner decision (not Phase C execution):** `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY`
+**Next Owner decision (not Phase C execution):** `KEEP_PHASE_C_BLOCKED`  
+(Future program if Owner later GO: `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY` — not started.)
 
 ---
 
