@@ -6,7 +6,7 @@
 | Task | `FINALIZATION_WAVE_7_AUTH_AND_UI_CLOSURE_PROOF_ONLY` |
 | Status | **`FINALIZATION_WAVE_7 = PASS`** |
 | Starting HEAD | `c6085895` |
-| Final HEAD | (this commit) |
+| Final HEAD | `eca5d59d` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Production code changed | **NO** |
