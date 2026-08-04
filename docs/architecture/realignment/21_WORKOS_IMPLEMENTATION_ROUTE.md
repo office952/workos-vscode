@@ -346,20 +346,20 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Schema Owner decisions RECORDED** — DEC-REASSIGN-SCHEMA-01…12 fix the append-only transition table contract.  
-Wave 9 PARTIAL_BLOCKED retained. Wave 8 PASS retained. One QA assignment retained.  
-Schema **not** implemented. Migration **not** executed. Reassignment/unassignment **not** implemented. Phase A / Wave 10 **not authorized**.
+**Wave 10 Phase A PASS** — `execution_task_assignment_transitions` created; 7 synthetic ASSIGN backfills; consistency MATCH.  
+Wave 8 PASS retained. Wave 9 schema decision retained. Embedded LED→7 unchanged.  
+Reassignment/unassignment **not** implemented. Phase B **not authorized**.
 
-Canonical schema decisions: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
-Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
-Worklog: `docs/worklog/realignment/2026-08-04_reassignment_transition_persistence_schema_owner_decisions.md`
+Canonical: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
+Worklog: `docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md`  
+Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
-- Embedded current assignee remains operational truth; separate `execution_task_assignment_transitions` holds append-only history.
-- Expand-only Phase A (table + backfill + verify) requires a **separate** Owner GO.
+- Expand-only history table + deterministic backfill proven; current assignee remains in `tasks_json`.
+- Dual-write reassignment commands still require Phase B Owner GO.
 
-**Next candidate (not started):** `REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION`
+**Next candidate (not started):** `PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION`
 
 ---
 

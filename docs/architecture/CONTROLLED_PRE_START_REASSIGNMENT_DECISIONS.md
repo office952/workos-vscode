@@ -19,8 +19,9 @@ SCHEMA_CHANGE_AUTHORIZED = FALSE
 MIGRATION_AUTHORIZED = FALSE
 WAVE_9 = PARTIAL_BLOCKED_READINESS_AUDIT
 SCHEMA_OWNER_DECISIONS = RECORDED
-PHASE_A = NOT_AUTHORIZED
-WAVE_10 = NOT_AUTHORIZED
+WAVE_10 = PASS_PHASE_A
+PHASE_A = VERIFIED
+PHASE_B = NOT_AUTHORIZED
 ```
 
 Canonical QA fixture (unchanged by this decision task):
@@ -248,13 +249,11 @@ Dead pieces removed: NONE
 
 ## Next step
 
-Wave 9 readiness audit completed — see `CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`.
-
-Schema Owner decisions **recorded** — see `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md` (DEC-REASSIGN-SCHEMA-01…12).
+Phase A schema + backfill **VERIFIED** — see Wave 10 worklog and `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`.
 
 ```text
 FUTURE CANDIDATE:
-REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION
+PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION
 ```
 
-Phase A (schema + backfill) is **not** authorized. Do **not** implement migration, table, reassignment, or unassignment without a separate Owner GO.
+Do **not** implement reassignment or unassignment without a Phase B Owner GO.

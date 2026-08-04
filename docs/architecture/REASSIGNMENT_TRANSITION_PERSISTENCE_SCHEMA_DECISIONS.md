@@ -12,32 +12,36 @@
 ```text
 REASSIGNMENT_TRANSITION_SCHEMA_OWNER_DECISIONS = RECORDED
 FINALIZATION_WAVE_9 = PARTIAL_BLOCKED
+FINALIZATION_WAVE_10 = PASS
 SCHEMA_CHANGE_REQUIRED = YES
 PERSISTENCE_STRATEGY = SEPARATE_APPEND_ONLY_ASSIGNMENT_TRANSITION_TABLE
-SCHEMA_IMPLEMENTED = NO
-MIGRATION_EXECUTED = NO
+SCHEMA_IMPLEMENTED = YES
+MIGRATION_EXECUTED = YES
+BACKFILLED_ASSIGNMENT_TRANSITIONS = 7
 REASSIGNMENT_IMPLEMENTED = NO
 UNASSIGNMENT_IMPLEMENTED = NO
-QA_MUTATIONS = 0
-PHASE_A = NOT_AUTHORIZED
-WAVE_10 = NOT_AUTHORIZED
+PHASE_A = VERIFIED
+PHASE_B = NOT_AUTHORIZED
+WAVE_11 = NOT_AUTHORIZED
 ```
+
+Phase A proof: `docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md`  
+Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 ---
 
-## Owner gate (this task)
+## Owner gate
 
 ```text
 SCHEMA_DECISION_AUTHORIZED = YES
-SCHEMA_IMPLEMENTATION_AUTHORIZED = FALSE
-MIGRATION_AUTHORIZED = FALSE
-TABLE_CREATION_AUTHORIZED = FALSE
+SCHEMA_IMPLEMENTATION_AUTHORIZED = YES   # Phase A completed
+MIGRATION_AUTHORIZED = YES               # Phase A completed (expand-only)
+TABLE_CREATION_AUTHORIZED = YES          # Phase A completed
 REASSIGNMENT_IMPLEMENTATION_AUTHORIZED = FALSE
 UNASSIGNMENT_IMPLEMENTATION_AUTHORIZED = FALSE
 REASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
 UNASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
-QA_MUTATIONS_AUTHORIZED = FALSE
-WAVE_10 = NOT_AUTHORIZED
+PHASE_B = NOT_AUTHORIZED
 ```
 
 ---
@@ -399,7 +403,7 @@ Any session/execution history for the task → reassign and unassign **blocked**
 
 | Phase | Scope | Auth |
 | ----- | ----- | ---- |
-| **A** | Table + constraints + indexes + backfill + consistency verification; no command behavior change | `NOT_AUTHORIZED` |
+| **A** | Table + constraints + indexes + backfill + consistency verification; no command behavior change | **`VERIFIED` (Wave 10 PASS)** |
 | **B** | Permissions, routes, schemas, CAS, DEC-015, guards, atomic dual-write, observability | `NOT_AUTHORIZED` |
 | **C** | Controlled QA: **one** reassignment **or** one unassignment; Owner fixture; exact mutation budget | `NOT_AUTHORIZED` |
 | **D** | UI after backend proof | `NOT_AUTHORIZED` |
@@ -407,7 +411,7 @@ Any session/execution history for the task → reassign and unassign **blocked**
 
 ```text
 FUTURE CANDIDATE (not started):
-REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION
+PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION
 ```
 
 ---
