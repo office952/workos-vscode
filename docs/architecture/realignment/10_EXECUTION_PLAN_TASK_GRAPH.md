@@ -1,7 +1,7 @@
 # ExecutionPlan — Task Graph & Operational Scheduling
 
-**Version:** 1.0.4  
-**Status:** Target architecture + Step 9 preview/persist **VALIDATED_WITH_GUARDS**; Wave 3 materialize **PASS** (`DEC-009=B` scoped 880750/23); Wave 4 capability/eligibility **READ_ONLY VERIFIED**  
+**Version:** 1.0.5  
+**Status:** Target architecture + Step 9 preview/persist **VALIDATED_WITH_GUARDS**; Wave 3 materialize **PASS**; Wave 4 capability/eligibility **READ_ONLY VERIFIED**; Wave 5 assignment readiness **AUDIT_ONLY VERIFIED**  
 **Step:** 9 — preview **VALIDATED**; persist draft **VALIDATED_WITH_GUARDS**; materialize **SCOPED VERIFIED**; assignment/sessions/scheduling **CLOSED**
 
 ---
@@ -11,6 +11,8 @@
 ExecutionPlan V2 transformă **graful tehnic înghețat** din Order Snapshot V2 — în special `product_aggregate_snapshot.task_contract.task_rules[]` — în **planned_tasks[]** (draft de planificare). Materializarea în `operational_tasks[]` este autorizată numai sub `DEC-009=B` pe fixture-ul controlat (Wave 3: order **880750** / plan **23**). Assignment, sessions și scheduling rămân închise.
 
 **Wave 4 (2026-08-04):** read models GET `resource-readiness` (workcenter→machine capability) și `employee-eligibility` (role/skill) sunt vizibile pe `/execution/:order_id`. Capable ≠ assigned; eligible ≠ assigned. Planned tasks / planned operations **nu** sunt fallback pentru task-uri operaționale.
+
+**Wave 5 (2026-08-04):** GET `assignment-readiness` audits command contract + candidate preconditions without executing PATCH assign. `ASSIGNMENT_AUTHORIZED=false`. Canonical mutate path remains `PATCH /api/v1/execution/plan/{order_id}/tasks/{task_id}/assign` (controlled default) — researched only.
 
 **Regulă:** ExecutionPlan vine **după** Quote/Order. Nu generează prețul clientului. Nu decide produsul. Nu inventează taskuri din catalog paralel V3, live Intake, Pricing Registry sau live ORR după freeze.
 

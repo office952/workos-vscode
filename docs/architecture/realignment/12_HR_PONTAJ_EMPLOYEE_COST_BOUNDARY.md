@@ -164,3 +164,13 @@ HR/Pontaj (internal people truth)
 | Pontaj / availability for matching | **NOT used** (`availability_status=not_evaluated`) |
 
 Eligible candidate ≠ assigned employee ≠ authorized to start. Wave 4 exposes minimum operational identity only (no salary, rates, leave, debts, or contact PII).
+
+## 14. Implementation status — Finalization Wave 5 (2026-08-04)
+
+| Aspect | Status |
+|--------|--------|
+| Assignment readiness audit | **VERIFIED_AUDIT_ONLY** (`GET …/assignment-readiness`) |
+| Candidate selection validation (hypothetical) | **VERIFIED** (pure eval; never persists) |
+| Assignment command executed | **NO** |
+| Employee / team assignment rows | **0** |
+| Ranking by cost / availability / admin wildcard | **FORBIDDEN / NOT used** |

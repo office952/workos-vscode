@@ -1,0 +1,1125 @@
+{
+  "mode": "assignment_readiness_audit",
+  "audit_version": "assignment-readiness/v1",
+  "order_id": 880750,
+  "execution_plan_id": 23,
+  "status": "ok",
+  "side_effects": "none",
+  "wave5_boundary": {
+    "assignment_authorized": false,
+    "assignment_command_executable": false,
+    "machine_assignable": false,
+    "schedulable": false,
+    "sessions_authorized": false,
+    "capacity_allocation": "not_started",
+    "evaluation_mode": "read_only_audit",
+    "authorization_blocker": "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED"
+  },
+  "command_contract": {
+    "canonical_route": "PATCH /api/v1/execution/plan/{order_id}/tasks/{task_id}/assign",
+    "request_schema": {
+      "assigned_employee_id": "int (required)",
+      "allow_reassign": "bool (default false on controlled path)",
+      "controlled": "bool (default true)"
+    },
+    "frontend_may_send_only": [
+      "order_id (path)",
+      "task_id / task_key (path)",
+      "assigned_employee_id",
+      "allow_reassign",
+      "controlled"
+    ],
+    "frontend_must_not_send_as_truth": [
+      "eligibility result",
+      "role/skill requirements",
+      "workcenter override",
+      "task body",
+      "machine capability result",
+      "eligible=true",
+      "admin_override",
+      "estimated_minutes"
+    ],
+    "server_rebuilds": [
+      "order → latest ExecutionPlan",
+      "task from operational_tasks[] only",
+      "frozen workcenter from task",
+      "DEC-015 eligibility (controlled path)",
+      "employee assignable lifecycle",
+      "existing assigned_employee_id",
+      "active session conflict",
+      "operational readiness mutation gate"
+    ],
+    "controlled_service": "assign_operational_task_controlled",
+    "persist_service": "assign_plan_task",
+    "permission": "execution.task_assign",
+    "persistence": "embedded assigned_employee_id on operational task in tasks_json (no separate assignment table)",
+    "legacy_bypass": {
+      "path": "controlled=false → assign_plan_task without eligibility revalidation; allow_reassign forced True",
+      "classification": "ACTIVE_LEGACY / BYPASSABLE",
+      "owner_decision_required": "Whether legacy manager bypass remains after Wave 6 GO"
+    },
+    "idempotency": {
+      "status": "IDEMPOTENCY_PARTIAL",
+      "same_employee_noop": true,
+      "idempotency_key": false,
+      "unique_constraint": false,
+      "optimistic_version": false,
+      "in_process_lock": true,
+      "select_for_update": true,
+      "notes": [
+        "asyncio.Lock is process-local (not multi-worker).",
+        "No client idempotency key."
+      ]
+    },
+    "transactionality": {
+      "status": "TRANSACTIONALITY_PARTIAL",
+      "unit": "single ExecutionPlan.tasks_json rewrite + commit",
+      "separate_assignment_row": false,
+      "partial_state_risk": "Low for single-field embed; no multi-entity outbox",
+      "rollback_helper": "clear_plan_task_assignment exists for session start failure paths"
+    },
+    "concurrency": {
+      "status": "CONCURRENCY_PARTIAL",
+      "protections": [
+        "per-(order,task) asyncio.Lock",
+        "SELECT FOR UPDATE on plan row",
+        "409 task_already_assigned when different assignee and allow_reassign=false"
+      ],
+      "gaps": [
+        "eligibility is re-read before write on controlled path but not inside a single serialized eligibility+write transaction spanning registry drift across workers",
+        "no expected plan/task version token from client"
+      ]
+    },
+    "candidate_selection_policy": "MANUAL_FUTURE_OWNER_DECISION",
+    "auto_assignment": "NOT_AUTHORIZED",
+    "machine_assignment_coupled": false
+  },
+  "protections": {
+    "confirmed": [
+      "controlled path revalidates DEC-015 eligibility server-side",
+      "operational_tasks[] only (no planned_tasks fallback in assignment parser path)",
+      "employee lifecycle is_assignable check",
+      "active session blocks controlled assign",
+      "permission execution.task_assign required",
+      "auth get_current_user required",
+      "Wave 5 audit never executes command"
+    ],
+    "missing_or_partial": [
+      "legacy controlled=false eligibility bypass still callable",
+      "no order-owner scoped authorization beyond permission",
+      "no idempotency key / unique assignment constraint",
+      "no expected version / ETag concurrency token",
+      "in-process lock not cluster-safe",
+      "no Owner GO gate inside command (Wave 5 documents CLOSED; command remains reachable with permission)",
+      "Availability/pontaj not evaluated (correct; must stay not_evaluated)"
+    ],
+    "wave5_authorization": {
+      "assignment_authorized": false,
+      "reason": "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED"
+    }
+  },
+  "operational_task_count": 13,
+  "employee_assignment_count": 0,
+  "machine_assignment_count": 0,
+  "session_count_active": 0,
+  "eligibility_envelope_status": "ok",
+  "resource_readiness_status": "ok",
+  "execution_tasks_created": true,
+  "scheduling": "HOLD",
+  "capacity_allocation": "not_started",
+  "tasks": [
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "canonical_task_type": "file_preparation",
+      "source_operation_code": "vector_prep",
+      "frozen_workcenter": "WC_PREPRESS",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "blocked_no_matching_employee",
+      "eligible_employee_count": 0,
+      "eligible_employees": [],
+      "eligibility_blockers": [
+        "no_matching_employee"
+      ],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": false,
+        "has_eligible_candidate": false,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "face_cnc_cut",
+      "frozen_workcenter": "WC_CNC_ROUTING",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 1,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:back_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "back_cut",
+      "frozen_workcenter": "WC_CNC_ROUTING",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 1,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "canonical_task_type": "edge_bending",
+      "source_operation_code": "side_forming",
+      "frozen_workcenter": "WC_LETTER_FORMING",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LETTER_FORMING",
+            "operation_resource_requirements:cant_modelare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_LETTER_MODELING",
+            "operation_employee_authorizations:cant_modelare"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LETTER_FORMING",
+            "operation_resource_requirements:cant_modelare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_LETTER_CANT_OPERATOR",
+            "operation_employee_authorizations:cant_modelare"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 1,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "return_face_bonding",
+      "frozen_workcenter": "WC_METAL_FAB",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "blocked_no_matching_employee",
+      "eligible_employee_count": 0,
+      "eligible_employees": [],
+      "eligibility_blockers": [
+        "no_matching_employee"
+      ],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 2,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": false,
+        "has_eligible_candidate": false,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "painting",
+      "frozen_workcenter": "WC_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+      "canonical_task_type": "led_assembly",
+      "source_operation_code": "led_install_letters",
+      "frozen_workcenter": "WC_LED_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_letters",
+      "canonical_task_type": "led_wiring",
+      "source_operation_code": "electrical_letters",
+      "frozen_workcenter": "WC_LED_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "assembly_letters",
+      "frozen_workcenter": "WC_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "canonical_task_type": "vinyl_cutting",
+      "source_operation_code": "vinyl_application",
+      "frozen_workcenter": "WC_VINYL_APPLICATION",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_VINYL_APPLICATION",
+            "operation_resource_requirements:colantare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_VINYL_APPLICATOR",
+            "operation_employee_authorizations:colantare"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_VINYL_APPLICATION",
+            "operation_resource_requirements:colantare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_VINYL_APPLICATOR",
+            "operation_employee_authorizations:colantare"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 1,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template_cnc_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "mounting_template_cnc_cut",
+      "frozen_workcenter": "WC_CNC_ROUTING",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "ready_with_warnings",
+        "capable_machine_candidate_count": 1,
+        "semantics": {
+          "CAPABLE_MACHINE": true,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_letters",
+      "canonical_task_type": "quality_control",
+      "source_operation_code": "qc_letters",
+      "frozen_workcenter": "WC_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "canonical_task_type": "packaging",
+      "source_operation_code": "packaging_letters",
+      "frozen_workcenter": "WC_ASSEMBLY",
+      "estimated_minutes": null,
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_REQUIRED",
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "eligibility_blockers": [],
+      "current_assignment": {
+        "status": "unassigned",
+        "assigned_employee_id": null,
+        "assignment_source": null
+      },
+      "machine_capability_ref": {
+        "status": "workcenter_only",
+        "capable_machine_candidate_count": 0,
+        "semantics": {
+          "CAPABLE_MACHINE": false,
+          "SELECTED_MACHINE": false,
+          "ASSIGNED_MACHINE": false,
+          "RESERVED_MACHINE": false,
+          "AVAILABLE_MACHINE": false
+        }
+      },
+      "active_session": false,
+      "future_assign_preconditions": {
+        "task_operational": true,
+        "eligibility_ready": true,
+        "has_eligible_candidate": true,
+        "currently_unassigned": true,
+        "no_active_session": true,
+        "minutes_configured": false,
+        "schedulable": false,
+        "assignment_authorized": false
+      },
+      "readiness_notes": [
+        "ELIGIBLE_CANDIDATE ≠ SELECTED_CANDIDATE ≠ PERSISTED_ASSIGNMENT",
+        "CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE",
+        "MATERIALIZED + ELIGIBLE ≠ ASSIGNED ≠ SCHEDULABLE ≠ AUTHORIZED_TO_START"
+      ]
+    }
+  ],
+  "hypothetical_candidate_evaluation": {
+    "evaluation_status": "VALID_CANDIDATE_FOR_FUTURE_ASSIGNMENT",
+    "assignment_authorized": false,
+    "authorization_blocker": "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED",
+    "eligibility_status": "ready_with_warnings",
+    "reasons": [
+      "Candidate passes known controlled-assign technical preconditions.",
+      "Wave 5 does not authorize executing the assignment command."
+    ],
+    "eligible_employee_ids": [
+      3,
+      7
+    ],
+    "semantics": {
+      "ELIGIBLE_CANDIDATE": true,
+      "SELECTED_CANDIDATE": false,
+      "ASSIGNABLE_REQUEST": false,
+      "VALIDATED_ASSIGNMENT_COMMAND": false,
+      "PERSISTED_ASSIGNMENT": false,
+      "AUTHORIZED_TO_START": false,
+      "AVAILABLE_NOW": false
+    },
+    "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+    "candidate_employee_id": 7
+  },
+  "notes": [
+    "Read-only audit. Does not assign employees, teams, machines, or reserve capacity.",
+    "Does not execute PATCH assign. Does not start sessions.",
+    "Candidate selection policy remains MANUAL_FUTURE_OWNER_DECISION.",
+    "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED"
+  ]
+}

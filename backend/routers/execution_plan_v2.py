@@ -16,6 +16,9 @@ from schemas.execution_plan_v2 import ExecutionPlanV2PersistResult, ExecutionPla
 from schemas.execution_plan_v2_materialize import ExecutionPlanV2MaterializeResult
 from schemas.execution_plan_v2_materialization_audit import ExecutionPlanV2MaterializationAudit
 from schemas.operational_resource_readiness import OperationalResourceReadinessResult
+from services.assignment_readiness_audit_service import (
+    build_assignment_readiness_audit,
+)
 from services.employee_eligibility_read_model_service import (
     build_employee_eligibility_read_model,
 )
@@ -205,6 +208,37 @@ async def employee_eligibility_read_model_by_order_id(
     if order_id <= 0:
         raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
     return await build_employee_eligibility_read_model(db, order_id)
+
+
+@router.get("/plan-v2/from-order/{order_id}/assignment-readiness")
+async def assignment_readiness_audit_by_order_id(
+    order_id: int,
+    candidate_employee_id: int | None = None,
+    task_key: str | None = None,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.plan_generate")),
+) -> dict:
+    """Wave 5 — read-only assignment readiness audit + command-contract inventory.
+
+    Never executes PATCH assign, never writes tasks_json, never creates sessions.
+    assignment_authorized remains false (OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED).
+    Optional query params evaluate a hypothetical candidate without persistence.
+    """
+    logger.info(
+        "GET /api/v1/execution/plan-v2/from-order/%s/assignment-readiness", order_id
+    )
+    if order_id <= 0:
+        raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
+    if candidate_employee_id is not None and candidate_employee_id <= 0:
+        raise HTTPException(
+            status_code=422, detail={"error": "candidate_employee_id_invalid"}
+        )
+    return await build_assignment_readiness_audit(
+        db,
+        order_id,
+        candidate_employee_id=candidate_employee_id,
+        task_key=task_key,
+    )
 
 
 @router.get(

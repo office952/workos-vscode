@@ -1,0 +1,91 @@
+{
+  "non_production": {
+    "APP_ENV": "development",
+    "backend": "http://127.0.0.1:8002",
+    "db": "C:\\w\\psiso\\backend\\dev.db"
+  },
+  "before": {
+    "id": 23,
+    "updated_at": "2026-08-04 02:21:47.122899",
+    "ops_count": 13,
+    "assigned_count": 0,
+    "execution_tasks_created": true,
+    "tasks_json_sha256": "e120b0cb91ff500504a9beb62d8e7f6608f5a6a14df2ae1a743c5c111dbac0f2"
+  },
+  "after_reads": {
+    "id": 23,
+    "updated_at": "2026-08-04 02:21:47.122899",
+    "ops_count": 13,
+    "assigned_count": 0,
+    "execution_tasks_created": true,
+    "tasks_json_sha256": "e120b0cb91ff500504a9beb62d8e7f6608f5a6a14df2ae1a743c5c111dbac0f2"
+  },
+  "tasks_json_unchanged": true,
+  "updated_at_unchanged": true,
+  "audit": {
+    "status": "ok",
+    "ops": 13,
+    "employee_assignments": 0,
+    "machine_assignments": 0,
+    "assignment_authorized": false,
+    "blocker": "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED",
+    "idempotency": "IDEMPOTENCY_PARTIAL",
+    "transactionality": "TRANSACTIONALITY_PARTIAL",
+    "side_effects": "none",
+    "scheduling": "HOLD"
+  },
+  "hypothetical": {
+    "evaluation_status": "VALID_CANDIDATE_FOR_FUTURE_ASSIGNMENT",
+    "assignment_authorized": false,
+    "authorization_blocker": "OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED",
+    "eligibility_status": "ready_with_warnings",
+    "reasons": [
+      "Candidate passes known controlled-assign technical preconditions.",
+      "Wave 5 does not authorize executing the assignment command."
+    ],
+    "eligible_employee_ids": [
+      3,
+      7
+    ],
+    "semantics": {
+      "ELIGIBLE_CANDIDATE": true,
+      "SELECTED_CANDIDATE": false,
+      "ASSIGNABLE_REQUEST": false,
+      "VALIDATED_ASSIGNMENT_COMMAND": false,
+      "PERSISTED_ASSIGNMENT": false,
+      "AUTHORIZED_TO_START": false,
+      "AVAILABLE_NOW": false
+    },
+    "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+    "candidate_employee_id": 7
+  },
+  "protected_totals": {
+    "880750": {
+      "id": 880750,
+      "total_amount": 1925.0,
+      "updated_at": "2026-08-04 02:21:47.128532"
+    },
+    "880811": {
+      "id": 880811,
+      "total_amount": 1847.5,
+      "updated_at": "2026-08-03 00:06:15.954195"
+    },
+    "973019": {
+      "id": 973019,
+      "total_amount": 847.5,
+      "updated_at": "2026-08-02 16:23:08.150854"
+    }
+  },
+  "f7i": {
+    "values": [
+      15.0,
+      1.5,
+      35.0,
+      20.0
+    ],
+    "currency": "EUR",
+    "identities": "4/4",
+    "source": "backend/data/commercial_rules_volumetric_v2.py",
+    "changed": false
+  }
+}

@@ -499,6 +499,67 @@ export interface Wave4ReadOnlyBoundary {
   evaluation_mode: 'read_only';
 }
 
+export interface Wave5AssignmentBoundary {
+  assignment_authorized: false;
+  assignment_command_executable: false;
+  machine_assignable: false;
+  schedulable: false;
+  sessions_authorized: false;
+  capacity_allocation: 'not_started';
+  evaluation_mode: 'read_only_audit';
+  authorization_blocker: string;
+}
+
+export interface AssignmentReadinessTaskRow {
+  task_key: string;
+  frozen_workcenter?: string | null;
+  eligibility_status?: string | null;
+  eligible_employee_count: number;
+  estimated_minutes?: number | null;
+  warnings?: string[];
+  current_assignment: {
+    status: 'assigned' | 'unassigned';
+    assigned_employee_id?: number | null;
+  };
+  machine_capability_ref?: {
+    status?: string | null;
+    capable_machine_candidate_count?: number;
+  };
+  future_assign_preconditions?: {
+    eligibility_ready?: boolean;
+    has_eligible_candidate?: boolean;
+    currently_unassigned?: boolean;
+    assignment_authorized?: false;
+  };
+}
+
+export interface AssignmentReadinessAuditResponse {
+  mode: string;
+  audit_version?: string;
+  order_id: number;
+  execution_plan_id?: number;
+  status: string;
+  side_effects?: 'none';
+  wave5_boundary: Wave5AssignmentBoundary;
+  operational_task_count?: number;
+  employee_assignment_count?: number;
+  machine_assignment_count?: number;
+  scheduling?: string;
+  capacity_allocation?: string;
+  tasks: AssignmentReadinessTaskRow[];
+  command_contract?: {
+    canonical_route?: string;
+    idempotency?: { status?: string };
+    transactionality?: { status?: string };
+    legacy_bypass?: { classification?: string };
+  };
+  protections?: {
+    confirmed?: string[];
+    missing_or_partial?: string[];
+  };
+  notes?: string[];
+}
+
 export interface OperationalTaskResourceReadiness {
   task_key?: string | null;
   display_name?: string | null;
@@ -883,6 +944,21 @@ export const executionApi = {
     }
     return getJson<OperationalResourceReadinessResponse>(
       `/execution/plan-v2/from-order/${orderId}/resource-readiness`,
+    );
+  },
+
+  /**
+   * Wave 5 — read-only assignment readiness audit + command-contract inventory.
+   * Never executes PATCH assign / never writes.
+   */
+  getAssignmentReadinessAudit(
+    orderId: number,
+  ): Promise<AssignmentReadinessAuditResponse> {
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return Promise.reject(new Error('order_id_invalid'));
+    }
+    return getJson<AssignmentReadinessAuditResponse>(
+      `/execution/plan-v2/from-order/${orderId}/assignment-readiness`,
     );
   },
 
