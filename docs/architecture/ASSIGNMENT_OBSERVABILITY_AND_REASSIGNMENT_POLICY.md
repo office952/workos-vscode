@@ -1,6 +1,7 @@
 # Assignment Observability and Reassignment Policy
 
-**Status:** Wave 8 audit **COMPLETE** — Owner reassignment decisions **RECORDED** — reassignment **NOT IMPLEMENTED**  
+**Status:** Wave 8 audit **COMPLETE** — Owner reassignment decisions **RECORDED** — Phase B backend **IMPLEMENTED** (Wave 11) — QA proof / UI **NOT AUTHORIZED**  
+ 
 **Date:** 2026-08-04  
 **Owner GO (audit):** `FINALIZATION_WAVE_8_AUTH_FAIL_CLOSED_AND_ASSIGNMENT_OBSERVABILITY_POLICY`  
 **Owner GO (decisions):** `CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISION_ONLY`  

@@ -1,24 +1,27 @@
 # Controlled Pre-Start Reassignment — Implementation Readiness
 
-**Status:** Wave 9 audit **COMPLETE** — implementation **NOT AUTHORIZED**  
+**Status:** Wave 9 audit complete · Phase A verified · **Phase B backend IMPLEMENTED** (2026-08-04) · QA transition proof **not** executed · UI **not** implemented · Phase C **not** authorized  
 **Date:** 2026-08-04  
-**Owner GO:** `FINALIZATION_WAVE_9 = CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT`  
+**Owner GO (Wave 9):** `FINALIZATION_WAVE_9 = CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT`  
+**Owner GO (Wave 11):** `PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION`  
 **Decisions:** `CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md` (DEC-REASSIGN-01…08)  
-**Worklog:** `docs/worklog/realignment/2026-08-04_finalization_wave9_reassignment_implementation_readiness_audit.md`
+**Worklog (Wave 9):** `docs/worklog/realignment/2026-08-04_finalization_wave9_reassignment_implementation_readiness_audit.md`  
+**Worklog (Wave 11):** `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`
 
 ```text
-FINALIZATION_WAVE_9 = PARTIAL_BLOCKED
+FINALIZATION_WAVE_9 = PARTIAL_BLOCKED (historical readiness)
 FINALIZATION_WAVE_10 = PASS
-REASSIGNMENT_IMPLEMENTATION_READINESS = BLOCKED_PENDING_PHASE_B
+FINALIZATION_WAVE_11 = PASS
+REASSIGNMENT_IMPLEMENTATION_READINESS = PHASE_B_BACKEND_COMPLETE
 PERSISTENCE_STRATEGY = SEPARATE_APPEND_ONLY_ASSIGNMENT_TRANSITION_TABLE
-SCHEMA_CHANGE_REQUIRED = YES
-SCHEMA_OWNER_DECISIONS = RECORDED
 SCHEMA_IMPLEMENTED = YES
 PHASE_A = VERIFIED
-PHASE_B = NOT_AUTHORIZED
-REASSIGNMENT_IMPLEMENTED = NO
-UNASSIGNMENT_IMPLEMENTED = NO
-WAVE_11 = NOT_AUTHORIZED
+PHASE_B_BACKEND = VERIFIED
+REASSIGNMENT_IMPLEMENTED = YES (backend routes/services; isolated tests)
+UNASSIGNMENT_IMPLEMENTED = YES (backend routes/services; isolated tests)
+QA_TRANSITION_PROOF = NOT_EXECUTED
+UI_IMPLEMENTED = NO
+PHASE_C = NOT_AUTHORIZED
 ```
 
 Owner schema decisions: `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
@@ -291,11 +294,12 @@ Dead pieces removed: NONE
 
 ## 15. Next step
 
-Phase A schema + backfill is **VERIFIED**. Reassignment commands remain unauthorized.
+Phase A schema + backfill is **VERIFIED**. Phase B backend is **VERIFIED** (isolated SQLite).  
+QA live reassignment/unassignment and UI remain unauthorized.
 
 ```text
 FUTURE CANDIDATE:
-PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION
+PHASE_C_CONTROLLED_SINGLE_QA_PRE_START_REASSIGNMENT_PROOF
 ```
 
-Do **not** start Phase B without a separate Owner GO.
+Do **not** start Phase C without a separate Owner GO.

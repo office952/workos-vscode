@@ -346,34 +346,33 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 10 = PASS** — Phase A schema/backfill complete; current freeze DB = SQLite (`DEC-DATABASE-01`).  
-Wave 8 PASS retained. Wave 9 schema decision retained. Embedded LED→7 unchanged.  
-Reassignment/unassignment **not** implemented. **Phase B = not authorized.**
+**Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
+Phase A schema/backfill complete; current freeze DB = SQLite (`DEC-DATABASE-01`).  
+Reassign/unassign **backend routes implemented** (isolated SQLite verified).  
+QA live reassignment/unassignment **not** executed. UI **not** implemented. **Phase C = not authorized.**
 
 ```text
 FINALIZATION_WAVE_10 = PASS
+FINALIZATION_WAVE_11 = PASS
 CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
-CURRENT_DEPLOYMENT_DATABASE_MIGRATION_RUNTIME = VERIFIED_SQLITE
-PHASE_B = NOT_AUTHORIZED
+PHASE_B_BACKEND = VERIFIED
+PHASE_C = NOT_AUTHORIZED
+FRONTEND_REASSIGNMENT_UI = NO
 ```
 
 Canonical schema: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
 Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`  
-Database engine boundary: `docs/architecture/DATABASE_ENGINE_AND_MIGRATION_VALIDATION_BOUNDARY.md`  
-Worklogs:  
-`docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md` ·  
-`docs/worklog/realignment/2026-08-04_finalization_wave10_canonical_migration_closure.md` ·  
-`docs/worklog/realignment/2026-08-04_database_engine_owner_decision_readiness.md` ·  
-`docs/worklog/realignment/2026-08-04_sqlite_current_freeze_owner_decision_and_wave10_closure.md`  
+Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
+Phase B worklog: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
-- Expand-only history table + deterministic backfill proven; current assignee remains in `tasks_json`.
-- Owner recorded SQLite as canonical for current development/test/QA freeze; production rollout still NOT_AUTHORIZED.
-- Dual-write reassignment commands still require a **separate** Phase B Owner GO.
+- Expand-only history + Phase B dual-write commands verified on isolated SQLite.
+- Resource guards fail-closed (`NOT_CONFIGURED`) outside isolated CLEAR override — QA unchanged.
+- QA single-transition proof still requires Phase C Owner GO.
 
-**Future candidate (not started; still unauthorized):** `PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION`
+**Future candidate (not started; still unauthorized):** `PHASE_C_CONTROLLED_SINGLE_QA_PRE_START_REASSIGNMENT_PROOF`
 
 ---
 
