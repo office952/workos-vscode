@@ -346,19 +346,19 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner reassignment decisions RECORDED** — DEC-REASSIGN-01…08 fix the future pre-start contract.  
-Wave 8 PASS retained. Reassignment/unassignment **not implemented**. Wave 9 / execution / scheduling **not authorized**.
+**Wave 9 PARTIAL_BLOCKED** — reassignment implementation readiness audited; **schema change required** for transition history.  
+Wave 8 PASS retained. One QA assignment retained. Reassignment/unassignment **not implemented**. Wave 10 **not authorized**.
 
-Canonical decisions: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`  
-Wave 8 audit: `docs/architecture/ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md`  
-Worklog: `docs/worklog/realignment/2026-08-04_controlled_pre_start_reassignment_owner_decisions.md`
+Canonical readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
+Owner decisions: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`  
+Worklog: `docs/worklog/realignment/2026-08-04_finalization_wave9_reassignment_implementation_readiness_audit.md`
 
 **Why:**
 
-- Manager/admin-only, distinct permission, strict pre-start, CAS expected employee, reason required, full transition history, scheduling/reservation block.
-- Persistence model for history must be audited before any implementation; schema still unauthorized.
+- Embedded `operational_tasks[]` holds current assignee only — cannot safely retain multi-transition history (DEC-REASSIGN-03).
+- Recommended persistence: separate transition table; Owner must authorize schema before any reassignment build.
 
-**Do not** start `CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT` without a new Owner GO.
+**Next Owner decision:** `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA` — do not start implementation without it.
 
 ---
 

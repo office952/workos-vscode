@@ -17,7 +17,8 @@ REASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
 UNASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
 SCHEMA_CHANGE_AUTHORIZED = FALSE
 MIGRATION_AUTHORIZED = FALSE
-WAVE_9 = NOT_AUTHORIZED
+WAVE_9 = PARTIAL_BLOCKED_READINESS_AUDIT
+WAVE_10 = NOT_AUTHORIZED
 ```
 
 Canonical QA fixture (unchanged by this decision task):
@@ -245,9 +246,11 @@ Dead pieces removed: NONE
 
 ## Next step
 
+Wave 9 readiness audit completed — see `CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`.
+
 ```text
-FUTURE CANDIDATE:
-CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT
+OWNER DECISION REQUIRED:
+REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA
 ```
 
-Do **not** implement reassignment or unassignment until that audit (and any required schema Owner GO) completes.
+Do **not** implement reassignment or unassignment until that schema Owner GO is recorded.

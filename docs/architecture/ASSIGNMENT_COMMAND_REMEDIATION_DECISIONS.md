@@ -31,7 +31,8 @@ WAVE_6 = COMPLETED_PASS
 WAVE_7 = COMPLETED_PASS
 WAVE_8 = COMPLETED_PASS
 OWNER_REASSIGNMENT_DECISIONS = RECORDED
-WAVE_9 = NOT_AUTHORIZED
+WAVE_9 = PARTIAL_BLOCKED_READINESS_AUDIT
+WAVE_10 = NOT_AUTHORIZED
 ```
 
 ---
@@ -231,7 +232,8 @@ Dead pieces removed: NONE
 ## Future candidate (not started)
 
 ```text
-CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT
+OWNER DECISION:
+REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA
 ```
 
-Owner DEC-REASSIGN-01…08 are **recorded**. Do not implement reassignment/unassignment until the readiness audit (persistence/history/permissions) and any required schema Owner GO complete.
+Wave 9 readiness audit concluded **schema change required** for safe transition history. Do not implement reassignment/unassignment until that Owner schema GO is recorded.
