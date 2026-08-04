@@ -346,19 +346,22 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 7 PASS** — exactly one QA employee assignment verified on order `880750` / plan `23` (LED install → employee_id `7`), plus authenticated authorization + UI read-only E2E closure.  
-Wave 8 / reassignment / scheduling **not authorized**.
+**Wave 8 PASS** — production auth fail-closed verified; Wave 7 failed-test root cause closed; assignment observability within embedded model; reassignment/unassignment **policy audit complete**, **not implemented**.  
+Wave 7 assignment retained. Wave 9 / reassignment execution / scheduling **not authorized**.
 
 Worklogs:  
 `docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`  
-`docs/worklog/realignment/2026-08-04_finalization_wave7_auth_and_ui_closure_proof_only.md`
+`docs/worklog/realignment/2026-08-04_finalization_wave7_auth_and_ui_closure_proof_only.md`  
+`docs/worklog/realignment/2026-08-04_finalization_wave8_assignment_auth_observability_reassignment_policy.md`  
+Canonical policy: `docs/architecture/ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md`
 
 **Why:**
 
-- Canonical hardened command persisted one assignment with audit; same-employee retry no-op; different-employee conflict; other 12 tasks unchanged; sessions/scheduling still closed.
-- Closure proof: JWT QA actor + `execution.task_assign` within single-org model; Vite `/api` → `:8000` verified after stale `BACKEND_PORT=8001` restart; UI `/execution/880750` shows 1 assigned / 12 unassigned / HOLD / no start implication; zero additional mutations.
+- Production missing/invalid auth denied; DEBUG cannot enable bypass; typo APP_ENV denies bypass.
+- Embedded assignment audit + safe structured logs; privacy boundary documented.
+- Reassignment inventory + Option A/B + DEC-REASSIGN-01…08 await Owner decision.
 
-**Do not** start `ASSIGNMENT_OBSERVABILITY_AND_CONTROLLED_REASSIGNMENT_POLICY_AUDIT` without a new Owner GO.
+**Do not** implement controlled reassignment without Owner DEC-REASSIGN decisions.
 
 ---
 

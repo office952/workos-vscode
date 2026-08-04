@@ -23,6 +23,14 @@ _VALID_ENVIRONMENTS: set[str] = {"local", "development", "staging", "production"
 _DEV_AUTH_ALLOWED_ENVIRONMENTS: set[str] = {"local", "development", "test"}
 
 
+def _raw_runtime_environment() -> str:
+    """Return the raw APP_ENV / ENVIRONMENT string (may be empty or invalid)."""
+    raw = os.environ.get("APP_ENV", "").strip().lower()
+    if not raw:
+        raw = os.environ.get("ENVIRONMENT", "").strip().lower()
+    return raw
+
+
 def get_runtime_environment() -> EnvironmentName:
     """
     Determine the current runtime environment.
@@ -31,17 +39,20 @@ def get_runtime_environment() -> EnvironmentName:
     1. APP_ENV env var
     2. ENVIRONMENT env var (fallback)
     3. Default: "development"
+
+    Unknown / typo values log a warning and fall back to "development" for
+    non-auth classification helpers. Auth bypass must use ``dev_auth_allowed()``,
+    which denies bypass for unknown values (Wave 8 fail-closed).
     """
-    raw = os.environ.get("APP_ENV", "").strip().lower()
+    raw = _raw_runtime_environment()
     if not raw:
-        raw = os.environ.get("ENVIRONMENT", "").strip().lower()
-    if not raw:
-        raw = "development"
+        return "development"
 
     if raw not in _VALID_ENVIRONMENTS:
         logger.warning(
-            "Unknown APP_ENV value '%s', defaulting to 'development'. "
-            "Valid values: %s",
+            "Unknown APP_ENV value '%s', defaulting to 'development' for "
+            "non-auth classification. Dev auth bypass is denied for unknown "
+            "values. Valid values: %s",
             raw,
             ", ".join(sorted(_VALID_ENVIRONMENTS)),
         )
@@ -67,9 +78,23 @@ def is_production_environment() -> bool:
 
 def dev_auth_allowed() -> bool:
     """
-    Whether dev auth fallback (role=user→admin, dev user creation) is permitted.
+    Whether dev auth fallback (missing credentials → synthetic admin / impersonation)
+    is permitted.
 
-    Returns True only in local/development/test environments.
-    In staging/production, returns False regardless of any other flag.
+    Returns True only when the explicit runtime environment is one of
+    local / development / test.
+
+    Fail-closed cases (bypass denied):
+    - staging / production
+    - missing APP_ENV/ENVIRONMENT is treated as development (local default)
+    - unknown / typo APP_ENV values (do not grant development trust)
+    - DEBUG has no effect on this gate
     """
+    raw = _raw_runtime_environment()
+    if raw and raw not in _VALID_ENVIRONMENTS:
+        logger.warning(
+            "Dev auth bypass denied: unknown APP_ENV value %r (fail-closed)",
+            raw,
+        )
+        return False
     return get_runtime_environment() in _DEV_AUTH_ALLOWED_ENVIRONMENTS

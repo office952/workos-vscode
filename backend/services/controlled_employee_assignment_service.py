@@ -14,6 +14,7 @@ Does not create sessions/actuals. Does not activate Employee Mobile.
 from __future__ import annotations
 
 import asyncio
+import logging
 from datetime import date, datetime, timezone
 from typing import Any, Optional
 from weakref import WeakValueDictionary
@@ -21,6 +22,8 @@ from weakref import WeakValueDictionary
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 from models.employees import Employees
 from models.execution_plan import ExecutionPlan
@@ -382,6 +385,25 @@ async def assign_operational_task_controlled(
             updated_task = dict(persisted)
 
         status = str(task_row.get("eligibility_status") or "")
+        # Operational application log — safe IDs only (no name/email/JWT/tasks_json/pricing).
+        logger.info(
+            "assignment_command event=%s outcome=%s order_id=%s plan_id=%s "
+            "task_id=%s employee_id=%s actor_user_id=%s eligibility_status=%s "
+            "retry_or_conflict=%s",
+            (
+                "ASSIGNMENT_IDEMPOTENT_RETRY"
+                if outcome == OUTCOME_ALREADY_SAME
+                else "ASSIGNMENT_SUCCEEDED"
+            ),
+            outcome,
+            order_id,
+            plan.id,
+            tid,
+            assigned_employee_id,
+            actor_user_id,
+            status,
+            "idempotent" if outcome == OUTCOME_ALREADY_SAME else "first_assign",
+        )
         return {
             "plan_id": plan.id,
             "order_id": plan.order_id,

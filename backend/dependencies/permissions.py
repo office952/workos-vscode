@@ -255,9 +255,10 @@ def require_permission(permission_key: str):
     ) -> UserResponse:
         effective_role = resolve_effective_role(current_user.role)
         if not has_permission(effective_role, permission_key):
+            # Safe actor id only — never log email / JWT / secrets (Wave 8 privacy).
             logger.warning(
-                "Permission denied: user=%s role=%s(%s) permission=%s",
-                current_user.email or current_user.id,
+                "Permission denied: user_id=%s role=%s(%s) permission=%s",
+                current_user.id,
                 current_user.role,
                 effective_role,
                 permission_key,

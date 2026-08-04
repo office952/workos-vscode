@@ -186,8 +186,20 @@ def test_impersonation_does_not_create_user_or_employee(unauth_client, db_fixtur
 
 
 def test_production_blocks_dev_bypass_without_credentials(db_fixture, monkeypatch):
+    """Production missing-auth must be 401 (fail-closed).
+
+    Wave 7 failure root cause: this test previously left ``DEBUG`` inherited from
+    the agent shell (``DEBUG=true``). Production + DEBUG blocks *startup* via
+    ``startup_safety`` before the auth assertion can run — that is the intended
+    DEBUG guard, not an auth fail-open. Isolate DEBUG=false for the 401 path.
+    """
     monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("DEBUG", "false")
     monkeypatch.setenv("WORKOS_DEV_AUTH_USER_ID", "dev-employee-test-001")
+    monkeypatch.setenv("JWT_SECRET_KEY", "test-jwt-secret-not-for-production")
+    monkeypatch.setenv("JWT_ALGORITHM", "HS256")
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///test_placeholder.db")
 
     async def _override_get_db():
         async with db_fixture.session_maker() as session:
@@ -203,3 +215,31 @@ def test_production_blocks_dev_bypass_without_credentials(db_fixture, monkeypatc
             assert resp.status_code == 401
     finally:
         app.dependency_overrides.clear()
+
+
+def test_production_debug_true_blocks_startup_not_auth_bypass(monkeypatch):
+    """DEBUG=true in production must block startup — never enable missing-auth bypass."""
+    from core.startup_safety import run_startup_safety_checks
+
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("DEBUG", "true")
+    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///test_placeholder.db")
+    monkeypatch.setenv("JWT_SECRET_KEY", "test-jwt-secret-not-for-production")
+
+    report = run_startup_safety_checks()
+    assert report.overall_status == "BLOCKED"
+    debug_check = next(c for c in report.checks if c.name == "DEBUG_MODE_OFF")
+    assert debug_check.status == "BLOCKED"
+
+    from core.environment import dev_auth_allowed
+
+    assert dev_auth_allowed() is False
+
+
+def test_unknown_app_env_denies_dev_auth_bypass(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "prodution")  # typo
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    from core.environment import dev_auth_allowed
+
+    assert dev_auth_allowed() is False

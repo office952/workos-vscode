@@ -4,16 +4,18 @@
 **Wave 5 remains:** `FINALIZATION_WAVE_5 = PARTIAL_BLOCKED` (historical readiness audit)  
 **Wave 6:** see `docs/worklog/realignment/2026-08-04_finalization_wave6_minimal_safe_assignment_command_hardening.md`  
 **QA fixture assignment execution:** Wave 7 single-task proof **COMPLETED** (see Wave 7 worklog).  
+**Wave 8:** auth fail-closed + observability + reassignment **policy audit** COMPLETE — see `ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md`.
 
 **Sources:**
 
 - `docs/worklog/realignment/2026-08-04_finalization_wave5_assignment_readiness_audit_only.md`
 - `docs/worklog/realignment/2026-08-04_assignment_command_remediation_strategy_audit_only.md`
 - `docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`
+- `docs/worklog/realignment/2026-08-04_finalization_wave8_assignment_auth_observability_reassignment_policy.md`
 
 **Canonical fixture after Wave 7:** order `880750` / plan `23` / 13 `operational_tasks[]` / **exactly 1** employee assignment (LED install → employee_id `7`).
 
-**Owner gate (post Wave 7 proof):**
+**Owner gate (post Wave 8 audit):**
 
 ```text
 ASSIGNMENT_IMPLEMENTATION_AUTHORIZED = TRUE   # Wave 6 hardening
@@ -25,7 +27,8 @@ LEGACY_REMOVAL_AUTHORIZED = FALSE
 MOBILE_ASSIGNMENT_AUTHORIZED = FALSE
 WAVE_6 = COMPLETED_PASS
 WAVE_7 = COMPLETED_PASS
-WAVE_8 = NOT_AUTHORIZED
+WAVE_8 = COMPLETED_PASS
+WAVE_9 = NOT_AUTHORIZED
 ```
 
 ---
@@ -225,7 +228,7 @@ Dead pieces removed: NONE
 ## Future candidate (not started)
 
 ```text
-ASSIGNMENT_OBSERVABILITY_AND_CONTROLLED_REASSIGNMENT_POLICY_AUDIT
+OWNER DECISION ON CONTROLLED PRE-START REASSIGNMENT POLICY
 ```
 
-Requires a **separate** Owner GO. Do not implement reassignment or scheduling here.
+Wave 8 completed the observability/reassignment **policy audit**. Do not implement reassignment or scheduling until Owner records DEC-REASSIGN-01…08.
