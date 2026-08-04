@@ -6,7 +6,7 @@
 | Task | `CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISION_ONLY` |
 | Status | **`CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISIONS = RECORDED`** |
 | Starting HEAD | `dbe76f28` |
-| Final HEAD | (this commit) |
+| Final HEAD | `eeb827a9` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Production / FE / tests / DB changed | **NO** |
