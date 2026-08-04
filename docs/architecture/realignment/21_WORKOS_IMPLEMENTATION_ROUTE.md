@@ -348,42 +348,40 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource-state program = **future candidate, not started**. No QA reassignment/unassignment.
+Resource-state program = **readiness audited; implementation not authorized**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
 FINALIZATION_WAVE_11 = PASS
 CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
 PHASE_B_BACKEND = VERIFIED
-ISOLATED_PROCESS_RUNTIME_PROOF = VERIFIED
-RESOURCE_GUARD_OVERRIDE = TEST_ONLY_VERIFIED
 PHASE_C = NOT_AUTHORIZED
 PHASE_C_QA_READINESS = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
-PHASE_C_RESOURCE_GUARD_STRATEGY_AUDIT = COMPLETE
-PHASE_C_RESOURCE_GUARD_OWNER_DECISION = RECORDED
 DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
-RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY = FUTURE_CANDIDATE_NOT_STARTED
+RESOURCE_STATE_BOUNDARY_READINESS_AUDIT = COMPLETE
+RECOMMENDED_PATH = MINIMAL_CANONICAL_RESOURCE_STATE_CONTRACT
+RECOMMENDED_CONCLUSION = PERSISTED_RESOURCE_STATE_MODEL_REQUIRED
+SCHEMA_CHANGE_REQUIRED = YES
+IMPLEMENTATION_AUTHORIZED = NO
+RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY = NOT_STARTED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
 Canonical schema: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
 Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`  
-Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
-Phase B worklog: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
-Wave 11 closure: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_runtime_and_guard_closure.md`  
-Phase C strategy audit: `docs/architecture/PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY.md`  
 Phase C Owner decision: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
-Decision worklog: `docs/worklog/realignment/2026-08-05_keep_phase_c_blocked_owner_decision.md`  
+Resource-state readiness: `docs/architecture/RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS.md`  
+Readiness worklog: `docs/worklog/realignment/2026-08-05_resource_state_contract_and_scheduling_boundary_readiness_audit.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
-- Phase B dual-write verified; resource CLEAR is TEST_ONLY; QA fail-closed.
-- Owner recorded `KEEP_PHASE_C_BLOCKED` — no canonical CLEAR source for scheduling / reservation / capacity.
+- Owner keeps Phase C blocked; placeholders cannot produce CLEAR.
+- Readiness audit: minimal persisted resource-state contract required before CLEAR; full scheduling engine not required first; implementation not authorized.
 
-**Next (future candidate only — not started):**  
-`RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS_AUDIT`
+**Next Owner gate (not implementation, not Phase C):**  
+`AUTHORIZE_RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS`
 
 ---
 
