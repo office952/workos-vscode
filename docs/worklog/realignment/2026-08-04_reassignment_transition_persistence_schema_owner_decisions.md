@@ -6,7 +6,7 @@
 | Task | `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_OWNER_DECISION_ONLY` |
 | Status | **`REASSIGNMENT_TRANSITION_SCHEMA_OWNER_DECISIONS = RECORDED`** |
 | Starting HEAD | `55bcd619` |
-| Content commit | (this series) |
+| Content commit | `3d0d40e6` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Schema / migration / table | **NONE** (decision docs only) |
