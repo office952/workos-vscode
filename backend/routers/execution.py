@@ -65,6 +65,14 @@ from services.execution_plan_service import (
 from services.controlled_employee_assignment_service import (
     assign_operational_task_controlled,
 )
+from services.controlled_pre_start_reassignment_service import (
+    reassign_operational_task_controlled,
+    unassign_operational_task_controlled,
+)
+from schemas.controlled_pre_start_reassignment import (
+    ReassignPlanTaskRequest,
+    UnassignPlanTaskRequest,
+)
 from services.controlled_task_session_service import (
     build_execution_actuals_read_model,
     end_controlled_task_session,
@@ -583,6 +591,57 @@ async def assign_plan_task_to_employee(
                 detail={"error": "inactive_employee", **detail},
             ) from exc
         raise
+
+
+@router.patch("/plan/{order_id}/tasks/{task_id}/reassign")
+async def reassign_plan_task_employee(
+    order_id: int,
+    task_id: str,
+    body: ReassignPlanTaskRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+    _user=Depends(require_permission("execution.task_reassign")),
+):
+    """Phase B controlled pre-start reassignment — manager/admin only."""
+    actor = str(current_user.id) if getattr(current_user, "id", None) else None
+    role = getattr(current_user, "role", None)
+    return await reassign_operational_task_controlled(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        transition_id=body.transition_id,
+        expected_current_employee_id=body.expected_current_employee_id,
+        new_employee_id=body.new_employee_id,
+        reason_code=body.reason_code,
+        reason_note=body.reason_note,
+        actor_user_id=actor,
+        actor_role=str(role) if role is not None else None,
+    )
+
+
+@router.patch("/plan/{order_id}/tasks/{task_id}/unassign")
+async def unassign_plan_task_employee(
+    order_id: int,
+    task_id: str,
+    body: UnassignPlanTaskRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+    _user=Depends(require_permission("execution.task_unassign")),
+):
+    """Phase B controlled pre-start unassignment — manager/admin only."""
+    actor = str(current_user.id) if getattr(current_user, "id", None) else None
+    role = getattr(current_user, "role", None)
+    return await unassign_operational_task_controlled(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        transition_id=body.transition_id,
+        expected_current_employee_id=body.expected_current_employee_id,
+        reason_code=body.reason_code,
+        reason_note=body.reason_note,
+        actor_user_id=actor,
+        actor_role=str(role) if role is not None else None,
+    )
 
 
 class UpdatePlanTaskInstructionsRequest(BaseModel):

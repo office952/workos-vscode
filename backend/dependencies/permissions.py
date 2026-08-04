@@ -115,6 +115,9 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.task_complete": ["admin", "manager", "operator"],
     "execution.task_block": ["admin", "manager", "operator"],
     "execution.task_assign": ["admin", "manager", "operator"],
+    # Phase B — distinct from assign; manager/admin only (DEC-REASSIGN-01/05).
+    "execution.task_reassign": ["admin", "manager"],
+    "execution.task_unassign": ["admin", "manager"],
     "execution.clarification_list": ["admin", "manager", "operator"],
     "execution.clarification_resolve": ["admin", "manager", "operator"],
     "execution.production_blueprint": ["admin", "manager", "operator"],
