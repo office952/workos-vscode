@@ -348,40 +348,39 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource-state program = **readiness audited; implementation not authorized**. No QA reassignment/unassignment.
+Resource State: readiness COMPLETE · **R1 Owner decisions COMPLETE** · schema/migration/R2 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
 FINALIZATION_WAVE_11 = PASS
-CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
 PHASE_B_BACKEND = VERIFIED
 PHASE_C = NOT_AUTHORIZED
-PHASE_C_QA_READINESS = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
 RESOURCE_STATE_BOUNDARY_READINESS_AUDIT = COMPLETE
-RECOMMENDED_PATH = MINIMAL_CANONICAL_RESOURCE_STATE_CONTRACT
-RECOMMENDED_CONCLUSION = PERSISTED_RESOURCE_STATE_MODEL_REQUIRED
+RESOURCE_STATE_PROGRAM_R1 = PASS
+OWNER_DECISIONS = RECORDED
 SCHEMA_CHANGE_REQUIRED = YES
-IMPLEMENTATION_AUTHORIZED = NO
-RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY = NOT_STARTED
+SCHEMA_IMPLEMENTATION = NOT_AUTHORIZED
+MIGRATION = NOT_AUTHORIZED
+R2 = NOT_AUTHORIZED
+RESOURCE_STATE_IMPLEMENTATION = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
-Canonical schema: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
-Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`  
 Phase C Owner decision: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
 Resource-state readiness: `docs/architecture/RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS.md`  
-Readiness worklog: `docs/worklog/realignment/2026-08-05_resource_state_contract_and_scheduling_boundary_readiness_audit.md`  
-Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
+R1 Owner decisions: `docs/architecture/RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS.md`  
+R1 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r1_owner_decisions.md`  
+Migration head (assignment transitions): `s63_execution_task_assignment_transitions`
 
 **Why:**
 
-- Owner keeps Phase C blocked; placeholders cannot produce CLEAR.
-- Readiness audit: minimal persisted resource-state contract required before CLEAR; full scheduling engine not required first; implementation not authorized.
+- R1 records dedicated persisted model, configuration, four-state fail-closed semantics, grain, CAS, lock revalidation, no synthetic CLEAR.
+- Implementation and Phase C remain unauthorized.
 
-**Next Owner gate (not implementation, not Phase C):**  
-`AUTHORIZE_RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS`
+**Next (future candidate only — not started):**  
+`RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS`
 
 ---
 

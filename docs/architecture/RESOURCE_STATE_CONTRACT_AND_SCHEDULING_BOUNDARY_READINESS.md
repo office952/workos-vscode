@@ -2,17 +2,23 @@
 
 **Task:** `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS_AUDIT`  
 **Date:** 2026-08-05  
-**Status:** Audit **COMPLETE** · Implementation **NOT AUTHORIZED** · Phase C **BLOCKED**  
+**Status:** Audit **COMPLETE** · R1 Owner decisions **RECORDED** · Implementation **NOT AUTHORIZED** · Phase C **BLOCKED**  
 **Prior Owner decision:** `DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED`  
-**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_contract_and_scheduling_boundary_readiness_audit.md`  
+**R1 decisions (canonical):** `docs/architecture/RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS.md`  
+**Worklog (audit):** `docs/worklog/realignment/2026-08-05_resource_state_contract_and_scheduling_boundary_readiness_audit.md`  
+**Worklog (R1):** `docs/worklog/realignment/2026-08-05_resource_state_program_r1_owner_decisions.md`  
 **Related:** `PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md` · `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY.md` · Wave 11 closure
 
 ```text
 RESOURCE_STATE_BOUNDARY_READINESS_AUDIT = COMPLETE
+RESOURCE_STATE_PROGRAM_R1 = PASS
+OWNER_DECISIONS = RECORDED
 RECOMMENDED_PATH = MINIMAL_CANONICAL_RESOURCE_STATE_CONTRACT
 RECOMMENDED_CONCLUSION = PERSISTED_RESOURCE_STATE_MODEL_REQUIRED
 SCHEMA_CHANGE_REQUIRED = YES
 IMPLEMENTATION_AUTHORIZED = NO
+MIGRATION = NOT_AUTHORIZED
+R2 = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 QA_MUTATIONS = 0
