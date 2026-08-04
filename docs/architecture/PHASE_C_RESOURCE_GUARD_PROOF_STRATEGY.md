@@ -2,15 +2,18 @@
 
 **Task:** `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY_OWNER_DECISION_ONLY`  
 **Date:** 2026-08-04  
-**Status:** Audit **COMPLETE** · Owner decision **NOT RECORDED** · Phase C **NOT AUTHORIZED**  
+**Status:** Audit **COMPLETE** · Owner decision **RECORDED** (`DEC-PHASE-C-RESOURCE-01`) · Phase C **NOT AUTHORIZED**  
 **Wave 11 retained:** `PASS` · Phase B backend **VERIFIED**  
-**Worklog:** `docs/worklog/realignment/2026-08-04_phase_c_resource_guard_proof_strategy_audit.md`  
+**Worklog (audit):** `docs/worklog/realignment/2026-08-04_phase_c_resource_guard_proof_strategy_audit.md`  
+**Owner decision (canonical):** `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
+**Worklog (decision):** `docs/worklog/realignment/2026-08-05_keep_phase_c_blocked_owner_decision.md`  
 **Related:** `CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md` · Wave 11 closure worklog · `21_WORKOS_IMPLEMENTATION_ROUTE.md`
 
 ```text
 PHASE_C_RESOURCE_GUARD_STRATEGY_AUDIT = COMPLETE
 RECOMMENDED_STRATEGY = OPTION_D_PHASE_C_REMAINS_BLOCKED
-OWNER_DECISION_RECORDED = NO
+OWNER_DECISION_RECORDED = YES
+DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
 PHASE_C = NOT_AUTHORIZED
 PHASE_C_QA_READINESS = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
@@ -32,7 +35,7 @@ capacity_allocation_state = CLEAR
 
 without environment bypass, hardcoded CLEAR, treating missing systems as CLEAR, implementing full scheduling, inventing tables, mutating the task, reserving a machine, or allocating capacity.
 
-This document records the **audit + recommendation only**. It does **not** authorize Phase C or record the Owner’s final choice.
+This document is the **strategy audit + recommendation**. The Owner’s recorded GO is `DEC-PHASE-C-RESOURCE-01` in `PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`.
 
 ---
 
@@ -232,31 +235,27 @@ CONCLUSION = PHASE_C_REMAINS_BLOCKED_UNTIL_SCHEDULING_DOMAIN_EXISTS
 
 ---
 
-## 8. Owner decisions required (not auto-recorded)
-
-Owner must choose exactly one next decision:
+## 8. Owner decision status
 
 ```text
-OWNER DECISION: KEEP_PHASE_C_BLOCKED
+OWNER DECISION: KEEP_PHASE_C_BLOCKED = GO
+DEC-PHASE-C-RESOURCE-01 = RECORDED
 ```
 
-(Recommended.)
+Canonical record: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`
 
-Alternatives (not recommended now):
+Alternatives considered in this audit and **not** chosen:
 
 ```text
-OWNER DECISION: PHASE_C_USE_READ_ONLY_NEGATIVE_EVIDENCE   # reject — false CLEAR
-OWNER DECISION: BUILD_MINIMAL_CANONICAL_RESOURCE_STATE_CONTRACT
-OWNER DECISION: CREATE_CONTROLLED_QA_RESOURCE_STATE_FIXTURE
+PHASE_C_USE_READ_ONLY_NEGATIVE_EVIDENCE   # rejected — false CLEAR
+CREATE_CONTROLLED_QA_RESOURCE_STATE_FIXTURE  # rejected — second SoT / bypass
 ```
 
-If Owner later chooses `BUILD_MINIMAL_CANONICAL_RESOURCE_STATE_CONTRACT`, that must be a **separate GO** named approximately:
+Future candidate (not authorized by this audit or by `DEC-PHASE-C-RESOURCE-01`):
 
 ```text
-RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY
+RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY = FUTURE_CANDIDATE_NOT_STARTED
 ```
-
-and must define CLEAR producers without inventing QA operational lies. That GO is **not** Phase C execution.
 
 ---
 
@@ -303,4 +302,5 @@ Dead pieces removed: none
 
 ## 12. Stop
 
-Await Owner review. Do not start Phase C. Do not start `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY` until Owner GO.
+Owner recorded `DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED`.  
+Do not start Phase C. Do not start `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY` until a separate Owner GO.

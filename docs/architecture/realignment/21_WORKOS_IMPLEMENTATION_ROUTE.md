@@ -346,10 +346,9 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS** (process runtime + guards closed)  
-Phase A schema/backfill complete; current freeze DB = SQLite (`DEC-DATABASE-01`).  
-Reassign/unassign **backend verified** (ASGI + real uvicorn isolated process).  
-QA live reassignment/unassignment **not** executed. UI **not** implemented. **Phase C = not authorized.**
+**Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
+**Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
+Resource-state program = **future candidate, not started**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -362,8 +361,9 @@ PHASE_C = NOT_AUTHORIZED
 PHASE_C_QA_READINESS = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 PHASE_C_RESOURCE_GUARD_STRATEGY_AUDIT = COMPLETE
-RECOMMENDED_STRATEGY = OPTION_D_PHASE_C_REMAINS_BLOCKED
-OWNER_DECISION_RECORDED = NO
+PHASE_C_RESOURCE_GUARD_OWNER_DECISION = RECORDED
+DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
+RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY = FUTURE_CANDIDATE_NOT_STARTED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
@@ -372,18 +372,18 @@ Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISI
 Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
 Phase B worklog: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
 Wave 11 closure: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_runtime_and_guard_closure.md`  
-Phase C resource-guard strategy audit: `docs/architecture/PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY.md`  
-Strategy worklog: `docs/worklog/realignment/2026-08-04_phase_c_resource_guard_proof_strategy_audit.md`  
+Phase C strategy audit: `docs/architecture/PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY.md`  
+Phase C Owner decision: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
+Decision worklog: `docs/worklog/realignment/2026-08-05_keep_phase_c_blocked_owner_decision.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
-- Expand-only history + Phase B dual-write verified on isolated SQLite (ASGI + process).
-- Resource CLEAR override is TEST_ONLY; production-like startup blocks unsafe CLEAR; QA fail-closed.
-- Strategy audit: no canonical CLEAR source for scheduling / reservation / capacity — Phase C remains blocked.
+- Phase B dual-write verified; resource CLEAR is TEST_ONLY; QA fail-closed.
+- Owner recorded `KEEP_PHASE_C_BLOCKED` — no canonical CLEAR source for scheduling / reservation / capacity.
 
-**Next Owner decision (not Phase C execution):** `KEEP_PHASE_C_BLOCKED`  
-(Future program if Owner later GO: `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY` — not started.)
+**Next (future candidate only — not started):**  
+`RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS_AUDIT`
 
 ---
 
