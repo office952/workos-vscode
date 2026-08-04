@@ -346,15 +346,17 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 7 PASS** — exactly one QA employee assignment verified on order `880750` / plan `23` (LED install → employee_id `7`).  
+**Wave 7 PASS** — exactly one QA employee assignment verified on order `880750` / plan `23` (LED install → employee_id `7`), plus authenticated authorization + UI read-only E2E closure.  
 Wave 8 / reassignment / scheduling **not authorized**.
 
-Worklog:  
-`docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`
+Worklogs:  
+`docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`  
+`docs/worklog/realignment/2026-08-04_finalization_wave7_auth_and_ui_closure_proof_only.md`
 
 **Why:**
 
 - Canonical hardened command persisted one assignment with audit; same-employee retry no-op; different-employee conflict; other 12 tasks unchanged; sessions/scheduling still closed.
+- Closure proof: JWT QA actor + `execution.task_assign` within single-org model; Vite `/api` → `:8000` verified after stale `BACKEND_PORT=8001` restart; UI `/execution/880750` shows 1 assigned / 12 unassigned / HOLD / no start implication; zero additional mutations.
 
 **Do not** start `ASSIGNMENT_OBSERVABILITY_AND_CONTROLLED_REASSIGNMENT_POLICY_AUDIT` without a new Owner GO.
 
