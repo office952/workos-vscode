@@ -7,7 +7,7 @@
 | Status | **`FINALIZATION_WAVE_10 = PASS`** |
 | Starting HEAD | `d393b27f` |
 | Impl commit | `bbb4c466` |
-| Docs commit | (pending tip) |
+| Docs commit | `73ed6592` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Phase B | **NOT_AUTHORIZED** |
