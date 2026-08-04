@@ -346,15 +346,18 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner review of Finalization Wave 5 correction** — status is **`PARTIAL_BLOCKED`**, not PASS.
+**Owner decision on assignment remediation strategy** — Wave 5 remains **`PARTIAL_BLOCKED`**. Wave 6 **not authorized**.
+
+Strategy audit (read-only):  
+`docs/worklog/realignment/2026-08-04_assignment_command_remediation_strategy_audit_only.md`
 
 **Why:**
 
-- Wave 5 delivered a RO assignment-readiness surface and inventoried the PATCH assign command without executing it.
-- Command **safety is NOT_VERIFIED**: legacy `controlled=false` remains **BYPASSABLE**; idempotency/transactionality remain **PARTIAL**.
-- Blocker: `LEGACY_CONTROLLED_FALSE_ASSIGNMENT_PATH_IS_BYPASSABLE`.
+- Command inventory is verified; command **safety is NOT_VERIFIED**.
+- Blockers: `controlled=false` BYPASSABLE; direct `assign_plan_task` paths bypass DEC-015 RM; idempotency/TX/concurrency PARTIAL.
+- Recommended future packet: **minimal safe hardening** (Option 1) after DEC-ASSIGN-01…08 — not implementation in this step.
 
-**Do not** start Wave 6 or execute assignment until Owner decides remediation of the bypass and concurrency/idempotency strategy.
+**Do not** execute assignment, remove legacy paths, change schema, or start Wave 6 without Owner GO.
 
 ---
 
