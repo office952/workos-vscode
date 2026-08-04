@@ -204,13 +204,13 @@ AUTHORIZATION_SCOPE = permission + order + execution plan + operational task + e
 
 | Piece | Class |
 | ----- | ----- |
-| Public `controlled=false` request option | ACTIVE_LEGACY / BYPASSABLE → target **FORBIDDEN** |
-| Direct-service `assign_plan_task` without DEC-015 RM | DEVIATED / BYPASSABLE |
-| Legacy assignment tests using `controlled=false` | ACTIVE_LEGACY (test) |
-| Ops-Graph / Operator assign UI callers | ACTIVE_LEGACY / DEVIATED UI |
-| Mobile claim path | DEVIATED / FROZEN |
-| Mobile start_from_available path | DEVIATED / FROZEN |
-| Controlled HTTP path (`controlled=true`) | ACTIVE_CANONICAL (code) / policy CLOSED until hardening GO |
+| Public `controlled=false` request option | `ACTIVE_LEGACY` + `BYPASSABLE` (target: FORBIDDEN) |
+| Direct-service `assign_plan_task` without DEC-015 RM | `ACTIVE_LEGACY` + `BYPASSABLE` |
+| Legacy assignment tests using `controlled=false` | `ACTIVE_LEGACY` |
+| Ops-Graph / Operator assign UI callers (`controlled:true`) | `ACTIVE_CANONICAL` (UI default); public bypass still `BYPASSABLE` at API |
+| Mobile claim path | `ACTIVE_LEGACY` + `BYPASSABLE` (frozen; not activated) |
+| Mobile start_from_available path | `ACTIVE_LEGACY` + `BYPASSABLE` (frozen; not activated) |
+| Controlled HTTP path (`controlled=true`) | `ACTIVE_CANONICAL` (policy CLOSED until hardening GO) |
 
 ```text
 Dead pieces touched: NONE

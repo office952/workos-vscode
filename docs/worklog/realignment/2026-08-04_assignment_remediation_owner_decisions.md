@@ -12,6 +12,8 @@
 | Worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Starting HEAD | `49643353` |
+| Decision record commit | `1f0d3c1f` |
+| Taxonomy align commit | (follow-up on same docs) |
 | Ancestry | `1e8d3344`, `6214ee7b`, `8386e3a6`, `9f236010`, `fa574d60`, `49643353` ⊂ HEAD |
 | Preexisting tracked changes | none |
 | Untracked | `docs/qa/**` leftovers — untouched |
