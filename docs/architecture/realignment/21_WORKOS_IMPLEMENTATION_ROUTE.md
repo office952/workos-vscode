@@ -346,19 +346,20 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 9 PARTIAL_BLOCKED** — reassignment implementation readiness audited; **schema change required** for transition history.  
-Wave 8 PASS retained. One QA assignment retained. Reassignment/unassignment **not implemented**. Wave 10 **not authorized**.
+**Schema Owner decisions RECORDED** — DEC-REASSIGN-SCHEMA-01…12 fix the append-only transition table contract.  
+Wave 9 PARTIAL_BLOCKED retained. Wave 8 PASS retained. One QA assignment retained.  
+Schema **not** implemented. Migration **not** executed. Reassignment/unassignment **not** implemented. Phase A / Wave 10 **not authorized**.
 
-Canonical readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
-Owner decisions: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`  
-Worklog: `docs/worklog/realignment/2026-08-04_finalization_wave9_reassignment_implementation_readiness_audit.md`
+Canonical schema decisions: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
+Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
+Worklog: `docs/worklog/realignment/2026-08-04_reassignment_transition_persistence_schema_owner_decisions.md`
 
 **Why:**
 
-- Embedded `operational_tasks[]` holds current assignee only — cannot safely retain multi-transition history (DEC-REASSIGN-03).
-- Recommended persistence: separate transition table; Owner must authorize schema before any reassignment build.
+- Embedded current assignee remains operational truth; separate `execution_task_assignment_transitions` holds append-only history.
+- Expand-only Phase A (table + backfill + verify) requires a **separate** Owner GO.
 
-**Next Owner decision:** `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA` — do not start implementation without it.
+**Next candidate (not started):** `REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION`
 
 ---
 

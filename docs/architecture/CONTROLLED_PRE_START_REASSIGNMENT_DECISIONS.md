@@ -18,6 +18,8 @@ UNASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
 SCHEMA_CHANGE_AUTHORIZED = FALSE
 MIGRATION_AUTHORIZED = FALSE
 WAVE_9 = PARTIAL_BLOCKED_READINESS_AUDIT
+SCHEMA_OWNER_DECISIONS = RECORDED
+PHASE_A = NOT_AUTHORIZED
 WAVE_10 = NOT_AUTHORIZED
 ```
 
@@ -248,9 +250,11 @@ Dead pieces removed: NONE
 
 Wave 9 readiness audit completed — see `CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`.
 
+Schema Owner decisions **recorded** — see `REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md` (DEC-REASSIGN-SCHEMA-01…12).
+
 ```text
-OWNER DECISION REQUIRED:
-REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA
+FUTURE CANDIDATE:
+REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION
 ```
 
-Do **not** implement reassignment or unassignment until that schema Owner GO is recorded.
+Phase A (schema + backfill) is **not** authorized. Do **not** implement migration, table, reassignment, or unassignment without a separate Owner GO.

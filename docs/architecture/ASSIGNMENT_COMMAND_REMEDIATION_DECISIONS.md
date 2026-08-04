@@ -32,6 +32,8 @@ WAVE_7 = COMPLETED_PASS
 WAVE_8 = COMPLETED_PASS
 OWNER_REASSIGNMENT_DECISIONS = RECORDED
 WAVE_9 = PARTIAL_BLOCKED_READINESS_AUDIT
+SCHEMA_OWNER_DECISIONS = RECORDED
+PHASE_A = NOT_AUTHORIZED
 WAVE_10 = NOT_AUTHORIZED
 ```
 
@@ -232,8 +234,8 @@ Dead pieces removed: NONE
 ## Future candidate (not started)
 
 ```text
-OWNER DECISION:
-REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA
+FUTURE CANDIDATE:
+REASSIGNMENT_TRANSITION_SCHEMA_AND_BACKFILL_IMPLEMENTATION
 ```
 
-Wave 9 readiness audit concluded **schema change required** for safe transition history. Do not implement reassignment/unassignment until that Owner schema GO is recorded.
+Schema Owner decisions are **recorded** (`REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`). Phase A (table + backfill) is **not** authorized. Do not implement reassignment/unassignment until Phase A/B Owner GOs complete.
