@@ -25,7 +25,8 @@ PHASE_B = NOT_AUTHORIZED
 WAVE_11 = NOT_AUTHORIZED
 ```
 
-Phase A proof: `docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md`  
+Phase A proof: `docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md`
+Evidence closure: worklog "Evidence closure addendum"; programmatic s63.upgrade() + post-body stamp; UUID5=backfill identity only; Wave10 tip before closure 9eef4414.
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 ---

@@ -1,4 +1,4 @@
-# Finalization Wave 10 / Phase A ΓÇö Transition Schema and Backfill
+# Finalization Wave 10 / Phase A — Transition Schema and Backfill
 
 | Field | Value |
 | ----- | ----- |
@@ -40,7 +40,7 @@ Unauthorized / not done: reassignment/unassignment routes or services, assignmen
 
 ## Owner decisions readback
 
-`DEC-REASSIGN-SCHEMA-01ΓÇª12` applied: separate append-only table; embedded current state remains canonical; expand-only migration; synthetic `ASSIGN` backfill; UUID5 transition identity; fail-closed consistency.
+`DEC-REASSIGN-SCHEMA-01…12` applied: separate append-only table; embedded current state remains canonical; expand-only migration; synthetic `ASSIGN` backfill; UUID5 transition identity; fail-closed consistency.
 
 ## Repo / preflight
 
@@ -49,9 +49,9 @@ Unauthorized / not done: reassignment/unassignment routes or services, assignmen
 | Root | `C:/w/psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Start HEAD | `d393b27f` |
-| Ancestry | Wave 6ΓÇô9 ┬╖ `3d0d40e6` ┬╖ `d393b27f` OK |
+| Ancestry | Wave 6–9 · `3d0d40e6` · `d393b27f` OK |
 | Tracked dirty at start | none |
-| Untracked leftovers | preexisting `docs/qa/**`, `_qa_backups` ΓÇö not staged |
+| Untracked leftovers | preexisting `docs/qa/**`, `_qa_backups` — not staged |
 | Migration framework | Alembic (`backend/alembic`) |
 | Heads before | single `s62_material_actuals_closed_job_v1` |
 | Heads after | single `s63_execution_task_assignment_transitions` |
@@ -78,7 +78,7 @@ Table: `execution_task_assignment_transitions`
 | ------ | ---- | ---- | ----- |
 | id | INTEGER PK AI | NO | Canonical order |
 | transition_id | VARCHAR(36) UNIQUE | NO | UUID5 for backfill |
-| execution_plan_id | INTEGER FK ΓåÆ execution_plan.id RESTRICT | NO | |
+| execution_plan_id | INTEGER FK → execution_plan.id RESTRICT | NO | |
 | order_id | INTEGER | NO | Denormalized |
 | task_key | VARCHAR(512) | NO | Embedded task id |
 | transition_type | VARCHAR(16) | NO | CHECK ASSIGN/REASSIGN/UNASSIGN |
@@ -111,7 +111,7 @@ UUID5(
 )
 ```
 
-Re-run ΓåÆ same ID ΓåÆ skip insert.
+Re-run → same ID → skip insert.
 
 ## Backfill inventory (pre-migration)
 
@@ -125,18 +125,18 @@ Re-run ΓåÆ same ID ΓåÆ skip insert.
 
 Known documented fixtures (not unexpected unknowns):
 
-1. 880750/23 Wave 7 LEDΓåÆ7 `canonical_controlled_assign_v1`
+1. 880750/23 Wave 7 LED→7 `canonical_controlled_assign_v1`
 2. 973019/21 golden-pilot `controlled_ops_graph_assign_v1` (Wave 3 noted)
-3. 23099/4 ├ù3 and 23150/5 ├ù2 historical Mobile/operator lab assignments
+3. 23099/4 ×3 and 23150/5 ×2 historical Mobile/operator lab assignments
 
 ## Backfill execution
 
 | Metric | Value |
 | ------ | ----- |
 | Rows inserted | 7 |
-| Idempotent re-run | 7 ΓåÆ 7 |
+| Idempotent re-run | 7 → 7 |
 | Wave 7 row | ASSIGN, previous=null, new=7, actor preserved, source=LEGACY_EMBEDDED_BACKFILL, reason=INITIAL_ASSIGNMENT_BACKFILL |
-| tasks_json SHA | unchanged `00ee947cΓÇªc1f2` |
+| tasks_json SHA | unchanged `00ee947c…c1f2` |
 | plan updated_at | unchanged `2026-08-04 19:16:57.407320` |
 
 ## Consistency
@@ -193,7 +193,7 @@ SESSION_MUTATIONS = 0
 | order/plan | 880750 / 23 | same |
 | ops / assigned / unassigned | 13 / 1 / 12 | same |
 | LED employee | 7 | 7 |
-| tasks_json SHA | `00ee947cΓÇªc1f2` | same |
+| tasks_json SHA | `00ee947c…c1f2` | same |
 | updated_at | `2026-08-04 19:16:57.407320` | same |
 | sessions / machines | 0 | 0 |
 | scheduling / capacity | HOLD / NOT_STARTED | same |
@@ -225,9 +225,9 @@ Classified unchanged; **removed: NONE**.
 ## Remaining risks
 
 - QA DB had create_all empty table before stamp (documented).
-- Production URL not in repo ΓÇö dialect support is code-level only.
-- Dual index naming (ORM + migration) on QA ΓÇö harmless.
-- Phase B dual-write not present ΓÇö history can drift if assign path mutates without transitions until Phase B.
+- Production URL not in repo — dialect support is code-level only.
+- Dual index naming (ORM + migration) on QA — harmless.
+- Phase B dual-write not present — history can drift if assign path mutates without transitions until Phase B.
 
 ## Scores
 
@@ -252,7 +252,7 @@ Do not start Phase B without Owner GO.
 ## Evidence closure addendum (2026-08-04, read-only)
 
 Task: FINALIZATION_WAVE_10_EVIDENCE_CLOSURE - no new migration, backfill, or Phase B code.
-Wave 10 tip before evidence closure: 9eef4414. Evidence-closure docs commits follow that tip.
+Wave 10 tip before evidence closure: 9eef4414. Subsequent commits are docs-only evidence-closure corrections.
 New DB mutations this addendum: **0**.
 
 ### Commit chain (Wave 10 only)
@@ -273,7 +273,7 @@ bbb4c466  parent=d393b27f  feat: model + s63 migration + services + tests
 | 73ed6592 | bb4c466 | Proof worklog + status pointers | docs | YES |
 | 9eef4414 | 73ed6592 | Tip HEAD note (1-line Docs commit field) | docs | YES |
 
-**Why tip was 9eef4414:** same pattern as prior waves - after content docs commit 73ed6592, a tip commit records that SHA in the worklog table. It does **not** add production code. Content commits remain bb4c466 + 73ed6592. Evidence-closure docs commits are subsequent tip updates only.
+**Why tip was 9eef4414:** same pattern as prior waves - after content docs commit 73ed6592, a tip commit records that SHA in the worklog table. It does **not** add production code. Content commits remain bb4c466 + 73ed6592.
 
 ### Exact QA migration chronology (evidence-backed)
 
