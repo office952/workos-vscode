@@ -6,7 +6,8 @@
 | Task | `CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISION_ONLY` |
 | Status | **`CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISIONS = RECORDED`** |
 | Starting HEAD | `dbe76f28` |
-| Final HEAD | `eeb827a9` |
+| Content commit | `eeb827a9` |
+| Final HEAD | `72b32f48` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Production / FE / tests / DB changed | **NO** |
@@ -87,9 +88,10 @@ Before = after:
 | updated_at | `2026-08-04 19:16:57.407320` |
 | LED employee | 7 |
 | assigned / unassigned | 1 / 12 |
-| DB SHA | `b67c76f0fe87cb64e2950d680e38da2fe32cb9229bf4015904ddd24cc32f8b14` |
 | sessions / machines | 0 |
 | scheduling | HOLD |
+
+Assignment / plan fields above are unchanged vs preflight. Full `dev.db` file SHA changed (`b67c76f0…` → `0f6a0332…`) with identical size while this docs-only task made **no** assignment API calls — attributed to incidental live local SQLite activity (detached uvicorn on `:8000`), not to reassignment/unassignment. Protected assignment truth remains the Wave 7 LED→7 record.
 
 ```text
 ASSIGNMENT_REQUESTS = 0
