@@ -6,7 +6,7 @@
 | Task | `FINALIZATION_WAVE_9 = CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT` |
 | Status | **`FINALIZATION_WAVE_9 = PARTIAL_BLOCKED`** |
 | Starting HEAD | `dc8726ec` |
-| Content commit | (this series) |
+| Content commit | `dcb3fab9` |
 | Repo / worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Production code | **unchanged** |
