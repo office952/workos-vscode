@@ -24,6 +24,8 @@ UNASSIGNMENT_IMPLEMENTED = YES_BACKEND
 PHASE_A = VERIFIED
 PHASE_B = BACKEND_VERIFIED
 PHASE_C = NOT_AUTHORIZED
+PHASE_C_QA_READINESS = BLOCKED
+PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 QA_TRANSITION_PROOF = NOT_EXECUTED
 UI_IMPLEMENTED = NO
 ```
@@ -404,19 +406,19 @@ Any session/execution history for the task → reassign and unassign **blocked**
 
 ---
 
-## Implementation phases (all NOT AUTHORIZED)
+## Implementation phases
 
 | Phase | Scope | Auth |
 | ----- | ----- | ---- |
 | **A** | Table + constraints + indexes + backfill + consistency verification; no command behavior change | **`VERIFIED` (Wave 10 PASS)** |
-| **B** | Permissions, routes, schemas, CAS, DEC-015, guards, atomic dual-write, observability | `NOT_AUTHORIZED` |
+| **B** | Permissions, routes, schemas, CAS, DEC-015, guards, atomic dual-write, observability | **`VERIFIED` (Wave 11 PASS)** — isolated SQLite only |
 | **C** | Controlled QA: **one** reassignment **or** one unassignment; Owner fixture; exact mutation budget | `NOT_AUTHORIZED` |
 | **D** | UI after backend proof | `NOT_AUTHORIZED` |
 | **E** | Post-start operational transfer (sessions/scheduling integrated) | `NOT_AUTHORIZED` |
 
 ```text
 FUTURE CANDIDATE (not started):
-PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION
+PHASE_C_CONTROLLED_SINGLE_QA_PRE_START_REASSIGNMENT_PROOF
 ```
 
 ---

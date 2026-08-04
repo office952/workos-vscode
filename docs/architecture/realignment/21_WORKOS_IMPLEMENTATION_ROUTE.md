@@ -346,9 +346,9 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
+**Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS** (process runtime + guards closed)  
 Phase A schema/backfill complete; current freeze DB = SQLite (`DEC-DATABASE-01`).  
-Reassign/unassign **backend routes implemented** (isolated SQLite verified).  
+Reassign/unassign **backend verified** (ASGI + real uvicorn isolated process).  
 QA live reassignment/unassignment **not** executed. UI **not** implemented. **Phase C = not authorized.**
 
 ```text
@@ -356,7 +356,11 @@ FINALIZATION_WAVE_10 = PASS
 FINALIZATION_WAVE_11 = PASS
 CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
 PHASE_B_BACKEND = VERIFIED
+ISOLATED_PROCESS_RUNTIME_PROOF = VERIFIED
+RESOURCE_GUARD_OVERRIDE = TEST_ONLY_VERIFIED
 PHASE_C = NOT_AUTHORIZED
+PHASE_C_QA_READINESS = BLOCKED
+PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
@@ -364,15 +368,16 @@ Canonical schema: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_
 Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`  
 Readiness: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS.md`  
 Phase B worklog: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
+Wave 11 closure: `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_runtime_and_guard_closure.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
-- Expand-only history + Phase B dual-write commands verified on isolated SQLite.
-- Resource guards fail-closed (`NOT_CONFIGURED`) outside isolated CLEAR override — QA unchanged.
-- QA single-transition proof still requires Phase C Owner GO.
+- Expand-only history + Phase B dual-write verified on isolated SQLite (ASGI + process).
+- Resource CLEAR override is TEST_ONLY; production-like startup blocks unsafe CLEAR; QA fail-closed.
+- Phase C blocked until Owner decides `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY`.
 
-**Future candidate (not started; still unauthorized):** `PHASE_C_CONTROLLED_SINGLE_QA_PRE_START_REASSIGNMENT_PROOF`
+**Next Owner decision (not Phase C execution):** `PHASE_C_RESOURCE_GUARD_PROOF_STRATEGY`
 
 ---
 

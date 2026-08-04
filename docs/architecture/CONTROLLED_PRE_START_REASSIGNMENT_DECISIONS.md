@@ -1,11 +1,12 @@
 # Controlled Pre-Start Reassignment and Unassignment Decisions
 
-**Status:** Owner decisions **RECORDED** (2026-08-04) · Phase B backend **IMPLEMENTED** (Wave 11) · QA execution **NOT AUTHORIZED** · UI **NOT AUTHORIZED**  
+**Status:** Owner decisions **RECORDED** (2026-08-04) · Phase B backend **VERIFIED** (Wave 11 closure) · Phase C QA readiness **BLOCKED** · UI **NOT AUTHORIZED**  
 **Task:** `CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISION_ONLY`  
 **Related audit:** `ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md` (Wave 8)  
 **Related hardening:** `ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md` (DEC-ASSIGN-01…08)  
 **Worklog:** `docs/worklog/realignment/2026-08-04_controlled_pre_start_reassignment_owner_decisions.md`  
-**Phase B worklog:** `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`
+**Phase B worklog:** `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_controlled_pre_start_reassignment_backend.md`  
+**Wave 11 closure:** `docs/worklog/realignment/2026-08-04_finalization_wave11_phase_b_runtime_and_guard_closure.md`
 
 ```text
 CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISIONS = RECORDED
@@ -22,6 +23,8 @@ WAVE_11 = PASS_PHASE_B_BACKEND
 PHASE_A = VERIFIED
 PHASE_B = BACKEND_VERIFIED
 PHASE_C = NOT_AUTHORIZED
+PHASE_C_QA_READINESS = BLOCKED
+PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 ```
 
 Canonical QA fixture (unchanged by this decision task):
