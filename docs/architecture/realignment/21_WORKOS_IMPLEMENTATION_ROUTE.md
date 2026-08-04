@@ -346,26 +346,32 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 10 technical closure** — Phase A schema + SQLite canonical Alembic chain + Alembic ownership verified.  
-Status remains `FINALIZATION_WAVE_10 = PARTIAL_BLOCKED` until Owner records the database engine decision.  
+**Wave 10 = PASS** — Phase A schema/backfill complete; current freeze DB = SQLite (`DEC-DATABASE-01`).  
 Wave 8 PASS retained. Wave 9 schema decision retained. Embedded LED→7 unchanged.  
-Reassignment/unassignment **not** implemented. Phase B **not authorized**.
+Reassignment/unassignment **not** implemented. **Phase B = not authorized.**
+
+```text
+FINALIZATION_WAVE_10 = PASS
+CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
+CURRENT_DEPLOYMENT_DATABASE_MIGRATION_RUNTIME = VERIFIED_SQLITE
+PHASE_B = NOT_AUTHORIZED
+```
 
 Canonical schema: `docs/architecture/REASSIGNMENT_TRANSITION_PERSISTENCE_SCHEMA_DECISIONS.md`  
-Database engine boundary (Owner decision pending): `docs/architecture/DATABASE_ENGINE_AND_MIGRATION_VALIDATION_BOUNDARY.md`  
+Owner DB decision: `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`  
+Database engine boundary: `docs/architecture/DATABASE_ENGINE_AND_MIGRATION_VALIDATION_BOUNDARY.md`  
 Worklogs:  
 `docs/worklog/realignment/2026-08-04_finalization_wave10_reassignment_transition_schema_and_backfill.md` ·  
 `docs/worklog/realignment/2026-08-04_finalization_wave10_canonical_migration_closure.md` ·  
-`docs/worklog/realignment/2026-08-04_database_engine_owner_decision_readiness.md`  
+`docs/worklog/realignment/2026-08-04_database_engine_owner_decision_readiness.md` ·  
+`docs/worklog/realignment/2026-08-04_sqlite_current_freeze_owner_decision_and_wave10_closure.md`  
 Migration: `backend/alembic/versions/s63_execution_task_assignment_transitions.py`
 
 **Why:**
 
 - Expand-only history table + deterministic backfill proven; current assignee remains in `tasks_json`.
-- Canonical SQLite migration ownership proven; production/current-deployment engine still needs Owner GO.
-- Dual-write reassignment commands still require Phase B Owner GO (separate; not authorized by engine decision alone).
-
-**Immediate Owner decision (not Phase B):** confirm SQLite freeze **or** PostgreSQL target **or** leave architecture undecided — see database engine boundary doc.
+- Owner recorded SQLite as canonical for current development/test/QA freeze; production rollout still NOT_AUTHORIZED.
+- Dual-write reassignment commands still require a **separate** Phase B Owner GO.
 
 **Future candidate (not started; still unauthorized):** `PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION`
 

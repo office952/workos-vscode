@@ -1,9 +1,22 @@
 # Database Engine and Migration Validation Boundary
 
-**Status:** DECISION READINESS — Owner confirmation required  
+**Status:** OWNER DECISION RECORDED  
 **Date:** 2026-08-04  
-**Task:** `DATABASE_ENGINE_OWNER_DECISION_ONLY`  
-**Owner decision recorded:** `NO`
+**Owner decision status:** `RECORDED`  
+**Decision:** `SQLITE_CURRENT_FREEZE`  
+**Decision ID:** `DEC-DATABASE-01`  
+**Canonical decision document:** [`SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`](./SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md)
+
+```text
+Scope = current WorkOS development/test/QA freeze
+Permanent production decision = NO
+PostgreSQL support = SUPPORTED_NOT_ACTIVE
+PostgreSQL runtime proof required now = NO
+Future PostgreSQL activation gate = separate Owner program
+PHASE_B = NOT_AUTHORIZED
+```
+
+This document retains the evidence matrix. The Owner GO text lives in the decision document above (single decision source — do not duplicate conflicting GO text elsewhere).
 
 ---
 
@@ -15,79 +28,73 @@ This document does **not** authorize Phase B, reassignment, unassignment, schema
 
 ---
 
-## 2. Recommended decision (evidence-based; not Owner GO)
+## 2. Recorded Owner decision (not a recommendation)
 
 ```text
-RECOMMENDED_DATABASE_ENGINE_DECISION =
+OWNER DECISION: SQLITE_CURRENT_FREEZE = GO
+
+DEC-DATABASE-01 =
 SQLITE_IS_CANONICAL_FOR_CURRENT_PRODUCT_FREEZE
 
-OWNER_DECISION_RECORDED = NO
+DATABASE_ENGINE_OWNER_DECISION = RECORDED
+CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
+CURRENT_ACTIVE_ENVIRONMENTS = development + tests + QA
+PRODUCTION_ROLLOUT = NOT_AUTHORIZED
+POSTGRESQL = SUPPORTED_NOT_ACTIVE
+MULTI_NODE_DATABASE_WRITES = NOT_PROVEN
+FUTURE_DATABASE_MIGRATION = SEPARATE_OWNER_PROGRAM
 ```
 
-### Why not PostgreSQL as confirmed target
+Do **not** use `PRODUCTION_DATABASE = SQLITE`.
+
+### Evidence that supported the GO (historical readiness)
 
 - No Docker Compose / Dockerfile PostgreSQL service in this repo.
 - No production/staging `DATABASE_URL` template with a real host.
-- CI (`.github/workflows/ci.yml`) does not provision or test PostgreSQL.
-- `asyncpg` in `requirements.txt` and `DatabaseManager` URL normalization prove **code capability only**.
-- `ENVIRONMENT_NOTES.md` row “Production → PostgreSQL / managed DB (typical)” is **aspirational export guidance**, not an authoritative deployment manifest for this freeze.
-
-### Why not “not yet decided”
-
-Active, scripted, documented, and QA-used environments all resolve to SQLite file URLs. Absence of a future multi-node production architecture is not the same as absence of a current deployment engine.
+- CI does not provision or test PostgreSQL.
+- `asyncpg` / `DatabaseManager` PG rewrite = **code capability only**.
+- `ENVIRONMENT_NOTES.md` “typical PostgreSQL” = aspirational, not a deploy manifest.
+- All active scripted environments resolve to SQLite file URLs.
 
 ---
 
-## 3. Canonical statements (pending Owner confirm of Option A)
-
-If Owner confirms SQLite freeze:
+## 3. Canonical statements (in force)
 
 ```text
-DATABASE_ENGINE_DECISION =
-SQLITE_IS_CANONICAL_FOR_CURRENT_PRODUCT_FREEZE
-
-CURRENT_PRODUCT_DATABASE = SQLite
+CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
 DATABASE_SCOPE = current product freeze only
-CURRENT_DEPLOYMENT_DATABASE =
-SQLITE_FOR_CURRENT_PRODUCT_FREEZE
-
-CURRENT_DEPLOYMENT_DATABASE_MIGRATION_RUNTIME =
-VERIFIED_SQLITE
+CURRENT_DEPLOYMENT_DATABASE_MIGRATION_RUNTIME = VERIFIED_SQLITE
+CURRENT_ACTIVE_DATABASE_RUNTIME = VERIFIED_SQLITE
 
 MIGRATION_OWNER = Alembic
-CREATE_ALL_PRODUCTION_SCHEMA_OWNERSHIP = forbidden
-  (for ALEMBIC_OWNED_TABLES; see core/schema_ownership.py)
+CREATE_ALL_SCHEMA_BYPASS = FORBIDDEN_FOR_OWNED_TABLES
+  (ALEMBIC_OWNED_TABLES; see core/schema_ownership.py)
 
-MULTI_NODE_DATABASE_WRITES = NOT_SUPPORTED_OR_NOT_PROVEN
+SQLITE_SCOPE = CURRENT_FREEZE_ONLY
+SINGLE_WRITER_LIMIT = ACKNOWLEDGED
+MULTI_PROCESS_WRITE_SAFETY = LIMITED_AND_DOCUMENTED
+MULTI_NODE_WRITE_SAFETY = NOT_PROVEN
 SELECT_FOR_UPDATE_SEMANTICS = LIMITED_BY_SQLITE
-PROCESS_CONCURRENCY = single-writer SQLite file; app uses async SQLAlchemy;
-  multi-process writers NOT_PROVEN for this freeze
-BACKUP_POLICY = file-level copy of backend/dev.db (and forensic/backup copies);
-  proven in BACKUP-BASELINE worklogs; not HA replication
-RECOVERY_POLICY = restore SQLite file to isolated path + start stack with
-  DATABASE_URL pointing at restored file
+DATABASE_FILE_BACKUP_REQUIRED = YES
+ALEMBIC_MIGRATION_REQUIRED = YES
+BACKUP_POLICY = file-level copy of backend/dev.db (BACKUP-BASELINE); not HA
+RECOVERY_POLICY = restore SQLite file + DATABASE_URL to restored path
 DATABASE_FILE_LOCATION = configuration-driven via DATABASE_URL
   (scripts default to <backend>/dev.db)
 
-POSTGRESQL_SUPPORT_IN_CODE = SUPPORTED_NOT_ACTIVE
-FUTURE_POSTGRESQL_MIGRATION = requires separate Owner program + runtime proof
+POSTGRESQL_DRIVER_SUPPORT = PRESENT
+POSTGRESQL_ACTIVE_DEPLOYMENT = NO
+POSTGRESQL_CANONICAL_RUNTIME = NO
+POSTGRESQL_MIGRATION_RUNTIME_PROOF = DEFERRED
+POSTGRESQL_MIGRATION_RUNTIME = NOT_REQUIRED_FOR_CURRENT_FREEZE
 ```
 
-If Owner instead confirms PostgreSQL target:
+QA legacy duplicate indexes:
 
 ```text
-FINALIZATION_WAVE_10 = PARTIAL_BLOCKED
-BLOCKER = POSTGRESQL_MIGRATION_RUNTIME_NOT_VERIFIED
-Required next task: WAVE_10_POSTGRESQL_MIGRATION_RUNTIME_PROOF
-PHASE_B = NOT_AUTHORIZED
-```
-
-If Owner leaves architecture undecided:
-
-```text
-FINALIZATION_WAVE_10 = PARTIAL_BLOCKED
-BLOCKER = DATABASE_DEPLOYMENT_ARCHITECTURE_NOT_DECIDED
-PHASE_B = NOT_AUTHORIZED
+ACTIVE_LEGACY
+NON_BLOCKING_FOR_CURRENT_FREEZE
+FUTURE_NORMALIZATION_REQUIRES_OWNER_GO
 ```
 
 ---
@@ -96,92 +103,79 @@ PHASE_B = NOT_AUTHORIZED
 
 | Environment | Engine configured | Source | Classification | Runtime proof | Canonical for freeze? |
 | ----------- | ----------------- | ------ | -------------- | ------------- | --------------------- |
-| Development | SQLite `sqlite+aiosqlite://…/dev.db` | `scripts/dev.ps1`, `start-dev.ps1`, `dev-backend.ps1`, `dev-detached.ps1`, `start_app.sh`, `.env.example`, `backend/.env.example`, `INSTALL_LOCAL.md`, `ENVIRONMENT_NOTES.md` | `CONFIGURED` + `USED_AT_RUNTIME` | Live Owner stack / detached scripts use SQLite file | **yes** (candidate) |
-| Tests | SQLite (isolated tmp or fixture DB); CI backend job sets `APP_ENV=test` without PG service | `scripts/test-backend.ps1`, `_db_fixture.py`, Wave 10 isolated tests, `.github/workflows/ci.yml` | `CONFIGURED` (local helpers) / CI tests often self-scoped | Wave 10 canonical migration tests on isolated SQLite | **yes** for migration proof of current engine |
-| QA | SQLite `backend/dev.db` | Same launch scripts; Wave audits | `CONFIGURED` + `USED_AT_RUNTIME` | Protected fixture 880750 / plan 23 / 7 transitions | **yes** (candidate) |
-| Staging | Label `staging` in `backend/release.json`; **no DB URL** | `release.json` environment field only | `DOCUMENTED_ONLY` (label) / DB engine `UNKNOWN` | No in-repo staging DB proof | **no** |
-| Production | No production `DATABASE_URL`; freeze = laboratory/reference | `docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md`; AGENTS.md freeze note | Production rollout `NOT_AUTHORIZED` / engine `UNKNOWN` as cloud deploy; **not** proven PostgreSQL | None in-repo | **n/a — no production rollout** |
+| Development | SQLite `sqlite+aiosqlite://…/dev.db` | launch scripts, `.env.example`, `INSTALL_LOCAL.md`, `ENVIRONMENT_NOTES.md` | `CONFIGURED` + `USED_AT_RUNTIME` | Live Owner stack | **yes** |
+| Tests | SQLite isolated / helpers | `test-backend.ps1`, fixtures, Wave 10 tests, CI | `CONFIGURED` + `USED_AT_RUNTIME` | Isolated Alembic proofs | **yes** |
+| QA | SQLite `backend/dev.db` | Same launch scripts; Wave audits | `CONFIGURED` + `USED_AT_RUNTIME` | 880750 / plan 23 / 7 transitions | **yes** |
+| Staging | Label only in `release.json` | no DB URL | `DOCUMENTED_ONLY` / DB `UNKNOWN` | none | **no** |
+| Production | no rollout | freeze = laboratory/reference | `NOT_AUTHORIZED` | none | **n/a** |
 
 ### Code support (not deployment truth)
 
 | Capability | Classification |
 | ---------- | -------------- |
-| `sqlite` / `aiosqlite` | `ACTIVE_CANONICAL` for current freeze (pending Owner confirm) |
-| `postgresql+asyncpg` URL rewrite in `DatabaseManager` | `SUPPORTED_NOT_ACTIVE` |
+| `sqlite` / `aiosqlite` | `ACTIVE_CANONICAL` for current freeze |
+| `postgresql+asyncpg` URL rewrite | `SUPPORTED_NOT_ACTIVE` |
 | `asyncpg` dependency | `SUPPORTED_NOT_ACTIVE` |
-| Neon `channel_binding` sanitize comment | `SUPPORTED_NOT_ACTIVE` (provider hint only) |
-| Lambda NullPool branch | `SUPPORTED_NOT_ACTIVE` (runtime path exists; no deploy manifest) |
-| Alembic `render_as_batch=True` | Compatible with SQLite; also used for portable migrations |
+| Neon `channel_binding` sanitize | `SUPPORTED_NOT_ACTIVE` |
+| Lambda NullPool branch | `SUPPORTED_NOT_ACTIVE` |
+| Alembic `render_as_batch=True` | portable migrations; SQLite verified |
 
 ---
 
-## 5. Answers to required questions
-
-| # | Question | Answer |
-| - | -------- | ------ |
-| 1 | Real production deployment in this repo? | **No** authoritative deploy pipeline with DB. Freeze declares laboratory/reference. Production rollout **NOT_AUTHORIZED**. |
-| 2 | Server configuration source? | **UNKNOWN** / absent for cloud servers. Local scripts are the active config source. |
-| 3 | Production `DATABASE_URL` documented? | **No** real URL. Examples are SQLite. Placeholder PG strings appear only in secret-scan tests. |
-| 4 | Backup/restore policy for SQLite? | **Yes (file-level)** — BACKUP-BASELINE worklogs; copy `dev.db`; integrity via SQLite APIs. Not HA. |
-| 5 | PostgreSQL service/configuration? | **No** in-repo service. |
-| 6 | Is `asyncpg` used at runtime or only available? | **Available / supported in code.** Active Owner/QA/dev paths use SQLite. No evidence of live PG runtime in this freeze. |
-| 7 | CI tests PostgreSQL? | **No.** |
-| 8 | Migration runbook for PostgreSQL? | **No** dedicated PG runbook. Alembic is dialect-portable in principle; runtime PG proof absent. |
-| 9 | WorkOS local/development/QA only now? | **Yes** for active use — local stack + QA SQLite. |
-| 10 | Can freeze declare SQLite official without contradicting authoritative source? | **Yes.** Only non-authoritative “typical production = PostgreSQL” language exists; it does not configure a PG target. |
-
----
-
-## 6. Wave 10 implication
-
-Current (until Owner records decision):
-
-```text
-FINALIZATION_WAVE_10 = PARTIAL_BLOCKED
-BLOCKER = PRODUCTION_DATABASE_ENGINE_NOT_IDENTIFIED_IN_REPO
-  (more precisely: CURRENT_DEPLOYMENT_DATABASE not Owner-recorded)
-PHASE_B = NOT_AUTHORIZED
-```
-
-After Owner confirms Option A (SQLite freeze):
+## 5. Wave 10 final status (after DEC-DATABASE-01)
 
 ```text
 FINALIZATION_WAVE_10 = PASS
-CURRENT_DEPLOYMENT_DATABASE = SQLITE_FOR_CURRENT_PRODUCT_FREEZE
+PHASE_A_SCHEMA_AND_BACKFILL = VERIFIED
+CURRENT_PRODUCT_FREEZE_DATABASE = SQLITE
+CURRENT_ACTIVE_DATABASE_RUNTIME = VERIFIED_SQLITE
 CURRENT_DEPLOYMENT_DATABASE_MIGRATION_RUNTIME = VERIFIED_SQLITE
+CANONICAL_ALEMBIC_UPGRADE_CHAIN = VERIFIED_SQLITE_ISOLATED
+ALEMBIC_SCHEMA_OWNERSHIP = VERIFIED
+CREATE_ALL_PRODUCTION_BYPASS = CLOSED_FOR_ALEMBIC_OWNED_TABLES
+MIGRATION_ANCESTRY = VERIFIED
+FRESH_DATABASE_MIGRATION = VERIFIED_SQLITE
+PRIOR_REVISION_TO_HEAD = VERIFIED_SQLITE
+BACKFILL_IDEMPOTENCY = VERIFIED
+DOWNGRADE_REUPGRADE = VERIFIED_ISOLATED_SQLITE
+POSTGRESQL = SUPPORTED_NOT_ACTIVE
+POSTGRESQL_MIGRATION_RUNTIME = NOT_REQUIRED_FOR_CURRENT_FREEZE
+MULTI_NODE_CONCURRENCY = NOT_PROVEN
+QA_OPERATIONAL_STATE = UNCHANGED
 PHASE_B = NOT_AUTHORIZED
+WAVE_11 = NOT_AUTHORIZED
 ```
-
-Prefer “current deployment” over “production” unless a production rollout exists.
 
 ---
 
-## 7. Phase B gate
+## 6. Phase B gate
 
 ```text
 PHASE_B = NOT_AUTHORIZED
 ```
 
-Even after Wave 10 PASS under SQLite freeze, Phase B requires a separate Owner GO.  
-SQLite freeze acknowledges concurrency limits (`SELECT FOR UPDATE` / multi-writer) for any future reassignment design.
+Wave 10 PASS under SQLite freeze does **not** authorize Phase B. Separate Owner GO required.
 
 ---
 
-## 8. Future PostgreSQL program (only if Owner chooses Option B later)
+## 7. Future PostgreSQL activation (deferred)
 
-Required proof task (not started here):
+Not required for current freeze. When Owner later activates PostgreSQL:
 
 ```text
 WAVE_10_POSTGRESQL_MIGRATION_RUNTIME_PROOF
+  (or successor task name under that Owner program)
 ```
 
-Minimum isolated proof: baseline/prior → s63 table, constraints, UUID, FK, indexes, backfill, idempotency, downgrade/re-upgrade — no production credentials.
+Minimum: authoritative deploy config + isolated upgrade/downgrade + constraint/UUID/FK/index parity + backfill idempotency + concurrency review + backup/restore + production rollout GO. No production credentials in lab proofs.
 
 ---
 
-## 9. Related
+## 8. Related
 
-- Wave 10 closure: `docs/worklog/realignment/2026-08-04_finalization_wave10_canonical_migration_closure.md`
+- Owner decision (canonical): `docs/architecture/SQLITE_CURRENT_PRODUCT_FREEZE_OWNER_DECISION.md`
+- Closure worklog: `docs/worklog/realignment/2026-08-04_sqlite_current_freeze_owner_decision_and_wave10_closure.md`
+- Prior readiness (historical): `docs/worklog/realignment/2026-08-04_database_engine_owner_decision_readiness.md`
+- Wave 10 migration closure (historical PARTIAL then superseded by this PASS): `docs/worklog/realignment/2026-08-04_finalization_wave10_canonical_migration_closure.md`
 - Schema ownership: `backend/core/schema_ownership.py`
-- Implementation route pointer: `docs/architecture/realignment/21_WORKOS_IMPLEMENTATION_ROUTE.md`
-- Worklog: `docs/worklog/realignment/2026-08-04_database_engine_owner_decision_readiness.md`
+- Route: `docs/architecture/realignment/21_WORKOS_IMPLEMENTATION_ROUTE.md`
