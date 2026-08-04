@@ -937,7 +937,6 @@ export default function MaterializedOpsGraph() {
                                             orderId,
                                             task.task_id,
                                             e.employee_id,
-                                            { controlled: true, allowReassign: false },
                                           );
                                           setAssignPickerTaskId(null);
                                           await load();

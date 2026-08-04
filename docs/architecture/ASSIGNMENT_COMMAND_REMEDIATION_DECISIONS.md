@@ -1,28 +1,29 @@
 # Assignment Command Remediation Decisions
 
-**Status:** Owner decisions **RECORDED** (2026-08-04)  
-**Does not authorize implementation or execution**  
-**Wave 5 remains:** `FINALIZATION_WAVE_5 = PARTIAL_BLOCKED`  
-**Wave 6:** `NOT_AUTHORIZED` until separate Owner GO  
+**Status:** Owner decisions **RECORDED** (2026-08-04); Wave 6 hardening **implemented** under separate Owner GO  
+**Wave 5 remains:** `FINALIZATION_WAVE_5 = PARTIAL_BLOCKED` (historical readiness audit)  
+**Wave 6:** see `docs/worklog/realignment/2026-08-04_finalization_wave6_minimal_safe_assignment_command_hardening.md`  
+**QA fixture assignment execution:** still **NOT_AUTHORIZED**  
 
 **Sources:**
 
 - `docs/worklog/realignment/2026-08-04_finalization_wave5_assignment_readiness_audit_only.md`
 - `docs/worklog/realignment/2026-08-04_assignment_command_remediation_strategy_audit_only.md`
 
-**Canonical fixture (unchanged by this decision record):** order `880750` / plan `23` / 13 `operational_tasks[]`.
+**Canonical fixture (unchanged by decision record / Wave 6 hardening):** order `880750` / plan `23` / 13 `operational_tasks[]`.
 
-**Owner gate (this document only):**
+**Owner gate (post Wave 6 hardening — execution still closed):**
 
 ```text
-ASSIGNMENT_IMPLEMENTATION_AUTHORIZED = FALSE
-ASSIGNMENT_EXECUTION_AUTHORIZED = FALSE
+ASSIGNMENT_IMPLEMENTATION_AUTHORIZED = TRUE  # Wave 6 hardening only
+ASSIGNMENT_EXECUTION_AUTHORIZED = FALSE      # no QA fixture assign yet
 SCHEMA_CHANGE_AUTHORIZED = FALSE
 MIGRATION_AUTHORIZED = FALSE
-DB_MUTATION_AUTHORIZED = FALSE
+DB_MUTATION_AUTHORIZED = FALSE               # for protected QA fixture
 LEGACY_REMOVAL_AUTHORIZED = FALSE
 MOBILE_ASSIGNMENT_AUTHORIZED = FALSE
-WAVE_6 = NOT_AUTHORIZED
+WAVE_6 = COMPLETED_PASS
+WAVE_7 = NOT_AUTHORIZED
 ```
 
 ---
@@ -222,7 +223,7 @@ Dead pieces removed: NONE
 ## Future candidate (not started)
 
 ```text
-FINALIZATION_WAVE_6_MINIMAL_SAFE_ASSIGNMENT_COMMAND_HARDENING
+CONTROLLED_SINGLE_QA_FIXTURE_EMPLOYEE_ASSIGNMENT_PROOF
 ```
 
-Requires a **separate** Owner GO. This decision document alone does **not** authorize it.
+Requires a **separate** Owner GO after Wave 6 PASS.

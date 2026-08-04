@@ -133,21 +133,18 @@ def _async_client_for(db_fixture) -> AsyncClient:
 
 
 @pytest.mark.asyncio
-async def test_concurrent_claim_one_owner_controlled_loser(claim_fixture):
+async def test_concurrent_claim_frozen_wave6(claim_fixture):
+    """Wave 6 / DEC-ASSIGN-08: Mobile claim is frozen — no mutation race."""
     fx = claim_fixture
     db_fixture = fx["db_fixture"]
     owner = _user(fx["owner_user"], "employee_mobile")
     rival = _user(fx["rival_user"], "employee_mobile")
-    barrier = asyncio.Barrier(2)
-    started: list[float] = []
 
     async with _async_client_for(db_fixture) as client:
 
         async def _claim_as(user: UserResponse):
             token = _claim_test_user.set(user)
             try:
-                await barrier.wait()
-                started.append(time.perf_counter())
                 return await client.post(
                     f"/api/v1/employee-mobile/tasks/{fx['task_id']}/claim",
                     json={"order_id": fx["order_id"]},
@@ -158,43 +155,26 @@ async def test_concurrent_claim_one_owner_controlled_loser(claim_fixture):
         r1, r2 = await asyncio.gather(_claim_as(owner), _claim_as(rival))
     _cleanup_overrides()
 
-    assert len(started) == 2
-    assert max(started) - min(started) < 0.5
-    assert r1.status_code in (200, 409)
-    assert r2.status_code in (200, 409)
-    winners = [
-        r
-        for r in (r1, r2)
-        if r.status_code == 200 and not r.json().get("already_claimed")
-    ]
-    controlled_losers = [
-        r
-        for r in (r1, r2)
-        if r.status_code == 409
-        or (r.status_code == 200 and r.json().get("already_claimed"))
-    ]
-    assert len(winners) == 1
-    assert len(controlled_losers) == 1
-    assignee = await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"])
-    assert assignee in (fx["owner_id"], fx["rival_id"])
-    assert await _assignment_source(db_fixture, fx["order_id"], fx["task_id"]) == "employee_claim"
+    assert r1.status_code == 403
+    assert r2.status_code == 403
+    assert r1.json()["detail"]["error"] == "employee_mobile_assignment_frozen"
+    assert r2.json()["detail"]["error"] == "employee_mobile_assignment_frozen"
+    assert await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"]) is None
     assert await _active_session_count(db_fixture, fx["order_id"], fx["task_id"]) == 0
 
 
 @pytest.mark.asyncio
-async def test_concurrent_start_from_available_one_session(claim_fixture):
+async def test_concurrent_start_from_available_frozen_wave6(claim_fixture):
     fx = claim_fixture
     db_fixture = fx["db_fixture"]
     owner = _user(fx["owner_user"], "employee_mobile")
     rival = _user(fx["rival_user"], "employee_mobile")
-    barrier = asyncio.Barrier(2)
 
     async with _async_client_for(db_fixture) as client:
 
         async def _start_as(user: UserResponse):
             token = _claim_test_user.set(user)
             try:
-                await barrier.wait()
                 return await client.post(
                     f"/api/v1/employee-mobile/tasks/{fx['task_id']}/start-from-available",
                     json={"order_id": fx["order_id"]},
@@ -205,17 +185,14 @@ async def test_concurrent_start_from_available_one_session(claim_fixture):
         r1, r2 = await asyncio.gather(_start_as(owner), _start_as(rival))
     _cleanup_overrides()
 
-    ok = [r for r in (r1, r2) if r.status_code == 200]
-    fail = [r for r in (r1, r2) if r.status_code != 200]
-    assert len(ok) == 1
-    assert len(fail) == 1
-    assert fail[0].status_code in (403, 409, 422)
-    assignee = await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"])
-    assert assignee in (fx["owner_id"], fx["rival_id"])
-    assert await _active_session_count(db_fixture, fx["order_id"], fx["task_id"]) == 1
+    assert r1.status_code == 403
+    assert r2.status_code == 403
+    assert r1.json()["detail"]["error"] == "employee_mobile_assignment_frozen"
+    assert await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"]) is None
+    assert await _active_session_count(db_fixture, fx["order_id"], fx["task_id"]) == 0
 
 
-def test_claim_records_assignment_metadata(db_fixture, claim_fixture):
+def test_claim_frozen_does_not_record_assignment(db_fixture, claim_fixture):
     fx = claim_fixture
     owner = _user(fx["owner_user"], "employee_mobile")
     client = _client_for(db_fixture, owner)
@@ -224,12 +201,12 @@ def test_claim_records_assignment_metadata(db_fixture, claim_fixture):
             f"/api/v1/employee-mobile/tasks/{fx['task_id']}/claim",
             json={"order_id": fx["order_id"]},
         )
-        assert resp.status_code == 200, resp.text
+        assert resp.status_code == 403, resp.text
+        assert resp.json()["detail"]["error"] == "employee_mobile_assignment_frozen"
     finally:
         _cleanup_overrides()
 
     async def _assert():
-        assert await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"]) == fx["owner_id"]
-        assert await _assignment_source(db_fixture, fx["order_id"], fx["task_id"]) == "employee_claim"
+        assert await _plan_assignee(db_fixture, fx["order_id"], fx["task_id"]) is None
 
     db_fixture.run(_assert())

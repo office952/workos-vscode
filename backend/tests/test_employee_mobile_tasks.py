@@ -774,7 +774,13 @@ def test_available_tasks_hidden_when_assigned_to_other(db_fixture, db_session):
         _cleanup_overrides()
 
 
+def _assert_mobile_assignment_frozen(response) -> None:
+    assert response.status_code == 403, response.text
+    assert response.json()["detail"]["error"] == "employee_mobile_assignment_frozen"
+
+
 def test_claim_success_assigns_and_lists_in_my_tasks(db_fixture, db_session):
+    """Wave 6: Mobile claim frozen — no assignment mutation."""
     user_id = f"claim-ok-{uuid.uuid4().hex[:8]}"
     order_id = 904
 
@@ -795,17 +801,7 @@ def test_claim_success_assigns_and_lists_in_my_tasks(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-CLAIM/claim",
             json={"order_id": order_id},
         )
-        assert claim.status_code == 200, claim.text
-        body = claim.json()
-        assert body["assigned_employee_id"] > 0
-        assert body["already_claimed"] is False
-
-        mine = client.get("/api/v1/employee-mobile/tasks").json()
-        assert len(mine) == 1
-        assert mine[0]["task_id"] == "T-CLAIM"
-
-        available = client.get("/api/v1/employee-mobile/tasks/available").json()
-        assert not any(row["task_id"] == "T-CLAIM" for row in available)
+        _assert_mobile_assignment_frozen(claim)
     finally:
         _cleanup_overrides()
 
@@ -834,8 +830,7 @@ def test_claim_conflict_when_assigned_to_other(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-CONFLICT/claim",
             json={"order_id": order_id},
         )
-        assert response.status_code == 409, response.text
-        assert response.json()["detail"]["error"] == "task_already_assigned"
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()
 
@@ -860,8 +855,7 @@ def test_claim_not_eligible_returns_403(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-NOELIG/claim",
             json={"order_id": order_id},
         )
-        assert response.status_code == 403, response.text
-        assert response.json()["detail"]["error"] == "employee_not_eligible"
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()
 
@@ -887,16 +881,13 @@ def test_claim_does_not_start_work_session(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-NOSTART/claim",
             json={"order_id": order_id},
         )
-        assert claim.status_code == 200, claim.text
-
-        listed = client.get("/api/v1/employee-mobile/tasks").json()
-        assert listed[0]["status"] == "assigned"
-        assert not listed[0].get("started_at")
+        _assert_mobile_assignment_frozen(claim)
     finally:
         _cleanup_overrides()
 
 
 def test_start_after_claim_still_respects_readiness(db_fixture, db_session):
+    """Claim is frozen; start on unassigned task remains blocked by readiness/assignment rules."""
     from tests.test_task_readiness_dependencies import _build_volumetric_tasks
 
     user_id = f"claim-gate-{uuid.uuid4().hex[:8]}"
@@ -945,14 +936,13 @@ def test_start_after_claim_still_respects_readiness(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-002/claim",
             json={"order_id": order_id},
         )
-        assert claim.status_code == 200, claim.text
+        _assert_mobile_assignment_frozen(claim)
 
         start = client.patch(
             "/api/v1/employee-mobile/tasks/T-002/start",
             json={"order_id": order_id},
         )
-        assert start.status_code == 409, start.text
-        assert start.json()["detail"]["code"] == "task_not_ready"
+        assert start.status_code in (403, 404, 409, 422), start.text
     finally:
         _cleanup_overrides()
 
@@ -986,23 +976,11 @@ def test_start_from_available_success(db_fixture, db_session):
     db_fixture.run(_setup())
     client = _client_for(db_fixture, _user(user_id, "employee_mobile"))
     try:
-        avail_before = client.get("/api/v1/employee-mobile/tasks/available").json()
-        assert any(r["task_id"] == "T-SFA-OK" and r.get("is_startable") for r in avail_before)
-
         response = client.post(
             "/api/v1/employee-mobile/tasks/T-SFA-OK/start-from-available",
             json={"order_id": order_id},
         )
-        assert response.status_code == 200, response.text
-
-        listed = client.get("/api/v1/employee-mobile/tasks").json()
-        assert len(listed) == 1
-        assert listed[0]["task_id"] == "T-SFA-OK"
-        assert listed[0]["status"] == "in_progress"
-        assert listed[0].get("started_at")
-
-        available = client.get("/api/v1/employee-mobile/tasks/available").json()
-        assert not any(row["task_id"] == "T-SFA-OK" for row in available)
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()
 
@@ -1056,13 +1034,7 @@ def test_start_from_available_not_ready_leaves_unassigned(db_fixture, db_session
             "/api/v1/employee-mobile/tasks/T-002/start-from-available",
             json={"order_id": order_id},
         )
-        assert response.status_code == 409, response.text
-        assert response.json()["detail"]["code"] == "task_not_ready"
-
-        available = client.get("/api/v1/employee-mobile/tasks/available").json()
-        t002_rows = [row for row in available if row.get("task_id") == "T-002"]
-        if t002_rows:
-            assert t002_rows[0].get("is_startable") is False
+        _assert_mobile_assignment_frozen(response)
 
         async def _check_unassigned():
             assigned = await _plan_assigned_employee_id(
@@ -1073,9 +1045,6 @@ def test_start_from_available_not_ready_leaves_unassigned(db_fixture, db_session
             assert assigned is None
 
         db_fixture.run(_check_unassigned())
-
-        listed = client.get("/api/v1/employee-mobile/tasks").json()
-        assert listed == []
     finally:
         _cleanup_overrides()
 
@@ -1100,8 +1069,7 @@ def test_start_from_available_not_eligible(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-SFA-NE/start-from-available",
             json={"order_id": order_id},
         )
-        assert response.status_code == 403, response.text
-        assert response.json()["detail"]["error"] == "employee_not_eligible"
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()
 
@@ -1130,8 +1098,7 @@ def test_start_from_available_assigned_to_other(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-SFA-OTH/start-from-available",
             json={"order_id": order_id},
         )
-        assert response.status_code == 409, response.text
-        assert response.json()["detail"]["error"] == "task_already_assigned"
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()
 
@@ -1158,8 +1125,6 @@ def test_start_from_available_already_mine_starts(db_fixture, db_session):
             "/api/v1/employee-mobile/tasks/T-SFA-MINE/start-from-available",
             json={"order_id": order_id},
         )
-        assert response.status_code == 200, response.text
-        listed = client.get("/api/v1/employee-mobile/tasks").json()
-        assert listed[0]["status"] == "in_progress"
+        _assert_mobile_assignment_frozen(response)
     finally:
         _cleanup_overrides()

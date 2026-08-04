@@ -29,7 +29,6 @@ from services.task_work_session_service import (
 )
 from services.preparation_domain_service import derive_preparation_domain
 from services.operational_registry_service import OperationalRegistryService
-from services.execution_task_assignment_service import assign_plan_task, clear_plan_task_assignment
 from services.operator_employee_guard import OperatorEmployeeGuard
 from services.material_procurement_status_service import build_procurement_enriched_context
 from services.task_readiness_service import (
@@ -1350,6 +1349,17 @@ async def get_employee_mobile_task(
     raise HTTPException(status_code=404, detail={"error": "task_not_found"})
 
 
+_MOBILE_ASSIGNMENT_FROZEN = {
+    "error": "employee_mobile_assignment_frozen",
+    "message": (
+        "Employee Mobile claim/start_from_available assignment is frozen "
+        "(DEC-ASSIGN-08 / FROZEN_FINAL_FINAL). Use the canonical controlled "
+        "assignment command when authorized."
+    ),
+    "classification": "BLOCKED_LEGACY",
+}
+
+
 async def claim_my_task(
     db: AsyncSession,
     *,
@@ -1357,75 +1367,9 @@ async def claim_my_task(
     task_id: str,
     employee_id: int,
 ) -> dict:
-    """Assign an unclaimed plan task to the authenticated employee without starting work."""
-    enriched, _ = await _load_enriched_tasks(db)
-    match = next(
-        (t for t in enriched if t["order_id"] == order_id and t["task_id"] == task_id),
-        None,
-    )
-    if match is None:
-        raise HTTPException(status_code=404, detail={"error": "task_not_found"})
-
-    if not _is_order_active_for_claim(str(match.get("order_status") or "")):
-        raise HTTPException(status_code=409, detail={"error": "task_not_claimable", "message": "Comanda nu este activă."})
-
-    reality_sql = text("SELECT tasks_json FROM execution_reality WHERE order_id = :oid LIMIT 1")
-    row = (await db.execute(reality_sql, {"oid": order_id})).mappings().first()
-    all_reality = _parse_json(row.get("tasks_json") if row else [])
-    task_sessions = sessions_for_task(all_reality, task_id)
-    status = derive_task_status_from_sessions(task_sessions) if task_sessions else "assigned"
-    if status == "done":
-        raise HTTPException(status_code=409, detail={"error": "task_not_claimable", "message": "Taskul este finalizat."})
-
-    if _has_active_session_by_other(task_sessions, employee_id):
-        raise HTTPException(
-            status_code=409,
-            detail={"error": "task_has_active_session", "message": "Un coleg lucrează deja la acest task."},
-        )
-
-    assigned_id = _normalize_employee_id(match.get("assigned_employee_id"))
-    if assigned_id is not None and assigned_id != employee_id:
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "error": "task_already_assigned",
-                "message": "Taskul este deja preluat de alt coleg.",
-            },
-        )
-
-    process_type = str(match.get("process_type") or "")
-    machine_type = str(match.get("machine_type") or "")
-    registry = OperationalRegistryService(db)
-    eligibility = await registry.check_employee_operation_eligibility(
-        employee_id,
-        process_type,
-        machine_type=machine_type or None,
-    )
-    if not eligibility.get("eligible"):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "error": "employee_not_eligible",
-                "message": "Nu ești eligibil pentru acest task.",
-            },
-        )
-
-    result = await assign_plan_task(
-        db,
-        order_id=order_id,
-        task_id=task_id,
-        assigned_employee_id=employee_id,
-        assignment_source="employee_claim",
-    )
-    return {
-        "status": "ok",
-        "action": "claim",
-        "task_id": task_id,
-        "order_id": order_id,
-        "assigned_employee_id": employee_id,
-        "assigned_employee_name": result.get("assigned_employee_name"),
-        "already_claimed": bool(result.get("already_assigned")),
-    }
+    """Frozen (DEC-ASSIGN-08) — does not mutate assignment."""
+    del db, order_id, task_id, employee_id
+    raise HTTPException(status_code=403, detail=dict(_MOBILE_ASSIGNMENT_FROZEN))
 
 
 async def start_available_task(
@@ -1435,100 +1379,6 @@ async def start_available_task(
     task_id: str,
     employee_id: int,
 ) -> dict:
-    """Assign (if needed) and start an available plan task — eligibility + readiness before assign."""
-    enriched, _ = await _load_enriched_tasks(db)
-    match = next(
-        (t for t in enriched if t["order_id"] == order_id and t["task_id"] == task_id),
-        None,
-    )
-    if match is None:
-        raise HTTPException(status_code=404, detail={"error": "task_not_found"})
-
-    if not _is_order_active_for_claim(str(match.get("order_status") or "")):
-        raise HTTPException(
-            status_code=409,
-            detail={"error": "task_not_claimable", "message": "Comanda nu este activă."},
-        )
-
-    reality_sql = text("SELECT tasks_json FROM execution_reality WHERE order_id = :oid LIMIT 1")
-    row = (await db.execute(reality_sql, {"oid": order_id})).mappings().first()
-    all_reality = _parse_json(row.get("tasks_json") if row else [])
-    task_sessions = sessions_for_task(all_reality, task_id)
-    status = derive_task_status_from_sessions(task_sessions) if task_sessions else "assigned"
-    if status == "done":
-        raise HTTPException(
-            status_code=409,
-            detail={"error": "task_not_claimable", "message": "Taskul este finalizat."},
-        )
-
-    if _has_active_session_by_other(task_sessions, employee_id):
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "error": "task_has_active_session",
-                "message": "Un coleg lucrează deja la acest task.",
-            },
-        )
-
-    assigned_id = _normalize_employee_id(match.get("assigned_employee_id"))
-    if assigned_id is not None and assigned_id != employee_id:
-        raise HTTPException(
-            status_code=409,
-            detail={
-                "error": "task_already_assigned",
-                "message": "Taskul este deja preluat de alt coleg.",
-            },
-        )
-
-    process_type = str(match.get("process_type") or "")
-    machine_type = str(match.get("machine_type") or "")
-    registry = OperationalRegistryService(db)
-    eligibility = await registry.check_employee_operation_eligibility(
-        employee_id,
-        process_type,
-        machine_type=machine_type or None,
-    )
-    if not eligibility.get("eligible"):
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "error": "employee_not_eligible",
-                "message": "Nu ești eligibil pentru acest task.",
-            },
-        )
-
-    if assigned_id == employee_id:
-        return await start_my_task(
-            db,
-            order_id=order_id,
-            task_id=task_id,
-            employee_id=employee_id,
-        )
-
-    from services.task_start_gate_service import assert_task_startable
-
-    # Evaluate dependency/material gates without assignment requirement — assign happens next.
-    await assert_task_startable(
-        db,
-        order_id=order_id,
-        task_id=task_id,
-        employee_id=None,
-    )
-
-    await assign_plan_task(
-        db,
-        order_id=order_id,
-        task_id=task_id,
-        assigned_employee_id=employee_id,
-        assignment_source="start_from_available",
-    )
-    try:
-        return await start_my_task(
-            db,
-            order_id=order_id,
-            task_id=task_id,
-            employee_id=employee_id,
-        )
-    except HTTPException:
-        await clear_plan_task_assignment(db, order_id=order_id, task_id=task_id)
-        raise
+    """Frozen (DEC-ASSIGN-08) — does not mutate assignment or start sessions via claim path."""
+    del db, order_id, task_id, employee_id
+    raise HTTPException(status_code=403, detail=dict(_MOBILE_ASSIGNMENT_FROZEN))

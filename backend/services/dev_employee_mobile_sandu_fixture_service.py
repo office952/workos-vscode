@@ -21,7 +21,6 @@ from models.execution_reality import ExecutionReality
 from models.intake_requests import Intake_requests
 from models.orders import Orders
 from models.quotes import Quotes
-from services.execution_task_assignment_service import assign_plan_task
 from services.production_document_handoff_service import (
     attach_documents_to_planned_tasks,
     load_eligible_intake_documents_for_plan,
@@ -484,16 +483,16 @@ async def seed_dev_employee_mobile_sandu_fixture(
             continue
         if act == "assign":
             if config.apply:
-                await assign_plan_task(
-                    db,
-                    order_id=order_id,
-                    task_id=task_id,
-                    assigned_employee_id=sandu.id,
+                # Wave 6: direct assign_plan_task closed; Mobile fixture must not bypass.
+                result.errors.append(
+                    f"{task_id}:direct_assign_blocked_wave6"
                 )
-                result.actions.append(f"assigned:{task_id}")
+                result.warnings.append(
+                    f"{task_id}:employee_mobile_assignment_frozen"
+                )
             else:
                 result.actions.append(f"dry_run_would_assign:{task_id}")
-            assigned.append(task_id)
+                assigned.append(task_id)
 
     result.assigned_task_ids = sorted(set(assigned))
 

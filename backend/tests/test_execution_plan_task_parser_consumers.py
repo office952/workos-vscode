@@ -20,6 +20,10 @@ from services.execution_plan_task_parser import (
     operational_tasks_only,
     parse_tasks_json_raw,
 )
+from models.orders import Orders
+from services.controlled_employee_assignment_service import (
+    assign_operational_task_controlled,
+)
 from services.execution_task_assignment_service import (
     ExecutionTaskAssignmentError,
     assign_plan_task,
@@ -166,35 +170,30 @@ def test_invalid_json_handled_safely_by_parser():
 
 
 @pytest.mark.asyncio
-async def test_assignment_legacy_v1_preserves_list_shape(db_session):
+async def test_assignment_legacy_v1_direct_path_blocked(db_session):
     order_id = 39701
     emp = await _seed_employee(db_session)
     await _seed_plan(db_session, order_id=order_id, tasks_json=_legacy_tasks("T-ASSIGN-V1"))
 
-    before = await _count_execution_reality(db_session)
-    result = await assign_plan_task(
-        db_session,
-        order_id=order_id,
-        task_id="T-ASSIGN-V1",
-        assigned_employee_id=emp.id,
-    )
-    after = await _count_execution_reality(db_session)
-
-    assert result["assigned_employee_id"] == emp.id
-    assert after == before
-
-    plan = (
-        await db_session.execute(select(ExecutionPlan).where(ExecutionPlan.order_id == order_id))
-    ).scalar_one()
-    loaded = json.loads(plan.tasks_json)
-    assert isinstance(loaded, list)
-    assert loaded[0]["assigned_employee_id"] == emp.id
+    with pytest.raises(HTTPException) as exc:
+        await assign_plan_task(
+            db_session,
+            order_id=order_id,
+            task_id="T-ASSIGN-V1",
+            assigned_employee_id=emp.id,
+        )
+    assert exc.value.status_code == 403
+    assert exc.value.detail["error"] == "direct_assign_blocked"
 
 
 @pytest.mark.asyncio
-async def test_assignment_v2_materialized_preserves_envelope_shape(db_session):
+async def test_assignment_v2_materialized_preserves_envelope_shape(db_session, monkeypatch):
     order_id = 39702
     emp = await _seed_employee(db_session)
+    db_session.add(
+        Orders(id=order_id, code=f"ORD-{order_id}", client_name="C", status="in_production")
+    )
+    await db_session.commit()
     operational = [
         {
             "task_id": "cnc_face_cut",
@@ -208,12 +207,35 @@ async def test_assignment_v2_materialized_preserves_envelope_shape(db_session):
         tasks_json=_v2_envelope(operational=operational, execution_tasks_created=True),
     )
 
-    await assign_plan_task(
+    async def fake_elig(db, oid):
+        return {
+            "status": "ok",
+            "tasks": [
+                {
+                    "task_key": "cnc_face_cut",
+                    "eligibility_status": "ready",
+                    "eligible_employee_count": 1,
+                    "eligible_employees": [
+                        {"employee_id": emp.id, "display_name": emp.name}
+                    ],
+                    "blockers": [],
+                }
+            ],
+        }
+
+    monkeypatch.setattr(
+        "services.controlled_employee_assignment_service.build_employee_eligibility_read_model",
+        fake_elig,
+    )
+    before = await _count_execution_reality(db_session)
+    await assign_operational_task_controlled(
         db_session,
         order_id=order_id,
         task_id="cnc_face_cut",
         assigned_employee_id=emp.id,
     )
+    after = await _count_execution_reality(db_session)
+    assert after == before
 
     plan = (
         await db_session.execute(select(ExecutionPlan).where(ExecutionPlan.order_id == order_id))
@@ -229,10 +251,14 @@ async def test_assignment_v2_materialized_preserves_envelope_shape(db_session):
 async def test_assignment_v2_not_materialized_has_no_operational_tasks(db_session):
     order_id = 39703
     emp = await _seed_employee(db_session)
+    db_session.add(
+        Orders(id=order_id, code=f"ORD-{order_id}", client_name="C", status="in_production")
+    )
+    await db_session.commit()
     await _seed_plan(db_session, order_id=order_id, tasks_json=_v2_envelope())
 
     with pytest.raises(HTTPException) as exc:
-        await assign_plan_task(
+        await assign_operational_task_controlled(
             db_session,
             order_id=order_id,
             task_id="cnc_face_cut",
@@ -241,7 +267,6 @@ async def test_assignment_v2_not_materialized_has_no_operational_tasks(db_sessio
     assert exc.value.status_code == 422
     assert exc.value.detail["error"] == "operational_readiness_blocked"
     assert exc.value.detail["operational_readiness_status"] == "v2_not_materialized"
-
 
 @pytest.mark.asyncio
 async def test_start_gate_uses_operational_tasks_not_planned(db_session):

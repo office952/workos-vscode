@@ -346,19 +346,20 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner decisions for assignment remediation are recorded** — Wave 5 remains **`PARTIAL_BLOCKED`**. Wave 6 **not authorized**.
+**Wave 6 hardening PASS** — public bypass closed; canonical CAS command verified on isolated test DB.  
+**Real QA fixture assignment still not executed.** Wave 7 **not authorized**.
 
-Decision contract:  
-`docs/architecture/ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md`  
 Worklog:  
-`docs/worklog/realignment/2026-08-04_assignment_remediation_owner_decisions.md`
+`docs/worklog/realignment/2026-08-04_finalization_wave6_minimal_safe_assignment_command_hardening.md`  
+Decisions:  
+`docs/architecture/ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md`
 
 **Why:**
 
-- DEC-ASSIGN-01…08 define the future hardening policy (close public bypass, scoped auth, CAS-first, no schema in first build, audit required, Mobile frozen).
-- Command **safety remains NOT_VERIFIED** until a separate implementation GO completes.
+- Command hardening is verified within documented single-process + DB-row-lock boundaries.
+- Next proof requires a separate Owner GO for one controlled QA fixture assignment.
 
-**Do not** start `FINALIZATION_WAVE_6_MINIMAL_SAFE_ASSIGNMENT_COMMAND_HARDENING` without a new Owner GO.
+**Do not** start `CONTROLLED_SINGLE_QA_FIXTURE_EMPLOYEE_ASSIGNMENT_PROOF` without a new Owner GO.
 
 ---
 

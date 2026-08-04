@@ -144,11 +144,16 @@ async def test_wave5_audit_read_only_zero_mutation(db_session):
     assert audit["machine_assignment_count"] == 0
     assert audit["scheduling"] == "HOLD"
     assert audit["operational_task_count"] >= 1
-    assert "assign_plan_task" in audit["command_contract"]["persist_service"]
-    assert audit["command_contract"]["idempotency"]["status"] == "IDEMPOTENCY_PARTIAL"
+    assert "assign_operational_task_controlled" in audit["command_contract"]["persist_service"] or (
+        "BLOCKED_LEGACY" in audit["command_contract"]["persist_service"]
+    )
+    assert (
+        audit["command_contract"]["idempotency"]["status"]
+        == "IDEMPOTENCY_VERIFIED_FOR_EMBEDDED_MODEL"
+    )
     assert (
         audit["command_contract"]["transactionality"]["status"]
-        == "TRANSACTIONALITY_PARTIAL"
+        == "TRANSACTIONALITY_VERIFIED_WITHIN_DOCUMENTED_BOUNDARY"
     )
     for task in audit["tasks"]:
         assert task["current_assignment"]["status"] == "unassigned"

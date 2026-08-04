@@ -18,7 +18,11 @@ from main import app
 from models.employees import Employees
 from models.execution_plan import ExecutionPlan
 from models.execution_reality import ExecutionReality
+from models.orders import Orders
 from schemas.auth import UserResponse
+from services.controlled_employee_assignment_service import (
+    assign_operational_task_controlled,
+)
 from services.execution_plan_operational_readiness_service import (
     BLOCKER_OPERATIONAL_TASK_DEPENDENCY_MISSING,
     BLOCKER_OPERATIONAL_TASKS_NOT_MATERIALIZED,
@@ -119,6 +123,19 @@ async def _seed_employee(db_session) -> Employees:
     return emp
 
 
+async def _seed_order(db_session, order_id: int) -> Orders:
+    row = Orders(
+        id=order_id,
+        code=f"ORD-{order_id}",
+        client_name="Gate Client",
+        status="in_production",
+    )
+    db_session.add(row)
+    await db_session.commit()
+    await db_session.refresh(row)
+    return row
+
+
 async def _seed_plan(db_session, *, order_id: int, tasks_json: str) -> ExecutionPlan:
     row = ExecutionPlan(
         order_id=order_id,
@@ -154,10 +171,11 @@ def _assert_readiness_blocked(exc: HTTPException, *, status: str, blocker: str):
 async def test_assignment_v2_not_materialized_returns_422(db_session):
     order_id = 39901
     emp = await _seed_employee(db_session)
+    await _seed_order(db_session, order_id)
     await _seed_plan(db_session, order_id=order_id, tasks_json=_v2_envelope())
 
     with pytest.raises(HTTPException) as exc:
-        await assign_plan_task(
+        await assign_operational_task_controlled(
             db_session,
             order_id=order_id,
             task_id="cnc_face_cut",
@@ -211,6 +229,7 @@ async def test_start_gate_v2_not_materialized_returns_422(db_session):
 async def test_assignment_blocked_task_graph_returns_422(db_session):
     order_id = 39904
     emp = await _seed_employee(db_session)
+    await _seed_order(db_session, order_id)
     operational = [
         {
             "task_id": "child",
@@ -225,7 +244,7 @@ async def test_assignment_blocked_task_graph_returns_422(db_session):
     )
 
     with pytest.raises(HTTPException) as exc:
-        await assign_plan_task(
+        await assign_operational_task_controlled(
             db_session,
             order_id=order_id,
             task_id="child",
@@ -268,18 +287,21 @@ async def test_start_gate_blocked_task_graph_returns_422(db_session):
 
 
 @pytest.mark.asyncio
-async def test_legacy_v1_assignment_unchanged(db_session):
+async def test_legacy_v1_direct_assign_blocked(db_session):
+    """Wave 6: direct assign_plan_task closed; legacy list is not a bypass path."""
     order_id = 39906
     emp = await _seed_employee(db_session)
     await _seed_plan(db_session, order_id=order_id, tasks_json=_legacy_tasks("T-V1"))
 
-    result = await assign_plan_task(
-        db_session,
-        order_id=order_id,
-        task_id="T-V1",
-        assigned_employee_id=emp.id,
-    )
-    assert result["assigned_employee_id"] == emp.id
+    with pytest.raises(HTTPException) as exc:
+        await assign_plan_task(
+            db_session,
+            order_id=order_id,
+            task_id="T-V1",
+            assigned_employee_id=emp.id,
+        )
+    assert exc.value.status_code == 403
+    assert exc.value.detail["error"] == "direct_assign_blocked"
 
 
 @pytest.mark.asyncio
@@ -312,9 +334,10 @@ async def test_legacy_v1_start_gate_wrong_task_still_404(db_session):
 
 
 @pytest.mark.asyncio
-async def test_v2_materialized_assignment_happy_path(db_session):
+async def test_v2_materialized_assignment_happy_path(db_session, monkeypatch):
     order_id = 39909
     emp = await _seed_employee(db_session)
+    await _seed_order(db_session, order_id)
     operational = [
         {
             "task_id": "cnc_face_cut",
@@ -328,7 +351,27 @@ async def test_v2_materialized_assignment_happy_path(db_session):
         tasks_json=_v2_envelope(operational=operational, execution_tasks_created=True),
     )
 
-    result = await assign_plan_task(
+    async def fake_elig(db, oid):
+        return {
+            "status": "ok",
+            "tasks": [
+                {
+                    "task_key": "cnc_face_cut",
+                    "eligibility_status": "ready",
+                    "eligible_employee_count": 1,
+                    "eligible_employees": [
+                        {"employee_id": emp.id, "display_name": emp.name}
+                    ],
+                    "blockers": [],
+                }
+            ],
+        }
+
+    monkeypatch.setattr(
+        "services.controlled_employee_assignment_service.build_employee_eligibility_read_model",
+        fake_elig,
+    )
+    result = await assign_operational_task_controlled(
         db_session,
         order_id=order_id,
         task_id="cnc_face_cut",
@@ -388,7 +431,7 @@ async def test_v2_materialized_start_gate_reaches_task_lookup(db_session):
 
 
 @pytest.mark.asyncio
-async def test_wrong_task_id_after_readiness_ready_returns_404(db_session):
+async def test_wrong_task_id_direct_assign_blocked(db_session):
     order_id = 39912
     emp = await _seed_employee(db_session)
     await _seed_plan(db_session, order_id=order_id, tasks_json=_legacy_tasks("T-OK"))
@@ -400,8 +443,8 @@ async def test_wrong_task_id_after_readiness_ready_returns_404(db_session):
             task_id="T-MISSING",
             assigned_employee_id=emp.id,
         )
-    assert exc.value.status_code == 404
-    assert exc.value.detail == {"error": "task_not_found_in_plan"}
+    assert exc.value.status_code == 403
+    assert exc.value.detail["error"] == "direct_assign_blocked"
 
 
 # ---------------------------------------------------------------------------

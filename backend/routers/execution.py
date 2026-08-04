@@ -25,7 +25,7 @@ import logging
 from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -71,7 +71,6 @@ from services.controlled_task_session_service import (
     start_controlled_task_session,
 )
 from services.employee_mobile_identity import resolve_employee_for_user
-from services.execution_task_assignment_service import assign_plan_task
 from services.execution_task_instructions_service import update_plan_task_instructions
 from services.production_document_handoff_service import (
     attach_documents_to_planned_tasks,
@@ -518,11 +517,29 @@ async def get_plan(order_id: int, db: AsyncSession = Depends(get_db)):
 
 
 class AssignPlanTaskRequest(BaseModel):
+    """Public assignment body — caller cannot disable DEC-015 or force reassign."""
+
+    model_config = ConfigDict(extra="ignore")
+
     assigned_employee_id: int
-    # Controlled Ops-Graph path defaults to False (first assign / idempotent only).
-    # Explicit True required for audited reassign.
-    allow_reassign: bool = False
-    controlled: bool = True
+    # Legacy fields accepted only so we can reject bypass attempts explicitly.
+    controlled: Optional[bool] = None
+    allow_reassign: Optional[bool] = None
+
+    @field_validator("assigned_employee_id")
+    @classmethod
+    def _positive_employee(cls, value: int) -> int:
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError("assigned_employee_id_invalid")
+        return value
+
+    @model_validator(mode="after")
+    def _reject_legacy_bypass(self) -> "AssignPlanTaskRequest":
+        if self.controlled is False:
+            raise ValueError("legacy_controlled_false_forbidden")
+        if self.allow_reassign is True:
+            raise ValueError("silent_reassignment_forbidden")
+        return self
 
 
 @router.patch("/plan/{order_id}/tasks/{task_id}/assign")
@@ -534,49 +551,38 @@ async def assign_plan_task_to_employee(
     current_user: UserResponse = Depends(get_current_user),
     _user=Depends(require_permission("execution.task_assign")),
 ):
-    """Persist assigned_employee_id on an operational task (eligibility-gated by default).
-
-    Controlled path (default): revalidates DEC-015 eligibility; no sessions/actuals.
-    Legacy manager path: set controlled=false (still operational_tasks only).
-    """
+    """Canonical controlled assignment — DEC-015 always enforced; no public bypass."""
     actor = str(current_user.id) if getattr(current_user, "id", None) else None
-    if body.controlled:
-        try:
-            return await assign_operational_task_controlled(
-                db,
-                order_id=order_id,
-                task_id=task_id,
-                assigned_employee_id=body.assigned_employee_id,
-                allow_reassign=body.allow_reassign,
-                actor_user_id=actor,
-            )
-        except HTTPException as exc:
-            # Normalize manager conflict wording for controlled API consumers.
-            detail = exc.detail if isinstance(exc.detail, dict) else {}
-            if detail.get("error") == "task_already_assigned":
-                raise HTTPException(
-                    status_code=409,
-                    detail={
-                        "error": "assignment_conflict",
-                        "message": detail.get("message")
-                        or "Task already assigned to another employee.",
-                    },
-                ) from exc
-            if detail.get("error") == "employee_not_assignable":
-                raise HTTPException(
-                    status_code=422,
-                    detail={"error": "inactive_employee", **detail},
-                ) from exc
-            raise
-
-    return await assign_plan_task(
-        db,
-        order_id=order_id,
-        task_id=task_id,
-        assigned_employee_id=body.assigned_employee_id,
-        allow_reassign=True,  # legacy manager path keeps prior reassign semantics
-        assignment_source="manager_assign",
-    )
+    try:
+        return await assign_operational_task_controlled(
+            db,
+            order_id=order_id,
+            task_id=task_id,
+            assigned_employee_id=body.assigned_employee_id,
+            actor_user_id=actor,
+        )
+    except HTTPException as exc:
+        detail = exc.detail if isinstance(exc.detail, dict) else {}
+        # Compat aliases for existing UI consumers.
+        if detail.get("error") == "already_assigned_to_different_employee":
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "error": "assignment_conflict",
+                    "message": detail.get("message")
+                    or "Task already assigned to another employee.",
+                    "reason": "already_assigned_to_different_employee",
+                    "current_assigned_employee_id": detail.get(
+                        "current_assigned_employee_id"
+                    ),
+                },
+            ) from exc
+        if detail.get("error") == "employee_not_assignable":
+            raise HTTPException(
+                status_code=422,
+                detail={"error": "inactive_employee", **detail},
+            ) from exc
+        raise
 
 
 class UpdatePlanTaskInstructionsRequest(BaseModel):

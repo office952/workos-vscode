@@ -8,6 +8,8 @@ export interface AssignExecutionTaskResult {
   assigned_employee_id: number;
   assigned_employee_name: string;
   task: Record<string, unknown>;
+  assignment_outcome?: string;
+  already_assigned?: boolean;
 }
 
 export interface UpdateExecutionTaskInstructionsResult {
@@ -23,10 +25,7 @@ export async function assignExecutionPlanTask(
   orderId: number,
   taskId: string,
   assignedEmployeeId: number,
-  options?: { controlled?: boolean; allowReassign?: boolean },
 ): Promise<AssignExecutionTaskResult> {
-  const controlled = options?.controlled ?? true;
-  const allowReassign = options?.allowReassign ?? false;
   const response = await fetch(
     `${getAPIBaseURL()}/api/v1/execution/plan/${orderId}/tasks/${encodeURIComponent(taskId)}/assign`,
     {
@@ -35,8 +34,6 @@ export async function assignExecutionPlanTask(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         assigned_employee_id: assignedEmployeeId,
-        controlled,
-        allow_reassign: allowReassign,
       }),
     },
   );
