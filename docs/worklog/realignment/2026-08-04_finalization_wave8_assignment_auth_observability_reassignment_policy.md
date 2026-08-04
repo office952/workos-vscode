@@ -6,7 +6,8 @@
 | Task | `FINALIZATION_WAVE_8_AUTH_FAIL_CLOSED_AND_ASSIGNMENT_OBSERVABILITY_POLICY` |
 | Status | **`FINALIZATION_WAVE_8 = PASS`** |
 | Starting HEAD | `1e3f8be4` |
-| Implementation commit | $sha |
+| Implementation commit | `06dcefd1` |
+| Final HEAD | `763b285a` |
 | Repo / worktree | `C:\w\psiso` (canonical also `C:\Users\offic\workos_app_vs`) |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Schema / migration | **NONE** |
