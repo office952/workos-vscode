@@ -1,14 +1,17 @@
 # Assignment Observability and Reassignment Policy
 
-**Status:** Wave 8 audit **COMPLETE** — reassignment **NOT IMPLEMENTED**  
+**Status:** Wave 8 audit **COMPLETE** — Owner reassignment decisions **RECORDED** — reassignment **NOT IMPLEMENTED**  
 **Date:** 2026-08-04  
-**Owner GO:** `FINALIZATION_WAVE_8_AUTH_FAIL_CLOSED_AND_ASSIGNMENT_OBSERVABILITY_POLICY`  
-**Related:** `ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md` (DEC-ASSIGN-01…08)  
-**Worklog:** `docs/worklog/realignment/2026-08-04_finalization_wave8_assignment_auth_observability_reassignment_policy.md`
+**Owner GO (audit):** `FINALIZATION_WAVE_8_AUTH_FAIL_CLOSED_AND_ASSIGNMENT_OBSERVABILITY_POLICY`  
+**Owner GO (decisions):** `CONTROLLED_PRE_START_REASSIGNMENT_OWNER_DECISION_ONLY`  
+**Related:** `ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md` · **canonical reassignment decisions:** `CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`  
+**Worklogs:** Wave 8 audit worklog · `docs/worklog/realignment/2026-08-04_controlled_pre_start_reassignment_owner_decisions.md`
 
 ```text
 REASSIGNMENT_IMPLEMENTED = NO
 UNASSIGNMENT_IMPLEMENTED = NO
+OWNER_REASSIGNMENT_DECISIONS = RECORDED
+IMPLEMENTATION_AUTHORIZED = FALSE
 SCHEMA_CHANGE = NO
 WAVE_9 = NOT_AUTHORIZED
 ```
@@ -117,51 +120,32 @@ Dead pieces removed: NONE
 
 ---
 
-## 6. Policy options (Owner decision required — not implemented)
+## 6. Owner reassignment decisions (recorded)
 
-### Option A — Strict pre-start reassignment (recommended first build)
+Owner selected the **strict pre-start** family. Full decision records live only in:
 
-```text
-actors: manager + admin (execution.task_assign + future reassign permission if split)
-when: task not started; no active session; no schedule/reservation; not completed/cancelled
-reason: required (coded enum + optional text)
-history: previous employee + new + actor + reason + timestamp retained (may need schema GO)
-concurrency: CAS expected current employee_id; no last-write-wins
-unassignment: manager/admin only, same pre-start gates, reason required
-employee acknowledgement: notification only (Mobile remains frozen)
-scheduling: reassignment ≠ availability; HOLD remains until separate scheduling GO
-```
+[`CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`](./CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md)
 
-### Option B — Controlled operational transfer (future / higher risk)
+| ID | Decision |
+| -- | -------- |
+| DEC-REASSIGN-01 | `MANAGER_AND_ADMIN_ONLY` (+ distinct reassign permission) |
+| DEC-REASSIGN-02 | `STRICT_PRE_START_ONLY` |
+| DEC-REASSIGN-03 | `RETAIN_FULL_ASSIGNMENT_TRANSITION_HISTORY` |
+| DEC-REASSIGN-04 | `REASON_CODE_REQUIRED` |
+| DEC-REASSIGN-05 | `ALLOWED_ONLY_PRE_START_BY_MANAGER_OR_ADMIN` |
+| DEC-REASSIGN-06 | `NOT_REQUIRED_FOR_FIRST_PRE_START_BUILD` |
+| DEC-REASSIGN-07 | `EXPECTED_CURRENT_EMPLOYEE_CAS` |
+| DEC-REASSIGN-08 | `BLOCK_WHEN_SCHEDULING_OR_RESERVATION_EXISTS` |
 
-```text
-active work handoff, session closure, planner intervention, employee acknowledgement
-class: FUTURE — not first build
-```
-
-**Default recommendation:** Option A only after Owner answers DEC-REASSIGN-01…08.
+Post-start operational transfer remains a **future separate architecture** (Wave 8 Option B class) — not authorized.
 
 ---
 
-## 7. Owner decisions required
-
-| ID | Question | Recommended (not decided) |
-| -- | -------- | ------------------------- |
-| DEC-REASSIGN-01 | Who may reassign? | manager + admin |
-| DEC-REASSIGN-02 | When allowed? | unstarted only; block completed/cancelled/active session/scheduled/reserved |
-| DEC-REASSIGN-03 | History retention? | previous + new + actor + reason + timestamp (+ eligibility ref) |
-| DEC-REASSIGN-04 | Reason code mandatory? | yes — enum + optional text |
-| DEC-REASSIGN-05 | Unassignment? | allowed only before start, manager/admin, no session/schedule/reservation |
-| DEC-REASSIGN-06 | Employee acknowledgement? | notification only until Mobile unfrozen |
-| DEC-REASSIGN-07 | Concurrency? | expected current employee + CAS; no LWW |
-| DEC-REASSIGN-08 | Scheduling interaction? | reassignment does not imply availability/start; separate scheduling GO |
-
----
-
-## 8. Next step
+## 7. Next step
 
 ```text
-OWNER DECISION ON CONTROLLED PRE-START REASSIGNMENT POLICY
+FUTURE CANDIDATE:
+CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT
 ```
 
-Do not implement reassignment until those decisions are recorded.
+Do not implement reassignment or unassignment until that readiness audit (and any required persistence/schema Owner GO) completes.

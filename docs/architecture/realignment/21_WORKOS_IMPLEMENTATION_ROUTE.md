@@ -346,22 +346,19 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 8 PASS** — production auth fail-closed verified; Wave 7 failed-test root cause closed; assignment observability within embedded model; reassignment/unassignment **policy audit complete**, **not implemented**.  
-Wave 7 assignment retained. Wave 9 / reassignment execution / scheduling **not authorized**.
+**Owner reassignment decisions RECORDED** — DEC-REASSIGN-01…08 fix the future pre-start contract.  
+Wave 8 PASS retained. Reassignment/unassignment **not implemented**. Wave 9 / execution / scheduling **not authorized**.
 
-Worklogs:  
-`docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`  
-`docs/worklog/realignment/2026-08-04_finalization_wave7_auth_and_ui_closure_proof_only.md`  
-`docs/worklog/realignment/2026-08-04_finalization_wave8_assignment_auth_observability_reassignment_policy.md`  
-Canonical policy: `docs/architecture/ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md`
+Canonical decisions: `docs/architecture/CONTROLLED_PRE_START_REASSIGNMENT_DECISIONS.md`  
+Wave 8 audit: `docs/architecture/ASSIGNMENT_OBSERVABILITY_AND_REASSIGNMENT_POLICY.md`  
+Worklog: `docs/worklog/realignment/2026-08-04_controlled_pre_start_reassignment_owner_decisions.md`
 
 **Why:**
 
-- Production missing/invalid auth denied; DEBUG cannot enable bypass; typo APP_ENV denies bypass.
-- Embedded assignment audit + safe structured logs; privacy boundary documented.
-- Reassignment inventory + Option A/B + DEC-REASSIGN-01…08 await Owner decision.
+- Manager/admin-only, distinct permission, strict pre-start, CAS expected employee, reason required, full transition history, scheduling/reservation block.
+- Persistence model for history must be audited before any implementation; schema still unauthorized.
 
-**Do not** implement controlled reassignment without Owner DEC-REASSIGN decisions.
+**Do not** start `CONTROLLED_PRE_START_REASSIGNMENT_IMPLEMENTATION_READINESS_AUDIT` without a new Owner GO.
 
 ---
 
