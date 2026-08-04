@@ -10,11 +10,13 @@ from __future__ import annotations
 from datetime import datetime
 
 from core.database import Base
+from core.schema_ownership import CANONICAL_ASSIGNMENT_TRANSITION_INDEXES
 from sqlalchemy import (
     CheckConstraint,
     Column,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -62,19 +64,23 @@ class ExecutionTaskAssignmentTransition(Base):
             ")",
             name="ck_exec_task_assign_transition_employee_shape",
         ),
+        # Index names must match Alembic s63 — never Column(index=True) auto-names.
+        *[
+            Index(name, *cols)
+            for name, cols in CANONICAL_ASSIGNMENT_TRANSITION_INDEXES
+        ],
         {"extend_existing": True},
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    transition_id = Column(String(36), nullable=False, index=True)
+    transition_id = Column(String(36), nullable=False)
     execution_plan_id = Column(
         Integer,
         ForeignKey("execution_plan.id", ondelete="RESTRICT"),
         nullable=False,
-        index=True,
     )
-    order_id = Column(Integer, nullable=False, index=True)
-    task_key = Column(String(512), nullable=False, index=True)
+    order_id = Column(Integer, nullable=False)
+    task_key = Column(String(512), nullable=False)
     transition_type = Column(String(16), nullable=False)
     previous_employee_id = Column(
         Integer,
@@ -96,7 +102,7 @@ class ExecutionTaskAssignmentTransition(Base):
     request_id = Column(String(64), nullable=True)
     correlation_id = Column(String(64), nullable=True)
     expected_current_employee_id = Column(Integer, nullable=True)
-    source = Column(String(64), nullable=True, index=True)
+    source = Column(String(64), nullable=True)
     command_version = Column(String(32), nullable=True)
     metadata_json = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.now)

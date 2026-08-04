@@ -11,6 +11,7 @@ from asyncpg.exceptions import (
     UniqueViolationError,
 )
 from core.config import resolve_database_url, settings
+from core.schema_ownership import ALEMBIC_OWNED_TABLES
 from sqlalchemy import DDL, text
 from sqlalchemy.sql.elements import TextClause
 
@@ -203,8 +204,34 @@ class DatabaseManager:
             self.async_session_maker = None
             self._initialized = False  # Reset initialization flag
 
+    def _runtime_create_all(self, sync_conn) -> None:
+        """create_all excluding Alembic-owned tables (migration governance).
+
+        New production schema for ALEMBIC_OWNED_TABLES must come from
+        ``alembic upgrade``, never from startup create_all.
+        """
+        tables = [
+            table
+            for name, table in Base.metadata.tables.items()
+            if name not in ALEMBIC_OWNED_TABLES
+        ]
+        skipped = sorted(ALEMBIC_OWNED_TABLES & set(Base.metadata.tables.keys()))
+        if skipped:
+            logger.info(
+                "Skipping Alembic-owned tables in runtime create_all: %s",
+                ", ".join(skipped),
+            )
+        Base.metadata.create_all(sync_conn, tables=tables)
+
     async def create_tables(self):
-        """Create all tables with thread safety"""
+        """Create non-Alembic tables with thread safety.
+
+        Alembic-owned tables (see ``core.schema_ownership.ALEMBIC_OWNED_TABLES``)
+        are never created here — including production/staging and development —
+        so runtime cannot silently bypass migration governance for those objects.
+        Isolated tests that need the full ORM schema should call
+        ``Base.metadata.create_all`` directly (e.g. IsolatedDBFixture).
+        """
         start_time = time.time()
         logger.debug("[DB_OP] Starting create_tables")
         await self._table_creation_lock.acquire()
@@ -226,9 +253,9 @@ class DatabaseManager:
                 logger.info("Table structure repair completed")
 
             try:
-                logger.info("🔧 Starting table creation...")
+                logger.info("🔧 Starting table creation (Alembic-owned tables excluded)...")
                 async with self.engine.begin() as conn:
-                    await conn.run_sync(Base.metadata.create_all)
+                    await conn.run_sync(self._runtime_create_all)
                     self._initialized = True
                     logger.info("Tables initialized successfully")
                     logger.debug(f"[DB_OP] Create tables completed in {time.time() - start_time:.4f}s")
@@ -253,7 +280,12 @@ class DatabaseManager:
                 return
 
             model_tables = list(Base.metadata.tables.keys())
-            tables_to_repair = [table for table in model_tables if table in existing_tables]
+            # Never ALTER Alembic-owned tables via startup repair — migrations own DDL.
+            tables_to_repair = [
+                table
+                for table in model_tables
+                if table in existing_tables and table not in ALEMBIC_OWNED_TABLES
+            ]
 
             if not tables_to_repair:
                 logger.info("No existing tables need repair")
