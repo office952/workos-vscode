@@ -346,15 +346,15 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner review of Finalization Wave 5** — assignment readiness audit-only + command-contract research verified on fixture **`880750`** / plan **`23`**.
+**Owner review of Finalization Wave 5 correction** — status is **`PARTIAL_BLOCKED`**, not PASS.
 
 **Why:**
 
-- Wave 4 verified capability + eligibility RO.
-- Wave 5 documents the canonical PATCH assign contract, protections, and gaps without executing assignment.
-- `ASSIGNMENT_AUTHORIZED = false` (`OWNER_GO_FOR_REAL_ASSIGNMENT_NOT_GRANTED`).
+- Wave 5 delivered a RO assignment-readiness surface and inventoried the PATCH assign command without executing it.
+- Command **safety is NOT_VERIFIED**: legacy `controlled=false` remains **BYPASSABLE**; idempotency/transactionality remain **PARTIAL**.
+- Blocker: `LEGACY_CONTROLLED_FALSE_ASSIGNMENT_PATH_IS_BYPASSABLE`.
 
-**Do not** execute assignment, machine assignment, sessions, scheduling, capacity, or Employee Mobile without a separate Owner GO.
+**Do not** start Wave 6 or execute assignment until Owner decides remediation of the bypass and concurrency/idempotency strategy.
 
 ---
 
@@ -376,8 +376,10 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | Workcenters on tasks | VALIDATED_WITH_GUARDS (new freeze path) | Historical 88002 may still show null WC |
 | Machine capability RO | VERIFIED (F7C + Wave 4 UI) | Assignment still CLOSED |
 | Employee eligibility RO | VERIFIED (DEC-015 + Wave 4 UI) | Assignment still CLOSED |
-| Assignment readiness audit | VERIFIED_AUDIT_ONLY (Wave 5) | Command not executed |
-| Assignment command contract | VERIFIED (research) · IDEMPOTENCY/TX PARTIAL | Real assign needs Wave 6 GO |
+| Assignment readiness audit | SURFACE IMPLEMENTED (Wave 5) | PARTIAL_BLOCKED overall |
+| Assignment command inventory | VERIFIED | Safety NOT_VERIFIED |
+| Assignment command safety | NOT_VERIFIED | Bypass `controlled=false` + IDOR soft |
+| Idempotency / transactionality | PARTIAL | Owner strategy required before mutate GO |
 | Employees / skills | PARTIAL (eligibility RO only) | Assignment requires separate GO |
 | Sessions / actuals | FROZEN | Faza 6 after materialize GO |
 | ProfitabilityAnalysis | PARTIAL | Faza 7 after actuals |
