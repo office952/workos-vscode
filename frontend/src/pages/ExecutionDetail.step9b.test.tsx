@@ -86,6 +86,9 @@ vi.mock("@/components/execution/PostJobTruthPanel", () => ({
 vi.mock("@/components/execution-result/ResourceReadinessPanel", () => ({
   ResourceReadinessPanel: () => null,
 }));
+vi.mock("@/components/execution-result/EmployeeEligibilityPanel", () => ({
+  EmployeeEligibilityPanel: () => null,
+}));
 vi.mock("@/components/execution-result/TechnicalDetails", () => ({
   TechnicalDetails: () => null,
 }));

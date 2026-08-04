@@ -76,6 +76,21 @@ class CompatibleMachineCandidate(BaseModel):
     is_available: bool
     operational_status: str | None = None
     is_default: bool = False
+    # Wave 4 — capable ≠ assigned/reserved; provenance for operator honesty.
+    match_provenance: list[str] = Field(default_factory=list)
+    assignment_status: Literal["unassigned"] = "unassigned"
+    reservation_status: Literal["not_reserved"] = "not_reserved"
+
+
+class Wave4ReadOnlyBoundary(BaseModel):
+    """Explicit Wave 4 fail-closed boundary — never implies assign/schedule authority."""
+
+    assignable: Literal[False] = False
+    machine_assignable: Literal[False] = False
+    schedulable: Literal[False] = False
+    sessions_authorized: Literal[False] = False
+    capacity_allocation: Literal["not_started"] = "not_started"
+    evaluation_mode: Literal["read_only"] = "read_only"
 
 
 class OperationalTaskResourceReadiness(BaseModel):
@@ -127,3 +142,4 @@ class OperationalResourceReadinessResult(BaseModel):
     tasks: list[OperationalTaskResourceReadiness] = Field(default_factory=list)
     side_effects: Literal["none"] = "none"
     notes: list[str] = Field(default_factory=list)
+    wave4_boundary: Wave4ReadOnlyBoundary = Field(default_factory=Wave4ReadOnlyBoundary)

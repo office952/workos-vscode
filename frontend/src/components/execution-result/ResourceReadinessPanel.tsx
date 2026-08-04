@@ -1,10 +1,9 @@
 /**
- * F7C — Pregătire resurse (read-only ORR allow-list ∩ registru utilaje).
+ * F7C / Wave 4 — Pregătire resurse (read-only ORR allow-list ∩ registru utilaje).
  *
  * Compact, read-only. Presents backend truth from
  * `GET /execution/plan-v2/from-order/{id}/resource-readiness` verbatim —
- * NO Assign / Schedule / Start controls, NO computed minutes, NO invented
- * machine assignment. Section is display-only and never mutates state.
+ * NO Assign / Schedule / Start controls. CAPABLE ≠ ASSIGNED ≠ RESERVED.
  */
 import { useEffect, useState } from "react";
 import { Wrench } from "lucide-react";
@@ -58,9 +57,53 @@ export function ResourceReadinessPanel({ orderId }: { orderId: number }) {
     };
   }, [orderId]);
 
-  if (loading) return null;
-  if (error) return null; // Silent — this is a supplementary read-only section, not a blocking gate.
-  if (!data || data.status !== "ok" || data.tasks.length === 0) return null;
+  if (loading) {
+    return (
+      <section
+        className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"
+        data-testid="resource-readiness-panel-loading"
+      >
+        <p className="text-[12px] text-wo-text-muted">Se încarcă potrivirea de capabilitate…</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        className="rounded-lg border border-amber-800/40 bg-amber-950/20 p-4"
+        data-testid="resource-readiness-panel-error"
+      >
+        <h2 className="text-sm font-semibold text-amber-100">Pregătire resurse</h2>
+        <p className="mt-1 text-[11px] text-amber-100/80">
+          Evaluare read-only indisponibilă: {error}
+        </p>
+      </section>
+    );
+  }
+
+  if (!data) return null;
+
+  if (data.status === "blocked_not_materialized" || data.status === "plan_not_found") {
+    return (
+      <section
+        className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"
+        data-testid="resource-readiness-panel-empty"
+      >
+        <div className="flex items-center gap-2">
+          <Wrench className="h-4 w-4 text-wo-text-muted" />
+          <h2 className="text-sm font-semibold text-wo-text-primary">Pregătire resurse</h2>
+        </div>
+        <p className="mt-1 text-[11px] text-wo-text-muted">
+          {data.status === "plan_not_found"
+            ? "Plan de execuție lipsă — capabilitatea nu poate fi evaluată."
+            : "Taskurile operaționale nu sunt materializate — potrivirea de utilaje rămâne neevaluată."}
+        </p>
+      </section>
+    );
+  }
+
+  if (data.status !== "ok" || data.tasks.length === 0) return null;
 
   return (
     <section
@@ -72,7 +115,8 @@ export function ResourceReadinessPanel({ orderId }: { orderId: number }) {
         <h2 className="text-sm font-semibold text-wo-text-primary">Pregătire resurse</h2>
       </div>
       <p className="mt-1 text-[11px] text-wo-text-muted">
-        Sursă: registru ORR ∩ registru utilaje. Nicio alocare automată — doar constatare.
+        Potrivire de capabilitate read-only · workcenter înghețat ∩ ORR ∩ registru utilaje. Utilaj
+        compatibil ≠ atribuit ≠ rezervat. Scheduling rămâne HOLD.
       </p>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-left text-[12px]">
@@ -122,11 +166,10 @@ export function ResourceReadinessPanel({ orderId }: { orderId: number }) {
           </tbody>
         </table>
       </div>
-      {data.warning_count > 0 || data.blocked_count > 0 ? (
-        <p className="mt-2 text-[10px] text-wo-text-muted">
-          {data.ready_count} pregătit(e) · {data.warning_count} cu atenționări · {data.blocked_count} blocate.
-        </p>
-      ) : null}
+      <p className="mt-2 text-[10px] text-wo-text-muted" data-testid="resource-readiness-summary">
+        {data.ready_count} pregătit(e) · {data.warning_count} cu atenționări · {data.blocked_count}{" "}
+        blocate · neatribuit · neprogramat
+      </p>
     </section>
   );
 }

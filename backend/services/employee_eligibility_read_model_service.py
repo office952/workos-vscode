@@ -88,6 +88,14 @@ async def build_employee_eligibility_read_model(
             "status": "plan_not_found",
             "tasks": [],
             "side_effects": "none",
+            "wave4_boundary": {
+                "assignable": False,
+                "machine_assignable": False,
+                "schedulable": False,
+                "sessions_authorized": False,
+                "capacity_allocation": "not_started",
+                "evaluation_mode": "read_only",
+            },
         }
 
     envelope = _parse_envelope(plan.tasks_json)
@@ -107,6 +115,14 @@ async def build_employee_eligibility_read_model(
             "operational_task_count": 0,
             "tasks": [],
             "side_effects": "none",
+            "wave4_boundary": {
+                "assignable": False,
+                "machine_assignable": False,
+                "schedulable": False,
+                "sessions_authorized": False,
+                "capacity_allocation": "not_started",
+                "evaluation_mode": "read_only",
+            },
             "notes": ["Eligibility requires materialized operational_tasks[]."],
         }
 
@@ -378,10 +394,20 @@ async def build_employee_eligibility_read_model(
         "blocked_count": blocked_n,
         "tasks": task_rows,
         "side_effects": "none",
+        "wave4_boundary": {
+            "assignable": False,
+            "machine_assignable": False,
+            "schedulable": False,
+            "sessions_authorized": False,
+            "capacity_allocation": "not_started",
+            "evaluation_mode": "read_only",
+        },
         "notes": [
             "Read-only. Does not assign, claim, start, or create sessions/actuals.",
             "Employee ≠ User. Matching uses explicit authorizations only.",
             "Planning minutes missing → warning only, not a blocker.",
             "Availability/calendar is not evaluated (availability_status=not_evaluated).",
+            "Wave 4: ELIGIBLE_CANDIDATE ≠ ASSIGNED_EMPLOYEE ≠ AUTHORIZED_TO_START; "
+            "scheduling remains HOLD.",
         ],
     }

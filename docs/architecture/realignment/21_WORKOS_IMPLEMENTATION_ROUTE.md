@@ -346,16 +346,15 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Owner review of Finalization Wave 3** — `DEC-009=B` recorded (`docs/decisions/DEC-009_CONTROLLED_OPERATIONAL_MATERIALIZATION_B.md`). Controlled materialization is authorized only for the OD3 next-dry durable QA fixture **`880750`** / plan **`23`**.
+**Owner review of Finalization Wave 4** — read-only workcenter→machine capability (F7C) + employee role/skill eligibility (DEC-015) verified on fixture **`880750`** / plan **`23`**.
 
 **Why:**
 
-- Faza 0–2 are complete at commits `134eef7e` (Wave 1) and `788171b4` (Wave 2).
-- Wave 3 exercises POST materialize under fail-closed True_CONDITIONAL scope; assignment / sessions / scheduling remain closed.
-- Canonical ownership, ORR compile freeze, finish-aware DAG, and Step 9B read-only remain in place.
-- Durable fixture: order **`880750`** / `ORD-WAVE2-QA-880750` / plan **`23`** / snapshot `QSN2-WAVE2-880750`.
+- Wave 3 (`1e8d3344`) materialized 13 operational tasks under `DEC-009=B` scoped next-dry.
+- Wave 4 composes existing GET read models on `/execution/880750` without assignment/session/scheduling writes.
+- Durable fixture remains the sole controlled QA target for Finalization waves.
 
-**Do not** start assignment, sessions, scheduling, or Employee Mobile without a separate Owner GO.
+**Do not** start assignment, machine assignment, sessions, scheduling, capacity, or Employee Mobile without a separate Owner GO.
 
 ---
 
@@ -373,9 +372,11 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 | Quote / Order Snapshot V2 | VALIDATED_WITH_GUARDS | Freeze WC + DAG + warnings on new snapshots |
 | ExecutionPlan V2 draft | VALIDATED_WITH_GUARDS | Reads frozen snapshot only |
 | Step 9B UI | COMPLETE (Wave 1/2) | Read-only; local WC provenance only |
-| Materialization | DEC-009=B SCOPED (880750 next-dry) | Owner review Wave 3; Wave 4 eligibility RO only |
+| Materialization | DEC-009=B SCOPED (880750 next-dry) | Verified Wave 3 |
 | Workcenters on tasks | VALIDATED_WITH_GUARDS (new freeze path) | Historical 88002 may still show null WC |
-| Employees / skills | PARTIAL | Faza 5 after materialize |
+| Machine capability RO | VERIFIED (F7C + Wave 4 UI) | Assignment still CLOSED |
+| Employee eligibility RO | VERIFIED (DEC-015 + Wave 4 UI) | Assignment still CLOSED |
+| Employees / skills | PARTIAL (eligibility RO only) | Assignment requires separate GO |
 | Sessions / actuals | FROZEN | Faza 6 after materialize GO |
 | ProfitabilityAnalysis | PARTIAL | Faza 7 after actuals |
 | UI labels (global Step 11) | PARTIAL | Broader labeling still pending; Step 9B done |
@@ -388,9 +389,9 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 | Question | Safe when | Not safe now because |
 | -------- | --------- | -------------------- |
-| **Materialize tasks?** | DEC-003/004/005/007 recorded; Faza 2 validated; DEC-009=B; durable controlled fixture | DEC-009 still A; Wave 2 fixture is pytest-ephemeral |
-| **Link employees to tasks?** | Faza 3 materialized + Faza 5 eligibility defined | `operational_tasks[]` empty on non-materialized path |
-| **Link utilaje/workcenters?** | Faza 4 after WC on frozen ops (DEC-005=E applied on new freeze path) | Historical 88002 may still show null WC |
+| **Materialize tasks?** | DEC-009=B scoped next-dry verified on durable **880750**/plan **23** (Wave 3) | Unscoped production materialize; protected orders |
+| **Link employees to tasks?** | Separate assignment GO after Wave 4 eligibility RO | Eligibility RO verified; assignment still CLOSED |
+| **Link utilaje/workcenters?** | Capability RO verified (Wave 4); assignment needs separate GO | Capable ≠ assigned; historical 88002 may still show null WC |
 | **Start sessions / actuals?** | Faza 6 GO; `v2_operational_ready` on order | Guards block `v2_not_materialized` |
 | **Employee Mobile?** | Faza 10 — all of Faza 3–6 + 8 stable | Mobile before materialize forbidden |
 

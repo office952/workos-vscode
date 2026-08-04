@@ -82,8 +82,22 @@ async def _load_machines_by_code(
 
 
 def _candidate_from_row(
-    row: MachineRegistry, *, is_default: bool
+    row: MachineRegistry,
+    *,
+    is_default: bool,
+    registry_operation_code: str | None = None,
+    frozen_workcenter: str | None = None,
 ) -> CompatibleMachineCandidate:
+    provenance = [
+        "machines_registry:resource_code",
+        "operation_resource_requirements:allowed_resource_codes",
+    ]
+    if registry_operation_code:
+        provenance.append(f"registry_operation_code:{registry_operation_code}")
+    if frozen_workcenter:
+        provenance.append(f"task_frozen_workcenter:{frozen_workcenter}")
+    if row.workcenter_code:
+        provenance.append(f"machine_registry_workcenter:{row.workcenter_code}")
     return CompatibleMachineCandidate(
         resource_code=row.machine_code,
         name=row.name,
@@ -93,6 +107,9 @@ def _candidate_from_row(
         is_available=bool(row.is_available),
         operational_status=row.operational_status,
         is_default=is_default,
+        match_provenance=provenance,
+        assignment_status="unassigned",
+        reservation_status="not_reserved",
     )
 
 
@@ -309,14 +326,24 @@ async def build_operational_resource_readiness(
             mode = "orr_allowlist"
 
         machine_candidates = [
-            _candidate_from_row(machines_by_code[c], is_default=(c == default_resource))
+            _candidate_from_row(
+                machines_by_code[c],
+                is_default=(c == default_resource),
+                registry_operation_code=registry_code,
+                frozen_workcenter=frozen_wc,
+            )
             for c in allowed_resources
             if c in machines_by_code
             and (machines_by_code[c].resource_kind or "machine") in MACHINE_LIKE_KINDS
             and machines_by_code[c].is_active
         ]
         work_area_candidates = [
-            _candidate_from_row(machines_by_code[c], is_default=(c == default_resource))
+            _candidate_from_row(
+                machines_by_code[c],
+                is_default=(c == default_resource),
+                registry_operation_code=registry_code,
+                frozen_workcenter=frozen_wc,
+            )
             for c in allowed_resources
             if c in machines_by_code
             and (machines_by_code[c].resource_kind or "machine") == "work_area"
@@ -399,5 +426,7 @@ async def build_operational_resource_readiness(
             "Planning minutes missing is a capacity warning, not a commercial blocker.",
             "workcenter_only means every ORR-allowed resource is work_area-kind — "
             "absence of a machine candidate is expected, not a gap.",
+            "Wave 4: CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE; "
+            "schedulable remains HOLD while planning minutes are null.",
         ],
     )

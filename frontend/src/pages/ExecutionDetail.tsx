@@ -29,6 +29,7 @@ import { FinalResultPanel } from "@/components/execution-result/FinalResultPanel
 import { ExecutionResultHeader } from "@/components/execution-result/Header";
 import { OperationalSummary } from "@/components/execution-result/OperationalSummary";
 import { PlanActualPanel } from "@/components/execution-result/PlanActualPanel";
+import { EmployeeEligibilityPanel } from "@/components/execution-result/EmployeeEligibilityPanel";
 import { ResourceReadinessPanel } from "@/components/execution-result/ResourceReadinessPanel";
 import { TechnicalDetails } from "@/components/execution-result/TechnicalDetails";
 import { WorkPanel } from "@/components/execution-result/WorkPanel";
@@ -185,6 +186,7 @@ export default function ExecutionDetail() {
           <OperationalSummary observability={observability} />
           <BlockersPanel observability={observability} alerts={alerts} />
           {observability.has_plan ? <ResourceReadinessPanel orderId={orderId} /> : null}
+          {observability.has_plan ? <EmployeeEligibilityPanel orderId={orderId} /> : null}
           {!observability.has_plan ? (
             <section
               className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4"

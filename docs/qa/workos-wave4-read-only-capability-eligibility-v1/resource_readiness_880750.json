@@ -1,0 +1,795 @@
+{
+  "mode": "operational_resource_readiness",
+  "order_id": 880750,
+  "execution_plan_id": 23,
+  "status": "ok",
+  "requirement_source": "operation_resource_requirements+machines_registry",
+  "requirement_version": "resource-readiness/v1",
+  "operational_task_count": 13,
+  "ready_count": 0,
+  "warning_count": 13,
+  "blocked_count": 0,
+  "tasks": [
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "display_name": "Vector Prep",
+      "source_operation_code": "vector_prep",
+      "canonical_task_type": "file_preparation",
+      "workcenter_code": "WC_PREPRESS",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "prepress",
+      "allowed_resource_codes": [],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "display_name": "Face CNC Cut",
+      "source_operation_code": "face_cnc_cut",
+      "canonical_task_type": "cnc_routing",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "cnc_cutting",
+      "allowed_resource_codes": [
+        "MCH-CNC-4020"
+      ],
+      "default_resource_code": "MCH-CNC-4020",
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-CNC-4020",
+          "name": "CNC 4020",
+          "resource_kind": "machine",
+          "workcenter_code": "WC_CNC_ROUTING",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": true,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:cnc_cutting",
+            "task_frozen_workcenter:WC_CNC_ROUTING",
+            "machine_registry_workcenter:WC_CNC_ROUTING"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:back_cut",
+      "display_name": "Back CNC Cut",
+      "source_operation_code": "back_cut",
+      "canonical_task_type": "cnc_routing",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "cnc_cutting",
+      "allowed_resource_codes": [
+        "MCH-CNC-4020"
+      ],
+      "default_resource_code": "MCH-CNC-4020",
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-CNC-4020",
+          "name": "CNC 4020",
+          "resource_kind": "machine",
+          "workcenter_code": "WC_CNC_ROUTING",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": true,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:cnc_cutting",
+            "task_frozen_workcenter:WC_CNC_ROUTING",
+            "machine_registry_workcenter:WC_CNC_ROUTING"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "display_name": "Side Forming",
+      "source_operation_code": "side_forming",
+      "canonical_task_type": "edge_bending",
+      "workcenter_code": "WC_LETTER_FORMING",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "cant_modelare",
+      "allowed_resource_codes": [
+        "MCH-CNC-CANT-LITERE"
+      ],
+      "default_resource_code": "MCH-CNC-CANT-LITERE",
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-CNC-CANT-LITERE",
+          "name": "CNC Cant Litere",
+          "resource_kind": "machine",
+          "workcenter_code": "WC_LETTER_FORMING",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": true,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:cant_modelare",
+            "task_frozen_workcenter:WC_LETTER_FORMING",
+            "machine_registry_workcenter:WC_LETTER_FORMING"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "display_name": "Return Face Bonding",
+      "source_operation_code": "return_face_bonding",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "workcenter_code": "WC_METAL_FAB",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "welding",
+      "allowed_resource_codes": [
+        "MCH-WELD-STEEL",
+        "MCH-WELD-ALU",
+        "WA-WELD-TABLE"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-WELD-STEEL",
+          "name": "Aparat sudură oțel",
+          "resource_kind": "tool",
+          "workcenter_code": "WC_METAL_FAB",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:welding",
+            "task_frozen_workcenter:WC_METAL_FAB",
+            "machine_registry_workcenter:WC_METAL_FAB"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "MCH-WELD-ALU",
+          "name": "Aparat sudură aluminiu",
+          "resource_kind": "tool",
+          "workcenter_code": "WC_METAL_FAB",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:welding",
+            "task_frozen_workcenter:WC_METAL_FAB",
+            "machine_registry_workcenter:WC_METAL_FAB"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-WELD-TABLE",
+          "name": "Masă pentru sudură",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_METAL_FAB",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:welding",
+            "task_frozen_workcenter:WC_METAL_FAB",
+            "machine_registry_workcenter:WC_METAL_FAB"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "display_name": "Painting module (alias)",
+      "source_operation_code": "painting",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "workcenter_code": "WC_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "assembly",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:assembly",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:assembly",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+      "display_name": "LED Install",
+      "source_operation_code": "led_install_letters",
+      "canonical_task_type": "led_assembly",
+      "workcenter_code": "WC_LED_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "montaj_led",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:montaj_led",
+            "task_frozen_workcenter:WC_LED_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:montaj_led",
+            "task_frozen_workcenter:WC_LED_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_letters",
+      "display_name": "Electrical",
+      "source_operation_code": "electrical_letters",
+      "canonical_task_type": "led_wiring",
+      "workcenter_code": "WC_LED_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "montaj_led",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:montaj_led",
+            "task_frozen_workcenter:WC_LED_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:montaj_led",
+            "task_frozen_workcenter:WC_LED_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+      "display_name": "Assembly Letters",
+      "source_operation_code": "assembly_letters",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "workcenter_code": "WC_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "assembly",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:assembly",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:assembly",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "display_name": "Vinyl Application",
+      "source_operation_code": "vinyl_application",
+      "canonical_task_type": "vinyl_cutting",
+      "workcenter_code": "WC_VINYL_APPLICATION",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "colantare",
+      "allowed_resource_codes": [
+        "MCH-RIGID-FILM-LAMINATOR",
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-RIGID-FILM-LAMINATOR",
+          "name": "Laminator pentru aplicare folie pe plăci rigide",
+          "resource_kind": "machine",
+          "workcenter_code": "WC_VINYL_APPLICATION",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:colantare",
+            "task_frozen_workcenter:WC_VINYL_APPLICATION",
+            "machine_registry_workcenter:WC_VINYL_APPLICATION"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:colantare",
+            "task_frozen_workcenter:WC_VINYL_APPLICATION",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:colantare",
+            "task_frozen_workcenter:WC_VINYL_APPLICATION",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template_cnc_cut",
+      "display_name": "Mounting Template CNC",
+      "source_operation_code": "mounting_template_cnc_cut",
+      "canonical_task_type": "cnc_routing",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "orr_allowlist",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "cnc_cutting",
+      "allowed_resource_codes": [
+        "MCH-CNC-4020"
+      ],
+      "default_resource_code": "MCH-CNC-4020",
+      "compatible_machine_candidates": [
+        {
+          "resource_code": "MCH-CNC-4020",
+          "name": "CNC 4020",
+          "resource_kind": "machine",
+          "workcenter_code": "WC_CNC_ROUTING",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": true,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:cnc_cutting",
+            "task_frozen_workcenter:WC_CNC_ROUTING",
+            "machine_registry_workcenter:WC_CNC_ROUTING"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "work_area_candidates": [],
+      "estimated_minutes": null,
+      "status": "ready_with_warnings",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_letters",
+      "display_name": "QC Letters",
+      "source_operation_code": "qc_letters",
+      "canonical_task_type": "quality_control",
+      "workcenter_code": "WC_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "quality_control",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:quality_control",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:quality_control",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "display_name": "Packaging",
+      "source_operation_code": "packaging_letters",
+      "canonical_task_type": "packaging",
+      "workcenter_code": "WC_ASSEMBLY",
+      "workcenter_registry_status": "resolved",
+      "resource_requirement_mode": "workcenter_only",
+      "authorization_mode": "hybrid",
+      "registry_operation_code": "packaging",
+      "allowed_resource_codes": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "default_resource_code": null,
+      "compatible_machine_candidates": [],
+      "work_area_candidates": [
+        {
+          "resource_code": "WA-ASSEMBLY-01",
+          "name": "Masă lucru ansamblare 1",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:packaging",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        },
+        {
+          "resource_code": "WA-ASSEMBLY-02",
+          "name": "Masă lucru ansamblare 2",
+          "resource_kind": "work_area",
+          "workcenter_code": "WC_ASSEMBLY",
+          "is_active": true,
+          "is_available": true,
+          "operational_status": "active",
+          "is_default": false,
+          "match_provenance": [
+            "machines_registry:resource_code",
+            "operation_resource_requirements:allowed_resource_codes",
+            "registry_operation_code:packaging",
+            "task_frozen_workcenter:WC_ASSEMBLY",
+            "machine_registry_workcenter:WC_ASSEMBLY"
+          ],
+          "assignment_status": "unassigned",
+          "reservation_status": "not_reserved"
+        }
+      ],
+      "estimated_minutes": null,
+      "status": "workcenter_only",
+      "blockers": [],
+      "warnings": [
+        "PLANNING_MINUTES_SOURCE_MISSING"
+      ],
+      "requirement_source": "operation_resource_requirements+machines_registry",
+      "requirement_version": "resource-readiness/v1"
+    }
+  ],
+  "side_effects": "none",
+  "notes": [
+    "Read-only. Does not assign machine_code, does not create sessions/assignments.",
+    "resource_requirement_mode is derived from ORR truth only — no formal machine_required|optional|workcenter_only enum exists in the registry (Owner decision pending).",
+    "Planning minutes missing is a capacity warning, not a commercial blocker.",
+    "workcenter_only means every ORR-allowed resource is work_area-kind — absence of a machine candidate is expected, not a gap.",
+    "Wave 4: CAPABLE_MACHINE ≠ ASSIGNED_MACHINE ≠ RESERVED_MACHINE; schedulable remains HOLD while planning minutes are null."
+  ],
+  "wave4_boundary": {
+    "assignable": false,
+    "machine_assignable": false,
+    "schedulable": false,
+    "sessions_authorized": false,
+    "capacity_allocation": "not_started",
+    "evaluation_mode": "read_only"
+  }
+}

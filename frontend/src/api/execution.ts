@@ -456,6 +456,7 @@ export interface EmployeeEligibilityReadModelResponse {
   tasks: TaskEligibilityRow[];
   side_effects?: string;
   notes?: string[];
+  wave4_boundary?: Wave4ReadOnlyBoundary;
 }
 
 /**
@@ -484,6 +485,18 @@ export interface CompatibleMachineCandidate {
   is_available: boolean;
   operational_status?: string | null;
   is_default?: boolean;
+  match_provenance?: string[];
+  assignment_status?: 'unassigned';
+  reservation_status?: 'not_reserved';
+}
+
+export interface Wave4ReadOnlyBoundary {
+  assignable: false;
+  machine_assignable: false;
+  schedulable: false;
+  sessions_authorized: false;
+  capacity_allocation: 'not_started';
+  evaluation_mode: 'read_only';
 }
 
 export interface OperationalTaskResourceReadiness {
@@ -516,6 +529,7 @@ export interface OperationalResourceReadinessResponse {
   tasks: OperationalTaskResourceReadiness[];
   side_effects: 'none';
   notes: string[];
+  wave4_boundary?: Wave4ReadOnlyBoundary;
 }
 
 // ---------------------------------------------------------------------------

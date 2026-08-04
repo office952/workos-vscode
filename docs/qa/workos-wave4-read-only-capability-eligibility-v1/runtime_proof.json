@@ -1,0 +1,151 @@
+{
+  "fixture_order_id": 880750,
+  "execution_plan_id": 23,
+  "non_production": {
+    "APP_ENV": "development",
+    "backend": "http://127.0.0.1:8001",
+    "db": "C:\\w\\psiso\\backend\\dev.db"
+  },
+  "before": {
+    "table": "execution_plan",
+    "columns_sample": [
+      "id",
+      "order_id",
+      "order_code",
+      "snapshot_version",
+      "tasks_json",
+      "total_estimated_time_minutes",
+      "prepared_by_user_id",
+      "plan_source",
+      "source_quote_snapshot_v2_id",
+      "source_snapshot_code",
+      "source_content_hash",
+      "source_order_snapshot_version",
+      "created_at",
+      "updated_at"
+    ],
+    "id": 23,
+    "order_id": 880750,
+    "execution_tasks_created": null,
+    "updated_at": "2026-08-04 02:21:47.122899",
+    "ops_count": 13,
+    "tasks_json_sha256": "e120b0cb91ff500504a9beb62d8e7f6608f5a6a14df2ae1a743c5c111dbac0f2"
+  },
+  "after_reads": {
+    "table": "execution_plan",
+    "columns_sample": [
+      "id",
+      "order_id",
+      "order_code",
+      "snapshot_version",
+      "tasks_json",
+      "total_estimated_time_minutes",
+      "prepared_by_user_id",
+      "plan_source",
+      "source_quote_snapshot_v2_id",
+      "source_snapshot_code",
+      "source_content_hash",
+      "source_order_snapshot_version",
+      "created_at",
+      "updated_at"
+    ],
+    "id": 23,
+    "order_id": 880750,
+    "execution_tasks_created": null,
+    "updated_at": "2026-08-04 02:21:47.122899",
+    "ops_count": 13,
+    "tasks_json_sha256": "e120b0cb91ff500504a9beb62d8e7f6608f5a6a14df2ae1a743c5c111dbac0f2"
+  },
+  "tasks_json_unchanged": true,
+  "updated_at_unchanged": true,
+  "materialization_audit_keys": [
+    "activation_hash_preview",
+    "blockers",
+    "contract_notes",
+    "dry_run_status",
+    "execution_plan_id",
+    "guards",
+    "input_summary",
+    "materializable_task_candidates",
+    "materialization_status",
+    "message",
+    "mode",
+    "non_operational_items",
+    "operation_count",
+    "operational_tasks_in_envelope_count",
+    "order_code",
+    "order_id",
+    "plan_source",
+    "planned_task_count",
+    "source_quote_snapshot_v2_id",
+    "source_snapshot_code",
+    "template_code",
+    "warnings"
+  ],
+  "resource_readiness": {
+    "status": "ok",
+    "operational_task_count": 13,
+    "ready_count": 0,
+    "warning_count": 13,
+    "blocked_count": 0,
+    "side_effects": "none",
+    "wave4_boundary": {
+      "assignable": false,
+      "machine_assignable": false,
+      "schedulable": false,
+      "sessions_authorized": false,
+      "capacity_allocation": "not_started",
+      "evaluation_mode": "read_only"
+    }
+  },
+  "employee_eligibility": {
+    "status": "ok",
+    "operational_task_count": 13,
+    "side_effects": "none",
+    "wave4_boundary": {
+      "assignable": false,
+      "machine_assignable": false,
+      "schedulable": false,
+      "sessions_authorized": false,
+      "capacity_allocation": "not_started",
+      "evaluation_mode": "read_only"
+    },
+    "summary": null
+  },
+  "tables_related": [
+    "attendance_request_effects",
+    "employee_attendance_events"
+  ],
+  "protected_baselines_after": {
+    "880811": {
+      "total_amount": 1847.5,
+      "ops": 5,
+      "plan_id": 22
+    },
+    "973019": {
+      "total_amount": 847.5,
+      "ops": 18,
+      "plan_id": 21
+    },
+    "88002": {
+      "present_in_orders": false,
+      "note": "historical RO fixture absent from this DB copy; not mutated"
+    }
+  },
+  "f7i_owner_confirmed": {
+    "BACK_CNC_COMMERCIAL_EUR_M2": 15.0,
+    "LED_MODULE_COMMERCIAL_EUR_BUC": 1.5,
+    "PSU_COMMERCIAL_EUR_BUC": 35.0,
+    "AMBALARE_COMMERCIAL_EUR_SET": 20.0,
+    "currency": "EUR",
+    "identities": "4/4",
+    "source": "backend/data/commercial_rules_volumetric_v2.py",
+    "changed_by_wave4": false
+  },
+  "fixture_880750": {
+    "execution_tasks_created": true,
+    "ops": 13,
+    "tasks_json_sha256": "e120b0cb91ff500504a9beb62d8e7f6608f5a6a14df2ae1a743c5c111dbac0f2",
+    "plan_updated_at": "2026-08-04 02:21:47.122899"
+  }
+}

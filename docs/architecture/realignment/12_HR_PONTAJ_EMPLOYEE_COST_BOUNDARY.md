@@ -149,3 +149,18 @@ HR/Pontaj (internal people truth)
 | Profitability can consume | Post-job labor cost available |
 | UI boundaries | Step 11 HR screens labeled internal |
 | Protected status maintained | No unscoped HR rewrite |
+
+---
+
+## 13. Implementation status — Finalization Wave 4 (2026-08-04)
+
+| Aspect | Status |
+|--------|--------|
+| Employee role/skill eligibility read model | **VERIFIED** (`GET …/employee-eligibility`, DEC-015) |
+| UI on ExecutionDetail | **VERIFIED** (`EmployeeEligibilityPanel`) |
+| Employee / team assignment | **CLOSED** |
+| Attendance / sessions / Employee Mobile | **UNTOUCHED / FROZEN** |
+| Employee hourly cost → eligibility or client price | **FORBIDDEN** (untouched) |
+| Pontaj / availability for matching | **NOT used** (`availability_status=not_evaluated`) |
+
+Eligible candidate ≠ assigned employee ≠ authorized to start. Wave 4 exposes minimum operational identity only (no salary, rates, leave, debts, or contact PII).

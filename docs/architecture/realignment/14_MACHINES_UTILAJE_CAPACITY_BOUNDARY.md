@@ -152,3 +152,17 @@ ProfitabilityAnalysis (efficiency learning)
 | ExecutionPlan assignment | Machine traceable |
 | Capacity warnings separated | From commercial blockers |
 | Post-job analytics | Machine efficiency in ProfitabilityAnalysis |
+
+---
+
+## 13. Implementation status — Finalization Wave 4 (2026-08-04)
+
+| Aspect | Status |
+|--------|--------|
+| Workcenter→machine capability read model | **VERIFIED** (`GET …/resource-readiness`, F7C) |
+| UI on ExecutionDetail | **VERIFIED** (`ResourceReadinessPanel`) |
+| Machine assignment | **CLOSED** |
+| Capacity reservation / scheduling | **NOT_STARTED / HOLD** |
+| Machine hourly → eligibility or client price | **FORBIDDEN** (untouched) |
+
+Capable machine ≠ assigned machine ≠ reserved machine. Wave 4 consults the live machine registry only as a read-only downstream reference against the frozen task workcenter.

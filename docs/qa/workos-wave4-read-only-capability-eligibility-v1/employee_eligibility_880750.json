@@ -1,0 +1,810 @@
+{
+  "mode": "employee_eligibility_read_model",
+  "order_id": 880750,
+  "execution_plan_id": 23,
+  "status": "ok",
+  "requirement_source": "operation_resource_requirements+employee_authorizations",
+  "requirement_version": "eligibility-rm/v1",
+  "operational_task_count": 13,
+  "ready_or_warning_count": 11,
+  "blocked_count": 2,
+  "tasks": [
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "canonical_task_type": "file_preparation",
+      "source_operation_code": "vector_prep",
+      "workcenter_code": "WC_PREPRESS",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_GRAPHIC_DESIGN",
+        "SK_QUOTING"
+      ],
+      "registry_operation_code": "prepress",
+      "eligibility_status": "blocked_no_matching_employee",
+      "eligible_employee_count": 0,
+      "eligible_employees": [],
+      "blockers": [
+        "no_matching_employee"
+      ],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "face_cnc_cut",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_CNC_OPERATOR"
+      ],
+      "registry_operation_code": "cnc_cutting",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:back_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "back_cut",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_CNC_OPERATOR"
+      ],
+      "registry_operation_code": "cnc_cutting",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "canonical_task_type": "edge_bending",
+      "source_operation_code": "side_forming",
+      "workcenter_code": "WC_LETTER_FORMING",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_LETTER_CANT_OPERATOR",
+        "SK_LETTER_MODELING"
+      ],
+      "registry_operation_code": "cant_modelare",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "cant_modelare",
+          "matched_skills": [
+            "SK_LETTER_MODELING"
+          ],
+          "matched_workcenter": "WC_LETTER_FORMING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LETTER_FORMING",
+            "operation_resource_requirements:cant_modelare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_LETTER_MODELING",
+            "operation_employee_authorizations:cant_modelare"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "active_status": "active",
+          "matched_operation_capability": "cant_modelare",
+          "matched_skills": [
+            "SK_LETTER_CANT_OPERATOR"
+          ],
+          "matched_workcenter": "WC_LETTER_FORMING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LETTER_FORMING",
+            "operation_resource_requirements:cant_modelare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_LETTER_CANT_OPERATOR",
+            "operation_employee_authorizations:cant_modelare"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "return_face_bonding",
+      "workcenter_code": "WC_METAL_FAB",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_LOCKSMITH"
+      ],
+      "registry_operation_code": "welding",
+      "eligibility_status": "blocked_no_matching_employee",
+      "eligible_employee_count": 0,
+      "eligible_employees": [],
+      "blockers": [
+        "no_matching_employee"
+      ],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "painting",
+      "workcenter_code": "WC_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ASSEMBLY"
+      ],
+      "registry_operation_code": "assembly",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+      "canonical_task_type": "led_assembly",
+      "source_operation_code": "led_install_letters",
+      "workcenter_code": "WC_LED_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ELECTRICIAN"
+      ],
+      "registry_operation_code": "montaj_led",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_letters",
+      "canonical_task_type": "led_wiring",
+      "source_operation_code": "electrical_letters",
+      "workcenter_code": "WC_LED_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ELECTRICIAN"
+      ],
+      "registry_operation_code": "montaj_led",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "montaj_led",
+          "matched_skills": [
+            "SK_ELECTRICIAN"
+          ],
+          "matched_workcenter": "WC_LED_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_LED_ASSEMBLY",
+            "operation_resource_requirements:montaj_led",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ELECTRICIAN",
+            "operation_employee_authorizations:montaj_led"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:assembly_letters",
+      "canonical_task_type": "volumetric_letter_assembly",
+      "source_operation_code": "assembly_letters",
+      "workcenter_code": "WC_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ASSEMBLY"
+      ],
+      "registry_operation_code": "assembly",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "assembly",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:assembly",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:assembly"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "canonical_task_type": "vinyl_cutting",
+      "source_operation_code": "vinyl_application",
+      "workcenter_code": "WC_VINYL_APPLICATION",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_VINYL_APPLICATOR"
+      ],
+      "registry_operation_code": "colantare",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "colantare",
+          "matched_skills": [
+            "SK_VINYL_APPLICATOR"
+          ],
+          "matched_workcenter": "WC_VINYL_APPLICATION",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_VINYL_APPLICATION",
+            "operation_resource_requirements:colantare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_VINYL_APPLICATOR",
+            "operation_employee_authorizations:colantare"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "colantare",
+          "matched_skills": [
+            "SK_VINYL_APPLICATOR"
+          ],
+          "matched_workcenter": "WC_VINYL_APPLICATION",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_VINYL_APPLICATION",
+            "operation_resource_requirements:colantare",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_VINYL_APPLICATOR",
+            "operation_employee_authorizations:colantare"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template_cnc_cut",
+      "canonical_task_type": "cnc_routing",
+      "source_operation_code": "mounting_template_cnc_cut",
+      "workcenter_code": "WC_CNC_ROUTING",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_CNC_OPERATOR"
+      ],
+      "registry_operation_code": "cnc_cutting",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 2,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 3,
+          "display_name": "Florin CNC",
+          "active_status": "active",
+          "matched_operation_capability": "cnc_cutting",
+          "matched_skills": [
+            "SK_CNC_OPERATOR"
+          ],
+          "matched_workcenter": "WC_CNC_ROUTING",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_CNC_ROUTING",
+            "operation_resource_requirements:cnc_cutting",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_CNC_OPERATOR",
+            "operation_employee_authorizations:cnc_cutting"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_letters",
+      "canonical_task_type": "quality_control",
+      "source_operation_code": "qc_letters",
+      "workcenter_code": "WC_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ASSEMBLY"
+      ],
+      "registry_operation_code": "quality_control",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "quality_control",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "quality_control",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "quality_control",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:quality_control",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:quality_control"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    },
+    {
+      "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+      "canonical_task_type": "packaging",
+      "source_operation_code": "packaging_letters",
+      "workcenter_code": "WC_ASSEMBLY",
+      "requirement_source": "operation_resource_requirements+employee_authorizations",
+      "requirement_version": "eligibility-rm/v1",
+      "authorization_mode": "hybrid",
+      "required_skill_codes": [
+        "SK_ASSEMBLY"
+      ],
+      "registry_operation_code": "packaging",
+      "eligibility_status": "ready_with_warnings",
+      "eligible_employee_count": 3,
+      "eligible_employees": [
+        {
+          "employee_id": 7,
+          "display_name": "Andrei Goghi",
+          "active_status": "active",
+          "matched_operation_capability": "packaging",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 6,
+          "display_name": "Costi Modelator",
+          "active_status": "active",
+          "matched_operation_capability": "packaging",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        },
+        {
+          "employee_id": 5,
+          "display_name": "Vali Colantator",
+          "active_status": "active",
+          "matched_operation_capability": "packaging",
+          "matched_skills": [
+            "SK_ASSEMBLY"
+          ],
+          "matched_workcenter": "WC_ASSEMBLY",
+          "match_provenance": [
+            "employee_workcenter_authorizations:WC_ASSEMBLY",
+            "operation_resource_requirements:packaging",
+            "authorization_mode:hybrid",
+            "employee_skill_authorizations:SK_ASSEMBLY",
+            "operation_employee_authorizations:packaging"
+          ],
+          "availability_status": "not_evaluated"
+        }
+      ],
+      "blockers": [],
+      "warnings": [
+        "planning_minutes_source_missing"
+      ]
+    }
+  ],
+  "side_effects": "none",
+  "wave4_boundary": {
+    "assignable": false,
+    "machine_assignable": false,
+    "schedulable": false,
+    "sessions_authorized": false,
+    "capacity_allocation": "not_started",
+    "evaluation_mode": "read_only"
+  },
+  "notes": [
+    "Read-only. Does not assign, claim, start, or create sessions/actuals.",
+    "Employee ≠ User. Matching uses explicit authorizations only.",
+    "Planning minutes missing → warning only, not a blocker.",
+    "Availability/calendar is not evaluated (availability_status=not_evaluated).",
+    "Wave 4: ELIGIBLE_CANDIDATE ≠ ASSIGNED_EMPLOYEE ≠ AUTHORIZED_TO_START; scheduling remains HOLD."
+  ]
+}
