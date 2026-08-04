@@ -1,4 +1,4 @@
-# Finalization Wave 10 / Phase A — Transition Schema and Backfill
+# Finalization Wave 10 / Phase A â€” Transition Schema and Backfill
 
 | Field | Value |
 | ----- | ----- |
@@ -40,7 +40,7 @@ Unauthorized / not done: reassignment/unassignment routes or services, assignmen
 
 ## Owner decisions readback
 
-`DEC-REASSIGN-SCHEMA-01…12` applied: separate append-only table; embedded current state remains canonical; expand-only migration; synthetic `ASSIGN` backfill; UUID5 transition identity; fail-closed consistency.
+`DEC-REASSIGN-SCHEMA-01â€¦12` applied: separate append-only table; embedded current state remains canonical; expand-only migration; synthetic `ASSIGN` backfill; UUID5 transition identity; fail-closed consistency.
 
 ## Repo / preflight
 
@@ -49,9 +49,9 @@ Unauthorized / not done: reassignment/unassignment routes or services, assignmen
 | Root | `C:/w/psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Start HEAD | `d393b27f` |
-| Ancestry | Wave 6–9 · `3d0d40e6` · `d393b27f` OK |
+| Ancestry | Wave 6â€“9 Â· `3d0d40e6` Â· `d393b27f` OK |
 | Tracked dirty at start | none |
-| Untracked leftovers | preexisting `docs/qa/**`, `_qa_backups` — not staged |
+| Untracked leftovers | preexisting `docs/qa/**`, `_qa_backups` â€” not staged |
 | Migration framework | Alembic (`backend/alembic`) |
 | Heads before | single `s62_material_actuals_closed_job_v1` |
 | Heads after | single `s63_execution_task_assignment_transitions` |
@@ -78,7 +78,7 @@ Table: `execution_task_assignment_transitions`
 | ------ | ---- | ---- | ----- |
 | id | INTEGER PK AI | NO | Canonical order |
 | transition_id | VARCHAR(36) UNIQUE | NO | UUID5 for backfill |
-| execution_plan_id | INTEGER FK → execution_plan.id RESTRICT | NO | |
+| execution_plan_id | INTEGER FK â†’ execution_plan.id RESTRICT | NO | |
 | order_id | INTEGER | NO | Denormalized |
 | task_key | VARCHAR(512) | NO | Embedded task id |
 | transition_type | VARCHAR(16) | NO | CHECK ASSIGN/REASSIGN/UNASSIGN |
@@ -111,7 +111,7 @@ UUID5(
 )
 ```
 
-Re-run → same ID → skip insert.
+Re-run â†’ same ID â†’ skip insert.
 
 ## Backfill inventory (pre-migration)
 
@@ -125,18 +125,18 @@ Re-run → same ID → skip insert.
 
 Known documented fixtures (not unexpected unknowns):
 
-1. 880750/23 Wave 7 LED→7 `canonical_controlled_assign_v1`
+1. 880750/23 Wave 7 LEDâ†’7 `canonical_controlled_assign_v1`
 2. 973019/21 golden-pilot `controlled_ops_graph_assign_v1` (Wave 3 noted)
-3. 23099/4 ×3 and 23150/5 ×2 historical Mobile/operator lab assignments
+3. 23099/4 Ã—3 and 23150/5 Ã—2 historical Mobile/operator lab assignments
 
 ## Backfill execution
 
 | Metric | Value |
 | ------ | ----- |
 | Rows inserted | 7 |
-| Idempotent re-run | 7 → 7 |
+| Idempotent re-run | 7 â†’ 7 |
 | Wave 7 row | ASSIGN, previous=null, new=7, actor preserved, source=LEGACY_EMBEDDED_BACKFILL, reason=INITIAL_ASSIGNMENT_BACKFILL |
-| tasks_json SHA | unchanged `00ee947c…c1f2` |
+| tasks_json SHA | unchanged `00ee947câ€¦c1f2` |
 | plan updated_at | unchanged `2026-08-04 19:16:57.407320` |
 
 ## Consistency
@@ -193,7 +193,7 @@ SESSION_MUTATIONS = 0
 | order/plan | 880750 / 23 | same |
 | ops / assigned / unassigned | 13 / 1 / 12 | same |
 | LED employee | 7 | 7 |
-| tasks_json SHA | `00ee947c…c1f2` | same |
+| tasks_json SHA | `00ee947câ€¦c1f2` | same |
 | updated_at | `2026-08-04 19:16:57.407320` | same |
 | sessions / machines | 0 | 0 |
 | scheduling / capacity | HOLD / NOT_STARTED | same |
@@ -210,8 +210,9 @@ GLOBAL_ZERO_MUTATION = NOT_CLAIMED_FOR_FILE
 
 ## Protected baselines / F7I
 
-880811 plan 22 · 973019 plan 21 · 88002 absent — plan identities/timestamps unchanged.  
-F7I 15 / 1.5 / 35 / 20 EUR untouched.
+880811 plan 22 Â· 973019 plan 21 â€” plan identities/timestamps unchanged vs backup.
+`ORDER_88002_BASELINE = ABSENT_BEFORE_AND_AFTER_UNCHANGED` (absent in backup and live).
+F7I 15 / 1.5 / 35 / 20 EUR untouched (4/4 identities).
 
 ## Runtime / UI
 
@@ -224,9 +225,9 @@ Classified unchanged; **removed: NONE**.
 ## Remaining risks
 
 - QA DB had create_all empty table before stamp (documented).
-- Production URL not in repo — dialect support is code-level only.
-- Dual index naming (ORM + migration) on QA — harmless.
-- Phase B dual-write not present — history can drift if assign path mutates without transitions until Phase B.
+- Production URL not in repo â€” dialect support is code-level only.
+- Dual index naming (ORM + migration) on QA â€” harmless.
+- Phase B dual-write not present â€” history can drift if assign path mutates without transitions until Phase B.
 
 ## Scores
 
@@ -245,3 +246,125 @@ PHASE_B_CONTROLLED_PRE_START_REASSIGNMENT_BACKEND_IMPLEMENTATION
 ```
 
 Do not start Phase B without Owner GO.
+
+---
+
+## Evidence closure addendum (2026-08-04, read-only)
+
+Task: `FINALIZATION_WAVE_10_EVIDENCE_CLOSURE` â€” no new migration, backfill, or Phase B code.
+Closure HEAD at verification: `9eef4414` (= tip). New mutations this addendum: **0** (docs-only correction allowed).
+
+### Commit chain (Wave 10 only)
+
+```text
+d393b27f  (start â€” schema Owner decisions tip; NOT Wave 10 impl)
+   â†“
+bbb4c466  parent=d393b27f  feat: model + s63 migration + services + tests
+   â†“
+73ed6592  parent=bbb4c466  docs: Wave 10 proof worklog + architecture status
+   â†“
+9eef4414  parent=73ed6592  docs: tip note â€” sets worklog Docs commit = 73ed6592
+```
+
+| SHA | Parent | Purpose | Kind | Wave 10 |
+| --- | ------ | ------- | ---- | ------- |
+| `bbb4c466` | `d393b27f` | Phase A schema/backfill implementation | code+migration+tests | YES |
+| `73ed6592` | `bbb4c466` | Proof worklog + status pointers | docs | YES |
+| `9eef4414` | `73ed6592` | Tip HEAD note (1-line Docs commit field) | docs | YES |
+
+**Why tip is `9eef4414`:** same pattern as prior waves â€” after content docs commit `73ed6592`, a tip commit records that SHA in the worklog table. It does **not** add production code. Content commits remain `bbb4c466` + `73ed6592`; tip is `9eef4414`.
+
+### Exact QA migration chronology (evidence-backed)
+
+Proven from: backup `dev.db.before_s63_20260804_225424`, live DB, agent shell transcript, worklog.
+
+1. **Pre-Wave-10 / pre-app-reload with new model:** no `execution_task_assignment_transitions`; no `alembic_version` (create_all-era QA DB).
+2. **After `bbb4c466` while writers still up:** ORM `create_all` created **empty** transition table (0 rows) with ORM-named indexes only. Backup proves table present, count=0, no `alembic_version`.
+3. **Writers stopped** (Owner-authorized): `stop-dev.ps1` + stop `:8002`.
+4. **Backup** copied to `_qa_backups/wave10_phase_a/dev.db.before_s63_20260804_225424` (SHA `231f3d1eâ€¦`).
+5. **Not** `alembic upgrade head` CLI. Controlled script called **`s63.upgrade()`** via `MigrationContext` + `Operations` on sync SQLite.
+6. **Earlier revisions not run** â€” only `s63.upgrade()` body.
+7. **`create_table` skipped** because `_table_exists` was true (compatible create_all table already had PK/UNIQUE/CHECK/FKs).
+8. **Migration indexes added** (`ix_exec_task_assign_tr_*` including composite plan/task/id). ORM indexes retained â†’ duplicate index names on same columns.
+9. **Backfill ran inside `upgrade()`** â†’ 7 ASSIGN rows; consistency fail-closed check inside `upgrade()` passed.
+10. **Stamp:** same script created `alembic_version` and set `s63_execution_task_assignment_transitions` **after** upgrade body (SQL insert/update â€” not `alembic stamp` CLI).
+11. **Idempotent re-invoke** of `upgrade()` observed **7 â†’ 7**, `tasks_json` unchanged.
+12. **Backend restarted** via `dev-detached.ps1` for RO continuity.
+
+Explicit answers:
+
+```text
+Did alembic upgrade CLI run before stamp? NO â€” programmatic s63.upgrade() only
+Did upgrade attempt earlier revisions? NO
+How was create_all-era DB baselined? Manual alembic_version row after s63 body; no stamp-s62-then-full-chain
+Why no create collision? _table_exists â†’ skip create_table
+Was existing table compatible? YES (columns/CHECK/FK/UNIQUE match model+migration)
+Migration body execution: create_table SKIPPED; indexes PARTIAL (add missing); backfill+verify FULL
+Was s63 stamped only after parity checks? YES â€” consistency inside upgrade(); tasks_json assert then stamp
+```
+
+```text
+QA_MIGRATION_SEQUENCE = VERIFIED
+```
+
+### Schema parity (model â†” s63 â†” live SQLite)
+
+```text
+SCHEMA_PARITY = MATCH
+```
+
+Columns, nullability, PK, UNIQUE(`transition_id`), CHECK types, CHECK employee shape, FKs plan/employees `ON DELETE RESTRICT`, no actor FK â€” match across model, migration DDL, and live `sqlite_master`.
+
+```text
+INDEX_INVENTORY_NOTE = DUPLICATE_ORM_AND_MIGRATION_NAMED_INDEXES
+```
+
+Live DB has both `ix_execution_task_assignment_transitions_*` (create_all) and `ix_exec_task_assign_tr_*` (migration). Superset; not a column/constraint mismatch. Not repaired in evidence closure.
+
+### Backfill / baselines (RO re-verified)
+
+| Metric | Backup before controlled mig | Live after |
+| ------ | ---------------------------- | ---------- |
+| Current assignments | 7 | 7 (embedded unchanged) |
+| Transition rows | 0 | 7 |
+| Malformed | 0 | 0 |
+| Consistency mismatches | n/a | 0 |
+| Retry previously observed | â€” | 7 â†’ 7 |
+
+```text
+ORDER_88002_BEFORE = ABSENT
+ORDER_88002_AFTER = ABSENT
+ORDER_88002_CHANGED = NO
+ORDER_88002_BASELINE = ABSENT_BEFORE_AND_AFTER_UNCHANGED
+```
+
+880811 / 973019 plan ids + `updated_at` unchanged vs backup. F7I 15 / 1.5 / 35 / 20 EUR unchanged (4/4 identities).
+
+### Engine / idempotency boundaries
+
+```text
+SQLITE_SCHEMA_RUNTIME = VERIFIED
+SQLITE_MIGRATION_RUNTIME = VERIFIED_VIA_PROGRAMMATIC_S63_UPGRADE
+POSTGRESQL_PORTABLE_TYPES = CODE_REVIEWED
+POSTGRESQL_MIGRATION_RUNTIME = NOT_EXECUTED
+PRODUCTION_DATABASE = NOT_TOUCHED
+
+BACKFILL_IDEMPOTENCY = VERIFIED
+PHASE_B_COMMAND_IDEMPOTENCY = NOT_IMPLEMENTED
+PHASE_B_CONCURRENCY_CONTROL = NOT_IMPLEMENTED
+PHASE_B_TRANSACTIONAL_DUAL_WRITE = NOT_IMPLEMENTED
+```
+
+UUID5(plan+task_key+employee+preserved assignment timestamp) proves **legacy backfill** identity only â€” not Phase B command retry, concurrent managers, dual-write, or CAS.
+
+### Evidence-closure verdict retention
+
+```text
+FINALIZATION_WAVE_10 = PASS
+PHASE_A_SCHEMA_AND_BACKFILL = VERIFIED
+REPO_COMMIT_CHAIN = VERIFIED
+QA_MIGRATION_SEQUENCE = VERIFIED
+SCHEMA_PARITY = MATCH
+PHASE_B = NOT_AUTHORIZED
+WAVE_11 = NOT_AUTHORIZED
+```
