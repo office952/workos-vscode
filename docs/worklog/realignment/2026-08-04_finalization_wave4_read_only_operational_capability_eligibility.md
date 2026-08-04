@@ -10,6 +10,7 @@
 | Worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Starting HEAD | `1e8d3344` |
+| Final HEAD | `6214ee7b` (`feat(execution): add read-only operational eligibility`) |
 | Ancestry | `788171b4`, `f6dfe4e3`, `cdb6e7ac`, `1e8d3344` ⊂ HEAD |
 | Verdict | `FINALIZATION_WAVE_4 = PASS` |
 
