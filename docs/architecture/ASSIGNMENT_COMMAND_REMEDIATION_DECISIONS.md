@@ -3,27 +3,29 @@
 **Status:** Owner decisions **RECORDED** (2026-08-04); Wave 6 hardening **implemented** under separate Owner GO  
 **Wave 5 remains:** `FINALIZATION_WAVE_5 = PARTIAL_BLOCKED` (historical readiness audit)  
 **Wave 6:** see `docs/worklog/realignment/2026-08-04_finalization_wave6_minimal_safe_assignment_command_hardening.md`  
-**QA fixture assignment execution:** still **NOT_AUTHORIZED**  
+**QA fixture assignment execution:** Wave 7 single-task proof **COMPLETED** (see Wave 7 worklog).  
 
 **Sources:**
 
 - `docs/worklog/realignment/2026-08-04_finalization_wave5_assignment_readiness_audit_only.md`
 - `docs/worklog/realignment/2026-08-04_assignment_command_remediation_strategy_audit_only.md`
+- `docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`
 
-**Canonical fixture (unchanged by decision record / Wave 6 hardening):** order `880750` / plan `23` / 13 `operational_tasks[]`.
+**Canonical fixture after Wave 7:** order `880750` / plan `23` / 13 `operational_tasks[]` / **exactly 1** employee assignment (LED install → employee_id `7`).
 
-**Owner gate (post Wave 6 hardening — execution still closed):**
+**Owner gate (post Wave 7 proof):**
 
 ```text
-ASSIGNMENT_IMPLEMENTATION_AUTHORIZED = TRUE  # Wave 6 hardening only
-ASSIGNMENT_EXECUTION_AUTHORIZED = FALSE      # no QA fixture assign yet
+ASSIGNMENT_IMPLEMENTATION_AUTHORIZED = TRUE   # Wave 6 hardening
+ASSIGNMENT_EXECUTION_AUTHORIZED = PROOF_ONLY  # Wave 7 single QA assign done
 SCHEMA_CHANGE_AUTHORIZED = FALSE
 MIGRATION_AUTHORIZED = FALSE
-DB_MUTATION_AUTHORIZED = FALSE               # for protected QA fixture
+REASSIGNMENT_AUTHORIZED = FALSE
 LEGACY_REMOVAL_AUTHORIZED = FALSE
 MOBILE_ASSIGNMENT_AUTHORIZED = FALSE
 WAVE_6 = COMPLETED_PASS
-WAVE_7 = NOT_AUTHORIZED
+WAVE_7 = COMPLETED_PASS
+WAVE_8 = NOT_AUTHORIZED
 ```
 
 ---
@@ -223,7 +225,7 @@ Dead pieces removed: NONE
 ## Future candidate (not started)
 
 ```text
-CONTROLLED_SINGLE_QA_FIXTURE_EMPLOYEE_ASSIGNMENT_PROOF
+ASSIGNMENT_OBSERVABILITY_AND_CONTROLLED_REASSIGNMENT_POLICY_AUDIT
 ```
 
-Requires a **separate** Owner GO after Wave 6 PASS.
+Requires a **separate** Owner GO. Do not implement reassignment or scheduling here.

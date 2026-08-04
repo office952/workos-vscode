@@ -346,20 +346,17 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 ## 9. Recommended immediate next step
 
-**Wave 6 hardening PASS** — public bypass closed; canonical CAS command verified on isolated test DB.  
-**Real QA fixture assignment still not executed.** Wave 7 **not authorized**.
+**Wave 7 PASS** — exactly one QA employee assignment verified on order `880750` / plan `23` (LED install → employee_id `7`).  
+Wave 8 / reassignment / scheduling **not authorized**.
 
 Worklog:  
-`docs/worklog/realignment/2026-08-04_finalization_wave6_minimal_safe_assignment_command_hardening.md`  
-Decisions:  
-`docs/architecture/ASSIGNMENT_COMMAND_REMEDIATION_DECISIONS.md`
+`docs/worklog/realignment/2026-08-04_finalization_wave7_controlled_single_qa_employee_assignment_proof.md`
 
 **Why:**
 
-- Command hardening is verified within documented single-process + DB-row-lock boundaries.
-- Next proof requires a separate Owner GO for one controlled QA fixture assignment.
+- Canonical hardened command persisted one assignment with audit; same-employee retry no-op; different-employee conflict; other 12 tasks unchanged; sessions/scheduling still closed.
 
-**Do not** start `CONTROLLED_SINGLE_QA_FIXTURE_EMPLOYEE_ASSIGNMENT_PROOF` without a new Owner GO.
+**Do not** start `ASSIGNMENT_OBSERVABILITY_AND_CONTROLLED_REASSIGNMENT_POLICY_AUDIT` without a new Owner GO.
 
 ---
 
