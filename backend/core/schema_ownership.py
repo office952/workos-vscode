@@ -14,6 +14,27 @@ from __future__ import annotations
 ALEMBIC_OWNED_TABLES: frozenset[str] = frozenset(
     {
         "execution_task_assignment_transitions",
+        "resource_domain_configurations",
+        "resource_domain_configuration_transitions",
+        "execution_task_schedules",
+        "execution_task_schedule_transitions",
+        "execution_task_machine_reservations",
+        "execution_task_machine_reservation_transitions",
+        "execution_task_capacity_allocations",
+        "execution_task_capacity_allocation_transitions",
+    }
+)
+
+RESOURCE_STATE_TABLES: frozenset[str] = frozenset(
+    {
+        "resource_domain_configurations",
+        "resource_domain_configuration_transitions",
+        "execution_task_schedules",
+        "execution_task_schedule_transitions",
+        "execution_task_machine_reservations",
+        "execution_task_machine_reservation_transitions",
+        "execution_task_capacity_allocations",
+        "execution_task_capacity_allocation_transitions",
     }
 )
 

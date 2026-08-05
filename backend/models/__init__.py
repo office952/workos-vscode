@@ -21,6 +21,10 @@ from models import execution_reality  # noqa: F401
 from models import execution_task_participant  # noqa: F401
 from models import execution_task_help_request  # noqa: F401
 from models import execution_task_assignment_transition  # noqa: F401
+from models import resource_domain_configuration  # noqa: F401
+from models import execution_task_schedule  # noqa: F401
+from models import execution_task_machine_reservation  # noqa: F401
+from models import execution_task_capacity_allocation  # noqa: F401
 from models import intake_requests  # noqa: F401
 from models import inventory_materials  # noqa: F401
 from models import inventory_material_price_history  # noqa: F401

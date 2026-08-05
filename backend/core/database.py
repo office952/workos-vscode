@@ -12,6 +12,7 @@ from asyncpg.exceptions import (
 )
 from core.config import resolve_database_url, settings
 from core.schema_ownership import ALEMBIC_OWNED_TABLES
+from core.sqlite_pragma import register_sqlite_foreign_keys
 from sqlalchemy import DDL, text
 from sqlalchemy.sql.elements import TextClause
 
@@ -173,6 +174,7 @@ class DatabaseManager:
                 logger.info("Using QueuePool with connection pooling for non-Lambda environment")
 
             self.engine = create_async_engine(database_url, **engine_kwargs)
+            register_sqlite_foreign_keys(self.engine)
             logger.info("Database engine created successfully")
 
             logger.info("Creating async session maker...")

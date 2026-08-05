@@ -11,6 +11,7 @@ import models
 from alembic import context
 from core.config import resolve_database_url
 from core.database import Base, DatabaseManager
+from core.sqlite_pragma import register_sqlite_foreign_keys
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
@@ -42,6 +43,7 @@ def _resolve_migration_database_url() -> str:
 async def run_migrations_online():
     url = _resolve_migration_database_url()
     connectable = create_async_engine(url, poolclass=pool.NullPool)
+    register_sqlite_foreign_keys(connectable)
     async with connectable.connect() as connection:
         await connection.run_sync(
             lambda sync_conn: context.configure(

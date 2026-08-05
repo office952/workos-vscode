@@ -39,6 +39,7 @@ import os
 import tempfile
 from typing import Optional
 
+from core.sqlite_pragma import register_sqlite_foreign_keys
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -104,6 +105,7 @@ class IsolatedDBFixture:
             echo=False,
             connect_args={"check_same_thread": False},
         )
+        register_sqlite_foreign_keys(self._engine)
         self._session_maker = async_sessionmaker(
             self._engine, class_=AsyncSession, expire_on_commit=False
         )
