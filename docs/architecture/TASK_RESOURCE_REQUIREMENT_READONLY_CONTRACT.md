@@ -1,15 +1,20 @@
 # Task Resource Requirement — Read-Only Contract
 
-**Task:** `TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT`  
-**Owner GO:** `AUTHORIZE_TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT`  
+**Task:** `TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT` (+ projection follow-on)  
+**Owner GOs:**  
+`AUTHORIZE_TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT` ·  
+`AUTHORIZE_TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Contract finalized · **no runtime · no schema**  
-**Starting HEAD:** `9b3d95ff`  
+**Status:** **PASS** · Contract finalized · **read-only projection implemented**  
+**Contract starting HEAD:** `9b3d95ff` · **Projection starting HEAD:** `fbdee6b1`  
 **Prerequisites:** Owner decision package PASS · Resource model realignment PASS  
-**Worklog:** `docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_contract.md`
+**Worklogs:**  
+`docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_contract.md` ·  
+`docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_projection.md`
 
 ```text
-TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT = PASS
+TASK_RESOURCE_REQUIREMENT_CONTRACT = PASS
+TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
 TASK_DEMAND_BOUNDARY = FINALIZED
 RESOURCE_AVAILABILITY_BOUNDARY = FINALIZED
 MINIMAL_CONTRACT = FINALIZED
@@ -128,9 +133,18 @@ These are the bounded **NOW** set: either already on the task, or defined as req
 | `resource_mode_hint` | **DERIVED** soft (non-HYBRID only) | Operator orientation from WC family | Hint absent; HYBRID → no hint |
 
 ```text
-resource_requirement_status:
-  PARTIAL_EXISTING_ROUTING_AND_DURATION  — workcenter and/or minutes present
-  RESOURCE_REQUIREMENTS_UNKNOWN          — demand fields (mode/people/workspace/batch) not declared
+# Projection runtime vocabulary (implemented)
+resource_requirements_status:
+  KNOWN_MINIMAL  — identity + WC + duration + duration source + safe non-HYBRID mode hint
+  PARTIAL        — some canonical routing/duration known; required planning fields still unknown
+  UNKNOWN        — resource requirements cannot be safely inferred
+  NOT_APPLICABLE — reserved; not used for shop volumetric ops in current fixtures
+
+# Contract honesty labels (pre-projection docs; still valid as semantics)
+PARTIAL_EXISTING_ROUTING_AND_DURATION ↔ typically maps to PARTIAL
+RESOURCE_REQUIREMENTS_UNKNOWN         ↔ UNKNOWN when nothing safe is known;
+                                          remaining LATER demand fields stay in unknown_fields[]
+                                          even when status is PARTIAL / KNOWN_MINIMAL
 ```
 
 Missing demand contract **never** means “no resources needed”.
@@ -338,26 +352,31 @@ No migration required for this contract GO.
 
 ---
 
-## 15. Recommended next slice
+## 15. Read-only projection (implemented)
 
 ```text
-RECOMMENDED_NEXT_SLICE =
-TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION
+TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION = PASS
+GET /api/v1/execution/plans/{plan_id}/resource-requirements
+optional ?task_key=
 ```
 
-**Why A over B/C:**
+Service: `task_resource_requirement_projection_service.py`  
+Schema: `task_resource_requirement_projection.py`  
+Does **not** mutate `tasks_json`. Does **not** gate Phase B.
+
+### Recommended next slice (not authorized)
 
 | Candidate | Decision |
 | --------- | -------- |
-| **A — READONLY_PROJECTION** | **Selected** — surface existing WC/minutes + `RESOURCE_REQUIREMENTS_UNKNOWN` / soft hints; no schema |
-| B — SCHEMA_READINESS | Premature — no persistence consumer yet; hybrids need authoring source first |
-| C — MACHINE_RUN_SCHEMA | Important later; blocked more by missing **demand declaration** than by missing run table |
+| A — READONLY_PROJECTION | **Done** |
+| B — SCHEMA_READINESS / demand persistence | Premature — hybrids need Product/Operation authoring source first |
+| C — MACHINE_RUN_SCHEMA | Later — still blocked by incomplete demand declaration |
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Do not start A without a separate Owner GO.
+Do not start B/C without a separate Owner GO.
 
 ---
 

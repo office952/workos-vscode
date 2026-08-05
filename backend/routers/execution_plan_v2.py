@@ -52,6 +52,9 @@ from schemas.resource_state_schedule import (
     ScheduleCommandResult,
     SupersedeScheduleCommand,
 )
+from schemas.task_resource_requirement_projection import (
+    PlanResourceRequirementProjection,
+)
 from services.assignment_readiness_audit_service import (
     build_assignment_readiness_audit,
 )
@@ -98,6 +101,11 @@ from services.resource_state_read_service import (
 from services.resource_state_write_common import ResourceStateWriteError
 from services.employee_eligibility_read_model_service import (
     build_employee_eligibility_read_model,
+)
+from services.task_resource_requirement_projection_service import (
+    TaskResourceRequirementPlanNotFoundError,
+    TaskResourceRequirementTaskNotFoundError,
+    project_plan_resource_requirements,
 )
 from services.operational_resource_readiness_service import (
     build_operational_resource_readiness,
@@ -839,6 +847,42 @@ async def get_task_resource_state(
             status_code=404, detail={"error": "execution_plan_not_found"}
         ) from None
     except ResourceStateTaskNotFoundError as exc:
+        raise HTTPException(
+            status_code=404, detail={"error": str(exc) or "task_key_not_found"}
+        ) from None
+
+
+@router.get(
+    "/plans/{plan_id}/resource-requirements",
+    response_model=PlanResourceRequirementProjection,
+)
+async def get_plan_resource_requirements(
+    plan_id: int,
+    task_key: str | None = None,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.plan_generate")),
+) -> PlanResourceRequirementProjection:
+    """Read-only task resource requirement projection (demand visibility).
+
+    Does not mutate tasks_json, does not write reservations/schedules/capacity,
+    does not select employees or book workspaces, does not gate Phase B.
+    """
+    logger.info(
+        "GET /api/v1/execution/plans/%s/resource-requirements task_key=%s",
+        plan_id,
+        task_key,
+    )
+    if plan_id <= 0:
+        raise HTTPException(status_code=422, detail={"error": "plan_id_invalid"})
+    try:
+        return await project_plan_resource_requirements(
+            db, plan_id=plan_id, task_key=task_key
+        )
+    except TaskResourceRequirementPlanNotFoundError:
+        raise HTTPException(
+            status_code=404, detail={"error": "execution_plan_not_found"}
+        ) from None
+    except TaskResourceRequirementTaskNotFoundError as exc:
         raise HTTPException(
             status_code=404, detail={"error": str(exc) or "task_key_not_found"}
         ) from None

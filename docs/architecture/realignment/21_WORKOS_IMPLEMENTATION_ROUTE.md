@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R11 PASS** · Capacity Stage 1 **implemented inactive** · resource model + Owner decisions **PASS** · **task resource requirement readonly contract PASS** · Capacity seed/activation **NOT_AUTHORIZED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · Capacity Stage 1 **implemented inactive** · resource model + Owner decisions **PASS** · **task resource requirement contract + read-only projection PASS** · Capacity seed/activation **NOT_AUTHORIZED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -359,9 +359,10 @@ RESOURCE_STATE_PROGRAM_R1..R11 = PASS
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
 OWNER_DECISION_PACKAGE = APPLIED
-TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT = PASS
+TASK_RESOURCE_REQUIREMENT_CONTRACT = PASS
+TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
 MACHINE_RUN = NOT_IMPLEMENTED
-WORKSPACE_MODEL = NOT_IMPLEMENTED
+WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
@@ -372,22 +373,23 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
-RECOMMENDED_NEXT_SLICE = TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION
+RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
 Task resource contract: `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`  
 Owner decisions: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
-Contract worklog: `docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_contract.md`
+Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`  
+Projection worklog: `docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_projection.md`
 
 **Why:**
 
 - Task demand vs resource availability are separated; NOW reuses WC + nullable minutes; HYBRID mode not inventable from WC.
-- Missing demand → RESOURCE_REQUIREMENTS_UNKNOWN (never “no resources needed”).
+- Projection surfaces known / partial / unknown demand without mutating snapshots.
 - Capacity / MACHINE_RUN / workspace booking remain unimplemented or inactive.
 
 **Next (future candidate only — not started):**  
-`TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION`
+Demand authoring / schema readiness or MACHINE_RUN — only with a separate Owner GO.
 
 ---
 
