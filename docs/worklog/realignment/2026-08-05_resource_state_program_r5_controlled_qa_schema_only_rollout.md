@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `ae6e5d7e`  
+**Final HEAD:** `6a0e2d25`  
 **Prerequisite:** `CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS` (`132edbf3` / tip `ae6e5d7e`)
 
 ---
