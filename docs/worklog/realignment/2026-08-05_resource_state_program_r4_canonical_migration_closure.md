@@ -4,7 +4,8 @@
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R4_CANONICAL_MIGRATION_CLOSURE`  
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
-**Starting HEAD:** `964d10d0`
+**Starting HEAD:** `964d10d0`  
+**Final HEAD:** `02d3e51b`
 
 ---
 
