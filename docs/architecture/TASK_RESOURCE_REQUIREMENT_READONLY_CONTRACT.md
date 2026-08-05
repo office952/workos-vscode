@@ -18,6 +18,8 @@ TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
 SOURCE_GAP_AUDIT = PASS
 PILOT_SELECTION = COMPLETE
 SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
+VECTOR_PREP_DURATION_E2E = PASS
+PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 TASK_DEMAND_BOUNDARY = FINALIZED
 RESOURCE_AVAILABILITY_BOUNDARY = FINALIZED
 MINIMAL_CONTRACT = FINALIZED
@@ -381,15 +383,15 @@ Canonical: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SEL
 | Candidate | Decision |
 | --------- | -------- |
 | A — READONLY_PROJECTION | **Done** |
-| B — SOURCE_GAP + PILOT SELECTION | **Done** (docs-only) |
-| C — VECTOR_PREP_DURATION_E2E implementation | **Selected next** — separate Owner GO |
-| D — CNC duration contract / SCHEMA / MACHINE_RUN | Later |
+| B — SOURCE_GAP + PILOT SELECTION | **Done** |
+| C — VECTOR_PREP_DURATION_E2E | **PASS** — `planning_minutes_source=LETTERS_VECTOR_PREP_DURATION` |
+| D — CNC duration / people / workspace / MACHINE_RUN | Later — Owner GO required |
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Do not start implementation without a separate Owner GO.
+Do not start the next slice without a separate Owner GO.
 
 ---
 

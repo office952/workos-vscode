@@ -14,7 +14,9 @@ SOURCE_GAP_INVENTORY = COMPLETE
 FIELD_OWNERSHIP_MATRIX = FINALIZED
 PILOT_SELECTION = COMPLETE
 SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+VECTOR_PREP_DURATION_E2E = PASS
+RUNTIME_IMPLEMENTATION = PILOT_COMPLETE
+PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 TASKS_JSON_MUTATIONS = 0
 QA_MUTATIONS = 0
 PRODUCT_SYSTEM_WRITES = 0
@@ -399,16 +401,18 @@ If letter_count is unknown for a real job — **ask Owner / capture geometry**. 
 
 ---
 
-## 12. Implementation sequencing proposal (future GOs only)
+## 12. Implementation sequencing
 
 | Order | Slice | Notes |
 | ----- | ----- | ----- |
-| 1 | **This audit** | PASS — no code |
-| 2 | `VECTOR_PREP_DURATION_E2E` implementation | Separate Owner GO; controlled fixture; projection proof |
+| 1 | Source gap audit | **PASS** |
+| 2 | `VECTOR_PREP_DURATION_E2E` | **PASS** — see worklog `2026-08-05_vector_prep_duration_e2e_completeness.md` |
 | 3 | First **new** machine-bound duration contract (`face_cnc_cut`) | After Owner formula decision |
 | 4 | Manual workspace / people pilots | After Owner answers crew + class |
 | 5 | HYBRID explicit `resource_mode` | After Product/Operation authoring |
 | 6 | MACHINE_RUN / batch | After demand + Reservation ownership ready |
+
+Owner D1–D5 applied. Positive proof = new controlled fixture; plan 23 remains null reference.
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
