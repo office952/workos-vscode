@@ -4,6 +4,7 @@
 **Owner GO:** `AUTHORIZE_TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `fbdee6b1`  
+**Tip HEAD:** `5ad352dc`  
 **Verdict:** **PASS**
 
 ```text
