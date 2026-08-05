@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R7 PASS** · QA `s64` · 8 empty RS tables · read evaluator `BLOCKED_NOT_CONFIGURED` · configuration command implemented · QA activation / domain writers / Phase B wiring **NOT_AUTHORIZED** · R8 **NOT_AUTHORIZED**.
+Resource State: **R1–R8 PASS** · QA `s64` · 8 empty RS tables · read evaluator `BLOCKED_NOT_CONFIGURED` · configuration command implemented · writer contracts finalized · domain writers / QA activation / Phase B wiring **NOT_AUTHORIZED** · R9 **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -362,6 +362,7 @@ RESOURCE_STATE_PROGRAM_R4 = PASS
 RESOURCE_STATE_PROGRAM_R5 = PASS
 RESOURCE_STATE_PROGRAM_R6 = PASS
 RESOURCE_STATE_PROGRAM_R7 = PASS
+RESOURCE_STATE_PROGRAM_R8 = PASS
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
 QA_FOREIGN_KEY_VIOLATIONS = 0
 QA_ALEMBIC_REVISION = s64
@@ -372,14 +373,17 @@ QA_RESOURCE_STATE_RECORDS = 0
 QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
 READ_EVALUATOR = IMPLEMENTED
 CONFIGURATION_COMMAND = IMPLEMENTED
-ACTIVATION_READINESS_GUARD = BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS
+DOMAIN_WRITE_SERVICE_READINESS = COMPLETE
+OVER_ALLOCATION_VALIDATION = BLOCKED_UNTIL_CAPACITY_SOURCE_EXISTS
 WRITE_SERVICES = NOT_IMPLEMENTED
 DOMAIN_ACTIVATION_IN_QA = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R8 = NOT_AUTHORIZED
+R9 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
+R8 architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS.md`  
+R8 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r8_domain_write_service_readiness.md`  
 R7 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`  
 R6 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`  
 R5 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`  
@@ -387,12 +391,12 @@ Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- Configuration infrastructure exists with CAS, idempotency, and append-only history.
-- Domain activation remains blocked until writers exist; QA was not activated.
-- Phase B consumer wiring and domain write services remain separate Owner GOs.
+- Writer command contracts, CAS/idempotency, concurrency, and activation prerequisites are finalized.
+- Capacity over-allocation blocked until a canonical capacity source exists.
+- Domain writers and Phase B wiring remain separate Owner GOs; QA untouched.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS`
+`RESOURCE_STATE_PROGRAM_R9_SCHEDULING_AND_RESERVATION_WRITER_IMPLEMENTATION`
 
 ---
 

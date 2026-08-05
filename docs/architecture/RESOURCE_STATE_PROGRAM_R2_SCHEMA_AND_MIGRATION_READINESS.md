@@ -516,14 +516,18 @@ Schedule/reservation/capacity create vs reassignment eval; config disable mid-co
 | R5 | Controlled QA schema-only migrate (empty tables, NOT_CONFIGURED) | **PASS** 2026-08-05 |
 | R6 | Read repositories + domain/aggregate evaluators (no writes) | **PASS** 2026-08-05 |
 | R7 | Configuration command + CAS/idempotency + activation boundary | **PASS** 2026-08-05 |
-| R8 | Domain write service readiness | separate — **NOT_AUTHORIZED** |
+| R8 | Domain write service readiness (contracts only) | **PASS** 2026-08-05 |
+| R9 | Scheduling + reservation writer implementation | separate — **NOT_AUTHORIZED** |
 
 R5 result: new tables empty.  
 R6 result: read evaluator returns `NOT_CONFIGURED` / aggregate `BLOCKED_NOT_CONFIGURED` on empty QA; Phase B consumer wiring still separate; Phase C blocked.  
 R7 result: configuration command implemented with CAS + idempotency + append-only transitions; activation blocked until domain writers exist (`ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS`); QA remains 0 configurations / 0 transitions; Phase B wiring still separate.  
+R8 result: writer contracts finalized; `OVER_ALLOCATION_VALIDATION = BLOCKED_UNTIL_CAPACITY_SOURCE_EXISTS`; Option B sequencing (schedule+reservation first); writers still NOT_IMPLEMENTED; QA untouched.  
+Architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS.md`  
 Worklogs:  
 `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`  
-`docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`.
+`docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`  
+`docs/worklog/realignment/2026-08-05_resource_state_program_r8_domain_write_service_readiness.md`.
 
 ---
 
@@ -543,10 +547,10 @@ Worklogs:
 
 ```text
 FUTURE CANDIDATE:
-RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS
+RESOURCE_STATE_PROGRAM_R9_SCHEDULING_AND_RESERVATION_WRITER_IMPLEMENTATION
 ```
 
-R8 may authorize domain write-service readiness only after Owner GO. Still: QA activation/config mutation 0 unless separately authorized; no Phase B wiring; Phase C blocked.
+R9 may authorize scheduling + reservation writers only after Owner GO. Capacity writer stays separate until capacity source exists. Still: QA activation 0 unless separately authorized; no Phase B wiring; Phase C blocked.
 
 ---
 
