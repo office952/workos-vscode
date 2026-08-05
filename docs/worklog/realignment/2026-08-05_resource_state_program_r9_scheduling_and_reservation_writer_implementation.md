@@ -5,6 +5,8 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `f76e1683`
+**Code commits:** `cc74383c` · `aaad7569`
+**Docs commit:** `05a423e5`
 
 ---
 
