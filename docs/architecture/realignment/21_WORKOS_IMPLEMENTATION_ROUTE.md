@@ -348,22 +348,24 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: readiness COMPLETE · **R1 Owner decisions COMPLETE** · schema/migration/R2 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
+Resource State: readiness COMPLETE · **R1 PASS** · **R2 schema/migration readiness COMPLETE** · schema implementation **NOT_AUTHORIZED** · migration creation **NOT_AUTHORIZED** · QA schema rollout **NOT_AUTHORIZED**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
 FINALIZATION_WAVE_11 = PASS
 PHASE_B_BACKEND = VERIFIED
-PHASE_C = NOT_AUTHORIZED
+PHASE_B = VERIFIED_FAIL_CLOSED
+PHASE_C = BLOCKED
 PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
 DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
 RESOURCE_STATE_BOUNDARY_READINESS_AUDIT = COMPLETE
 RESOURCE_STATE_PROGRAM_R1 = PASS
-OWNER_DECISIONS = RECORDED
-SCHEMA_CHANGE_REQUIRED = YES
+RESOURCE_STATE_PROGRAM_R2 = PASS
+SCHEMA_AND_MIGRATION_READINESS = COMPLETE
 SCHEMA_IMPLEMENTATION = NOT_AUTHORIZED
-MIGRATION = NOT_AUTHORIZED
-R2 = NOT_AUTHORIZED
+MIGRATION_CREATION = NOT_AUTHORIZED
+QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 RESOURCE_STATE_IMPLEMENTATION = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
@@ -371,16 +373,17 @@ FRONTEND_REASSIGNMENT_UI = NO
 Phase C Owner decision: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
 Resource-state readiness: `docs/architecture/RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS.md`  
 R1 Owner decisions: `docs/architecture/RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS.md`  
-R1 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r1_owner_decisions.md`  
-Migration head (assignment transitions): `s63_execution_task_assignment_transitions`
+R2 schema readiness: `docs/architecture/RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS.md`  
+R2 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r2_schema_and_migration_readiness.md`  
+Migration head (current): `s63_execution_task_assignment_transitions` · conceptual next: `s64_resource_state_persistence` (**not created**)
 
 **Why:**
 
-- R1 records dedicated persisted model, configuration, four-state fail-closed semantics, grain, CAS, lock revalidation, no synthetic CLEAR.
-- Implementation and Phase C remain unauthorized.
+- R2 finalizes eight-table Option A expand-only package, CAS/idempotency/history, Alembic ownership, zero-backfill, proof plans.
+- ORM/migration/QA rollout and Phase C remain unauthorized.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS`
+`RESOURCE_STATE_PROGRAM_R3_ISOLATED_SCHEMA_AND_MIGRATION_IMPLEMENTATION`
 
 ---
 

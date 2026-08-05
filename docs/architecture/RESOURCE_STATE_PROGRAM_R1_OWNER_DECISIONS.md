@@ -24,10 +24,13 @@ CONCEPTUAL_SCHEMA = READY_FOR_R2_READINESS
 INITIAL_CLEAR_BACKFILL = FORBIDDEN
 RESOURCE_STATE_IMPLEMENTATION = NOT_AUTHORIZED
 MIGRATION = NOT_AUTHORIZED
-R2 = NOT_AUTHORIZED
+R2_READINESS = COMPLETE
+SCHEMA_IMPLEMENTATION = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 QA_MUTATIONS = 0
 ```
+
+R2 readiness (post-R1): `docs/architecture/RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS.md`
 
 This document is the **canonical Owner decision register** for Resource State R1.  
 Readiness audit remains historical evidence: `RESOURCE_STATE_CONTRACT_AND_SCHEDULING_BOUNDARY_READINESS.md`.
@@ -565,7 +568,7 @@ Future PG: parity of constraints + stronger row locking — verify in a dedicate
 | Gate | Status |
 | ---- | ------ |
 | R1 Owner decisions | **COMPLETE** |
-| R2 schema & migration readiness | **NOT_AUTHORIZED** |
+| R2 schema & migration readiness | **COMPLETE** |
 | Schema implementation / migration file | **NOT_AUTHORIZED** |
 | Resource State service / Phase B wire-up | **NOT_AUTHORIZED** |
 | Phase C | **BLOCKED** |
@@ -573,7 +576,7 @@ Future PG: parity of constraints + stronger row locking — verify in a dedicate
 Next candidate after Owner review:
 
 ```text
-RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS
+RESOURCE_STATE_PROGRAM_R3_ISOLATED_SCHEMA_AND_MIGRATION_IMPLEMENTATION
 ```
 
 ---
