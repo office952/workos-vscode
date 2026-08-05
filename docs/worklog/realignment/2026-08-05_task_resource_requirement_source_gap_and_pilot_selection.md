@@ -4,6 +4,7 @@
 **Owner GO:** `AUTHORIZE_TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SELECTION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `c37b1aec`  
+**Tip HEAD:** `1f3328c9`  
 **Verdict:** **PASS** · docs-only
 
 ```text
