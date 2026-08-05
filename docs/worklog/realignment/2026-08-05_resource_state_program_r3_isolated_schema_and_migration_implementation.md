@@ -4,7 +4,9 @@
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R3_ISOLATED_SCHEMA_AND_MIGRATION_IMPLEMENTATION`  
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
-**Starting HEAD:** `fb190aad`
+**Starting HEAD:** `fb190aad`  
+**Final HEAD:** `e8b12471`  
+**Commits:** `b2f5ef3d` (schema/FK) · `61462dc3` (tests) · `e8b12471` (docs)
 
 ---
 
