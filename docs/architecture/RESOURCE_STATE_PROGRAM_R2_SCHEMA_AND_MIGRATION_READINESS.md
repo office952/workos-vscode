@@ -515,11 +515,15 @@ Schedule/reservation/capacity create vs reassignment eval; config disable mid-co
 | R4 | Downgrade/re-upgrade + create_all ownership + constraint matrix | separate |
 | R5 | Controlled QA schema-only migrate (empty tables, NOT_CONFIGURED) | **PASS** 2026-08-05 |
 | R6 | Read repositories + domain/aggregate evaluators (no writes) | **PASS** 2026-08-05 |
-| R7 | Configuration command + domain activation | separate — **NOT_AUTHORIZED** |
+| R7 | Configuration command + CAS/idempotency + activation boundary | **PASS** 2026-08-05 |
+| R8 | Domain write service readiness | separate — **NOT_AUTHORIZED** |
 
 R5 result: new tables empty.  
 R6 result: read evaluator returns `NOT_CONFIGURED` / aggregate `BLOCKED_NOT_CONFIGURED` on empty QA; Phase B consumer wiring still separate; Phase C blocked.  
-Worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`.
+R7 result: configuration command implemented with CAS + idempotency + append-only transitions; activation blocked until domain writers exist (`ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS`); QA remains 0 configurations / 0 transitions; Phase B wiring still separate.  
+Worklogs:  
+`docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`  
+`docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`.
 
 ---
 
@@ -539,10 +543,10 @@ Worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configur
 
 ```text
 FUTURE CANDIDATE:
-RESOURCE_STATE_PROGRAM_R3_ISOLATED_SCHEMA_AND_MIGRATION_IMPLEMENTATION
+RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS
 ```
 
-R3 may authorize ORM + Alembic + isolated tests only. Still: QA mutation 0; no configs; no Phase B wiring; Phase C blocked.
+R8 may authorize domain write-service readiness only after Owner GO. Still: QA activation/config mutation 0 unless separately authorized; no Phase B wiring; Phase C blocked.
 
 ---
 

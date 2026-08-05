@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R6 PASS** · QA `s64` · 8 empty RS tables · read evaluator returns `BLOCKED_NOT_CONFIGURED` · writes/activation/Phase B wiring **NOT_AUTHORIZED** · R7 **NOT_AUTHORIZED**.
+Resource State: **R1–R7 PASS** · QA `s64` · 8 empty RS tables · read evaluator `BLOCKED_NOT_CONFIGURED` · configuration command implemented · QA activation / domain writers / Phase B wiring **NOT_AUTHORIZED** · R8 **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -361,31 +361,38 @@ RESOURCE_STATE_PROGRAM_R3 = PASS
 RESOURCE_STATE_PROGRAM_R4 = PASS
 RESOURCE_STATE_PROGRAM_R5 = PASS
 RESOURCE_STATE_PROGRAM_R6 = PASS
+RESOURCE_STATE_PROGRAM_R7 = PASS
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
 QA_FOREIGN_KEY_VIOLATIONS = 0
 QA_ALEMBIC_REVISION = s64
 QA_RESOURCE_STATE_TABLES = 8
 QA_RESOURCE_STATE_CONFIGURATIONS = 0
+QA_RESOURCE_STATE_CONFIGURATION_TRANSITIONS = 0
 QA_RESOURCE_STATE_RECORDS = 0
 QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
 READ_EVALUATOR = IMPLEMENTED
+CONFIGURATION_COMMAND = IMPLEMENTED
+ACTIVATION_READINESS_GUARD = BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS
 WRITE_SERVICES = NOT_IMPLEMENTED
+DOMAIN_ACTIVATION_IN_QA = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R7 = NOT_AUTHORIZED
+R8 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
+R7 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`  
 R6 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`  
 R5 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`  
 Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- Read path can factually report unconfigured domains; no CLEAR invented from empty tables.
-- Domain activation / write commands (R7) and Phase B consumer wiring remain separate Owner GOs.
+- Configuration infrastructure exists with CAS, idempotency, and append-only history.
+- Domain activation remains blocked until writers exist; QA was not activated.
+- Phase B consumer wiring and domain write services remain separate Owner GOs.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R7_CONFIGURATION_COMMAND_AND_DOMAIN_ACTIVATION`
+`RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS`
 
 ---
 
