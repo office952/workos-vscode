@@ -514,9 +514,12 @@ Schedule/reservation/capacity create vs reassignment eval; config disable mid-co
 | R3 | ORM + migration + isolated fresh/s63 proofs | separate |
 | R4 | Downgrade/re-upgrade + create_all ownership + constraint matrix | separate |
 | R5 | Controlled QA schema-only migrate (empty tables, NOT_CONFIGURED) | **PASS** 2026-08-05 |
-| R6 | Configure + write services | separate program — **NOT_AUTHORIZED** |
+| R6 | Read repositories + domain/aggregate evaluators (no writes) | **PASS** 2026-08-05 |
+| R7 | Configuration command + domain activation | separate — **NOT_AUTHORIZED** |
 
-R5 result: new tables empty; guards still NOT_CONFIGURED; Phase C blocked.
+R5 result: new tables empty.  
+R6 result: read evaluator returns `NOT_CONFIGURED` / aggregate `BLOCKED_NOT_CONFIGURED` on empty QA; Phase B consumer wiring still separate; Phase C blocked.  
+Worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`.
 
 ---
 

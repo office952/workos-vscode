@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R5 PASS** · QA at `s64` schema-only · 8 RS tables **empty** · FK clean · Phase B wiring **NOT_AUTHORIZED** · R6 **NOT_AUTHORIZED**.
+Resource State: **R1–R6 PASS** · QA `s64` · 8 empty RS tables · read evaluator returns `BLOCKED_NOT_CONFIGURED` · writes/activation/Phase B wiring **NOT_AUTHORIZED** · R7 **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -360,33 +360,32 @@ RESOURCE_STATE_PROGRAM_R2 = PASS
 RESOURCE_STATE_PROGRAM_R3 = PASS
 RESOURCE_STATE_PROGRAM_R4 = PASS
 RESOURCE_STATE_PROGRAM_R5 = PASS
+RESOURCE_STATE_PROGRAM_R6 = PASS
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
-PRE_R5_QA_FK_DEBT_READINESS = COMPLETE
-CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS
-QA_FOREIGN_KEY_INTEGRITY = CLEAN
 QA_FOREIGN_KEY_VIOLATIONS = 0
-GLOBAL_TRANSITIONS = 7
 QA_ALEMBIC_REVISION = s64
 QA_RESOURCE_STATE_TABLES = 8
 QA_RESOURCE_STATE_CONFIGURATIONS = 0
 QA_RESOURCE_STATE_RECORDS = 0
-QA_SCHEMA_ROLLOUT = PASS_SCHEMA_ONLY
+QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
+READ_EVALUATOR = IMPLEMENTED
+WRITE_SERVICES = NOT_IMPLEMENTED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R6 = NOT_AUTHORIZED
+R7 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
+R6 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r6_configuration_and_read_evaluator.md`  
 R5 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`  
-FK remediation: `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`  
 Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- QA now has empty Resource State schema; no domain activation, schedules, reservations, or capacity rows.
-- Configuration / write evaluator (R6) and Phase B wiring remain separate Owner GOs.
+- Read path can factually report unconfigured domains; no CLEAR invented from empty tables.
+- Domain activation / write commands (R7) and Phase B consumer wiring remain separate Owner GOs.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R6_CONFIGURATION_AND_READ_EVALUATOR_IMPLEMENTATION`
+`RESOURCE_STATE_PROGRAM_R7_CONFIGURATION_COMMAND_AND_DOMAIN_ACTIVATION`
 
 ---
 
