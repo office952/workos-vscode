@@ -16,8 +16,14 @@ from schemas.execution_plan_v2 import ExecutionPlanV2PersistResult, ExecutionPla
 from schemas.execution_plan_v2_materialize import ExecutionPlanV2MaterializeResult
 from schemas.execution_plan_v2_materialization_audit import ExecutionPlanV2MaterializationAudit
 from schemas.operational_resource_readiness import OperationalResourceReadinessResult
+from schemas.resource_state_read import TaskResourceStateResult
 from services.assignment_readiness_audit_service import (
     build_assignment_readiness_audit,
+)
+from services.resource_state_read_service import (
+    ResourceStatePlanNotFoundError,
+    ResourceStateTaskNotFoundError,
+    evaluate_task_resource_state,
 )
 from services.employee_eligibility_read_model_service import (
     build_employee_eligibility_read_model,
@@ -239,6 +245,43 @@ async def assignment_readiness_audit_by_order_id(
         candidate_employee_id=candidate_employee_id,
         task_key=task_key,
     )
+
+
+@router.get(
+    "/resource-state/plans/{plan_id}/tasks",
+    response_model=TaskResourceStateResult,
+)
+async def get_task_resource_state(
+    plan_id: int,
+    task_key: str,
+    db: AsyncSession = Depends(get_db),
+    _user=Depends(require_permission("execution.plan_generate")),
+) -> TaskResourceStateResult:
+    """R6 — read-only Resource State evaluation for one plan task.
+
+    ``task_key`` is a query parameter so keys with ``:`` remain unambiguous.
+    Does not write configurations/schedules/reservations/capacity.
+    Does not wire Phase B reassignment consumers.
+    """
+    logger.info(
+        "GET /api/v1/execution/resource-state/plans/%s/tasks?task_key=%s",
+        plan_id,
+        task_key,
+    )
+    if plan_id <= 0:
+        raise HTTPException(status_code=422, detail={"error": "plan_id_invalid"})
+    try:
+        return await evaluate_task_resource_state(
+            db, plan_id=plan_id, task_key=task_key
+        )
+    except ResourceStatePlanNotFoundError:
+        raise HTTPException(
+            status_code=404, detail={"error": "execution_plan_not_found"}
+        ) from None
+    except ResourceStateTaskNotFoundError as exc:
+        raise HTTPException(
+            status_code=404, detail={"error": str(exc) or "task_key_not_found"}
+        ) from None
 
 
 @router.get(
