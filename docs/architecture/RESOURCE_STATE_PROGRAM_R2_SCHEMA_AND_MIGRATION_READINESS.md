@@ -38,13 +38,13 @@ DOWNGRADE_REUPGRADE_PLAN = READY
 RUNTIME_CREATE_ALL_EXCLUSION_PLAN = READY
 SCHEMA_IMPLEMENTATION = SEE_R3_ISOLATED_PASS
 MIGRATION_CREATION = SEE_R3_ISOLATED_PASS
-QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+QA_SCHEMA_ROLLOUT = PASS_R5_SCHEMA_ONLY
 PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
-QA_MUTATIONS = 0
 ```
 
-Post-R3 note: isolated ORM + `s64_resource_state_persistence` implemented and proven on temporary DBs only; QA not migrated.
+Post-R3 note: isolated ORM + `s64_resource_state_persistence` implemented and proven on temporary DBs.  
+Post-R5 note (2026-08-05): QA migrated schema-only to `s64`; eight RS tables empty; no configurations/records; Phase B/C still blocked. Worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`.
 
 This document is the **technical schema/migration readiness** for R3. It does **not** create ORM models or Alembic files.
 
@@ -513,10 +513,10 @@ Schedule/reservation/capacity create vs reassignment eval; config disable mid-co
 | ----- | ------- | -------- |
 | R3 | ORM + migration + isolated fresh/s63 proofs | separate |
 | R4 | Downgrade/re-upgrade + create_all ownership + constraint matrix | separate |
-| R5 | Controlled QA schema-only migrate (empty tables, NOT_CONFIGURED) | separate |
-| R6 | Configure + write services | separate program |
+| R5 | Controlled QA schema-only migrate (empty tables, NOT_CONFIGURED) | **PASS** 2026-08-05 |
+| R6 | Configure + write services | separate program — **NOT_AUTHORIZED** |
 
-R5 expected: new tables empty; guards still NOT_CONFIGURED; Phase C blocked.
+R5 result: new tables empty; guards still NOT_CONFIGURED; Phase C blocked.
 
 ---
 

@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R4 PASS** · QA remains `s63` · **FK Hybrid C+B remediation PASS** · `foreign_key_check = 0` · R5 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
+Resource State: **R1–R5 PASS** · QA at `s64` schema-only · 8 RS tables **empty** · FK clean · Phase B wiring **NOT_AUTHORIZED** · R6 **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -359,36 +359,34 @@ RESOURCE_STATE_PROGRAM_R1 = PASS
 RESOURCE_STATE_PROGRAM_R2 = PASS
 RESOURCE_STATE_PROGRAM_R3 = PASS
 RESOURCE_STATE_PROGRAM_R4 = PASS
+RESOURCE_STATE_PROGRAM_R5 = PASS
+CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
 PRE_R5_QA_FK_DEBT_READINESS = COMPLETE
-QA_FK_DEBT_REMEDIATION_PLANNING = PASS
-ISOLATED_CLONE_REHEARSAL = VERIFIED
-QA_FK_REMEDIATION_STRATEGY = HYBRID_C_PLUS_B
 CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS
 QA_FOREIGN_KEY_INTEGRITY = CLEAN
 QA_FOREIGN_KEY_VIOLATIONS = 0
 GLOBAL_TRANSITIONS = 7
-QA_ALEMBIC_REVISION = s63
-QA_RESOURCE_STATE_TABLES = 0
-QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
-R5 = NOT_AUTHORIZED
+QA_ALEMBIC_REVISION = s64
+QA_RESOURCE_STATE_TABLES = 8
+QA_RESOURCE_STATE_CONFIGURATIONS = 0
+QA_RESOURCE_STATE_RECORDS = 0
+QA_SCHEMA_ROLLOUT = PASS_SCHEMA_ONLY
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-RESOURCE_STATE_CONFIGURATIONS = 0
-RESOURCE_STATE_RECORDS = 0
+R6 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
-R4 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r4_canonical_migration_closure.md`  
-FK remediation plan: `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`  
-Controlled remediation worklog: `docs/worklog/realignment/2026-08-05_controlled_qa_foreign_key_debt_remediation.md`  
-Migration head (code): `s64_resource_state_persistence` · QA still `s63`
+R5 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`  
+FK remediation: `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`  
+Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- QA FK debt cleared via Owner-approved Hybrid C+B (nullify 7 orphan snapshot FKs; delete 4 employee-9 auth rows); transitions preserved at 7.
-- R5 schema rollout remains a separate Owner GO — not auto-started.
+- QA now has empty Resource State schema; no domain activation, schedules, reservations, or capacity rows.
+- Configuration / write evaluator (R6) and Phase B wiring remain separate Owner GOs.
 
 **Next (future candidate only — not started):**  
-Reassess R5 readiness (`AUTHORIZE_RESOURCE_STATE_PROGRAM_R5_…` or equivalent Owner GO only after review).
+`RESOURCE_STATE_PROGRAM_R6_CONFIGURATION_AND_READ_EVALUATOR_IMPLEMENTATION`
 
 ---
 

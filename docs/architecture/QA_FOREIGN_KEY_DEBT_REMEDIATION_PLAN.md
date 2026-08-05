@@ -6,7 +6,7 @@
 **Owner GO (execution):** `AUTHORIZE_CONTROLLED_QA_FOREIGN_KEY_DEBT_REMEDIATION`  
 **Approved strategy:** `HYBRID_C_PLUS_B`  
 **Date:** 2026-08-05  
-**Status:** Planning **PASS** · Clone rehearsal **VERIFIED** · Controlled QA remediation **PASS** · R5 **NOT AUTHORIZED**  
+**Status:** Planning **PASS** · Clone rehearsal **VERIFIED** · Controlled QA remediation **PASS** · R5 schema-only **PASS** (follow-on) · R6 **NOT AUTHORIZED**  
 **Planning worklog:** `docs/worklog/realignment/2026-08-05_qa_foreign_key_debt_remediation_planning_and_clone_rehearsal.md`  
 **Execution worklog:** `docs/worklog/realignment/2026-08-05_controlled_qa_foreign_key_debt_remediation.md`  
 **Rehearsal script:** `backend/scripts/qa_fk_debt_remediation_clone_rehearsal.py`  
@@ -27,9 +27,10 @@ GLOBAL_TRANSITIONS_AFTER = 7
 PROTECTED_BASELINE_DIFF = NONE
 SQLITE_FOREIGN_KEYS = VERIFIED_ON_AFTER_RESTART
 
-QA_ALEMBIC_REVISION = s63
-QA_RESOURCE_STATE_TABLES = 0
-R5 = NOT_AUTHORIZED
+QA_ALEMBIC_REVISION = s64  (post-R5 schema-only)
+QA_RESOURCE_STATE_TABLES = 8
+RESOURCE_STATE_ROWS = 0
+R6 = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
 
@@ -291,10 +292,16 @@ Executed on live QA under maintenance window (2026-08-05):
 | RS tables | 0 |
 | Rollback | not required |
 
-## 12. Next Owner GO
+## 12. R5 follow-on (completed)
+
+After this remediation PASS, Owner authorized and completed:
 
 ```text
-Reassess R5 readiness only after Owner review of CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS
+RESOURCE_STATE_PROGRAM_R5 = PASS
+QA_ALEMBIC_REVISION = s64_resource_state_persistence
+RESOURCE_STATE_TABLES = 8
+RESOURCE_STATE_ROWS = 0
 ```
 
-Do **not** auto-start R5. Do **not** migrate QA to `s64` without a separate Owner GO.
+Worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r5_controlled_qa_schema_only_rollout.md`  
+R6 / Phase B wiring / Phase C remain **NOT_AUTHORIZED**.
