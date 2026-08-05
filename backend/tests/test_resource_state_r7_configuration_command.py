@@ -25,6 +25,7 @@ from schemas.auth import UserResponse
 from schemas.resource_state_configuration import ResourceDomainConfigurationCommand
 from services.resource_domain_configuration_command_service import (
     ACTIVATION_ALLOW_ENV,
+    DOMAIN_WRITER_READY,
     ResourceDomainConfigurationActivationBlockedError,
     ResourceDomainConfigurationCasConflictError,
     ResourceDomainConfigurationConflictError,
@@ -91,8 +92,7 @@ def _user(user_id: str, role: str) -> UserResponse:
 
 
 @pytest_asyncio.fixture
-async def r7_session(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setenv(ACTIVATION_ALLOW_ENV, "1")
+async def r7_session(tmp_path: Path):
     db = tmp_path / "r7.db"
     url = _async_url(db)
     proc = _alembic_cmd(url, "upgrade", "head")
@@ -198,7 +198,11 @@ async def test_activate_and_disable(r7_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_cas_success_and_stale(r7_session: AsyncSession):
+async def test_cas_success_and_stale(
+    r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+):
+    # Capacity has no product writer; temporarily mark ready for CAS path only.
+    monkeypatch.setitem(DOMAIN_WRITER_READY, "CAPACITY_ALLOCATION", True)
     first = await configure_resource_domain(
         r7_session,
         domain="CAPACITY_ALLOCATION",
@@ -346,16 +350,16 @@ async def test_invalid_domain_and_status(r7_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_activation_blocked_without_writer_env(
+async def test_capacity_activation_blocked_missing_writer(
     r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ):
-    """Capacity still lacks a domain writer — activation remains blocked without env."""
-    monkeypatch.delenv(ACTIVATION_ALLOW_ENV, raising=False)
+    """Capacity cannot be unlocked by legacy env bypass — domain-specific guard."""
+    monkeypatch.setenv(ACTIVATION_ALLOW_ENV, "1")
     ready, reason = await assess_activation_readiness(
         r7_session, domain="CAPACITY_ALLOCATION"
     )
     assert ready is False
-    assert reason == "ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS"
+    assert reason == "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
     with pytest.raises(ResourceDomainConfigurationActivationBlockedError):
         await configure_resource_domain(
             r7_session,
@@ -382,7 +386,10 @@ async def test_evaluator_disabled_is_not_configured(r7_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_evaluator_active_no_records_clear(r7_session: AsyncSession):
+async def test_evaluator_active_no_records_clear(
+    r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.setitem(DOMAIN_WRITER_READY, "CAPACITY_ALLOCATION", True)
     await configure_resource_domain(
         r7_session,
         domain="SCHEDULING",
@@ -413,10 +420,8 @@ async def test_evaluator_active_no_records_clear(r7_session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_api_roles_admin_manager_ok_operator_viewer_denied(
-    r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+    r7_session: AsyncSession,
 ):
-    monkeypatch.setenv(ACTIVATION_ALLOW_ENV, "1")
-
     async def _override_get_db():
         yield r7_session
 

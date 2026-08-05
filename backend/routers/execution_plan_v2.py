@@ -58,6 +58,7 @@ from services.resource_domain_configuration_command_service import (
     ResourceDomainConfigurationActivationBlockedError,
     ResourceDomainConfigurationCasConflictError,
     ResourceDomainConfigurationConflictError,
+    ResourceDomainConfigurationDisableBlockedError,
     ResourceDomainConfigurationValidationError,
     configure_resource_domain,
 )
@@ -337,6 +338,10 @@ async def post_resource_domain_configuration(
             status_code=409, detail={"error": exc.code, "message": exc.message}
         ) from None
     except ResourceDomainConfigurationActivationBlockedError as exc:
+        raise HTTPException(
+            status_code=409, detail={"error": exc.code, "message": exc.message}
+        ) from None
+    except ResourceDomainConfigurationDisableBlockedError as exc:
         raise HTTPException(
             status_code=409, detail={"error": exc.code, "message": exc.message}
         ) from None

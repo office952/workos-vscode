@@ -1,19 +1,14 @@
-"""Resource State R7 — domain configuration command (CAS + idempotency).
+"""Resource State R7/R10 — domain configuration command (CAS + idempotency).
 
-Activation readiness (Owner GO R7 explicit decision):
-  ACTIVATION = BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS
+Activation is **domain-specific** via ``DOMAIN_WRITER_READY``:
+  SCHEDULING / MACHINE_RESERVATION → writers implemented (R9)
+  CAPACITY_ALLOCATION → blocked until writer + capacity source exist
 
-R7 implements configuration command infrastructure, but domain writers for
-schedule / reservation / capacity are NOT_IMPLEMENTED. Activating a domain
-without writers would make the R6 read evaluator return CLEAR on empty
-records — a false operational clear if Phase B were wired.
+R10 disable safety:
+  DISABLE rejected while blocking source rows exist for that domain.
+  Terminal/history-only rows do not block disable. Rows are never deleted.
 
-Therefore transitions to ACTIVE are refused unless:
-  WORKOS_RESOURCE_STATE_ALLOW_DOMAIN_ACTIVATION=1
-(isolated tests / future Owner GO for controlled activation rehearsal).
-
-QA activation remains NOT_AUTHORIZED regardless of this flag — do not call
-this command against the live QA database without a separate Owner GO.
+QA activation remains NOT_AUTHORIZED without a separate Owner GO.
 
 DISABLED semantics (R1/R2/R6): only ACTIVE configurations are loaded by the
 read path → DISABLED evaluates as NOT_CONFIGURED (configured=False).
@@ -21,7 +16,6 @@ read path → DISABLED evaluates as NOT_CONFIGURED (configured=False).
 
 from __future__ import annotations
 
-import os
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -43,12 +37,17 @@ from schemas.resource_state_configuration import (
 from services.resource_domain_configuration_repository import (
     ResourceDomainConfigurationRepository,
 )
-from services.resource_state_read_evaluator import evaluate_domain_from_rows
+from services.resource_state_read_evaluator import (
+    CAPACITY_BLOCKING_STATUSES,
+    RESERVATION_BLOCKING_STATUSES,
+    SCHEDULE_BLOCKING_STATUSES,
+    evaluate_domain_from_rows,
+)
 from services.resource_state_read_service import evaluate_task_resource_state
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# R9: scheduling + reservation writers implemented; capacity still blocked.
+# Domain-specific writer readiness (not a global unlock).
 DOMAIN_WRITER_READY: dict[str, bool] = {
     "SCHEDULING": True,
     "MACHINE_RESERVATION": True,
@@ -67,6 +66,13 @@ DOMAIN_KNOWN_STATUSES: dict[str, frozenset[str]] = {
     "CAPACITY_ALLOCATION": frozenset(CAPACITY_STATUSES),
 }
 
+DOMAIN_BLOCKING_STATUSES: dict[str, frozenset[str]] = {
+    "SCHEDULING": SCHEDULE_BLOCKING_STATUSES,
+    "MACHINE_RESERVATION": RESERVATION_BLOCKING_STATUSES,
+    "CAPACITY_ALLOCATION": CAPACITY_BLOCKING_STATUSES,
+}
+
+# Retained for test imports / docs; no longer unlocks activation globally.
 ACTIVATION_ALLOW_ENV = "WORKOS_RESOURCE_STATE_ALLOW_DOMAIN_ACTIVATION"
 
 
@@ -95,12 +101,12 @@ class ResourceDomainConfigurationActivationBlockedError(ResourceDomainConfigurat
     pass
 
 
+class ResourceDomainConfigurationDisableBlockedError(ResourceDomainConfigurationError):
+    pass
+
+
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
-
-
-def _activation_env_allowed() -> bool:
-    return os.environ.get(ACTIVATION_ALLOW_ENV, "").strip() == "1"
 
 
 def _resolve_operation(
@@ -154,10 +160,24 @@ async def _inconsistent_source_count(db: AsyncSession, domain: str) -> int:
     return int(result.scalar_one())
 
 
+async def count_blocking_source_rows(db: AsyncSession, domain: str) -> int:
+    table = DOMAIN_SOURCE_TABLE[domain]
+    blocking = DOMAIN_BLOCKING_STATUSES[domain]
+    placeholders = ", ".join(f"'{s}'" for s in sorted(blocking))
+    result = await db.execute(
+        text(f"SELECT COUNT(*) FROM {table} WHERE status IN ({placeholders})")
+    )
+    return int(result.scalar_one())
+
+
 async def assess_activation_readiness(
     db: AsyncSession, *, domain: str
 ) -> tuple[bool, str]:
-    """Return (ok, reason_code). Used before any transition to ACTIVE."""
+    """Return (ok, reason_code). Used before any transition to ACTIVE.
+
+    Writer readiness is **per domain** — CAPACITY cannot be unlocked by a
+    global env flag when its writer is not ready.
+    """
     if domain not in RESOURCE_DOMAINS:
         return False, "domain_not_supported"
     if not await _schema_tables_present(db):
@@ -167,9 +187,42 @@ async def assess_activation_readiness(
     inconsistent = await _inconsistent_source_count(db, domain)
     if inconsistent > 0:
         return False, "inconsistent_source_records"
-    if not DOMAIN_WRITER_READY.get(domain, False) and not _activation_env_allowed():
+    if not DOMAIN_WRITER_READY.get(domain, False):
+        if domain == "CAPACITY_ALLOCATION":
+            return False, "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
         return False, "ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS"
     return True, "ready"
+
+
+async def assess_disable_readiness(
+    db: AsyncSession, *, domain: str
+) -> tuple[bool, str]:
+    """DISABLE allowed only when no blocking source rows exist."""
+    if domain not in RESOURCE_DOMAINS:
+        return False, "domain_not_supported"
+    blocking = await count_blocking_source_rows(db, domain)
+    if blocking > 0:
+        return False, "disable_blocked_active_source_rows"
+    return True, "ready"
+
+
+async def domain_activation_readiness_report(
+    db: AsyncSession,
+) -> dict[str, dict[str, Any]]:
+    """R10 readiness matrix for all Resource State domains."""
+    report: dict[str, dict[str, Any]] = {}
+    for domain in RESOURCE_DOMAINS:
+        ok, reason = await assess_activation_readiness(db, domain=domain)
+        report[domain] = {
+            "ready": ok,
+            "reason_code": reason,
+            "writer_ready": bool(DOMAIN_WRITER_READY.get(domain, False)),
+            "blocking_source_rows": await count_blocking_source_rows(db, domain),
+            "inconsistent_source_rows": await _inconsistent_source_count(
+                db, domain
+            ),
+        }
+    return report
 
 
 def _payload_fingerprint(
@@ -278,6 +331,22 @@ async def configure_resource_domain(
         domain=domain_norm,
         application_scope_key=command.application_scope_key,
     )
+
+    if command.target_status == "DISABLED" and (
+        cfg is None or cfg.status == "ACTIVE"
+    ):
+        # Create-as-DISABLED is fine (no active rows expected).
+        # ACTIVE→DISABLED requires no blocking source rows.
+        if cfg is not None and cfg.status == "ACTIVE":
+            d_ok, d_reason = await assess_disable_readiness(
+                db, domain=domain_norm
+            )
+            if not d_ok:
+                raise ResourceDomainConfigurationDisableBlockedError(
+                    d_reason,
+                    f"disable blocked for {domain_norm}: {d_reason}",
+                )
+
     now = _utcnow()
 
     if cfg is None:
