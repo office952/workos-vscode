@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R11 PASS** · QA `s64` · Scheduling + Machine Reservation ACTIVE in QA · Capacity still NOT_CONFIGURED · zero schedule/reservation/capacity operational rows · aggregate `BLOCKED_NOT_CONFIGURED` · Phase B wiring **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · **Capacity source decision PASS** · QA `s64` · Scheduling + Machine Reservation ACTIVE · Capacity NOT_CONFIGURED · zero operational RS rows · aggregate `BLOCKED_NOT_CONFIGURED` · Capacity writer **NOT_IMPLEMENTED** · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -366,43 +366,46 @@ RESOURCE_STATE_PROGRAM_R8 = PASS
 RESOURCE_STATE_PROGRAM_R9 = PASS
 RESOURCE_STATE_PROGRAM_R10 = PASS
 RESOURCE_STATE_PROGRAM_R11 = PASS
+CAPACITY_SOURCE_AND_WRITER_DECISION = PASS
+CAPACITY_SOURCE = WORKCENTER_CONFIGURED_CAPACITY
+RESOURCE_SCOPE = WORKCENTER_PRIMARY | MACHINE_DEFERRED_STAGE_2
+CAPACITY_UNIT = minutes
+PLANNING_BUCKET = DAY
+OVER_ALLOCATION_POLICY = CONFIGURABLE_PER_WORKCENTER_DEFAULT_WARN_ONLY
+IMPLEMENTATION_STRATEGY = OPTION_D_STAGED
+CAPACITY_WRITER = NOT_IMPLEMENTED
+CAPACITY_ACTIVATION = NOT_AUTHORIZED
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
 CONTROLLED_QA_DOMAIN_ACTIVATION = VERIFIED
 QA_FOREIGN_KEY_VIOLATIONS = 0
 QA_ALEMBIC_REVISION = s64
 QA_RESOURCE_STATE_TABLES = 8
 QA_RESOURCE_STATE_CONFIGURATIONS = 2
-QA_RESOURCE_STATE_CONFIGURATION_TRANSITIONS = 2
 QA_SCHEDULING_CONFIGURATION = ACTIVE
 QA_MACHINE_RESERVATION_CONFIGURATION = ACTIVE
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_SCHEDULE_ROWS = 0
 QA_RESERVATION_ROWS = 0
 QA_CAPACITY_ROWS = 0
-QA_SCHEDULING_STATE = CLEAR
-QA_MACHINE_RESERVATION_STATE = CLEAR
-QA_CAPACITY_STATE = NOT_CONFIGURED
 QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
-CAPACITY_ACTIVATION_READINESS = BLOCKED_MISSING_WRITER_AND_SOURCE
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R12 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
+Capacity decision: `docs/architecture/CAPACITY_SOURCE_AND_WRITER_DECISION.md`  
+Capacity worklog: `docs/worklog/realignment/2026-08-05_capacity_source_and_writer_decision.md`  
 R10 architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS.md`  
-R10 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r10_controlled_domain_activation_readiness.md`  
 R11 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r11_controlled_qa_scheduling_and_reservation_activation.md`  
-R9 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r9_scheduling_and_reservation_writer_implementation.md`  
 Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- R11 executed OPTION_A: Scheduling + Reservation ACTIVE in QA; Capacity remains unconfigured; aggregate stays fail-closed.
-- Domains are ready to accept real schedule/reservation data later; no operational rows were created in R11.
-- Capacity source/writer and Phase B remain blocked.
+- R11 left Scheduling/Reservation ACTIVE and empty; Capacity stayed NOT_CONFIGURED.
+- Capacity decision freezes Stage-1 source = Owner-configured workcenter minutes/day; writer still not built.
+- Phase B stays unwired until Capacity truth + controlled transfer exist.
 
 **Next (future candidate only — not started):**  
-`CAPACITY_SOURCE_AND_WRITER_DECISION`
+`CAPACITY_STAGE_1_WORKCENTER_SOURCE_AND_WRITER_IMPLEMENTATION`
 
 ---
 
