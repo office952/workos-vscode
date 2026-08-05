@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `27a9248d`  
+**Docs commit / Final HEAD:** `cd291b67`  
 **Prerequisite:** `CAPACITY_STAGE_1_MIGRATION_READINESS = PASS` (tip `27a9248d`)
 
 ---
