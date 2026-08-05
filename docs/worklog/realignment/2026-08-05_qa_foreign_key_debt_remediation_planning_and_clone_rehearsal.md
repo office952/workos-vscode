@@ -6,7 +6,7 @@
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `a03dd4e7`  
 **Script commit:** `b19dd451`  
-**Final HEAD:** *(set after docs commit)*  
+**Final HEAD:** `a741f357`  
 **Canonical:** `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`
 
 ---
