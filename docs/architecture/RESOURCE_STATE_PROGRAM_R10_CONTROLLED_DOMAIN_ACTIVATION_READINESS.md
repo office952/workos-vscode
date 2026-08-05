@@ -3,9 +3,10 @@
 **Task:** `RESOURCE_STATE_PROGRAM_R10 = CONTROLLED_DOMAIN_ACTIVATION_READINESS`  
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · QA activation **NOT_AUTHORIZED**  
+**Status:** **PASS** · readiness complete; QA activation executed under **R11** (separate Owner GO)  
 **Starting HEAD:** `393337ba`  
-**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r10_controlled_domain_activation_readiness.md`
+**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r10_controlled_domain_activation_readiness.md`  
+**R11 follow-through:** `docs/worklog/realignment/2026-08-05_resource_state_program_r11_controlled_qa_scheduling_and_reservation_activation.md`
 
 ```text
 RESOURCE_STATE_PROGRAM_R10 = PASS
@@ -17,11 +18,14 @@ DOMAIN_SPECIFIC_ACTIVATION_GUARD = VERIFIED
 DISABLE_SAFETY = VERIFIED
 ACTIVATION_WRITE_CONCURRENCY = VERIFIED
 RECOMMENDED_ACTIVATION_STRATEGY = OPTION_A
-QA_DOMAIN_CONFIGURATIONS = 0
-QA_RESOURCE_STATE_ROWS = 0
+RESOURCE_STATE_PROGRAM_R11 = PASS
+QA_DOMAIN_CONFIGURATIONS = 2
+QA_SCHEDULING_CONFIGURATION = ACTIVE
+QA_MACHINE_RESERVATION_CONFIGURATION = ACTIVE
+QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
+QA_RESOURCE_STATE_OPERATIONAL_ROWS = 0
 PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
-R11 = NOT_AUTHORIZED
 ```
 
 ---
@@ -136,8 +140,9 @@ No QA writes. No capacity writer. No Phase B wiring. No migration.
 ## 8. Next Owner gate
 
 ```text
+R11 = PASS (controlled QA Scheduling + Machine Reservation activation; zero operational rows)
 FUTURE CANDIDATE:
-RESOURCE_STATE_PROGRAM_R11_CONTROLLED_QA_SCHEDULING_AND_RESERVATION_ACTIVATION
+CAPACITY_SOURCE_AND_WRITER_DECISION
 ```
 
-R11 requires a separate Owner GO and must weigh whether QA activation has operational value before UI exists. R10 does **not** authorize R11.
+R10 authorized readiness only. R11 performed OPTION_A activation under its own Owner GO. Capacity writer/source and Phase B wiring remain **NOT_AUTHORIZED**.

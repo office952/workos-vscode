@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R10 PASS** · QA `s64` · empty RS rows · schedule+reservation writers ready for activation · capacity activation blocked · QA domains still NOT_CONFIGURED · Phase B wiring **NOT_AUTHORIZED** · R11 **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · QA `s64` · Scheduling + Machine Reservation ACTIVE in QA · Capacity still NOT_CONFIGURED · zero schedule/reservation/capacity operational rows · aggregate `BLOCKED_NOT_CONFIGURED` · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -365,37 +365,44 @@ RESOURCE_STATE_PROGRAM_R7 = PASS
 RESOURCE_STATE_PROGRAM_R8 = PASS
 RESOURCE_STATE_PROGRAM_R9 = PASS
 RESOURCE_STATE_PROGRAM_R10 = PASS
+RESOURCE_STATE_PROGRAM_R11 = PASS
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
+CONTROLLED_QA_DOMAIN_ACTIVATION = VERIFIED
 QA_FOREIGN_KEY_VIOLATIONS = 0
 QA_ALEMBIC_REVISION = s64
 QA_RESOURCE_STATE_TABLES = 8
-QA_RESOURCE_STATE_CONFIGURATIONS = 0
-QA_RESOURCE_STATE_CONFIGURATION_TRANSITIONS = 0
-QA_RESOURCE_STATE_RECORDS = 0
+QA_RESOURCE_STATE_CONFIGURATIONS = 2
+QA_RESOURCE_STATE_CONFIGURATION_TRANSITIONS = 2
+QA_SCHEDULING_CONFIGURATION = ACTIVE
+QA_MACHINE_RESERVATION_CONFIGURATION = ACTIVE
+QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
+QA_SCHEDULE_ROWS = 0
+QA_RESERVATION_ROWS = 0
+QA_CAPACITY_ROWS = 0
+QA_SCHEDULING_STATE = CLEAR
+QA_MACHINE_RESERVATION_STATE = CLEAR
+QA_CAPACITY_STATE = NOT_CONFIGURED
 QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
-SCHEDULING_ACTIVATION_READINESS = READY
-MACHINE_RESERVATION_ACTIVATION_READINESS = READY
 CAPACITY_ACTIVATION_READINESS = BLOCKED_MISSING_WRITER_AND_SOURCE
-RECOMMENDED_ACTIVATION_STRATEGY = OPTION_A
-DOMAIN_ACTIVATION_IN_QA = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R11 = NOT_AUTHORIZED
+R12 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
 R10 architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS.md`  
 R10 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r10_controlled_domain_activation_readiness.md`  
+R11 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r11_controlled_qa_scheduling_and_reservation_activation.md`  
 R9 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r9_scheduling_and_reservation_writer_implementation.md`  
 Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- Scheduling and Reservation may activate independently of Capacity; aggregate stays fail-closed.
-- Recommended later QA path: OPTION_A (activate both together under separate Owner GO).
-- Capacity and Phase B remain blocked.
+- R11 executed OPTION_A: Scheduling + Reservation ACTIVE in QA; Capacity remains unconfigured; aggregate stays fail-closed.
+- Domains are ready to accept real schedule/reservation data later; no operational rows were created in R11.
+- Capacity source/writer and Phase B remain blocked.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R11_CONTROLLED_QA_SCHEDULING_AND_RESERVATION_ACTIVATION`
+`CAPACITY_SOURCE_AND_WRITER_DECISION`
 
 ---
 
