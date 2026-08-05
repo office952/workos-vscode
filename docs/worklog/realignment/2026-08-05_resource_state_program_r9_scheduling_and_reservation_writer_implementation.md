@@ -5,9 +5,9 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `f76e1683`  
-**Code commits:** `cc74383c` · `aaad7569`  
+**Code commits:** `cc74383c` ? `aaad7569`  
 **Docs commit:** `05a423e5`  
-**Final HEAD:** `e725bcc7`
+**Final HEAD:** `0b81566d`
 
 ---
 
@@ -108,7 +108,7 @@ CROSS_TASK_SCHEDULING_CONFLICT = NOT_IMPLEMENTED
 
 ---
 
-## /modules · /governance
+## /modules ? /governance
 
 **/modules:** Scheduling writer exists; Reservation writer exists; Capacity writer absent; QA domains inactive.  
 **/governance:** admin/manager manage ownership; CAS/idempotency; append-only history; activation still Owner-gated (QA not activated).
@@ -120,7 +120,7 @@ CROSS_TASK_SCHEDULING_CONFLICT = NOT_IMPLEMENTED
 ```text
 Nota roadmap awareness: 9/10
 Pozi?ia curent?: Resource State scheduling + reservation writers
-Cât sunt în direc?ia stabilit?: 98/100%
+C?t sunt ?n direc?ia stabilit?: 98/100%
 (func?ionalitate RS ~85/100 ? capacity + Phase B wiring remaining)
 Dead Pieces Check: none introduced
 Forbidden scope respected: YES
