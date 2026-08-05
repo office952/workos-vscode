@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `681f1ac0`  
+**Docs commit / Final HEAD:** `5c8681ed`  
 **Architecture:** `docs/architecture/CAPACITY_RESOURCE_MODEL_REALIGNMENT.md`
 
 ---
