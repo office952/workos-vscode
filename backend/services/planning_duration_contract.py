@@ -24,6 +24,11 @@ _LETTERS_TEMPLATE_CODES = frozenset(
 )
 
 
+# Stable Aggregate → EP provenance stamp for the vector_prep contract.
+# Single authority label (Owner VECTOR_PREP_DURATION_E2E); not a second formula.
+PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP = "LETTERS_VECTOR_PREP_DURATION"
+
+
 @dataclass(frozen=True)
 class PlanningDurationContract:
     """Reusable Product System duration contract for one operation."""
@@ -35,10 +40,13 @@ class PlanningDurationContract:
     required_inputs: tuple[str, ...] = ()
     units: str = "min"
     notes: str = ""
+    # When set, Aggregate stamps this exact planning_minutes_source on resolve.
+    planning_minutes_source: str | None = None
 
 
 # TE2E-028B Letters-only proof: vector prep duration from letter count.
 # Uses approved FormulaId.COUNT_BASED_TIME — not a quantity/commercial formula.
+# Owner D2: duration = 2 minutes × letter_count (minutes_per_letter lives only here).
 LETTERS_VECTOR_PREP_DURATION = PlanningDurationContract(
     operation_code="vector_prep",
     duration_mode="formula",
@@ -46,6 +54,7 @@ LETTERS_VECTOR_PREP_DURATION = PlanningDurationContract(
     formula_params={"minutes_per_letter": 2.0},
     required_inputs=("letter_count",),
     units="min",
+    planning_minutes_source=PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP,
     notes=(
         "Operational planning duration for Pregătire vector / font. "
         "Commercial quantity formula on the same op remains letter_count_material."

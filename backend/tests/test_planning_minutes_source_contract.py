@@ -76,7 +76,4 @@ def test_formula_resolution_uses_letter_count_not_price():
     assert vp.planning_duration_status in {"resolved", "RESOLVED"} or str(
         vp.planning_duration_status
     ).lower() == "resolved"
-    assert vp.planning_minutes_source is not None
-    assert "formula" in vp.planning_minutes_source.lower() or "count" in (
-        vp.planning_duration_formula_id or ""
-    ).lower()
+    assert vp.planning_minutes_source == "LETTERS_VECTOR_PREP_DURATION"

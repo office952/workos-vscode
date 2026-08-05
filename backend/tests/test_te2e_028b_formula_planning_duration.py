@@ -11,7 +11,6 @@ from models.execution_plan import ExecutionPlan
 from models.orders import Orders
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from schemas.execution_plan_v2 import (
-    PLANNING_MINUTES_SOURCE_AGGREGATE_FORMULA_PREFIX,
     PLANNING_MINUTES_SOURCE_AGGREGATE_OPS,
     PLANNING_MINUTES_WARNING,
 )
@@ -38,6 +37,7 @@ from services.execution_plan_v2_preview_service import (
 from services.formula_handlers import FormulaId
 from services.planning_duration_contract import (
     LETTERS_VECTOR_PREP_DURATION,
+    PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP,
     get_planning_duration_contract,
 )
 from services.post_job_truth_service import PostJobTruthService
@@ -46,7 +46,6 @@ from services.product_aggregate_planning_duration_service import (
     PLANNING_DURATION_STATUS_PLACEHOLDER,
     PLANNING_DURATION_STATUS_RESOLVED,
     apply_planning_duration_resolution,
-    planning_minutes_source_for_formula,
 )
 from tests.test_quote_snapshot_v2_accept_gate import _commercial_preview, _internal_preview
 
@@ -242,9 +241,8 @@ def test_aggregate_resolves_vector_prep_minutes_and_provenance():
     assert vp.planning_duration_mode == "formula"
     assert vp.planning_duration_status == PLANNING_DURATION_STATUS_RESOLVED
     assert vp.planning_duration_formula_id == FormulaId.COUNT_BASED_TIME.value
-    assert vp.planning_minutes_source == planning_minutes_source_for_formula(
-        FormulaId.COUNT_BASED_TIME.value
-    )
+    assert vp.planning_minutes_source == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
+    assert vp.planning_minutes_source == LETTERS_VECTOR_PREP_DURATION.planning_minutes_source
     # Commercial formula id preserved on the op.
     assert vp.formula_id == "letter_count_material"
 
@@ -294,9 +292,7 @@ def test_plan_resolver_accepts_formula_resolved_and_rejects_placeholder():
 
     minutes, source = resolve_planning_minutes_from_aggregate_op(by_code["vector_prep"])
     assert minutes == EXPECTED_VECTOR_PREP_MINUTES
-    assert source is not None
-    assert source.startswith(PLANNING_MINUTES_SOURCE_AGGREGATE_FORMULA_PREFIX)
-    assert FormulaId.COUNT_BASED_TIME.value in source
+    assert source == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
 
     minutes_qc, source_qc = resolve_planning_minutes_from_aggregate_op(by_code["qc_letters"])
     assert minutes_qc == 15.0
@@ -318,14 +314,11 @@ def test_explicit_zero_accepted_only_with_formula_provenance():
         planning_duration_mode="formula",
         planning_duration_status="resolved",
         planning_duration_formula_id=FormulaId.COUNT_BASED_TIME.value,
-        planning_minutes_source=planning_minutes_source_for_formula(
-            FormulaId.COUNT_BASED_TIME.value
-        ),
+        planning_minutes_source=PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP,
     )
     minutes, source = resolve_planning_minutes_from_aggregate_op(op)
     assert minutes == 0.0
-    assert source is not None
-    assert FormulaId.COUNT_BASED_TIME.value in source
+    assert source == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
 
 
 @pytest.mark.asyncio
@@ -338,8 +331,7 @@ async def test_preview_persist_materialize_postjob_formula_minutes(db_session):
 
     vp = by_op["vector_prep"]
     assert vp.estimated_minutes == EXPECTED_VECTOR_PREP_MINUTES
-    assert vp.planning_minutes_source is not None
-    assert vp.planning_minutes_source.startswith(PLANNING_MINUTES_SOURCE_AGGREGATE_FORMULA_PREFIX)
+    assert vp.planning_minutes_source == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
     assert PLANNING_MINUTES_WARNING not in vp.warnings
 
     assert by_op["qc_letters"].estimated_minutes == 15.0
@@ -357,8 +349,13 @@ async def test_preview_persist_materialize_postjob_formula_minutes(db_session):
 
     assert planned["vector_prep"]["estimated_minutes"] == EXPECTED_VECTOR_PREP_MINUTES
     assert ops["vector_prep"]["estimated_time_minutes"] == EXPECTED_VECTOR_PREP_MINUTES
-    assert FormulaId.COUNT_BASED_TIME.value in (
-        planned["vector_prep"].get("planning_minutes_source") or ""
+    assert (
+        planned["vector_prep"].get("planning_minutes_source")
+        == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
+    )
+    assert (
+        ops["vector_prep"].get("planning_minutes_source")
+        == PLANNING_MINUTES_SOURCE_LETTERS_VECTOR_PREP
     )
 
     truth = await PostJobTruthService(db_session).build_for_order(order.id)

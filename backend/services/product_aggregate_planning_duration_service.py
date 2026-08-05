@@ -197,15 +197,17 @@ def resolve_operation_planning_duration(
             }
         )
 
+    source = (contract.planning_minutes_source or "").strip() or None
+    if source is None:
+        source = planning_minutes_source_for_formula(contract.formula_id or "")
+
     return op.model_copy(
         update={
             "estimated_minutes": minutes,
             "planning_duration_mode": "formula",
             "planning_duration_status": PLANNING_DURATION_STATUS_RESOLVED,
             "planning_duration_formula_id": contract.formula_id,
-            "planning_minutes_source": planning_minutes_source_for_formula(
-                contract.formula_id or ""
-            ),
+            "planning_minutes_source": source,
         }
     )
 
