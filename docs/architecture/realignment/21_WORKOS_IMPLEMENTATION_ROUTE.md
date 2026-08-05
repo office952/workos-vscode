@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R11 PASS** · Capacity Stage 1 **implemented inactive** · **resource model realignment PASS** · **Owner decision package APPLIED** (MACHINE_RUN + workspace classes + hybrid/prepress/field) · Capacity seed/activation **NOT_AUTHORIZED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · Capacity Stage 1 **implemented inactive** · resource model + Owner decisions **PASS** · **task resource requirement readonly contract PASS** · Capacity seed/activation **NOT_AUTHORIZED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -356,18 +356,13 @@ FINALIZATION_WAVE_11 = PASS
 PHASE_B = VERIFIED_FAIL_CLOSED
 PHASE_C = BLOCKED
 RESOURCE_STATE_PROGRAM_R1..R11 = PASS
-CAPACITY_SOURCE_AND_WRITER_DECISION = PASS
-CAPACITY_STAGE_1 = PASS
-CAPACITY_STAGE_1_DISPOSITION = OPTION_D_KEEP_IMPLEMENTED_INACTIVE
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
 OWNER_DECISION_PACKAGE = APPLIED
-MACHINE_RUN = OWNER_CONFIRMED_CONCEPT
-MANUAL_WORKSPACE_CLASSES = OWNER_CONFIRMED
-WORKSPACE_SHARING = CONDITIONAL
-HYBRID_WORKCENTERS = OWNER_CONFIRMED
-PREPRESS = PERSON_DRIVEN_STAGE_1
-FIELD_INSTALLATION = OUTSIDE_SHOP_CAPACITY
+TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT = PASS
+MACHINE_RUN = NOT_IMPLEMENTED
+WORKSPACE_MODEL = NOT_IMPLEMENTED
+EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
 code Alembic = s65_workcenter_capacity_source
@@ -377,20 +372,22 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
+RECOMMENDED_NEXT_SLICE = TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
+Task resource contract: `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`  
 Owner decisions: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
-Resource model realignment: `docs/architecture/CAPACITY_RESOURCE_MODEL_REALIGNMENT.md`  
-Decision worklog: `docs/worklog/realignment/2026-08-05_machine_batch_and_manual_workspace_owner_decisions.md`
+Contract worklog: `docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_contract.md`
 
 **Why:**
 
-- Owner froze MACHINE_RUN, conditional table sharing, hybrid task demand, PREPRESS person-driven, FIELD outside shop.
-- Capacity Stage 1 stays implemented but inactive — no seed, no activation.
-- No runtime implementation authorized from this package.
+- Task demand vs resource availability are separated; NOW reuses WC + nullable minutes; HYBRID mode not inventable from WC.
+- Missing demand → RESOURCE_REQUIREMENTS_UNKNOWN (never “no resources needed”).
+- Capacity / MACHINE_RUN / workspace booking remain unimplemented or inactive.
 
-**Next:** none authorized — wait for a separate Owner GO before any contract/runtime work.
+**Next (future candidate only — not started):**  
+`TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION`
 
 ---
 

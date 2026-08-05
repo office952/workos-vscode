@@ -23,10 +23,13 @@ CAPACITY_SEED = NOT_AUTHORIZED
 QA_MUTATIONS = 0
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
+TASK_RESOURCE_REQUIREMENT_CONTRACT = PASS
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
 Owner confirmation source: chat acceptance of the six-decision set (METAL_FAB/VINYL HYBRID; OPTION_A classes; conditional cant+vinyl share; MACHINE_RUN owns one Reservation; PREPRESS person-driven; FIELD outside shop Capacity). Recommendations were **not** treated as accepted until that Owner set was stated.
+
+Follow-on contract (docs-only): `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`.
 
 ---
 
@@ -269,7 +272,9 @@ QA_MUTATIONS = 0
 ## 11. Next task
 
 ```text
+TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT = PASS
+RECOMMENDED_NEXT_SLICE = TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-No runtime implementation candidate is started by this package. A later Owner GO may authorize a **readonly** task resource requirement contract or a MACHINE_RUN design spike — only after explicit GO.
+Readonly **contract** is documented. No runtime projection or MACHINE_RUN implementation is authorized without a separate Owner GO.
