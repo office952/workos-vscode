@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `9b3d95ff`  
+**Docs commit / Final HEAD:** `f293bba3`  
 **Architecture:** `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`
 
 ---
