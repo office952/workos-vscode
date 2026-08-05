@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `efc3b190`  
+**Docs commit / Final HEAD:** `6072686b`  
 **Architecture:** `docs/architecture/CAPACITY_SOURCE_AND_WRITER_DECISION.md`
 
 ---
