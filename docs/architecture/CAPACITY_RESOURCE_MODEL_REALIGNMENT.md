@@ -3,22 +3,26 @@
 **Task:** `CAPACITY_RESOURCE_MODEL_REALIGNMENT`  
 **Owner GO:** `AUTHORIZE_CAPACITY_RESOURCE_MODEL_REALIGNMENT`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Conceptual realignment · **no implementation · no Capacity activation**  
+**Status:** **PASS** · Conceptual realignment · Owner decision package **APPLIED** · **no implementation · no Capacity activation**  
 **Starting HEAD:** `681f1ac0`  
-**Worklog:** `docs/worklog/realignment/2026-08-05_capacity_resource_model_realignment.md`
+**Worklog:** `docs/worklog/realignment/2026-08-05_capacity_resource_model_realignment.md`  
+**Owner decisions:** `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`
 
 ```text
 CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
+OWNER_DECISION_PACKAGE = APPLIED
 MACHINE_BOUND_MODEL = FINALIZED
 MACHINE_EXCLUSIVITY = CONFIRMED
-MACHINE_BATCH_MODEL = FINALIZED_CONCEPTUALLY
-MANUAL_SHARED_WORKSPACE_MODEL = FINALIZED_CONCEPTUALLY
-WORKSPACE_EXCLUSIVITY = CONDITIONAL
-WORKSPACE_SHARING = SUPPORTED_CONCEPTUALLY
-WORKSPACE_CLASS_MODEL = OPTION_A_RECOMMENDED
+MACHINE_RUN = OWNER_CONFIRMED_CONCEPT
+MANUAL_WORKSPACE_CLASSES = OWNER_CONFIRMED
+WORKSPACE_SHARING = CONDITIONAL
+HYBRID_WORKCENTERS = OWNER_CONFIRMED
+PREPRESS = PERSON_DRIVEN_STAGE_1
+FIELD_INSTALLATION = OUTSIDE_SHOP_CAPACITY
 EMPLOYEE_RESOURCE_BOUNDARY = FINALIZED
 TASK_RESOURCE_REQUIREMENT_CONTRACT = BOUNDED_MINIMAL
 CAPACITY_STAGE_1_DISPOSITION = OPTION_D_KEEP_IMPLEMENTED_INACTIVE
+CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 CAPACITY_STAGE_1_QA_SEED_READINESS = SUPERSEDED_BY_RESOURCE_MODEL_REALIGNMENT
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
@@ -401,30 +405,30 @@ Capacity NOT_CONFIGURED still fail-closes aggregate. Richer resource model does 
 
 ---
 
-## 17. Owner decisions still required (simple)
+## 17. Owner decisions — applied
 
-1. **Hybrid WCs** — For `WC_METAL_FAB` and `WC_VINYL_APPLICATION`, is the primary bottleneck the **machine**, the **table**, or **both** (HYBRID confirmed)?  
-2. **OPTION_A classes** — Accept SMALL / MEDIUM / FULL_TABLE / LARGE_AREA as the first workspace language?  
-3. **Assembly example** — On one table, may “cant bonding” and “small vinyl” share by default if both SMALL and compatible?  
-4. **CNC batch** — Should the first batch grain be named **MACHINE_RUN** (preferred) and always own exactly one Machine Reservation?  
-5. **Prepress** — Treat as person-driven only (no table capacity), correct?  
-6. **Field** — Keep completely outside shop Capacity / workspace models?  
+The six questions from the realignment pass are **Owner-confirmed** and recorded in:
 
-Do **not** ask Owner to approve ORM tables in this step.
+`docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`
+
+```text
+D1 HYBRID task-driven demand
+D2 SMALL / MEDIUM / FULL_TABLE / LARGE_AREA
+D3 CONDITIONAL workspace sharing
+D4 MACHINE_RUN owns one Machine Reservation
+D5 PREPRESS PERSON_DRIVEN
+D6 FIELD outside shop Capacity
+```
 
 ---
 
-## 18. Future candidate (single, proportional)
+## 18. Future candidate
 
 ```text
-FUTURE CANDIDATE:
-MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISION_PACKAGE
+NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Closes §17 with Owner answers, freezes family map + OPTION_A + MACHINE_RUN naming, still **no** schema/activation.  
-After that, a later GO may introduce a **readonly** task resource contract — not before.
-
-Alternative deferred: `TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT`.
+No runtime task is started from the decision package. A later explicit Owner GO may authorize a bounded readonly task resource contract or MACHINE_RUN design — not implied by this document.
 
 ---
 

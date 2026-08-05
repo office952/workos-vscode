@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R11 PASS** · Capacity Stage 1 code + s65 schema **PASS** · **resource model realignment PASS** · Capacity **inactive** (OPTION_D) · seed readiness **SUPERSEDED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · Capacity Stage 1 **implemented inactive** · **resource model realignment PASS** · **Owner decision package APPLIED** (MACHINE_RUN + workspace classes + hybrid/prepress/field) · Capacity seed/activation **NOT_AUTHORIZED** · Scheduling + Reservation ACTIVE · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -358,44 +358,39 @@ PHASE_C = BLOCKED
 RESOURCE_STATE_PROGRAM_R1..R11 = PASS
 CAPACITY_SOURCE_AND_WRITER_DECISION = PASS
 CAPACITY_STAGE_1 = PASS
-CAPACITY_STAGE_1_MIGRATION_READINESS = PASS
-CAPACITY_STAGE_1_QA_SCHEMA_ROLLOUT = PASS
-CAPACITY_STAGE_1_QA_SEED_READINESS = SUPERSEDED_BY_RESOURCE_MODEL_REALIGNMENT
-CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
 CAPACITY_STAGE_1_DISPOSITION = OPTION_D_KEEP_IMPLEMENTED_INACTIVE
-MACHINE_EXCLUSIVITY = CONFIRMED
-MACHINE_BATCH_MODEL = FINALIZED_CONCEPTUALLY
-MANUAL_SHARED_WORKSPACE_MODEL = FINALIZED_CONCEPTUALLY
-CANONICAL_MIGRATION_CLOSURE = VERIFIED
-CAPACITY_SOURCE = WORKCENTER_CONFIGURED_CAPACITY
-CAPACITY_WRITER = IMPLEMENTED
+CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
+CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
+OWNER_DECISION_PACKAGE = APPLIED
+MACHINE_RUN = OWNER_CONFIRMED_CONCEPT
+MANUAL_WORKSPACE_CLASSES = OWNER_CONFIRMED
+WORKSPACE_SHARING = CONDITIONAL
+HYBRID_WORKCENTERS = OWNER_CONFIRMED
+PREPRESS = PERSON_DRIVEN_STAGE_1
+FIELD_INSTALLATION = OUTSIDE_SHOP_CAPACITY
+CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
+CAPACITY_QA_SEED = NOT_AUTHORIZED
 code Alembic = s65_workcenter_capacity_source
 QA Alembic = s65_workcenter_capacity_source
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
-CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
-CAPACITY_QA_SEED = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-PHASE_B_CAPACITY_CONSUMER = NOT_IMPLEMENTED
 FRONTEND_REASSIGNMENT_UI = NO
+NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Capacity decision: `docs/architecture/CAPACITY_SOURCE_AND_WRITER_DECISION.md`  
+Owner decisions: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
 Resource model realignment: `docs/architecture/CAPACITY_RESOURCE_MODEL_REALIGNMENT.md`  
-Seed readiness (superseded): `docs/architecture/CAPACITY_STAGE_1_QA_CONFIGURATION_AND_SEED_READINESS.md`  
-Realignment worklog: `docs/worklog/realignment/2026-08-05_capacity_resource_model_realignment.md`  
-R11 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r11_controlled_qa_scheduling_and_reservation_activation.md`
+Decision worklog: `docs/worklog/realignment/2026-08-05_machine_batch_and_manual_workspace_owner_decisions.md`
 
 **Why:**
 
-- Machine ≠ table ≠ employee ≠ workcenter; Stage 1 WC-minutes alone is insufficient.
-- Machine Reservation already owns exclusive machine runs; batch multi-job is conceptual MACHINE_RUN.
-- Manual tables need conditional sharing (OPTION_A classes) — not exclusive utilaj semantics.
-- Keep Stage 1 implemented but **inactive**; no seed/activation until Owner decision package.
+- Owner froze MACHINE_RUN, conditional table sharing, hybrid task demand, PREPRESS person-driven, FIELD outside shop.
+- Capacity Stage 1 stays implemented but inactive — no seed, no activation.
+- No runtime implementation authorized from this package.
 
-**Next (future candidate only — not started):**  
-`MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISION_PACKAGE`
+**Next:** none authorized — wait for a separate Owner GO before any contract/runtime work.
 
 ---
 
