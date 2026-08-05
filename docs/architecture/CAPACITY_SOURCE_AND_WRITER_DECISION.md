@@ -3,9 +3,10 @@
 **Task:** `CAPACITY_SOURCE_AND_WRITER_DECISION`  
 **Owner GO:** `AUTHORIZE_CAPACITY_SOURCE_AND_WRITER_DECISION`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Decision complete · Capacity writer **NOT_IMPLEMENTED** · QA Capacity **NOT_CONFIGURED**  
+**Status:** **PASS** · Decision complete · Stage 1 writer **IMPLEMENTED** (code) · QA Capacity **NOT_CONFIGURED**  
 **Starting HEAD:** `efc3b190`  
 **Worklog:** `docs/worklog/realignment/2026-08-05_capacity_source_and_writer_decision.md`  
+**Stage 1 implementation:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_workcenter_source_and_writer_implementation.md`  
 **Prerequisites:** Resource State R1–R11 PASS · Scheduling + Machine Reservation ACTIVE in QA · Capacity rows = 0
 
 ```text
@@ -21,6 +22,10 @@ CAPACITY_WRITER_CONTRACT = FINALIZED
 CAPACITY_EVALUATOR_SEMANTICS = FINALIZED
 PHASE_B_CAPACITY_POLICY = FINALIZED
 IMPLEMENTATION_STRATEGY = OPTION_D_STAGED
+CAPACITY_STAGE_1 = PASS
+CAPACITY_WRITER = IMPLEMENTED
+code Alembic = s65_workcenter_capacity_source
+QA Alembic = s64
 CAPACITY_ACTIVATION = NOT_AUTHORIZED
 QA_CAPACITY_CONFIGURATION = 0
 QA_CAPACITY_ROWS = 0
@@ -28,7 +33,7 @@ PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
 
-This document answers the fifteen Owner questions and freezes Stage-1 contracts. It does **not** implement the capacity writer, create QA capacity configuration, or wire Phase B.
+Stage 1 implements the workcenter/day source + WORKCENTER allocation writer on isolated DBs. QA remains on s64 without Capacity activation.
 
 ---
 
@@ -469,8 +474,9 @@ Phase B wiring still NOT_AUTHORIZED
 ## 18. Next Owner gate
 
 ```text
+CAPACITY_STAGE_1 = PASS (writer + source in code; QA inactive)
 FUTURE CANDIDATE:
-CAPACITY_STAGE_1_WORKCENTER_SOURCE_AND_WRITER_IMPLEMENTATION
+CAPACITY_STAGE_1_CANONICAL_MIGRATION_AND_QA_ROLLOUT_READINESS
 ```
 
-Not authorized by this decision document alone.
+QA Alembic upgrade / Capacity activation remain separate Owner GOs.
