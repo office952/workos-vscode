@@ -349,16 +349,17 @@ async def test_invalid_domain_and_status(r7_session: AsyncSession):
 async def test_activation_blocked_without_writer_env(
     r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ):
+    """Capacity still lacks a domain writer — activation remains blocked without env."""
     monkeypatch.delenv(ACTIVATION_ALLOW_ENV, raising=False)
     ready, reason = await assess_activation_readiness(
-        r7_session, domain="SCHEDULING"
+        r7_session, domain="CAPACITY_ALLOCATION"
     )
     assert ready is False
     assert reason == "ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS"
     with pytest.raises(ResourceDomainConfigurationActivationBlockedError):
         await configure_resource_domain(
             r7_session,
-            domain="SCHEDULING",
+            domain="CAPACITY_ALLOCATION",
             command=_cmd(target_status="ACTIVE", expected_version=0),
             actor_user_id="admin-1",
         )

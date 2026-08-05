@@ -48,10 +48,10 @@ from services.resource_state_read_service import evaluate_task_resource_state
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# R7: domain write services are not implemented — activation blocked by default.
+# R9: scheduling + reservation writers implemented; capacity still blocked.
 DOMAIN_WRITER_READY: dict[str, bool] = {
-    "SCHEDULING": False,
-    "MACHINE_RESERVATION": False,
+    "SCHEDULING": True,
+    "MACHINE_RESERVATION": True,
     "CAPACITY_ALLOCATION": False,
 }
 

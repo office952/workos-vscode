@@ -21,8 +21,38 @@ from schemas.resource_state_configuration import (
     ResourceDomainConfigurationResult,
 )
 from schemas.resource_state_read import TaskResourceStateResult
+from schemas.resource_state_reservation import (
+    CancelReservationCommand,
+    ConfirmReservationCommand,
+    CreateReservationCommand,
+    ReleaseReservationCommand,
+    ReservationCommandResult,
+    SupersedeReservationCommand,
+)
+from schemas.resource_state_schedule import (
+    CancelScheduleCommand,
+    ConfirmScheduleCommand,
+    CreateScheduleCommand,
+    RescheduleCommand,
+    ScheduleCommandResult,
+    SupersedeScheduleCommand,
+)
 from services.assignment_readiness_audit_service import (
     build_assignment_readiness_audit,
+)
+from services.execution_task_machine_reservation_command_service import (
+    cancel_reservation,
+    confirm_reservation,
+    create_reservation,
+    release_reservation,
+    supersede_reservation,
+)
+from services.execution_task_schedule_command_service import (
+    cancel_schedule,
+    confirm_schedule,
+    create_schedule,
+    reschedule_schedule,
+    supersede_schedule,
 )
 from services.resource_domain_configuration_command_service import (
     ResourceDomainConfigurationActivationBlockedError,
@@ -36,6 +66,7 @@ from services.resource_state_read_service import (
     ResourceStateTaskNotFoundError,
     evaluate_task_resource_state,
 )
+from services.resource_state_write_common import ResourceStateWriteError
 from services.employee_eligibility_read_model_service import (
     build_employee_eligibility_read_model,
 )
@@ -309,6 +340,237 @@ async def post_resource_domain_configuration(
         raise HTTPException(
             status_code=409, detail={"error": exc.code, "message": exc.message}
         ) from None
+
+
+def _raise_rs_write(exc: ResourceStateWriteError) -> None:
+    raise HTTPException(
+        status_code=exc.http_status,
+        detail={"error": exc.code, "message": exc.message},
+    ) from None
+
+
+@router.post(
+    "/resource-state/schedules",
+    response_model=ScheduleCommandResult,
+)
+async def post_create_schedule(
+    body: CreateScheduleCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.schedule.manage")
+    ),
+) -> ScheduleCommandResult:
+    """R9 — CREATE_SCHEDULE (isolated writers; do not call against QA)."""
+    try:
+        return await create_schedule(
+            db, command=body, actor_user_id=str(current_user.id)
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/schedules/{schedule_id}/reschedule",
+    response_model=ScheduleCommandResult,
+)
+async def post_reschedule_schedule(
+    schedule_id: int,
+    body: RescheduleCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.schedule.manage")
+    ),
+) -> ScheduleCommandResult:
+    try:
+        return await reschedule_schedule(
+            db,
+            schedule_id=schedule_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/schedules/{schedule_id}/confirm",
+    response_model=ScheduleCommandResult,
+)
+async def post_confirm_schedule(
+    schedule_id: int,
+    body: ConfirmScheduleCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.schedule.manage")
+    ),
+) -> ScheduleCommandResult:
+    try:
+        return await confirm_schedule(
+            db,
+            schedule_id=schedule_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/schedules/{schedule_id}/cancel",
+    response_model=ScheduleCommandResult,
+)
+async def post_cancel_schedule(
+    schedule_id: int,
+    body: CancelScheduleCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.schedule.manage")
+    ),
+) -> ScheduleCommandResult:
+    try:
+        return await cancel_schedule(
+            db,
+            schedule_id=schedule_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/schedules/{schedule_id}/supersede",
+    response_model=ScheduleCommandResult,
+)
+async def post_supersede_schedule(
+    schedule_id: int,
+    body: SupersedeScheduleCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.schedule.manage")
+    ),
+) -> ScheduleCommandResult:
+    try:
+        return await supersede_schedule(
+            db,
+            schedule_id=schedule_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/reservations",
+    response_model=ReservationCommandResult,
+)
+async def post_create_reservation(
+    body: CreateReservationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_reservation.manage")
+    ),
+) -> ReservationCommandResult:
+    """R9 — CREATE_RESERVATION (isolated writers; do not call against QA)."""
+    try:
+        return await create_reservation(
+            db, command=body, actor_user_id=str(current_user.id)
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/reservations/{reservation_id}/confirm",
+    response_model=ReservationCommandResult,
+)
+async def post_confirm_reservation(
+    reservation_id: int,
+    body: ConfirmReservationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_reservation.manage")
+    ),
+) -> ReservationCommandResult:
+    try:
+        return await confirm_reservation(
+            db,
+            reservation_id=reservation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/reservations/{reservation_id}/release",
+    response_model=ReservationCommandResult,
+)
+async def post_release_reservation(
+    reservation_id: int,
+    body: ReleaseReservationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_reservation.manage")
+    ),
+) -> ReservationCommandResult:
+    try:
+        return await release_reservation(
+            db,
+            reservation_id=reservation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/reservations/{reservation_id}/cancel",
+    response_model=ReservationCommandResult,
+)
+async def post_cancel_reservation(
+    reservation_id: int,
+    body: CancelReservationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_reservation.manage")
+    ),
+) -> ReservationCommandResult:
+    try:
+        return await cancel_reservation(
+            db,
+            reservation_id=reservation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/reservations/{reservation_id}/supersede",
+    response_model=ReservationCommandResult,
+)
+async def post_supersede_reservation(
+    reservation_id: int,
+    body: SupersedeReservationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_reservation.manage")
+    ),
+) -> ReservationCommandResult:
+    try:
+        return await supersede_reservation(
+            db,
+            reservation_id=reservation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
 
 
 @router.get(

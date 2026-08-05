@@ -433,16 +433,16 @@ def test_runtime_create_all_dual_proof(tmp_path: Path):
 
 
 def test_append_only_boundary_classification():
-    """No Resource State write repositories exist yet."""
+    """R9: schedule/reservation writers exist; capacity writer still absent."""
     services = BACKEND_ROOT / "services"
-    names = [p.name for p in services.glob("*resource*")]
-    # No resource_state / schedule / reservation / capacity write repos
-    forbidden = [
-        "resource_domain",
-        "execution_task_schedule",
-        "machine_reservation",
-        "capacity_allocation",
+    names = sorted(p.name for p in services.glob("*.py"))
+    assert any("execution_task_schedule" in n for n in names)
+    assert any("machine_reservation" in n for n in names)
+    assert any("resource_domain_configuration" in n for n in names)
+    # Capacity domain writer remains blocked until capacity source exists.
+    capacity_writers = [
+        n
+        for n in names
+        if "capacity_allocation" in n and ("command" in n or "write" in n)
     ]
-    for needle in forbidden:
-        assert not any(needle in n for n in names), names
-    # WRITE_SERVICE_NOT_IMPLEMENTED / MODEL_HISTORY_STRUCTURE_READY
+    assert capacity_writers == [], capacity_writers
