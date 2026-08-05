@@ -16,6 +16,7 @@ from alembic.operations import Operations
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
+from core.sqlite_pragma import register_sqlite_foreign_keys
 from models.execution_task_assignment_transition import (
     REASON_NOTE_MAX_LEN,
     ExecutionTaskAssignmentTransition,
@@ -256,6 +257,7 @@ def test_consistency_match_and_mismatch_and_multiple_backfill():
 def test_migration_upgrade_backfill_idempotent_and_downgrade(tmp_path: Path):
     db_path = tmp_path / "phase_a.db"
     engine = create_engine(f"sqlite:///{db_path}")
+    register_sqlite_foreign_keys(engine)
     _bootstrap_schema(engine)
     tasks_json = _ops_envelope(
         [
@@ -375,6 +377,7 @@ def test_migration_upgrade_backfill_idempotent_and_downgrade(tmp_path: Path):
 def test_backfill_zero_and_multiple_assignments(tmp_path: Path):
     db_path = tmp_path / "multi.db"
     engine = create_engine(f"sqlite:///{db_path}")
+    register_sqlite_foreign_keys(engine)
     _bootstrap_schema(engine)
     with engine.begin() as conn:
         conn.execute(text("INSERT INTO employees (id, name) VALUES (4, 'E4')"))
@@ -416,6 +419,7 @@ def test_backfill_zero_and_multiple_assignments(tmp_path: Path):
 def test_unique_transition_id_and_invalid_type_rejected(tmp_path: Path):
     db_path = tmp_path / "constraints.db"
     engine = create_engine(f"sqlite:///{db_path}")
+    register_sqlite_foreign_keys(engine)
     _bootstrap_schema(engine)
     with engine.begin() as conn:
         conn.execute(text("INSERT INTO employees (id, name) VALUES (7, 'E7')"))

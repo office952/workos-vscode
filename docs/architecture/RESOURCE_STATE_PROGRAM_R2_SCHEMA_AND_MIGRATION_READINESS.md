@@ -6,7 +6,8 @@
 **Status:** **PASS** · Schema implementation status: see R3  
 **R1 canonical:** `RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS.md`  
 **Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r2_schema_and_migration_readiness.md`  
-**R3 isolated implementation:** `docs/worklog/realignment/2026-08-05_resource_state_program_r3_isolated_schema_and_migration_implementation.md`
+**R3 isolated implementation:** `docs/worklog/realignment/2026-08-05_resource_state_program_r3_isolated_schema_and_migration_implementation.md`  
+**R4 canonical migration closure:** `docs/worklog/realignment/2026-08-05_resource_state_program_r4_canonical_migration_closure.md`
 
 ```text
 RESOURCE_STATE_PROGRAM_R2 = PASS

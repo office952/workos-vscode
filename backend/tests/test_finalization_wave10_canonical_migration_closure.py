@@ -22,6 +22,7 @@ from core.schema_ownership import (
     CANONICAL_ASSIGNMENT_TRANSITION_INDEXES,
     LEGACY_ORM_ASSIGNMENT_TRANSITION_INDEX_NAMES,
 )
+from core.sqlite_pragma import register_sqlite_foreign_keys
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 S62 = "s62_material_actuals_closed_job_v1"
@@ -62,7 +63,9 @@ def _async_sqlite_url(path: Path) -> str:
 
 
 def _sync_engine(path: Path):
-    return create_engine(f"sqlite:///{path.resolve().as_posix()}")
+    engine = create_engine(f"sqlite:///{path.resolve().as_posix()}")
+    register_sqlite_foreign_keys(engine)
+    return engine
 
 
 def _current_revision(engine) -> str | None:

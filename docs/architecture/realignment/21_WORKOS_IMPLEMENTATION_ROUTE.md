@@ -348,21 +348,22 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1 PASS** · **R2 PASS** · **R3 isolated schema/migration PASS** · QA schema rollout **NOT_AUTHORIZED** · Resource configurations = 0 · Resource records = 0 · Phase B wiring **NOT_AUTHORIZED**. No QA reassignment/unassignment.
+Resource State: **R1–R4 PASS** · QA remains `s63` · QA schema rollout **NOT_AUTHORIZED** · Resource configurations = 0 · Resource records = 0 · Phase B wiring **NOT_AUTHORIZED**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
 FINALIZATION_WAVE_11 = PASS
-PHASE_B_BACKEND = VERIFIED
 PHASE_B = VERIFIED_FAIL_CLOSED
 PHASE_C = BLOCKED
-PHASE_C_BLOCKER = RESOURCE_GUARDS_HAVE_NO_CANONICAL_CLEAR_SOURCE
-DEC-PHASE-C-RESOURCE-01 = KEEP_PHASE_C_BLOCKED
 RESOURCE_STATE_PROGRAM_R1 = PASS
 RESOURCE_STATE_PROGRAM_R2 = PASS
 RESOURCE_STATE_PROGRAM_R3 = PASS
-ISOLATED_SCHEMA_AND_MIGRATION_IMPLEMENTATION = VERIFIED
+RESOURCE_STATE_PROGRAM_R4 = PASS
+CANONICAL_MIGRATION_CLOSURE = VERIFIED
 SQLITE_FOREIGN_KEYS = VERIFIED_ON
+QA_ALEMBIC_REVISION = s63
+QA_RESOURCE_STATE_TABLES = 0
+QA_FOREIGN_KEY_INTEGRITY = DEBT_PRESENT
 QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 RESOURCE_STATE_CONFIGURATIONS = 0
@@ -370,18 +371,17 @@ RESOURCE_STATE_RECORDS = 0
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
-Phase C Owner decision: `docs/architecture/PHASE_C_RESOURCE_GUARD_OWNER_DECISION.md`  
-R2 schema readiness: `docs/architecture/RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS.md`  
 R3 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r3_isolated_schema_and_migration_implementation.md`  
+R4 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r4_canonical_migration_closure.md`  
 Migration head (code): `s64_resource_state_persistence` · QA `dev.db` still stamped `s63` (not migrated)
 
 **Why:**
 
-- R3 implements eight Alembic-owned tables + SQLite FK pragma on product connection paths; proven only on isolated DBs.
+- R4 closes ORM↔migration parity, fingerprint, FK product paths, and documents QA FK debt without mutation.
 - QA rollout, write services, Phase B wiring, and Phase C remain unauthorized.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R4_CANONICAL_MIGRATION_CLOSURE`
+`RESOURCE_STATE_PROGRAM_R5_CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT`
 
 ---
 
