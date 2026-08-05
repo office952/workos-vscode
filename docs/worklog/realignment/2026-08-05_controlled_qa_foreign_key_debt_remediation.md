@@ -6,6 +6,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `546d8951`  
+**Final HEAD:** `132edbf3`  
 **Canonical plan:** `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`
 
 ---
