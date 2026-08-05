@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `4ed8aaea`  
+**Docs commit / Final HEAD:** `45f52bb3`  
 **Architecture:** `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
 **Prerequisite:** `CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS` (tip `4ed8aaea`)
 
