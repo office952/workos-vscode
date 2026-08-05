@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `5b2bc568`  
+**Docs commit / Final HEAD:** `f318a843`  
 **Architecture:** `docs/architecture/CAPACITY_STAGE_1_QA_CONFIGURATION_AND_SEED_READINESS.md`  
 **Prerequisite:** `CAPACITY_STAGE_1_QA_SCHEMA_ROLLOUT = PASS` (tip `5b2bc568`)
 
