@@ -26,6 +26,7 @@ from core.schema_ownership import (
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 S62 = "s62_material_actuals_closed_job_v1"
 S63 = "s63_execution_task_assignment_transitions"
+S64 = "s64_resource_state_persistence"
 TABLE = "execution_task_assignment_transitions"
 
 
@@ -149,12 +150,15 @@ def test_migration_graph_single_head_and_s63_predecessor():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
     heads = script.get_heads()
-    assert heads == [S63], heads
-    rev = script.get_revision(S63)
-    assert rev is not None
-    assert rev.down_revision == S62
-    assert rev.branch_labels in (None, set(), ())
-    assert rev.dependencies in (None, ())
+    assert heads == [S64], heads
+    rev64 = script.get_revision(S64)
+    assert rev64 is not None
+    assert rev64.down_revision == S63
+    rev63 = script.get_revision(S63)
+    assert rev63 is not None
+    assert rev63.down_revision == S62
+    assert rev63.branch_labels in (None, set(), ())
+    assert rev63.dependencies in (None, ())
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +173,7 @@ def test_scenario_a_fresh_empty_database_upgrade_head(tmp_path: Path):
     assert proc.returncode == 0, proc.stderr + proc.stdout
 
     engine = _sync_engine(db)
-    assert _current_revision(engine) == S63
+    assert _current_revision(engine) == S64
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
         cols = {c["name"] for c in inspect(conn).get_columns(TABLE)}
@@ -207,7 +211,7 @@ def test_scenario_b_prior_revision_to_head_backfill(tmp_path: Path):
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == S63
+    assert _current_revision(engine) == S64
 
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
@@ -253,7 +257,7 @@ def test_scenario_collision_create_all_table_then_alembic_upgrade(tmp_path: Path
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == S63
+    assert _current_revision(engine) == S64
 
     names = _index_names(engine, TABLE)
     canonical = {n for n, _ in CANONICAL_ASSIGNMENT_TRANSITION_INDEXES}
