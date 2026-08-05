@@ -15,7 +15,8 @@ FIELD_OWNERSHIP_MATRIX = FINALIZED
 PILOT_SELECTION = COMPLETE
 SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
 VECTOR_PREP_DURATION_E2E = PASS
-RUNTIME_IMPLEMENTATION = PILOT_COMPLETE
+FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS = PASS
+RUNTIME_IMPLEMENTATION = PILOT_COMPLETE_FOR_VECTOR_PREP_ONLY
 PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 TASKS_JSON_MUTATIONS = 0
 QA_MUTATIONS = 0
@@ -406,16 +407,16 @@ If letter_count is unknown for a real job — **ask Owner / capture geometry**. 
 | Order | Slice | Notes |
 | ----- | ----- | ----- |
 | 1 | Source gap audit | **PASS** |
-| 2 | `VECTOR_PREP_DURATION_E2E` | **PASS** — see worklog `2026-08-05_vector_prep_duration_e2e_completeness.md` |
-| 3 | First **new** machine-bound duration contract (`face_cnc_cut`) | After Owner formula decision |
-| 4 | Manual workspace / people pilots | After Owner answers crew + class |
-| 5 | HYBRID explicit `resource_mode` | After Product/Operation authoring |
-| 6 | MACHINE_RUN / batch | After demand + Reservation ownership ready |
-
-Owner D1–D5 applied. Positive proof = new controlled fixture; plan 23 remains null reference.
+| 2 | `VECTOR_PREP_DURATION_E2E` | **PASS** |
+| 3 | `FACE_CNC_CUT` machine requirement Owner decisions | **PASS** — `docs/architecture/FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS.md` |
+| 4 | `FACE_CNC_CUT` machine requirement stamp / projection pilot | **Not authorized** — capability `CNC_ROUTER_CUTTING`, `MACHINE_BOUND`, `batch_eligible=true` |
+| 5 | CNC planning duration contract | Separate Owner formula decision |
+| 6 | Manual workspace / people pilots | After Owner answers crew + class |
+| 7 | MACHINE_RUN / auto-batch | After demand stamps + Reservation ownership ready |
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
+RECOMMENDED_NEXT_SLICE = FACE_CNC_CUT_MACHINE_REQUIREMENT_STAMP_OR_PROJECTION_PILOT
 ```
 
 ---
