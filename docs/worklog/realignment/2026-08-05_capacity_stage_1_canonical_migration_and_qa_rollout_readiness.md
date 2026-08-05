@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `d70904c2`  
+**Docs/tests commit / Final HEAD:** `826e5eff`  
 **Prerequisite:** `CAPACITY_STAGE_1 = PASS` (tip `d70904c2`)
 
 ---
