@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R4 PASS** · QA remains `s63` · **Pre-R5 FK debt audit COMPLETE** · R5 readiness = **REMEDIATION_REQUIRED_FIRST** · R5 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
+Resource State: **R1–R4 PASS** · QA remains `s63` · **Pre-R5 FK debt audit COMPLETE** · **FK remediation plan PASS / clone rehearsal VERIFIED** · Real QA remediation **NOT_AUTHORIZED** · R5 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -362,6 +362,10 @@ RESOURCE_STATE_PROGRAM_R4 = PASS
 PRE_R5_QA_FK_DEBT_READINESS = COMPLETE
 QA_FOREIGN_KEY_INTEGRITY = DEBT_PRESENT
 QA_FOREIGN_KEY_VIOLATIONS = 11
+QA_FK_DEBT_REMEDIATION_PLANNING = PASS
+ISOLATED_CLONE_REHEARSAL = VERIFIED
+QA_FK_REMEDIATION_PLAN = READY_FOR_OWNER_EXECUTION_GO
+REAL_QA_REMEDIATION = NOT_AUTHORIZED
 R5_READINESS = REMEDIATION_REQUIRED_FIRST
 QA_ALEMBIC_REVISION = s63
 QA_RESOURCE_STATE_TABLES = 0
@@ -375,16 +379,17 @@ FRONTEND_REASSIGNMENT_UI = NO
 
 R4 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r4_canonical_migration_closure.md`  
 Pre-R5 FK debt: `docs/architecture/PRE_R5_QA_FOREIGN_KEY_DEBT_READINESS.md`  
-Pre-R5 worklog: `docs/worklog/realignment/2026-08-05_pre_r5_qa_foreign_key_debt_readiness.md`  
+FK remediation plan: `docs/architecture/QA_FOREIGN_KEY_DEBT_REMEDIATION_PLAN.md`  
+FK remediation worklog: `docs/worklog/realignment/2026-08-05_qa_foreign_key_debt_remediation_planning_and_clone_rehearsal.md`  
 Migration head (code): `s64_resource_state_persistence` · QA still `s63`
 
 **Why:**
 
-- Eleven preexisting FK violations (gate snapshot orphans + missing employee 9 auth) block safe R5 while product FK ON is active.
-- Remediation planning is the next gate — not R5 schema rollout.
+- Eleven preexisting FK violations still present on QA; clone rehearsal proved Expanded Option D (exact PK dependents) and Hybrid C+B both clear FK check without touching protected fixtures.
+- Real QA remediation requires a separate Owner GO — not R5.
 
 **Next (future candidate only — not started):**  
-`AUTHORIZE_QA_FOREIGN_KEY_DEBT_REMEDIATION_PLANNING`
+`AUTHORIZE_CONTROLLED_QA_FOREIGN_KEY_DEBT_REMEDIATION`
 
 ---
 
