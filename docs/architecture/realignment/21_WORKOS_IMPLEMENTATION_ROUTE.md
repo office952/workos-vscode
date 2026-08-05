@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R9 PASS** · QA `s64` · empty RS rows · schedule+reservation writers implemented · capacity writer blocked · QA domains still NOT_CONFIGURED · Phase B wiring **NOT_AUTHORIZED** · R10 **NOT_AUTHORIZED**.
+Resource State: **R1–R10 PASS** · QA `s64` · empty RS rows · schedule+reservation writers ready for activation · capacity activation blocked · QA domains still NOT_CONFIGURED · Phase B wiring **NOT_AUTHORIZED** · R11 **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -364,6 +364,7 @@ RESOURCE_STATE_PROGRAM_R6 = PASS
 RESOURCE_STATE_PROGRAM_R7 = PASS
 RESOURCE_STATE_PROGRAM_R8 = PASS
 RESOURCE_STATE_PROGRAM_R9 = PASS
+RESOURCE_STATE_PROGRAM_R10 = PASS
 CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT = VERIFIED
 QA_FOREIGN_KEY_VIOLATIONS = 0
 QA_ALEMBIC_REVISION = s64
@@ -372,31 +373,29 @@ QA_RESOURCE_STATE_CONFIGURATIONS = 0
 QA_RESOURCE_STATE_CONFIGURATION_TRANSITIONS = 0
 QA_RESOURCE_STATE_RECORDS = 0
 QA_AGGREGATE = BLOCKED_NOT_CONFIGURED
-READ_EVALUATOR = IMPLEMENTED
-CONFIGURATION_COMMAND = IMPLEMENTED
-SCHEDULING_WRITER = IMPLEMENTED
-MACHINE_RESERVATION_WRITER = IMPLEMENTED
-CAPACITY_WRITER = NOT_IMPLEMENTED
-OVER_ALLOCATION_VALIDATION = BLOCKED_UNTIL_CAPACITY_SOURCE_EXISTS
+SCHEDULING_ACTIVATION_READINESS = READY
+MACHINE_RESERVATION_ACTIVATION_READINESS = READY
+CAPACITY_ACTIVATION_READINESS = BLOCKED_MISSING_WRITER_AND_SOURCE
+RECOMMENDED_ACTIVATION_STRATEGY = OPTION_A
 DOMAIN_ACTIVATION_IN_QA = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
-R10 = NOT_AUTHORIZED
+R11 = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
+R10 architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS.md`  
+R10 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r10_controlled_domain_activation_readiness.md`  
 R9 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r9_scheduling_and_reservation_writer_implementation.md`  
-R8 architecture: `docs/architecture/RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS.md`  
-R8 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r8_domain_write_service_readiness.md`  
-R7 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r7_configuration_command_and_activation_boundary.md`  
 Migration head = QA revision: `s64_resource_state_persistence`
 
 **Why:**
 
-- Scheduling and reservation can be written safely on isolated DBs with CAS, history, and R6 evaluator agreement.
-- Capacity and QA domain activation remain Owner-gated; Phase B still fail-closed via legacy guard.
+- Scheduling and Reservation may activate independently of Capacity; aggregate stays fail-closed.
+- Recommended later QA path: OPTION_A (activate both together under separate Owner GO).
+- Capacity and Phase B remain blocked.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS`
+`RESOURCE_STATE_PROGRAM_R11_CONTROLLED_QA_SCHEDULING_AND_RESERVATION_ACTIVATION`
 
 ---
 

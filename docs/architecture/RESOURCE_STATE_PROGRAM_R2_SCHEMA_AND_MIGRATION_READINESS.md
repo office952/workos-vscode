@@ -518,7 +518,8 @@ Schedule/reservation/capacity create vs reassignment eval; config disable mid-co
 | R7 | Configuration command + CAS/idempotency + activation boundary | **PASS** 2026-08-05 |
 | R8 | Domain write service readiness (contracts only) | **PASS** 2026-08-05 |
 | R9 | Scheduling + reservation writer implementation | **PASS** 2026-08-05 |
-| R10 | Controlled domain activation readiness | separate — **NOT_AUTHORIZED** |
+| R10 | Controlled domain activation readiness | **PASS** 2026-08-05 |
+| R11 | Controlled QA scheduling+reservation activation | separate — **NOT_AUTHORIZED** |
 
 R5 result: new tables empty.  
 R6 result: read evaluator returns `NOT_CONFIGURED` / aggregate `BLOCKED_NOT_CONFIGURED` on empty QA; Phase B consumer wiring still separate; Phase C blocked.  
@@ -548,10 +549,10 @@ Worklogs:
 
 ```text
 FUTURE CANDIDATE:
-RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS
+RESOURCE_STATE_PROGRAM_R11_CONTROLLED_QA_SCHEDULING_AND_RESERVATION_ACTIVATION
 ```
 
-R10 may authorize activation readiness only after Owner GO (must decide schedule+reservation vs capacity NOT_CONFIGURED). Still: no auto QA activation; capacity writer blocked until source exists; no Phase B wiring; Phase C blocked.
+R11 may authorize controlled QA activation of Scheduling+Reservation only after Owner GO (R10 recommends OPTION_A). Still: capacity blocked; no Phase B wiring; Phase C blocked; no auto-activation without GO.
 
 ---
 
