@@ -127,6 +127,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     # Resource State R9 — scheduling / reservation writers (capacity later).
     "execution.schedule.manage": ["admin", "manager"],
     "execution.machine_reservation.manage": ["admin", "manager"],
+    "execution.capacity_allocation.manage": ["admin", "manager"],
+    "execution.capacity_source.manage": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],
 
     # ExecutionReality

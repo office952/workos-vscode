@@ -22,9 +22,12 @@ ALEMBIC_OWNED_TABLES: frozenset[str] = frozenset(
         "execution_task_machine_reservation_transitions",
         "execution_task_capacity_allocations",
         "execution_task_capacity_allocation_transitions",
+        "workcenter_capacity_sources",
+        "workcenter_capacity_source_transitions",
     }
 )
 
+# Original eight-table Resource State package (s64). Capacity source (s65) is separate.
 RESOURCE_STATE_TABLES: frozenset[str] = frozenset(
     {
         "resource_domain_configurations",
@@ -35,6 +38,13 @@ RESOURCE_STATE_TABLES: frozenset[str] = frozenset(
         "execution_task_machine_reservation_transitions",
         "execution_task_capacity_allocations",
         "execution_task_capacity_allocation_transitions",
+    }
+)
+
+CAPACITY_SOURCE_TABLES: frozenset[str] = frozenset(
+    {
+        "workcenter_capacity_sources",
+        "workcenter_capacity_source_transitions",
     }
 )
 

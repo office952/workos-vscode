@@ -29,6 +29,21 @@ from schemas.resource_state_reservation import (
     ReservationCommandResult,
     SupersedeReservationCommand,
 )
+from schemas.resource_state_capacity_allocation import (
+    AdjustAllocationCommand,
+    AllocationCommandResult,
+    CancelAllocationCommand,
+    CreateAllocationCommand,
+    ReleaseAllocationCommand,
+    SupersedeAllocationCommand,
+)
+from schemas.resource_state_capacity_source import (
+    AdjustWorkcenterCapacityCommand,
+    CreateWorkcenterCapacityCommand,
+    DisableWorkcenterCapacityCommand,
+    SupersedeWorkcenterCapacityCommand,
+    WorkcenterCapacitySourceResult,
+)
 from schemas.resource_state_schedule import (
     CancelScheduleCommand,
     ConfirmScheduleCommand,
@@ -39,6 +54,13 @@ from schemas.resource_state_schedule import (
 )
 from services.assignment_readiness_audit_service import (
     build_assignment_readiness_audit,
+)
+from services.execution_task_capacity_allocation_command_service import (
+    adjust_allocation,
+    cancel_allocation,
+    create_allocation,
+    release_allocation,
+    supersede_allocation,
 )
 from services.execution_task_machine_reservation_command_service import (
     cancel_reservation,
@@ -53,6 +75,12 @@ from services.execution_task_schedule_command_service import (
     create_schedule,
     reschedule_schedule,
     supersede_schedule,
+)
+from services.workcenter_capacity_source_command_service import (
+    adjust_workcenter_capacity,
+    create_workcenter_capacity,
+    disable_workcenter_capacity,
+    supersede_workcenter_capacity,
 )
 from services.resource_domain_configuration_command_service import (
     ResourceDomainConfigurationActivationBlockedError,
@@ -571,6 +599,207 @@ async def post_supersede_reservation(
         return await supersede_reservation(
             db,
             reservation_id=reservation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/workcenter-capacity",
+    response_model=WorkcenterCapacitySourceResult,
+)
+async def post_create_workcenter_capacity(
+    body: CreateWorkcenterCapacityCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_source.manage")
+    ),
+) -> WorkcenterCapacitySourceResult:
+    """Stage 1 — CREATE_WORKCENTER_CAPACITY (isolated; do not call against QA)."""
+    try:
+        return await create_workcenter_capacity(
+            db, command=body, actor_user_id=str(current_user.id)
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/workcenter-capacity/{source_id}/adjust",
+    response_model=WorkcenterCapacitySourceResult,
+)
+async def post_adjust_workcenter_capacity(
+    source_id: int,
+    body: AdjustWorkcenterCapacityCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_source.manage")
+    ),
+) -> WorkcenterCapacitySourceResult:
+    try:
+        return await adjust_workcenter_capacity(
+            db,
+            source_id=source_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/workcenter-capacity/{source_id}/disable",
+    response_model=WorkcenterCapacitySourceResult,
+)
+async def post_disable_workcenter_capacity(
+    source_id: int,
+    body: DisableWorkcenterCapacityCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_source.manage")
+    ),
+) -> WorkcenterCapacitySourceResult:
+    try:
+        return await disable_workcenter_capacity(
+            db,
+            source_id=source_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/workcenter-capacity/{source_id}/supersede",
+    response_model=WorkcenterCapacitySourceResult,
+)
+async def post_supersede_workcenter_capacity(
+    source_id: int,
+    body: SupersedeWorkcenterCapacityCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_source.manage")
+    ),
+) -> WorkcenterCapacitySourceResult:
+    try:
+        return await supersede_workcenter_capacity(
+            db,
+            source_id=source_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/allocations",
+    response_model=AllocationCommandResult,
+)
+async def post_create_allocation(
+    body: CreateAllocationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_allocation.manage")
+    ),
+) -> AllocationCommandResult:
+    """Stage 1 — CREATE_ALLOCATION WORKCENTER/DAY (isolated; do not call against QA)."""
+    try:
+        return await create_allocation(
+            db, command=body, actor_user_id=str(current_user.id)
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/allocations/{allocation_id}/adjust",
+    response_model=AllocationCommandResult,
+)
+async def post_adjust_allocation(
+    allocation_id: int,
+    body: AdjustAllocationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_allocation.manage")
+    ),
+) -> AllocationCommandResult:
+    try:
+        return await adjust_allocation(
+            db,
+            allocation_id=allocation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/allocations/{allocation_id}/release",
+    response_model=AllocationCommandResult,
+)
+async def post_release_allocation(
+    allocation_id: int,
+    body: ReleaseAllocationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_allocation.manage")
+    ),
+) -> AllocationCommandResult:
+    try:
+        return await release_allocation(
+            db,
+            allocation_id=allocation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/allocations/{allocation_id}/cancel",
+    response_model=AllocationCommandResult,
+)
+async def post_cancel_allocation(
+    allocation_id: int,
+    body: CancelAllocationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_allocation.manage")
+    ),
+) -> AllocationCommandResult:
+    try:
+        return await cancel_allocation(
+            db,
+            allocation_id=allocation_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/allocations/{allocation_id}/supersede",
+    response_model=AllocationCommandResult,
+)
+async def post_supersede_allocation(
+    allocation_id: int,
+    body: SupersedeAllocationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.capacity_allocation.manage")
+    ),
+) -> AllocationCommandResult:
+    try:
+        return await supersede_allocation(
+            db,
+            allocation_id=allocation_id,
             command=body,
             actor_user_id=str(current_user.id),
         )

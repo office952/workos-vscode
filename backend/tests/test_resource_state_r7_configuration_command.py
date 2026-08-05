@@ -350,23 +350,24 @@ async def test_invalid_domain_and_status(r7_session: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_capacity_activation_blocked_missing_writer(
+async def test_capacity_activation_ready_when_source_schema_present(
     r7_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ):
-    """Capacity cannot be unlocked by legacy env bypass — domain-specific guard."""
+    """Stage 1: capacity activates on isolated head (s65); env bypass still unused."""
     monkeypatch.setenv(ACTIVATION_ALLOW_ENV, "1")
     ready, reason = await assess_activation_readiness(
         r7_session, domain="CAPACITY_ALLOCATION"
     )
-    assert ready is False
-    assert reason == "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
-    with pytest.raises(ResourceDomainConfigurationActivationBlockedError):
-        await configure_resource_domain(
-            r7_session,
-            domain="CAPACITY_ALLOCATION",
-            command=_cmd(target_status="ACTIVE", expected_version=0),
-            actor_user_id="admin-1",
-        )
+    assert ready is True
+    assert reason == "ready"
+    act = await configure_resource_domain(
+        r7_session,
+        domain="CAPACITY_ALLOCATION",
+        command=_cmd(target_status="ACTIVE", expected_version=0),
+        actor_user_id="admin-1",
+    )
+    await r7_session.commit()
+    assert act.status == "ACTIVE"
 
 
 @pytest.mark.asyncio

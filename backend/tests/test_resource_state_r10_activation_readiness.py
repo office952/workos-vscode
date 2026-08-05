@@ -126,9 +126,13 @@ async def r10_session(tmp_path: Path):
 def test_writer_ready_is_domain_specific_not_global():
     assert DOMAIN_WRITER_READY["SCHEDULING"] is True
     assert DOMAIN_WRITER_READY["MACHINE_RESERVATION"] is True
-    assert DOMAIN_WRITER_READY["CAPACITY_ALLOCATION"] is False
-    # Distinct keys — not a single global unlock boolean.
-    assert len(set(DOMAIN_WRITER_READY.values())) >= 2
+    # Stage 1 landed: capacity writer ready in code; still domain-keyed dict.
+    assert DOMAIN_WRITER_READY["CAPACITY_ALLOCATION"] is True
+    assert set(DOMAIN_WRITER_READY.keys()) == {
+        "SCHEDULING",
+        "MACHINE_RESERVATION",
+        "CAPACITY_ALLOCATION",
+    }
 
 
 @pytest.mark.asyncio
@@ -136,11 +140,9 @@ async def test_readiness_matrix(r10_session: AsyncSession):
     report = await domain_activation_readiness_report(r10_session)
     assert report["SCHEDULING"]["ready"] is True
     assert report["MACHINE_RESERVATION"]["ready"] is True
-    assert report["CAPACITY_ALLOCATION"]["ready"] is False
-    assert (
-        report["CAPACITY_ALLOCATION"]["reason_code"]
-        == "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
-    )
+    # Isolated DBs upgrade to head (s65) → capacity source schema present.
+    assert report["CAPACITY_ALLOCATION"]["ready"] is True
+    assert report["CAPACITY_ALLOCATION"]["reason_code"] == "ready"
 
 
 @pytest.mark.asyncio
@@ -234,15 +236,23 @@ async def test_both_active_capacity_keeps_aggregate_blocked(r10_session: AsyncSe
 
 
 @pytest.mark.asyncio
-async def test_capacity_activation_rejected(r10_session: AsyncSession):
-    with pytest.raises(ResourceDomainConfigurationActivationBlockedError) as exc:
-        await configure_resource_domain(
-            r10_session,
-            domain="CAPACITY_ALLOCATION",
-            command=_cmd(target_status="ACTIVE", expected_version=0),
-            actor_user_id="admin-1",
-        )
-    assert exc.value.code == "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
+async def test_capacity_activation_allowed_when_source_schema_present(
+    r10_session: AsyncSession,
+):
+    """Stage 1: capacity may activate on isolated s65 DBs (QA stays s64)."""
+    act = await configure_resource_domain(
+        r10_session,
+        domain="CAPACITY_ALLOCATION",
+        command=_cmd(target_status="ACTIVE", expected_version=0),
+        actor_user_id="admin-1",
+    )
+    await r10_session.commit()
+    assert act.status == "ACTIVE"
+    result = await evaluate_task_resource_state(
+        r10_session, plan_id=23, task_key=LED_TASK
+    )
+    assert result.capacity_allocation.state == "CLEAR"
+    assert result.aggregate == "BLOCKED_NOT_CONFIGURED"  # schedule/res not ACTIVE
 
 
 @pytest.mark.asyncio

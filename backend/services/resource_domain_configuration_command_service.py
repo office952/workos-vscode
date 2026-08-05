@@ -20,7 +20,7 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
-from core.schema_ownership import RESOURCE_STATE_TABLES
+from core.schema_ownership import CAPACITY_SOURCE_TABLES, RESOURCE_STATE_TABLES
 from models.execution_task_capacity_allocation import CAPACITY_STATUSES
 from models.execution_task_machine_reservation import RESERVATION_STATUSES
 from models.execution_task_schedule import SCHEDULE_STATUSES
@@ -51,7 +51,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 DOMAIN_WRITER_READY: dict[str, bool] = {
     "SCHEDULING": True,
     "MACHINE_RESERVATION": True,
-    "CAPACITY_ALLOCATION": False,
+    # Stage 1 writer + workcenter source exist in code (s65).
+    # QA stays on s64 → activation still blocked until schema rollout GO.
+    "CAPACITY_ALLOCATION": True,
 }
 
 DOMAIN_SOURCE_TABLE: dict[str, str] = {
@@ -132,12 +134,24 @@ async def _schema_tables_present(db: AsyncSession) -> bool:
             "name LIKE 'resource_%' "
             "OR name LIKE 'execution_task_schedule%' "
             "OR name LIKE 'execution_task_machine_reservation%' "
-            "OR name LIKE 'execution_task_capacity_allocation%'"
+            "OR name LIKE 'execution_task_capacity_allocation%' "
+            "OR name LIKE 'workcenter_capacity%'"
             ")"
         )
     )
     names = {row[0] for row in result.fetchall()}
     return RESOURCE_STATE_TABLES.issubset(names)
+
+
+async def _capacity_source_schema_present(db: AsyncSession) -> bool:
+    result = await db.execute(
+        text(
+            "SELECT name FROM sqlite_master WHERE type='table' "
+            "AND name LIKE 'workcenter_capacity%'"
+        )
+    )
+    names = {row[0] for row in result.fetchall()}
+    return CAPACITY_SOURCE_TABLES.issubset(names)
 
 
 def _read_evaluator_present() -> bool:
@@ -191,6 +205,9 @@ async def assess_activation_readiness(
         if domain == "CAPACITY_ALLOCATION":
             return False, "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
         return False, "ACTIVATION_BLOCKED_UNTIL_DOMAIN_WRITER_EXISTS"
+    if domain == "CAPACITY_ALLOCATION":
+        if not await _capacity_source_schema_present(db):
+            return False, "ACTIVATION_BLOCKED_MISSING_WRITER_AND_SOURCE"
     return True, "ready"
 
 
