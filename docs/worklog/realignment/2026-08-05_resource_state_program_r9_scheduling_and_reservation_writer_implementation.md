@@ -1,12 +1,13 @@
-# Resource State Program R9 — Scheduling & Reservation Writer Implementation
+# Resource State Program R9 ? Scheduling & Reservation Writer Implementation
 
 **Task:** `RESOURCE_STATE_PROGRAM_R9_SCHEDULING_AND_RESERVATION_WRITER_IMPLEMENTATION`  
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R9_SCHEDULING_AND_RESERVATION_WRITER_IMPLEMENTATION`  
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
-**Starting HEAD:** `f76e1683`
-**Code commits:** `cc74383c` � `aaad7569`
-**Docs commit:** `05a423e5`
+**Starting HEAD:** `f76e1683`  
+**Code commits:** `cc74383c` � `aaad7569`  
+**Docs commit:** `05a423e5`  
+**Final HEAD:** `e725bcc7`
 
 ---
 
@@ -60,15 +61,15 @@ Forbidden: QA activation/writes, capacity writer/source, Phase B/C, migration, f
 | Reservation repo | `backend/services/execution_task_machine_reservation_repository.py` |
 | Reservation service | `backend/services/execution_task_machine_reservation_command_service.py` |
 | Permissions | `execution.schedule.manage`, `execution.machine_reservation.manage` |
-| API | `POST …/resource-state/schedules[/{id}/…]`, `…/reservations[/{id}/…]` |
+| API | `POST ?/resource-state/schedules[/{id}/?]`, `?/reservations[/{id}/?]` |
 | Writer readiness | `DOMAIN_WRITER_READY[SCHEDULING|MACHINE_RESERVATION]=True` (capacity still False) |
 
 ### Commands
 
 **Scheduling:** CREATE / RESCHEDULE / CONFIRM / CANCEL / SUPERSEDE  
-**Reservation:** CREATE (HELD) / CONFIRM (HELD→RESERVED) / RELEASE / CANCEL / SUPERSEDE  
+**Reservation:** CREATE (HELD) / CONFIRM (HELD?RESERVED) / RELEASE / CANCEL / SUPERSEDE  
 
-Writers require ACTIVE domain configuration. Plan lock + `SELECT FOR UPDATE` + in-txn `task_key` check. Machine create requires `is_active` ∧ `is_available` ∧ `operational_status==active`. Overlap: `start < other_end AND end > other_start`; adjacent `end==start` allowed.
+Writers require ACTIVE domain configuration. Plan lock + `SELECT FOR UPDATE` + in-txn `task_key` check. Machine create requires `is_active` ? `is_available` ? `operational_status==active`. Overlap: `start < other_end AND end > other_start`; adjacent `end==start` allowed.
 
 ### Tests
 
@@ -86,7 +87,7 @@ Writers require ACTIVE domain configuration. Plan lock + `SELECT FOR UPDATE` + i
 
 | Metric | Value |
 | ------ | ----- |
-| QA SHA | `57fc4873…` unchanged |
+| QA SHA | `57fc4873?` unchanged |
 | configurations / config transitions | 0 / 0 |
 | schedule / reservation / capacity rows | 0 |
 | schedule / reservation transitions | 0 |
@@ -107,7 +108,7 @@ CROSS_TASK_SCHEDULING_CONFLICT = NOT_IMPLEMENTED
 
 ---
 
-## /modules · /governance
+## /modules � /governance
 
 **/modules:** Scheduling writer exists; Reservation writer exists; Capacity writer absent; QA domains inactive.  
 **/governance:** admin/manager manage ownership; CAS/idempotency; append-only history; activation still Owner-gated (QA not activated).
@@ -118,9 +119,9 @@ CROSS_TASK_SCHEDULING_CONFLICT = NOT_IMPLEMENTED
 
 ```text
 Nota roadmap awareness: 9/10
-Poziția curentă: Resource State scheduling + reservation writers
-Cât sunt în direcția stabilită: 98/100%
-(funcționalitate RS ~85/100 — capacity + Phase B wiring remaining)
+Pozi?ia curent?: Resource State scheduling + reservation writers
+C�t sunt �n direc?ia stabilit?: 98/100%
+(func?ionalitate RS ~85/100 ? capacity + Phase B wiring remaining)
 Dead Pieces Check: none introduced
 Forbidden scope respected: YES
 ```
