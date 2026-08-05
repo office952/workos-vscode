@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `ac3ef4ed`  
+**Docs commit / Final HEAD:** `be34282c`  
 **Prerequisite:** `RESOURCE_STATE_PROGRAM_R10 = PASS` (activation readiness; OPTION_A)
 
 ---
@@ -60,7 +61,8 @@ QA_OPERATIONAL_TASK_MUTATIONS = 0
 | Worktree | `C:\w\psiso` |
 | Branch | `feat/f7i-owner-rate-activation` |
 | Starting HEAD | `ac3ef4ed` |
-| Served commit (post-restart) | `ac3ef4ed` |
+| Final HEAD | `be34282c` |
+| Served commit at activation smoke | `ac3ef4ed` (docs tip after smoke) |
 | QA path | `C:\w\psiso\backend\dev.db` |
 | QA Alembic | `s64_resource_state_persistence` |
 | QA SHA before | `57fc48730108c8a9022d8151ddaa1f809a51cdfeff2174f2fb6f6ba293d463e9` |
