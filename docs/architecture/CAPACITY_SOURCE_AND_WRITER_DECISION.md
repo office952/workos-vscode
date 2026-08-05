@@ -9,6 +9,7 @@
 **Stage 1 implementation:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_workcenter_source_and_writer_implementation.md`  
 **Migration readiness:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_canonical_migration_and_qa_rollout_readiness.md`  
 **QA schema rollout:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_controlled_qa_schema_rollout.md`  
+**Seed readiness:** `docs/architecture/CAPACITY_STAGE_1_QA_CONFIGURATION_AND_SEED_READINESS.md`  
 **Prerequisites:** Resource State R1–R11 PASS · Scheduling + Machine Reservation ACTIVE in QA · Capacity rows = 0
 
 ```text
@@ -28,6 +29,8 @@ CAPACITY_STAGE_1 = PASS
 CAPACITY_WRITER = IMPLEMENTED
 CAPACITY_STAGE_1_MIGRATION_READINESS = PASS
 CAPACITY_STAGE_1_QA_SCHEMA_ROLLOUT = PASS
+CAPACITY_STAGE_1_QA_SEED_READINESS = PARTIAL_BLOCKED
+BLOCKER = MISSING_OWNER_CONFIRMED_OR_ACCEPTED_AVAILABLE_MINUTES
 CANONICAL_MIGRATION_CLOSURE = VERIFIED
 code Alembic = s65_workcenter_capacity_source
 QA Alembic = s65_workcenter_capacity_source
@@ -39,7 +42,7 @@ PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
 
-Stage 1 implements the workcenter/day source + WORKCENTER allocation writer. Canonical `s64 → s65` is verified; QA now has the s65 schema with empty Capacity source tables. Capacity remains NOT_CONFIGURED — schema ≠ activation.
+Stage 1 implements the workcenter/day source + WORKCENTER allocation writer. QA has s65 schema with empty Capacity tables. Seed readiness is PARTIAL: canonical WC routing is complete on protected plans, but **no Owner-confirmed daily minutes** exist — do not invent 480; activation remains Owner-gated.
 
 ---
 
