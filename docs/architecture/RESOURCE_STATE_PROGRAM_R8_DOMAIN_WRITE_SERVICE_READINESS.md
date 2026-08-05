@@ -3,9 +3,10 @@
 **Task:** `RESOURCE_STATE_PROGRAM_R8 = DOMAIN_WRITE_SERVICE_READINESS`  
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R8_DOMAIN_WRITE_SERVICE_READINESS`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Writers **NOT_IMPLEMENTED** · Domain activation **NOT_AUTHORIZED**  
+**Status:** **PASS** · Contracts **FINALIZED** · R9 implemented schedule+reservation writers (capacity still blocked)  
 **Branch tip at authoring:** `eb40308c` (R7 accepted)  
-**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r8_domain_write_service_readiness.md`
+**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r8_domain_write_service_readiness.md`  
+**R9 implementation:** `docs/worklog/realignment/2026-08-05_resource_state_program_r9_scheduling_and_reservation_writer_implementation.md`
 
 ```text
 RESOURCE_STATE_PROGRAM_R8 = PASS
@@ -23,10 +24,10 @@ DOMAIN_ACTIVATION = NOT_AUTHORIZED
 QA_RESOURCE_STATE_ROWS = 0
 PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
-R9 = NOT_AUTHORIZED
+R9 = PASS  # scheduling + reservation writers implemented; QA not activated
 ```
 
-This document is the **canonical write-service contract** for R9+. It does **not** implement writers, activate domains, or wire Phase B.
+This document remains the **canonical write-service contract**. R9 implements scheduling + reservation writers against these contracts; capacity writer and QA activation stay separate.
 
 ---
 
@@ -640,13 +641,15 @@ Dead pieces removed: NONE
 
 ```text
 FUTURE CANDIDATE:
-RESOURCE_STATE_PROGRAM_R9_SCHEDULING_AND_RESERVATION_WRITER_IMPLEMENTATION
+RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS
 ```
 
-Capacity writer remains a **separate** future candidate until capacity source exists.
+R9 delivered scheduling + reservation writers. Capacity writer remains separate until capacity source exists. R10 decides activation readiness (including whether schedule+reservation may activate while capacity stays NOT_CONFIGURED) — **without** auto-activating QA.
 
 ```text
-DOMAIN_WRITERS = NOT_IMPLEMENTED
+SCHEDULING_WRITER = IMPLEMENTED
+MACHINE_RESERVATION_WRITER = IMPLEMENTED
+CAPACITY_WRITER = NOT_IMPLEMENTED
 PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
