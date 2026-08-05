@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R4 PASS** · QA remains `s63` · QA schema rollout **NOT_AUTHORIZED** · Resource configurations = 0 · Resource records = 0 · Phase B wiring **NOT_AUTHORIZED**. No QA reassignment/unassignment.
+Resource State: **R1–R4 PASS** · QA remains `s63` · **Pre-R5 FK debt audit COMPLETE** · R5 readiness = **REMEDIATION_REQUIRED_FIRST** · R5 **NOT_AUTHORIZED**. No QA reassignment/unassignment.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -359,29 +359,32 @@ RESOURCE_STATE_PROGRAM_R1 = PASS
 RESOURCE_STATE_PROGRAM_R2 = PASS
 RESOURCE_STATE_PROGRAM_R3 = PASS
 RESOURCE_STATE_PROGRAM_R4 = PASS
-CANONICAL_MIGRATION_CLOSURE = VERIFIED
-SQLITE_FOREIGN_KEYS = VERIFIED_ON
+PRE_R5_QA_FK_DEBT_READINESS = COMPLETE
+QA_FOREIGN_KEY_INTEGRITY = DEBT_PRESENT
+QA_FOREIGN_KEY_VIOLATIONS = 11
+R5_READINESS = REMEDIATION_REQUIRED_FIRST
 QA_ALEMBIC_REVISION = s63
 QA_RESOURCE_STATE_TABLES = 0
-QA_FOREIGN_KEY_INTEGRITY = DEBT_PRESENT
 QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+R5 = NOT_AUTHORIZED
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 RESOURCE_STATE_CONFIGURATIONS = 0
 RESOURCE_STATE_RECORDS = 0
 FRONTEND_REASSIGNMENT_UI = NO
 ```
 
-R3 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r3_isolated_schema_and_migration_implementation.md`  
 R4 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r4_canonical_migration_closure.md`  
-Migration head (code): `s64_resource_state_persistence` · QA `dev.db` still stamped `s63` (not migrated)
+Pre-R5 FK debt: `docs/architecture/PRE_R5_QA_FOREIGN_KEY_DEBT_READINESS.md`  
+Pre-R5 worklog: `docs/worklog/realignment/2026-08-05_pre_r5_qa_foreign_key_debt_readiness.md`  
+Migration head (code): `s64_resource_state_persistence` · QA still `s63`
 
 **Why:**
 
-- R4 closes ORM↔migration parity, fingerprint, FK product paths, and documents QA FK debt without mutation.
-- QA rollout, write services, Phase B wiring, and Phase C remain unauthorized.
+- Eleven preexisting FK violations (gate snapshot orphans + missing employee 9 auth) block safe R5 while product FK ON is active.
+- Remediation planning is the next gate — not R5 schema rollout.
 
 **Next (future candidate only — not started):**  
-`RESOURCE_STATE_PROGRAM_R5_CONTROLLED_QA_SCHEMA_ONLY_ROLLOUT`
+`AUTHORIZE_QA_FOREIGN_KEY_DEBT_REMEDIATION_PLANNING`
 
 ---
 
