@@ -348,7 +348,7 @@ Legacy `/price` deprecation aligns with Faza 8–9, not before V2 snapshot is de
 
 **Wave 10 = PASS** · **Wave 11 / Phase B backend = PASS**  
 **Phase C = BLOCKED_BY_OWNER_DECISION** (`DEC-PHASE-C-RESOURCE-01`)  
-Resource State: **R1–R11 PASS** · Capacity decision + **Stage 1 PASS** · **s65 canonical migration closure VERIFIED** · code Alembic `s65` · QA remains `s64` · Scheduling + Reservation ACTIVE · Capacity NOT_CONFIGURED in QA · Capacity writer implemented in code only · Phase B wiring **NOT_AUTHORIZED**.
+Resource State: **R1–R11 PASS** · Capacity decision + **Stage 1 PASS** · **s65 migration closure VERIFIED** · **QA schema rolled to s65** (empty Capacity tables) · Scheduling + Reservation ACTIVE · Capacity NOT_CONFIGURED · Phase B wiring **NOT_AUTHORIZED**.
 
 ```text
 FINALIZATION_WAVE_10 = PASS
@@ -359,6 +359,7 @@ RESOURCE_STATE_PROGRAM_R1..R11 = PASS
 CAPACITY_SOURCE_AND_WRITER_DECISION = PASS
 CAPACITY_STAGE_1 = PASS
 CAPACITY_STAGE_1_MIGRATION_READINESS = PASS
+CAPACITY_STAGE_1_QA_SCHEMA_ROLLOUT = PASS
 CANONICAL_MIGRATION_CLOSURE = VERIFIED
 CAPACITY_SOURCE = WORKCENTER_CONFIGURED_CAPACITY
 CAPACITY_WRITER = IMPLEMENTED
@@ -367,8 +368,7 @@ CAPACITY_UNIT = minutes
 PLANNING_BUCKET = DAY
 OVER_ALLOCATION_DEFAULT = WARN_ONLY
 code Alembic = s65_workcenter_capacity_source
-QA Alembic = s64
-QA_ROLLOUT = NOT_AUTHORIZED
+QA Alembic = s65_workcenter_capacity_source
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
@@ -381,17 +381,18 @@ FRONTEND_REASSIGNMENT_UI = NO
 Capacity decision: `docs/architecture/CAPACITY_SOURCE_AND_WRITER_DECISION.md`  
 Stage 1 worklog: `docs/worklog/realignment/2026-08-05_capacity_stage_1_workcenter_source_and_writer_implementation.md`  
 Migration readiness: `docs/worklog/realignment/2026-08-05_capacity_stage_1_canonical_migration_and_qa_rollout_readiness.md`  
+QA schema rollout: `docs/worklog/realignment/2026-08-05_capacity_stage_1_controlled_qa_schema_rollout.md`  
 R11 worklog: `docs/worklog/realignment/2026-08-05_resource_state_program_r11_controlled_qa_scheduling_and_reservation_activation.md`
 
 **Why:**
 
 - Stage 1 delivers workcenter/day available minutes + allocation writer with WARN_ONLY default.
-- Canonical `s64 → s65` is verified in isolation (parity, fresh/upgrade/downgrade, create_all ownership).
-- QA stays on s64 without schema rollout or Capacity activation until a separate Owner GO.
+- Canonical `s64 → s65` verified; QA schema now s65 with empty Capacity source tables.
+- Capacity activation / minutes / allocations remain separately Owner-gated.
 - Phase B remains unwired.
 
 **Next (future candidate only — not started):**  
-`CAPACITY_STAGE_1_CONTROLLED_QA_SCHEMA_ROLLOUT`
+`CAPACITY_STAGE_1_CONTROLLED_QA_CONFIGURATION_AND_SEED_READINESS`
 
 ---
 
