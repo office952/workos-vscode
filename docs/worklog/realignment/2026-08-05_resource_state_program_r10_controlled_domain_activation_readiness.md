@@ -4,7 +4,9 @@
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R10_CONTROLLED_DOMAIN_ACTIVATION_READINESS`  
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
-**Starting HEAD:** `393337ba`
+**Starting HEAD:** `393337ba`  
+**Code commit:** `d874b9dc`  
+**Docs commit / Final HEAD:** `5da08e82`
 
 ---
 
