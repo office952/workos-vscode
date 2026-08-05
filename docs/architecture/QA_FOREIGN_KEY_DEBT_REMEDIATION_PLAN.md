@@ -1,35 +1,34 @@
 # QA Foreign-Key Debt Remediation Plan
 
-**Task:** `QA_FOREIGN_KEY_DEBT_REMEDIATION = PLANNING_AND_ISOLATED_CLONE_REHEARSAL`  
-**Owner GO:** `AUTHORIZE_QA_FOREIGN_KEY_DEBT_REMEDIATION_PLANNING`  
+**Planning task:** `QA_FOREIGN_KEY_DEBT_REMEDIATION = PLANNING_AND_ISOLATED_CLONE_REHEARSAL`  
+**Execution task:** `CONTROLLED_QA_FK_DEBT_REMEDIATION`  
+**Owner GO (planning):** `AUTHORIZE_QA_FOREIGN_KEY_DEBT_REMEDIATION_PLANNING`  
+**Owner GO (execution):** `AUTHORIZE_CONTROLLED_QA_FOREIGN_KEY_DEBT_REMEDIATION`  
+**Approved strategy:** `HYBRID_C_PLUS_B`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Clone rehearsal **VERIFIED** · Real QA remediation **NOT AUTHORIZED** · R5 **NOT AUTHORIZED**  
-**Worklog:** `docs/worklog/realignment/2026-08-05_qa_foreign_key_debt_remediation_planning_and_clone_rehearsal.md`  
-**Rehearsal script:** `backend/scripts/qa_fk_debt_remediation_clone_rehearsal.py`
+**Status:** Planning **PASS** · Clone rehearsal **VERIFIED** · Controlled QA remediation **PASS** · R5 **NOT AUTHORIZED**  
+**Planning worklog:** `docs/worklog/realignment/2026-08-05_qa_foreign_key_debt_remediation_planning_and_clone_rehearsal.md`  
+**Execution worklog:** `docs/worklog/realignment/2026-08-05_controlled_qa_foreign_key_debt_remediation.md`  
+**Rehearsal script:** `backend/scripts/qa_fk_debt_remediation_clone_rehearsal.py`  
+**Apply script:** `backend/scripts/qa_fk_debt_remediation_hybrid_c_plus_b_apply.py`
 
 ```text
 QA_FK_DEBT_REMEDIATION_PLANNING = PASS
 ISOLATED_CLONE_REHEARSAL = VERIFIED
-QA_FK_REMEDIATION_PLAN = READY_FOR_OWNER_EXECUTION_GO
+QA_FK_REMEDIATION_STRATEGY = HYBRID_C_PLUS_B
+CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS
 
-VIOLATIONS_BEFORE = 11
-VIOLATIONS_AFTER = 0
+FOREIGN_KEY_VIOLATIONS_BEFORE = 11
+FOREIGN_KEY_VIOLATIONS_AFTER = 0
+FAMILY_A_NULLIFIED = 7
+FAMILY_B_DELETED = 4
+GLOBAL_TRANSITIONS_BEFORE = 7
+GLOBAL_TRANSITIONS_AFTER = 7
+PROTECTED_BASELINE_DIFF = NONE
+SQLITE_FOREIGN_KEYS = VERIFIED_ON_AFTER_RESTART
 
-FAMILY_A_DELETE_CANDIDATES = 7_CONFIRMED
-FAMILY_B_DELETE_CANDIDATES = 4_CONFIRMED
-
-PROTECTED_BASELINE_DIFF = NONE_FOR_PROTECTED_SCOPE
-ROLLBACK_REHEARSAL = VERIFIED
-REMEDIATION_RESULT = DETERMINISTIC
-
-CLONE_RUNTIME_FK_ON = VERIFIED
-CLONE_RUNTIME_READ_SMOKE = VERIFIED
-CLONE_S63_TO_S64 = VERIFIED
-RESOURCE_STATE_TABLES = 8
-RESOURCE_STATE_ROWS = 0
-
-QA_MUTATIONS = 0
-REAL_QA_REMEDIATION = NOT_AUTHORIZED
+QA_ALEMBIC_REVISION = s63
+QA_RESOURCE_STATE_TABLES = 0
 R5 = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
@@ -269,24 +268,33 @@ Dead pieces removed from source code: NONE
 
 ---
 
-## 11. Next Owner GO
+## 11. Controlled QA execution (completed)
+
+Owner selected and authorized:
 
 ```text
-OWNER GO:
-AUTHORIZE_CONTROLLED_QA_FOREIGN_KEY_DEBT_REMEDIATION
+STRATEGY = HYBRID_C_PLUS_B
+FAMILY_A = NULLIFY_EXACT_ORPHAN_FKS
+FAMILY_B = DELETE_EXACT_EMPLOYEE_9_AUTHORIZATIONS
 ```
 
-Must choose:
+Executed on live QA under maintenance window (2026-08-05):
+
+| Item | Value |
+| ---- | ----- |
+| Backup | `backend/_qa_backups/controlled_fk_hybrid_c_plus_b/20260805_092545/dev.db.pre_hybrid_c_plus_b.bak` |
+| Backup SHA | `0023d2fb98145587a13d1117f13dac39c3c648aec7484ea7122560e7d846d1c2` |
+| QA SHA after | `af182ed4c9aa8f67b6227843e771f301cb7b3eccca88ad5cf6d233d20d6fb60b` |
+| FK check | 11 → 0 |
+| Transitions | 7 → 7 |
+| Alembic | remains `s63` |
+| RS tables | 0 |
+| Rollback | not required |
+
+## 12. Next Owner GO
 
 ```text
-STRATEGY = EXPANDED_OPTION_D_WITH_EXACT_DEPENDENT_PKS
-  or
-STRATEGY = HYBRID_OPTION_C_FAMILY_A_PLUS_OPTION_D_FAMILY_B
+Reassess R5 readiness only after Owner review of CONTROLLED_QA_FK_DEBT_REMEDIATION = PASS
 ```
 
-And for Expanded D, explicitly accept:
-
-```text
-GLOBAL_TRANSITION_COUNT_7_TO_2 = ACCEPTED
-PROTECTED_TRANSITION_SCOPE = PLANS_21_23
-```
+Do **not** auto-start R5. Do **not** migrate QA to `s64` without a separate Owner GO.
