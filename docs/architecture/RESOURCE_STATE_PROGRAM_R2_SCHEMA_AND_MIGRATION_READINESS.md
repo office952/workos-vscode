@@ -3,9 +3,10 @@
 **Task:** `RESOURCE_STATE_PROGRAM_R2 = SCHEMA_AND_MIGRATION_READINESS_AUDIT`  
 **Owner GO:** `AUTHORIZE_RESOURCE_STATE_PROGRAM_R2_SCHEMA_AND_MIGRATION_READINESS`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Schema implementation **NOT AUTHORIZED** · Migration file **NOT CREATED**  
+**Status:** **PASS** · Schema implementation status: see R3  
 **R1 canonical:** `RESOURCE_STATE_PROGRAM_R1_OWNER_DECISIONS.md`  
-**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r2_schema_and_migration_readiness.md`
+**Worklog:** `docs/worklog/realignment/2026-08-05_resource_state_program_r2_schema_and_migration_readiness.md`  
+**R3 isolated implementation:** `docs/worklog/realignment/2026-08-05_resource_state_program_r3_isolated_schema_and_migration_implementation.md`
 
 ```text
 RESOURCE_STATE_PROGRAM_R2 = PASS
@@ -34,13 +35,15 @@ FRESH_SQLITE_UPGRADE_PLAN = READY
 S63_TO_RESOURCE_STATE_UPGRADE_PLAN = READY
 DOWNGRADE_REUPGRADE_PLAN = READY
 RUNTIME_CREATE_ALL_EXCLUSION_PLAN = READY
-SCHEMA_IMPLEMENTATION = NOT_AUTHORIZED
-MIGRATION_CREATION = NOT_AUTHORIZED
+SCHEMA_IMPLEMENTATION = SEE_R3_ISOLATED_PASS
+MIGRATION_CREATION = SEE_R3_ISOLATED_PASS
 QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 QA_MUTATIONS = 0
 ```
+
+Post-R3 note: isolated ORM + `s64_resource_state_persistence` implemented and proven on temporary DBs only; QA not migrated.
 
 This document is the **technical schema/migration readiness** for R3. It does **not** create ORM models or Alembic files.
 
