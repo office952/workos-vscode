@@ -5,6 +5,7 @@
 **Date:** 2026-08-05  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `d13f78c1`  
+**Final HEAD:** `1c34f5aa`  
 **Canonical:** `docs/architecture/PRE_R5_QA_FOREIGN_KEY_DEBT_READINESS.md`
 
 ---
