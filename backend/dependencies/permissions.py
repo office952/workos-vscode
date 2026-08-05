@@ -124,6 +124,9 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.owner_decision_resolve": ["admin", "manager"],
     # Resource State R7 — domain configuration command (not operational writes).
     "execution.resource_domain.configure": ["admin", "manager"],
+    # Resource State R9 — scheduling / reservation writers (capacity later).
+    "execution.schedule.manage": ["admin", "manager"],
+    "execution.machine_reservation.manage": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],
 
     # ExecutionReality
