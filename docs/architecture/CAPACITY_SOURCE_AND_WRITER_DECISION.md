@@ -3,10 +3,11 @@
 **Task:** `CAPACITY_SOURCE_AND_WRITER_DECISION`  
 **Owner GO:** `AUTHORIZE_CAPACITY_SOURCE_AND_WRITER_DECISION`  
 **Date:** 2026-08-05  
-**Status:** **PASS** · Decision complete · Stage 1 writer **IMPLEMENTED** (code) · QA Capacity **NOT_CONFIGURED**  
+**Status:** **PASS** · Decision complete · Stage 1 writer **IMPLEMENTED** (code) · s65 migration closure **VERIFIED** · QA Capacity **NOT_CONFIGURED** · QA remains **s64**  
 **Starting HEAD:** `efc3b190`  
 **Worklog:** `docs/worklog/realignment/2026-08-05_capacity_source_and_writer_decision.md`  
 **Stage 1 implementation:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_workcenter_source_and_writer_implementation.md`  
+**Migration readiness:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_canonical_migration_and_qa_rollout_readiness.md`  
 **Prerequisites:** Resource State R1–R11 PASS · Scheduling + Machine Reservation ACTIVE in QA · Capacity rows = 0
 
 ```text
@@ -24,8 +25,11 @@ PHASE_B_CAPACITY_POLICY = FINALIZED
 IMPLEMENTATION_STRATEGY = OPTION_D_STAGED
 CAPACITY_STAGE_1 = PASS
 CAPACITY_WRITER = IMPLEMENTED
+CAPACITY_STAGE_1_MIGRATION_READINESS = PASS
+CANONICAL_MIGRATION_CLOSURE = VERIFIED
 code Alembic = s65_workcenter_capacity_source
 QA Alembic = s64
+QA_ROLLOUT = NOT_AUTHORIZED
 CAPACITY_ACTIVATION = NOT_AUTHORIZED
 QA_CAPACITY_CONFIGURATION = 0
 QA_CAPACITY_ROWS = 0
@@ -33,7 +37,7 @@ PHASE_B_WIRING = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 ```
 
-Stage 1 implements the workcenter/day source + WORKCENTER allocation writer on isolated DBs. QA remains on s64 without Capacity activation.
+Stage 1 implements the workcenter/day source + WORKCENTER allocation writer on isolated DBs. Canonical `s64 → s65` is verified in isolation. QA remains on s64 without schema rollout or Capacity activation.
 
 ---
 

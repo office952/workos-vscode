@@ -20,12 +20,17 @@ from alembic.config import Config
 from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine, inspect, text
 
-from core.schema_ownership import ALEMBIC_OWNED_TABLES, RESOURCE_STATE_TABLES
+from core.schema_ownership import (
+    ALEMBIC_OWNED_TABLES,
+    CAPACITY_SOURCE_TABLES,
+    RESOURCE_STATE_TABLES,
+)
 from core.sqlite_pragma import register_sqlite_foreign_keys
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 S63 = "s63_execution_task_assignment_transitions"
 S64 = "s64_resource_state_persistence"
+S65 = "s65_workcenter_capacity_source"
 ASSIGN_TABLE = "execution_task_assignment_transitions"
 
 
@@ -145,7 +150,8 @@ def _seed_minimal(engine) -> str:
 def test_alembic_single_head_ancestry():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == [S64]
+    assert script.get_heads() == [S65]
+    assert script.get_revision(S65).down_revision == S64
     assert script.get_revision(S64).down_revision == S63
     assert script.get_revision(S63).down_revision == "s62_material_actuals_closed_job_v1"
 
@@ -153,7 +159,9 @@ def test_alembic_single_head_ancestry():
 def test_alembic_owned_tables_include_assignment_and_resource_state():
     assert ASSIGN_TABLE in ALEMBIC_OWNED_TABLES
     assert RESOURCE_STATE_TABLES.issubset(ALEMBIC_OWNED_TABLES)
+    assert CAPACITY_SOURCE_TABLES.issubset(ALEMBIC_OWNED_TABLES)
     assert len(RESOURCE_STATE_TABLES) == 8
+    assert len(CAPACITY_SOURCE_TABLES) == 2
 
 
 def test_fresh_full_chain_and_fingerprint(tmp_path: Path):
@@ -162,12 +170,12 @@ def test_fresh_full_chain_and_fingerprint(tmp_path: Path):
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
     engine = _sync_engine(db)
-    assert _revision(engine) == S64
+    assert _revision(engine) == S65
     assert _pragma_fk(engine) == 1
     with engine.connect() as conn:
         tables = set(inspect(conn).get_table_names())
     assert ASSIGN_TABLE in tables
-    for name in RESOURCE_STATE_TABLES:
+    for name in RESOURCE_STATE_TABLES | CAPACITY_SOURCE_TABLES:
         assert name in tables
     assert all(v == 0 for v in _rs_counts(engine).values())
     fp = _schema_fingerprint(engine)
@@ -415,7 +423,7 @@ def test_runtime_create_all_dual_proof(tmp_path: Path):
     with engine.begin() as conn:
         mgr._runtime_create_all(conn)
         tables = set(inspect(conn).get_table_names())
-    for name in RESOURCE_STATE_TABLES:
+    for name in RESOURCE_STATE_TABLES | CAPACITY_SOURCE_TABLES:
         assert name not in tables
     assert ASSIGN_TABLE not in tables
     assert "execution_plan" in tables
@@ -428,21 +436,21 @@ def test_runtime_create_all_dual_proof(tmp_path: Path):
     with engine2.connect() as conn:
         tables2 = set(inspect(conn).get_table_names())
     assert ASSIGN_TABLE in tables2
-    for name in RESOURCE_STATE_TABLES:
+    for name in RESOURCE_STATE_TABLES | CAPACITY_SOURCE_TABLES:
         assert name in tables2
 
 
 def test_append_only_boundary_classification():
-    """R9: schedule/reservation writers exist; capacity writer still absent."""
+    """Schedule/reservation/capacity Stage-1 writers exist as command services."""
     services = BACKEND_ROOT / "services"
     names = sorted(p.name for p in services.glob("*.py"))
     assert any("execution_task_schedule" in n for n in names)
     assert any("machine_reservation" in n for n in names)
     assert any("resource_domain_configuration" in n for n in names)
-    # Capacity domain writer remains blocked until capacity source exists.
     capacity_writers = [
         n
         for n in names
         if "capacity_allocation" in n and ("command" in n or "write" in n)
     ]
-    assert capacity_writers == [], capacity_writers
+    assert capacity_writers, "Stage 1 capacity allocation command service required"
+    assert any("workcenter_capacity_source" in n for n in names)

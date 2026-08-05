@@ -153,7 +153,11 @@ def test_migration_graph_single_head_and_s63_predecessor():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
     heads = script.get_heads()
-    assert heads == [S64], heads
+    # Head advanced to s65 (Capacity Stage 1); s64 remains on the linear chain.
+    assert heads == ["s65_workcenter_capacity_source"], heads
+    rev65 = script.get_revision("s65_workcenter_capacity_source")
+    assert rev65 is not None
+    assert rev65.down_revision == S64
     rev64 = script.get_revision(S64)
     assert rev64 is not None
     assert rev64.down_revision == S63
@@ -176,7 +180,7 @@ def test_scenario_a_fresh_empty_database_upgrade_head(tmp_path: Path):
     assert proc.returncode == 0, proc.stderr + proc.stdout
 
     engine = _sync_engine(db)
-    assert _current_revision(engine) == S64
+    assert _current_revision(engine) == "s65_workcenter_capacity_source"
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
         cols = {c["name"] for c in inspect(conn).get_columns(TABLE)}
@@ -214,7 +218,7 @@ def test_scenario_b_prior_revision_to_head_backfill(tmp_path: Path):
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == S64
+    assert _current_revision(engine) == "s65_workcenter_capacity_source"
 
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
@@ -260,7 +264,7 @@ def test_scenario_collision_create_all_table_then_alembic_upgrade(tmp_path: Path
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == S64
+    assert _current_revision(engine) == "s65_workcenter_capacity_source"
 
     names = _index_names(engine, TABLE)
     canonical = {n for n, _ in CANONICAL_ASSIGNMENT_TRANSITION_INDEXES}
