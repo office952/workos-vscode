@@ -3,13 +3,24 @@
 **Task:** `CAPACITY_STAGE_1_CONTROLLED_QA_CONFIGURATION_AND_SEED_READINESS`  
 **Owner GO:** `AUTHORIZE_CAPACITY_STAGE_1_CONTROLLED_QA_CONFIGURATION_AND_SEED_READINESS`  
 **Date:** 2026-08-05  
-**Status:** **PARTIAL_BLOCKED** — workcenter routing ready; available minutes not Owner-confirmed  
+**Status:** **SUPERSEDED** by `CAPACITY_RESOURCE_MODEL_REALIGNMENT` — do not seed or activate from this report  
 **Starting HEAD:** `5b2bc568`  
 **Worklog:** `docs/worklog/realignment/2026-08-05_capacity_stage_1_qa_configuration_and_seed_readiness.md`  
+**Superseding architecture:** `docs/architecture/CAPACITY_RESOURCE_MODEL_REALIGNMENT.md`  
 **Prerequisites:** Capacity Stage 1 code PASS · s65 QA schema rollout PASS · Capacity rows = 0
 
 ```text
-CAPACITY_STAGE_1_QA_SEED_READINESS = PARTIAL_BLOCKED
+CAPACITY_STAGE_1_QA_SEED_READINESS = SUPERSEDED_BY_RESOURCE_MODEL_REALIGNMENT
+SUPERSEDE_REASON = single workcenter-minutes model insufficient for shared manual workspaces and multi-person operations
+PRIOR_BLOCKER = MISSING_OWNER_CONFIRMED_OR_ACCEPTED_AVAILABLE_MINUTES
+CAPACITY_QA_SEED = NOT_AUTHORIZED
+CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
+```
+
+Historical snapshot at supersession (inventory still useful; minutes/seed conclusions outdated as next step):
+
+```text
+PRIOR_STATUS = PARTIAL_BLOCKED
 BLOCKER = MISSING_OWNER_CONFIRMED_OR_ACCEPTED_AVAILABLE_MINUTES
 TASK_TO_WORKCENTER_MAPPING = COMPLETE_ON_PROTECTED_PLANS
 CANONICAL_WORKCENTERS = 12
