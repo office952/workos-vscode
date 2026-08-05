@@ -361,6 +361,9 @@ CAPACITY_RESOURCE_MODEL_REALIGNMENT = PASS
 OWNER_DECISION_PACKAGE = APPLIED
 TASK_RESOURCE_REQUIREMENT_CONTRACT = PASS
 TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
+SOURCE_GAP_AUDIT = PASS
+PILOT_SELECTION = COMPLETE
+SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
 MACHINE_RUN = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
@@ -373,23 +376,24 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
-RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
+RECOMMENDED_NEXT_SLICE = VECTOR_PREP_DURATION_E2E
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
 Task resource contract: `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`  
+Source gap + pilot: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SELECTION.md`  
 Owner decisions: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
 Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`  
-Projection worklog: `docs/worklog/realignment/2026-08-05_task_resource_requirement_readonly_projection.md`
+Pilot worklog: `docs/worklog/realignment/2026-08-05_task_resource_requirement_source_gap_and_pilot_selection.md`
 
 **Why:**
 
-- Task demand vs resource availability are separated; NOW reuses WC + nullable minutes; HYBRID mode not inventable from WC.
-- Projection surfaces known / partial / unknown demand without mutating snapshots.
-- Capacity / MACHINE_RUN / workspace booking remain unimplemented or inactive.
+- Gaps sit upstream (Product System / geometry / op contracts), not in Scheduling or Capacity.
+- Only `vector_prep` has a planning-duration contract; plan 21 proves it; plan 23 nulls because `letter_count` is missing.
+- First pilot is duration E2E completeness for `vector_prep` — not LED/people/workspace/batch.
 
 **Next (future candidate only — not started):**  
-Demand authoring / schema readiness or MACHINE_RUN — only with a separate Owner GO.
+`VECTOR_PREP_DURATION_E2E` implementation — only with a separate Owner GO.
 
 ---
 

@@ -15,6 +15,9 @@
 ```text
 TASK_RESOURCE_REQUIREMENT_CONTRACT = PASS
 TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
+SOURCE_GAP_AUDIT = PASS
+PILOT_SELECTION = COMPLETE
+SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
 TASK_DEMAND_BOUNDARY = FINALIZED
 RESOURCE_AVAILABILITY_BOUNDARY = FINALIZED
 MINIMAL_CONTRACT = FINALIZED
@@ -364,19 +367,29 @@ Service: `task_resource_requirement_projection_service.py`
 Schema: `task_resource_requirement_projection.py`  
 Does **not** mutate `tasks_json`. Does **not** gate Phase B.
 
+### Source gap + pilot (docs-only, authorized follow-on)
+
+```text
+SOURCE_GAP_AUDIT = PASS
+SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
+```
+
+Canonical: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SELECTION.md`
+
 ### Recommended next slice (not authorized)
 
 | Candidate | Decision |
 | --------- | -------- |
 | A — READONLY_PROJECTION | **Done** |
-| B — SCHEMA_READINESS / demand persistence | Premature — hybrids need Product/Operation authoring source first |
-| C — MACHINE_RUN_SCHEMA | Later — still blocked by incomplete demand declaration |
+| B — SOURCE_GAP + PILOT SELECTION | **Done** (docs-only) |
+| C — VECTOR_PREP_DURATION_E2E implementation | **Selected next** — separate Owner GO |
+| D — CNC duration contract / SCHEMA / MACHINE_RUN | Later |
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Do not start B/C without a separate Owner GO.
+Do not start implementation without a separate Owner GO.
 
 ---
 
