@@ -122,6 +122,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.clarification_resolve": ["admin", "manager", "operator"],
     "execution.production_blueprint": ["admin", "manager", "operator"],
     "execution.owner_decision_resolve": ["admin", "manager"],
+    # Resource State R7 — domain configuration command (not operational writes).
+    "execution.resource_domain.configure": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],
 
     # ExecutionReality

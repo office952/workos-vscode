@@ -16,9 +16,20 @@ from schemas.execution_plan_v2 import ExecutionPlanV2PersistResult, ExecutionPla
 from schemas.execution_plan_v2_materialize import ExecutionPlanV2MaterializeResult
 from schemas.execution_plan_v2_materialization_audit import ExecutionPlanV2MaterializationAudit
 from schemas.operational_resource_readiness import OperationalResourceReadinessResult
+from schemas.resource_state_configuration import (
+    ResourceDomainConfigurationCommand,
+    ResourceDomainConfigurationResult,
+)
 from schemas.resource_state_read import TaskResourceStateResult
 from services.assignment_readiness_audit_service import (
     build_assignment_readiness_audit,
+)
+from services.resource_domain_configuration_command_service import (
+    ResourceDomainConfigurationActivationBlockedError,
+    ResourceDomainConfigurationCasConflictError,
+    ResourceDomainConfigurationConflictError,
+    ResourceDomainConfigurationValidationError,
+    configure_resource_domain,
 )
 from services.resource_state_read_service import (
     ResourceStatePlanNotFoundError,
@@ -245,6 +256,59 @@ async def assignment_readiness_audit_by_order_id(
         candidate_employee_id=candidate_employee_id,
         task_key=task_key,
     )
+
+
+@router.post(
+    "/resource-state/configurations/{domain}",
+    response_model=ResourceDomainConfigurationResult,
+)
+async def post_resource_domain_configuration(
+    domain: str,
+    body: ResourceDomainConfigurationCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.resource_domain.configure")
+    ),
+) -> ResourceDomainConfigurationResult:
+    """R7 — configure / activate / disable a Resource State domain.
+
+    Does not write schedules, reservations, or capacity.
+    Does not wire Phase B. QA activation remains Owner-gated separately —
+    do not invoke against live QA without an explicit activation GO.
+    """
+    logger.info(
+        "POST /api/v1/execution/resource-state/configurations/%s "
+        "target=%s expected_version=%s actor=%s",
+        domain,
+        body.target_status,
+        body.expected_version,
+        current_user.id,
+    )
+    try:
+        result = await configure_resource_domain(
+            db,
+            domain=domain,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+        await db.commit()
+        return result
+    except ResourceDomainConfigurationValidationError as exc:
+        raise HTTPException(
+            status_code=422, detail={"error": exc.code, "message": exc.message}
+        ) from None
+    except ResourceDomainConfigurationCasConflictError as exc:
+        raise HTTPException(
+            status_code=409, detail={"error": exc.code, "message": exc.message}
+        ) from None
+    except ResourceDomainConfigurationConflictError as exc:
+        raise HTTPException(
+            status_code=409, detail={"error": exc.code, "message": exc.message}
+        ) from None
+    except ResourceDomainConfigurationActivationBlockedError as exc:
+        raise HTTPException(
+            status_code=409, detail={"error": exc.code, "message": exc.message}
+        ) from None
 
 
 @router.get(
