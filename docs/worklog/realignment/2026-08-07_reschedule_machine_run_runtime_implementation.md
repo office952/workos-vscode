@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `7021982d`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `ef95cd2e`  
 **Verdict:** **PASS**  
 **Scope:** RESCHEDULE only · same machine/participants/status · window move · isolated DB · QA zero-mutation · no UI · no push
 
