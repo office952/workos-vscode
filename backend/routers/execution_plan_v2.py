@@ -22,11 +22,13 @@ from schemas.resource_state_configuration import (
 )
 from schemas.resource_state_read import TaskResourceStateResult
 from schemas.resource_state_machine_run import (
+    AddMachineRunParticipantCommand,
     CancelMachineRunCommand,
     ConfirmMachineRunCommand,
     CreateMachineRunCommand,
     CreateMachineRunResult,
     ReleaseMachineRunCommand,
+    RemoveMachineRunParticipantCommand,
     RescheduleMachineRunCommand,
 )
 from schemas.resource_state_reservation import (
@@ -81,10 +83,12 @@ from services.execution_task_machine_reservation_command_service import (
     supersede_reservation,
 )
 from services.machine_run_command_service import (
+    add_machine_run_participant,
     cancel_machine_run,
     confirm_machine_run,
     create_machine_run,
     release_machine_run,
+    remove_machine_run_participant,
     reschedule_machine_run,
 )
 from services.execution_task_schedule_command_service import (
@@ -644,6 +648,54 @@ async def post_reschedule_machine_run(
     """RESCHEDULE_MACHINE_RUN — same status/machine; new window (isolated; not QA)."""
     try:
         return await reschedule_machine_run(
+            db,
+            machine_run_id=machine_run_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/machine-runs/{machine_run_id}/add-participant",
+    response_model=CreateMachineRunResult,
+)
+async def post_add_machine_run_participant(
+    machine_run_id: int,
+    body: AddMachineRunParticipantCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_run.manage")
+    ),
+) -> CreateMachineRunResult:
+    """ADD_MACHINE_RUN_PARTICIPANT — HELD only (isolated; not QA)."""
+    try:
+        return await add_machine_run_participant(
+            db,
+            machine_run_id=machine_run_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/machine-runs/{machine_run_id}/remove-participant",
+    response_model=CreateMachineRunResult,
+)
+async def post_remove_machine_run_participant(
+    machine_run_id: int,
+    body: RemoveMachineRunParticipantCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_run.manage")
+    ),
+) -> CreateMachineRunResult:
+    """REMOVE_MACHINE_RUN_PARTICIPANT — HELD only, soft REMOVED (isolated; not QA)."""
+    try:
+        return await remove_machine_run_participant(
             db,
             machine_run_id=machine_run_id,
             command=body,
