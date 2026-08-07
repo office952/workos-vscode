@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_QA_SQLITE_BYTE_DRIFT_CLOSURE_BEFORE_S67_ROLLOUT`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `5a3697b1`  
-**Tip HEAD:** _(filled after tip commit)_  
+**Tip HEAD:** `df46f30d`  
 **Verdict:** **PARTIAL_BLOCKED**  
 **Scope:** read-only audit · no alembic · no VACUUM/checkpoint · no restore · no product code
 
