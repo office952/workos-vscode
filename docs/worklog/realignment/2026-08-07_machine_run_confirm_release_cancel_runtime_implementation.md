@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `4f43b1de`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `e7d22071`  
 **Verdict:** **PASS**  
 **Scope:** reservation lifecycle only · isolated DB · QA zero-mutation · no UI · no push
 
