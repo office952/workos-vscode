@@ -30,9 +30,11 @@ PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 R6_POST_CREATE_BEHAVIOR = FINALIZED
 CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_LIFECYCLE = CREATE_ONLY
 AUTO_BATCH = NOT_IMPLEMENTED
+CONFIRM_RELEASE_CANCEL = READINESS_ONLY
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -41,7 +43,9 @@ NEXT_TASK = NOT_AUTHORIZED
 ```
 
 Implementation worklog: `docs/worklog/realignment/2026-08-07_create_machine_run_minimal_runtime_implementation.md`  
-API: `POST /api/v1/execution/resource-state/machine-runs` (create-only; QA operational usage not activated).
+API: `POST /api/v1/execution/resource-state/machine-runs` (create-only; QA operational usage not activated).  
+Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`  
+(`CONFIRM` / `RELEASE` / `CANCEL` — implementation requires a separate Owner GO.)
 
 ---
 
