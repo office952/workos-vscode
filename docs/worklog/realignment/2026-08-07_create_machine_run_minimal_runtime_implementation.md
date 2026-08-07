@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `f959fe3a`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `9d8d759b`  
 **Verdict:** **PASS**  
 **Scope:** CREATE only · isolated DB proof · QA zero-mutation · no UI · no push
 
