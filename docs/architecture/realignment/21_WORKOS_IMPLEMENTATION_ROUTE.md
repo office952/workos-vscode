@@ -380,7 +380,9 @@ MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
 RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
-CODE_ALEMBIC = s66_machine_run_reservation_grain
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
+MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+CODE_ALEMBIC = s67_machine_run_execution_status
 QA_ALEMBIC = s66_machine_run_reservation_grain
 MACHINE_RUN = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION
 MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_ADD_REMOVE_IMPLEMENTED_IN_CODE
@@ -388,8 +390,13 @@ MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE_PLUS_P
 CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
-MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
+MACHINE_RUN_STATUS_RUNNING = SUPPORTED_IN_CODE_SCHEMA
+MACHINE_RUN_STATUS_COMPLETED = SUPPORTED_IN_CODE_SCHEMA
+STARTED_AT = IMPLEMENTED_NULLABLE
+COMPLETED_AT = IMPLEMENTED_NULLABLE
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
+START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+QA_S67_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
 QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
 AUTO_BATCH = NOT_IMPLEMENTED
@@ -398,7 +405,7 @@ WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
-code Alembic = s66_machine_run_reservation_grain
+code Alembic = s67_machine_run_execution_status
 QA Alembic = s66_machine_run_reservation_grain
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_CAPACITY_SOURCE_ROWS = 0
@@ -432,17 +439,18 @@ Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTAT
 Participant mutation readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`  
 Participant mutation implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`  
 Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS.md`  
-Execution lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_lifecycle_readiness.md`
+Execution lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_lifecycle_readiness.md`  
+Execution status schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_schema_foundation.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS**; **execution lifecycle readiness PASS** (START/COMPLETE not implemented; RUNNING keeps reservation RESERVED; COMPLETE then RELEASE; no auto task/session mutation).
+- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS**; **execution lifecycle readiness PASS**; **s67 execution status schema foundation PASS in code** (`RUNNING`/`COMPLETED` + nullable `started_at`/`completed_at`; Reservation vocabulary unchanged; START/COMPLETE runtime not implemented; QA still on s66).
 
 **Next (future candidate only — not started):**  
-`START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` implementation (schema status expansion + phase-aware coupling), or machine reassignment / UI / auto-batch — only with a separate Owner GO.
+Controlled **QA s67 schema rollout**, then `START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` (phase-aware coupling + RELEASE-after-COMPLETED), or machine reassignment / UI / auto-batch — only with a separate Owner GO.
 
 ---
 

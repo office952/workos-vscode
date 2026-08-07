@@ -30,7 +30,8 @@ MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
-CODE_ALEMBIC_HEAD = s66_machine_run_reservation_grain
+MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
 QA_ALEMBIC = s66_machine_run_reservation_grain
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_RUNTIME = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION_IMPLEMENTED_IN_CODE
@@ -40,7 +41,10 @@ CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
+EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
+START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -240,17 +244,17 @@ Prefer **lockstep vocabulary with Machine Reservation** for the planning claim l
 | `CANCELLED` | **Yes** | Aborted | **yes** | CANCEL |
 | `RELEASED` | **Yes** | Normal release of machine claim | **yes** | RELEASE |
 | `SUPERSEDED` | Later (optional first slice) | Replaced by another run | **yes** | SUPERSEDE |
-| `RUNNING` | **Readiness PASS** (not in s66 yet) | Shop-floor started | no | START (future impl) |
-| `COMPLETED` | **Readiness PASS** (not in s66 yet) | Shop-floor finished | **yes** (future) | COMPLETE then RELEASE |
+| `RUNNING` | **Schema PASS (s67)** · runtime NOT_IMPLEMENTED | Shop-floor started | no | START (future impl) |
+| `COMPLETED` | **Schema PASS (s67)** · runtime NOT_IMPLEMENTED | Shop-floor finished | **yes** (future) | COMPLETE then RELEASE |
 
 ```text
 one MACHINE_RUN lifecycle (recommended)
-planned (HELD → RESERVED) → [future RUNNING] → RELEASED / CANCELLED / [future COMPLETED]
+planned (HELD → RESERVED) → RUNNING → COMPLETED → RELEASED / CANCELLED
 ```
 
-**Why not adopt DRAFT/READY/RUNNING now as the readiness set:** Reservation already uses HELD/RESERVED; dual vocabularies without shop-floor consumers is overengineering. `RUNNING`/`COMPLETED` wait until actual timestamps exist.
+Reservation vocabulary stays without `RUNNING`/`COMPLETED`. After START, coupling is phase-aware (`run RUNNING|COMPLETED` with `reservation RESERVED`).
 
-**Lockstep meaning:** status **names** align with Reservation for cognitive reuse. Run status is **not** automatically derived from reservation status — writers must keep them consistent in the same command txn. A future GO may tighten sync rules; readiness does not invent a second independent open/terminal matrix.
+**Lockstep meaning (commitment phase):** status names align with Reservation through CONFIRM/RELEASE/CANCEL. After START, equality is **not** the universal invariant — see execution lifecycle readiness.
 
 ---
 
@@ -261,7 +265,7 @@ planned (HELD → RESERVED) → [future RUNNING] → RELEASED / CANCELLED / [fut
 | Planned machine run | MACHINE_RUN status `HELD`/`RESERVED` | Same entity lifecycle |
 | Exclusive interval | **Owned Machine Reservation** | Sole exclusive clock |
 | Estimated run minutes | Planning hint on run or derived from demand | ≠ reserved window ≠ actual |
-| Actual runtime | Future `actual_started_at` / `actual_ended_at` on run | Defer measurement |
+| Actual runtime | `machine_runs.started_at` / `completed_at` (s67; writers not yet) | Derive minutes; do not persist duplicate |
 
 ```text
 estimated_run_minutes  ≠ reserved_interval ≠ actual_runtime_minutes
@@ -464,8 +468,9 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 5. Phase B (later): consume union path — not authorized now.
 6. Grouping service (eligibility beyond the three stamps) — separate GO.
 7. Optional attach of nesting/program payload — separate decision.
-8. ~~START/COMPLETE readiness~~ → PASS (runtime not started).
-9. Machine reassignment / PAUSE / Phase B wiring — separate GO.
+8. ~~START/COMPLETE readiness~~ → PASS.
+9. ~~Execution status schema foundation (s67)~~ → PASS (QA rollout + START/COMPLETE writers not started).
+10. Machine reassignment / PAUSE / Phase B wiring — separate GO.
 
 ```text
 RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
@@ -477,9 +482,14 @@ RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
+MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
+QA_ALEMBIC = s66_machine_run_reservation_grain
 RUNTIME_IMPLEMENTATION = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
+START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 

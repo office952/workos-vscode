@@ -10,16 +10,26 @@
 
 ```text
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
-START_MACHINE_RUN = FINALIZED
-COMPLETE_MACHINE_RUN = FINALIZED
+EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
+QA_ALEMBIC = s66_machine_run_reservation_grain
+MACHINE_RUN_STATUS_RUNNING = SUPPORTED
+MACHINE_RUN_STATUS_COMPLETED = SUPPORTED
+STARTED_AT = IMPLEMENTED_NULLABLE
+COMPLETED_AT = IMPLEMENTED_NULLABLE
+RESERVATION_STATUS_MODEL = UNCHANGED
+START_MACHINE_RUN = FINALIZED_CONTRACT_NOT_IMPLEMENTED
+COMPLETE_MACHINE_RUN = FINALIZED_CONTRACT_NOT_IMPLEMENTED
 START_ALLOWED_FROM = RESERVED
 COMPLETE_ALLOWED_FROM = RUNNING
 RUNNING_RESERVATION_STATE = RESERVED
 RUN_RESERVATION_COUPLING_MODEL = PHASE_AWARE_MATRIX_AFTER_START
 ACTUAL_RUNTIME_OWNER = MACHINE_RUN
+ACTUAL_RUNTIME_MINUTES_PERSISTED = NO
 PARTICIPANT_TASK_STATE_MUTATION = FORBIDDEN_IN_FIRST_SLICE
 EMPLOYEE_SESSION_MUTATION = FORBIDDEN_IN_FIRST_SLICE
 COMPLETE_RESERVATION_BEHAVIOR = SEPARATE_RELEASE
+RELEASE_AFTER_COMPLETED = FUTURE_RUNTIME_ADJUSTMENT_REQUIRED
 PAUSE_RESUME = DEFERRED
 CANCEL_WHILE_RUNNING = FORBIDDEN
 RESCHEDULE_WHILE_RUNNING = FORBIDDEN
@@ -29,12 +39,14 @@ HISTORY_MODEL = FINALIZED
 R6_RUNNING = ACTIVE
 R6_COMPLETED = ACTIVE_UNTIL_RELEASE
 PERMISSION = RECOMMEND_SEPARATE_EXECUTE
+PERMISSION_CHANGES = 0
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 PHASE_B_IMPACT = DOCUMENTED_NOT_IMPLEMENTED
-SCHEMA_STATUS_EXPANSION_REQUIRED = YES
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+SCHEMA_STATUS_EXPANSION_REQUIRED = NO
+START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
 QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
+NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
@@ -286,17 +298,41 @@ RELEASE from COMPLETED+RESERVED: **allowed** (extends today’s RELEASE source s
 
 ## 5. Schema sufficiency
 
-s66 CHECK / ORM statuses **do not** include `RUNNING` / `COMPLETED`.  
-Actual timestamp columns **absent** on `machine_runs`.
+**s67 (`s67_machine_run_execution_status`) — code schema foundation PASS.**
 
 ```text
-SCHEMA_STATUS_EXPANSION_REQUIRED = YES
-SCHEMA_ACTUAL_RUNTIME_COLUMNS_REQUIRED = YES
+machine_runs.status CHECK includes RUNNING|COMPLETED
+machine_runs.started_at  nullable (no backfill)
+machine_runs.completed_at nullable (no backfill)
+Reservation status vocabulary UNCHANGED (no RUNNING/COMPLETED)
+machine_run_transitions can store RESERVED→RUNNING / RUNNING→COMPLETED structurally
+actual_runtime_minutes NOT persisted (derive later from completed_at - started_at)
 ```
 
-This is an **implementation prerequisite**, not a readiness PARTIAL: the contract is decided; the next GO must ship a bounded migration (or equivalent schema change) before writers.
+```text
+SCHEMA_STATUS_EXPANSION_REQUIRED = NO
+SCHEMA_ACTUAL_RUNTIME_COLUMNS_REQUIRED = NO
+EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+```
 
-No parser / frontend / Phase B work in that first slice beyond what START/COMPLETE need.
+Phase-aware `_assert_coupled` and START/COMPLETE writers remain **not implemented**.  
+Current commitment runtime still uses status equality (HELD/RESERVED/RELEASED/CANCELLED only).
+
+Structural coupling matrix (future runtime):
+
+```text
+run HELD       ↔ reservation HELD
+run RESERVED   ↔ reservation RESERVED
+run RUNNING    ↔ reservation RESERVED
+run COMPLETED  ↔ reservation RESERVED
+run RELEASED   ↔ reservation RELEASED
+run CANCELLED  ↔ reservation CANCELLED
+```
+
+`RELEASE_AFTER_COMPLETED = FUTURE_RUNTIME_ADJUSTMENT_REQUIRED`  
+(today RELEASE accepts run RESERVED only).
 
 ---
 
@@ -398,13 +434,13 @@ QA_MUTATIONS = 0
 **In:**
 
 ```text
-schema: RUNNING|COMPLETED on machine_runs + started_at/completed_at (+ derived minutes if needed)
-phase-aware _assert_coupled matrix
-START_MACHINE_RUN / COMPLETE_MACHINE_RUN writers
-extend RELEASE allowed source to COMPLETED+RESERVED
-permission recommendation wiring (execute)
-isolated tests + commitment lifecycle regression
-R6 ACTIVE while RUNNING/COMPLETED+RESERVED; CLEAR after RELEASE
+1) controlled QA s67 schema rollout (separate Owner GO; zero operational MACHINE_RUN usage)
+2) START_MACHINE_RUN / COMPLETE_MACHINE_RUN writers
+3) phase-aware _assert_coupled matrix
+4) extend RELEASE allowed source to COMPLETED+RESERVED
+5) permission recommendation wiring (execute) if Owner approves
+6) isolated tests + commitment lifecycle regression
+7) R6 remains reservation-driven ACTIVE while RESERVED
 ```
 
 **Out:**
@@ -419,11 +455,11 @@ Capacity activation
 UI / Mobile
 auto-batch
 machine reassignment
-QA operational activation
+QA operational MACHINE_RUN usage
 ```
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
+NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
 ```
 
 ---
@@ -445,12 +481,17 @@ NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
 
 ```text
 QA Alembic = s66_machine_run_reservation_grain
-QA SHA = b7950463b2956e779275e14fa81ee742a681ccee2e9f338a9db1310e1b740fb1
+CODE Alembic head = s67_machine_run_execution_status
+QA SHA (post schema-foundation GO) = 7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+prior tip SHA = b7950463b2956e779275e14fa81ee742a681ccee2e9f338a9db1310e1b740fb1
 machine_runs / participants / transitions / reservations = 0
 assignment transitions = 7
 foreign_key_check = 0
-QA_MUTATIONS = 0
+QA_SCHEMA_MUTATIONS = 0
+QA_DATA_MUTATIONS = 0
 ```
+
+SHA byte drift vs prior tip without alembic/count change is recorded; this GO did not upgrade QA.
 
 ---
 
@@ -460,4 +501,4 @@ QA_MUTATIONS = 0
 NO_UI_CHANGE
 ```
 
-Docs only: execution lifecycle readiness · START/COMPLETE not implemented · RUNNING ≠ RESERVED ≠ employee session.
+execution lifecycle schema foundation = implemented in code · runtime = not implemented · QA rollout = not authorized.
