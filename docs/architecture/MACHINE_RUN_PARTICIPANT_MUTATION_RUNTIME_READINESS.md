@@ -3,34 +3,35 @@
 **Task:** `MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS`  
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS`  
 **Date:** 2026-08-07  
-**Status:** **PASS** · docs-only · **no runtime · no QA writes**  
+**Status:** **PASS** · readiness finalized · **runtime VERIFIED** · **no QA writes**  
 **Starting HEAD:** `484c7a8c`  
 **Prerequisites:** CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE runtime PASS · s66 schema  
-**Worklog:** `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`
+**Readiness worklog:** `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`  
+**Implementation worklog:** `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`
 
 ```text
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
-ADD_MACHINE_RUN_PARTICIPANT = FINALIZED
-REMOVE_MACHINE_RUN_PARTICIPANT = FINALIZED
+MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
+ADD_MACHINE_RUN_PARTICIPANT = VERIFIED
+REMOVE_MACHINE_RUN_PARTICIPANT = VERIFIED
 ALLOWED_FROM = HELD
 MIN_PARTICIPANTS_AFTER_MUTATION = 2
-MACHINE_ID_UNCHANGED = FINALIZED
-RESERVATION_WINDOW_UNCHANGED = FINALIZED
-RESERVATION_STATUS_UNCHANGED = FINALIZED
+MACHINE_ID_UNCHANGED = VERIFIED
+RESERVATION_WINDOW_UNCHANGED = VERIFIED
+RESERVATION_STATUS_UNCHANGED = VERIFIED
 RUN_VERSION_BEHAVIOR = INCREMENT
 RESERVATION_VERSION_BEHAVIOR = INCREMENT_LOCKSTEP
 PARTICIPANT_HISTORY_MODEL = SOFT_REMOVED_ROW_PLUS_COMMAND_TRANSITION
 SCHEMA_SUFFICIENCY = VERIFIED
-CAS = FINALIZED
-IDEMPOTENCY = FINALIZED
-R6_ADD_BEHAVIOR = FINALIZED
-R6_REMOVE_BEHAVIOR = FINALIZED
-MULTI_PLAN_ADD = ALLOWED
+CAS = VERIFIED
+IDEMPOTENCY = VERIFIED
+R6_ADD_BEHAVIOR = VERIFIED
+R6_REMOVE_BEHAVIOR = VERIFIED
+MULTI_PLAN_ADD = VERIFIED
 PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+RUNTIME_IMPLEMENTATION = VERIFIED
 QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = ADD_REMOVE_PARTICIPANT_ONLY
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 AUTO_BATCH = NOT_IMPLEMENTED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -515,25 +516,14 @@ EMPLOYEE_MOBILE_CHANGED = NO
 
 ---
 
-## 18. Next implementation GO (bounded)
-
-**In:**
+## 18. Runtime implementation (closed)
 
 ```text
-AddMachineRunParticipantCommand / RemoveMachineRunParticipantCommand
-service methods (HELD only)
-soft REMOVED + reactivate path
-CREATE eligibility reuse
-active membership guard
-MIN_PARTICIPANTS = 2 after REMOVE
-OPTION B dual version + dual transitions
-CAS / idempotency
-API routes add-participant / remove-participant
-isolated tests + CREATE/lifecycle/RESCHEDULE regression
-R6 ADD ACTIVE / REMOVE CLEAR proofs
+MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
+API = POST …/add-participant | …/remove-participant
 ```
 
-**Out:**
+**Still out (separate Owner GO):**
 
 ```text
 machine_id change
@@ -541,14 +531,13 @@ window change / RESCHEDULE redesign
 RESERVED participant mutation
 RUNNING / COMPLETED
 auto-batch / nesting / UI
-schema migration
 QA operational writes
 SUPERSEDE_MACHINE_RUN
 ```
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = ADD_REMOVE_PARTICIPANT_ONLY
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+RUNTIME_IMPLEMENTATION = VERIFIED
+MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 ```
 
 ---
@@ -586,4 +575,4 @@ QA_MUTATIONS = 0
 NO_UI_CHANGE
 ```
 
-Docs only: participant mutation readiness · runtime not implemented · grouping edit ≠ production execution.
+Docs: ADD/REMOVE runtime VERIFIED in code · QA operational usage not activated · grouping edit ≠ production execution.

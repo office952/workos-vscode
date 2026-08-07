@@ -379,14 +379,15 @@ MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
 RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
+MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC = s66_machine_run_reservation_grain
 QA_ALEMBIC = s66_machine_run_reservation_grain
-MACHINE_RUN = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE
-MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_IMPLEMENTED_IN_CODE
-MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE
+MACHINE_RUN = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION
+MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_ADD_REMOVE_IMPLEMENTED_IN_CODE
+MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE_PLUS_PARTICIPANT_MUTATION
 CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
-PARTICIPANT_MUTATION = READINESS_ONLY
+PARTICIPANT_MUTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
 QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
@@ -427,17 +428,18 @@ Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINES
 Reschedule readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reschedule_runtime_readiness.md`  
 Reschedule implementation worklog: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`  
 Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`  
-Participant mutation readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`
+Participant mutation readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`  
+Participant mutation implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE runtime PASS**; **participant mutation readiness PASS** (ADD/REMOVE not implemented; HELD only; soft REMOVED; version lockstep OPTION B).
+- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS** (QA operational usage not activated; HELD-only mutation; soft REMOVED; version lockstep).
 
 **Next (future candidate only — not started):**  
-`ADD_MACHINE_RUN_PARTICIPANT` / `REMOVE_MACHINE_RUN_PARTICIPANT` implementation (or machine reassignment / START/COMPLETE / UI / CNC duration) — only with a separate Owner GO.
+Machine reassignment, START/COMPLETE / RUNNING/COMPLETED, UI, CNC duration, auto-batch — only with a separate Owner GO.
 
 ---
 
