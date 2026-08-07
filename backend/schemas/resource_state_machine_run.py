@@ -1,4 +1,4 @@
-"""Resource State — CREATE_MACHINE_RUN command contracts (create-only)."""
+"""Resource State — MACHINE_RUN command contracts (CREATE + reservation lifecycle)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,12 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 MachineRunStatus = Literal["HELD", "RESERVED", "CANCELLED", "RELEASED", "SUPERSEDED"]
-MachineRunOperation = Literal["CREATE_MACHINE_RUN"]
+MachineRunOperation = Literal[
+    "CREATE_MACHINE_RUN",
+    "CONFIRM_MACHINE_RUN",
+    "RELEASE_MACHINE_RUN",
+    "CANCEL_MACHINE_RUN",
+]
 ParticipantStatus = Literal["ACTIVE", "REMOVED"]
 ReservationStatus = Literal[
     "HELD", "RESERVED", "CANCELLED", "RELEASED", "SUPERSEDED"
@@ -35,6 +40,36 @@ class CreateMachineRunCommand(BaseModel):
     correlation_id: str | None = Field(default=None, max_length=64)
 
 
+class ConfirmMachineRunCommand(BaseModel):
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_confirm", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
+class ReleaseMachineRunCommand(BaseModel):
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_release", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
+class CancelMachineRunCommand(BaseModel):
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_cancel", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
 class MachineRunParticipantResult(BaseModel):
     execution_plan_id: int
     task_key: str
@@ -43,6 +78,8 @@ class MachineRunParticipantResult(BaseModel):
 
 
 class CreateMachineRunResult(BaseModel):
+    """Shared response for CREATE and reservation-lifecycle MACHINE_RUN commands."""
+
     machine_run_id: int
     status: MachineRunStatus
     version: int
@@ -58,3 +95,5 @@ class CreateMachineRunResult(BaseModel):
     transition_id: str
     reservation_transition_id: str
     already_applied: bool = False
+    previous_status: MachineRunStatus | None = None
+    previous_version: int | None = None

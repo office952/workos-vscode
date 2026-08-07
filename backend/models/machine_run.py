@@ -5,7 +5,8 @@ DB link is one-direction to avoid circular FK:
   execution_task_machine_reservations.machine_run_id → machine_runs.id (UNIQUE when set)
 
 Lookup: reservation WHERE machine_run_id = run.id
-Lifecycle beyond CREATE (confirm/release/cancel/participants) is not implemented.
+Reservation lifecycle CONFIRM/RELEASE/CANCEL is implemented.
+Participant ADD/REMOVE and shop-floor START/COMPLETE are not.
 """
 
 from __future__ import annotations

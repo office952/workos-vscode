@@ -1,12 +1,14 @@
-"""CREATE_MACHINE_RUN — atomic create of run + participants + run-owned reservation.
+"""MACHINE_RUN commands — CREATE + CONFIRM/RELEASE/CANCEL reservation lifecycle.
 
-Create-only. No CONFIRM/RELEASE/CANCEL/ADD/REMOVE/auto-batch.
+No ADD/REMOVE participants, RESCHEDULE, START/COMPLETE, or auto-batch.
+RESERVED means machine commitment confirmed — not shop-floor RUNNING.
 """
 
 from __future__ import annotations
 
 import json
 import uuid
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any
 
@@ -18,9 +20,12 @@ from models.execution_task_machine_reservation import (
 from models.machine_run import MachineRun, MachineRunParticipant, MachineRunTransition
 from models.operational_registry import MachineRegistry
 from schemas.resource_state_machine_run import (
+    CancelMachineRunCommand,
+    ConfirmMachineRunCommand,
     CreateMachineRunCommand,
     CreateMachineRunResult,
     MachineRunParticipantResult,
+    ReleaseMachineRunCommand,
 )
 from services.execution_task_machine_reservation_repository import (
     ExecutionTaskMachineReservationRepository,
@@ -268,6 +273,9 @@ async def _result_from_persisted(
     transition_id: str,
     reservation_transition_id: str,
     already_applied: bool,
+    operation: str = OPERATION,
+    previous_status: str | None = None,
+    previous_version: int | None = None,
 ) -> CreateMachineRunResult:
     reservation = await _load_run_reservation(db, run.id)
     if reservation is None:
@@ -296,10 +304,12 @@ async def _result_from_persisted(
             )
             for p in parts
         ],
-        operation=OPERATION,  # type: ignore[arg-type]
+        operation=operation,  # type: ignore[arg-type]
         transition_id=transition_id,
         reservation_transition_id=reservation_transition_id,
         already_applied=already_applied,
+        previous_status=previous_status,  # type: ignore[arg-type]
+        previous_version=previous_version,
     )
 
 
@@ -638,4 +648,336 @@ async def _create_under_locks(
         transition_id=run_tr.transition_id,
         reservation_transition_id=res_tr.transition_id,
         already_applied=False,
+    )
+
+
+# ---------------------------------------------------------------------------
+# CONFIRM / RELEASE / CANCEL — reservation lifecycle (not shop-floor execution)
+# ---------------------------------------------------------------------------
+
+TERMINAL = frozenset({"CANCELLED", "RELEASED", "SUPERSEDED"})
+
+_LifecycleCommand = (
+    ConfirmMachineRunCommand | ReleaseMachineRunCommand | CancelMachineRunCommand
+)
+
+
+async def _load_run_for_update(db: AsyncSession, machine_run_id: int) -> MachineRun:
+    result = await db.execute(
+        select(MachineRun)
+        .where(MachineRun.id == machine_run_id)
+        .with_for_update()
+    )
+    run = result.scalar_one_or_none()
+    if run is None:
+        raise ResourceStateNotFoundError(
+            "machine_run_not_found", f"machine_run {machine_run_id} not found"
+        )
+    return run
+
+
+async def _load_run_reservation_for_update(
+    db: AsyncSession, machine_run_id: int
+) -> ExecutionTaskMachineReservation:
+    result = await db.execute(
+        select(ExecutionTaskMachineReservation)
+        .where(ExecutionTaskMachineReservation.machine_run_id == machine_run_id)
+        .with_for_update()
+    )
+    row = result.scalar_one_or_none()
+    if row is None:
+        raise ResourceStateNotFoundError(
+            "reservation_not_found",
+            f"run-owned reservation missing for machine_run {machine_run_id}",
+        )
+    return row
+
+
+def _assert_coupled(
+    run: MachineRun, reservation: ExecutionTaskMachineReservation
+) -> None:
+    if run.status != reservation.status or run.version != reservation.version:
+        raise ResourceStateWriteError(
+            "run_reservation_state_mismatch",
+            f"run status={run.status!r} v={run.version} "
+            f"reservation status={reservation.status!r} v={reservation.version}",
+        )
+
+
+async def _lifecycle_idempotent_replay(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: _LifecycleCommand,
+    actor_user_id: str,
+    operation: str,
+    target_status: str,
+) -> CreateMachineRunResult | None:
+    tr = await _get_run_transition_by_idempotency(db, command.idempotency_key)
+    if tr is None:
+        return None
+    match = (
+        tr.operation == operation
+        and tr.machine_run_id == machine_run_id
+        and tr.previous_version == command.expected_version
+        and tr.new_status == target_status
+        and (tr.reason_code or "") == command.reason_code
+        and (tr.reason_note or None) == command.reason_note
+        and (tr.actor_user_id or "") == actor_user_id
+    )
+    if not match:
+        raise ResourceStateWriteError(
+            "idempotency_payload_conflict",
+            "idempotency_key already used with a different payload",
+        )
+    run = await db.get(MachineRun, machine_run_id)
+    if run is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "transition exists without machine_run row",
+        )
+    res_repo = ExecutionTaskMachineReservationRepository(db)
+    res_tr = await res_repo.get_transition_by_idempotency_key(command.idempotency_key)
+    if res_tr is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "reservation transition missing for idempotent lifecycle command",
+        )
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=True,
+        operation=operation,
+        previous_status=tr.previous_status,
+        previous_version=tr.previous_version,
+    )
+
+
+async def _mutate_machine_run_lifecycle(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: _LifecycleCommand,
+    actor_user_id: str,
+    operation: str,
+    reservation_operation: str,
+    target_status: str,
+    allowed_sources: frozenset[str],
+    stamp_fn: Callable[[MachineRun, ExecutionTaskMachineReservation, datetime], None],
+) -> CreateMachineRunResult:
+    replay = await _lifecycle_idempotent_replay(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation=operation,
+        target_status=target_status,
+    )
+    if replay is not None:
+        return replay
+
+    peek = await db.get(MachineRun, machine_run_id)
+    if peek is None:
+        raise ResourceStateNotFoundError(
+            "machine_run_not_found", f"machine_run {machine_run_id} not found"
+        )
+
+    async with machine_lock(int(peek.machine_id)):
+        try:
+            replay = await _lifecycle_idempotent_replay(
+                db,
+                machine_run_id=machine_run_id,
+                command=command,
+                actor_user_id=actor_user_id,
+                operation=operation,
+                target_status=target_status,
+            )
+            if replay is not None:
+                await db.commit()
+                return replay
+
+            await require_active_domain_config(db, domain=DOMAIN)
+            run = await _load_run_for_update(db, machine_run_id)
+            reservation = await _load_run_reservation_for_update(db, machine_run_id)
+            _assert_coupled(run, reservation)
+
+            if run.version != command.expected_version:
+                raise ResourceStateWriteError(
+                    "cas_stale",
+                    f"expected_version={command.expected_version} "
+                    f"current={run.version}",
+                )
+            if run.status in TERMINAL:
+                raise ResourceStateWriteError(
+                    "invalid_transition",
+                    f"terminal machine_run status {run.status}",
+                )
+            if run.status not in allowed_sources:
+                raise ResourceStateWriteError(
+                    "invalid_transition",
+                    f"{operation} not allowed from {run.status}",
+                )
+
+            prev_status = run.status
+            prev_ver = run.version
+            now = utcnow()
+            window_start = reservation.reservation_start
+            window_end = reservation.reservation_end
+            machine_id = run.machine_id
+
+            run.status = target_status
+            run.version = prev_ver + 1
+            run.updated_by = actor_user_id
+            run.updated_at = now
+            reservation.status = target_status
+            reservation.version = prev_ver + 1
+            reservation.updated_by = actor_user_id
+            reservation.updated_at = now
+            stamp_fn(run, reservation, now)
+
+            run_tr = MachineRunTransition(
+                transition_id=str(uuid.uuid4()),
+                machine_run_id=run.id,
+                machine_id=machine_id,
+                operation=operation,
+                previous_status=prev_status,
+                new_status=target_status,
+                previous_version=prev_ver,
+                new_version=run.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            db.add(run_tr)
+            await db.flush()
+
+            res_repo = ExecutionTaskMachineReservationRepository(db)
+            res_tr = ExecutionTaskMachineReservationTransition(
+                transition_id=str(uuid.uuid4()),
+                reservation_id=reservation.id,
+                owner_form=OWNER_FORM,
+                execution_plan_id=None,
+                task_key=None,
+                machine_run_id=run.id,
+                machine_id=machine_id,
+                operation=reservation_operation,
+                previous_status=prev_status,
+                new_status=target_status,
+                previous_start=window_start,
+                previous_end=window_end,
+                new_start=window_start,
+                new_end=window_end,
+                previous_version=prev_ver,
+                new_version=reservation.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            await res_repo.add_transition(res_tr)
+            await db.commit()
+        except ResourceStateWriteError:
+            await db.rollback()
+            raise
+        except Exception:
+            await db.rollback()
+            raise
+
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=run_tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=False,
+        operation=operation,
+        previous_status=prev_status,
+        previous_version=prev_ver,
+    )
+
+
+async def confirm_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: ConfirmMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    def stamp(
+        run: MachineRun, reservation: ExecutionTaskMachineReservation, _now: datetime
+    ) -> None:
+        return None
+
+    return await _mutate_machine_run_lifecycle(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation="CONFIRM_MACHINE_RUN",
+        reservation_operation="CONFIRM_RESERVATION",
+        target_status="RESERVED",
+        allowed_sources=frozenset({"HELD"}),
+        stamp_fn=stamp,
+    )
+
+
+async def release_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: ReleaseMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    def stamp(
+        run: MachineRun, reservation: ExecutionTaskMachineReservation, now: datetime
+    ) -> None:
+        run.released_at = now
+        run.released_by = actor_user_id
+        reservation.released_at = now
+        reservation.released_by = actor_user_id
+
+    return await _mutate_machine_run_lifecycle(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation="RELEASE_MACHINE_RUN",
+        reservation_operation="RELEASE_RESERVATION",
+        target_status="RELEASED",
+        allowed_sources=frozenset({"RESERVED"}),
+        stamp_fn=stamp,
+    )
+
+
+async def cancel_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: CancelMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    def stamp(
+        run: MachineRun, reservation: ExecutionTaskMachineReservation, now: datetime
+    ) -> None:
+        run.cancelled_at = now
+        run.cancelled_by = actor_user_id
+        reservation.cancelled_at = now
+        reservation.cancelled_by = actor_user_id
+
+    return await _mutate_machine_run_lifecycle(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation="CANCEL_MACHINE_RUN",
+        reservation_operation="CANCEL_RESERVATION",
+        target_status="CANCELLED",
+        allowed_sources=frozenset({"HELD", "RESERVED"}),
+        stamp_fn=stamp,
     )
