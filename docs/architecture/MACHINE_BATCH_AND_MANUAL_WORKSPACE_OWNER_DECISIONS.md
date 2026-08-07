@@ -12,6 +12,7 @@
 MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISION_PACKAGE = PASS
 OWNER_DECISIONS_CONFIRMED = 6_OF_6
 MACHINE_RUN_CONTRACT = FINALIZED_CONCEPTUALLY
+MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 MANUAL_WORKSPACE_CLASSES = FINALIZED
 WORKSPACE_SHARING_POLICY = CONDITIONAL
 HYBRID_WORKCENTER_POLICY = FINALIZED
@@ -135,6 +136,10 @@ MACHINE_RUN
 
 **Reuse:** Machine Reservation exclusivity (existing). **Do not** invent a parallel exclusive-time system.  
 **Gap:** no production MACHINE_RUN entity yet — Intake material nesting is **not** this contract.
+
+**Readiness (docs-only, 2026-08-07):** ownership, `machine_runs.reservation_id` relation, participant model, multi-plan, status/CAS/schema gap finalized in  
+`docs/architecture/MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS.md`.  
+**Still not authorized:** ORM, migration, grouping runtime, Reservation rewrite for run ownership.
 
 ---
 
@@ -273,8 +278,11 @@ QA_MUTATIONS = 0
 
 ```text
 TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT = PASS
-RECOMMENDED_NEXT_SLICE = TASK_RESOURCE_REQUIREMENT_READONLY_PROJECTION
+TASK_RESOURCE_REQUIREMENT_PROJECTION = PASS
+FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
+MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
+RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Readonly **contract** is documented. No runtime projection or MACHINE_RUN implementation is authorized without a separate Owner GO.
+Readonly contract, projection, and face CNC demand stamps are PASS. MACHINE_RUN **runtime** remains unauthorized without a separate Owner GO.

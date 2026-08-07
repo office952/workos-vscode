@@ -368,6 +368,7 @@ VECTOR_PREP_DURATION_E2E = PASS
 PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS = PASS
 FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
+MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 MACHINE_RUN = NOT_IMPLEMENTED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
@@ -389,16 +390,19 @@ Task resource contract: `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CO
 Source gap + pilot: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SELECTION.md`  
 Face CNC decisions: `docs/architecture/FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS.md`  
 Owner machine/workspace package: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
+MACHINE_RUN readiness: `docs/architecture/MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS.md`  
 Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`  
-Face CNC E2E worklog: `docs/worklog/realignment/2026-08-07_face_cnc_cut_machine_requirement_e2e_completeness.md`
+Face CNC E2E worklog: `docs/worklog/realignment/2026-08-07_face_cnc_cut_machine_requirement_e2e_completeness.md`  
+MACHINE_RUN readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_schema_and_contract_readiness.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
+- MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
 
 **Next (future candidate only — not started):**  
-CNC duration contract, MACHINE_RUN, or people/workspace — only with a separate Owner GO.
+MACHINE_RUN runtime/schema implementation, CNC duration contract, or people/workspace — only with a separate Owner GO.
 
 ---
 

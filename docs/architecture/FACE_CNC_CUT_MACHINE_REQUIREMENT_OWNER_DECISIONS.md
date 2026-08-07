@@ -21,6 +21,7 @@ BATCH_ELIGIBLE = true
 BATCH_ELIGIBLE_MEANING = MAY_PARTICIPATE_IN_FUTURE_SHARED_CNC_RUN
 MACHINE_ID_SELECTION = DEFERRED_TO_RESERVATION
 MACHINE_RUN = NOT_IMPLEMENTED
+MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 BATCH_GROUPING = NOT_IMPLEMENTED
 NEXT_PILOT_FIELDS = machine_capability_code · resource_mode · batch_eligible
 RUNTIME_IMPLEMENTATION = E2E_COMPLETE_FOR_THREE_FIELDS
@@ -277,7 +278,11 @@ No frontend/Mobile
 
 ```text
 FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
+MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 ```
 
-Candidates (separate Owner GO only): CNC planning duration · MACHINE_RUN · people/workspace.
+Three stamped fields prove `MAY_JOIN_FUTURE_MACHINE_RUN` only — not auto-grouping.  
+MACHINE_RUN contract readiness: `docs/architecture/MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS.md`.
+
+Candidates (separate Owner GO only): MACHINE_RUN runtime/schema · CNC planning duration · people/workspace.
