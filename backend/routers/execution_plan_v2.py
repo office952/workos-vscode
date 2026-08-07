@@ -27,6 +27,7 @@ from schemas.resource_state_machine_run import (
     CreateMachineRunCommand,
     CreateMachineRunResult,
     ReleaseMachineRunCommand,
+    RescheduleMachineRunCommand,
 )
 from schemas.resource_state_reservation import (
     CancelReservationCommand,
@@ -84,6 +85,7 @@ from services.machine_run_command_service import (
     confirm_machine_run,
     create_machine_run,
     release_machine_run,
+    reschedule_machine_run,
 )
 from services.execution_task_schedule_command_service import (
     cancel_schedule,
@@ -618,6 +620,30 @@ async def post_cancel_machine_run(
     """CANCEL_MACHINE_RUN — HELD|RESERVED→CANCELLED (isolated; do not call against QA)."""
     try:
         return await cancel_machine_run(
+            db,
+            machine_run_id=machine_run_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/machine-runs/{machine_run_id}/reschedule",
+    response_model=CreateMachineRunResult,
+)
+async def post_reschedule_machine_run(
+    machine_run_id: int,
+    body: RescheduleMachineRunCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_run.manage")
+    ),
+) -> CreateMachineRunResult:
+    """RESCHEDULE_MACHINE_RUN — same status/machine; new window (isolated; not QA)."""
+    try:
+        return await reschedule_machine_run(
             db,
             machine_run_id=machine_run_id,
             command=body,

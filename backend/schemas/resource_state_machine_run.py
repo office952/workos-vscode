@@ -13,6 +13,7 @@ MachineRunOperation = Literal[
     "CONFIRM_MACHINE_RUN",
     "RELEASE_MACHINE_RUN",
     "CANCEL_MACHINE_RUN",
+    "RESCHEDULE_MACHINE_RUN",
 ]
 ParticipantStatus = Literal["ACTIVE", "REMOVED"]
 ReservationStatus = Literal[
@@ -70,6 +71,19 @@ class CancelMachineRunCommand(BaseModel):
     correlation_id: str | None = Field(default=None, max_length=64)
 
 
+class RescheduleMachineRunCommand(BaseModel):
+    reservation_start: datetime
+    reservation_end: datetime
+    timezone: str = Field(..., min_length=1, max_length=64)
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_reschedule", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
 class MachineRunParticipantResult(BaseModel):
     execution_plan_id: int
     task_key: str
@@ -78,7 +92,7 @@ class MachineRunParticipantResult(BaseModel):
 
 
 class CreateMachineRunResult(BaseModel):
-    """Shared response for CREATE and reservation-lifecycle MACHINE_RUN commands."""
+    """Shared response for CREATE, lifecycle, and RESCHEDULE MACHINE_RUN commands."""
 
     machine_run_id: int
     status: MachineRunStatus

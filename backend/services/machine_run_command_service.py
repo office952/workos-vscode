@@ -1,6 +1,6 @@
-"""MACHINE_RUN commands — CREATE + CONFIRM/RELEASE/CANCEL reservation lifecycle.
+"""MACHINE_RUN commands — CREATE + reservation lifecycle + RESCHEDULE.
 
-No ADD/REMOVE participants, RESCHEDULE, START/COMPLETE, or auto-batch.
+No ADD/REMOVE participants, machine reassignment, START/COMPLETE, or auto-batch.
 RESERVED means machine commitment confirmed — not shop-floor RUNNING.
 """
 
@@ -26,6 +26,7 @@ from schemas.resource_state_machine_run import (
     CreateMachineRunResult,
     MachineRunParticipantResult,
     ReleaseMachineRunCommand,
+    RescheduleMachineRunCommand,
 )
 from services.execution_task_machine_reservation_repository import (
     ExecutionTaskMachineReservationRepository,
@@ -980,4 +981,219 @@ async def cancel_machine_run(
         target_status="CANCELLED",
         allowed_sources=frozenset({"HELD", "RESERVED"}),
         stamp_fn=stamp,
+    )
+
+
+# ---------------------------------------------------------------------------
+# RESCHEDULE — same machine / participants / status; new window only
+# ---------------------------------------------------------------------------
+
+OPEN_RESCHEDULE = frozenset({"HELD", "RESERVED"})
+
+
+async def _reschedule_idempotent_replay(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: RescheduleMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult | None:
+    tr = await _get_run_transition_by_idempotency(db, command.idempotency_key)
+    if tr is None:
+        return None
+    match = (
+        tr.operation == "RESCHEDULE_MACHINE_RUN"
+        and tr.machine_run_id == machine_run_id
+        and tr.previous_version == command.expected_version
+        and tr.previous_status == tr.new_status
+        and tr.new_status in OPEN_RESCHEDULE
+        and (tr.reason_code or "") == command.reason_code
+        and (tr.reason_note or None) == command.reason_note
+        and (tr.actor_user_id or "") == actor_user_id
+    )
+    if not match:
+        raise ResourceStateWriteError(
+            "idempotency_payload_conflict",
+            "idempotency_key already used with a different payload",
+        )
+    res_repo = ExecutionTaskMachineReservationRepository(db)
+    res_tr = await res_repo.get_transition_by_idempotency_key(command.idempotency_key)
+    if res_tr is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "reservation transition missing for idempotent RESCHEDULE",
+        )
+    if (
+        dt_key(res_tr.new_start) != dt_key(command.reservation_start)
+        or dt_key(res_tr.new_end) != dt_key(command.reservation_end)
+        or res_tr.operation != "RESCHEDULE_RESERVATION"
+    ):
+        raise ResourceStateWriteError(
+            "idempotency_payload_conflict",
+            "idempotency_key already used with a different payload",
+        )
+    run = await db.get(MachineRun, machine_run_id)
+    if run is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "transition exists without machine_run row",
+        )
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=True,
+        operation="RESCHEDULE_MACHINE_RUN",
+        previous_status=tr.previous_status,
+        previous_version=tr.previous_version,
+    )
+
+
+async def reschedule_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: RescheduleMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    _validate_window(command.reservation_start, command.reservation_end)
+
+    replay = await _reschedule_idempotent_replay(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+    )
+    if replay is not None:
+        return replay
+
+    peek = await db.get(MachineRun, machine_run_id)
+    if peek is None:
+        raise ResourceStateNotFoundError(
+            "machine_run_not_found", f"machine_run {machine_run_id} not found"
+        )
+
+    async with machine_lock(int(peek.machine_id)):
+        try:
+            replay = await _reschedule_idempotent_replay(
+                db,
+                machine_run_id=machine_run_id,
+                command=command,
+                actor_user_id=actor_user_id,
+            )
+            if replay is not None:
+                await db.commit()
+                return replay
+
+            await require_active_domain_config(db, domain=DOMAIN)
+            run = await _load_run_for_update(db, machine_run_id)
+            reservation = await _load_run_reservation_for_update(db, machine_run_id)
+            _assert_coupled(run, reservation)
+
+            if run.version != command.expected_version:
+                raise ResourceStateWriteError(
+                    "cas_stale",
+                    f"expected_version={command.expected_version} "
+                    f"current={run.version}",
+                )
+            if run.status in TERMINAL or run.status not in OPEN_RESCHEDULE:
+                raise ResourceStateWriteError(
+                    "invalid_transition",
+                    f"RESCHEDULE_MACHINE_RUN not allowed from {run.status}",
+                )
+
+            res_repo = ExecutionTaskMachineReservationRepository(db)
+            overlap = await res_repo.find_overlapping_open(
+                machine_id=run.machine_id,
+                start=command.reservation_start,
+                end=command.reservation_end,
+                exclude_id=reservation.id,
+            )
+            if overlap is not None:
+                raise ResourceStateWriteError(
+                    "overlap_conflict",
+                    f"overlaps reservation id={overlap.id}",
+                )
+
+            prev_status = run.status
+            prev_ver = run.version
+            prev_start = reservation.reservation_start
+            prev_end = reservation.reservation_end
+            now = utcnow()
+
+            reservation.reservation_start = command.reservation_start
+            reservation.reservation_end = command.reservation_end
+            reservation.timezone = command.timezone
+            reservation.version = prev_ver + 1
+            reservation.updated_by = actor_user_id
+            reservation.updated_at = now
+
+            run.timezone = command.timezone
+            run.version = prev_ver + 1
+            run.updated_by = actor_user_id
+            run.updated_at = now
+            # status unchanged on both
+
+            run_tr = MachineRunTransition(
+                transition_id=str(uuid.uuid4()),
+                machine_run_id=run.id,
+                machine_id=run.machine_id,
+                operation="RESCHEDULE_MACHINE_RUN",
+                previous_status=prev_status,
+                new_status=prev_status,
+                previous_version=prev_ver,
+                new_version=run.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            db.add(run_tr)
+            await db.flush()
+
+            res_tr = ExecutionTaskMachineReservationTransition(
+                transition_id=str(uuid.uuid4()),
+                reservation_id=reservation.id,
+                owner_form=OWNER_FORM,
+                execution_plan_id=None,
+                task_key=None,
+                machine_run_id=run.id,
+                machine_id=run.machine_id,
+                operation="RESCHEDULE_RESERVATION",
+                previous_status=prev_status,
+                new_status=prev_status,
+                previous_start=prev_start,
+                previous_end=prev_end,
+                new_start=command.reservation_start,
+                new_end=command.reservation_end,
+                previous_version=prev_ver,
+                new_version=reservation.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            await res_repo.add_transition(res_tr)
+            await db.commit()
+        except ResourceStateWriteError:
+            await db.rollback()
+            raise
+        except Exception:
+            await db.rollback()
+            raise
+
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=run_tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=False,
+        operation="RESCHEDULE_MACHINE_RUN",
+        previous_status=prev_status,
+        previous_version=prev_ver,
     )
