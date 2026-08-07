@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_RESERVATION_GRAIN_SCHEMA_FOUNDATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `dbbc7015`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `62ba62e00e58cf24b1117022288cd71e3c82a41f`  
 **Verdict:** **PASS**  
 **Scope:** schema + ORM + read compatibility · **no MACHINE_RUN command runtime** · QA not migrated
 
