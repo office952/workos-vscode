@@ -10,9 +10,10 @@
 
 ```text
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
-EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+EXECUTION_STATUS_SCHEMA_FOUNDATION = IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
 CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
 QA_ALEMBIC = s66_machine_run_reservation_grain
+QA_SQLITE_BYTE_DRIFT_CLOSURE = PARTIAL_BLOCKED
 MACHINE_RUN_STATUS_RUNNING = SUPPORTED
 MACHINE_RUN_STATUS_COMPLETED = SUPPORTED
 STARTED_AT = IMPLEMENTED_NULLABLE
@@ -312,9 +313,12 @@ actual_runtime_minutes NOT persisted (derive later from completed_at - started_a
 ```text
 SCHEMA_STATUS_EXPANSION_REQUIRED = NO
 SCHEMA_ACTUAL_RUNTIME_COLUMNS_REQUIRED = NO
-EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+EXECUTION_STATUS_SCHEMA_FOUNDATION =
+  IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
 START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
 QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+QA_SQLITE_BYTE_DRIFT_CLOSURE = PARTIAL_BLOCKED
+S67_QA_ROLLOUT = BLOCKED
 ```
 
 Phase-aware `_assert_coupled` and START/COMPLETE writers remain **not implemented**.  
@@ -482,16 +486,24 @@ NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
 ```text
 QA Alembic = s66_machine_run_reservation_grain
 CODE Alembic head = s67_machine_run_execution_status
-QA SHA (post schema-foundation GO) = 7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+QA SHA (current) = 7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
 prior tip SHA = b7950463b2956e779275e14fa81ee742a681ccee2e9f338a9db1310e1b740fb1
 machine_runs / participants / transitions / reservations = 0
 assignment transitions = 7
 foreign_key_check = 0
-QA_SCHEMA_MUTATIONS = 0
-QA_DATA_MUTATIONS = 0
+S67_ARTIFACTS_IN_QA = 0
 ```
 
-SHA byte drift vs prior tip without alembic/count change is recorded; this GO did not upgrade QA.
+Byte-drift closure (`AUTHORIZE_QA_SQLITE_BYTE_DRIFT_CLOSURE_BEFORE_S67_ROLLOUT`):
+
+```text
+DRIFT_CLASSIFICATION = LOGICAL_QA_STATE_DRIFT
+ROOT_CAUSE = PUT /api/v1/entities/intake_requests/50
+  delivery_type='delivery_standard' @ 2026-08-07 22:10:46.650895
+PROTECTED_MACHINE_RUN_BASELINE_DIFF = NONE
+S67_QA_ROLLOUT = BLOCKED
+worklog = docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md
+```
 
 ---
 

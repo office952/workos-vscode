@@ -381,9 +381,15 @@ RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
-MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = PASS
+MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION =
+  IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
+QA_SQLITE_BYTE_DRIFT_CLOSURE_BEFORE_S67_ROLLOUT = PARTIAL_BLOCKED
 CODE_ALEMBIC = s67_machine_run_execution_status
 QA_ALEMBIC = s66_machine_run_reservation_grain
+QA_SHA_CURRENT = 7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+QA_SHA_PRIOR_TIP = b7950463b2956e779275e14fa81ee742a681ccee2e9f338a9db1310e1b740fb1
+QA_DRIFT_CAUSE = live_PUT_intake_requests_50_delivery_type
+S67_QA_ROLLOUT = BLOCKED
 MACHINE_RUN = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION
 MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_ADD_REMOVE_IMPLEMENTED_IN_CODE
 MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE_PLUS_PARTICIPANT_MUTATION
@@ -450,7 +456,9 @@ Execution status schema foundation worklog: `docs/worklog/realignment/2026-08-07
 - Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS**; **execution lifecycle readiness PASS**; **s67 execution status schema foundation PASS in code** (`RUNNING`/`COMPLETED` + nullable `started_at`/`completed_at`; Reservation vocabulary unchanged; START/COMPLETE runtime not implemented; QA still on s66).
 
 **Next (future candidate only — not started):**  
-Controlled **QA s67 schema rollout**, then `START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` (phase-aware coupling + RELEASE-after-COMPLETED), or machine reassignment / UI / auto-batch — only with a separate Owner GO.
+Owner must accept the new QA SHA baseline (intake_requests/50 delivery_type write proven) or otherwise clear `PARTIAL_BLOCKED` before **controlled QA s67 schema rollout**. Then `START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` — only with separate Owner GOs.
+
+Drift closure worklog: `docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md`
 
 ---
 
