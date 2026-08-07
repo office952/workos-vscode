@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `836964d9`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `a8cfcde6`  
 **Verdict:** **PASS**  
 **Scope:** docs-only · no runtime · no QA writes
 
