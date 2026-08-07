@@ -27,13 +27,17 @@ MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS = PASS
 CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 CODE_ALEMBIC_HEAD = s66_machine_run_reservation_grain
 QA_ALEMBIC = s66_machine_run_reservation_grain
 RUNTIME_IMPLEMENTATION = VERIFIED
-MACHINE_RUN_RUNTIME = CREATE_PLUS_RESERVATION_LIFECYCLE
-MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE
+MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_IMPLEMENTED_IN_CODE
+MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE
 AUTO_BATCH = NOT_IMPLEMENTED
 CONFIRM_RELEASE_CANCEL = VERIFIED
+RESCHEDULE_MACHINE_RUN = VERIFIED
+PARTICIPANT_MUTATION = READINESS_ONLY
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -451,14 +455,14 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 
 ## 17. Implementation gap list (for a future Owner GO)
 
-1. **Atomic schema slice:** MACHINE_RUN tables + Reservation OPTION_B owner grain (see grain readiness).
-2. Reservation writer RUN owner form + XOR + CREATE fingerprint without `task_key`.
-3. Domain config `MACHINE_RUN` + orchestration CREATE_RUN (run + reservation + participants).
-4. R6 union path: task-owned ∪ participant→run→reservation.
-5. Commands: ADD/REMOVE_PARTICIPANT, CONFIRM, CANCEL, RELEASE (after create).
-6. Phase B (later): consume union path — not authorized now.
-7. Grouping service (eligibility beyond the three stamps) — separate GO.
-8. Optional attach of nesting/program payload — separate decision.
+1. ~~Atomic schema slice + OPTION_B grain~~ → s66 PASS.
+2. ~~CREATE_RUN orchestration + R6 union~~ → runtime PASS.
+3. ~~CONFIRM / RELEASE / CANCEL / RESCHEDULE~~ → runtime PASS.
+4. **ADD/REMOVE_PARTICIPANT** — readiness PASS; runtime **not started**.
+5. Phase B (later): consume union path — not authorized now.
+6. Grouping service (eligibility beyond the three stamps) — separate GO.
+7. Optional attach of nesting/program payload — separate decision.
+8. Machine reassignment / START/COMPLETE — separate GO.
 
 ```text
 RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
@@ -466,8 +470,10 @@ MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS = PASS
 CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
-MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE
+PARTICIPANT_MUTATION = READINESS_ONLY
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 NEXT_TASK = NOT_AUTHORIZED
 ```
@@ -475,4 +481,5 @@ NEXT_TASK = NOT_AUTHORIZED
 Command readiness: `docs/architecture/MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS.md`  
 CREATE implementation worklog: `docs/worklog/realignment/2026-08-07_create_machine_run_minimal_runtime_implementation.md`  
 Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`  
-Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`
+Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
+Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`

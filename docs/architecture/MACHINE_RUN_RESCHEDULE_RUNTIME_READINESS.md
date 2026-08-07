@@ -29,6 +29,7 @@ RUNTIME_IMPLEMENTATION = VERIFIED
 QA_MUTATIONS = 0
 CREATE_MACHINE_RUN = PASS
 CONFIRM_RELEASE_CANCEL = PASS
+MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 AUTO_BATCH = NOT_IMPLEMENTED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -375,16 +376,18 @@ RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 API = POST …/machine-runs/{id}/reschedule
 ```
 
-**Still out (separate Owner GO):**
+**Still out of RESCHEDULE (separate Owner GOs):**
 
 ```text
 machine_id change
-ADD/REMOVE participants
+ADD/REMOVE participants (readiness PASS elsewhere; runtime not started)
 SUPERSEDE run
 RUNNING/COMPLETED
 auto-batch / nesting / UI
 QA operational writes
 ```
+
+Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`
 
 ```text
 RUNTIME_IMPLEMENTATION = VERIFIED
