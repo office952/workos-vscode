@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `1468e2d3`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `5addeb57`  
 **Verdict:** **PASS**  
 **Scope:** docs-only · no runtime · no QA writes
 
