@@ -384,6 +384,11 @@ MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
 MACHINE_RUN_EXECUTION_STATUS_QA_S67_ROLLOUT = PASS
 START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_SHOP_FLOOR_UI_READINESS_AND_PLACEMENT_AUDIT = PASS
+MACHINE_RUN_READ_API = INSUFFICIENT
+UI_BLOCKER = MACHINE_RUN_READ_MODEL/API_MISSING
+PRIMARY_UI_LOCATION = /execution/machine-runs
+NEW_PAGE_REQUIRED = YES
 CODE_ALEMBIC = s67_machine_run_execution_status
 QA_ALEMBIC = s67_machine_run_execution_status
 QA_BASELINE_ACCEPTED =
@@ -424,7 +429,8 @@ QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 FRONTEND_START_COMPLETE_UI = NO
-RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
+MACHINE_RUN_SHOP_FLOOR_UI = NOT_STARTED
+RECOMMENDED_NEXT_SLICE = MACHINE_RUN_OPERATOR_READ_API
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -455,17 +461,21 @@ Execution lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_mach
 Execution status schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_schema_foundation.md`  
 QA byte-drift closure worklog: `docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md`  
 Controlled QA s67 rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_controlled_qa_s67_rollout.md`  
-START/COMPLETE runtime worklog: `docs/worklog/realignment/2026-08-07_start_complete_machine_run_runtime_implementation.md`
+START/COMPLETE runtime worklog: `docs/worklog/realignment/2026-08-07_start_complete_machine_run_runtime_implementation.md`  
+Shop-floor UI readiness audit: `docs/architecture/MACHINE_RUN_SHOP_FLOOR_UI_READINESS_AND_PLACEMENT_AUDIT.md`  
+UI readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_shop_floor_ui_readiness_and_placement_audit.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67**; **START/COMPLETE runtime PASS** (phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute`; no task/session side effects; QA runtime writes = 0; UI not implemented).
+- Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67**; **START/COMPLETE runtime PASS** (phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute`; no task/session side effects; QA runtime writes = 0).
+- **Shop-floor UI readiness PASS:** primary placement `/execution/machine-runs` (new page YES); secondary chips on ExecutionDetail/Ops-Graph; Utilaje LATER; **read/list API missing** → UI blocked until `MACHINE_RUN_OPERATOR_READ_API`.
 
 **Next (future candidate only — not started):**  
-PAUSE/RESUME · task/session coupling · Phase B · shop-floor UI for START/COMPLETE — only with separate Owner GO.
+`MACHINE_RUN_OPERATOR_READ_API` first, then shop-floor UI implementation — only with separate Owner GO.  
+Still deferred: PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile.
 
 ---
 
