@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_ACCEPT_CURRENT_QA_BASELINE_AND_CONTROLLED_S67_ROLLOUT`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `7cee40b1`  
-**Tip HEAD:** _(filled after tip commit)_  
+**Tip HEAD:** `88e30810`  
 **Verdict:** **PASS**  
 **Scope:** accept QA SHA baseline · stop writers · backup · alembic upgrade s66→s67 · read-only smoke · isolated lifecycle regression · docs · no START/COMPLETE · no push
 
