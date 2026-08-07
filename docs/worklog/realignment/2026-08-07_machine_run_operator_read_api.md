@@ -4,6 +4,7 @@
 **Date:** 2026-08-07  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `4ae976e7`  
+**Tip HEAD:** `1b92d399` · impl `c82a30cc`  
 **Canonical doc:** `docs/architecture/MACHINE_RUN_OPERATOR_READ_API.md`
 
 ---
