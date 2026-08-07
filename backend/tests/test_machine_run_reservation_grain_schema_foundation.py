@@ -49,6 +49,7 @@ from schemas.resource_state_configuration import ResourceDomainConfigurationComm
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 S65 = "s65_workcenter_capacity_source"
 S66 = "s66_machine_run_reservation_grain"
+S67 = "s67_machine_run_execution_status"
 LED_TASK = "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters"
 OTHER_TASK = "other-task"
 
@@ -145,8 +146,10 @@ def _seed_plan_machine(engine) -> None:
 def test_alembic_single_head_s66_ancestry():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == [S66]
+    # Head advanced to s67; s66 remains on the linear chain after s65.
+    assert script.get_heads() == [S67]
     assert script.get_revision(S66).down_revision == S65
+    assert script.get_revision(S67).down_revision == S66
 
 
 def test_machine_run_tables_alembic_owned():
@@ -161,7 +164,7 @@ def test_fresh_full_chain_s66(tmp_path: Path):
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
     engine = _sync_engine(db)
-    assert _revision(engine) == S66
+    assert _revision(engine) == S67
     with engine.connect() as conn:
         assert int(conn.execute(text("PRAGMA foreign_keys")).scalar_one()) == 1
         assert conn.execute(text("PRAGMA foreign_key_check")).fetchall() == []

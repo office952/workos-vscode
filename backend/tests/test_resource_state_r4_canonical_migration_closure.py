@@ -32,6 +32,7 @@ S63 = "s63_execution_task_assignment_transitions"
 S64 = "s64_resource_state_persistence"
 S65 = "s65_workcenter_capacity_source"
 S66 = "s66_machine_run_reservation_grain"
+S67 = "s67_machine_run_execution_status"
 ASSIGN_TABLE = "execution_task_assignment_transitions"
 
 
@@ -151,7 +152,8 @@ def _seed_minimal(engine) -> str:
 def test_alembic_single_head_ancestry():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
-    assert script.get_heads() == [S66]
+    assert script.get_heads() == [S67]
+    assert script.get_revision(S67).down_revision == S66
     assert script.get_revision(S66).down_revision == S65
     assert script.get_revision(S65).down_revision == S64
     assert script.get_revision(S64).down_revision == S63
@@ -172,7 +174,7 @@ def test_fresh_full_chain_and_fingerprint(tmp_path: Path):
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
     engine = _sync_engine(db)
-    assert _revision(engine) == S66
+    assert _revision(engine) == S67
     assert _pragma_fk(engine) == 1
     with engine.connect() as conn:
         tables = set(inspect(conn).get_table_names())

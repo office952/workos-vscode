@@ -130,7 +130,7 @@ async def c1(tmp_path: Path):
             {"tj": json.dumps(tasks)},
         )
         rev = conn.execute(text("select version_num from alembic_version")).scalar()
-        assert rev == "s66_machine_run_reservation_grain"
+        assert rev == "s67_machine_run_execution_status"
     sync.dispose()
     engine = create_async_engine(url)
     factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

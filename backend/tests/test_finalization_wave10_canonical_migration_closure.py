@@ -153,8 +153,11 @@ def test_migration_graph_single_head_and_s63_predecessor():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
     heads = script.get_heads()
-    # Head advanced to s66 (MACHINE_RUN grain); s64/s65 remain on the linear chain.
-    assert heads == ["s66_machine_run_reservation_grain"], heads
+    # Head advanced to s67 (execution status); s64/s65/s66 remain on the linear chain.
+    assert heads == ["s67_machine_run_execution_status"], heads
+    rev67 = script.get_revision("s67_machine_run_execution_status")
+    assert rev67 is not None
+    assert rev67.down_revision == "s66_machine_run_reservation_grain"
     rev66 = script.get_revision("s66_machine_run_reservation_grain")
     assert rev66 is not None
     assert rev66.down_revision == "s65_workcenter_capacity_source"
@@ -183,7 +186,7 @@ def test_scenario_a_fresh_empty_database_upgrade_head(tmp_path: Path):
     assert proc.returncode == 0, proc.stderr + proc.stdout
 
     engine = _sync_engine(db)
-    assert _current_revision(engine) == "s66_machine_run_reservation_grain"
+    assert _current_revision(engine) == "s67_machine_run_execution_status"
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
         cols = {c["name"] for c in inspect(conn).get_columns(TABLE)}
@@ -221,7 +224,7 @@ def test_scenario_b_prior_revision_to_head_backfill(tmp_path: Path):
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == "s66_machine_run_reservation_grain"
+    assert _current_revision(engine) == "s67_machine_run_execution_status"
 
     with engine.connect() as conn:
         assert TABLE in set(inspect(conn).get_table_names())
@@ -267,7 +270,7 @@ def test_scenario_collision_create_all_table_then_alembic_upgrade(tmp_path: Path
 
     proc = _alembic_cmd(url, "upgrade", "head")
     assert proc.returncode == 0, proc.stderr + proc.stdout
-    assert _current_revision(engine) == "s66_machine_run_reservation_grain"
+    assert _current_revision(engine) == "s67_machine_run_execution_status"
 
     names = _index_names(engine, TABLE)
     canonical = {n for n, _ in CANONICAL_ASSIGNMENT_TRANSITION_INDEXES}

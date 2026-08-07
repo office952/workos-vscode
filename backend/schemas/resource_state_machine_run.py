@@ -7,7 +7,15 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-MachineRunStatus = Literal["HELD", "RESERVED", "CANCELLED", "RELEASED", "SUPERSEDED"]
+MachineRunStatus = Literal[
+    "HELD",
+    "RESERVED",
+    "RUNNING",
+    "COMPLETED",
+    "CANCELLED",
+    "RELEASED",
+    "SUPERSEDED",
+]
 MachineRunOperation = Literal[
     "CREATE_MACHINE_RUN",
     "CONFIRM_MACHINE_RUN",

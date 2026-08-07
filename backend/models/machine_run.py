@@ -1,4 +1,4 @@
-"""MACHINE_RUN schema (s66) + CREATE_MACHINE_RUN runtime (create-only).
+"""MACHINE_RUN schema (s66 + s67 execution status columns).
 
 Ownership semantic (D4): a MACHINE_RUN owns exactly one Machine Reservation.
 DB link is one-direction to avoid circular FK:
@@ -7,7 +7,9 @@ DB link is one-direction to avoid circular FK:
 Lookup: reservation WHERE machine_run_id = run.id
 Reservation lifecycle CONFIRM/RELEASE/CANCEL/RESCHEDULE and HELD-only
 ADD/REMOVE participant (soft REMOVED) are implemented.
-Machine reassignment and shop-floor START/COMPLETE are not.
+RUNNING/COMPLETED statuses + started_at/completed_at are schema-ready (s67);
+START/COMPLETE command runtime is not.
+Machine reassignment is not.
 """
 
 from __future__ import annotations
@@ -32,10 +34,13 @@ REASON_NOTE_MAX_LEN = 500
 MACHINE_RUN_STATUSES = (
     "HELD",
     "RESERVED",
+    "RUNNING",
+    "COMPLETED",
     "CANCELLED",
     "RELEASED",
     "SUPERSEDED",
 )
+# Commitment-open statuses (execution RUNNING/COMPLETED are separate).
 MACHINE_RUN_OPEN_STATUSES = ("HELD", "RESERVED")
 
 PARTICIPANT_STATUSES = ("ACTIVE", "REMOVED")
@@ -46,7 +51,8 @@ class MachineRun(Base):
     __table_args__ = (
         UniqueConstraint("idempotency_key", name="uq_machine_run_idempotency"),
         CheckConstraint(
-            "status IN ('HELD', 'RESERVED', 'CANCELLED', 'RELEASED', 'SUPERSEDED')",
+            "status IN ('HELD', 'RESERVED', 'RUNNING', 'COMPLETED', "
+            "'CANCELLED', 'RELEASED', 'SUPERSEDED')",
             name="ck_machine_run_status",
         ),
         CheckConstraint("version >= 1", name="ck_machine_run_version"),
@@ -77,6 +83,8 @@ class MachineRun(Base):
         default=datetime.now,
         onupdate=datetime.now,
     )
+    started_at = Column(DateTime(timezone=True), nullable=True)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
     cancelled_at = Column(DateTime(timezone=True), nullable=True)
     cancelled_by = Column(String(255), nullable=True)
     released_at = Column(DateTime(timezone=True), nullable=True)
