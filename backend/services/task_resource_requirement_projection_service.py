@@ -43,13 +43,14 @@ _MANUAL_WORKSPACE_WORKCENTERS: frozenset[str] = frozenset(
 _PERSON_DRIVEN_WORKCENTERS: frozenset[str] = frozenset({"WC_PREPRESS"})
 _FIELD_WORKCENTERS: frozenset[str] = frozenset({"WC_FIELD_INSTALLATION"})
 
-# Demand fields from the readonly contract that are not yet on tasks.
+# Demand fields that remain future unless stamped on the EP snapshot.
 _LATER_DEMAND_FIELDS: tuple[str, ...] = (
-    "resource_mode",
     "required_people_min",
     "workspace_class",
-    "machine_capability_code",
-    "batch_eligible",
+)
+
+_AUTHORITATIVE_MODES: frozenset[str] = frozenset(
+    {"MACHINE_BOUND", "MANUAL_WORKSPACE", "PERSON_DRIVEN", "FIELD", "UNKNOWN"}
 )
 
 _WC_LABELS: dict[str, str] = {
@@ -114,20 +115,31 @@ def soft_resource_mode_hint(workcenter_code: str | None) -> ResourceModeHint:
     return "UNKNOWN"
 
 
+def _authoritative_resource_mode(task: dict[str, Any]) -> ResourceModeHint | None:
+    """Read stamped resource_mode from EP snapshot — never invent from WC/op name."""
+    raw = task.get("resource_mode")
+    if raw is None:
+        return None
+    mode = str(raw).strip()
+    if mode not in _AUTHORITATIVE_MODES:
+        return None
+    return mode  # type: ignore[return-value]
+
+
 def _classify_status(
     *,
     task_key: str,
     workcenter_code: str | None,
     duration_known: bool,
     duration_source_known: bool,
-    mode_hint: ResourceModeHint,
+    mode_for_status: ResourceModeHint,
 ) -> ResourceRequirementsStatus:
     if not task_key:
         return "UNKNOWN"
     # Soft NOT_APPLICABLE reserved; shop volumetric tasks always need some resource story.
     if not workcenter_code and not duration_known:
         return "UNKNOWN"
-    safe_mode = mode_hint != "UNKNOWN"
+    safe_mode = mode_for_status != "UNKNOWN"
     if (
         workcenter_code
         and duration_known
@@ -168,6 +180,20 @@ def project_task_resource_requirements(
         planning_source = str(planning_source).strip() or None
 
     mode_hint = soft_resource_mode_hint(workcenter_code)
+    auth_mode = _authoritative_resource_mode(task)
+    mode_for_status: ResourceModeHint = auth_mode if auth_mode is not None else mode_hint
+
+    raw_capability = task.get("machine_capability_code")
+    machine_capability: str | None
+    if raw_capability is None or not str(raw_capability).strip():
+        machine_capability = None
+    else:
+        machine_capability = str(raw_capability).strip()
+
+    batch_eligible = task.get("batch_eligible")
+    if batch_eligible is not None and not isinstance(batch_eligible, bool):
+        batch_eligible = None
+
     duration_known = estimated is not None
     duration_source_known = planning_source is not None
 
@@ -176,7 +202,7 @@ def project_task_resource_requirements(
         workcenter_code=workcenter_code,
         duration_known=duration_known,
         duration_source_known=duration_source_known,
-        mode_hint=mode_hint,
+        mode_for_status=mode_for_status,
     )
 
     known: list[str] = []
@@ -260,6 +286,46 @@ def project_task_resource_requirements(
     else:
         unknown.append("planning_minutes_source")
 
+    if auth_mode is not None:
+        known.append("resource_mode")
+        provenance.append(
+            FieldProvenance(
+                field="resource_mode",
+                source="EXECUTION_PLAN_SNAPSHOT",
+                derived=False,
+                confidence="CONFIRMED",
+            )
+        )
+    else:
+        unknown.append("resource_mode")
+
+    if machine_capability is not None:
+        known.append("machine_capability_code")
+        provenance.append(
+            FieldProvenance(
+                field="machine_capability_code",
+                source="EXECUTION_PLAN_SNAPSHOT",
+                derived=False,
+                confidence="CONFIRMED",
+            )
+        )
+    else:
+        unknown.append("machine_capability_code")
+
+    if batch_eligible is not None:
+        known.append("batch_eligible")
+        provenance.append(
+            FieldProvenance(
+                field="batch_eligible",
+                source="EXECUTION_PLAN_SNAPSHOT",
+                derived=False,
+                confidence="CONFIRMED",
+            )
+        )
+    else:
+        unknown.append("batch_eligible")
+
+    # Soft hint remains for legacy tasks; not a substitute for authoritative resource_mode.
     if mode_hint != "UNKNOWN":
         derived.append("resource_mode_hint")
         provenance.append(
@@ -281,7 +347,7 @@ def project_task_resource_requirements(
         )
 
     for field in _LATER_DEMAND_FIELDS:
-        if field not in unknown:
+        if field not in unknown and field not in known:
             unknown.append(field)
 
     # Stable ordering for lists
@@ -297,6 +363,9 @@ def project_task_resource_requirements(
         workcenter_label=workcenter_label,
         estimated_time_minutes=estimated,
         planning_minutes_source=planning_source,
+        resource_mode=auth_mode,
+        machine_capability_code=machine_capability,
+        batch_eligible=batch_eligible,
         resource_requirements_status=status,
         resource_mode_hint=mode_hint,
         known_fields=known,

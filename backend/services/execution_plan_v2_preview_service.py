@@ -449,6 +449,17 @@ def _build_planned_tasks(
         estimated_minutes, planning_minutes_source = resolve_planning_minutes_from_aggregate_op(
             agg_op
         )
+        machine_capability_code = None
+        resource_mode = None
+        batch_eligible = None
+        if agg_op is not None:
+            machine_capability_code = getattr(agg_op, "machine_capability_code", None)
+            resource_mode = getattr(agg_op, "resource_mode", None)
+            batch_eligible = getattr(agg_op, "batch_eligible", None)
+            if isinstance(machine_capability_code, str):
+                machine_capability_code = machine_capability_code.strip() or None
+            if isinstance(resource_mode, str):
+                resource_mode = resource_mode.strip() or None
         task_warnings: list[str] = []
         if estimated_minutes is None:
             task_warnings.append(PLANNING_MINUTES_WARNING)
@@ -470,6 +481,8 @@ def _build_planned_tasks(
         planning_status = getattr(agg_op, "planning_duration_status", None) if agg_op else None
         if planning_status:
             task_provenance.append(f"planning_duration_status={planning_status}")
+        if machine_capability_code:
+            task_provenance.append("operation_machine_requirement_contract")
 
         tasks.append(
             PlannedTaskPreview(
@@ -484,6 +497,9 @@ def _build_planned_tasks(
                 estimated_minutes=estimated_minutes,
                 planning_minutes_source=planning_minutes_source,
                 machine_requirement=machine_req,
+                machine_capability_code=machine_capability_code,
+                resource_mode=resource_mode,
+                batch_eligible=batch_eligible,
                 warnings=task_warnings,
                 provenance=task_provenance,
                 frozen_identity=frozen_identity,

@@ -238,6 +238,16 @@ def materialize_operational_tasks_from_v2_envelope(
 
         resolved_wc = _machine_type_from_planned(planned) or None
         machine_req = planned.get("machine_requirement")
+        machine_capability_code = planned.get("machine_capability_code")
+        if isinstance(machine_capability_code, str):
+            machine_capability_code = machine_capability_code.strip() or None
+        resource_mode = planned.get("resource_mode")
+        if isinstance(resource_mode, str):
+            resource_mode = resource_mode.strip() or None
+        batch_eligible = planned.get("batch_eligible")
+        if batch_eligible is not None and not isinstance(batch_eligible, bool):
+            batch_eligible = None
+
         operational: dict[str, Any] = {
             "task_id": task_key,
             "source_task_key": task_key,
@@ -250,6 +260,9 @@ def materialize_operational_tasks_from_v2_envelope(
             # DEC-010: explicit workcenter field for Ops-Graph / eligibility (frozen).
             "workcenter": resolved_wc,
             "machine_requirement": machine_req if isinstance(machine_req, dict) else None,
+            "machine_capability_code": machine_capability_code,
+            "resource_mode": resource_mode,
+            "batch_eligible": batch_eligible,
             "depends_on_task_ids": dep_ids,
             "sequence_index": planned.get("sequence_index"),
             "estimated_time_minutes": estimated_time_minutes,

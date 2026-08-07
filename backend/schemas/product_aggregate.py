@@ -88,6 +88,10 @@ class ProductAggregateOperation(BaseModel):
     # DEC-010: freeze-time ORR workcenter resolution (JSON aggregate only — no DB migration).
     workcenter_resolution_status: str | None = None
     workcenter_mapping_source: str | None = None
+    # Operation Contract machine demand (not machine_id; not Reservation).
+    machine_capability_code: str | None = None
+    resource_mode: str | None = None
+    batch_eligible: bool | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None

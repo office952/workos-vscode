@@ -43,6 +43,9 @@ from services.product_aggregate_planning_duration_service import (
     apply_planning_duration_resolution,
     collect_planning_duration_facts,
 )
+from services.product_aggregate_machine_requirement_service import (
+    apply_machine_requirement_resolution,
+)
 from services.product_aggregate_active_scope_filter import filter_aggregate_by_active_scope
 from services.product_aggregate_service import ProductAggregateService
 from services.product_aggregate_workspace_composition_service import SEGMENT_NAMESPACE_SEP
@@ -406,6 +409,9 @@ async def build_frozen_component_scope(
         orr_mappings,
         active_workcenter_codes=active_wcs,
     )
+
+    # Operation Contract machine demand (capability / mode / batch_eligible).
+    aggregate = apply_machine_requirement_resolution(aggregate)
 
     # TE2E-028B: resolve formula duration from freeze-time product facts.
     duration_facts = collect_planning_duration_facts(merged_payload)

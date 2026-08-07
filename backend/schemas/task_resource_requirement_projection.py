@@ -52,6 +52,10 @@ class TaskResourceRequirementProjection(BaseModel):
     workcenter_label: str | None = None
     estimated_time_minutes: float | None = None
     planning_minutes_source: str | None = None
+    # Authoritative when stamped on EP snapshot; else null (soft hint remains separate).
+    resource_mode: ResourceModeHint | None = None
+    machine_capability_code: str | None = None
+    batch_eligible: bool | None = None
     resource_requirements_status: ResourceRequirementsStatus
     resource_mode_hint: ResourceModeHint
     known_fields: list[str] = Field(default_factory=list)

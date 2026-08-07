@@ -100,6 +100,10 @@ class PlannedTaskPreview(BaseModel):
     external_service_requirement: PlannedTaskExternalServiceRequirement | None = None
     estimated_minutes: float | None = None
     planning_minutes_source: str | None = None
+    # Operation Contract machine demand (frozen Aggregate → EP; not machine_id).
+    machine_capability_code: str | None = None
+    resource_mode: str | None = None
+    batch_eligible: bool | None = None
     warnings: list[str] = Field(default_factory=list)
     provenance: list[str] = Field(default_factory=list)
     frozen_identity: FrozenTaskIdentity | None = None

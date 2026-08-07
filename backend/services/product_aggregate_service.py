@@ -35,6 +35,9 @@ from services.canonical_template_contract_service import (
 from services.mini_module_registry_service import get_mini_module_registry_service
 from data.product_process.catalogs import is_bom_only_without_activation
 from services.product_process_aggregate_bridge import collapse_operational_alias_rules
+from services.product_aggregate_machine_requirement_service import (
+    apply_machine_requirement_resolution,
+)
 from services.template_architecture_scope import normalize_template_code, resolve_template_identity
 
 logger = logging.getLogger(__name__)
@@ -372,11 +375,12 @@ class ProductAggregateService:
 
         orr_mappings = await load_orr_mappings(self._db)
         active_wcs = await load_active_workcenter_codes(self._db)
-        return apply_workcenter_resolution_to_aggregate(
+        aggregate = apply_workcenter_resolution_to_aggregate(
             aggregate,
             orr_mappings,
             active_workcenter_codes=active_wcs,
         )
+        return apply_machine_requirement_resolution(aggregate)
 
     async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:
         from services.product_aggregate_workspace_composition_service import build_workspace_composed_aggregate
