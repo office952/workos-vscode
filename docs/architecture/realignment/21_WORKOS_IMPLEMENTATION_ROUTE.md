@@ -369,7 +369,9 @@ PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS = PASS
 FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
 MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
+MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
 MACHINE_RUN = NOT_IMPLEMENTED
+RESERVATION_SCHEMA_CHANGE = NOT_IMPLEMENTED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
@@ -391,18 +393,21 @@ Source gap + pilot: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_
 Face CNC decisions: `docs/architecture/FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS.md`  
 Owner machine/workspace package: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
 MACHINE_RUN readiness: `docs/architecture/MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS.md`  
+Reservation grain readiness: `docs/architecture/MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS.md`  
 Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`  
 Face CNC E2E worklog: `docs/worklog/realignment/2026-08-07_face_cnc_cut_machine_requirement_e2e_completeness.md`  
-MACHINE_RUN readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_schema_and_contract_readiness.md`
+MACHINE_RUN readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_schema_and_contract_readiness.md`  
+Grain readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_realignment_readiness.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
+- Reservation grain realignment readiness PASS (docs-only): OPTION_B TASK⊕RUN owner XOR; task reservations preserved; single overlap engine; atomic future migration with MACHINE_RUN tables — **no schema change yet**.
 
 **Next (future candidate only — not started):**  
-MACHINE_RUN runtime/schema implementation, CNC duration contract, or people/workspace — only with a separate Owner GO.
+Atomic reservation grain + MACHINE_RUN schema slice, then runtime writers — or CNC duration / people/workspace — only with a separate Owner GO.
 
 ---
 

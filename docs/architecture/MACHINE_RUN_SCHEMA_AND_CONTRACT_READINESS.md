@@ -20,6 +20,7 @@ MACHINE_TIME_COUNTING = ONCE_PER_RUN
 STATUS_MODEL = BOUNDED_FOR_READINESS
 CAS_IDEMPOTENCY_HISTORY = FINALIZED
 SCHEMA_GAP = FINALIZED
+RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
 RUNTIME_IMPLEMENTATION = NOT_STARTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -107,16 +108,20 @@ Inverse `reservation.machine_run_id` is **not** the ownership authority. An opti
 2. Reservation is today’s exclusive-interval grain (`machine_id` + window + open overlap / partial unique). Run must sit **above** that grain, not invent a second exclusive clock.
 3. Today’s reservation row is **task-keyed** (`execution_plan_id`, `task_key`, `machine_id`). Multi-participant runs cannot honestly treat each participant as the reservation owner.
 
-### Known schema tension (gap for future GO — not solved here)
+### Known schema tension — resolved at readiness (implementation still deferred)
 
-| Today | Needed for MACHINE_RUN |
-| ----- | ---------------------- |
-| Reservation requires one `task_key` | Run-owned reservation with many participants |
-| Open unique `(plan, task_key, machine_id)` | Open unique grain at run / machine+window (via owned reservation) |
-| CREATE API is single-task | CREATE_RUN + participants + attach/create reservation |
+Grain realignment readiness (docs-only):  
+`docs/architecture/MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS.md`
+
+| Today | Target |
+| ----- | ------ |
+| Reservation requires one `task_key` | **OPTION_B:** TASK owner XOR RUN owner (`machine_run_id`) |
+| Open unique `(plan, task_key, machine_id)` | Keep for TASK; run-owned uses `machine_run_id` + shared machine overlap |
+| CREATE API is single-task | Keep task POST; MACHINE_RUN orchestration owns run-level create |
 
 **Reuse as-is:** overlap checks, CAS/`expected_version`, transition idempotency, status vocabulary for the claim, machine reservability gates.  
-**Do not** create a parallel exclusive-time system on the run row.
+**Do not** create a parallel exclusive-time system on the run row.  
+**Do not** implement MACHINE_RUN runtime until reservation grain schema lands (same atomic migration slice).
 
 ---
 
@@ -433,15 +438,17 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 
 ## 17. Implementation gap list (for a future Owner GO)
 
-1. Create `machine_runs` + `machine_run_participants` + `machine_run_transitions`.
-2. Resolve reservation task-key grain vs run ownership (schema/policy decision).
-3. Domain config `MACHINE_RUN` + writer mirroring R9.
-4. Commands: CREATE_RUN, ADD/REMOVE_PARTICIPANT, CONFIRM, CANCEL, RELEASE.
-5. R6 / Phase B semantics for shared runs (undefined today).
-6. Grouping service (eligibility beyond the three stamps) — separate GO.
-7. Optional attach of nesting/program payload — separate decision.
+1. **Atomic schema slice:** MACHINE_RUN tables + Reservation OPTION_B owner grain (see grain readiness).
+2. Reservation writer RUN owner form + XOR + CREATE fingerprint without `task_key`.
+3. Domain config `MACHINE_RUN` + orchestration CREATE_RUN (run + reservation + participants).
+4. R6 union path: task-owned ∪ participant→run→reservation.
+5. Commands: ADD/REMOVE_PARTICIPANT, CONFIRM, CANCEL, RELEASE (after create).
+6. Phase B (later): consume union path — not authorized now.
+7. Grouping service (eligibility beyond the three stamps) — separate GO.
+8. Optional attach of nesting/program payload — separate decision.
 
 ```text
+RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
 RUNTIME_IMPLEMENTATION = NOT_STARTED
 NEXT_TASK = NOT_AUTHORIZED
 ```
