@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `7aef85e1`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `5c2d6ca2c966aa77f0bc0ec04d21ace033583778`  
 **Verdict:** **PASS**  
 **Scope:** docs-only · read-only audit · **no ORM · no migration · no runtime**
 
