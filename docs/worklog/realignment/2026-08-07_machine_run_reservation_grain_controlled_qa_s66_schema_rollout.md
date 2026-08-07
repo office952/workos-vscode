@@ -5,7 +5,7 @@
 **Date:** 2026-08-07  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `e584bee3`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `42d163587e910d240c82ad03eef75bd62226a67a`  
 **Prerequisite:** `MACHINE_RUN_RESERVATION_GRAIN_SCHEMA_FOUNDATION = PASS`
 
 ---
