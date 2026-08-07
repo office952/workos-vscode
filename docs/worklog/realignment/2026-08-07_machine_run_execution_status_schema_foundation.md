@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `de0f43f4`  
-**Tip HEAD:** `d5cbcb52`  
+**Tip HEAD:** `e744312f`  
 **Verdict:** **PASS**  
 **Scope:** s67 schema only · ORM/CHECK parity · migration tests · runtime regression · docs · no START/COMPLETE · no QA migrate · no push
 
