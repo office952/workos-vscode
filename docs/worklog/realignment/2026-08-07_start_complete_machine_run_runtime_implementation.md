@@ -3,7 +3,9 @@
 **Owner GO:** `AUTHORIZE_START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION`  
 **Date:** 2026-08-07  
 **Branch:** `feat/f7i-owner-rate-activation`  
-**Starting HEAD:** `d4ee200f`
+**Starting HEAD:** `d4ee200f`  
+**Tip HEAD:** `87ea354e`  
+**Impl commit:** `b614b92f` · **Docs commit:** `87ea354e`
 
 ---
 
