@@ -373,12 +373,15 @@ MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
 QA_S66_SCHEMA_ROLLOUT = PASS
 MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS = PASS
+CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC = s66_machine_run_reservation_grain
 QA_ALEMBIC = s66_machine_run_reservation_grain
-MACHINE_RUN = NOT_IMPLEMENTED
-MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
+MACHINE_RUN = CREATE_ONLY
+MACHINE_RUN_RUNTIME = CREATE_ONLY_IMPLEMENTED_IN_CODE
+MACHINE_RUN_LIFECYCLE = CREATE_ONLY
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
-QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
+QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
+AUTO_BATCH = NOT_IMPLEMENTED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
@@ -406,17 +409,18 @@ Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`
 Face CNC E2E worklog: `docs/worklog/realignment/2026-08-07_face_cnc_cut_machine_requirement_e2e_completeness.md`  
 MACHINE_RUN readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_schema_and_contract_readiness.md`  
 Grain readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_realignment_readiness.md`  
-Command readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_minimal_command_runtime_readiness.md`
+Command readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_minimal_command_runtime_readiness.md`  
+CREATE runtime worklog: `docs/worklog/realignment/2026-08-07_create_machine_run_minimal_runtime_implementation.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + s66 QA schema PASS; **CREATE_MACHINE_RUN command readiness PASS** (docs-only); runtime still NOT_IMPLEMENTED.
+- Reservation grain + s66 QA schema PASS; **CREATE_MACHINE_RUN runtime PASS** (create-only in code; QA unused; no UI; no lifecycle beyond HELD create).
 
 **Next (future candidate only — not started):**  
-`CREATE_MACHINE_RUN` implementation (or CNC duration / people/workspace) — only with a separate Owner GO.
+MACHINE_RUN lifecycle (CONFIRM/RELEASE/CANCEL/ADD/REMOVE) or CNC duration / people/workspace — only with a separate Owner GO.
 
 ---
 
