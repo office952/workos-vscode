@@ -370,14 +370,19 @@ FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS = PASS
 FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
 MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
+MACHINE_RUN_SCHEMA_FOUNDATION = PASS
+CODE_ALEMBIC = s66_machine_run_reservation_grain
+QA_ALEMBIC = s65_workcenter_capacity_source
 MACHINE_RUN = NOT_IMPLEMENTED
-RESERVATION_SCHEMA_CHANGE = NOT_IMPLEMENTED
+MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
+RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_NOT_ROLLED_OUT_TO_QA
+QA_ROLLOUT = NOT_AUTHORIZED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
-code Alembic = s65_workcenter_capacity_source
+code Alembic = s66_machine_run_reservation_grain
 QA Alembic = s65_workcenter_capacity_source
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_CAPACITY_SOURCE_ROWS = 0
@@ -404,10 +409,10 @@ Grain readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reserv
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain realignment readiness PASS (docs-only): OPTION_B TASK⊕RUN owner XOR; task reservations preserved; single overlap engine; atomic future migration with MACHINE_RUN tables — **no schema change yet**.
+- Reservation grain realignment readiness PASS; schema foundation PASS in code (`s66`) — QA remains s65 / not rolled out; MACHINE_RUN command runtime still NOT_IMPLEMENTED.
 
 **Next (future candidate only — not started):**  
-Atomic reservation grain + MACHINE_RUN schema slice, then runtime writers — or CNC duration / people/workspace — only with a separate Owner GO.
+MACHINE_RUN orchestration/runtime writers, QA Alembic rollout, CNC duration, or people/workspace — only with a separate Owner GO.
 
 ---
 
