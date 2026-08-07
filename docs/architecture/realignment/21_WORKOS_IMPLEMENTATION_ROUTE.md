@@ -388,6 +388,7 @@ MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE_PLUS_P
 CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
 QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
@@ -429,17 +430,19 @@ Reschedule readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_r
 Reschedule implementation worklog: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`  
 Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`  
 Participant mutation readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_participant_mutation_runtime_readiness.md`  
-Participant mutation implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`
+Participant mutation implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`  
+Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS.md`  
+Execution lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_lifecycle_readiness.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS** (QA operational usage not activated; HELD-only mutation; soft REMOVED; version lockstep).
+- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE + ADD/REMOVE participant runtime PASS**; **execution lifecycle readiness PASS** (START/COMPLETE not implemented; RUNNING keeps reservation RESERVED; COMPLETE then RELEASE; no auto task/session mutation).
 
 **Next (future candidate only — not started):**  
-Machine reassignment, START/COMPLETE / RUNNING/COMPLETED, UI, CNC duration, auto-batch — only with a separate Owner GO.
+`START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` implementation (schema status expansion + phase-aware coupling), or machine reassignment / UI / auto-batch — only with a separate Owner GO.
 
 ---
 

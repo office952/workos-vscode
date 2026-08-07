@@ -32,6 +32,7 @@ PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 RUNTIME_IMPLEMENTATION = VERIFIED
 QA_MUTATIONS = 0
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 AUTO_BATCH = NOT_IMPLEMENTED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -523,13 +524,13 @@ MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 API = POST …/add-participant | …/remove-participant
 ```
 
-**Still out (separate Owner GO):**
+**Still out of participant mutation (separate Owner GOs):**
 
 ```text
 machine_id change
 window change / RESCHEDULE redesign
 RESERVED participant mutation
-RUNNING / COMPLETED
+RUNNING / COMPLETED (execution readiness PASS elsewhere; runtime not started)
 auto-batch / nesting / UI
 QA operational writes
 SUPERSEDE_MACHINE_RUN
@@ -539,6 +540,8 @@ SUPERSEDE_MACHINE_RUN
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 ```
+
+Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS.md`
 
 ---
 

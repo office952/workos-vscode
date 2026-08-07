@@ -31,6 +31,7 @@ RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 RESCHEDULE_MACHINE_RUN = VERIFIED
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 AUTO_BATCH = NOT_IMPLEMENTED
@@ -45,7 +46,8 @@ Implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm
 Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS.md`  
 Reschedule implementation: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`  
 Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`  
-Participant mutation implementation: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`
+Participant mutation implementation: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`  
+Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS.md`
 
 ---
 

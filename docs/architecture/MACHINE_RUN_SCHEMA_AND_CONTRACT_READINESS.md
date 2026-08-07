@@ -39,6 +39,7 @@ AUTO_BATCH = NOT_IMPLEMENTED
 CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -239,8 +240,8 @@ Prefer **lockstep vocabulary with Machine Reservation** for the planning claim l
 | `CANCELLED` | **Yes** | Aborted | **yes** | CANCEL |
 | `RELEASED` | **Yes** | Normal release of machine claim | **yes** | RELEASE |
 | `SUPERSEDED` | Later (optional first slice) | Replaced by another run | **yes** | SUPERSEDE |
-| `RUNNING` | **Defer** | Shop-floor started | no | START (future) |
-| `COMPLETED` | **Defer** | Shop-floor finished | **yes** (future) | COMPLETE |
+| `RUNNING` | **Readiness PASS** (not in s66 yet) | Shop-floor started | no | START (future impl) |
+| `COMPLETED` | **Readiness PASS** (not in s66 yet) | Shop-floor finished | **yes** (future) | COMPLETE then RELEASE |
 
 ```text
 one MACHINE_RUN lifecycle (recommended)
@@ -463,7 +464,8 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 5. Phase B (later): consume union path — not authorized now.
 6. Grouping service (eligibility beyond the three stamps) — separate GO.
 7. Optional attach of nesting/program payload — separate decision.
-8. Machine reassignment / START/COMPLETE — separate GO.
+8. ~~START/COMPLETE readiness~~ → PASS (runtime not started).
+9. Machine reassignment / PAUSE / Phase B wiring — separate GO.
 
 ```text
 RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
@@ -474,6 +476,7 @@ MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS = PASS
 MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
@@ -485,4 +488,5 @@ CREATE implementation worklog: `docs/worklog/realignment/2026-08-07_create_machi
 Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`  
 Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
 Participant mutation readiness: `docs/architecture/MACHINE_RUN_PARTICIPANT_MUTATION_RUNTIME_READINESS.md`  
-Participant mutation implementation: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`
+Participant mutation implementation: `docs/worklog/realignment/2026-08-07_machine_run_add_remove_participant_runtime_implementation.md`  
+Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS.md`
