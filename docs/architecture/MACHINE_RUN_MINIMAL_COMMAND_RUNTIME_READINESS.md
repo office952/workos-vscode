@@ -31,10 +31,12 @@ DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 R6_POST_CREATE_BEHAVIOR = FINALIZED
 CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS = PASS
+MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
-MACHINE_RUN_LIFECYCLE = CREATE_ONLY
+MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE
 AUTO_BATCH = NOT_IMPLEMENTED
-CONFIRM_RELEASE_CANCEL = READINESS_ONLY
+CONFIRM_RELEASE_CANCEL = VERIFIED
+MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -43,9 +45,9 @@ NEXT_TASK = NOT_AUTHORIZED
 ```
 
 Implementation worklog: `docs/worklog/realignment/2026-08-07_create_machine_run_minimal_runtime_implementation.md`  
-API: `POST /api/v1/execution/resource-state/machine-runs` (create-only; QA operational usage not activated).  
-Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`  
-(`CONFIRM` / `RELEASE` / `CANCEL` — implementation requires a separate Owner GO.)
+Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
+API: `POST …/machine-runs` + `…/{id}/confirm|release|cancel` (QA operational usage not activated).  
+Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`
 
 ---
 
