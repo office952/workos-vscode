@@ -27,9 +27,10 @@ BACKFILL_POLICY = NO_SYNTHETIC_RUN_BACKFILL
 RUNTIME_IMPLEMENTATION = NOT_STARTED
 RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_ALEMBIC_S66
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
+QA_S66_SCHEMA_ROLLOUT = PASS
 MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
-QA_ALEMBIC = s65_workcenter_capacity_source
-QA_ROLLOUT = NOT_AUTHORIZED
+QA_ALEMBIC = s66_machine_run_reservation_grain
+QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -477,11 +478,14 @@ Ordered prerequisites:
 ```text
 RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_ALEMBIC_S66
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
+QA_S66_SCHEMA_ROLLOUT = PASS
+QA_ALEMBIC = s66_machine_run_reservation_grain
 MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
-QA_ROLLOUT = NOT_AUTHORIZED
+QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
 ```
 
-Schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_schema_foundation.md`.
+Schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_schema_foundation.md`.  
+QA rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_controlled_qa_s66_schema_rollout.md`.
 
 **Implemented link shape (s66):** one-direction `reservation.machine_run_id → machine_runs.id` UNIQUE (no `machine_runs.reservation_id`) to avoid circular FK; D4 semantic ownership unchanged.
 

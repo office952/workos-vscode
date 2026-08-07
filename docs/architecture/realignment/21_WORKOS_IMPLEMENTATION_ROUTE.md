@@ -371,19 +371,20 @@ FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
 MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS = PASS
 MACHINE_RUN_RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
+QA_S66_SCHEMA_ROLLOUT = PASS
 CODE_ALEMBIC = s66_machine_run_reservation_grain
-QA_ALEMBIC = s65_workcenter_capacity_source
+QA_ALEMBIC = s66_machine_run_reservation_grain
 MACHINE_RUN = NOT_IMPLEMENTED
 MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
-RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_NOT_ROLLED_OUT_TO_QA
-QA_ROLLOUT = NOT_AUTHORIZED
+RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
+QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
 CAPACITY_QA_SEED = NOT_AUTHORIZED
 code Alembic = s66_machine_run_reservation_grain
-QA Alembic = s65_workcenter_capacity_source
+QA Alembic = s66_machine_run_reservation_grain
 QA_CAPACITY_CONFIGURATION = NOT_CONFIGURED
 QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
@@ -409,10 +410,10 @@ Grain readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reserv
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain realignment readiness PASS; schema foundation PASS in code (`s66`) — QA remains s65 / not rolled out; MACHINE_RUN command runtime still NOT_IMPLEMENTED.
+- Reservation grain realignment readiness PASS; schema foundation PASS; **QA s66 schema rollout PASS** (tables present, 0 rows); MACHINE_RUN command runtime still NOT_IMPLEMENTED.
 
 **Next (future candidate only — not started):**  
-MACHINE_RUN orchestration/runtime writers, QA Alembic rollout, CNC duration, or people/workspace — only with a separate Owner GO.
+`MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS` (or CNC duration / people/workspace) — only with a separate Owner GO.
 
 ---
 
