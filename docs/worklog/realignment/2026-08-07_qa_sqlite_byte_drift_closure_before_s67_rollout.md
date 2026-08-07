@@ -5,12 +5,33 @@
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `5a3697b1`  
 **Tip HEAD:** `df46f30d`  
-**Verdict:** **PARTIAL_BLOCKED**  
+**Verdict:** **PARTIAL_BLOCKED** → Owner accepted current SHA as new baseline  
 **Scope:** read-only audit · no alembic · no VACUUM/checkpoint · no restore · no product code
 
 ---
 
-## Verdict block
+## Owner acceptance (baseline closure)
+
+```text
+ACCEPT_CURRENT_QA_SHA_AS_NEW_BASELINE = YES
+CURRENT QA SHA ACCEPTED AS NEW BASELINE =
+7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+KNOWN_BASELINE_DRIFT =
+  intake_requests.id=50
+  delivery_type = delivery_standard
+  updated_at = 2026-08-07 22:10:46.650895
+  source = live PUT /api/v1/entities/intake_requests/50
+SCHEMA_DRIFT = NONE
+PROTECTED_MACHINE_RUN_BASELINE_DIFF = NONE
+DO_NOT_RESTORE_OLD_BACKUP = YES
+```
+
+This acceptance closed the byte-drift hold. Controlled s67 rollout is a separate GO
+(`AUTHORIZE_ACCEPT_CURRENT_QA_BASELINE_AND_CONTROLLED_S67_ROLLOUT`).
+
+---
+
+## Verdict block (audit)
 
 ```text
 QA_SQLITE_BYTE_DRIFT_CLOSURE_BEFORE_S67_ROLLOUT = PARTIAL_BLOCKED
@@ -26,11 +47,7 @@ PROTECTED_MACHINE_RUN_BASELINE_DIFF = NONE
 UNEXPECTED_WRITER = live uvicorn (app_20260807_142745.log) — NOT schema-foundation tests
 ROOT_CAUSE = PROVEN
 S67_ARTIFACTS_IN_QA = 0
-QA_ALEMBIC = s66_machine_run_reservation_grain
-S67_QA_ROLLOUT = BLOCKED
-MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION =
-  IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
-NEXT_TASK = NOT_AUTHORIZED
+QA_ALEMBIC_AT_AUDIT = s66_machine_run_reservation_grain
 ```
 
 ---

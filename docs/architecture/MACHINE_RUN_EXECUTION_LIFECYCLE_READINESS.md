@@ -10,10 +10,14 @@
 
 ```text
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
-EXECUTION_STATUS_SCHEMA_FOUNDATION = IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
+EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
+MACHINE_RUN_EXECUTION_STATUS_QA_S67_ROLLOUT = PASS
 CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
-QA_ALEMBIC = s66_machine_run_reservation_grain
-QA_SQLITE_BYTE_DRIFT_CLOSURE = PARTIAL_BLOCKED
+QA_ALEMBIC = s67_machine_run_execution_status
+QA_BASELINE_ACCEPTED =
+  7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+QA_SHA_AFTER_S67 =
+  bee5f5f74c428fd03cf30ffd7377db00be3fa64716a29ce2652ae9f93b161322
 MACHINE_RUN_STATUS_RUNNING = SUPPORTED
 MACHINE_RUN_STATUS_COMPLETED = SUPPORTED
 STARTED_AT = IMPLEMENTED_NULLABLE
@@ -45,9 +49,9 @@ DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 PHASE_B_IMPACT = DOCUMENTED_NOT_IMPLEMENTED
 SCHEMA_STATUS_EXPANSION_REQUIRED = NO
 START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
-QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
+QA_SCHEMA_ROLLOUT = PASS
 QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
+NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
@@ -313,12 +317,10 @@ actual_runtime_minutes NOT persisted (derive later from completed_at - started_a
 ```text
 SCHEMA_STATUS_EXPANSION_REQUIRED = NO
 SCHEMA_ACTUAL_RUNTIME_COLUMNS_REQUIRED = NO
-EXECUTION_STATUS_SCHEMA_FOUNDATION =
-  IMPLEMENTATION_AND_MIGRATION_PROOFS_PASS_HOLD_PENDING_QA_BASELINE
+EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
 START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
-QA_SCHEMA_ROLLOUT = NOT_AUTHORIZED
-QA_SQLITE_BYTE_DRIFT_CLOSURE = PARTIAL_BLOCKED
-S67_QA_ROLLOUT = BLOCKED
+QA_SCHEMA_ROLLOUT = PASS
+S67_QA_ROLLOUT = PASS
 ```
 
 Phase-aware `_assert_coupled` and START/COMPLETE writers remain **not implemented**.  
@@ -438,13 +440,12 @@ QA_MUTATIONS = 0
 **In:**
 
 ```text
-1) controlled QA s67 schema rollout (separate Owner GO; zero operational MACHINE_RUN usage)
-2) START_MACHINE_RUN / COMPLETE_MACHINE_RUN writers
-3) phase-aware _assert_coupled matrix
-4) extend RELEASE allowed source to COMPLETED+RESERVED
-5) permission recommendation wiring (execute) if Owner approves
-6) isolated tests + commitment lifecycle regression
-7) R6 remains reservation-driven ACTIVE while RESERVED
+1) START_MACHINE_RUN / COMPLETE_MACHINE_RUN writers
+2) phase-aware _assert_coupled matrix
+3) extend RELEASE allowed source to COMPLETED+RESERVED
+4) permission recommendation wiring (execute) if Owner approves
+5) isolated tests + commitment lifecycle regression
+6) R6 remains reservation-driven ACTIVE while RESERVED
 ```
 
 **Out:**
@@ -463,7 +464,7 @@ QA operational MACHINE_RUN usage
 ```
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
+NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
 ```
 
 ---
@@ -484,26 +485,30 @@ NEXT_IMPLEMENTATION_SCOPE = QA_S67_SCHEMA_ROLLOUT_THEN_START_COMPLETE
 ## 15. QA proof (read-only)
 
 ```text
-QA Alembic = s66_machine_run_reservation_grain
+QA Alembic = s67_machine_run_execution_status
 CODE Alembic head = s67_machine_run_execution_status
-QA SHA (current) = 7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
-prior tip SHA = b7950463b2956e779275e14fa81ee742a681ccee2e9f338a9db1310e1b740fb1
+QA baseline accepted =
+  7586819bb20087cd3df71a221ea0f2332bcb062952991a92afced287368d35b4
+QA SHA after s67 =
+  bee5f5f74c428fd03cf30ffd7377db00be3fa64716a29ce2652ae9f93b161322
 machine_runs / participants / transitions / reservations = 0
 assignment transitions = 7
 foreign_key_check = 0
-S67_ARTIFACTS_IN_QA = 0
+started_at/completed_at = present nullable
+RUNNING/COMPLETED on MachineRun CHECK = present
+Reservation RUNNING/COMPLETED = absent
 ```
 
-Byte-drift closure (`AUTHORIZE_QA_SQLITE_BYTE_DRIFT_CLOSURE_BEFORE_S67_ROLLOUT`):
+Known accepted intake baseline drift (pre-s67, not reversed):
 
 ```text
-DRIFT_CLASSIFICATION = LOGICAL_QA_STATE_DRIFT
-ROOT_CAUSE = PUT /api/v1/entities/intake_requests/50
-  delivery_type='delivery_standard' @ 2026-08-07 22:10:46.650895
-PROTECTED_MACHINE_RUN_BASELINE_DIFF = NONE
-S67_QA_ROLLOUT = BLOCKED
-worklog = docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md
+intake_requests.id=50 delivery_type=delivery_standard
+updated_at=2026-08-07 22:10:46.650895
 ```
+
+Worklogs:
+- `docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md`
+- `docs/worklog/realignment/2026-08-07_machine_run_execution_status_controlled_qa_s67_rollout.md`
 
 ---
 
@@ -513,4 +518,4 @@ worklog = docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_befor
 NO_UI_CHANGE
 ```
 
-execution lifecycle schema foundation = implemented in code · runtime = not implemented · QA rollout = not authorized.
+execution lifecycle schema = available in QA · START/COMPLETE runtime = not implemented.
