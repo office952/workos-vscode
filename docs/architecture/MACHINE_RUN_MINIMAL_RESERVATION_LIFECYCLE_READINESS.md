@@ -26,6 +26,7 @@ R6_STATE_BEHAVIOR = FINALIZED
 PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
@@ -35,7 +36,9 @@ PHASE_C = BLOCKED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`
+Implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
+Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS.md`  
+(`RESCHEDULE_MACHINE_RUN` — implementation requires a separate Owner GO.)
 
 ---
 
