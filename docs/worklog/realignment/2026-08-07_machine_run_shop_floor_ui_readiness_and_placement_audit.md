@@ -4,6 +4,7 @@
 **Date:** 2026-08-07  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `94b4223b`  
+**Tip HEAD:** `58d0cc65`  
 **Canonical doc:** `docs/architecture/MACHINE_RUN_SHOP_FLOOR_UI_READINESS_AND_PLACEMENT_AUDIT.md`
 
 ---
