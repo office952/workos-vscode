@@ -33,6 +33,10 @@ from schemas.resource_state_machine_run import (
     RescheduleMachineRunCommand,
     StartMachineRunCommand,
 )
+from schemas.resource_state_machine_run_read import (
+    MachineRunDetail,
+    MachineRunListResult,
+)
 from schemas.resource_state_reservation import (
     CancelReservationCommand,
     ConfirmReservationCommand,
@@ -95,6 +99,7 @@ from services.machine_run_command_service import (
     reschedule_machine_run,
     start_machine_run,
 )
+from services.machine_run_read_service import get_machine_run, list_machine_runs
 from services.execution_task_schedule_command_service import (
     cancel_schedule,
     confirm_schedule,
@@ -541,6 +546,49 @@ async def post_create_reservation(
         return await create_reservation(
             db, command=body, actor_user_id=str(current_user.id)
         )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.get(
+    "/resource-state/machine-runs",
+    response_model=MachineRunListResult,
+)
+async def get_machine_runs(
+    status: str | None = None,
+    machine_id: int | None = None,
+    execution_plan_id: int | None = None,
+    order_id: int | None = None,
+    open_only: bool = False,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("execution.machine_run.read")),
+) -> MachineRunListResult:
+    """List MACHINE_RUN rows (operator read; QA-safe when empty)."""
+    try:
+        return await list_machine_runs(
+            db,
+            status=status,
+            machine_id=machine_id,
+            execution_plan_id=execution_plan_id,
+            order_id=order_id,
+            open_only=open_only,
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.get(
+    "/resource-state/machine-runs/{machine_run_id}",
+    response_model=MachineRunDetail,
+)
+async def get_machine_run_detail(
+    machine_run_id: int,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("execution.machine_run.read")),
+) -> MachineRunDetail:
+    """MACHINE_RUN detail with reservation, machine, and participants."""
+    try:
+        return await get_machine_run(db, machine_run_id=machine_run_id)
     except ResourceStateWriteError as exc:
         _raise_rs_write(exc)
 

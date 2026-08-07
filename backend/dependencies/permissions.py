@@ -130,6 +130,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.machine_run.manage": ["admin", "manager"],
     # Shop-floor START/COMPLETE — separate from commitment orchestration (manage).
     "execution.machine_run.execute": ["admin", "manager", "operator"],
+    # Operator list/detail read — no write rights (manage/execute stay separate).
+    "execution.machine_run.read": ["admin", "manager", "operator"],
     "execution.capacity_allocation.manage": ["admin", "manager"],
     "execution.capacity_source.manage": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],
