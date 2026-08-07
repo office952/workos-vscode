@@ -1,10 +1,11 @@
-"""MACHINE_RUN schema foundation (s66) — no command runtime yet.
+"""MACHINE_RUN schema (s66) + CREATE_MACHINE_RUN runtime (create-only).
 
 Ownership semantic (D4): a MACHINE_RUN owns exactly one Machine Reservation.
 DB link is one-direction to avoid circular FK:
   execution_task_machine_reservations.machine_run_id → machine_runs.id (UNIQUE when set)
 
 Lookup: reservation WHERE machine_run_id = run.id
+Lifecycle beyond CREATE (confirm/release/cancel/participants) is not implemented.
 """
 
 from __future__ import annotations

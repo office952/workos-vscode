@@ -21,6 +21,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 _plan_locks: "WeakValueDictionary[int, asyncio.Lock]" = WeakValueDictionary()
+_machine_locks: "WeakValueDictionary[int, asyncio.Lock]" = WeakValueDictionary()
 
 
 def plan_order_lock(order_id: int) -> asyncio.Lock:
@@ -28,6 +29,15 @@ def plan_order_lock(order_id: int) -> asyncio.Lock:
     if lock is None:
         lock = asyncio.Lock()
         _plan_locks[order_id] = lock
+    return lock
+
+
+def machine_lock(machine_id: int) -> asyncio.Lock:
+    """Process-local serialization for machine-centric writers (e.g. MACHINE_RUN)."""
+    lock = _machine_locks.get(machine_id)
+    if lock is None:
+        lock = asyncio.Lock()
+        _machine_locks[machine_id] = lock
     return lock
 
 
@@ -70,6 +80,13 @@ async def load_plan_for_update(
 
 
 def require_task_in_plan(plan: ExecutionPlan, task_key: str) -> None:
+    get_operational_task_from_plan(plan, task_key)
+
+
+def get_operational_task_from_plan(
+    plan: ExecutionPlan, task_key: str
+) -> dict[str, Any]:
+    """Return the operational_tasks[] entry for task_key (canonical EP V2 truth)."""
     tid = (task_key or "").strip()
     if not tid:
         raise ResourceStateValidationError(
@@ -82,7 +99,7 @@ def require_task_in_plan(plan: ExecutionPlan, task_key: str) -> None:
         )
     for entry in tasks:
         if isinstance(entry, dict) and str(entry.get("task_id")) == tid:
-            return
+            return entry
     raise ResourceStateNotFoundError(
         "task_key_not_found", f"task_key {tid!r} not in plan {plan.id}"
     )
