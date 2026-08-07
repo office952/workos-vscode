@@ -367,7 +367,9 @@ SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
 VECTOR_PREP_DURATION_E2E = PASS
 PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS = PASS
+FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
 MACHINE_RUN = NOT_IMPLEMENTED
+BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
 EMPLOYEE_AVAILABILITY = NOT_IMPLEMENTED
 CAPACITY_QA_ACTIVATION = NOT_AUTHORIZED
@@ -379,7 +381,7 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
-RECOMMENDED_NEXT_SLICE = FACE_CNC_CUT_MACHINE_REQUIREMENT_STAMP_OR_PROJECTION_PILOT
+RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -388,15 +390,15 @@ Source gap + pilot: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_
 Face CNC decisions: `docs/architecture/FACE_CNC_CUT_MACHINE_REQUIREMENT_OWNER_DECISIONS.md`  
 Owner machine/workspace package: `docs/architecture/MACHINE_BATCH_AND_MANUAL_WORKSPACE_OWNER_DECISIONS.md`  
 Projection API: `GET /api/v1/execution/plans/{plan_id}/resource-requirements`  
-Face CNC decisions worklog: `docs/worklog/realignment/2026-08-05_face_cnc_cut_machine_requirement_owner_decisions.md`
+Face CNC E2E worklog: `docs/worklog/realignment/2026-08-07_face_cnc_cut_machine_requirement_e2e_completeness.md`
 
 **Why:**
 
-- Gaps sit upstream (Product System / geometry / op contracts), not in Scheduling or Capacity.
-- `vector_prep` duration E2E PASS; next machine-bound pilot decisions closed for `face_cnc_cut` (`CNC_ROUTER_CUTTING`, `MACHINE_BOUND`, `batch_eligible=true` as future-run participation only).
+- Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
+- `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 
 **Next (future candidate only — not started):**  
-Stamp/project `machine_capability_code` + `resource_mode` + `batch_eligible` for `face_cnc_cut` — only with a separate Owner GO. No MACHINE_RUN yet.
+CNC duration contract, MACHINE_RUN, or people/workspace — only with a separate Owner GO.
 
 ---
 

@@ -19,6 +19,7 @@ SOURCE_GAP_AUDIT = PASS
 PILOT_SELECTION = COMPLETE
 SELECTED_PILOT = VECTOR_PREP_DURATION_E2E_COMPLETENESS
 VECTOR_PREP_DURATION_E2E = PASS
+FACE_CNC_CUT_MACHINE_REQUIREMENT_E2E = PASS
 PLAN_23 = UNCHANGED_NULL_REFERENCE_CASE
 TASK_DEMAND_BOUNDARY = FINALIZED
 RESOURCE_AVAILABILITY_BOUNDARY = FINALIZED
@@ -384,8 +385,9 @@ Canonical: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SEL
 | --------- | -------- |
 | A — READONLY_PROJECTION | **Done** |
 | B — SOURCE_GAP + PILOT SELECTION | **Done** |
-| C — VECTOR_PREP_DURATION_E2E | **PASS** — `planning_minutes_source=LETTERS_VECTOR_PREP_DURATION` |
-| D — CNC duration / people / workspace / MACHINE_RUN | Later — Owner GO required |
+| C — VECTOR_PREP_DURATION_E2E | **PASS** |
+| D — FACE_CNC_CUT machine requirement E2E | **PASS** — capability/mode/batch_eligible stamped from Operation Contract |
+| E — CNC duration / people / workspace / MACHINE_RUN | Later — Owner GO required |
 
 ```text
 NEXT_TASK = NOT_AUTHORIZED
