@@ -3,30 +3,34 @@
 **Task:** `MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS`  
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS`  
 **Date:** 2026-08-07  
-**Status:** **PASS** · docs-only · **no runtime · no QA writes**  
+**Status:** **PASS** · readiness finalized · **runtime VERIFIED** · **no QA writes**  
 **Starting HEAD:** `a36e7de3`  
 **Prerequisites:** CREATE + CONFIRM/RELEASE/CANCEL runtime PASS · s66 schema  
-**Worklog:** `docs/worklog/realignment/2026-08-07_machine_run_reschedule_runtime_readiness.md`
+**Readiness worklog:** `docs/worklog/realignment/2026-08-07_machine_run_reschedule_runtime_readiness.md`  
+**Implementation worklog:** `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`
 
 ```text
 MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
-RESCHEDULE_MACHINE_RUN = FINALIZED
+RESCHEDULE_MACHINE_RUN = VERIFIED
 ALLOWED_FROM = HELD,RESERVED
 MACHINE_ID_CHANGE = FORBIDDEN
 STATUS_CHANGE = FORBIDDEN
-WINDOW_MUTATION = FINALIZED
+WINDOW_MUTATION = VERIFIED
 OVERLAP_ENGINE = SINGLE_SHARED
-CAS = FINALIZED
-IDEMPOTENCY = FINALIZED
-HISTORY_MODEL = FINALIZED
+CAS = VERIFIED
+IDEMPOTENCY = VERIFIED
+HISTORY_MODEL = VERIFIED
 SCHEMA_SUFFICIENCY = VERIFIED
-PARTICIPANTS_UNCHANGED = FINALIZED
+PARTICIPANTS_UNCHANGED = VERIFIED
 R6_BEHAVIOR = ACTIVE_UNCHANGED
 PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+RUNTIME_IMPLEMENTATION = VERIFIED
 QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = RESCHEDULE_MACHINE_RUN_ONLY
+CREATE_MACHINE_RUN = PASS
+CONFIRM_RELEASE_CANCEL = PASS
+MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
+AUTO_BATCH = NOT_IMPLEMENTED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
@@ -364,20 +368,14 @@ PHASE_C = BLOCKED
 
 ---
 
-## 17. Next implementation GO (bounded)
-
-**In:**
+## 17. Runtime implementation (closed)
 
 ```text
-RescheduleMachineRunCommand
-service method + dual history
-overlap exclude_id
-CAS/idempotency
-API route
-isolated tests (HELD move, RESERVED move, overlap, terminal reject, R6 ACTIVE, CREATE/lifecycle regression)
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+API = POST …/machine-runs/{id}/reschedule
 ```
 
-**Out:**
+**Still out (separate Owner GO):**
 
 ```text
 machine_id change
@@ -385,13 +383,12 @@ ADD/REMOVE participants
 SUPERSEDE run
 RUNNING/COMPLETED
 auto-batch / nesting / UI
-schema migration (not needed for MVP)
 QA operational writes
 ```
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = RESCHEDULE_MACHINE_RUN_ONLY
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+RUNTIME_IMPLEMENTATION = VERIFIED
+MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 ```
 
 ---
@@ -427,4 +424,4 @@ QA_MUTATIONS = 0
 NO_UI_CHANGE
 ```
 
-Docs only: RESCHEDULE readiness · runtime not implemented · commitment move ≠ production execution.
+Docs: RESCHEDULE runtime VERIFIED in code · QA operational usage not activated · commitment move ≠ production execution.

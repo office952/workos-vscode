@@ -37,6 +37,8 @@ MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE
 AUTO_BATCH = NOT_IMPLEMENTED
 CONFIRM_RELEASE_CANCEL = VERIFIED
 MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+RESCHEDULE_MACHINE_RUN = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
@@ -47,7 +49,8 @@ NEXT_TASK = NOT_AUTHORIZED
 
 Implementation worklog: `docs/worklog/realignment/2026-08-07_create_machine_run_minimal_runtime_implementation.md`  
 Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
-API: `POST …/machine-runs` + `…/{id}/confirm|release|cancel` (QA operational usage not activated).  
+Reschedule implementation worklog: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`  
+API: `POST …/machine-runs` + `…/{id}/confirm|release|cancel|reschedule` (QA operational usage not activated).  
 Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS.md`  
 Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS.md`
 

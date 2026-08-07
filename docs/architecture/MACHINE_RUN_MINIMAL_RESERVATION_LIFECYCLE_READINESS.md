@@ -27,8 +27,11 @@ PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+RESCHEDULE_MACHINE_RUN = VERIFIED
 RUNTIME_IMPLEMENTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
+AUTO_BATCH = NOT_IMPLEMENTED
 QA_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -38,7 +41,7 @@ NEXT_TASK = NOT_AUTHORIZED
 
 Implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
 Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS.md`  
-(`RESCHEDULE_MACHINE_RUN` — implementation requires a separate Owner GO.)
+Reschedule implementation: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`
 
 ---
 
@@ -540,7 +543,7 @@ MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 | --------- | --------------------------------------------- | ------- |
 | RUNNING/COMPLETED | no | defer |
 | ADD/REMOVE participants | no | defer |
-| RESCHEDULE window | no | defer |
+| RESCHEDULE window | deferred here; later VERIFIED in RESCHEDULE runtime GO | closed elsewhere |
 | New permission per command | no | reject |
 | New MACHINE_RUN domain | no | reject |
 | Auto-heal mismatched statuses | no | reject |
@@ -567,4 +570,4 @@ QA_MUTATIONS = 0
 NO_UI_CHANGE
 ```
 
-Docs only: CREATE implemented · CONFIRM/RELEASE/CANCEL readiness · runtime lifecycle not active · RESERVED ≠ RUNNING.
+Docs: CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE runtime VERIFIED in code · QA operational usage not activated · RESERVED ≠ RUNNING.

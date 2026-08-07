@@ -377,13 +377,14 @@ CREATE_MACHINE_RUN_MINIMAL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_CONFIRM_RELEASE_CANCEL_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS = PASS
+RESCHEDULE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC = s66_machine_run_reservation_grain
 QA_ALEMBIC = s66_machine_run_reservation_grain
-MACHINE_RUN = CREATE_PLUS_RESERVATION_LIFECYCLE
-MACHINE_RUN_RUNTIME = CREATE_PLUS_RESERVATION_LIFECYCLE_IMPLEMENTED_IN_CODE
-MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE
+MACHINE_RUN = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE
+MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_IMPLEMENTED_IN_CODE
+MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE
 CONFIRM_RELEASE_CANCEL = VERIFIED
-RESCHEDULE = READINESS_ONLY
+RESCHEDULE_MACHINE_RUN = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
 QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
@@ -421,17 +422,18 @@ Lifecycle readiness: `docs/architecture/MACHINE_RUN_MINIMAL_RESERVATION_LIFECYCL
 Lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_minimal_reservation_lifecycle_readiness.md`  
 Lifecycle implementation worklog: `docs/worklog/realignment/2026-08-07_machine_run_confirm_release_cancel_runtime_implementation.md`  
 Reschedule readiness: `docs/architecture/MACHINE_RUN_RESCHEDULE_RUNTIME_READINESS.md`  
-Reschedule readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reschedule_runtime_readiness.md`
+Reschedule readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_reschedule_runtime_readiness.md`  
+Reschedule implementation worklog: `docs/worklog/realignment/2026-08-07_reschedule_machine_run_runtime_implementation.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL runtime PASS**; **RESCHEDULE readiness PASS** (docs-only; not implemented).
+- Reservation grain + s66 QA schema PASS; **CREATE + CONFIRM/RELEASE/CANCEL + RESCHEDULE runtime PASS** (QA operational usage not activated).
 
 **Next (future candidate only — not started):**  
-`RESCHEDULE_MACHINE_RUN` implementation (or ADD/REMOVE / START/COMPLETE / UI / CNC duration) — only with a separate Owner GO.
+ADD/REMOVE participants, machine reassignment, START/COMPLETE / RUNNING/COMPLETED, UI, CNC duration — only with a separate Owner GO.
 
 ---
 
