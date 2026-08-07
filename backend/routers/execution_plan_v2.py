@@ -24,12 +24,14 @@ from schemas.resource_state_read import TaskResourceStateResult
 from schemas.resource_state_machine_run import (
     AddMachineRunParticipantCommand,
     CancelMachineRunCommand,
+    CompleteMachineRunCommand,
     ConfirmMachineRunCommand,
     CreateMachineRunCommand,
     CreateMachineRunResult,
     ReleaseMachineRunCommand,
     RemoveMachineRunParticipantCommand,
     RescheduleMachineRunCommand,
+    StartMachineRunCommand,
 )
 from schemas.resource_state_reservation import (
     CancelReservationCommand,
@@ -85,11 +87,13 @@ from services.execution_task_machine_reservation_command_service import (
 from services.machine_run_command_service import (
     add_machine_run_participant,
     cancel_machine_run,
+    complete_machine_run,
     confirm_machine_run,
     create_machine_run,
     release_machine_run,
     remove_machine_run_participant,
     reschedule_machine_run,
+    start_machine_run,
 )
 from services.execution_task_schedule_command_service import (
     cancel_schedule,
@@ -597,9 +601,57 @@ async def post_release_machine_run(
         require_permission("execution.machine_run.manage")
     ),
 ) -> CreateMachineRunResult:
-    """RELEASE_MACHINE_RUN — RESERVED→RELEASED (isolated; do not call against QA)."""
+    """RELEASE_MACHINE_RUN — RESERVED|COMPLETED→RELEASED (isolated; not QA)."""
     try:
         return await release_machine_run(
+            db,
+            machine_run_id=machine_run_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/machine-runs/{machine_run_id}/start",
+    response_model=CreateMachineRunResult,
+)
+async def post_start_machine_run(
+    machine_run_id: int,
+    body: StartMachineRunCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_run.execute")
+    ),
+) -> CreateMachineRunResult:
+    """START_MACHINE_RUN — RESERVED→RUNNING (reservation stays RESERVED; not QA)."""
+    try:
+        return await start_machine_run(
+            db,
+            machine_run_id=machine_run_id,
+            command=body,
+            actor_user_id=str(current_user.id),
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.post(
+    "/resource-state/machine-runs/{machine_run_id}/complete",
+    response_model=CreateMachineRunResult,
+)
+async def post_complete_machine_run(
+    machine_run_id: int,
+    body: CompleteMachineRunCommand,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(
+        require_permission("execution.machine_run.execute")
+    ),
+) -> CreateMachineRunResult:
+    """COMPLETE_MACHINE_RUN — RUNNING→COMPLETED (reservation stays RESERVED; not QA)."""
+    try:
+        return await complete_machine_run(
             db,
             machine_run_id=machine_run_id,
             command=body,

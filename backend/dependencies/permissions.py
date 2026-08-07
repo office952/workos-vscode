@@ -128,6 +128,8 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "execution.schedule.manage": ["admin", "manager"],
     "execution.machine_reservation.manage": ["admin", "manager"],
     "execution.machine_run.manage": ["admin", "manager"],
+    # Shop-floor START/COMPLETE — separate from commitment orchestration (manage).
+    "execution.machine_run.execute": ["admin", "manager", "operator"],
     "execution.capacity_allocation.manage": ["admin", "manager"],
     "execution.capacity_source.manage": ["admin", "manager"],
     "operator.task_action": ["admin", "manager", "operator"],

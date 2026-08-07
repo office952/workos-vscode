@@ -1,6 +1,7 @@
-"""MACHINE_RUN commands — CREATE + lifecycle + RESCHEDULE + ADD/REMOVE participant.
+"""MACHINE_RUN commands — CREATE + lifecycle + execution + RESCHEDULE + participants.
 
-No machine reassignment, START/COMPLETE, or auto-batch.
+START/COMPLETE mutate MachineRun execution status only (reservation stays RESERVED).
+No task state, employee session, assignment, PAUSE/RESUME, or auto-batch.
 Participant mutation is HELD-only. RESERVED ≠ shop-floor RUNNING.
 """
 
@@ -22,6 +23,7 @@ from models.operational_registry import MachineRegistry
 from schemas.resource_state_machine_run import (
     AddMachineRunParticipantCommand,
     CancelMachineRunCommand,
+    CompleteMachineRunCommand,
     ConfirmMachineRunCommand,
     CreateMachineRunCommand,
     CreateMachineRunResult,
@@ -29,6 +31,7 @@ from schemas.resource_state_machine_run import (
     ReleaseMachineRunCommand,
     RemoveMachineRunParticipantCommand,
     RescheduleMachineRunCommand,
+    StartMachineRunCommand,
 )
 from services.execution_task_machine_reservation_repository import (
     ExecutionTaskMachineReservationRepository,
@@ -320,6 +323,8 @@ async def _result_from_persisted(
             if affected_participant is not None
             else None
         ),
+        started_at=run.started_at,
+        completed_at=run.completed_at,
     )
 
 
@@ -662,14 +667,29 @@ async def _create_under_locks(
 
 
 # ---------------------------------------------------------------------------
-# CONFIRM / RELEASE / CANCEL — reservation lifecycle (not shop-floor execution)
+# CONFIRM / RELEASE / CANCEL — reservation lifecycle
+# START / COMPLETE — shop-floor execution (reservation stays RESERVED)
 # ---------------------------------------------------------------------------
 
 TERMINAL = frozenset({"CANCELLED", "RELEASED", "SUPERSEDED"})
 
+# Phase-aware run/reservation pairs (status equality is not required after START).
+COUPLED_STATUS_PAIRS = frozenset(
+    {
+        ("HELD", "HELD"),
+        ("RESERVED", "RESERVED"),
+        ("RUNNING", "RESERVED"),
+        ("COMPLETED", "RESERVED"),
+        ("RELEASED", "RELEASED"),
+        ("CANCELLED", "CANCELLED"),
+        ("SUPERSEDED", "SUPERSEDED"),
+    }
+)
+
 _LifecycleCommand = (
     ConfirmMachineRunCommand | ReleaseMachineRunCommand | CancelMachineRunCommand
 )
+_ExecutionCommand = StartMachineRunCommand | CompleteMachineRunCommand
 
 
 async def _load_run_for_update(db: AsyncSession, machine_run_id: int) -> MachineRun:
@@ -706,7 +726,8 @@ async def _load_run_reservation_for_update(
 def _assert_coupled(
     run: MachineRun, reservation: ExecutionTaskMachineReservation
 ) -> None:
-    if run.status != reservation.status or run.version != reservation.version:
+    pair = (run.status, reservation.status)
+    if pair not in COUPLED_STATUS_PAIRS or run.version != reservation.version:
         raise ResourceStateWriteError(
             "run_reservation_state_mismatch",
             f"run status={run.status!r} v={run.version} "
@@ -830,7 +851,8 @@ async def _mutate_machine_run_lifecycle(
                     f"{operation} not allowed from {run.status}",
                 )
 
-            prev_status = run.status
+            prev_run_status = run.status
+            prev_res_status = reservation.status
             prev_ver = run.version
             now = utcnow()
             window_start = reservation.reservation_start
@@ -852,7 +874,7 @@ async def _mutate_machine_run_lifecycle(
                 machine_run_id=run.id,
                 machine_id=machine_id,
                 operation=operation,
-                previous_status=prev_status,
+                previous_status=prev_run_status,
                 new_status=target_status,
                 previous_version=prev_ver,
                 new_version=run.version,
@@ -876,7 +898,7 @@ async def _mutate_machine_run_lifecycle(
                 machine_run_id=run.id,
                 machine_id=machine_id,
                 operation=reservation_operation,
-                previous_status=prev_status,
+                previous_status=prev_res_status,
                 new_status=target_status,
                 previous_start=window_start,
                 previous_end=window_end,
@@ -907,7 +929,7 @@ async def _mutate_machine_run_lifecycle(
         reservation_transition_id=res_tr.transition_id,
         already_applied=False,
         operation=operation,
-        previous_status=prev_status,
+        previous_status=prev_run_status,
         previous_version=prev_ver,
     )
 
@@ -960,7 +982,7 @@ async def release_machine_run(
         operation="RELEASE_MACHINE_RUN",
         reservation_operation="RELEASE_RESERVATION",
         target_status="RELEASED",
-        allowed_sources=frozenset({"RESERVED"}),
+        allowed_sources=frozenset({"RESERVED", "COMPLETED"}),
         stamp_fn=stamp,
     )
 
@@ -989,6 +1011,258 @@ async def cancel_machine_run(
         reservation_operation="CANCEL_RESERVATION",
         target_status="CANCELLED",
         allowed_sources=frozenset({"HELD", "RESERVED"}),
+        stamp_fn=stamp,
+    )
+
+
+async def _execution_idempotent_replay(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: _ExecutionCommand,
+    actor_user_id: str,
+    operation: str,
+    target_run_status: str,
+) -> CreateMachineRunResult | None:
+    tr = await _get_run_transition_by_idempotency(db, command.idempotency_key)
+    if tr is None:
+        return None
+    match = (
+        tr.operation == operation
+        and tr.machine_run_id == machine_run_id
+        and tr.previous_version == command.expected_version
+        and tr.new_status == target_run_status
+        and (tr.reason_code or "") == command.reason_code
+        and (tr.reason_note or None) == command.reason_note
+        and (tr.actor_user_id or "") == actor_user_id
+    )
+    if not match:
+        raise ResourceStateWriteError(
+            "idempotency_payload_conflict",
+            "idempotency_key already used with a different payload",
+        )
+    run = await db.get(MachineRun, machine_run_id)
+    if run is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "transition exists without machine_run row",
+        )
+    res_repo = ExecutionTaskMachineReservationRepository(db)
+    res_tr = await res_repo.get_transition_by_idempotency_key(command.idempotency_key)
+    if res_tr is None:
+        raise ResourceStateWriteError(
+            "idempotency_orphaned_transition",
+            "reservation transition missing for idempotent execution command",
+        )
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=True,
+        operation=operation,
+        previous_status=tr.previous_status,
+        previous_version=tr.previous_version,
+    )
+
+
+async def _mutate_machine_run_execution(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: _ExecutionCommand,
+    actor_user_id: str,
+    operation: str,
+    source_run_status: str,
+    target_run_status: str,
+    required_reservation_status: str,
+    stamp_fn: Callable[[MachineRun, datetime], None],
+) -> CreateMachineRunResult:
+    """START/COMPLETE: run status changes; reservation status stays RESERVED; dual bump."""
+    replay = await _execution_idempotent_replay(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation=operation,
+        target_run_status=target_run_status,
+    )
+    if replay is not None:
+        return replay
+
+    peek = await db.get(MachineRun, machine_run_id)
+    if peek is None:
+        raise ResourceStateNotFoundError(
+            "machine_run_not_found", f"machine_run {machine_run_id} not found"
+        )
+
+    async with machine_lock(int(peek.machine_id)):
+        try:
+            replay = await _execution_idempotent_replay(
+                db,
+                machine_run_id=machine_run_id,
+                command=command,
+                actor_user_id=actor_user_id,
+                operation=operation,
+                target_run_status=target_run_status,
+            )
+            if replay is not None:
+                await db.commit()
+                return replay
+
+            await require_active_domain_config(db, domain=DOMAIN)
+            run = await _load_run_for_update(db, machine_run_id)
+            reservation = await _load_run_reservation_for_update(db, machine_run_id)
+            _assert_coupled(run, reservation)
+
+            if run.version != command.expected_version:
+                raise ResourceStateWriteError(
+                    "cas_stale",
+                    f"expected_version={command.expected_version} "
+                    f"current={run.version}",
+                )
+            if run.status in TERMINAL:
+                raise ResourceStateWriteError(
+                    "invalid_transition",
+                    f"terminal machine_run status {run.status}",
+                )
+            if (
+                run.status != source_run_status
+                or reservation.status != required_reservation_status
+            ):
+                raise ResourceStateWriteError(
+                    "invalid_transition",
+                    f"{operation} requires run={source_run_status}/"
+                    f"reservation={required_reservation_status}; "
+                    f"got run={run.status}/reservation={reservation.status}",
+                )
+
+            prev_run_status = run.status
+            prev_res_status = reservation.status
+            prev_ver = run.version
+            now = utcnow()
+            window_start = reservation.reservation_start
+            window_end = reservation.reservation_end
+            machine_id = run.machine_id
+
+            run.status = target_run_status
+            run.version = prev_ver + 1
+            run.updated_by = actor_user_id
+            run.updated_at = now
+            stamp_fn(run, now)
+
+            # Reservation status unchanged; version bumps for coupling invariant.
+            reservation.version = prev_ver + 1
+            reservation.updated_by = actor_user_id
+            reservation.updated_at = now
+
+            run_tr = MachineRunTransition(
+                transition_id=str(uuid.uuid4()),
+                machine_run_id=run.id,
+                machine_id=machine_id,
+                operation=operation,
+                previous_status=prev_run_status,
+                new_status=target_run_status,
+                previous_version=prev_ver,
+                new_version=run.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            db.add(run_tr)
+            await db.flush()
+
+            res_repo = ExecutionTaskMachineReservationRepository(db)
+            res_tr = ExecutionTaskMachineReservationTransition(
+                transition_id=str(uuid.uuid4()),
+                reservation_id=reservation.id,
+                owner_form=OWNER_FORM,
+                execution_plan_id=None,
+                task_key=None,
+                machine_run_id=run.id,
+                machine_id=machine_id,
+                operation=operation,
+                previous_status=prev_res_status,
+                new_status=prev_res_status,
+                previous_start=window_start,
+                previous_end=window_end,
+                new_start=window_start,
+                new_end=window_end,
+                previous_version=prev_ver,
+                new_version=reservation.version,
+                reason_code=command.reason_code,
+                reason_note=command.reason_note,
+                actor_user_id=actor_user_id,
+                idempotency_key=command.idempotency_key,
+                correlation_id=command.correlation_id,
+                created_at=now,
+            )
+            await res_repo.add_transition(res_tr)
+            await db.commit()
+        except ResourceStateWriteError:
+            await db.rollback()
+            raise
+        except Exception:
+            await db.rollback()
+            raise
+
+    return await _result_from_persisted(
+        db,
+        run=run,
+        transition_id=run_tr.transition_id,
+        reservation_transition_id=res_tr.transition_id,
+        already_applied=False,
+        operation=operation,
+        previous_status=prev_run_status,
+        previous_version=prev_ver,
+    )
+
+
+async def start_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: StartMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    def stamp(run: MachineRun, now: datetime) -> None:
+        run.started_at = now
+
+    return await _mutate_machine_run_execution(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation="START_MACHINE_RUN",
+        source_run_status="RESERVED",
+        target_run_status="RUNNING",
+        required_reservation_status="RESERVED",
+        stamp_fn=stamp,
+    )
+
+
+async def complete_machine_run(
+    db: AsyncSession,
+    *,
+    machine_run_id: int,
+    command: CompleteMachineRunCommand,
+    actor_user_id: str,
+) -> CreateMachineRunResult:
+    def stamp(run: MachineRun, now: datetime) -> None:
+        run.completed_at = now
+
+    return await _mutate_machine_run_execution(
+        db,
+        machine_run_id=machine_run_id,
+        command=command,
+        actor_user_id=actor_user_id,
+        operation="COMPLETE_MACHINE_RUN",
+        source_run_status="RUNNING",
+        target_run_status="COMPLETED",
+        required_reservation_status="RESERVED",
         stamp_fn=stamp,
     )
 

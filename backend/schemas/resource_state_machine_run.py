@@ -24,6 +24,8 @@ MachineRunOperation = Literal[
     "RESCHEDULE_MACHINE_RUN",
     "ADD_MACHINE_RUN_PARTICIPANT",
     "REMOVE_MACHINE_RUN_PARTICIPANT",
+    "START_MACHINE_RUN",
+    "COMPLETE_MACHINE_RUN",
 ]
 ParticipantStatus = Literal["ACTIVE", "REMOVED"]
 ReservationStatus = Literal[
@@ -118,6 +120,26 @@ class RemoveMachineRunParticipantCommand(BaseModel):
     correlation_id: str | None = Field(default=None, max_length=64)
 
 
+class StartMachineRunCommand(BaseModel):
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_start", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
+class CompleteMachineRunCommand(BaseModel):
+    expected_version: int = Field(..., ge=1)
+    idempotency_key: str = Field(..., min_length=8, max_length=36)
+    reason_code: str = Field(
+        default="machine_run_complete", min_length=1, max_length=64
+    )
+    reason_note: str | None = Field(default=None, max_length=500)
+    correlation_id: str | None = Field(default=None, max_length=64)
+
+
 class MachineRunParticipantResult(BaseModel):
     execution_plan_id: int
     task_key: str
@@ -126,7 +148,7 @@ class MachineRunParticipantResult(BaseModel):
 
 
 class CreateMachineRunResult(BaseModel):
-    """Shared response for CREATE, lifecycle, RESCHEDULE, and participant commands."""
+    """Shared response for CREATE, lifecycle, execution, RESCHEDULE, participants."""
 
     machine_run_id: int
     status: MachineRunStatus
@@ -146,3 +168,5 @@ class CreateMachineRunResult(BaseModel):
     previous_status: MachineRunStatus | None = None
     previous_version: int | None = None
     affected_participant: MachineRunParticipantResult | None = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
