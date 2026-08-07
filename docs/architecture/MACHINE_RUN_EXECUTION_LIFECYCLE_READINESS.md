@@ -12,6 +12,7 @@
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
 MACHINE_RUN_EXECUTION_STATUS_QA_S67_ROLLOUT = PASS
+START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
 QA_ALEMBIC = s67_machine_run_execution_status
 QA_BASELINE_ACCEPTED =
@@ -23,38 +24,40 @@ MACHINE_RUN_STATUS_COMPLETED = SUPPORTED
 STARTED_AT = IMPLEMENTED_NULLABLE
 COMPLETED_AT = IMPLEMENTED_NULLABLE
 RESERVATION_STATUS_MODEL = UNCHANGED
-START_MACHINE_RUN = FINALIZED_CONTRACT_NOT_IMPLEMENTED
-COMPLETE_MACHINE_RUN = FINALIZED_CONTRACT_NOT_IMPLEMENTED
+START_MACHINE_RUN = PASS
+COMPLETE_MACHINE_RUN = PASS
+RELEASE_AFTER_COMPLETED = PASS
 START_ALLOWED_FROM = RESERVED
 COMPLETE_ALLOWED_FROM = RUNNING
 RUNNING_RESERVATION_STATE = RESERVED
-RUN_RESERVATION_COUPLING_MODEL = PHASE_AWARE_MATRIX_AFTER_START
+COMPLETED_RESERVATION_STATE = RESERVED
+RUN_RESERVATION_COUPLING_MODEL = PHASE_AWARE_MATRIX
 ACTUAL_RUNTIME_OWNER = MACHINE_RUN
 ACTUAL_RUNTIME_MINUTES_PERSISTED = NO
 PARTICIPANT_TASK_STATE_MUTATION = FORBIDDEN_IN_FIRST_SLICE
 EMPLOYEE_SESSION_MUTATION = FORBIDDEN_IN_FIRST_SLICE
 COMPLETE_RESERVATION_BEHAVIOR = SEPARATE_RELEASE
-RELEASE_AFTER_COMPLETED = FUTURE_RUNTIME_ADJUSTMENT_REQUIRED
 PAUSE_RESUME = DEFERRED
 CANCEL_WHILE_RUNNING = FORBIDDEN
 RESCHEDULE_WHILE_RUNNING = FORBIDDEN
 PARTICIPANT_MUTATION_WHILE_RUNNING = FORBIDDEN
-VERSION_MODEL = FINALIZED
-HISTORY_MODEL = FINALIZED
+VERSION_MODEL = DUAL_BUMP_VERIFIED
+HISTORY_MODEL = VERIFIED
 R6_RUNNING = ACTIVE
 R6_COMPLETED = ACTIVE_UNTIL_RELEASE
-PERMISSION = RECOMMEND_SEPARATE_EXECUTE
-PERMISSION_CHANGES = 0
+PERMISSION_START_COMPLETE = execution.machine_run.execute
+RELEASE_PERMISSION = execution.machine_run.manage
 DOMAIN_GATE = MACHINE_RESERVATION_ACTIVE
 PHASE_B_IMPACT = DOCUMENTED_NOT_IMPLEMENTED
 SCHEMA_STATUS_EXPANSION_REQUIRED = NO
-START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+START_COMPLETE_RUNTIME = PASS
 QA_SCHEMA_ROLLOUT = PASS
-QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
+QA_RUNTIME_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
+FRONTEND_CHANGED = NO
+EMPLOYEE_MOBILE_CHANGED = NO
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -133,7 +136,7 @@ QA: MACHINE_RUN tables empty · Capacity NOT_CONFIGURED · Phase B/C blocked.
 | **D7** | COMPLETE does **not** auto-RELEASE — separate **RELEASE** after COMPLETED | **FINALIZED** (Option A) |
 | **D8** | PAUSE / RESUME **deferred** | **FINALIZED** |
 | **D9** | CANCEL while RUNNING **forbidden** | **FINALIZED** |
-| **D10** | Prefer new **`execution.machine_run.execute`** for START/COMPLETE; keep `manage` for orchestration | **FINALIZED** (recommend; do not create in this GO) |
+| **D10** | Prefer new **`execution.machine_run.execute`** for START/COMPLETE; keep `manage` for orchestration | **FINALIZED** · wired in runtime GO |
 
 ### D1 — START from RESERVED only
 
@@ -141,7 +144,7 @@ HELD is still grouping. CONFIRM seals the commitment. Starting shop-floor work f
 
 ```text
 HELD → RUNNING     FORBIDDEN
-RESERVED → RUNNING ALLOWED (future)
+RESERVED → RUNNING ALLOWED (implemented)
 ```
 
 ### D2 — Reservation during RUNNING
@@ -260,7 +263,7 @@ manage  = admin/manager orchestration (create, membership, confirm, reschedule, 
 execute = recommended for START/COMPLETE (align roles with task_start/task_complete → include operator)
 ```
 
-Do **not** create the permission in this readiness GO. Implementation GO chooses exact name (`execution.machine_run.execute`) and registry wiring.
+Runtime GO wired `execution.machine_run.execute` for START/COMPLETE (`admin`/`manager`/`operator`); RELEASE stays on `execution.machine_run.manage`.
 
 ---
 
@@ -401,8 +404,8 @@ POST /api/v1/execution/resource-state/machine-runs/{id}/start
 POST /api/v1/execution/resource-state/machine-runs/{id}/complete
 ```
 
-Permission: recommended `execution.machine_run.execute` (implementation GO).  
-Release remains on existing `/release` with `manage` (or Owner may later allow execute to release post-complete — **not** decided as required here; default keep RELEASE on `manage`).
+Permission: `execution.machine_run.execute` for START/COMPLETE.  
+Release remains on existing `/release` with `execution.machine_run.manage`.
 
 ---
 
@@ -423,32 +426,23 @@ permission_denied
 ## 12. Boundaries
 
 ```text
-RUNTIME_IMPLEMENTATION = NOT_STARTED
+START_COMPLETE_RUNTIME = PASS
 AUTO_BATCH = NOT_IMPLEMENTED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 FRONTEND_CHANGED = NO
 EMPLOYEE_MOBILE_CHANGED = NO
-QA_MUTATIONS = 0
+QA_RUNTIME_MUTATIONS = 0
 ```
 
 ---
 
 ## 13. Next implementation GO (bounded)
 
-**In:**
+**Done (this arc):** START/COMPLETE writers · phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute` · isolated + regression proofs.
 
-```text
-1) START_MACHINE_RUN / COMPLETE_MACHINE_RUN writers
-2) phase-aware _assert_coupled matrix
-3) extend RELEASE allowed source to COMPLETED+RESERVED
-4) permission recommendation wiring (execute) if Owner approves
-5) isolated tests + commitment lifecycle regression
-6) R6 remains reservation-driven ACTIVE while RESERVED
-```
-
-**Out:**
+**Still out (require separate Owner GO):**
 
 ```text
 PAUSE/RESUME
@@ -457,14 +451,14 @@ auto employee sessions
 CANCEL-while-RUNNING / ABORT
 Phase B wiring
 Capacity activation
-UI / Mobile
+UI / Mobile START/COMPLETE buttons
 auto-batch
 machine reassignment
 QA operational MACHINE_RUN usage
 ```
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = START_COMPLETE_MACHINE_RUN_ONLY
+NEXT_TASK = NOT_AUTHORIZED
 ```
 
 ---
@@ -518,4 +512,4 @@ Worklogs:
 NO_UI_CHANGE
 ```
 
-execution lifecycle schema = available in QA · START/COMPLETE runtime = not implemented.
+MachineRun execution lifecycle: START + COMPLETE implemented backend · UI = not implemented · employee/session coupling = not implemented · Phase B coupling = not implemented.

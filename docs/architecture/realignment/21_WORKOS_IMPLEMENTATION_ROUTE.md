@@ -383,6 +383,7 @@ MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
 MACHINE_RUN_EXECUTION_STATUS_QA_S67_ROLLOUT = PASS
+START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC = s67_machine_run_execution_status
 QA_ALEMBIC = s67_machine_run_execution_status
 QA_BASELINE_ACCEPTED =
@@ -390,21 +391,25 @@ QA_BASELINE_ACCEPTED =
 QA_SHA_AFTER_S67 =
 bee5f5f74c428fd03cf30ffd7377db00be3fa64716a29ce2652ae9f93b161322
 KNOWN_BASELINE_DRIFT = intake_requests.id=50_delivery_standard
-MACHINE_RUN = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION
-MACHINE_RUN_RUNTIME = CREATE_CONFIRM_RELEASE_CANCEL_RESCHEDULE_ADD_REMOVE_IMPLEMENTED_IN_CODE
-MACHINE_RUN_LIFECYCLE = CREATE_PLUS_RESERVATION_LIFECYCLE_PLUS_RESCHEDULE_PLUS_PARTICIPANT_MUTATION
+MACHINE_RUN = CREATE_LIFECYCLE_RESCHEDULE_PARTICIPANT_MUTATION_START_COMPLETE
+MACHINE_RUN_RUNTIME = CREATE_CONFIRM_START_COMPLETE_RELEASE_CANCEL_RESCHEDULE_ADD_REMOVE_IMPLEMENTED_IN_CODE
+MACHINE_RUN_LIFECYCLE = COMMITMENT_PLUS_EXECUTION_RUNTIME
 CONFIRM_RELEASE_CANCEL = VERIFIED
 RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
+START_MACHINE_RUN = VERIFIED
+COMPLETE_MACHINE_RUN = VERIFIED
+RELEASE_AFTER_COMPLETED = VERIFIED
 MACHINE_RUN_STATUS_RUNNING = SUPPORTED_IN_QA_SCHEMA
 MACHINE_RUN_STATUS_COMPLETED = SUPPORTED_IN_QA_SCHEMA
 STARTED_AT = IMPLEMENTED_NULLABLE
 COMPLETED_AT = IMPLEMENTED_NULLABLE
-MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
-START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+MACHINE_RUN_EXECUTION_LIFECYCLE = PASS
+START_COMPLETE_RUNTIME = PASS
 QA_S67_SCHEMA_ROLLOUT = PASS
 RESERVATION_SCHEMA_CHANGE = ROLLED_OUT_TO_QA_SCHEMA_ONLY
 QA_OPERATIONAL_MACHINE_RUN_USAGE = NOT_ACTIVATED
+QA_RUNTIME_MUTATIONS = 0
 AUTO_BATCH = NOT_IMPLEMENTED
 BATCH_GROUPING = NOT_IMPLEMENTED
 WORKSPACE_BOOKING = NOT_IMPLEMENTED
@@ -418,6 +423,7 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
+FRONTEND_START_COMPLETE_UI = NO
 RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
@@ -448,17 +454,18 @@ Execution lifecycle readiness: `docs/architecture/MACHINE_RUN_EXECUTION_LIFECYCL
 Execution lifecycle readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_lifecycle_readiness.md`  
 Execution status schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_schema_foundation.md`  
 QA byte-drift closure worklog: `docs/worklog/realignment/2026-08-07_qa_sqlite_byte_drift_closure_before_s67_rollout.md`  
-Controlled QA s67 rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_controlled_qa_s67_rollout.md`
+Controlled QA s67 rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_execution_status_controlled_qa_s67_rollout.md`  
+START/COMPLETE runtime worklog: `docs/worklog/realignment/2026-08-07_start_complete_machine_run_runtime_implementation.md`
 
 **Why:**
 
 - Gaps sit upstream (Product System / op contracts), not in Scheduling or Capacity.
 - `vector_prep` duration E2E PASS; `face_cnc_cut` machine demand E2E PASS (`CNC_ROUTER_CUTTING` / `MACHINE_BOUND` / `batch_eligible=true`) without `machine_id` or MACHINE_RUN.
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
-- Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67** (`RUNNING`/`COMPLETED` + nullable `started_at`/`completed_at`; Reservation vocabulary unchanged; START/COMPLETE runtime not implemented; MACHINE_RUN tables empty).
+- Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67**; **START/COMPLETE runtime PASS** (phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute`; no task/session side effects; QA runtime writes = 0; UI not implemented).
 
 **Next (future candidate only — not started):**  
-`START_MACHINE_RUN` / `COMPLETE_MACHINE_RUN` (phase-aware coupling + RELEASE-after-COMPLETED + optional `execution.machine_run.execute`) — only with a separate Owner GO.
+PAUSE/RESUME · task/session coupling · Phase B · shop-floor UI for START/COMPLETE — only with separate Owner GO.
 
 ---
 

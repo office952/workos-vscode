@@ -43,14 +43,19 @@ RESCHEDULE_MACHINE_RUN = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
-MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
-START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
+MACHINE_RUN_EXECUTION_LIFECYCLE = PASS
+START_COMPLETE_RUNTIME = PASS
+START_MACHINE_RUN = PASS
+COMPLETE_MACHINE_RUN = PASS
+RELEASE_AFTER_COMPLETED = PASS
 QA_SCHEMA_ROLLOUT = PASS
 S67_QA_ROLLOUT = PASS
-QA_MUTATIONS = 0
+QA_RUNTIME_MUTATIONS = 0
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
+FRONTEND_CHANGED = NO
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -246,8 +251,8 @@ Prefer **lockstep vocabulary with Machine Reservation** for the planning claim l
 | `CANCELLED` | **Yes** | Aborted | **yes** | CANCEL |
 | `RELEASED` | **Yes** | Normal release of machine claim | **yes** | RELEASE |
 | `SUPERSEDED` | Later (optional first slice) | Replaced by another run | **yes** | SUPERSEDE |
-| `RUNNING` | **Schema PASS (s67)** · runtime NOT_IMPLEMENTED | Shop-floor started | no | START (future impl) |
-| `COMPLETED` | **Schema PASS (s67)** · runtime NOT_IMPLEMENTED | Shop-floor finished | **yes** (future) | COMPLETE then RELEASE |
+| `RUNNING` | **Schema PASS (s67)** · runtime PASS | Shop-floor started | no | START |
+| `COMPLETED` | **Schema PASS (s67)** · runtime PASS | Shop-floor finished | **yes** (after COMPLETE) | COMPLETE then RELEASE |
 
 ```text
 one MACHINE_RUN lifecycle (recommended)
@@ -267,7 +272,7 @@ Reservation vocabulary stays without `RUNNING`/`COMPLETED`. After START, couplin
 | Planned machine run | MACHINE_RUN status `HELD`/`RESERVED` | Same entity lifecycle |
 | Exclusive interval | **Owned Machine Reservation** | Sole exclusive clock |
 | Estimated run minutes | Planning hint on run or derived from demand | ≠ reserved window ≠ actual |
-| Actual runtime | `machine_runs.started_at` / `completed_at` (s67; writers not yet) | Derive minutes; do not persist duplicate |
+| Actual runtime | `machine_runs.started_at` / `completed_at` (s67; START/COMPLETE writers) | Derive minutes; do not persist duplicate |
 
 ```text
 estimated_run_minutes  ≠ reserved_interval ≠ actual_runtime_minutes
@@ -471,8 +476,9 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 6. Grouping service (eligibility beyond the three stamps) — separate GO.
 7. Optional attach of nesting/program payload — separate decision.
 8. ~~START/COMPLETE readiness~~ → PASS.
-9. ~~Execution status schema foundation (s67)~~ → PASS (QA rollout + START/COMPLETE writers not started).
-10. Machine reassignment / PAUSE / Phase B wiring — separate GO.
+9. ~~Execution status schema foundation (s67)~~ → PASS.
+10. ~~START/COMPLETE runtime~~ → PASS.
+11. Machine reassignment / PAUSE / Phase B / UI — separate GO.
 
 ```text
 RESERVATION_GRAIN_REALIGNMENT_READINESS = PASS
@@ -486,14 +492,16 @@ MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION = PASS
 MACHINE_RUN_EXECUTION_LIFECYCLE_READINESS = PASS
 MACHINE_RUN_EXECUTION_STATUS_SCHEMA_FOUNDATION = ACCEPTED_FINAL
 MACHINE_RUN_EXECUTION_STATUS_QA_S67_ROLLOUT = PASS
+START_COMPLETE_MACHINE_RUN_RUNTIME_IMPLEMENTATION = PASS
 CODE_ALEMBIC_HEAD = s67_machine_run_execution_status
 QA_ALEMBIC = s67_machine_run_execution_status
 RUNTIME_IMPLEMENTATION = VERIFIED
 PARTICIPANT_MUTATION = VERIFIED
-MACHINE_RUN_EXECUTION_LIFECYCLE = NOT_IMPLEMENTED
-START_COMPLETE_RUNTIME = NOT_IMPLEMENTED
+MACHINE_RUN_EXECUTION_LIFECYCLE = PASS
+START_COMPLETE_RUNTIME = PASS
 QA_SCHEMA_ROLLOUT = PASS
 S67_QA_ROLLOUT = PASS
+QA_RUNTIME_MUTATIONS = 0
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
