@@ -366,6 +366,39 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     spineOrder: 0,
   },
   {
+    id: "machine_run",
+    labelRo: "Rulare utilaj (MachineRun)",
+    technicalName: "MachineRun",
+    owner: "Execution / MachineRun",
+    purposeRo:
+      "Context partajat de execuție pe utilaj: participanți multi-plan, status execuție, started_at/completed_at.",
+    status: "PARTIAL",
+    inputRo:
+      "Demand înghețat din ExecutionPlan task · utilaj selectat · participanți · fereastră rezervare",
+    outputRo:
+      "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · API read list/detail",
+    consumerRo: "Operator UI (pending) · R6 (via Reservation) · Phase B (viitor, neautorizat)",
+    limitationRo:
+      "Backend runtime + operator read API active. UI /execution/machine-runs = NOT_IMPLEMENTED. Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred.",
+    verifyRoute: "/execution",
+    spineOrder: 0,
+  },
+  {
+    id: "machine_reservation",
+    labelRo: "Rezervare utilaj",
+    technicalName: "Machine Reservation",
+    owner: "Execution / Resource State",
+    purposeRo: "Angajament pe utilaj: identitate mașină + fereastră de timp + status commitment.",
+    status: "PARTIAL",
+    inputRo: "MachineRun (run-owned) sau task-owned reservation writers",
+    outputRo: "Reservation HELD|RESERVED|RELEASED|CANCELLED · overlap / R6 ACTIVE",
+    consumerRo: "MachineRun · R6 machine_reservation evaluator",
+    limitationRo:
+      "Nu deține RUNNING/COMPLETED (vocabular doar pe MachineRun). Capacity Stage 1 = IMPLEMENTED_INACTIVE.",
+    verifyRoute: "/execution",
+    spineOrder: 0,
+  },
+  {
     id: "attendance",
     labelRo: "Pontaj",
     technicalName: "Attendance / HR",
@@ -692,10 +725,35 @@ export const PRESENT_OWNERSHIP_ROWS: PresentOwnershipRow[] = [
     domainRo: "Execuție reală",
     technicalAlias: "Execution Reality",
     owner: "Execution path",
-    semanticOwnershipRo: "Actuals / sesiuni",
+    semanticOwnershipRo: "Actuals / sesiuni angajat",
     writeAuthorityRo: "Sesiuni execuție",
     readOnlyRo: "Post-Job (citire)",
     enforcementRo: "Execution session APIs",
+    status: "PARTIAL",
+  },
+  {
+    systemId: "machine_run",
+    domainRo: "Rulare utilaj",
+    technicalAlias: "MachineRun",
+    owner: "Execution / MachineRun",
+    semanticOwnershipRo:
+      "Grupare shared pe utilaj · status execuție · started_at/completed_at",
+    writeAuthorityRo:
+      "CREATE/CONFIRM/START/COMPLETE/RELEASE/CANCEL (+ participant HELD-only)",
+    readOnlyRo: "GET list/detail operator read API · viitor UI /execution/machine-runs",
+    enforcementRo:
+      "execution.machine_run.manage|execute|read · phase-aware run/reservation coupling",
+    status: "PARTIAL",
+  },
+  {
+    systemId: "machine_reservation",
+    domainRo: "Rezervare utilaj",
+    technicalAlias: "Machine Reservation",
+    owner: "Execution / Resource State",
+    semanticOwnershipRo: "Commitment utilaj · fereastră · machine_id",
+    writeAuthorityRo: "Reservation writers + run-owned lifecycle",
+    readOnlyRo: "R6 · MachineRun read projection",
+    enforcementRo: "MACHINE_RESERVATION domain ACTIVE · overlap OPEN set",
     status: "PARTIAL",
   },
   {
