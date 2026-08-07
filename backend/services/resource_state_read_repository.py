@@ -15,8 +15,9 @@ from models.execution_task_machine_reservation import (
     ExecutionTaskMachineReservation,
 )
 from models.execution_task_schedule import ExecutionTaskSchedule
+from models.machine_run import MachineRunParticipant
 from models.resource_domain_configuration import ResourceDomainConfiguration
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 DEFAULT_APPLICATION_SCOPE = "application"
@@ -60,16 +61,61 @@ class ResourceStateReadRepository:
     async def list_reservations_for_task(
         self, *, execution_plan_id: int, task_key: str
     ) -> Sequence[ExecutionTaskMachineReservation]:
+        """Task-owned reservations only (legacy grain)."""
         result = await self._db.execute(
             select(ExecutionTaskMachineReservation)
             .where(
                 ExecutionTaskMachineReservation.execution_plan_id
                 == execution_plan_id,
                 ExecutionTaskMachineReservation.task_key == task_key,
+                ExecutionTaskMachineReservation.machine_run_id.is_(None),
             )
             .order_by(ExecutionTaskMachineReservation.id.asc())
         )
         return list(result.scalars().all())
+
+    async def list_reservations_visible_to_task(
+        self, *, execution_plan_id: int, task_key: str
+    ) -> Sequence[ExecutionTaskMachineReservation]:
+        """Union: task-owned rows ∪ run-owned rows via ACTIVE participant.
+
+        Deduplicates by reservation id. Foundation for R6; no MACHINE_RUN runtime.
+        """
+        participant_run_ids = (
+            select(MachineRunParticipant.machine_run_id)
+            .where(
+                MachineRunParticipant.execution_plan_id == execution_plan_id,
+                MachineRunParticipant.task_key == task_key,
+                MachineRunParticipant.status == "ACTIVE",
+            )
+            .scalar_subquery()
+        )
+        result = await self._db.execute(
+            select(ExecutionTaskMachineReservation)
+            .where(
+                or_(
+                    (
+                        ExecutionTaskMachineReservation.execution_plan_id
+                        == execution_plan_id
+                    )
+                    & (ExecutionTaskMachineReservation.task_key == task_key)
+                    & ExecutionTaskMachineReservation.machine_run_id.is_(None),
+                    ExecutionTaskMachineReservation.machine_run_id.in_(
+                        participant_run_ids
+                    ),
+                )
+            )
+            .order_by(ExecutionTaskMachineReservation.id.asc())
+        )
+        seen: set[int] = set()
+        out: list[ExecutionTaskMachineReservation] = []
+        for row in result.scalars().all():
+            rid = int(row.id)
+            if rid in seen:
+                continue
+            seen.add(rid)
+            out.append(row)
+        return out
 
     async def list_capacity_allocations_for_task(
         self, *, execution_plan_id: int, task_key: str

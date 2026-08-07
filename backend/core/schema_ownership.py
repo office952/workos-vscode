@@ -24,6 +24,9 @@ ALEMBIC_OWNED_TABLES: frozenset[str] = frozenset(
         "execution_task_capacity_allocation_transitions",
         "workcenter_capacity_sources",
         "workcenter_capacity_source_transitions",
+        "machine_runs",
+        "machine_run_participants",
+        "machine_run_transitions",
     }
 )
 
@@ -45,6 +48,15 @@ CAPACITY_SOURCE_TABLES: frozenset[str] = frozenset(
     {
         "workcenter_capacity_sources",
         "workcenter_capacity_source_transitions",
+    }
+)
+
+# MACHINE_RUN schema foundation (s66). Runtime command domain not activated.
+MACHINE_RUN_TABLES: frozenset[str] = frozenset(
+    {
+        "machine_runs",
+        "machine_run_participants",
+        "machine_run_transitions",
     }
 )
 

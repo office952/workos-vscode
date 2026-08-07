@@ -152,6 +152,7 @@ async def create_reservation(
     repo = ExecutionTaskMachineReservationRepository(db)
     fp = {
         "operation": "CREATE_RESERVATION",
+        "owner_form": "TASK",
         "execution_plan_id": command.execution_plan_id,
         "task_key": command.task_key,
         "machine_id": command.machine_id,
@@ -167,6 +168,8 @@ async def create_reservation(
     def match(tr: ExecutionTaskMachineReservationTransition, f: dict[str, Any]) -> bool:
         return (
             tr.operation == "CREATE_RESERVATION"
+            and (getattr(tr, "owner_form", None) or "TASK") == f["owner_form"]
+            and tr.machine_run_id is None
             and tr.execution_plan_id == f["execution_plan_id"]
             and tr.task_key == f["task_key"]
             and tr.machine_id == f["machine_id"]
@@ -236,6 +239,7 @@ async def create_reservation(
                 execution_plan_id=plan.id,
                 order_id=int(plan.order_id),
                 task_key=command.task_key,
+                machine_run_id=None,
                 machine_id=command.machine_id,
                 reservation_start=command.reservation_start,
                 reservation_end=command.reservation_end,
@@ -253,8 +257,10 @@ async def create_reservation(
                 tr = ExecutionTaskMachineReservationTransition(
                     transition_id=str(uuid.uuid4()),
                     reservation_id=row.id,
+                    owner_form="TASK",
                     execution_plan_id=plan.id,
                     task_key=command.task_key,
+                    machine_run_id=None,
                     machine_id=command.machine_id,
                     operation="CREATE_RESERVATION",
                     previous_status=None,
@@ -404,8 +410,10 @@ async def confirm_reservation(
         tr = ExecutionTaskMachineReservationTransition(
             transition_id=str(uuid.uuid4()),
             reservation_id=row.id,
+            owner_form="TASK",
             execution_plan_id=row.execution_plan_id,
             task_key=row.task_key,
+            machine_run_id=None,
             machine_id=row.machine_id,
             operation="CONFIRM_RESERVATION",
             previous_status=prev_status,
@@ -488,8 +496,10 @@ async def release_reservation(
         tr = ExecutionTaskMachineReservationTransition(
             transition_id=str(uuid.uuid4()),
             reservation_id=row.id,
+            owner_form="TASK",
             execution_plan_id=row.execution_plan_id,
             task_key=row.task_key,
+            machine_run_id=None,
             machine_id=row.machine_id,
             operation="RELEASE_RESERVATION",
             previous_status=prev_status,
@@ -572,8 +582,10 @@ async def cancel_reservation(
         tr = ExecutionTaskMachineReservationTransition(
             transition_id=str(uuid.uuid4()),
             reservation_id=row.id,
+            owner_form="TASK",
             execution_plan_id=row.execution_plan_id,
             task_key=row.task_key,
+            machine_run_id=None,
             machine_id=row.machine_id,
             operation="CANCEL_RESERVATION",
             previous_status=prev_status,
@@ -745,6 +757,7 @@ async def supersede_reservation(
                 execution_plan_id=plan.id,
                 order_id=int(plan.order_id),
                 task_key=row.task_key,
+                machine_run_id=None,
                 machine_id=new_machine_id,
                 reservation_start=command.reservation_start,
                 reservation_end=command.reservation_end,
@@ -764,8 +777,10 @@ async def supersede_reservation(
             tr_super = ExecutionTaskMachineReservationTransition(
                 transition_id=str(uuid.uuid4()),
                 reservation_id=row.id,
+                owner_form="TASK",
                 execution_plan_id=plan.id,
                 task_key=row.task_key,
+                machine_run_id=None,
                 machine_id=row.machine_id,
                 operation="SUPERSEDE_RESERVATION",
                 previous_status=prev_status,
@@ -788,8 +803,10 @@ async def supersede_reservation(
             tr_create = ExecutionTaskMachineReservationTransition(
                 transition_id=str(uuid.uuid4()),
                 reservation_id=new_row.id,
+                owner_form="TASK",
                 execution_plan_id=plan.id,
                 task_key=row.task_key,
+                machine_run_id=None,
                 machine_id=new_machine_id,
                 operation="CREATE_RESERVATION",
                 previous_status=None,

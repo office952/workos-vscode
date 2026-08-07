@@ -175,8 +175,11 @@ def test_migration_graph_single_head_s64_after_s63():
     cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(cfg)
     heads = script.get_heads()
-    # Head advanced to s65 (Capacity Stage 1); s64 remains the RS eight-pack revision.
-    assert heads == ["s65_workcenter_capacity_source"], heads
+    # Head advanced to s66 (MACHINE_RUN grain); s64 remains the RS eight-pack revision.
+    assert heads == ["s66_machine_run_reservation_grain"], heads
+    assert script.get_revision("s66_machine_run_reservation_grain").down_revision == (
+        "s65_workcenter_capacity_source"
+    )
     assert script.get_revision("s65_workcenter_capacity_source").down_revision == S64
     rev = script.get_revision(S64)
     assert rev is not None
@@ -190,8 +193,8 @@ def test_fresh_sqlite_upgrade_head_resource_state(tmp_path: Path):
     assert proc.returncode == 0, proc.stderr + proc.stdout
 
     engine = _sync_engine(db)
-    # Head is s65; RS eight-pack from s64 remains present and empty.
-    assert _current_revision(engine) == "s65_workcenter_capacity_source"
+    # Head is s66; RS eight-pack from s64 remains present and empty.
+    assert _current_revision(engine) == "s66_machine_run_reservation_grain"
     assert _pragma_foreign_keys(engine) == 1
 
     with engine.connect() as conn:

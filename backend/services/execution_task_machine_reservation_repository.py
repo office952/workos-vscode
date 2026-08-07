@@ -48,6 +48,7 @@ class ExecutionTaskMachineReservationRepository:
                 == execution_plan_id,
                 ExecutionTaskMachineReservation.task_key == task_key,
                 ExecutionTaskMachineReservation.machine_id == machine_id,
+                ExecutionTaskMachineReservation.machine_run_id.is_(None),
                 ExecutionTaskMachineReservation.status.in_(
                     RESERVATION_OPEN_STATUSES
                 ),

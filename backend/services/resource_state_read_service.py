@@ -132,7 +132,7 @@ async def _evaluate_reservation(
 ) -> DomainResourceStateResult:
     try:
         config = await repo.get_active_configuration(domain="MACHINE_RESERVATION")
-        rows = await repo.list_reservations_for_task(
+        rows = await repo.list_reservations_visible_to_task(
             execution_plan_id=plan_id, task_key=task_key
         )
     except Exception:
