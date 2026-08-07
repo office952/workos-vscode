@@ -465,13 +465,14 @@ Future effect only: participant + open run reservation ⇒ task sees ACTIVE mach
 
 ## 20. What must be implemented before MACHINE_RUN runtime writers
 
-Ordered prerequisites (future Owner GOs):
+Ordered prerequisites:
 
-1. **Atomic schema slice** — MACHINE_RUN tables + Reservation OPTION_B grain (this readiness).
-2. Reservation writer support for RUN owner form + XOR + fingerprint without `task_key`.
-3. R6 union reader path.
-4. MACHINE_RUN orchestration command (create run + reservation + participants).
-5. Only then: grouping eligibility beyond the three demand stamps (separate GO).
+1. **Atomic schema slice** — DONE in code (`s66`); QA rollout not authorized.
+2. R6 union reader path — DONE (`list_reservations_visible_to_task`).
+3. Task-owned reservation writer compatibility — DONE (R9 unchanged).
+4. Reservation writer support for RUN owner form + CREATE fingerprint without `task_key` — future runtime GO.
+5. MACHINE_RUN orchestration command (create run + reservation + participants) — future runtime GO.
+6. Grouping eligibility beyond the three demand stamps — separate GO.
 
 ```text
 RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_ALEMBIC_S66
