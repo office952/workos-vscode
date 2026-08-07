@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_ADD_REMOVE_PARTICIPANT_RUNTIME_IMPLEMENTATION`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `6e8d774b`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `51a0d4ee`  
 **Verdict:** **PASS**  
 **Scope:** HELD-only ADD/REMOVE · soft REMOVED · version lockstep · isolated DB · QA zero-mutation · no UI · no push
 
