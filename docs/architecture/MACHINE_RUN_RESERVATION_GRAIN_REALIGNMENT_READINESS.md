@@ -28,6 +28,7 @@ RUNTIME_IMPLEMENTATION = NOT_STARTED
 RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_ALEMBIC_S66
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
 QA_S66_SCHEMA_ROLLOUT = PASS
+MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS = PASS
 MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
 QA_ALEMBIC = s66_machine_run_reservation_grain
 QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
@@ -472,20 +473,23 @@ Ordered prerequisites:
 2. R6 union reader path — DONE (`list_reservations_visible_to_task`).
 3. Task-owned reservation writer compatibility — DONE (R9 unchanged).
 4. Reservation writer support for RUN owner form + CREATE fingerprint without `task_key` — future runtime GO.
-5. MACHINE_RUN orchestration command (create run + reservation + participants) — future runtime GO.
+5. MACHINE_RUN orchestration command (`CREATE_MACHINE_RUN`) — contract READY; implementation GO separate  
+   (`docs/architecture/MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS.md`).
 6. Grouping eligibility beyond the three demand stamps — separate GO.
 
 ```text
 RESERVATION_SCHEMA_CHANGE = IMPLEMENTED_IN_CODE_ALEMBIC_S66
 MACHINE_RUN_SCHEMA_FOUNDATION = PASS
 QA_S66_SCHEMA_ROLLOUT = PASS
+MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS = PASS
 QA_ALEMBIC = s66_machine_run_reservation_grain
 MACHINE_RUN_RUNTIME = NOT_IMPLEMENTED
 QA_ROLLOUT_RUNTIME = NOT_AUTHORIZED
 ```
 
 Schema foundation worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_schema_foundation.md`.  
-QA rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_controlled_qa_s66_schema_rollout.md`.
+QA rollout worklog: `docs/worklog/realignment/2026-08-07_machine_run_reservation_grain_controlled_qa_s66_schema_rollout.md`.  
+Command readiness: `docs/architecture/MACHINE_RUN_MINIMAL_COMMAND_RUNTIME_READINESS.md`.
 
 **Implemented link shape (s66):** one-direction `reservation.machine_run_id → machine_runs.id` UNIQUE (no `machine_runs.reservation_id`) to avoid circular FK; D4 semantic ownership unchanged.
 
