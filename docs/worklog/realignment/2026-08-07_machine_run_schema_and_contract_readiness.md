@@ -4,7 +4,7 @@
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_SCHEMA_AND_CONTRACT_READINESS`  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Starting HEAD:** `2e7e4310`  
-**Tip HEAD:** _(set by tip commit)_  
+**Tip HEAD:** `fdb31fbb2b69e998472a5a7182e4d5c05435e9ca`  
 **Verdict:** **PASS**  
 **Scope:** docs-only · read-only audit · **no ORM · no migration · no runtime**
 
