@@ -376,10 +376,10 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     inputRo:
       "Demand înghețat din ExecutionPlan task · utilaj selectat · participanți · fereastră rezervare",
     outputRo:
-      "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · API read list/detail",
+      "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · list/detail + candidate/lookup read APIs",
     consumerRo: "Operator UI /execution/machine-runs · R6 (via Reservation) · Phase B (viitor, neautorizat)",
     limitationRo:
-      "Runtime + read API + shop-floor UI active. CREATE/ADD UI deferred (candidate discovery API missing). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred.",
+      "Runtime + read + shop-floor UI active. Candidate discovery + task→run lookup APIs available; CREATE/ADD UI + secondary chips still deferred (UI closure). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred.",
     verifyRoute: "/execution/machine-runs",
     spineOrder: 0,
   },
@@ -740,7 +740,8 @@ export const PRESENT_OWNERSHIP_ROWS: PresentOwnershipRow[] = [
       "Grupare shared pe utilaj · status execuție · started_at/completed_at",
     writeAuthorityRo:
       "CREATE/CONFIRM/START/COMPLETE/RELEASE/CANCEL (+ participant HELD-only)",
-    readOnlyRo: "GET list/detail · UI /execution/machine-runs (CREATE/ADD deferred)",
+    readOnlyRo:
+      "GET list/detail + candidates + by-task · UI CREATE/ADD/chips still deferred",
     enforcementRo:
       "execution.machine_run.manage|execute|read · phase-aware run/reservation coupling",
     status: "PARTIAL",

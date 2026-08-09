@@ -29,14 +29,22 @@ QA_READ_SMOKE = VERIFIED
 QA_MUTATIONS = 0
 MODULES_IMPACT = UPDATED_SUPPORT_SYSTEM_ROWS
 GOVERNANCE_IMPACT = UPDATED_OWNERSHIP_ROWS
-FRONTEND_MACHINE_RUN_UI = NOT_STARTED
-NEXT_IMPLEMENTATION_SCOPE = MACHINE_RUN_SHOP_FLOOR_UI
+FRONTEND_MACHINE_RUN_UI = PASS (shop-floor)
+CANDIDATE_DISCOVERY_API = PASS
+TASK_TO_ACTIVE_MACHINE_RUN_LOOKUP = PASS
+CREATE_UI = DEFERRED
+ADD_UI = DEFERRED
+SECONDARY_CONTEXT_LINKS = DEFERRED
+NEXT_IMPLEMENTATION_SCOPE =
+MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE
 PAUSE_RESUME = DEFERRED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
 PHASE_C = BLOCKED
 NEXT_TASK = NOT_AUTHORIZED
 ```
+
+Canonical candidate/lookup doc: `docs/architecture/MACHINE_RUN_CANDIDATE_DISCOVERY_AND_TASK_LOOKUP_READ_API.md`
 
 ---
 
@@ -45,6 +53,9 @@ NEXT_TASK = NOT_AUTHORIZED
 ```text
 GET /api/v1/execution/resource-state/machine-runs
 GET /api/v1/execution/resource-state/machine-runs/{machine_run_id}
+GET /api/v1/execution/resource-state/machine-runs/candidates
+GET /api/v1/execution/resource-state/machine-runs/{id}/candidate-participants
+GET /api/v1/execution/resource-state/machine-runs/by-task
 ```
 
 ### List query params

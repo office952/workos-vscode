@@ -434,11 +434,13 @@ PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
 FRONTEND_START_COMPLETE_UI = YES_MACHINE_RUN_ONLY
 MACHINE_RUN_SHOP_FLOOR_UI = PASS
+CANDIDATE_DISCOVERY_API = PASS
+TASK_TO_ACTIVE_MACHINE_RUN_LOOKUP = PASS
 CREATE_UI = DEFERRED
 ADD_UI = DEFERRED
-CANDIDATE_DISCOVERY_API = MISSING
 SECONDARY_CONTEXT_LINKS = DEFERRED
-RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
+RECOMMENDED_NEXT_SLICE =
+MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -473,7 +475,10 @@ START/COMPLETE runtime worklog: `docs/worklog/realignment/2026-08-07_start_compl
 Shop-floor UI readiness audit: `docs/architecture/MACHINE_RUN_SHOP_FLOOR_UI_READINESS_AND_PLACEMENT_AUDIT.md`  
 UI readiness worklog: `docs/worklog/realignment/2026-08-07_machine_run_shop_floor_ui_readiness_and_placement_audit.md`  
 Operator read API: `docs/architecture/MACHINE_RUN_OPERATOR_READ_API.md`  
-Read API worklog: `docs/worklog/realignment/2026-08-07_machine_run_operator_read_api.md`
+Read API worklog: `docs/worklog/realignment/2026-08-07_machine_run_operator_read_api.md`  
+Candidate discovery + task lookup: `docs/architecture/MACHINE_RUN_CANDIDATE_DISCOVERY_AND_TASK_LOOKUP_READ_API.md`  
+Candidate/lookup worklog: `docs/worklog/realignment/2026-08-09_machine_run_candidate_discovery_and_task_lookup_read_api.md`  
+Shop-floor UI worklog: `docs/worklog/realignment/2026-08-09_machine_run_shop_floor_ui_implementation.md`
 
 **Why:**
 
@@ -483,10 +488,12 @@ Read API worklog: `docs/worklog/realignment/2026-08-07_machine_run_operator_read
 - Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67**; **START/COMPLETE runtime PASS** (phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute`; no task/session side effects; QA runtime writes = 0).
 - **Shop-floor UI readiness PASS:** primary placement `/execution/machine-runs` (new page YES); secondary chips; Utilaje LATER.
 - **Operator read API PASS:** GET list + detail · `execution.machine_run.read` · modules/governance ownership rows updated.
-- **Shop-floor UI PASS:** `/execution/machine-runs` list+detail · command wiring · light/dark · CREATE/ADD + secondary chips deferred (API gaps).
+- **Shop-floor UI PASS:** `/execution/machine-runs` list+detail · command wiring · light/dark.
+- **Candidate discovery + task lookup PASS:** shared eligibility with CREATE/ADD · by-task active membership · CREATE/ADD UI + chips still deferred (UI closure).
 
-**Next:** not authorized.  
-Still deferred: candidate discovery · secondary task chips · PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home.
+**Next (future candidate only):**  
+`MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE` — only with separate Owner GO.  
+Still deferred: PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home.
 
 ---
 
