@@ -75,7 +75,9 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | QA_MUTATIONS (this GO) | 0 |
 | COMMERCIAL_OFFER | DONE_FOR_V1 |
 | PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~80% |
+| MATERIAL_ACTUALS_V1 | DONE_FOR_V1 |
+| PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~85% |
 
 ---
 
@@ -98,7 +100,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | M. MachineRun runtime | DONE_FOR_V1 | YES | Command lifecycle + UI | Cost authority (separate) | — | NO runtime |
 | N. Scheduling | PARTIAL_NON_BLOCKING | NO | Order-centric execution UI | Advanced schedule | — | NO |
 | O. Capacity Stage 1 | IMPLEMENTED_INACTIVE_BY_DECISION | NO | Code present, inactive | Activation | Owner Option D | NO |
-| P. Actual material cost | PARTIAL_V1_BLOCKER | YES | Movement freeze closed-job | Platform-complete for all jobs | Missing unit cost fail-closed | Bounded only |
+| P. Actual material cost | DONE_FOR_V1 | YES | Freeze-on-write StockMovement; material_input helper; historical stability PROVEN | Operator capture discipline for Letters jobs | — | NO inventory program |
 | Q. Actual labor cost | DONE_FOR_V1 | YES | Time + historical rate freeze | Monetary Profitability rollup | — | NO |
 | R. Actual machine cost | NOT_STARTED_V1_REQUIRED | CONDITIONAL | Runtime exists | Dated machine cost policy | Cost ≠ runtime | Later if N/A |
 | S. Other/service actuals | NOT_STARTED_V1_REQUIRED | CONDITIONAL | Fail-closed N/A | Declared other-direct ledger | — | Later if N/A |
@@ -110,7 +112,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset; security write-gate DONE | Owner SQLite confirm; secrets; smoke pack | Deploy misconfig | Bounded |
 
-**Counts (exact):** DONE_FOR_V1 = 13 · OPEN/PARTIAL_V1_BLOCKER = 4 · PARTIAL_NON_BLOCKING = 8 · NOT_STARTED_V1_REQUIRED = 3 · IMPLEMENTED_INACTIVE = 1 · DEFERRED (cross-cutting Phase E / PAUSE) = listed in Later
+**Counts (exact):** DONE_FOR_V1 = 14 · OPEN/PARTIAL_V1_BLOCKER = 3 · PARTIAL_NON_BLOCKING = 8 · NOT_STARTED_V1_REQUIRED = 3 · IMPLEMENTED_INACTIVE = 1 · DEFERRED (cross-cutting Phase E / PAUSE) = listed in Later
 
 ---
 
@@ -131,6 +133,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 | HR/Pontaj boundary | Separation | Owner decision docs | Payroll reconciliation |
 | Commercial offer currency/rates (Letters) | EUR native + fail-closed mix; Order EUR\|RON; revenue envelope | `WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE` | Quotes list aggregate currency polish; `printed_vinyl` |
 | Production security write-gate | Intake V5 unmounted; HR cost projection gated; anonymous critical writes = 0 | `WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE` | External pentest LATER; APP_ENV discipline in smoke pack |
+| Material actuals sufficiency | Frozen StockMovement + material_input; planned≠actual; historical PROVEN | `WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY` | Warehouse/MRP LATER; operator issue discipline |
 
 ---
 
@@ -138,8 +141,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| Actual material platform | Consistent freeze + valuation for V1 jobs | Inventory facts | MEDIUM | SMALL | POSSIBLE | MEDIUM |
-| Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material PARTIAL; revenue READY | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
+| Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material READY; revenue READY | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
 | Production readiness pack | Owner SQLite record; secrets; smoke; APP_ENV discipline | Security DONE | LOW | NONE | NONE | SMALL |
 | Machine cost (if required) | Dated machine cost policy | MachineRun runtime | HIGH | SMALL | LIKELY | LARGE |
 
@@ -172,7 +174,7 @@ Verified against current truth:
 |-------|-----------|----------|
 | Revenue | READY | Frozen `accepted_commercial_total` + currency; net/VAT/gross envelope when Quote had them |
 | Labor | READY | Closed sessions + finalize → frozen `ActualLaborCostLine` |
-| Material | PARTIAL | Movement freeze closed-job; not all jobs complete |
+| Material | READY | Freeze-on-write StockMovement + material_input; fail-closed if unused/missing cost |
 | Machine | BLOCKED / CONDITIONAL | Runtime ≠ cost; fail-closed until policy |
 | Other | BLOCKED / CONDITIONAL | `other_direct_not_declared` |
 | Provenance | PARTIAL | Labor/material strong; machine/other weak |
@@ -242,8 +244,8 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 
 1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE** (`WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE`)  
 2. ~~Production security gates (intake-v5 + HR salary read authz)~~ **DONE** (`WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE`)  
-3. Material actuals V1 sufficiency  
-4. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred)  
+3. ~~Material actuals V1 sufficiency~~ **DONE** (`WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY`)  
+4. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred — **Owner decision**)  
 5. Bounded operator UI honesty (quotes list currency aggregates; execution density)  
 6. Production readiness pack (SQLite confirm, secrets, smoke)  
 7. V1 exit criteria verification  
@@ -255,26 +257,26 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY
-```
-
-**Why:** Security write-gate is DONE_FOR_V1. Material actuals remain the open V1 cost-input blocker before monetary Profitability composition. Verify sufficiency first — do not assume platform-complete.
-
-### BUILD_AFTER_NEXT
-
-```text
 PROFITABILITY_MONETARY_COMPOSITION_V1
 ```
 
-Compose READY labor + material + READY revenue into deterministic actual cost/margin with fail-closed gaps. No dashboard redesign.
+**Why:** Labor + material + revenue inputs are READY. Remaining is composition with fail-closed machine/other (Owner must declare N/A or required). No Inventory program.
 
-### BUILD_AFTER_THAT
+### BUILD_AFTER_NEXT
 
 ```text
 WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK
 ```
 
-Owner SQLite confirm, secrets posture, Letters E2E smoke — after monetary inputs are honest.
+Owner SQLite confirm, secrets posture, Letters E2E smoke.
+
+### BUILD_AFTER_THAT
+
+```text
+WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES
+```
+
+Quotes list currency aggregates + dense execution chrome — non-blocking polish after monetary path.
 
 ---
 
@@ -300,15 +302,15 @@ Owner SQLite confirm, secrets posture, Letters E2E smoke — after monetary inpu
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~80%
+WORKOS_V1_COMPLETION_ESTIMATE = ~85%
 
 ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 8/10
+V1_FUNCTIONAL_CLOSURE    = 8.5/10
 OPERATOR_UI_CLOSURE      = 6/10
 PRODUCTION_READINESS     = 7/10
 ```
 
-**What dominates remaining work:** material actuals sufficiency, profitability monetary composition, then production smoke — not commercial/labor/MachineRun/security re-hardening.
+**What dominates remaining work:** profitability monetary composition (+ Owner machine/other decision), then production smoke — not Inventory/security/labor re-hardening.
 
 ---
 
