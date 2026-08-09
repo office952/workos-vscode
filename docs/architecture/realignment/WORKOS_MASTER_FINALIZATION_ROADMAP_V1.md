@@ -77,6 +77,8 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
 | MATERIAL_ACTUALS_V1 | DONE_FOR_V1 |
 | PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
+| MACHINE_COST_V1 | OWNER_DECISION_PENDING |
+| OTHER_DIRECT_COST_V1 | OWNER_DECISION_PENDING |
 | WORKOS_V1_COMPLETION_ESTIMATE | ~85% |
 
 ---
@@ -209,9 +211,11 @@ PROFITABILITY_MONETARY_CALCULATION = NOT_STARTED
 3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
 4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER; Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
 5. **SQLite as V1 production DB** — confirm laboratory/single-tenant freeze (Postgres LATER).  
-6. **Machine/other actual cost in V1** — REQUIRED vs N/A fail-closed for Letters pilot.
+6. **Machine actual cost in V1** — `OWNER_DECISION_PENDING` — INCLUDE vs `DECLARE_NA_FOR_V1` (prep: `2026-08-09_profitability_v1_machine_other_cost_owner_decision.md`; agent recommends N/A).  
+7. **Other direct cost in V1** — `OWNER_DECISION_PENDING` — INCLUDE vs `DECLARE_NA_FOR_V1` (same prep; agent recommends N/A).
 
-Do **not** ask Owner to decide technical implementation details agents can resolve.
+Do **not** ask Owner to decide technical implementation details agents can resolve.  
+Do **not** start `PROFITABILITY_MONETARY_COMPOSITION_V1` until decisions 6–7 are answered.
 
 ---
 
