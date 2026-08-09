@@ -1,19 +1,22 @@
 # Profitability Monetary Composition V1
 
-**Status:** PARTIAL — composition + N/A closed; **currency gate blocks Letters EUR vs RON costs**  
+**Status:** DONE_FOR_V1  
 **Date:** 2026-08-09  
-**Owner GO:** `AUTHORIZE_PROFITABILITY_MONETARY_COMPOSITION_V1`  
+**Owner GOs:** monetary composition + `PROFITABILITY_CURRENCY_POLICY = A` wiring  
 **Owner decisions:**  
 `MACHINE_COST_V1 = DECLARE_NA_FOR_V1`  
-`OTHER_DIRECT_COST_V1 = DECLARE_NA_FOR_V1`
+`OTHER_DIRECT_COST_V1 = DECLARE_NA_FOR_V1`  
+`PROFITABILITY_CURRENCY_POLICY = A`
 
-## Formula (same currency only)
+## Formula
 
 ```text
-known_v1_contribution =
-  accepted_commercial_total
-  − actual_labor_cost
-  − actual_material_cost
+Same currency:
+  known_v1_contribution = revenue − labor − material
+
+Policy A (EUR revenue + RON costs):
+  known_cost_eur = (labor_ron + material_ron) / profitability_fx_v1.eur_to_ron_rate
+  known_v1_contribution_eur = revenue_eur − known_cost_eur
 ```
 
 Machine / other_direct: `N_A_FOR_V1` (value null, never 0).
@@ -25,19 +28,21 @@ Machine / other_direct: `N_A_FOR_V1` (value null, never 0).
 | Revenue | `order_snapshot_v2.accepted_commercial_total` + currency |
 | Labor | `ActualLaborCostLine` frozen |
 | Material | `stock_movements.extended_cost_snapshot` |
+| FX stamp | `order_snapshot_v2.profitability_fx_v1` (frozen at convert) |
 | Machine | Owner N/A |
 | Other | Owner N/A |
 
 ## Currency
 
 ```text
-FX_REQUIRED = YES for typical Letters (EUR revenue vs RON labor/material)
-Silent EUR−RON subtraction = FORBIDDEN
-Reason code = currency_mismatch_no_fx
+Silent EUR−RON without stamp = FORBIDDEN
+Missing stamp on EUR/RON job → profitability_fx_stamp_missing
+Live Settings at P&L view = FORBIDDEN
 ```
 
-When currencies match (e.g. RON−RON): `scope_status = COMPLETE_FOR_V1_SCOPE`.  
-When mismatch: `scope_status = BLOCKED_CURRENCY`; known labor+material cost may still be available in cost currency.
+Same currency → `COMPLETE_FOR_V1_SCOPE`.  
+Policy A with stamp → `COMPLETE_FOR_V1_SCOPE` in EUR.  
+See `PROFITABILITY_CURRENCY_POLICY_A.md`.
 
 ## Read model
 
