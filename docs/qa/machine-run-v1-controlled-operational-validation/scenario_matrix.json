@@ -1,0 +1,354 @@
+{
+  "evidence_type": "CONTROLLED_SCENARIO_EVIDENCE",
+  "live_workshop_validation": "NOT_AVAILABLE",
+  "db": "C:\\w\\psiso\\docs\\qa\\machine-run-v1-controlled-operational-validation\\_isolated_s67_validation.db",
+  "generated_at": "2026-08-09T12:33:38.362992+00:00",
+  "matrix": [
+    {
+      "#": 1,
+      "Scenario": "NORMAL_MACHINE_RUN",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "full lifecycle + timestamps; no task/session mutate"
+    },
+    {
+      "#": 2,
+      "Scenario": "MULTI_PLAN_MULTI_ORDER",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "multi-plan provenance; single reservation"
+    },
+    {
+      "#": 3,
+      "Scenario": "PARTICIPANT_CORRECTION_BEFORE_CONFIRM",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "REMOVE/ADD HELD-only; history preserved; post-CONFIRM blocked"
+    },
+    {
+      "#": 4,
+      "Scenario": "CAS_CONCURRENCY",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "cas_stale on START+RESCHEDULE; no silent retry"
+    },
+    {
+      "#": 5,
+      "Scenario": "RESERVATION_OVERLAP",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "overlap_conflict; non-overlap PASS; no partial run"
+    },
+    {
+      "#": 6,
+      "Scenario": "COMPLETE_WITHOUT_RELEASE",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "COMPLETED leaves machine reserved until RELEASE (intentional)",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "informs RELEASE_FRICTION; does not justify auto-release"
+    },
+    {
+      "#": 7,
+      "Scenario": "CANCEL_PATHS",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED_WITH_LIMITATION",
+      "Limitation": "CANCEL works, but tasks remain ACTIVE on CANCELLED run \u2192 re-CREATE blocked",
+      "Candidate domain": "MACHINE_RUN_V1_HARDENING_FIX",
+      "Technical severity": "S3",
+      "Operational frequency": "UNKNOWN",
+      "notes": "cancel transitions PASS; terminal membership not cleared for create guard"
+    },
+    {
+      "#": 8,
+      "Scenario": "TERMINAL_MEMBERSHIP_REELIGIBILITY",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "UNSUPPORTED",
+      "Limitation": "by-task clears but candidate discovery still excludes ACTIVE rows on CANCELLED runs",
+      "Candidate domain": "MACHINE_RUN_V1_HARDENING_FIX",
+      "Technical severity": "S3",
+      "Operational frequency": "UNKNOWN",
+      "notes": "inconsistency: lookup filters terminal; create/candidate keys do not"
+    },
+    {
+      "#": 9,
+      "Scenario": "TEMPORARY_STOP_SIMULATION",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED_WITH_LIMITATION",
+      "Limitation": "RUNNING remains while physical machine may be stopped; no PAUSE state",
+      "Candidate domain": "PAUSE_RESUME",
+      "Technical severity": "S1",
+      "Operational frequency": "UNKNOWN",
+      "notes": "TECHNICALLY_TOLERABLE; YES_CONCEPTUALLY misleading; not operational proof"
+    },
+    {
+      "#": 10,
+      "Scenario": "EMPLOYEE_CHANGE_WHILE_RUNNING",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "labor provenance lives outside MachineRun by design",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "MachineRun independent of employee/session; no coupling required for V1 correctness"
+    },
+    {
+      "#": 11,
+      "Scenario": "POST_START_TRANSFER_PHASE_E",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "BLOCKED_BY_DESIGN",
+      "Limitation": "post-start transfer intentionally not in V1",
+      "Candidate domain": "REASSIGNMENT_PHASE_E",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "BLOCKED_BY_DESIGN_EXPECTED / EXPECTED_POLICY_GUARD \u00e2\u20ac\u201d not a bug"
+    },
+    {
+      "#": 12,
+      "Scenario": "MACHINE_COMPLETE_MANUAL_WORK_CONTINUES",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "machine COMPLETE/RELEASE does not finish task/session/order"
+    },
+    {
+      "#": 13,
+      "Scenario": "PERMISSION_MATRIX",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED_WITH_LIMITATION",
+      "Limitation": "role\u00e2\u2020\u2019permission mapping is environment-specific; router splits read/manage/execute",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "viewer GET=403; admin create=200"
+    },
+    {
+      "#": 14,
+      "Scenario": "INVALID_COMMAND_MATRIX",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "invalid START/COMPLETE/ADD rejected"
+    },
+    {
+      "#": 15,
+      "Scenario": "IDEMPOTENCY",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "CREATE already_applied + payload conflict"
+    },
+    {
+      "#": 16,
+      "Scenario": "REQUEST_VOLUME_CONTEXT_CHIPS",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "N lookups for N tasks; acceptable at current plan sizes (\u00e2\u2030\u00a424)",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "LOOKUP_PATTERN=ACCEPTABLE_CURRENT_SCALE; not BULK_LOOKUP_TECHNICAL_CANDIDATE at \u00e2\u2030\u00a424"
+    },
+    {
+      "#": 17,
+      "Scenario": "LIGHT_DARK_FULL_PAGE",
+      "Evidence type": "BROWSER_RUNTIME_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "Detail lifecycle states cross-referenced from prior isolated shop-floor/closure screenshots; this GO captured QA empty list light/dark",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "QA :3000 light/dark list+create; no deferred/PAUSE"
+    },
+    {
+      "#": 18,
+      "Scenario": "REFRESH_RELOAD_DURABILITY",
+      "Evidence type": "BROWSER_RUNTIME_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "reload reconstructs list from backend on QA FE"
+    },
+    {
+      "#": 19,
+      "Scenario": "BACKEND_RESTART_DURABILITY",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "state intact after new engine connection; no synthetic transition"
+    },
+    {
+      "#": 20,
+      "Scenario": "READ_WRITE_PARITY",
+      "Evidence type": "CONTROLLED_SCENARIO_EVIDENCE",
+      "Result": "SUPPORTED",
+      "Limitation": "NONE",
+      "Candidate domain": "NONE",
+      "Technical severity": "S0",
+      "Operational frequency": "UNKNOWN",
+      "notes": "GET detail matches write result for START"
+    }
+  ],
+  "details": {
+    "s1": {
+      "before": {
+        "runs": 0,
+        "participants": 0,
+        "transitions": 0,
+        "reservations": 0
+      },
+      "after": {
+        "runs": 1,
+        "participants": 2,
+        "transitions": 5,
+        "reservations": 1
+      },
+      "machine_r6_active_while_running": false,
+      "task_session_assignment_mutations": 0
+    },
+    "s2": {
+      "plans": [
+        42,
+        43
+      ],
+      "orders": [
+        881042,
+        881043
+      ]
+    },
+    "s6": {
+      "completed_reserved_blocks_overlap": true
+    },
+    "s7_recreate_after_cancel": {
+      "code": "task_already_in_active_machine_run",
+      "message": "task (59, 'node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b') already ACTIVE in machine_run_id=10"
+    },
+    "s8": {
+      "by_task_cleared": true,
+      "candidate_reappears": false
+    },
+    "s9": {
+      "technically_tolerable": true,
+      "running_semantically_misleading_if_long_stop": "YES_CONCEPTUALLY",
+      "pause_implemented": false
+    },
+    "s10": {
+      "machine_run_requires_employee_identity": false,
+      "employee_change_invalidates_machine_run": false,
+      "running_can_continue_while_session_changes": true,
+      "provenance": "intentionally_separate",
+      "has_employee_field_on_detail": false
+    },
+    "s11": {
+      "canonical_domain": "REASSIGNMENT_PHASE_E",
+      "current_policy": "pre-start reassignment only (Phase B)",
+      "expected_guard_code": "task_not_pre_start",
+      "source_constant": "CONTROLLED_PRE_START_REASSIGN_V1",
+      "classification": "EXPECTED_POLICY_GUARD",
+      "missing_contract": "post-start handoff/takeover semantics not implemented",
+      "machine_run_phase_e_controls": false
+    },
+    "s12": {
+      "task_auto_done": false,
+      "task_status_after_release": "READY",
+      "session_auto_closed": false,
+      "order_auto_completed": false,
+      "machine_run_released_observed": true
+    },
+    "s16": {
+      "execution_detail_small_task_count": 1,
+      "ops_graph_medium_task_count": 24,
+      "by_task_lookup_request_count_medium": 24,
+      "lookup_pattern": "ACCEPTABLE_CURRENT_SCALE",
+      "note": "N requests for N tasks; no browser jank measured here"
+    },
+    "s13": {
+      "viewer_list_status": 403,
+      "admin_list_status": 200,
+      "admin_create_status": 200,
+      "note": "dev role model may combine perms; factual codes recorded"
+    }
+  },
+  "browser": {
+    "fe": "http://127.0.0.1:3000",
+    "evidence_type": "BROWSER_RUNTIME_EVIDENCE",
+    "themes": {
+      "light": {
+        "list_ok": true,
+        "has_create_affordance": true,
+        "deferred_stale": false,
+        "pause_controls": false
+      },
+      "dark": {
+        "list_ok": true,
+        "has_create_affordance": true,
+        "deferred_stale": false,
+        "pause_controls": false
+      }
+    },
+    "refresh": {
+      "reconstructed": true,
+      "roughly_stable": true,
+      "before_sample": "WorkOS\n\nLUCR\u0102RI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUC\u021aIE\n\nAtelier\nPlanificare\nR",
+      "after_sample": "WorkOS\n\nLUCR\u0102RI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUC\u021aIE\n\nAtelier\nPlanificare\nR"
+    },
+    "console_errors_filtered": [],
+    "page_errors_filtered": [
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')",
+      "TypeError: Cannot read properties of null (reading 'classList')"
+    ]
+  },
+  "hardening_fix_candidate": {
+    "id": "TERMINAL_MEMBERSHIP_REELIGIBILITY",
+    "severity": "S3",
+    "summary": "find_active_membership / _active_membership_keys treat participant ACTIVE without joining MachineRun terminal status; RELEASE/CANCEL do not set participants REMOVED",
+    "symptoms": [
+      "CREATE after RELEASE/CANCEL \u2192 task_already_in_active_machine_run",
+      "candidate discovery omits tasks still ACTIVE on CANCELLED/RELEASED runs",
+      "by-task lookup correctly returns none (inconsistency)"
+    ],
+    "bounded_fix_scope": "Filter active membership by non-terminal MachineRun status (and/or set participants REMOVED on RELEASE/CANCEL) in eligibility + create guard + candidate keys; add regression tests for re-CREATE and candidate reappear after RELEASE/CANCEL",
+    "do_not_fix_in_this_go": true
+  }
+}

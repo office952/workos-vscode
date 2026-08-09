@@ -502,12 +502,14 @@ UI CREATE/ADD/context closure worklog: `docs/worklog/realignment/2026-08-09_mach
 - **UI CREATE/ADD + context links PASS (2026-08-09):** `/execution/machine-runs` CREATE · HELD ADD · ExecutionDetail + Ops-Graph chips · `MACHINE_RUN_V1_E2E = CLOSED`.
 - **V1 closure + next-domain audit PASS (2026-08-09):** E2E confirmed closed; recommended next domain = `HARDEN_AND_OBSERVE` (not authorized to implement).
 - **Harden & observe baseline PASS (2026-08-09):** V1 frozen as `STABLE_BASELINE`; `CURRENT_MODE = HARDEN_AND_OBSERVE`; `NEXT_FEATURE_DOMAIN = UNSELECTED`. Post-start transfer canonical name = **reassignment Phase E** (not Phase B).
+- **Controlled operational scenario validation (2026-08-09):** audit-only; `LIVE_WORKSHOP_VALIDATION = NOT_AVAILABLE`; hardening gap found = terminal membership re-eligibility after RELEASE/CANCEL (`MACHINE_RUN_V1_HARDENING_FIX_CANDIDATE`). No feature domain activated.
 
 **Still deferred (not V1 blockers; next implementation needs separate Owner GO + workshop evidence):**  
 PAUSE/RESUME · post-start transfer (Phase E) · MachineRun→R6 reassignment-guard coupling · employee/session coupling · Employee Mobile · Utilaje MachineRun home · Capacity activation.
 
 Closure/next-domain audit worklog: `docs/worklog/realignment/2026-08-09_machine_run_v1_closure_and_next_domain_audit.md`  
-Harden/observe baseline: `docs/worklog/realignment/2026-08-09_machine_run_v1_harden_and_observe_baseline.md`
+Harden/observe baseline: `docs/worklog/realignment/2026-08-09_machine_run_v1_harden_and_observe_baseline.md`  
+Controlled scenario validation: `docs/worklog/realignment/2026-08-09_machine_run_v1_controlled_operational_scenario_validation.md`
 
 ---
 

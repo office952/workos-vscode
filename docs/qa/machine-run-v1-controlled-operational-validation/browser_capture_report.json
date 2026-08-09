@@ -1,0 +1,34 @@
+{
+  "fe": "http://127.0.0.1:3000",
+  "evidence_type": "BROWSER_RUNTIME_EVIDENCE",
+  "themes": {
+    "light": {
+      "list_ok": true,
+      "has_create_affordance": true,
+      "deferred_stale": false,
+      "pause_controls": false
+    },
+    "dark": {
+      "list_ok": true,
+      "has_create_affordance": true,
+      "deferred_stale": false,
+      "pause_controls": false
+    }
+  },
+  "refresh": {
+    "reconstructed": true,
+    "roughly_stable": true,
+    "before_sample": "WorkOS\n\nLUCRĂRI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUCȚIE\n\nAtelier\nPlanificare\nR",
+    "after_sample": "WorkOS\n\nLUCRĂRI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUCȚIE\n\nAtelier\nPlanificare\nR"
+  },
+  "console_errors_filtered": [],
+  "page_errors_filtered": [
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')",
+    "TypeError: Cannot read properties of null (reading 'classList')"
+  ]
+}
