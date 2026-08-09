@@ -1,0 +1,352 @@
+{
+  "started_at": "2026-08-09T23:40:09.008429+00:00",
+  "verdict": "PASS",
+  "first_broken_boundary": null,
+  "workspace_id": "261f796c-b3e7-43ad-aae2-4d43852376e2",
+  "workspace_code": "IV6-GOLD-FINAL-261F796C",
+  "steps": {
+    "workspace_seed": {
+      "ok": true,
+      "analysis_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+    },
+    "product_truth_confirm": {
+      "ok": true,
+      "write_performed": true,
+      "confirmation_state": "confirmed",
+      "revision": 1,
+      "content_hash": "sha256:3eec1b4f810726594d9e3375ecd98d7dd14f8193d9c9a35bf4a086a0774af5a5",
+      "commercial_freeze_allowed": true
+    },
+    "product_definition": {
+      "ok": true,
+      "product_truth_job_revision": 1,
+      "product_truth_content_hash": "sha256:3eec1b4f810726594d9e3375ecd98d7dd14f8193d9c9a35bf4a086a0774af5a5",
+      "component_count": 5
+    },
+    "product_aggregate": {
+      "ok": true,
+      "keys": "ProductAggregate"
+    },
+    "cpp_dry_run": {
+      "pricing_status": "V6_PRICED_DRY_RUN_READY",
+      "authority": "ready",
+      "currency": "EUR",
+      "total_gross": 862.65,
+      "subtotal_net": 712.93,
+      "vat_amount": 149.72,
+      "line_count": 23,
+      "line_codes": [
+        "debitare_fata",
+        "modelare_cant_aluminiu",
+        "debitare_spate",
+        "sistem_led_module",
+        "sursa_led",
+        "finisaje_oracal_8500_material",
+        "finisaje_aplicare_autocolant_fata",
+        "ambalare",
+        "montaj",
+        "logo_face_cnc::logo_instance_001",
+        "logo_return_cant::logo_instance_001",
+        "logo_back_cnc::logo_instance_001",
+        "logo_print::logo_instance_001",
+        "logo_laminate::logo_instance_001",
+        "logo_application::logo_instance_001",
+        "logo_led_modules::logo_instance_001",
+        "logo_face_cnc::logo_instance_002",
+        "logo_return_cant::logo_instance_002",
+        "logo_back_cnc::logo_instance_002",
+        "logo_print::logo_instance_002",
+        "logo_laminate::logo_instance_002",
+        "logo_application::logo_instance_002",
+        "logo_led_modules::logo_instance_002"
+      ],
+      "blockers": [],
+      "can_write_quote_totals": false,
+      "finish_line_codes": [
+        "finisaje_oracal_8500_material",
+        "finisaje_aplicare_autocolant_fata"
+      ]
+    },
+    "handoff": {
+      "status": "V6_PRICED_QUOTE_WRITTEN",
+      "quote_id": 31,
+      "quote_code": "Q-V6-IV6-GOLD-FINAL-261F796C-1786318809",
+      "blockers": [],
+      "commercial_totals": {
+        "subtotal_net": 712.93,
+        "discount": 0.0,
+        "total_before_vat": 712.93,
+        "vat": 149.72,
+        "vat_rate": 21.0,
+        "total_gross": 862.65,
+        "currency": "EUR"
+      }
+    },
+    "snapshot_v2": {
+      "status": "V6_QUOTE_SNAPSHOT_V2_CREATED",
+      "snapshot_id": 31,
+      "blockers": []
+    },
+    "pricing_review": {
+      "ok": true,
+      "pricing_review_completed": true,
+      "pricing_totals_source": "quote_snapshot_v2"
+    },
+    "owner_approval": {
+      "ok": true,
+      "keys": [
+        "owner_approval_persisted",
+        "quote_id",
+        "owner_approval",
+        "owner_approval_exists",
+        "owner_approval_valid",
+        "owner_approval_stale",
+        "creates_execution_tasks",
+        "writes_execution_plan"
+      ]
+    },
+    "accept": {
+      "status": null,
+      "accepted": true,
+      "blockers": null
+    },
+    "convert": {
+      "converted": true,
+      "order_id": 973024,
+      "order_code": "ORD-IV6-V2-1786318810-31",
+      "blockers": null,
+      "order_snapshot_v2_convert": {
+        "status": "converted",
+        "quote_id": 31,
+        "quote_code": "Q-V6-IV6-GOLD-FINAL-261F796C-1786318809",
+        "order_id": 973024,
+        "order_code": "ORD-IV6-V2-1786318810-31",
+        "order_status": "locked",
+        "quote_snapshot_v2_id": 31,
+        "accepted_commercial_total": 712.9272,
+        "accepted_currency": "EUR",
+        "estimated_internal_total": 1411.8436,
+        "blockers": [],
+        "error_code": null,
+        "message": null
+      }
+    },
+    "execution_plan": {
+      "ok": true,
+      "preview_status": "partial_missing_planning_minutes",
+      "persist_status": "persisted",
+      "execution_plan_id": 27,
+      "dec009_registered_fixture": "FIX-GOLDEN-LETTERS-E2E-FINAL-973024",
+      "materialize": {
+        "status": "materialized",
+        "operational_task_count": 18
+      },
+      "operational_task_count": 18,
+      "task_codes": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FOREX_BACK",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:PREPARE_CANT_STRIP",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:FORM_CANT_CNC",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:BOND_FACE_TO_CANT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:WIRE_LED_MODULES",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ROUTE_CABLES_THROUGH_BACK",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LED_ON",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ATTACH_BODY_TO_BACK",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LIGHT_UNIFORMITY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:LABEL_POWER_SUPPLY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_POWER_SUPPLY_SEPARATELY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:QUALITY_CONTROL",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CLEAN_PRODUCT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:RIGIDIZE_FOR_TRANSPORT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_PRODUCT"
+      ],
+      "task_ids": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FOREX_BACK",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:PREPARE_CANT_STRIP",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:FORM_CANT_CNC",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:BOND_FACE_TO_CANT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:WIRE_LED_MODULES",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ROUTE_CABLES_THROUGH_BACK",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LED_ON",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ATTACH_BODY_TO_BACK",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LIGHT_UNIFORMITY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:LABEL_POWER_SUPPLY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_POWER_SUPPLY_SEPARATELY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:QUALITY_CONTROL",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CLEAN_PRODUCT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:RIGIDIZE_FOR_TRANSPORT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_PRODUCT"
+      ]
+    },
+    "assignment": {
+      "ok": true,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+      "employee_id": 3,
+      "mode": "fallback_scan",
+      "result_keys": [
+        "plan_id",
+        "order_id",
+        "order_code",
+        "task_id",
+        "assigned_employee_id",
+        "assigned_employee_name",
+        "task",
+        "assignment_outcome",
+        "already_assigned",
+        "controlled",
+        "eligibility_status",
+        "eligible_employee_count",
+        "requirement_version",
+        "actor_user_id",
+        "sessions_created",
+        "actuals_created",
+        "authorization_scope"
+      ]
+    },
+    "session": {
+      "ok": true,
+      "started": {
+        "session_id": "ws-6168ab41b616",
+        "status": "ok",
+        "already_active": false
+      },
+      "ended": {
+        "session_id": "ws-6168ab41b616",
+        "duration_minutes": 40,
+        "already_ended": false,
+        "task_auto_completed": false
+      }
+    },
+    "labor_actual": {
+      "ok": true,
+      "duration_minutes": 40,
+      "employee_id": 3,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE"
+    },
+    "material_actual": {
+      "ok": true,
+      "material_id": 64,
+      "quantity": 0.25,
+      "unit_cost": 8.5,
+      "issue": {
+        "status": "recorded",
+        "movement_id": 6,
+        "material_cost_status": "incomplete",
+        "reason": "material_valuation_unavailable"
+      }
+    },
+    "machine_run": {
+      "status": "NOT_APPLICABLE",
+      "reason": "Golden Letters primary path does not require MachineRun monetary proof for V1"
+    },
+    "profitability": {
+      "ok": true,
+      "keys": [
+        "order_id",
+        "order_code",
+        "snapshot_version",
+        "has_snapshot_v2",
+        "revenue_source",
+        "accepted_commercial_total",
+        "accepted_currency",
+        "estimated_internal_total",
+        "has_execution_reality",
+        "actual_total_cost",
+        "actual_labor_minutes",
+        "actual_materials_total",
+        "estimated_margin_amount",
+        "estimated_margin_percent",
+        "actual_margin_amount",
+        "actual_margin_percent",
+        "variance_estimated_vs_actual",
+        "profitability_status",
+        "warnings",
+        "retroactive_change_allowed",
+        "write_back_performed",
+        "known_actual_cost",
+        "known_actual_margin",
+        "known_actual_margin_percent",
+        "cost_coverage_status",
+        "included_cost_components",
+        "excluded_cost_components",
+        "missing_actual_components",
+        "material_valuation_method",
+        "profitability_wording"
+      ],
+      "summary": {
+        "order_id": 973024,
+        "order_code": "ORD-IV6-V2-1786318810-31",
+        "snapshot_version": 1,
+        "has_snapshot_v2": true,
+        "revenue_source": "order_snapshot_v2",
+        "accepted_commercial_total": 712.9272,
+        "accepted_currency": "EUR",
+        "estimated_internal_total": 1411.8436,
+        "has_execution_reality": true,
+        "actual_total_cost": null,
+        "actual_labor_minutes": 40.0,
+        "actual_materials_total": 2.125,
+        "estimated_margin_amount": -698.9164,
+        "estimated_margin_percent": -98.0348,
+        "actual_margin_amount": null,
+        "actual_margin_percent": null,
+        "variance_estimated_vs_actual": {
+          "cost_delta": -1409.7186,
+          "minutes_delta": 40.0
+        },
+        "profitability_status": "actuals_partial",
+        "warnings": [
+          "hr_labor_cost_missing",
+          "known_margin_materials_only_not_final_profit",
+          "material_cost_uses_catalog_unit_cost_at_read",
+          "order_mutability_guard_batch_watch"
+        ],
+        "retroactive_change_allowed": false,
+        "write_back_performed": false,
+        "known_actual_cost": 2.125,
+        "known_actual_margin": 710.8022,
+        "known_actual_margin_percent": 99.7019,
+        "cost_coverage_status": "PARTIAL",
+        "included_cost_components": [
+          "materials"
+        ],
+        "excluded_cost_components": [
+          "labor_money",
+          "machine_money"
+        ],
+        "missing_actual_components": [
+          "labor_money",
+          "machine_money"
+        ],
+        "material_valuation_method": "inventory_materials.unit_cost_at_read",
+        "profitability_wording": [
+          "Known actual cost includes materials only",
+          "Partial profitability — labor monetary cost not included",
+          "Do not treat known margin as final profit"
+        ]
+      }
+    }
+  },
+  "selected_configuration": {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "face_finish_type": "oracal_8500",
+    "return_finish_type": "white_aluminum",
+    "return_depth_mm": 60.0,
+    "backing_mode": "forex_10_no_bevel",
+    "illuminated": true,
+    "lighting_system_type": "led_modules",
+    "mounting_template_enabled": false,
+    "mounting_scope": "none",
+    "mounting_template_material_type": null
+  },
+  "quote_id": 31,
+  "order_id": 973024,
+  "ended_at": "2026-08-09T23:40:10.518879+00:00",
+  "final_status": "WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF_PASS",
+  "v1_exit": "READY_TO_RESUME"
+}

@@ -84,11 +84,12 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | BOUNDED_UI_HONESTY | DONE_FOR_V1 (Light Theme systemic closure 2026-08-10) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | HOLD_PENDING_GOLDEN_FINAL_PROOF (Light Theme DONE; golden Letters E2E remaining) |
-| WORKOS_V1_STATUS | NOT_FINALIZED — Exit HOLD pending golden Letters E2E |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~96% (Light Theme closed; golden Letters E2E remaining) |
+| WORKOS_V1_EXIT_VERIFICATION | READY_TO_RESUME (Golden Letters E2E PASS 2026-08-10) |
+| WORKOS_V1_STATUS | NOT_FINALIZED — Exit verification resume next |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~98% (Golden Letters E2E PASS; Exit resume + product-set ack remaining) |
 | LIGHT_THEME_V1 | DONE_FOR_V1 |
 | UI_HONESTY_V1 | DONE_FOR_V1 |
+| GOLDEN_LETTERS_E2E_FINAL_PROOF | PASS |
 
 ---
 
@@ -272,10 +273,10 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
+WORKOS_V1_EXIT_VERIFICATION_RESUME
 ```
 
-**Why:** Commercial currency + Light Theme systemic closure are `DONE_FOR_V1` (evidence `docs/qa/workos-v1-commercial-currency-truth-closure/`, `docs/qa/workos-v1-light-theme-systemic-closure/`). Exit remains HOLD until golden Letters E2E final proof.
+**Why:** Golden Letters E2E Final Proof = PASS (`docs/qa/workos-v1-golden-letters-e2e-final-proof/`). Exit HOLD cleared; resume formal Exit verification / status sync. Product-set Owner ack remains after Exit resume if still missing.
 
 ### BUILD_AFTER_NEXT
 

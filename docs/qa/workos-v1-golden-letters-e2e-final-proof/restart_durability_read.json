@@ -1,0 +1,17 @@
+{
+  "order_id": 973024,
+  "order_code": "ORD-IV6-V2-1786318810-31",
+  "order_status": "locked",
+  "quote_grand_total": 862.65,
+  "has_snapshot_v2_json": true,
+  "quote_snapshot_v2_id": 31,
+  "operational_task_count": 18,
+  "stock_movements": 1,
+  "profitability": {
+    "accepted_commercial_total": 712.9272,
+    "accepted_currency": "EUR",
+    "actual_labor_minutes": 40.0,
+    "known_actual_cost": 2.125,
+    "cost_coverage_status": "PARTIAL"
+  }
+}
