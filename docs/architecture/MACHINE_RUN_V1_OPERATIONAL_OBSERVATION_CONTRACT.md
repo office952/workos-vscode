@@ -171,3 +171,26 @@ NO_CHANGE             ← default until evidence
 NEXT_FEATURE_DOMAIN = UNSELECTED
 NEXT_TASK = NOT_AUTHORIZED
 ```
+
+---
+
+## Latest observation review result (evidence annotation only)
+
+**GO:** `AUTHORIZE_MACHINE_RUN_V1_OPERATIONAL_OBSERVATION_REVIEW`  
+**Date:** 2026-08-09  
+**Worklog:** `docs/worklog/realignment/2026-08-09_machine_run_v1_operational_observation_review.md`
+
+```text
+REAL_OPERATIONAL_EVIDENCE_AVAILABLE = NO
+DECISION = CONTINUE_OBSERVING
+CURRENT_MODE = HARDEN_AND_OBSERVE
+NEXT_FEATURE_DOMAIN = UNSELECTED
+NEXT_FEATURE_DOMAIN_CANDIDATE = none
+PAUSE_RESUME = KEEP_DEFERRED
+REASSIGNMENT_PHASE_E = KEEP_DEFERRED
+EMPLOYEE_SESSION_RELATION = KEEP_DEFERRED
+BULK_LOOKUP = KEEP_DEFERRED
+MACHINE_RUN_V1_HARDENING_FIX = NOT_PROMOTED
+```
+
+Factual note: QA persisted `machine_runs = 0` at review time; log CREATE/lifecycle activity classified as `QA_EVIDENCE` (`network_proof_*` / agent UI proof), not workshop operational evidence. Architecture of this contract is unchanged.
