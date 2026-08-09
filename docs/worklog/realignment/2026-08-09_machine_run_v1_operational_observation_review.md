@@ -348,6 +348,6 @@ QA_MUTATIONS this GO = 0
 ## AF–AG. Commit / push
 
 ```text
-COMMIT = docs-only (this review)
+COMMIT = 2ea55150 docs(machine-run): operational observation review — continue observing
 PUSH = NO (Owner must request)
 ```
