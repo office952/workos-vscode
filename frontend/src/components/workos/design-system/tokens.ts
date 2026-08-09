@@ -2,9 +2,12 @@
  * WorkOS design-system tokens — TypeScript source for primitives.
  * Document reference: docs/design/WORKOS_UI_TOKENS_DRAFT.md
  *
- * No global CSS; Tailwind utility classes only.
+ * Canonical paint authority for surfaces/text/border = CSS `--wo-*` in `index.css`
+ * (html.light / html.dark). Hex maps below are legacy documentation only — do not
+ * use them as Light Theme palette authority.
  */
 
+/** @deprecated Not paint authority. Use `bg-wo-surface-*` / CSS `--wo-surface-*`. */
 export const woSurfaces = {
   app: "#0A0F1C",
   shell: "#0D1321",
@@ -14,11 +17,13 @@ export const woSurfaces = {
   inset: "#0B0E13",
 } as const;
 
+/** @deprecated Not paint authority. Use `border-wo-border-*` / CSS `--wo-border-*`. */
 export const woBorders = {
   subtle: "#1E293B",
   strong: "#2A3548",
 } as const;
 
+/** @deprecated Not paint authority. Use `text-wo-text-*` / CSS `--wo-text-*`. */
 export const woText = {
   primary: "#F1F5F9",
   secondary: "#CBD5E1",
@@ -26,6 +31,7 @@ export const woText = {
   dim: "#5C6B80",
 } as const;
 
+/** @deprecated Accent paint should use theme-aware Tailwind / CSS vars. */
 export const woAccent = {
   primary: "#3B82F6",
   primaryHover: "#60A5FA",
@@ -494,18 +500,18 @@ export const statusBadgeSizeClasses = {
   lg: "px-3 py-1.5 text-sm",
 } as const;
 
-/** Muted emerald variant for live-empty source indicator. */
+/** Muted emerald variant for live-empty source indicator (Light + Dark). */
 export const sourceEmptyToneClasses: ToneClasses = {
-  bg: "bg-emerald-900/20",
-  text: "text-emerald-300/90",
-  border: "border-emerald-800/30",
+  bg: "bg-emerald-50 dark:bg-emerald-900/20",
+  text: "text-emerald-800 dark:text-emerald-300/90",
+  border: "border-emerald-200 dark:border-emerald-800/30",
   dot: "bg-emerald-500/70",
 };
 
-/** Non-live mixed source — slate, not confused with Live DB. */
+/** Non-live mixed source — slate, not confused with Live DB (Light + Dark). */
 export const sourceMixedToneClasses: ToneClasses = {
-  bg: "bg-slate-700/50",
-  text: "text-slate-300",
-  border: "border-slate-600/40",
+  bg: "bg-slate-100 dark:bg-slate-700/50",
+  text: "text-slate-700 dark:text-slate-300",
+  border: "border-slate-300 dark:border-slate-600/40",
   dot: "bg-slate-500",
 };

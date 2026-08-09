@@ -36,7 +36,7 @@ export default function QuoteCommercialActionPanel({
           <p className="text-[10px] uppercase tracking-wide text-slate-500">
             Stare comercială
           </p>
-          <h3 className="text-[14px] font-semibold text-slate-100 mt-0.5">
+          <h3 className="text-[14px] font-semibold text-wo-text-primary mt-0.5">
             {guidance.title}
           </h3>
         </div>
@@ -57,13 +57,13 @@ export default function QuoteCommercialActionPanel({
         </div>
         <div>
           <span className="text-slate-500">Versiune</span>
-          <p className="text-slate-200" data-testid="quote-commercial-version">
+          <p className="text-wo-text-primary" data-testid="quote-commercial-version">
             v{quote.version}
           </p>
         </div>
         <div>
           <span className="text-slate-500">Client</span>
-          <p className="text-slate-200">{quote.client}</p>
+          <p className="text-wo-text-primary">{quote.client}</p>
         </div>
         {quote.intakeId ? (
           <div>
@@ -84,17 +84,17 @@ export default function QuoteCommercialActionPanel({
       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-wo-border-subtle text-[11px]">
         <div>
           <span className="text-slate-500">Total fără TVA</span>
-          <p className="text-slate-200 font-medium">
+          <p className="text-wo-text-primary font-medium">
             {formatCommercialAmount(quote.totalBeforeVAT, currency)}
           </p>
         </div>
         <div>
           <span className="text-slate-500">TVA</span>
-          <p className="text-slate-200">{formatCommercialAmount(quote.vat, currency)}</p>
+          <p className="text-wo-text-primary">{formatCommercialAmount(quote.vat, currency)}</p>
         </div>
         <div>
           <span className="text-slate-500">Total cu TVA</span>
-          <p className="text-slate-100 font-semibold">
+          <p className="text-wo-text-primary font-semibold">
             {formatCommercialAmount(quote.grandTotal, currency)}
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function QuoteCommercialActionPanel({
             <TrendingUp className="w-3 h-3" /> Marjă
           </span>
           <p
-            className="text-slate-200 font-medium"
+            className="text-wo-text-primary font-medium"
             data-testid="quote-commercial-margin"
           >
             {quote.marginPct}%
@@ -112,7 +112,7 @@ export default function QuoteCommercialActionPanel({
             <Percent className="w-3 h-3" /> Discount
           </span>
           <p
-            className="text-slate-200 font-medium"
+            className="text-wo-text-primary font-medium"
             data-testid="quote-commercial-discount"
           >
             {quote.discountPct}%
@@ -133,7 +133,7 @@ export default function QuoteCommercialActionPanel({
 
       {quote.revisionHistory && quote.revisionHistory.length > 0 && (
         <div
-          className="rounded-lg border border-slate-700/40 bg-slate-900/40 px-3 py-2 space-y-2"
+          className="rounded-lg border border-wo-border-strong/60 bg-wo-surface-inset/80 px-3 py-2 space-y-2"
           data-testid="quote-revision-history-panel"
         >
           <p className="text-[10px] uppercase tracking-wide text-slate-500 flex items-center gap-1">
@@ -171,7 +171,7 @@ export default function QuoteCommercialActionPanel({
 
       {quote.commercialDeliveryLog && quote.commercialDeliveryLog.length > 0 && (
         <div
-          className="rounded-lg border border-slate-700/40 bg-slate-900/40 px-3 py-2 space-y-2"
+          className="rounded-lg border border-wo-border-strong/60 bg-wo-surface-inset/80 px-3 py-2 space-y-2"
           data-testid="quote-send-history-panel"
         >
           <p className="text-[10px] uppercase tracking-wide text-slate-500 flex items-center gap-1">
@@ -196,7 +196,7 @@ export default function QuoteCommercialActionPanel({
         </div>
       )}
 
-      <div className="flex items-start gap-2 rounded-lg border border-slate-700/40 bg-slate-900/40 px-3 py-2">
+      <div className="flex items-start gap-2 rounded-lg border border-wo-border-strong/60 bg-wo-surface-inset/80 px-3 py-2">
         <Info className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
         <div className="space-y-2 text-[10px] text-slate-400 leading-relaxed">
           <p data-testid="quote-revision-mechanism-notice">{QUOTE_REVISION_MECHANISM_NOTICE}</p>

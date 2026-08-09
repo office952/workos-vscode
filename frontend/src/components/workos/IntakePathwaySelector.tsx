@@ -29,7 +29,7 @@ export default function IntakePathwaySelector({
       data-testid="intake-pathway-selector"
     >
       <div className="flex items-center gap-1.5">
-        <p className="text-[12px] font-semibold text-slate-100">
+        <p className="text-[12px] font-semibold text-wo-text-primary">
           Cum introduci produsul?
         </p>
         <InfoHint label="Despre calea de introducere">
@@ -51,14 +51,14 @@ export default function IntakePathwaySelector({
               className={`text-left rounded-lg border p-3 transition-colors disabled:opacity-60 ${
                 active
                   ? "border-blue-500/60 bg-blue-950/40 ring-1 ring-blue-500/30"
-                  : "border-wo-border-strong bg-[#0f1524] hover:border-slate-500"
+                  : "border-wo-border-strong bg-wo-surface-input hover:border-slate-500"
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
                 <Icon
                   className={`w-4 h-4 shrink-0 ${active ? "text-blue-400" : "text-slate-500"}`}
                 />
-                <p className="text-[12px] font-semibold text-slate-100">{opt.title}</p>
+                <p className="text-[12px] font-semibold text-wo-text-primary">{opt.title}</p>
               </div>
             </button>
           );

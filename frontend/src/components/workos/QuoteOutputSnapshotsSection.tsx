@@ -146,12 +146,12 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
     s.status === "draft" || s.status === "needs_review";
 
   return (
-    <div className="mt-6 border border-slate-700 rounded-lg bg-slate-800/50 p-4">
+    <div className="mt-6 border border-wo-border-strong rounded-lg bg-slate-800/50 p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-blue-400" />
-          <h3 className="text-sm font-semibold text-slate-200">
+          <h3 className="text-sm font-semibold text-wo-text-primary">
             Saved Output Snapshots
           </h3>
         </div>
@@ -160,7 +160,7 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
             <button
               onClick={loadSnapshots}
               disabled={loading}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded bg-slate-700 text-slate-200 hover:bg-slate-600 disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded bg-slate-700 text-wo-text-primary hover:bg-slate-600 disabled:opacity-50"
             >
               {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Eye className="h-3 w-3" />}
               Load Snapshots
@@ -184,7 +184,7 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
       </div>
 
       {/* Disclaimer */}
-      <div className="mb-3 px-3 py-2 bg-slate-900/50 border border-slate-600 rounded text-xs text-slate-400">
+      <div className="mb-3 px-3 py-2 bg-wo-surface-inset/80 border border-wo-border-strong rounded text-xs text-slate-400">
         <ShieldAlert className="inline h-3 w-3 mr-1 text-amber-400" />
         Saved quote output snapshot candidate. This is not an accepted order snapshot
         and does not change the quote or order.
@@ -209,7 +209,7 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
           {snapshots.map((s) => (
             <div
               key={s.snapshot_id}
-              className="border border-slate-700 rounded p-3 bg-slate-900/30"
+              className="border border-wo-border-strong rounded p-3 bg-wo-surface-inset/60"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
@@ -313,10 +313,10 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
 
               {/* View detail */}
               {viewingSnapshot?.snapshot_id === s.snapshot_id && (
-                <div className="mt-3 border-t border-slate-700 pt-3">
+                <div className="mt-3 border-t border-wo-border-strong pt-3">
                   <div className="space-y-2">
                     {s.rendered_sections_json?.map((section, idx) => (
-                      <div key={idx} className="bg-slate-800 rounded p-2 border border-slate-700">
+                      <div key={idx} className="bg-slate-800 rounded p-2 border border-wo-border-strong">
                         <p className="text-xs font-medium text-blue-300 mb-1">
                           {section.title || `Section ${idx + 1}`}
                         </p>
@@ -326,7 +326,7 @@ export default function QuoteOutputSnapshotsSection({ quoteId, quoteCode }: Prop
                       </div>
                     ))}
                     {s.commercial_summary_json && (
-                      <div className="bg-slate-800 rounded p-2 border border-slate-700">
+                      <div className="bg-slate-800 rounded p-2 border border-wo-border-strong">
                         <p className="text-xs font-medium text-blue-300 mb-1">Commercial Summary</p>
                         <p className="text-xs text-slate-300">
                           Total: {s.commercial_summary_json.total?.toLocaleString("ro-RO")} {s.commercial_summary_json.currency || "RON"}

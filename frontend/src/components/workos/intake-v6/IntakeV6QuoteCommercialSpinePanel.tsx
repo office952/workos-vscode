@@ -138,7 +138,7 @@ function WorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
           key={step.id}
           className={`rounded border px-2 py-1.5 text-center text-[10px] ${
             step.done
-              ? "border-emerald-700/40 bg-emerald-950/20 text-emerald-200"
+              ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700/40 dark:bg-emerald-950/20 dark:text-emerald-200"
               : step.active
                 ? "border-amber-600/40 bg-amber-950/20 text-amber-100"
                 : "border-wo-border-subtle bg-wo-surface-input text-slate-500"
@@ -363,7 +363,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
           data-testid="intake-v6-pricing-review-authority"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[11px] text-slate-300">
+            <p className="text-[11px] text-wo-text-secondary">
               Sursa review:{" "}
               <strong data-testid="intake-v6-pricing-review-source">
                 {pricingReviewReadModel.authority_source === "quote_snapshot_v2"
@@ -372,7 +372,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
               </strong>
             </p>
             {snapshotAuthorityGross != null ? (
-              <p className="text-[11px] text-slate-200" data-testid="intake-v6-pricing-review-gross">
+              <p className="text-[11px] text-wo-text-primary" data-testid="intake-v6-pricing-review-gross">
                 Total client: {formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)}
               </p>
             ) : null}
@@ -399,11 +399,11 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       <section className="mb-4 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3" data-testid="intake-v6-priced-quote-bridge">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h4 className="text-[12px] font-semibold text-slate-200">1. Ofertă client</h4>
+          <h4 className="text-[12px] font-semibold text-wo-text-primary">1. Ofertă client</h4>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
               pricingSectionComplete || dryRunReady
-                ? "bg-emerald-950/40 text-emerald-200 border border-emerald-800/40"
+                ? "bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800/40"
                 : "bg-amber-950/30 text-amber-200 border border-amber-800/30"
             }`}
             data-testid="intake-v6-dry-run-status-label"
@@ -415,7 +415,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         </div>
 
         {pricingSectionComplete && !showSecondaryActions && primaryAction !== "snapshot" ? (
-          <p className="text-[11px] text-emerald-200/90" data-testid="intake-v6-pricing-complete-summary">
+          <p className="text-[11px] text-emerald-800 dark:text-emerald-200/90" data-testid="intake-v6-pricing-complete-summary">
             Totalurile Ofertă client sunt pe ofertă.
           </p>
         ) : dryRunLoading && !dryRun ? (
@@ -423,7 +423,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         ) : (
           <>
             {!quoteTotalsAvailable && dryRunReady ? (
-              <p className="mb-3 text-[11px] text-slate-300">
+              <p className="mb-3 text-[11px] text-wo-text-secondary">
                 Total propus:{" "}
                 <strong data-testid="intake-v6-dry-run-total">
                   {formatMoney(
@@ -444,7 +444,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
             {Array.isArray(dryRun?.commercial_line_items) && dryRun.commercial_line_items.length > 0 ? (
               <details className="mb-3" data-testid="intake-v6-commercial-line-provenance">
-                <summary className="cursor-pointer text-[11px] text-slate-300">
+                <summary className="cursor-pointer text-[11px] text-wo-text-secondary">
                   Linii comerciale ({dryRun.commercial_line_items.length})
                 </summary>
                 <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto text-[11px] text-slate-400">
@@ -598,7 +598,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
       </section>
 
       <section className="mb-3 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3">
-        <h4 className="mb-2 text-[12px] font-semibold text-slate-200">2. Aprobare & conversie</h4>
+        <h4 className="mb-2 text-[12px] font-semibold text-wo-text-primary">2. Aprobare & conversie</h4>
         {convertBlockers.length > 0 && !converted ? (
           <ul className="mb-3 space-y-1 text-[11px] text-amber-200" data-testid="intake-v6-spine-blockers">
             {convertBlockers.slice(0, 3).map((code) => (
@@ -714,7 +714,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
       {!converted ? (
         <button
           type="button"
-          className="mb-3 text-[11px] text-slate-500 hover:text-slate-300"
+          className="mb-3 text-[11px] text-slate-500 hover:text-wo-text-secondary"
           onClick={() => setShowSecondaryActions((value) => !value)}
           data-testid="intake-v6-toggle-secondary-actions"
         >
@@ -730,7 +730,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       <button
         type="button"
-        className="text-[11px] text-slate-500 hover:text-slate-300"
+        className="text-[11px] text-slate-500 hover:text-wo-text-secondary"
         onClick={() => setShowTechnical((value) => !value)}
         data-testid="intake-v6-toggle-technical"
       >

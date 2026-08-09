@@ -259,7 +259,7 @@ export default function QuoteRevisionDialog({
 
             <Percent className="w-4 h-4 text-purple-400" />
 
-            <h2 className="text-[14px] font-bold text-slate-100">
+            <h2 className="text-[14px] font-bold text-wo-text-primary">
 
               Revizie comercială — ajustează discount
 
@@ -273,7 +273,7 @@ export default function QuoteRevisionDialog({
 
             onClick={onClose}
 
-            className="p-1 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200"
+            className="p-1 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-wo-text-primary"
 
           >
 
@@ -337,7 +337,7 @@ export default function QuoteRevisionDialog({
 
 
 
-          <div className="rounded-lg border border-slate-700/50 bg-slate-900/40 px-3 py-2 text-[10px] text-slate-400 space-y-1">
+          <div className="rounded-lg border border-wo-border-strong/70 bg-wo-surface-inset/80 px-3 py-2 text-[10px] text-slate-400 space-y-1">
 
             <p data-testid="quote-revision-mechanism-notice">{QUOTE_REVISION_MECHANISM_NOTICE}</p>
 
@@ -463,7 +463,7 @@ export default function QuoteRevisionDialog({
 
                 onChange={(e) => setDiscountPct(e.target.value)}
 
-                className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
+                className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-wo-surface-input text-wo-text-primary text-[13px]"
 
               />
 
@@ -545,7 +545,7 @@ export default function QuoteRevisionDialog({
 
             onClick={onClose}
 
-            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200"
+            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-wo-text-primary"
 
           >
 

@@ -1,14 +1,18 @@
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Toaster as Sonner, toast } from 'sonner';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
+/**
+ * WorkOS toast host — consumes ThemeContext (not next-themes).
+ * `next-themes` package may remain in the repo; this path must not use it.
+ */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = 'system' } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      theme={resolvedTheme}
       className="toaster group"
       toastOptions={{
         classNames: {

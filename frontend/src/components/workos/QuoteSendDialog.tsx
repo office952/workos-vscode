@@ -340,7 +340,7 @@ export default function QuoteSendDialog({
 
             <Send className="w-4 h-4 text-blue-400" />
 
-            <h2 className="text-[14px] font-bold text-slate-100">Trimitere asistată</h2>
+            <h2 className="text-[14px] font-bold text-wo-text-primary">Trimitere asistată</h2>
 
           </div>
 
@@ -350,7 +350,7 @@ export default function QuoteSendDialog({
 
             onClick={onClose}
 
-            className="p-1 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors"
+            className="p-1 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-wo-text-primary transition-colors"
 
           >
 
@@ -406,7 +406,7 @@ export default function QuoteSendDialog({
 
             </div>
 
-            <span className="text-[16px] font-bold text-slate-100">
+            <span className="text-[16px] font-bold text-wo-text-primary">
 
               {formatCommercialAmount(quote.grandTotal, currency)}
 
@@ -440,7 +440,7 @@ export default function QuoteSendDialog({
 
               disabled={pdfGenerating}
 
-              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-wo-text-primary"
 
             >
 
@@ -454,7 +454,7 @@ export default function QuoteSendDialog({
 
               onClick={handleEmail}
 
-              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-wo-text-primary"
 
             >
 
@@ -468,7 +468,7 @@ export default function QuoteSendDialog({
 
               onClick={handleWhatsApp}
 
-              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-wo-text-primary"
 
             >
 
@@ -482,7 +482,7 @@ export default function QuoteSendDialog({
 
               onClick={handleCopyLink}
 
-              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-wo-text-primary"
 
             >
 
@@ -534,7 +534,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setChannel(e.target.value as QuoteSendChannel)}
 
-              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-wo-surface-input text-wo-text-primary text-[13px]"
 
             >
 
@@ -572,7 +572,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setRecipient(e.target.value)}
 
-              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-wo-surface-input text-wo-text-primary text-[13px]"
 
             />
 
@@ -600,7 +600,7 @@ export default function QuoteSendDialog({
 
               rows={2}
 
-              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-wo-surface-input text-wo-text-primary text-[13px]"
 
             />
 
@@ -626,7 +626,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setDocumentRef(e.target.value)}
 
-              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-wo-surface-input text-wo-text-primary text-[13px]"
 
             />
 
@@ -716,7 +716,7 @@ export default function QuoteSendDialog({
 
             onClick={onClose}
 
-            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200"
+            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-wo-text-primary"
 
           >
 

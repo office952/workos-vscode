@@ -581,7 +581,7 @@ function buildLogicalDisplayRows(
 
 function DiagnosticBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex rounded border border-wo-border-strong bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+    <span className="inline-flex rounded border border-wo-border-strong bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-wo-text-secondary">
       {label}
     </span>
   );
@@ -608,16 +608,16 @@ function DiagnosticSection({ rows }: { rows: LiveCalcDisplayRow[] }) {
       className="mt-3 rounded border border-wo-border-strong bg-wo-surface-inset/80"
       data-testid="intake-v6-live-diagnostics"
     >
-      <summary className="cursor-pointer list-none px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-amber-200">
+      <summary className="cursor-pointer list-none px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200">
         Neincluse / necesită configurare ({rows.length})
       </summary>
       <div className="border-t border-wo-border-subtle/80 px-2.5 py-2">
         {Array.from(grouped.entries()).map(([reason, items]) => (
           <div key={reason} className="mb-3 last:mb-0" data-testid={`intake-v6-live-diagnostic-group-${reason}`}>
-            <p className="mb-1 text-[11px] font-semibold text-amber-100/90">
+            <p className="mb-1 text-[11px] font-semibold text-amber-900/90 dark:text-amber-100/90">
               {reason} · {items.length}
             </p>
-            <ul className="space-y-1 text-[11px] text-slate-300">
+            <ul className="space-y-1 text-[11px] text-wo-text-secondary">
               {items.map((item) => (
                 <li key={item.groupKey} className="rounded border border-wo-border-subtle/80 bg-wo-surface-inset/70 px-2 py-1.5">
                   <div className="flex items-start justify-between gap-2">
@@ -681,7 +681,7 @@ function LiveCalcLineList({
             <li key={category || "breakdown"} className="contents">
               {logicalMode ? (
                 <div
-                  className="bg-wo-surface-inset px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-200/80"
+                  className="bg-wo-surface-inset px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-800 dark:text-cyan-200/80"
                   data-testid={`intake-v6-logical-list-category-${category}`}
                 >
                   {logicalCategoryLabel(category)} · {items.length}
@@ -693,7 +693,7 @@ function LiveCalcLineList({
                   className="grid grid-cols-[minmax(0,1fr)_80px_84px] items-start gap-2 px-2.5 py-2"
                   data-testid={`intake-v6-live-material-used-${item.groupKey}`}
                 >
-                  <span className="min-w-0 leading-relaxed text-slate-200" title={item.label}>
+                  <span className="min-w-0 leading-relaxed text-wo-text-primary" title={item.label}>
                     <span className="block truncate">{item.label}</span>
                     {logicalMode && showTechnicalDetails ? (
                       <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">
@@ -733,12 +733,12 @@ function LiveCalcLineList({
                       </span>
                     ) : null}
                   </span>
-                  <span className="text-right font-mono text-[12px] tabular-nums text-slate-300">{item.quantityText}</span>
+                  <span className="text-right font-mono text-[12px] tabular-nums text-wo-text-secondary">{item.quantityText}</span>
                   <span
                     className={joinClassNames(
                       "text-right text-[12px] tabular-nums",
                       logicalMode ? "font-semibold" : "font-mono",
-                      item.muted ? "text-amber-200/90" : "text-wo-text-primary",
+                      item.muted ? "text-amber-800 dark:text-amber-200/90" : "text-wo-text-primary",
                     )}
                     data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
                   >
@@ -757,12 +757,12 @@ function LiveCalcLineList({
       </ul>
       {activeFilter !== "all" && !logicalMode ? (
         <div
-          className="flex flex-wrap items-center justify-between gap-2 border-t border-wo-border-subtle bg-wo-surface-inset/80 px-2.5 py-2 text-[11px] text-slate-300"
+          className="flex flex-wrap items-center justify-between gap-2 border-t border-wo-border-subtle bg-wo-surface-inset/80 px-2.5 py-2 text-[11px] text-wo-text-secondary"
           data-testid="intake-v6-live-filter-subtotal"
         >
           <span>
             Subtotal filtru:{" "}
-            <strong className="font-semibold tabular-nums text-slate-200">
+            <strong className="font-semibold tabular-nums text-wo-text-primary">
               {formatFaceBackPrepMoney(filterTotals.subtotal, currency)}
             </strong>
           </span>
@@ -869,10 +869,10 @@ function LiveCalcEstimateTotalsBlock({
   const showCommercialEstimate = offerMoney != null;
   const grossClassName =
     emphasis === "compact"
-      ? "text-[14px] font-semibold tabular-nums leading-none text-slate-200"
+      ? "text-[14px] font-semibold tabular-nums leading-none text-emerald-700 dark:text-emerald-200"
       : emphasis === "sidebar"
-        ? "text-[16px] font-semibold tabular-nums leading-tight text-slate-200"
-        : "mt-0.5 block text-[18px] font-semibold tabular-nums leading-tight text-slate-200";
+        ? "text-[16px] font-semibold tabular-nums leading-tight text-emerald-700 dark:text-emerald-200"
+        : "mt-0.5 block text-[18px] font-semibold tabular-nums leading-tight text-emerald-700 dark:text-emerald-200";
   const containerClassName =
     emphasis === "compact"
       ? "min-w-0"
@@ -892,21 +892,21 @@ function LiveCalcEstimateTotalsBlock({
               emphasis === "compact" ? "mt-0.5" : "mt-1.5",
             )}
           >
-            <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
-            <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-net">
+            <span className="text-wo-text-muted">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
+            <span className="tabular-nums text-wo-text-primary" data-testid="intake-v6-live-offer-net">
               {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
             </span>
           </div>
           {displayVatRon != null ? (
             <div className="mt-1 flex items-baseline justify-between gap-2 text-[11px]">
-              <span className="text-slate-500">
+              <span className="text-wo-text-muted">
                 {displayVatRate != null
                   ? `${INTAKE_V6_LIVE_CALC_VAT_LABEL} (${displayVatRate.toLocaleString("ro-RO", {
                       maximumFractionDigits: 2,
                     })}%)`
                   : INTAKE_V6_LIVE_CALC_VAT_LABEL}
               </span>
-              <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-vat">
+              <span className="tabular-nums text-wo-text-secondary" data-testid="intake-v6-live-offer-vat">
                 {formatFaceBackPrepMoney(displayVatRon, offerMoney.currency)}
               </span>
             </div>
@@ -914,14 +914,14 @@ function LiveCalcEstimateTotalsBlock({
           {displayAdaosPercent != null ? (
             <div className="mt-1 flex items-baseline justify-between gap-2 text-[11px]">
               <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_ADAOS_LABEL}</span>
-              <span className="tabular-nums text-slate-300" data-testid="intake-v6-live-offer-adaos">
+              <span className="tabular-nums text-wo-text-secondary" data-testid="intake-v6-live-offer-adaos">
                 {displayAdaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
               </span>
             </div>
           ) : null}
         </>
       ) : !artworkOnlyBlocked ? (
-        <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
+        <p className="text-[11px] leading-relaxed text-wo-text-secondary" data-testid="intake-v6-live-estimate-unavailable">
           {displayGrossRon != null && offerCurrency == null
             ? INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING
             : shortenOperatorPricingBlocker(officialPricingBlocker) ??
@@ -939,7 +939,7 @@ function LiveCalcEstimateTotalsBlock({
         </span>
         <span
           className={joinClassNames(
-            "tabular-nums text-slate-300",
+            "tabular-nums text-wo-text-secondary",
             emphasis === "sidebar" ? "text-[13px] font-medium" : "text-[12px] font-medium",
           )}
           data-testid="intake-v6-live-material-total"
@@ -967,7 +967,7 @@ function CantMetricsStrip({ operatorCantPerimeterM }: { operatorCantPerimeterM?:
         <Ruler className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
         <span className="text-[11px] font-medium text-slate-500">Perimetru cant operator</span>
       </span>
-      <span className="font-mono text-[12px] font-semibold tabular-nums text-slate-200">
+      <span className="font-mono text-[12px] font-semibold tabular-nums text-wo-text-primary">
         {formatEdgeCantOperatorPerimeter(operatorCantPerimeterM)}
       </span>
     </div>
@@ -990,7 +990,7 @@ function DetailsSheet({
       <SheetTrigger asChild>
         <button
           type="button"
-          className="inline-flex w-full items-center justify-center gap-0.5 rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] font-semibold text-slate-200 hover:border-cyan-500/30"
+          className="inline-flex w-full items-center justify-center gap-0.5 rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] font-semibold text-wo-text-primary hover:border-cyan-500/30"
           data-testid={testId}
         >
           {triggerLabel}
@@ -1247,8 +1247,8 @@ export default function IntakeV6LiveCalculationSummary({
             className={joinClassNames(
               "rounded border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide transition",
               active
-                ? "border-cyan-500/40 bg-cyan-500/15 text-cyan-200"
-                : "border-wo-border-strong bg-wo-surface-raised text-slate-400 hover:border-slate-500/40 hover:text-slate-200",
+                ? "border-cyan-600/50 bg-cyan-500/15 text-cyan-800 dark:border-cyan-500/40 dark:text-cyan-200"
+                : "border-wo-border-strong bg-wo-surface-raised text-wo-text-muted hover:border-wo-border-strong hover:text-wo-text-primary",
             )}
             onClick={() => setActiveFilter(option.id)}
             data-testid={`intake-v6-live-filter-${option.id}`}
@@ -1263,7 +1263,7 @@ export default function IntakeV6LiveCalculationSummary({
 
   const technicalDetailsToggle = (
     <label
-      className="mb-2 flex items-center gap-2 rounded border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2.5 py-2 text-[11px] text-slate-300"
+      className="mb-2 flex items-center gap-2 rounded border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2.5 py-2 text-[11px] text-wo-text-secondary"
       data-testid="intake-v6-live-technical-toggle"
     >
       <input
@@ -1280,7 +1280,7 @@ export default function IntakeV6LiveCalculationSummary({
       <CantMetricsStrip operatorCantPerimeterM={effectiveCantPerimeter} />
       {artworkOnlyBlocked && !suppressLetterCantChrome ? (
         <p
-          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] leading-relaxed text-amber-100/90"
+          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] leading-relaxed text-amber-900/90 dark:text-amber-100/90"
           data-testid="intake-v6-live-artwork-only-blocked"
         >
           Nu există straturi de litere confirmate. Artwork-only necesită decizie operator.
@@ -1288,7 +1288,7 @@ export default function IntakeV6LiveCalculationSummary({
       ) : null}
       {pendingSave ? (
         <p
-          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/90"
+          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-900/90 dark:text-amber-100/90"
           data-testid="intake-v6-live-pending-save"
         >
           {INTAKE_V6_PENDING_SAVE_BANNER}
@@ -1298,7 +1298,7 @@ export default function IntakeV6LiveCalculationSummary({
       {technicalDetailsToggle}
       {usesLogicalList ? (
         <p
-          className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
+          className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-900/85 dark:text-cyan-100/85"
           data-testid="intake-v6-logical-list-summary"
         >
           Lista logică read-model · {logicalRowCount} rânduri
@@ -1360,13 +1360,13 @@ export default function IntakeV6LiveCalculationSummary({
             <div className="min-w-0 border-l border-wo-border-strong/60 pl-3" data-testid="intake-v6-live-totals-summary">
               <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
               <span
-                className="text-[16px] font-semibold tabular-nums leading-none text-emerald-200"
+                className="text-[16px] font-semibold tabular-nums leading-none text-emerald-700 dark:text-emerald-200"
                 data-testid="intake-v6-live-offer-gross"
               >
                 {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
               </span>
-              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[10px] tabular-nums text-slate-400">
-                <span data-testid="intake-v6-live-offer-net">
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[10px] tabular-nums text-wo-text-secondary">
+                <span className="text-wo-text-primary" data-testid="intake-v6-live-offer-net">
                   Net {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
                 </span>
                 {displayVatRon != null ? (
@@ -1383,7 +1383,7 @@ export default function IntakeV6LiveCalculationSummary({
             </div>
           ) : !artworkOnlyBlocked && displayGrossRon != null && offerCurrency == null ? (
             <p
-              className="min-w-0 border-l border-wo-border-strong/60 pl-3 text-[10px] leading-relaxed text-slate-400"
+              className="min-w-0 border-l border-wo-border-strong/60 pl-3 text-[10px] leading-relaxed text-wo-text-secondary"
               data-testid="intake-v6-live-estimate-unavailable"
             >
               {INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING}
@@ -1395,7 +1395,7 @@ export default function IntakeV6LiveCalculationSummary({
               {acmPanelCostFallback ? "Estimare panou ACM" : INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}
             </span>
             <span
-              className="text-[12px] font-medium tabular-nums text-slate-300"
+              className="text-[12px] font-medium tabular-nums text-wo-text-secondary"
               data-testid="intake-v6-live-material-total"
             >
               {artworkOnlyBlocked
@@ -1406,7 +1406,7 @@ export default function IntakeV6LiveCalculationSummary({
 
           {missingPrices || missingRateLabels.length > 0 ? (
             <span
-              className="inline-flex items-center gap-1 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-0.5 text-[10px] text-amber-200/90"
+              className="inline-flex items-center gap-1 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-0.5 text-[10px] text-amber-800 dark:text-amber-200/90"
               data-testid="intake-v6-live-missing-rates-banner"
             >
               <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
@@ -1417,7 +1417,7 @@ export default function IntakeV6LiveCalculationSummary({
           ) : null}
 
           {pendingSave ? (
-            <span className="text-[10px] text-amber-200/90" data-testid="intake-v6-live-pending-save-inline">
+            <span className="text-[10px] text-amber-800 dark:text-amber-200/90" data-testid="intake-v6-live-pending-save-inline">
               Salvare…
             </span>
           ) : null}
@@ -1477,7 +1477,7 @@ export default function IntakeV6LiveCalculationSummary({
         <div className="mb-2 min-w-0" data-testid="intake-v6-live-calc-preview-header">
           <div className="flex items-center gap-1.5">
             <Calculator className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
-            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-wo-text-secondary">
               {INTAKE_V6_LIVE_CALC_TITLE}
             </h3>
           </div>
@@ -1490,19 +1490,19 @@ export default function IntakeV6LiveCalculationSummary({
         >
           {offerMoney ? (
             <>
-              <span className="block text-[10px] font-semibold uppercase tracking-wide text-emerald-200/80">
+              <span className="block text-[10px] font-semibold uppercase tracking-wide text-emerald-800/90 dark:text-emerald-200/80">
                 {INTAKE_V6_LIVE_CALC_GROSS_LABEL}
               </span>
               <span
-                className="mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-200"
+                className="mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-700 dark:text-emerald-200"
                 data-testid="intake-v6-live-offer-gross"
               >
                 {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
               </span>
               <div className="mt-1.5 space-y-1 border-t border-wo-border-strong/50 pt-1.5 text-[11px]">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
-                  <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-net">
+                  <span className="text-wo-text-muted">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
+                  <span className="tabular-nums text-wo-text-primary" data-testid="intake-v6-live-offer-net">
                     {formatFaceBackPrepMoney(offerMoney.net, offerMoney.currency)}
                   </span>
                 </div>
@@ -1515,7 +1515,7 @@ export default function IntakeV6LiveCalculationSummary({
                           })}%)`
                         : INTAKE_V6_LIVE_CALC_VAT_LABEL}
                     </span>
-                    <span className="tabular-nums text-slate-300" data-testid="intake-v6-live-offer-vat">
+                    <span className="tabular-nums text-wo-text-secondary" data-testid="intake-v6-live-offer-vat">
                       {formatFaceBackPrepMoney(displayVatRon, offerMoney.currency)}
                     </span>
                   </div>
@@ -1523,7 +1523,7 @@ export default function IntakeV6LiveCalculationSummary({
                 {displayAdaosPercent != null ? (
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_ADAOS_LABEL}</span>
-                    <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-adaos">
+                    <span className="tabular-nums text-wo-text-primary" data-testid="intake-v6-live-offer-adaos">
                       {displayAdaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
                     </span>
                   </div>
@@ -1532,7 +1532,7 @@ export default function IntakeV6LiveCalculationSummary({
             </>
           ) : (
             <div data-testid="intake-v6-live-estimate-unavailable">
-              <p className="text-[12px] font-medium leading-snug text-slate-200">Încă indisponibilă</p>
+              <p className="text-[12px] font-medium leading-snug text-wo-text-primary">Încă indisponibilă</p>
               <p className="mt-0.5 text-[10px] leading-relaxed text-slate-500">
                 {displayGrossRon != null && offerCurrency == null
                   ? INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING
@@ -1556,8 +1556,8 @@ export default function IntakeV6LiveCalculationSummary({
                   className="flex items-baseline justify-between gap-2 text-[11px]"
                   data-testid="intake-v6-offer-rail-letters"
                 >
-                  <span className="text-slate-400">Litere</span>
-                  <span className="tabular-nums text-slate-200">
+                  <span className="text-wo-text-muted">Litere</span>
+                  <span className="tabular-nums text-wo-text-primary">
                     {totalCostLabel(lettersInternalTotal, currency)}
                   </span>
                 </li>
@@ -1567,8 +1567,8 @@ export default function IntakeV6LiveCalculationSummary({
                   className="flex items-baseline justify-between gap-2 text-[11px]"
                   data-testid="intake-v6-offer-rail-bond"
                 >
-                  <span className="text-slate-400">Panou Alucobond</span>
-                  <span className="tabular-nums text-slate-200">
+                  <span className="text-wo-text-muted">Panou Alucobond</span>
+                  <span className="tabular-nums text-wo-text-primary">
                     {totalCostLabel(
                       acmPanelCommercialPreview.estimated_total ?? null,
                       acmPanelCommercialPreview.currency || "EUR",
@@ -1581,8 +1581,8 @@ export default function IntakeV6LiveCalculationSummary({
                   className="flex items-baseline justify-between gap-2 text-[11px]"
                   data-testid="intake-v6-offer-rail-contract"
                 >
-                  <span className="text-slate-400">Legături Litere↔Bond</span>
-                  <span className="tabular-nums text-slate-300">
+                  <span className="text-wo-text-muted">Legături Litere↔Bond</span>
+                  <span className="tabular-nums text-wo-text-secondary">
                     {compositionConnectionRowCount} linii
                   </span>
                 </li>
@@ -1591,8 +1591,8 @@ export default function IntakeV6LiveCalculationSummary({
                   className="flex items-baseline justify-between gap-2 text-[11px]"
                   data-testid="intake-v6-offer-rail-contract-missing"
                 >
-                  <span className="text-slate-400">Legături Litere↔Bond</span>
-                  <span className="tabular-nums text-amber-100/80">lipsă în calcul</span>
+                  <span className="text-wo-text-muted">Legături Litere↔Bond</span>
+                  <span className="tabular-nums text-amber-800 dark:text-amber-100/80">lipsă în calcul</span>
                 </li>
               ) : null}
             </ul>
@@ -1626,7 +1626,7 @@ export default function IntakeV6LiveCalculationSummary({
             >
               <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
               <span
-                className="tabular-nums text-slate-300"
+                className="tabular-nums text-wo-text-secondary"
                 data-testid="intake-v6-live-material-total"
               >
                 {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, internalCurrency)}
@@ -1650,7 +1650,7 @@ export default function IntakeV6LiveCalculationSummary({
 
         {pendingSave ? (
           <p
-            className="mb-2 mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/90"
+            className="mb-2 mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-900/90 dark:text-amber-100/90"
             data-testid="intake-v6-live-pending-save"
           >
             {INTAKE_V6_PENDING_SAVE_BANNER}
@@ -1662,12 +1662,12 @@ export default function IntakeV6LiveCalculationSummary({
             className="mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5"
             data-testid="intake-v6-offer-rail-blockers"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-100/90">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-900/90 dark:text-amber-100/90">
               Ce blochează
             </p>
             <ul className="mt-1 space-y-0.5">
               {blockerReasons.map((reason) => (
-                <li key={reason} className="text-[10px] leading-snug text-amber-100/80">
+                <li key={reason} className="text-[10px] leading-snug text-amber-900/80 dark:text-amber-100/80">
                   · {reason}
                 </li>
               ))}
@@ -1751,7 +1751,7 @@ export default function IntakeV6LiveCalculationSummary({
 
       {pendingSave ? (
         <p
-          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/90"
+          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-900/90 dark:text-amber-100/90"
           data-testid="intake-v6-live-pending-save"
         >
           {INTAKE_V6_PENDING_SAVE_BANNER}
@@ -1760,13 +1760,13 @@ export default function IntakeV6LiveCalculationSummary({
 
       {missingPrices || missingRateLabels.length > 0 ? (
         <div
-          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/85"
+          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-900/85 dark:text-amber-100/85"
           data-testid="intake-v6-live-missing-rates-banner"
         >
           <p>
             <span className="font-medium">Tarife lipsă</span>
             {visibleMissingRateLabels.length > 0 ? (
-              <span className="text-amber-100/75">
+              <span className="text-amber-900/75 dark:text-amber-100/75">
                 {" "}
                 — {visibleMissingRateLabels.join("; ")}
                 {hiddenMissingRateCount > 0 ? ` (+${hiddenMissingRateCount})` : ""}
@@ -1789,7 +1789,7 @@ export default function IntakeV6LiveCalculationSummary({
         <div data-testid="intake-v6-live-materials-used">
           {usesLogicalList ? (
             <p
-              className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
+              className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-900/85 dark:text-cyan-100/85"
               data-testid="intake-v6-logical-list-summary"
             >
               Lista logică read-model · {logicalRowCount} rânduri
@@ -1814,7 +1814,7 @@ export default function IntakeV6LiveCalculationSummary({
             data-testid="intake-v6-live-materials-used-toggle"
             aria-expanded={materialsOpen}
           >
-            <span className="text-[11px] font-bold uppercase tracking-wide text-slate-300">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-wo-text-secondary">
               Detalii linii ({filteredRows.length})
             </span>
             <span className="text-[11px] text-slate-400">{materialsOpen ? "−" : "+"}</span>

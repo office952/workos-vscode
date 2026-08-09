@@ -380,7 +380,7 @@ export default function VolumetricLettersQuoteFlow({
           <FlowBreadcrumb items={volumetricQuoteBreadcrumb(intakeRequestId)} />
           <button
             onClick={onClose}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-wo-text-primary hover:bg-slate-800/60"
           >
             <X className="w-3.5 h-3.5" />
             Închide
@@ -392,7 +392,7 @@ export default function VolumetricLettersQuoteFlow({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-wo-text-primary hover:bg-slate-800/60"
             data-testid="volumetric-quote-back-to-spec"
           >
             <X className="w-3.5 h-3.5" />
@@ -405,7 +405,7 @@ export default function VolumetricLettersQuoteFlow({
 
       {commercialHandoffMode && (
         <div
-          className="flex items-start gap-2 px-3 py-2.5 bg-emerald-900/15 border border-emerald-800/35 rounded-lg text-[11px] text-emerald-200/95"
+          className="flex items-start gap-2 px-3 py-2.5 bg-emerald-900/15 border border-emerald-800/35 rounded-lg text-[11px] text-emerald-800 dark:text-emerald-200/95"
           data-testid="volumetric-handoff-commercial-banner"
         >
           <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
@@ -522,9 +522,9 @@ export default function VolumetricLettersQuoteFlow({
                   materialFiles.map((file) => (
                     <div
                       key={file.id}
-                      className="border border-wo-border-strong rounded-md px-3 py-2 bg-[#0f1524]"
+                      className="border border-wo-border-strong rounded-md px-3 py-2 bg-wo-surface-input"
                     >
-                      <p className="text-[12px] text-slate-200 truncate">{file.name}</p>
+                      <p className="text-[12px] text-wo-text-primary truncate">{file.name}</p>
                       <p className="text-[10px] text-slate-500 mt-0.5">
                         {file.category.replace("_", " ")} · {file.status}
                         {file.contextOnly ? " · context" : ""}
@@ -557,7 +557,7 @@ export default function VolumetricLettersQuoteFlow({
                       className={`text-left rounded-lg border p-3 transition-colors ${
                         active
                           ? "border-blue-500/60 bg-blue-950/30 ring-1 ring-blue-500/30"
-                          : "border-wo-border-strong hover:border-slate-500 bg-[#0f1524]"
+                          : "border-wo-border-strong hover:border-slate-500 bg-wo-surface-input"
                       }`}
                     >
                       <p className="text-[13px] font-semibold text-slate-100">{opt.title}</p>
@@ -604,7 +604,7 @@ export default function VolumetricLettersQuoteFlow({
                   className="rounded-md border border-wo-border-strong bg-wo-surface-inset/30"
                   data-testid="volumetric-advanced-technical-override"
                 >
-                  <summary className="cursor-pointer px-3 py-2.5 text-[12px] font-medium text-slate-400 hover:text-slate-200">
+                  <summary className="cursor-pointer px-3 py-2.5 text-[12px] font-medium text-slate-400 hover:text-wo-text-primary">
                     Advanced technical override
                   </summary>
                   <div className="px-3 pb-3 space-y-3 border-t border-wo-border-subtle/80 pt-3">
@@ -630,7 +630,7 @@ export default function VolumetricLettersQuoteFlow({
                             value={technicalOverrideReason}
                             onChange={(e) => setTechnicalOverrideReason(e.target.value)}
                             placeholder="ex: ajustare perimetru pentru variantă comercială"
-                            className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
+                            className="mt-1 w-full bg-wo-surface-input border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
                             data-testid="volumetric-technical-override-reason"
                           />
                         </label>
@@ -748,7 +748,7 @@ export default function VolumetricLettersQuoteFlow({
           {/* Simulation panel */}
           {simulationResult && costBreakdown && (
             <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
-              <p className="text-[12px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
+              <p className="text-[12px] font-semibold text-wo-text-primary mb-3 flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-blue-400" />
                 Rezultat simulare preliminară
               </p>
@@ -826,10 +826,10 @@ export default function VolumetricLettersQuoteFlow({
                       return (
                         <div
                           key={`${module.template_code}-${index}`}
-                          className="border border-wo-border-strong rounded-md bg-[#0f1524] px-3 py-2"
+                          className="border border-wo-border-strong rounded-md bg-wo-surface-input px-3 py-2"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <p className="text-[12px] font-semibold text-slate-200">
+                            <p className="text-[12px] font-semibold text-wo-text-primary">
                               Structură metalică premontaj
                             </p>
                             <span className="text-[10px] font-mono text-blue-300">
@@ -1052,7 +1052,7 @@ function EmbeddedIntakeSpecSummary({
 
   return (
     <div className="space-y-3 text-[11px]">
-      <p className="text-[12px] font-semibold text-slate-200">
+      <p className="text-[12px] font-semibold text-wo-text-primary">
         Date din specificație salvată
       </p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
@@ -1107,7 +1107,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-[9px] uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="font-medium text-slate-200 truncate">{value}</p>
+      <p className="font-medium text-wo-text-primary truncate">{value}</p>
     </div>
   );
 }
@@ -1123,7 +1123,7 @@ function VectorMethodPanel({
     spec?.vector_layer_mapping_status === "mapped" ||
     Boolean(spec?.svg_layer_mappings && Object.keys(spec.svg_layer_mappings).length);
   return (
-    <div className="rounded-md border border-wo-border-strong bg-[#0f1524] p-3 space-y-2 text-[11px]">
+    <div className="rounded-md border border-wo-border-strong bg-wo-surface-input p-3 space-y-2 text-[11px]">
       <p className="text-slate-300 font-medium flex items-center gap-2">
         <Layers className="w-4 h-4 text-blue-400" />
         Vector &amp; review
@@ -1270,7 +1270,7 @@ function CostOptionsPanel({
           <select
             value={quoteInput.selected_psu_watts ?? ""}
             onChange={(e) => onChange("selected_psu_watts", e.target.value)}
-            className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
+            className="mt-1 w-full bg-wo-surface-input border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
           >
             <option value="">—</option>
             {VOLUMETRIC_PSU_WATTAGE_OPTIONS.map((w) => (
@@ -1286,7 +1286,7 @@ function CostOptionsPanel({
         <select
           value={quoteInput.mounting_system ?? ""}
           onChange={(e) => onChange("mounting_system", e.target.value)}
-          className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-1 w-full bg-wo-surface-input border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
         >
           {VOLUMETRIC_MOUNTING_SYSTEM_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -1322,7 +1322,7 @@ function CostOptionsPanel({
         <select
           value={quoteInput.face_finish_type ?? "none"}
           onChange={(e) => onChange("face_finish_type", e.target.value)}
-          className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-1 w-full bg-wo-surface-input border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
         >
           {VOLUMETRIC_FACE_FINISH_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -1546,7 +1546,7 @@ function Field({
         className={`mt-1 w-full border border-wo-border-strong rounded px-2 py-1.5 text-[12px] ${
           readOnly
             ? "bg-wo-surface-inset/60 text-slate-400 cursor-default"
-            : "bg-[#0f1524] text-slate-100"
+            : "bg-wo-surface-input text-slate-100"
         }`}
       />
     </label>

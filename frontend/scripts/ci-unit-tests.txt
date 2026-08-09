@@ -38,3 +38,6 @@ src/components/execution/executionPlanV2Readiness.test.ts
 src/components/execution/ExecutionPlanV2TruthPanel.test.tsx
 src/lib/opsGraphDisplayOrder.test.ts
 src/components/workos/OpsGraphFrozenTechnicalMaterials.test.tsx
+src/contexts/ThemeContext.test.tsx
+src/components/workos/design-system/sourceToneTheme.test.ts
+src/components/ui/sonner.theme.test.tsx

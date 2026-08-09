@@ -160,7 +160,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <FileText className="w-4 h-4 text-blue-400 shrink-0" />
-            <span className="text-[13px] font-bold text-slate-100">Ofertă pentru client</span>
+            <span className="text-[13px] font-bold text-wo-text-primary">Ofertă pentru client</span>
             <span data-testid="commercial-document-operator-status">
               <StatusBadge domain="quote" status={document.status} className="text-[10px]" />
             </span>
@@ -186,25 +186,25 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
 
         {/* Quick summary */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <div className="rounded-md border border-slate-700/50 bg-slate-900/30 px-2.5 py-2">
+          <div className="rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/60 px-2.5 py-2">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide">Produs</p>
-            <p className="text-[12px] text-slate-200 font-medium mt-0.5 leading-snug">
+            <p className="text-[12px] text-wo-text-primary font-medium mt-0.5 leading-snug">
               {product_text?.client_title || document.product_summary?.product_name || "—"}
             </p>
           </div>
-          <div className="rounded-md border border-slate-700/50 bg-slate-900/30 px-2.5 py-2">
+          <div className="rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/60 px-2.5 py-2">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide">Total</p>
-            <p className="text-[14px] text-slate-100 font-bold mt-0.5 tabular-nums">
+            <p className="text-[14px] text-wo-text-primary font-bold mt-0.5 tabular-nums">
               {formatCurrency(totals.grand_total)} {totals.currency}
             </p>
           </div>
-          <div className="rounded-md border border-slate-700/50 bg-slate-900/30 px-2.5 py-2">
+          <div className="rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/60 px-2.5 py-2">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide">Valabilitate</p>
             <p className="text-[12px] text-slate-300 mt-0.5 leading-snug">
               {formatValidityLabel(commercial, metadata.valid_until)}
             </p>
           </div>
-          <div className="rounded-md border border-slate-700/50 bg-slate-900/30 px-2.5 py-2">
+          <div className="rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/60 px-2.5 py-2">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide">TVA</p>
             <p className="text-[12px] text-slate-300 mt-0.5">{commercial.tva_percent}%</p>
           </div>
@@ -217,7 +217,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
           className="rounded-xl border border-slate-600/35 bg-wo-surface-inset shadow-[0_4px_24px_rgba(0,0,0,0.22)] overflow-hidden"
           data-testid="commercial-document-preview"
         >
-          <div className="px-5 py-4 border-b border-slate-600/30 bg-gradient-to-b from-slate-800/35 to-transparent">
+          <div className="px-5 py-4 border-b border-wo-border-strong/50 bg-gradient-to-b from-slate-800/35 to-transparent">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Document comercial</p>
@@ -240,10 +240,10 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-700/40 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="mt-4 pt-3 border-t border-wo-border-strong/60 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div data-testid="commercial-document-client-block">
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Client</p>
-                <p className="text-[13px] font-semibold text-slate-100 mt-0.5">{client.name || "—"}</p>
+                <p className="text-[13px] font-semibold text-wo-text-primary mt-0.5">{client.name || "—"}</p>
                 {client.company ? (
                   <p className="text-[11px] text-slate-400 mt-0.5">{client.company}</p>
                 ) : null}
@@ -253,7 +253,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-wide text-slate-500">Produs ofertat</p>
-                <p className="text-[13px] text-slate-200 mt-0.5 leading-snug">
+                <p className="text-[13px] text-wo-text-primary mt-0.5 leading-snug">
                   {product_text?.client_title || document.product_summary?.product_name || "—"}
                 </p>
               </div>
@@ -269,7 +269,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
             expanded={sectionsExpanded.product_description}
             onToggle={() => toggleSection("product_description")}
           >
-            <p className="text-[12px] text-slate-200 font-medium mb-1">
+            <p className="text-[12px] text-wo-text-primary font-medium mb-1">
               {product_text?.client_title || "—"}
             </p>
             <p className="text-[11px] text-slate-300">
@@ -327,21 +327,21 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
             onToggle={() => toggleSection("line_items")}
           >
             <div className="space-y-0.5">
-              <div className="grid grid-cols-[1fr_auto] gap-2 text-[9px] uppercase tracking-wide text-slate-500 px-0.5 pb-1 border-b border-slate-700/40">
+              <div className="grid grid-cols-[1fr_auto] gap-2 text-[9px] uppercase tracking-wide text-slate-500 px-0.5 pb-1 border-b border-wo-border-strong/60">
                 <span>Descriere</span>
                 <span className="text-right">Valoare</span>
               </div>
               {document.line_items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="grid grid-cols-[1fr_auto] gap-2 items-start py-2 border-b border-slate-700/40 last:border-0"
+                  className="grid grid-cols-[1fr_auto] gap-2 items-start py-2 border-b border-wo-border-strong/60 last:border-0"
                   data-testid={idx === 0 ? "commercial-document-line-item" : undefined}
                 >
                   <div>
-                    <p className="text-[11px] text-slate-200 leading-snug">{item.description}</p>
+                    <p className="text-[11px] text-wo-text-primary leading-snug">{item.description}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[11px] text-slate-200 font-medium tabular-nums">
+                    <p className="text-[11px] text-wo-text-primary font-medium tabular-nums">
                       {formatCurrency(item.total)} {totals.currency}
                     </p>
                     <p className="text-[9px] text-slate-500 tabular-nums">
@@ -354,12 +354,12 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
 
             {/* Totals */}
             <div
-              className="mt-4 rounded-lg border border-slate-600/40 bg-slate-900/45 px-3 py-2.5 space-y-1.5"
+              className="mt-4 rounded-lg border border-wo-border-strong/60 bg-wo-surface-inset/80 px-3 py-2.5 space-y-1.5"
               data-testid="commercial-document-financial-summary"
             >
               <div className="flex justify-between text-[11px]">
                 <span className="text-slate-400">Subtotal</span>
-                <span className="text-slate-200 tabular-nums">
+                <span className="text-wo-text-primary tabular-nums">
                   {formatCurrency(totals.subtotal)} {totals.currency}
                 </span>
               </div>
@@ -373,12 +373,12 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
               )}
               <div className="flex justify-between text-[11px]">
                 <span className="text-slate-400">TVA ({commercial.tva_percent}%)</span>
-                <span className="text-slate-200 tabular-nums" data-testid="commercial-document-tva">
+                <span className="text-wo-text-primary tabular-nums" data-testid="commercial-document-tva">
                   {formatCurrency(totals.tva)} {totals.currency}
                 </span>
               </div>
               <div className="flex justify-between items-baseline pt-2 mt-1 border-t border-slate-500/50">
-                <span className="text-[12px] font-bold tracking-wide text-slate-100">TOTAL</span>
+                <span className="text-[12px] font-bold tracking-wide text-wo-text-primary">TOTAL</span>
                 <span
                   className="text-[15px] font-bold text-wo-text-primary tabular-nums"
                   data-testid="commercial-document-grand-total"
@@ -519,7 +519,7 @@ function CollapsibleSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-slate-900/45 border border-slate-600/30 rounded-lg overflow-hidden">
+    <div className="bg-wo-surface-inset/80 border border-wo-border-strong/50 rounded-lg overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-slate-800/55 transition-colors"

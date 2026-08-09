@@ -39,8 +39,8 @@ export default function QuoteAcceptanceConversionPanel({
           className="rounded-lg border border-emerald-900/30 bg-emerald-950/20 px-3 py-2 space-y-1"
           data-testid="quote-acceptance-clarity-notice"
         >
-          <p className="text-[11px] text-emerald-200/90">{QUOTE_INTERNAL_ACCEPTANCE_NOTICE}</p>
-          <p className="text-[10px] text-emerald-300/80">{QUOTE_ACCEPTANCE_NEXT_STEP_NOTICE}</p>
+          <p className="text-[11px] text-emerald-800 dark:text-emerald-200/90">{QUOTE_INTERNAL_ACCEPTANCE_NOTICE}</p>
+          <p className="text-[10px] text-emerald-700 dark:text-emerald-300/80">{QUOTE_ACCEPTANCE_NEXT_STEP_NOTICE}</p>
         </div>
       )}
 
@@ -52,7 +52,7 @@ export default function QuoteAcceptanceConversionPanel({
           <p className="text-[10px] uppercase tracking-wide text-purple-300/80">
             Conversie în comandă
           </p>
-          <p className="text-[11px] text-slate-200 font-medium" data-testid="quote-conversion-summary-line">
+          <p className="text-[11px] text-wo-text-primary font-medium" data-testid="quote-conversion-summary-line">
             {formatQuoteConversionSummary(quote)}
           </p>
           <p className="text-[11px] text-slate-300" data-testid="quote-conversion-total-eur">

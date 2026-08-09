@@ -200,51 +200,51 @@ function GuardedQuoteSourceBadges({ quote }: { quote: Quote }) {
         </span>
       ) : null}
       {guard.requiresPricingReview ? (
-        <span className="rounded border border-amber-700/50 bg-amber-950/40 px-1.5 py-0.5 text-[10px] text-amber-200">
+        <span className="rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] text-amber-800 dark:border-amber-700/50 dark:bg-amber-950/40 dark:text-amber-200">
           Requires pricing review
         </span>
       ) : guard.pricingReviewCompleted ? (
-        <span className="rounded border border-emerald-700/50 bg-emerald-950/40 px-1.5 py-0.5 text-[10px] text-emerald-200">
+        <span className="rounded border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[10px] text-emerald-800 dark:border-emerald-700/50 dark:bg-emerald-950/40 dark:text-emerald-200">
           Pricing reviewed
         </span>
       ) : null}
       {guard.pricedDraft && !guard.requiresPricingReview ? (
-        <span className="rounded border border-blue-700/50 bg-blue-950/40 px-1.5 py-0.5 text-[10px] text-blue-200">
+        <span className="rounded border border-blue-300 bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-800 dark:border-blue-700/50 dark:bg-blue-950/40 dark:text-blue-200">
           Priced draft
         </span>
       ) : null}
       {guard.guardedAcceptCompleted ? (
-        <span className="rounded border border-emerald-700/50 bg-emerald-950/40 px-1.5 py-0.5 text-[10px] text-emerald-200">
+        <span className="rounded border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[10px] text-emerald-800 dark:border-emerald-700/50 dark:bg-emerald-950/40 dark:text-emerald-200">
           Accepted
         </span>
       ) : guard.guardedAcceptReady ? (
-        <span className="rounded border border-blue-700/50 bg-blue-950/40 px-1.5 py-0.5 text-[10px] text-blue-200">
+        <span className="rounded border border-blue-300 bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-800 dark:border-blue-700/50 dark:bg-blue-950/40 dark:text-blue-200">
           Accept ready
         </span>
       ) : guard.acceptBlocked ? (
-        <span className="rounded border border-rose-700/50 bg-rose-950/40 px-1.5 py-0.5 text-[10px] text-rose-200">
+        <span className="rounded border border-rose-300 bg-rose-50 px-1.5 py-0.5 text-[10px] text-rose-800 dark:border-rose-700/50 dark:bg-rose-950/40 dark:text-rose-200">
           Accept blocked
         </span>
       ) : null}
       {guard.orderCreated ? (
         <>
-          <span className="rounded border border-emerald-700/50 bg-emerald-950/40 px-1.5 py-0.5 text-[10px] text-emerald-200">
+          <span className="rounded border border-emerald-300 bg-emerald-50 px-1.5 py-0.5 text-[10px] text-emerald-800 dark:border-emerald-700/50 dark:bg-emerald-950/40 dark:text-emerald-200">
             Order created
           </span>
-          <span className="rounded border border-blue-700/50 bg-blue-950/40 px-1.5 py-0.5 text-[10px] text-blue-200">
+          <span className="rounded border border-blue-300 bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-800 dark:border-blue-700/50 dark:bg-blue-950/40 dark:text-blue-200">
             Production readiness audit
           </span>
-          <span className="rounded border border-slate-600 bg-slate-900 px-1.5 py-0.5 text-[10px] text-wo-text-secondary">
+          <span className="rounded border border-wo-border-strong bg-wo-surface-inset px-1.5 py-0.5 text-[10px] text-wo-text-secondary">
             Production not started
           </span>
         </>
       ) : guard.guardedConvertReady ? (
-        <span className="rounded border border-blue-700/50 bg-blue-950/40 px-1.5 py-0.5 text-[10px] text-blue-200">
+        <span className="rounded border border-blue-300 bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-800 dark:border-blue-700/50 dark:bg-blue-950/40 dark:text-blue-200">
           Convert ready
         </span>
       ) : null}
       {!guard.orderCreated && guard.convertBlocked ? (
-        <span className="rounded border border-rose-700/50 bg-rose-950/40 px-1.5 py-0.5 text-[10px] text-rose-200">
+        <span className="rounded border border-rose-300 bg-rose-50 px-1.5 py-0.5 text-[10px] text-rose-800 dark:border-rose-700/50 dark:bg-rose-950/40 dark:text-rose-200">
           Convert guarded
         </span>
       ) : null}
@@ -263,7 +263,7 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-[12px] font-mono text-blue-400">{quote.id}</span>
+          <span className="text-[12px] font-mono text-blue-700 dark:text-blue-400">{quote.id}</span>
           <QuoteStatusBadge status={quote.status} />
           <GuardedQuoteSourceBadges quote={quote} />
           <VolumetricQuoteReadinessChip
@@ -273,7 +273,7 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
           <span className="text-[10px] text-wo-text-muted">v{quote.version}</span>
         </div>
         <span
-          className={`text-[16px] font-bold ${isUnpricedIntakeV6Quote(quote) ? "text-amber-300" : "text-wo-text-primary"}`}
+          className={`text-[16px] font-bold ${isUnpricedIntakeV6Quote(quote) ? "text-amber-700 dark:text-amber-300" : "text-wo-text-primary"}`}
           data-testid={isUnpricedIntakeV6Quote(quote) ? `quote-v6-unpriced-total-${quote.id}` : undefined}
         >
           {formatV6QuoteTotalLabel(quote, formatCommercialAmount(quote.grandTotal, currency))}
@@ -281,7 +281,7 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
       </div>
       <p className="text-[13px] font-semibold text-wo-text-primary">{quote.client}</p>
       {quote.intakeId ? (
-        <p className="text-[10px] text-blue-400/80 font-mono mt-0.5">
+        <p className="text-[10px] text-blue-700/80 dark:text-blue-400/80 font-mono mt-0.5">
           Cerere sursă: {quote.intakeId}
         </p>
       ) : null}
@@ -883,7 +883,7 @@ export default function Quotes() {
         <button
           onClick={() => setFilterStatus("all")}
           className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-            filterStatus === "all" ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
+            filterStatus === "all" ? "bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-600/20 dark:text-blue-400 dark:border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
           }`}
         >
           Toate ({quotes.length})
@@ -893,7 +893,7 @@ export default function Quotes() {
             key={s.status}
             onClick={() => setFilterStatus(filterStatus === s.status ? "all" : s.status)}
             className={`px-2.5 py-1 text-[11px] font-medium rounded-full border transition-all ${
-              filterStatus === s.status ? "bg-blue-600/20 text-blue-400 border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
+              filterStatus === s.status ? "bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-600/20 dark:text-blue-400 dark:border-blue-600/50" : "bg-transparent text-wo-text-muted border-wo-border-strong hover:border-slate-500"
             }`}
           >
             {statusConfig[s.status].label} ({s.count})
@@ -921,7 +921,7 @@ export default function Quotes() {
               {/* Quote Header */}
               <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[12px] font-mono text-blue-400">{selectedQuote.id}</span>
+                  <span className="text-[12px] font-mono text-blue-700 dark:text-blue-400">{selectedQuote.id}</span>
                   <QuoteStatusBadge
                     status={selectedQuote.status}
                     testId="quote-readiness-state"
@@ -933,7 +933,7 @@ export default function Quotes() {
                   <p className="text-[11px] mt-1">
                     <Link
                       to={buildIntakeV6Path(intakeV6WorkspaceId)}
-                      className="text-blue-400 hover:text-blue-300 font-mono"
+                      className="text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-mono"
                       data-testid="quote-detail-intake-link"
                     >
                       din cerere {intakeV6IntakeCode ?? selectedQuote.intakeId ?? intakeV6WorkspaceId}
@@ -964,7 +964,7 @@ export default function Quotes() {
                       <p className="text-[12px] text-cyan-400 font-semibold">Frozen Snapshot V2</p>
                     </div>
                     <div className="space-y-2 text-[11px]">
-                      <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
+                      <div className="flex items-center justify-between bg-wo-surface-raised px-2 py-1.5 rounded">
                         <span className="text-wo-text-muted">Accepted snapshot</span>
                         <span className="text-wo-text-primary font-mono">
                           {selectedQuote.acceptedSnapshotV2Id != null
@@ -972,20 +972,20 @@ export default function Quotes() {
                             : "—"}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
+                      <div className="flex items-center justify-between bg-wo-surface-raised px-2 py-1.5 rounded">
                         <span className="text-wo-text-muted">Snapshot code</span>
                         <span className="text-wo-text-primary font-mono">
                           {selectedQuote.snapshotV2Code ?? "—"}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between bg-[#121B2C] px-2 py-1.5 rounded">
+                      <div className="flex items-center justify-between bg-wo-surface-raised px-2 py-1.5 rounded">
                         <span className="text-wo-text-muted">Snapshot readiness</span>
                         <span className="text-wo-text-primary">
                           {selectedQuote.snapshotV2Readiness ?? "—"}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2">
-                        <div className="bg-[#121B2C] px-2 py-1.5 rounded">
+                        <div className="bg-wo-surface-raised px-2 py-1.5 rounded">
                           <p className="text-wo-text-muted">Commercial frozen</p>
                           <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2CommercialTotal != null
@@ -993,7 +993,7 @@ export default function Quotes() {
                               : "—"}
                           </p>
                         </div>
-                        <div className="bg-[#121B2C] px-2 py-1.5 rounded">
+                        <div className="bg-wo-surface-raised px-2 py-1.5 rounded">
                           <p className="text-wo-text-muted">Internal estimate</p>
                           <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2InternalTotal != null
