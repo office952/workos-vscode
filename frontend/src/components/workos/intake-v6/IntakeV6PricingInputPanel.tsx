@@ -34,12 +34,26 @@ interface IntakeV6PricingInputPanelProps {
   variant?: "full" | "commercialSliders" | "confirmHero";
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("ro-RO", {
-    style: "currency",
-    currency: "RON",
-    maximumFractionDigits: 2,
-  }).format(value);
+function formatCurrency(value: number, currency: string | null | undefined): string {
+  const code = typeof currency === "string" && currency.trim() ? currency.trim().toUpperCase() : null;
+  if (!code) {
+    return `${value.toLocaleString("ro-RO", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} (monedă indisponibilă)`;
+  }
+  try {
+    return new Intl.NumberFormat("ro-RO", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `${value.toLocaleString("ro-RO", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} ${code}`;
+  }
 }
 
 function formatNumber(value: number, digits = 2): string {
@@ -145,6 +159,10 @@ function IntakeV6PricingInputPanelReady({
   const displayOfficialGross = adjustedOfficialTotals?.totalGross ?? officialTotals?.total_gross ?? null;
   const displayOfficialVatRate =
     adjustedOfficialTotals?.vatPercent ?? officialTotals?.vat_rate ?? activeCommercialInputs.vatPercent;
+  const officialCurrency =
+    typeof officialTotals?.currency === "string" && officialTotals.currency.trim()
+      ? officialTotals.currency.trim().toUpperCase()
+      : null;
   const internalEstimateRon =
     offerModel.internalEstimateTotal != null
       ? roundMoney(
@@ -156,8 +174,12 @@ function IntakeV6PricingInputPanelReady({
   const officialNetRon = hasOfficialTotals ? displayOfficialNet : null;
   const internalMarginVsNetRon =
     internalEstimateRon != null && officialNetRon != null ? roundMoney(officialNetRon - internalEstimateRon) : null;
+  // Only compare when both sides are RON — never invent FX margin against EUR sell.
   const hasNegativeInternalMargin =
-    hasOfficialTotals && internalMarginVsNetRon != null && internalMarginVsNetRon < 0;
+    hasOfficialTotals &&
+    officialCurrency === "RON" &&
+    internalMarginVsNetRon != null &&
+    internalMarginVsNetRon < 0;
   const negativeInternalMarginAlert = hasNegativeInternalMargin ? (
     <div
       className="mt-3 rounded border border-red-500/40 bg-red-500/10 px-3 py-2 text-[11px] text-red-100"
@@ -165,8 +187,8 @@ function IntakeV6PricingInputPanelReady({
     >
       <p className="font-semibold">Marjă internă negativă</p>
       <p className="mt-1 text-red-100/90">
-        Cost intern estimativ {formatCurrency(internalEstimateRon as number)} depășește Oferta client (net) cu{" "}
-        {formatCurrency(Math.abs(internalMarginVsNetRon as number))}.
+        Cost intern estimativ {formatCurrency(internalEstimateRon as number, "RON")} depășește Oferta
+        client (net) cu {formatCurrency(Math.abs(internalMarginVsNetRon as number), "RON")}.
       </p>
     </div>
   ) : null;
@@ -265,13 +287,13 @@ function IntakeV6PricingInputPanelReady({
         <div className="flex justify-between gap-2 text-slate-400">
           <dt>Net</dt>
           <dd className="text-slate-200" data-testid="intake-v6-offer-net-price">
-            {hasOfficialTotals && displayOfficialNet != null ? formatCurrency(displayOfficialNet) : "—"}
+            {hasOfficialTotals && displayOfficialNet != null ? formatCurrency(displayOfficialNet, officialCurrency) : "—"}
           </dd>
         </div>
         <div className="flex justify-between gap-2 font-semibold text-emerald-300">
           <dt>{hasOfficialTotals ? "Ofertă client" : "Ofertă client (estimată)"}</dt>
           <dd data-testid="intake-v6-offer-final-price">
-            {hasOfficialTotals && displayOfficialGross != null ? formatCurrency(displayOfficialGross) : "—"}
+            {hasOfficialTotals && displayOfficialGross != null ? formatCurrency(displayOfficialGross, officialCurrency) : "—"}
           </dd>
         </div>
         {!hasOfficialTotals && officialPricingBlocker ? (
@@ -335,7 +357,7 @@ function IntakeV6PricingInputPanelReady({
             className="text-[28px] font-bold tabular-nums leading-none text-emerald-300"
             data-testid="intake-v6-confirm-pricing-hero-gross"
           >
-            {formatCurrency(heroGross)}
+            {formatCurrency(heroGross, officialCurrency)}
           </p>
         ) : (
           <p
@@ -348,31 +370,28 @@ function IntakeV6PricingInputPanelReady({
         <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-wo-border-strong/70 pt-2 text-[11px]">
           <span className="text-slate-500">Ofertă client netă</span>
           <span className="tabular-nums text-cyan-200" data-testid="intake-v6-confirm-pricing-hero-net">
-            {heroNet != null ? formatCurrency(heroNet) : "—"}
+            {heroNet != null ? formatCurrency(heroNet, officialCurrency) : "—"}
           </span>
         </div>
         <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 text-[11px]">
           <span className="text-slate-500">Cost intern estimativ</span>
           <span className="tabular-nums text-slate-200">
-            {breakdown?.totals.estimated_cost_total != null
+            {breakdown?.totals.estimated_cost_total != null && breakdown.totals.currency
               ? formatFaceBackPrepMoney(
                   breakdown.totals.estimated_cost_total,
-                  breakdown.totals.currency ?? "EUR",
+                  breakdown.totals.currency,
                 )
+              : breakdown?.totals.estimated_cost_total != null
+                ? formatCurrency(breakdown.totals.estimated_cost_total, null)
               : "—"}
           </span>
         </div>
-        {offerModel.internalEstimateCurrency === "EUR" ? (
+        {hasOfficialTotals && officialCurrency ? (
           <p className="mt-1 text-[10px] text-slate-500" data-testid="intake-v6-confirm-pricing-hero-fx">
-            {hasOfficialTotals
-              ? `Ofertă client (backend V6) · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                })}%`
-              : `Ofertă client în RON · curs ${offerModel.eurToRonRate.toLocaleString("ro-RO", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 4,
-                })} RON/EUR`}
+            {`Ofertă client (backend V6) · ${officialCurrency} · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })}%`}
           </p>
         ) : null}
         {negativeInternalMarginAlert}
@@ -444,7 +463,7 @@ function IntakeV6PricingInputPanelReady({
                 <div className="mb-2 flex items-center justify-between gap-3 border-b border-wo-border-subtle pb-2">
                   <h5 className={v6.zoneTitle}>{group.label}</h5>
                   <strong className="text-wo-text-primary">
-                    {formatCurrency(group.items.reduce((sum, item) => sum + item.amount, 0))}
+                    {formatCurrency(group.items.reduce((sum, item) => sum + item.amount, 0), officialCurrency)}
                   </strong>
                 </div>
                 {shouldRenderGroupItems(group) ? (
@@ -457,7 +476,7 @@ function IntakeV6PricingInputPanelReady({
                             {line.source === "payload" ? "sursa: breakdown ofertare" : "sursa: estimare V6 locala"}
                           </p>
                         </div>
-                        <strong className="text-wo-text-primary">{formatCurrency(line.amount)}</strong>
+                        <strong className="text-wo-text-primary">{formatCurrency(line.amount, officialCurrency)}</strong>
                       </li>
                     ))}
                   </ul>
@@ -548,19 +567,19 @@ function IntakeV6PricingInputPanelReady({
                 <div className="flex items-center justify-between gap-3 text-slate-300">
                   <dt>Ofertă client netă</dt>
                   <dd data-testid="intake-v6-offer-net-price">
-                    {formatCurrency(displayOfficialNet ?? 0)}
+                    {formatCurrency(displayOfficialNet ?? 0, officialCurrency)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-slate-300">
                   <dt>TVA ({Number(displayOfficialVatRate)}%)</dt>
                   <dd data-testid="intake-v6-offer-vat-amount">
-                    {formatCurrency(displayOfficialVat ?? 0)}
+                    {formatCurrency(displayOfficialVat ?? 0, officialCurrency)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t border-wo-border-strong pt-2 text-[12px] font-semibold text-emerald-300">
                   <dt>Ofertă client cu TVA</dt>
                   <dd data-testid="intake-v6-offer-final-price">
-                    {formatCurrency(displayOfficialGross ?? 0)}
+                    {formatCurrency(displayOfficialGross ?? 0, officialCurrency)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-[10px] text-slate-500">
@@ -587,7 +606,7 @@ function IntakeV6PricingInputPanelReady({
                   <p className="mb-1 font-semibold text-slate-400">Estimare locală (nu este Ofertă client)</p>
                   <div className="flex items-center justify-between gap-3 text-slate-400">
                     <span>Bază Cost intern estimativ × adaos</span>
-                    <span>{formatCurrency(offerModel.totalGross)}</span>
+                    <span>{formatCurrency(offerModel.totalGross, officialCurrency)}</span>
                   </div>
                 </div>
               </>

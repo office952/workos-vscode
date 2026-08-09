@@ -334,7 +334,11 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         criticality="critical",
         documented_unit_price=DEV_BRIDGE_FINISH_RON_M2,
         documented_unit_price_currency="RON",
-        warnings=("Unconfirmed finish groups may require owner review before numeric pricing.",),
+        warnings=(
+            "LEGACY_NOT_USED_ON_V1_SELL_PATH: RON DEV_BRIDGE catch-all is never emitted under "
+            "EUR presentation. Canonical Oracal/RAL/print EUR lines own finish money.",
+            "Unconfirmed finish groups may require owner review before numeric pricing.",
+        ),
     ),
     CommercialRuleDefinition(
         line_code="finisaje_cant_oracal_material",
@@ -544,7 +548,12 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         material_gate_path="finish_setup.mounting_template_material_type",
         material_gate_value="forex",
         module_gate="sablon_montaj",
-        warnings=("Step 8 dev bridge: interim Forex sablon price until owner approves in 7I.",),
+        warnings=(
+            "SABLON_MONTAJ_FOREX_V1=BLOCKED_PENDING_OWNER_EUR_SELL_RATE: RON DEV_BRIDGE is not "
+            "emitted. Selection fail-closes until Owner confirms EUR commercial sell (purchase "
+            "inventory is not a selling rate).",
+        ),
+        owner_decision_required=True,
     ),
     CommercialRuleDefinition(
         line_code="ambalare",

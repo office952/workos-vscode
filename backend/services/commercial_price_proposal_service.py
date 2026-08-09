@@ -593,13 +593,10 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
             return False
 
     if rule.line_code == "finisaje_colantare_vopsire":
-        face_token = _face_finish_token(payload)
-        if (
-            face_token in FACE_FINISH_NONE_VALUES
-            or face_token in FACE_FINISH_VINYL_APPLIED_TOKENS
-            or face_token in FACE_FINISH_UNPRICED_COMMERCIAL_TOKENS
-        ):
-            return False
+        # V1 commercial currency truth: never emit the RON DEV_BRIDGE catch-all into the
+        # EUR presentation sell path. Canonical Oracal / RAL / print lines remain the only
+        # finish money. Unpriced face tokens fail closed via COMMERCIAL_RULE_MISSING.
+        return False
 
     if rule.line_code == "finisaje_print_laminate_material":
         return _face_finish_token(payload) in FACE_FINISH_PRINT_LAMINATE_TOKENS
@@ -628,7 +625,9 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
         if rule.line_code == "sablon_montaj_hartie":
             return material == "paper"
         if rule.line_code == "sablon_montaj_forex":
-            return material == "forex"
+            # RON DEV_BRIDGE retired from sell path. Forex selection is fail-closed
+            # (BLOCKED_PENDING_OWNER_EUR_SELL_RATE) — never emit 15 RON/m² or invent EUR.
+            return False
         if rule.line_code == "sablon_montaj":
             return material not in ("paper", "forex")
         return True
@@ -1487,6 +1486,30 @@ class CommercialPriceProposalService:
                             "8500 face must be confirmed and must agree on one width."
                         ),
                         module_code="finisaje",
+                    )
+                )
+
+            # Forex mounting template: selected but no Owner-confirmed EUR sell authority.
+            # Do not emit legacy RON, do not FX-convert, do not use inventory purchase as sell.
+            from services.letters_acm_composition_commercial_v1 import (
+                is_letters_acm_composition_active,
+            )
+
+            if (
+                _sablon_enabled(payload)
+                and _sablon_material(payload) == "forex"
+                and not is_letters_acm_composition_active(payload)
+            ):
+                blockers.append(
+                    CommercialBlocker(
+                        code="COMMERCIAL_CONFIGURATION_INCOMPLETE",
+                        message=(
+                            "SABLON_MONTAJ_FOREX_V1=BLOCKED_PENDING_OWNER_EUR_SELL_RATE. "
+                            "Șablon montaj Forex is selected but has no Owner-confirmed EUR "
+                            "commercial sell rate. Inventory purchase cost is not a selling price. "
+                            "Use paper template, clear the template, or wait for Owner EUR authority."
+                        ),
+                        module_code="sablon_montaj",
                     )
                 )
 

@@ -1,12 +1,10 @@
 import jsPDF from "jspdf";
 import { type Quote, type CompanySettings, companySettings } from "./mockData";
-import {
-  DEFAULT_QUOTE_CURRENCY,
-  formatQuoteMoney,
-} from "./quoteCurrency";
+import { formatCommercialAmount } from "./quoteCurrency";
 
-function quoteDisplayCurrency(quote: Quote): string {
-  return quote.currency ?? DEFAULT_QUOTE_CURRENCY;
+function quoteDisplayCurrency(quote: Quote): string | null {
+  const raw = typeof quote.currency === "string" ? quote.currency.trim() : "";
+  return raw ? raw.toUpperCase() : null;
 }
 
 function formatAmount(val: number): string {
@@ -112,8 +110,8 @@ export function generateQuotePDF(
     const desc = li.description.length > 40 ? li.description.slice(0, 40) + "..." : li.description;
     doc.text(desc, colX[1], y);
     doc.text(`${li.quantity}`, colX[2], y);
-    doc.text(formatQuoteMoney(li.unitPrice, currency), colX[3], y);
-    doc.text(formatQuoteMoney(li.total, currency), colX[4], y);
+    doc.text(formatCommercialAmount(li.unitPrice, currency), colX[3], y);
+    doc.text(formatCommercialAmount(li.total, currency), colX[4], y);
     y += 5;
   });
 
@@ -128,30 +126,30 @@ export function generateQuotePDF(
   doc.setFont("helvetica", "normal");
 
   doc.text("Subtotal:", totalsX, y);
-  doc.text(formatQuoteMoney(quote.subtotal, currency), pageW - margin, y, { align: "right" });
+  doc.text(formatCommercialAmount(quote.subtotal, currency), pageW - margin, y, { align: "right" });
   y += 5;
 
   if (quote.discountPct > 0) {
     doc.setTextColor(220, 38, 38);
     doc.text(`Discount (${quote.discountPct}%):`, totalsX, y);
-    doc.text(`-${formatQuoteMoney(quote.discount, currency)}`, pageW - margin, y, { align: "right" });
+    doc.text(`-${formatCommercialAmount(quote.discount, currency)}`, pageW - margin, y, { align: "right" });
     y += 5;
     doc.setTextColor(0);
   }
 
   doc.text("Total fără TVA:", totalsX, y);
-  doc.text(formatQuoteMoney(quote.totalBeforeVAT, currency), pageW - margin, y, { align: "right" });
+  doc.text(formatCommercialAmount(quote.totalBeforeVAT, currency), pageW - margin, y, { align: "right" });
   y += 5;
 
   doc.text("TVA (19%):", totalsX, y);
-  doc.text(formatQuoteMoney(quote.vat, currency), pageW - margin, y, { align: "right" });
+  doc.text(formatCommercialAmount(quote.vat, currency), pageW - margin, y, { align: "right" });
   y += 6;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
   doc.setTextColor(59, 130, 246);
   doc.text("TOTAL:", totalsX, y);
-  doc.text(formatQuoteMoney(quote.grandTotal, currency), pageW - margin, y, { align: "right" });
+  doc.text(formatCommercialAmount(quote.grandTotal, currency), pageW - margin, y, { align: "right" });
   y += 10;
 
   // ── Notes ──
@@ -198,16 +196,16 @@ export function buildQuoteSummaryText(quote: Quote, company: CompanySettings = c
     `Produse:`,
     ...quote.lineItems.map(
       (li, i) =>
-        `  ${i + 1}. ${li.description} — ${li.quantity} buc × ${formatQuoteMoney(li.unitPrice, currency)} = ${formatQuoteMoney(li.total, currency)}`
+        `  ${i + 1}. ${li.description} — ${li.quantity} buc × ${formatCommercialAmount(li.unitPrice, currency)} = ${formatCommercialAmount(li.total, currency)}`
     ),
     ``,
-    `Subtotal: ${formatQuoteMoney(quote.subtotal, currency)}`,
+    `Subtotal: ${formatCommercialAmount(quote.subtotal, currency)}`,
     ...(quote.discountPct > 0
-      ? [`Discount: -${quote.discountPct}% (${formatQuoteMoney(quote.discount, currency)})`]
+      ? [`Discount: -${quote.discountPct}% (${formatCommercialAmount(quote.discount, currency)})`]
       : []),
-    `Total fără TVA: ${formatQuoteMoney(quote.totalBeforeVAT, currency)}`,
-    `TVA (19%): ${formatQuoteMoney(quote.vat, currency)}`,
-    `💰 TOTAL: ${formatQuoteMoney(quote.grandTotal, currency)}`,
+    `Total fără TVA: ${formatCommercialAmount(quote.totalBeforeVAT, currency)}`,
+    `TVA (19%): ${formatCommercialAmount(quote.vat, currency)}`,
+    `💰 TOTAL: ${formatCommercialAmount(quote.grandTotal, currency)}`,
     ``,
     `Valabilă până: ${quote.validUntil}`,
     ``,
@@ -238,6 +236,6 @@ export function buildWhatsAppLink(quote: Quote, company: CompanySettings = compa
  */
 export function buildSmsLink(quote: Quote, company: CompanySettings = companySettings): string {
   const currency = quoteDisplayCurrency(quote);
-  const shortText = `Ofertă ${quote.id} de la ${company.name}: ${formatQuoteMoney(quote.grandTotal, currency)}. Contact: ${company.phone}`;
+  const shortText = `Ofertă ${quote.id} de la ${company.name}: ${formatCommercialAmount(quote.grandTotal, currency)}. Contact: ${company.phone}`;
   return `sms:?body=${encodeURIComponent(shortText)}`;
 }

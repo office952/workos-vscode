@@ -10,7 +10,7 @@ import {
   showsConversionSummary,
   showsInternalAcceptanceGuidance,
 } from "@/lib/quoteAcceptanceConversion";
-import { DEFAULT_QUOTE_CURRENCY, formatQuoteMoney } from "@/lib/quoteCurrency";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 import { estimateOrderRonFromEurQuote, formatOrderMoney, formatExchangeRate } from "@/lib/orderCurrency";
 import { buildIntakeV6Path } from "@/lib/volumetricIntakeRoute";
 
@@ -25,7 +25,7 @@ export default function QuoteAcceptanceConversionPanel({
   duplicateOrderCode,
   eurToRonRate,
 }: QuoteAcceptanceConversionPanelProps) {
-  const quoteCurrency = quote.currency ?? DEFAULT_QUOTE_CURRENCY;
+  const quoteCurrency = quote.currency ?? null;
   const roundedEurTotal =
     quoteCurrency === "EUR" ? Math.round(quote.grandTotal) : quote.grandTotal;
   const estimatedRonTotal =
@@ -56,7 +56,7 @@ export default function QuoteAcceptanceConversionPanel({
             {formatQuoteConversionSummary(quote)}
           </p>
           <p className="text-[11px] text-slate-300" data-testid="quote-conversion-total-eur">
-            Total ofertă: {formatQuoteMoney(roundedEurTotal, quoteCurrency)}
+            Total ofertă: {formatCommercialAmount(roundedEurTotal, quoteCurrency)}
             {quoteCurrency === "EUR" ? " (rotunjit comercial)" : ""}
           </p>
           {quoteCurrency === "EUR" ? (
@@ -75,7 +75,7 @@ export default function QuoteAcceptanceConversionPanel({
             </div>
           ) : (
             <p className="text-[11px] text-slate-300">
-              Total activ: {formatQuoteMoney(quote.grandTotal, quoteCurrency)} (cu TVA)
+              Total activ: {formatCommercialAmount(quote.grandTotal, quoteCurrency)} (cu TVA)
             </p>
           )}
           {quote.intakeId ? (

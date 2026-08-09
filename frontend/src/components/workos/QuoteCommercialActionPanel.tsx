@@ -8,7 +8,7 @@ import {
 import { isQuoteRevisionEligible } from "@/lib/quoteRevision";
 import { ArrowRight, Clock, History, Info, Percent, TrendingUp } from "lucide-react";
 import { formatSendChannelLabel } from "@/lib/quoteSendLog";
-import { DEFAULT_QUOTE_CURRENCY, formatQuoteMoney } from "@/lib/quoteCurrency";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 import { StatusBadge } from "@/components/workos/design-system/StatusBadge";
 import { buildIntakeV6Path } from "@/lib/volumetricIntakeRoute";
 
@@ -24,7 +24,7 @@ export default function QuoteCommercialActionPanel({
   onOpenRevision,
 }: QuoteCommercialActionPanelProps) {
   const guidance = getQuoteCommercialGuidance(quote.status, quote);
-  const currency = quote.currency ?? DEFAULT_QUOTE_CURRENCY;
+  const currency = quote.currency ?? null;
 
   return (
     <div
@@ -85,17 +85,17 @@ export default function QuoteCommercialActionPanel({
         <div>
           <span className="text-slate-500">Total fără TVA</span>
           <p className="text-slate-200 font-medium">
-            {formatQuoteMoney(quote.totalBeforeVAT, currency)}
+            {formatCommercialAmount(quote.totalBeforeVAT, currency)}
           </p>
         </div>
         <div>
           <span className="text-slate-500">TVA</span>
-          <p className="text-slate-200">{formatQuoteMoney(quote.vat, currency)}</p>
+          <p className="text-slate-200">{formatCommercialAmount(quote.vat, currency)}</p>
         </div>
         <div>
           <span className="text-slate-500">Total cu TVA</span>
           <p className="text-slate-100 font-semibold">
-            {formatQuoteMoney(quote.grandTotal, currency)}
+            {formatCommercialAmount(quote.grandTotal, currency)}
           </p>
         </div>
         <div className="flex flex-col gap-0.5">
@@ -161,7 +161,7 @@ export default function QuoteCommercialActionPanel({
                 </p>
                 {entry.grandTotal != null ? (
                   <p className="text-slate-500">
-                    Total cu TVA: {formatQuoteMoney(entry.grandTotal ?? 0, currency)}
+                    Total cu TVA: {formatCommercialAmount(entry.grandTotal ?? 0, currency)}
                   </p>
                 ) : null}
               </div>

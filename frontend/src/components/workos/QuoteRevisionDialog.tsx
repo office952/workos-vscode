@@ -39,7 +39,7 @@ import { buildIntakeV6Path } from "@/lib/volumetricIntakeRoute";
 
 
 
-import { DEFAULT_QUOTE_CURRENCY, formatQuoteMoney } from "@/lib/quoteCurrency";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 
 function formatCurrency(val: number) {
 
@@ -312,7 +312,7 @@ export default function QuoteRevisionDialog({
               <span className="text-slate-500">Total cu TVA</span>
 
               <p>
-                {formatQuoteMoney(quote.grandTotal, quote.currency ?? DEFAULT_QUOTE_CURRENCY)}
+                {formatCommercialAmount(quote.grandTotal, quote.currency)}
               </p>
 
             </div>

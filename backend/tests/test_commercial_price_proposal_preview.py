@@ -16,6 +16,7 @@ from models.workcenter_rates import Workcenter_rates
 from schemas.commercial_price_proposal import CommercialPriceLine
 from services.commercial_price_proposal_service import (
     CommercialPriceProposalService,
+    _build_commercial_product_breakdown,
     scan_forbidden_hourly_usage,
 )
 from services.company_commercial_settings_service import CompanyCommercialSettingsService
@@ -59,7 +60,8 @@ def _full_quote_input(*, mounting_system: str = "direct_wall", illuminated: bool
             "required_psu_watts": 140.4,
             "mounting_template_enabled": True,
             "mounting_template_area_m2": 2.5,
-            "mounting_template_material_type": "forex",
+            # Paper is the V1 EUR-native golden path. Forex is fail-closed (no Owner EUR sell).
+            "mounting_template_material_type": "paper",
             "letter_group_finishes": [{"group_key": "default", "confirmed": True}],
         },
     }
@@ -737,11 +739,10 @@ async def test_oracal_8500_blocks_on_unconfirmed_or_disagreeing_letter_groups(
 
 
 @pytest.mark.asyncio
-async def test_sablon_forex_preserves_plus_10_ron_delta_vs_paper(
+async def test_sablon_paper_emits_eur_and_forex_fail_closes_without_ron(
     cpp_service: CommercialPriceProposalService,
 ):
-    """Regression guard for the proven paper<->Forex differential-pricing control
-    (AGENT-B-F009, +10.00 RON/m2 delta) â€” must not shift while G1 branches are added."""
+    """V1 currency truth: paper sablon stays EUR-native; forex never emits RON DEV_BRIDGE."""
     paper_payload = _full_quote_input()
     paper_payload["finish_setup"]["mounting_template_material_type"] = "paper"
     forex_payload = _full_quote_input()
@@ -754,10 +755,122 @@ async def test_sablon_forex_preserves_plus_10_ron_delta_vs_paper(
     hartie = next(
         line for line in paper_preview.commercial_price_lines if line.code == "sablon_montaj_hartie"
     )
-    forex = next(
-        line for line in forex_preview.commercial_price_lines if line.code == "sablon_montaj_forex"
+    assert hartie.commercial_unit_price == pytest.approx(5.0)
+    assert (hartie.cpp_currency or hartie.source_currency or "").upper() == "EUR"
+
+    forex_codes = {line.code for line in forex_preview.commercial_price_lines}
+    assert "sablon_montaj_forex" not in forex_codes
+    assert "finisaje_colantare_vopsire" not in forex_codes
+    assert any(
+        b.code == "COMMERCIAL_CONFIGURATION_INCOMPLETE"
+        and "SABLON_MONTAJ_FOREX_V1=BLOCKED_PENDING_OWNER_EUR_SELL_RATE" in b.message
+        for b in forex_preview.commercial_blockers
     )
-    assert forex.commercial_unit_price - hartie.commercial_unit_price == pytest.approx(10.0)
+    assert forex_preview.status == "blocked"
+    assert forex_preview.commercial_product_breakdown is not None
+    # Fail-closed incomplete — not RON mix poison.
+    assert forex_preview.commercial_product_breakdown.currency_mix_detected is False
+    assert (
+        forex_preview.commercial_product_breakdown.complete_offer_total is None
+        or forex_preview.commercial_product_breakdown.complete_offer_total_is_partial
+    )
+
+
+@pytest.mark.asyncio
+async def test_v1_letters_eur_pure_complete_offer_and_finish_deltas(
+    cpp_service: CommercialPriceProposalService,
+):
+    """Golden EUR-pure path: complete_offer_total + Oracal/RAL deltas; zero RON sell lines."""
+    base = _full_quote_input(illuminated=False)
+    base["finish_setup"]["mounting_template_material_type"] = "paper"
+    base["finish_setup"]["face_finish_type"] = "none"
+    base["finish_setup"]["return_finish_type"] = "white_aluminum"
+
+    base_preview = await cpp_service.build_preview(TEMPLATE, quote_input=base)
+    assert base_preview is not None
+    base_bd = base_preview.commercial_product_breakdown
+    assert base_bd is not None
+    assert base_bd.presentation_currency == "EUR"
+    assert base_bd.currency_mix_detected is False
+    assert base_bd.complete_offer_total is not None
+    assert base_bd.complete_offer_total_currency == "EUR"
+    assert base_bd.complete_offer_total_unavailable_reason is None
+    ron_emitted = [
+        line.code
+        for line in base_preview.commercial_price_lines
+        if (line.cpp_currency or line.source_currency or "").upper() == "RON"
+        and line.subtotal is not None
+    ]
+    assert ron_emitted == []
+    assert "finisaje_colantare_vopsire" not in {line.code for line in base_preview.commercial_price_lines}
+    base_total = base_bd.complete_offer_total
+
+    oracal = _full_quote_input(illuminated=False)
+    oracal["finish_setup"]["mounting_template_material_type"] = "paper"
+    oracal["finish_setup"]["face_finish_type"] = "oracal_651"
+    oracal["finish_setup"]["return_finish_type"] = "white_aluminum"
+    oracal_preview = await cpp_service.build_preview(TEMPLATE, quote_input=oracal)
+    assert oracal_preview is not None
+    oracal_bd = oracal_preview.commercial_product_breakdown
+    assert oracal_bd is not None
+    assert oracal_bd.complete_offer_total is not None
+    assert oracal_bd.complete_offer_total_currency == "EUR"
+    assert oracal_bd.complete_offer_total > base_total
+    # Oracal 651 material 5 EUR/m² + vinyl application 3 EUR/m² × face 1.2 m²
+    assert oracal_bd.complete_offer_total - base_total == pytest.approx(5.0 * 1.2 + 3.0 * 1.2)
+
+    ral = _full_quote_input(illuminated=False)
+    ral["finish_setup"]["mounting_template_material_type"] = "paper"
+    ral["finish_setup"]["face_finish_type"] = "none"
+    ral["finish_setup"]["return_finish_type"] = "ral_paint"
+    ral_preview = await cpp_service.build_preview(TEMPLATE, quote_input=ral)
+    assert ral_preview is not None
+    ral_bd = ral_preview.commercial_product_breakdown
+    assert ral_bd is not None
+    assert ral_bd.complete_offer_total is not None
+    assert ral_bd.complete_offer_total_currency == "EUR"
+    assert ral_bd.complete_offer_total > base_total
+    assert "finisaje_cant_ral_material" in {line.code for line in ral_preview.commercial_price_lines}
+
+
+@pytest.mark.asyncio
+async def test_v1_synthetic_currency_mix_still_fail_closes():
+    """Mix guard must remain even after RON landmines are retired from the sell path."""
+    breakdown = _build_commercial_product_breakdown(
+        lines=[
+            CommercialPriceLine(
+                code="a",
+                label="a",
+                module_code="x",
+                basis_type="ml",
+                source="t",
+                pricing_rule_code="a",
+                subtotal=10.0,
+                source_currency="EUR",
+                cpp_currency="EUR",
+                commercial_product_key="letters",
+            ),
+            CommercialPriceLine(
+                code="b",
+                label="b",
+                module_code="x",
+                basis_type="m2",
+                source="t",
+                pricing_rule_code="b",
+                subtotal=20.0,
+                source_currency="RON",
+                cpp_currency="RON",
+                commercial_product_key="letters",
+            ),
+        ],
+        blockers=[],
+        vat_rate_percent=None,
+        vat_policy_source=None,
+        presentation_currency="EUR",
+    )
+    assert breakdown.complete_offer_total is None
+    assert breakdown.currency_mix_detected is True
+    assert breakdown.complete_offer_total_unavailable_reason == "COMMERCIAL_CURRENCY_MIX_UNRESOLVED"
 
 
 @pytest.mark.asyncio

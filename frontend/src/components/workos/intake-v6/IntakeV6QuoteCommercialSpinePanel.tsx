@@ -61,9 +61,13 @@ function readBlockerCodes(dryRun: IntakeV6PricedQuoteDryRunResponse | null): str
   return (dryRun?.blockers ?? []).map((blocker) => blocker.code).filter(Boolean);
 }
 
-function formatMoney(value: number | null | undefined, currency = "RON"): string {
+function formatMoney(value: number | null | undefined, currency: string | null | undefined): string {
   if (value == null || typeof value !== "number" || Number.isNaN(value)) return "—";
-  return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+  const code = typeof currency === "string" && currency.trim() ? currency.trim().toUpperCase() : null;
+  if (!code) {
+    return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (monedă indisponibilă)`;
+  }
+  return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${code}`;
 }
 
 function dryRunStatusLabel(status: string | undefined, loading: boolean): string {
@@ -254,9 +258,9 @@ export default function IntakeV6QuoteCommercialSpinePanel({
       ? snapshotCommercialTotals.total_gross
       : null;
   const snapshotAuthorityCurrency =
-    typeof snapshotCommercialTotals?.currency === "string"
-      ? snapshotCommercialTotals.currency
-      : "RON";
+    typeof snapshotCommercialTotals?.currency === "string" && snapshotCommercialTotals.currency.trim()
+      ? snapshotCommercialTotals.currency.trim().toUpperCase()
+      : null;
   const columnDriftBlocked = pricingReviewReadModel?.column_drift_blocked === true;
   const internalCostReview = pricingReviewReadModel?.internal_cost as
     | Record<string, unknown>
@@ -296,7 +300,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             state?.quote_commercial_totals?.grand_total as number | null | undefined,
             typeof state?.quote_commercial_totals?.currency === "string"
               ? state.quote_commercial_totals.currency
-              : "EUR",
+              : null,
           )
         : dryRunReady
           ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
@@ -424,7 +428,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                 <strong data-testid="intake-v6-dry-run-total">
                   {formatMoney(
                     dryRunExpectedGross,
-                    typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON",
+                    typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : null,
                   )}
                 </strong>
               </p>
@@ -456,7 +460,10 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                       (unitPrice == null || subtotal == null);
                     const money =
                       subtotal != null
-                        ? formatMoney(subtotal, typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON")
+                        ? formatMoney(
+                            subtotal,
+                            typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : null,
+                          )
                         : "tarif lipsă";
                     return (
                       <li key={code}>

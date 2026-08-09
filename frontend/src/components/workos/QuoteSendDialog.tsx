@@ -16,7 +16,7 @@ import {
 
 } from "@/lib/quotePdfGenerator";
 import { generateQuotePdf, downloadLatestPdf } from "@/api/quotePdf";
-import { DEFAULT_QUOTE_CURRENCY, formatQuoteMoney } from "@/lib/quoteCurrency";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 
 import { postQuoteSendLog, QuotePricingError, type QuoteSendLogResponse } from "@/api/quotes";
 
@@ -318,7 +318,7 @@ export default function QuoteSendDialog({
 
 
 
-  const currency = quote.currency ?? DEFAULT_QUOTE_CURRENCY;
+  const currency = quote.currency ?? null;
 
 
 
@@ -408,7 +408,7 @@ export default function QuoteSendDialog({
 
             <span className="text-[16px] font-bold text-slate-100">
 
-              {formatQuoteMoney(quote.grandTotal, currency)}
+              {formatCommercialAmount(quote.grandTotal, currency)}
 
             </span>
 

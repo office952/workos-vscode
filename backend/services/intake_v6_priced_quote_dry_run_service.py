@@ -56,7 +56,7 @@ def _blocker(code: str, message: str) -> dict[str, str]:
 	return {"code": code, "message": message}
 
 
-def _empty_totals(*, vat_rate: float | None = None, currency: str = "RON") -> dict[str, Any]:
+def _empty_totals(*, vat_rate: float | None = None, currency: str | None = None) -> dict[str, Any]:
 	return {
 		"subtotal_net": None,
 		"vat_rate": vat_rate,
@@ -750,7 +750,8 @@ async def build_intake_v6_priced_quote_dry_run(
 		presentation_currency = getattr(breakdown, "presentation_currency", None) or getattr(
 			commercial_preview, "currency", None
 		)
-	totals_currency = str(presentation_currency or "RON").upper()
+	# Never invent RON when presentation currency is unset — UI must show unavailable.
+	totals_currency = str(presentation_currency).strip().upper() if presentation_currency else None
 
 	if blockers:
 		totals = _empty_totals(vat_rate=vat_rate, currency=totals_currency)

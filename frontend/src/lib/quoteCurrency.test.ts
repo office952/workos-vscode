@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  DEFAULT_QUOTE_CURRENCY,
   extractQuoteCurrencyFromLineItems,
+  formatCommercialAmount,
   formatQuoteListKpiAmount,
   formatQuoteMoney,
   quoteCurrencyLabel,
@@ -18,6 +18,16 @@ describe("extractQuoteCurrencyFromLineItems", () => {
     expect(extractQuoteCurrencyFromLineItems(raw)).toBe("EUR");
   });
 
+  it("returns EUR from commercial_totals when present", () => {
+    const raw = JSON.stringify({
+      product_definition: { template_code: "TPL-VOLUMETRIC-LETTERS" },
+      commercial_totals: { currency: "EUR", total_gross: 100 },
+      pricing: {},
+      price: 100,
+    });
+    expect(extractQuoteCurrencyFromLineItems(raw)).toBe("EUR");
+  });
+
   it("returns EUR from Shape B wrapper around canonical snapshot", () => {
     const raw = JSON.stringify({
       line_items: {
@@ -30,9 +40,18 @@ describe("extractQuoteCurrencyFromLineItems", () => {
     expect(extractQuoteCurrencyFromLineItems(raw)).toBe("EUR");
   });
 
-  it("falls back to RON for legacy flat line items", () => {
+  it("returns null for legacy flat line items without currency (no invent)", () => {
     const raw = JSON.stringify([{ description: "Line", quantity: 1, total: 100 }]);
-    expect(extractQuoteCurrencyFromLineItems(raw)).toBe(DEFAULT_QUOTE_CURRENCY);
+    expect(extractQuoteCurrencyFromLineItems(raw)).toBeNull();
+  });
+
+  it("returns null when snapshot has no currency fields", () => {
+    const raw = JSON.stringify({
+      product_definition: { template_code: "TPL-VOLUMETRIC-LETTERS" },
+      pricing: {},
+      price: 100,
+    });
+    expect(extractQuoteCurrencyFromLineItems(raw)).toBeNull();
   });
 });
 
@@ -41,6 +60,21 @@ describe("formatQuoteMoney", () => {
     expect(formatQuoteMoney(768, "EUR")).toContain("768");
     expect(formatQuoteMoney(768, "EUR")).toContain("EUR");
     expect(formatQuoteMoney(768, "EUR")).not.toContain("RON");
+  });
+});
+
+describe("formatCommercialAmount", () => {
+  it("formats when currency is present", () => {
+    expect(formatCommercialAmount(100, "EUR")).toContain("EUR");
+    expect(formatCommercialAmount(100, "eur")).toContain("EUR");
+  });
+
+  it("marks unavailable currency instead of inventing RON/EUR", () => {
+    expect(formatCommercialAmount(100, null)).toContain("monedă indisponibilă");
+    expect(formatCommercialAmount(100, undefined)).toContain("monedă indisponibilă");
+    expect(formatCommercialAmount(100, "")).toContain("monedă indisponibilă");
+    expect(formatCommercialAmount(100, null)).not.toContain("RON");
+    expect(formatCommercialAmount(null, "EUR")).toBe("—");
   });
 });
 

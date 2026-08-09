@@ -469,7 +469,7 @@ async def write_intake_v6_priced_quote_totals(
 	# Top-level freeze helper for Order Snapshot V2 commercial envelope (currency + VAT %).
 	notes_payload["commercial_adjustment_trace"] = {
 		**adjustment_trace,
-		"currency": totals.get("currency") or adjustment_trace.get("currency") or "RON",
+		"currency": totals.get("currency") or adjustment_trace.get("currency") or None,
 		"vat_percent": totals.get("vat_rate"),
 	}
 	update_data = {
@@ -505,7 +505,7 @@ async def write_intake_v6_priced_quote_totals(
 			"vat": vat_amount,
 			"vat_rate": totals.get("vat_rate"),
 			"total_gross": _money(total_gross),
-			"currency": totals.get("currency") or "RON",
+			"currency": totals.get("currency") or None,
 		},
 		"line_items": mapped_line_items,
 		"pricing_trace": {

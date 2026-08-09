@@ -7,9 +7,8 @@ import {
   terminalClosedQuoteMessage,
 } from "@/lib/commercialSpineNavigation";
 import {
-  DEFAULT_QUOTE_CURRENCY,
+  formatCommercialAmount,
   formatQuoteListKpiAmount,
-  formatQuoteMoney,
   quoteCurrencyLabel,
 } from "@/lib/quoteCurrency";
 import { type Quote, type QuoteStatus, deliveryTypeLabels, type DeliveryType } from "@/lib/mockData";
@@ -254,7 +253,7 @@ function GuardedQuoteSourceBadges({ quote }: { quote: Quote }) {
 }
 
 function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: boolean; onClick: () => void }) {
-  const currency = quote.currency ?? DEFAULT_QUOTE_CURRENCY;
+  const currency = quote.currency ?? null;
   return (
     <div
       onClick={onClick}
@@ -277,7 +276,7 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
           className={`text-[16px] font-bold ${isUnpricedIntakeV6Quote(quote) ? "text-amber-300" : "text-wo-text-primary"}`}
           data-testid={isUnpricedIntakeV6Quote(quote) ? `quote-v6-unpriced-total-${quote.id}` : undefined}
         >
-          {formatV6QuoteTotalLabel(quote, formatQuoteMoney(quote.grandTotal, currency))}
+          {formatV6QuoteTotalLabel(quote, formatCommercialAmount(quote.grandTotal, currency))}
         </span>
       </div>
       <p className="text-[13px] font-semibold text-wo-text-primary">{quote.client}</p>
@@ -733,8 +732,8 @@ export default function Quotes() {
   const acceptedValue = quotes.filter((q) => q.status === "accepted").reduce((sum, q) => sum + q.grandTotal, 0);
   const pendingValue = quotes.filter((q) => ["draft", "priced", "sent", "viewed", "negotiating"].includes(q.status)).reduce((sum, q) => sum + q.grandTotal, 0);
   const kpiCurrency = quoteCurrencyLabel(quotes);
-  const selectedCurrency = selectedQuote?.currency ?? DEFAULT_QUOTE_CURRENCY;
-  const technicalBreakdownCurrency = technicalBreakdown?.totals?.currency ?? "EUR";
+  const selectedCurrency = selectedQuote?.currency ?? null;
+  const technicalBreakdownCurrency = technicalBreakdown?.totals?.currency ?? null;
   const technicalBreakdownRowCount =
     (technicalBreakdown?.material_rows.length ?? 0) +
     (technicalBreakdown?.consumable_rows.length ?? 0) +
@@ -990,7 +989,7 @@ export default function Quotes() {
                           <p className="text-wo-text-muted">Commercial frozen</p>
                           <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2CommercialTotal != null
-                              ? formatQuoteMoney(selectedQuote.snapshotV2CommercialTotal, selectedCurrency)
+                              ? formatCommercialAmount(selectedQuote.snapshotV2CommercialTotal, selectedCurrency)
                               : "—"}
                           </p>
                         </div>
@@ -998,7 +997,7 @@ export default function Quotes() {
                           <p className="text-wo-text-muted">Internal estimate</p>
                           <p className="text-wo-text-primary font-semibold">
                             {selectedQuote.snapshotV2InternalTotal != null
-                              ? formatQuoteMoney(selectedQuote.snapshotV2InternalTotal, selectedCurrency)
+                              ? formatCommercialAmount(selectedQuote.snapshotV2InternalTotal, selectedCurrency)
                               : "—"}
                           </p>
                         </div>
@@ -1098,7 +1097,7 @@ export default function Quotes() {
                         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                           <p className="text-[10px] uppercase tracking-wide text-wo-text-muted">Cost intern estimativ</p>
                           <p className="text-[14px] font-semibold text-wo-text-primary mt-1">
-                            {formatQuoteMoney(technicalBreakdown.totals?.estimated_cost_total ?? 0, technicalBreakdownCurrency)}
+                            {formatCommercialAmount(technicalBreakdown.totals?.estimated_cost_total ?? 0, technicalBreakdownCurrency)}
                           </p>
                         </div>
                         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
@@ -1125,7 +1124,7 @@ export default function Quotes() {
                                         <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}</p>
                                       </div>
                                       <span className="text-[12px] font-semibold text-wo-text-primary">
-                                        {formatQuoteMoney(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
+                                        {formatCommercialAmount(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
                                       </span>
                                     </div>
                                   </div>
@@ -1146,7 +1145,7 @@ export default function Quotes() {
                                         <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}</p>
                                       </div>
                                       <span className="text-[12px] font-semibold text-wo-text-primary">
-                                        {formatQuoteMoney(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
+                                        {formatCommercialAmount(row.estimated_cost ?? 0, row.currency ?? technicalBreakdownCurrency)}
                                       </span>
                                     </div>
                                   </div>
@@ -1167,7 +1166,7 @@ export default function Quotes() {
                                         <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
                                       </div>
                                       <span className="text-[12px] font-semibold text-wo-text-primary">
-                                        {formatQuoteMoney(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
+                                        {formatCommercialAmount(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
                                       </span>
                                     </div>
                                   </div>
@@ -1188,7 +1187,7 @@ export default function Quotes() {
                                         <p className="text-[10px] text-wo-text-muted mt-1">{row.quantity} {row.unit}{row.pricing_status ? ` • ${row.pricing_status}` : ""}</p>
                                       </div>
                                       <span className="text-[12px] font-semibold text-wo-text-primary">
-                                        {formatQuoteMoney(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
+                                        {formatCommercialAmount(row.estimated_cost ?? 0, technicalBreakdownCurrency)}
                                       </span>
                                     </div>
                                   </div>
@@ -1265,10 +1264,10 @@ export default function Quotes() {
                             <span className="text-[10px] font-mono text-wo-text-muted">{item.productCode}</span>
                             <div className="flex items-center gap-3 text-[11px]">
                               <span className="text-wo-text-muted">
-                                {item.quantity} × {formatQuoteMoney(item.unitPrice, selectedCurrency)}
+                                {item.quantity} × {formatCommercialAmount(item.unitPrice, selectedCurrency)}
                               </span>
                               <span className="text-wo-text-primary font-semibold">
-                                {formatQuoteMoney(item.total, selectedCurrency)}
+                                {formatCommercialAmount(item.total, selectedCurrency)}
                               </span>
                             </div>
                           </div>
@@ -1302,7 +1301,7 @@ export default function Quotes() {
                 <SectionHeader title="Ofertă client — totaluri afișate" icon={<DollarSign className="w-4 h-4" />} />
                 <p className="text-[10px] text-wo-text-muted mt-2 mb-3">
                   {isUnpricedIntakeV6Quote(selectedQuote)
-                    ? `Draft V6 nepretuit: totalurile de mai jos sunt placeholder 0 ${selectedCurrency} până când bridge-ul V6 scrie totalurile backend oficiale.`
+                    ? `Draft V6 nepretuit: totalurile de mai jos sunt placeholder până când bridge-ul V6 scrie totalurile backend oficiale.`
                     : selectedQuote.acceptedSnapshotV2Id != null
                     ? "Frozen Snapshot V2 de mai sus rămâne sursa canonică pentru acceptare și conversie. Totalurile de aici sunt afișajul curent al ofertei selectate."
                     : "Până la freeze, aceste totaluri rămân afișajul curent al ofertei, nu un snapshot comercial înghețat."}
@@ -1313,19 +1312,19 @@ export default function Quotes() {
                     <span className="text-wo-text-primary">
                       {isUnpricedIntakeV6Quote(selectedQuote)
                         ? "Nepretuit (draft V6)"
-                        : formatQuoteMoney(selectedQuote.subtotal, selectedCurrency)}
+                        : formatCommercialAmount(selectedQuote.subtotal, selectedCurrency)}
                     </span>
                   </div>
                   {selectedQuote.discountPct > 0 && (
                     <div className="flex justify-between text-amber-400">
                       <span>Discount ({selectedQuote.discountPct}%)</span>
-                      <span>-{formatQuoteMoney(selectedQuote.discount, selectedCurrency)}</span>
+                      <span>-{formatCommercialAmount(selectedQuote.discount, selectedCurrency)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-wo-text-muted">Total fără TVA</span>
                     <span className="text-wo-text-primary">
-                      {formatQuoteMoney(selectedQuote.totalBeforeVAT, selectedCurrency)}
+                      {formatCommercialAmount(selectedQuote.totalBeforeVAT, selectedCurrency)}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -1333,7 +1332,7 @@ export default function Quotes() {
                       {selectedQuote.vatPct != null ? `TVA (${selectedQuote.vatPct}%)` : "TVA"}
                     </span>
                     <span className="text-wo-text-primary">
-                      {formatQuoteMoney(selectedQuote.vat, selectedCurrency)}
+                      {formatCommercialAmount(selectedQuote.vat, selectedCurrency)}
                     </span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-wo-border-strong">
@@ -1344,7 +1343,7 @@ export default function Quotes() {
                     >
                       {isUnpricedIntakeV6Quote(selectedQuote)
                         ? "Nepretuit (draft V6)"
-                        : formatQuoteMoney(selectedQuote.grandTotal, selectedCurrency)}
+                        : formatCommercialAmount(selectedQuote.grandTotal, selectedCurrency)}
                     </span>
                   </div>
                   <div className="flex justify-between pt-1">
