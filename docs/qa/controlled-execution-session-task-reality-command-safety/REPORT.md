@@ -1,0 +1,63 @@
+# CONTROLLED EXECUTION SESSION / TASK REALITY COMMAND SAFETY
+
+## Verdict
+
+```text
+CONTROLLED_EXECUTION_SESSION_TASK_REALITY_COMMAND_SAFETY = PASS
+HARDENING_APPLIED = YES
+HARDENING_SCOPE = isolated_safety_tests + modules/governance Phase B factual sync
+EVIDENCE_TYPE = CONTROLLED_SESSION_VALIDATION_EVIDENCE
+LIVE_WORKSHOP_VALIDATION = NOT_AVAILABLE
+```
+
+## Canonical
+
+```text
+CANONICAL_START = POST …/sessions/start
+CANONICAL_END = POST …/sessions/end
+CANONICAL_TASK_SOURCE = EXECUTION_PLAN_V2_OPERATIONAL_TASKS
+SOT = execution_reality.tasks_json
+ACTUAL_DURATION_SOURCE = ended_at - started_at
+END_EQUALS_TASK_COMPLETE = NO (controlled path)
+```
+
+## Scores
+
+```text
+ASSIGNMENT_SESSION_BOUNDARY = VERIFIED
+VALID_START / VALID_END = VERIFIED
+DUPLICATE_START/END = SAFE
+CONCURRENT_START = SAFE
+AUTHORIZATION = VERIFIED
+IDOR_PROTECTION = VERIFIED
+TASK_STATE_GUARDS = VERIFIED
+RESOURCE_STATE_GUARDS = VERIFIED_NOT_REQUIRED_ON_CONTROLLED_START
+CAS_CONCURRENCY = PROVEN
+IDEMPOTENCY = PROVEN
+TRANSACTIONALITY = PROVEN
+RESTART_DURABILITY = PROVEN
+EXECUTION_ACTUALS = VERIFIED
+MACHINE_RUN_MUTATIONS = 0
+SCHEDULING_MUTATIONS = 0
+CAPACITY_MUTATIONS = 0
+COMMERCIAL_MUTATIONS = 0
+EMPLOYEE_COST_USED_FOR_PRICING = NO
+REASSIGNMENT_PHASE_E = FAIL_CLOSED_DEFERRED
+DB_SCHEMA_CHANGES = 0
+QA_MUTATIONS = 0
+MODULES_IMPACT = Phase B / Phase E / session≠MachineRun factual sync
+GOVERNANCE_IMPACT = via currentTruthControlCenter (same source)
+PROFITABILITY_LABOR_INPUT_READINESS = PARTIAL
+NEXT_ROADMAP_DOMAIN = LEGACY_SESSION_WRITE_PATH_ASSIGNMENT_GATE_CLOSURE
+NEXT_TASK = NOT_AUTHORIZED
+```
+
+## Profitability readiness (read-only)
+
+Controlled closed sessions provide: employee_id, task_id, order_id, plan_id, started_at, ended_at, duration_minutes, source.
+
+Missing for READY: guaranteed exclusive write-path (legacy operator/raw still write same SoT without assignment gate); optional workcenter copy on every observation; rates intentionally out of scope.
+
+## Dead pieces
+
+See worklog §AL. Legacy assignment-bypass writers = `BYPASS_RISK` / next domain — not removed here.

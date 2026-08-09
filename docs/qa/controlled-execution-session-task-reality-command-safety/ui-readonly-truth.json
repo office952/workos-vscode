@@ -1,0 +1,27 @@
+{
+  "captured_at": "2026-08-09",
+  "served_head_start": "b7aebd04",
+  "evidence_type": "CONTROLLED_SESSION_VALIDATION_EVIDENCE",
+  "routes": {
+    "/shop-floor": {
+      "ok": true,
+      "actions": "read-only monitor; no start/end session from this surface"
+    },
+    "/execution/880750": {
+      "ok": true,
+      "conflates_assigned_working": false,
+      "machine_run_vs_session_collision": false
+    },
+    "/modules": {
+      "before": { "phaseBStale": true },
+      "after_factual_sync": {
+        "phaseBStale": false,
+        "phaseBProven": true,
+        "phaseEDeferred": true,
+        "sessionMachineRunSeparated": true
+      }
+    },
+    "/governance": { "ok": true }
+  },
+  "UI_HARDENING_CANDIDATE": []
+}
