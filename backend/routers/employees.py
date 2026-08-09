@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 
 from core.database import get_db
 from dependencies.auth import get_current_user
-from dependencies.permissions import require_permission
+from dependencies.permissions import has_permission, require_permission, resolve_effective_role
 from fastapi import APIRouter, Depends, HTTPException, Query
 from models.auth import User
 from pydantic import BaseModel
@@ -139,11 +139,18 @@ def _mobile_access_flags(
     return is_linked, has_mobile
 
 
+def _viewer_may_see_hr_cost(current_user: UserResponse | None) -> bool:
+    if current_user is None:
+        return False
+    return has_permission(resolve_effective_role(current_user.role), "employee.view_hr_cost")
+
+
 def _serialize(
     row,
     user: User | None = None,
     *,
     calculated_hours: Optional[float] = None,
+    include_hr_cost: bool = False,
 ) -> EmployeeResponse:
     def _parse_list(val: Optional[str]) -> Optional[List[str]]:
         if val is None:
@@ -169,6 +176,40 @@ def _serialize(
         hours = float(row.ore_productive_luna)
         hours_source = "stored_legacy"
 
+    if include_hr_cost:
+        return EmployeeResponse(
+            id=row.id,
+            name=row.name,
+            role=row.role,
+            department=row.department,
+            status=row.status,
+            employee_type=row.employee_type,
+            user_id=user_id,
+            auth_email=user.email if user else None,
+            auth_role=user.role if user else None,
+            is_linked_to_user=is_linked,
+            has_mobile_access=has_mobile,
+            cost_lunar_firma=row.cost_lunar_firma,
+            monthly_internal_pay_amount=getattr(row, "monthly_internal_pay_amount", None),
+            salary_amount=row.cost_lunar_firma,
+            salary_currency=getattr(row, "salary_currency", None) or "RON",
+            salary_period=getattr(row, "salary_period", None) or "monthly",
+            ore_lucru_luna=row.ore_lucru_luna,
+            ore_productive_luna=hours,
+            ore_productive_luna_source=hours_source,
+            cost_ora_calculat=compute_cost_ora_calculat(row.cost_lunar_firma, hours),
+            valid_for_cost_engine=is_valid_for_cost_engine(row),
+            skills=_parse_list(row.skills),
+            machines=_parse_list(row.machines),
+            data_angajare=row.data_angajare,
+            end_date=getattr(row, "end_date", None),
+            is_assignable=is_assignable(row, date.today()),
+            observatii=row.observatii,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+        )
+
+    # OPERATIONAL_SAFE projection — same endpoint, restricted fields omitted.
     return EmployeeResponse(
         id=row.id,
         name=row.name,
@@ -181,22 +222,22 @@ def _serialize(
         auth_role=user.role if user else None,
         is_linked_to_user=is_linked,
         has_mobile_access=has_mobile,
-        cost_lunar_firma=row.cost_lunar_firma,
-        monthly_internal_pay_amount=getattr(row, "monthly_internal_pay_amount", None),
-        salary_amount=row.cost_lunar_firma,
-        salary_currency=getattr(row, "salary_currency", None) or "RON",
-        salary_period=getattr(row, "salary_period", None) or "monthly",
-        ore_lucru_luna=row.ore_lucru_luna,
-        ore_productive_luna=hours,
-        ore_productive_luna_source=hours_source,
-        cost_ora_calculat=compute_cost_ora_calculat(row.cost_lunar_firma, hours),
-        valid_for_cost_engine=is_valid_for_cost_engine(row),
+        cost_lunar_firma=None,
+        monthly_internal_pay_amount=None,
+        salary_amount=None,
+        salary_currency=None,
+        salary_period=None,
+        ore_lucru_luna=None,
+        ore_productive_luna=None,
+        ore_productive_luna_source=None,
+        cost_ora_calculat=None,
+        valid_for_cost_engine=False,
         skills=_parse_list(row.skills),
         machines=_parse_list(row.machines),
         data_angajare=row.data_angajare,
         end_date=getattr(row, "end_date", None),
         is_assignable=is_assignable(row, date.today()),
-        observatii=row.observatii,
+        observatii=None,
         created_at=row.created_at,
         updated_at=row.updated_at,
     )
@@ -230,6 +271,7 @@ async def employee_capacity_read_model(
     year: Optional[int] = Query(None),
     month: Optional[int] = Query(None),
     db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("employee.view_hr_cost")),
 ):
     """Current-month capacity — effective-date based (HR, not client pricing)."""
     today = date.today()
@@ -271,6 +313,7 @@ async def list_employees(
     skip: int = Query(0, ge=0),
     limit: int = Query(500, ge=1, le=2000),
     db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
 ):
     svc = EmployeesService(db)
     query_dict = None
@@ -286,13 +329,15 @@ async def list_employees(
         if getattr(row, "user_id", None)
     }
     users_by_id = await _users_by_id(db, user_ids)
-    hours_by_id = await _hours_map_for_rows(db, result["items"])
+    include_hr = _viewer_may_see_hr_cost(current_user)
+    hours_by_id = await _hours_map_for_rows(db, result["items"]) if include_hr else {}
     return EmployeeListResponse(
         items=[
             _serialize(
                 r,
                 users_by_id.get((getattr(r, "user_id", None) or "").strip()),
-                calculated_hours=hours_by_id.get(r.id),
+                calculated_hours=hours_by_id.get(r.id) if include_hr else None,
+                include_hr_cost=include_hr,
             )
             for r in result["items"]
         ],
@@ -303,14 +348,24 @@ async def list_employees(
 
 
 @router.get("/{id}", response_model=EmployeeResponse)
-async def get_employee(id: int, db: AsyncSession = Depends(get_db)):
+async def get_employee(
+    id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
     svc = EmployeesService(db)
     row = await svc.get_by_id(id)
     if not row:
         raise HTTPException(status_code=404, detail="Employee not found")
     user = await _user_for_employee(db, getattr(row, "user_id", None))
-    hours_by_id = await _hours_map_for_rows(db, [row])
-    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
+    include_hr = _viewer_may_see_hr_cost(current_user)
+    hours_by_id = await _hours_map_for_rows(db, [row]) if include_hr else {}
+    return _serialize(
+        row,
+        user,
+        calculated_hours=hours_by_id.get(row.id) if include_hr else None,
+        include_hr_cost=include_hr,
+    )
 
 
 @router.post("", response_model=EmployeeResponse, status_code=201)
@@ -322,7 +377,9 @@ async def create_employee(data: EmployeeData, db: AsyncSession = Depends(get_db)
         raise HTTPException(status_code=400, detail=str(e))
     user = await _user_for_employee(db, getattr(row, "user_id", None))
     hours_by_id = await _hours_map_for_rows(db, [row])
-    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
+    return _serialize(
+        row, user, calculated_hours=hours_by_id.get(row.id), include_hr_cost=True
+    )
 
 
 @router.put("/{id}", response_model=EmployeeResponse)
@@ -336,7 +393,9 @@ async def update_employee(id: int, data: EmployeeUpdateData, db: AsyncSession = 
         raise HTTPException(status_code=404, detail="Employee not found")
     user = await _user_for_employee(db, getattr(row, "user_id", None))
     hours_by_id = await _hours_map_for_rows(db, [row])
-    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
+    return _serialize(
+        row, user, calculated_hours=hours_by_id.get(row.id), include_hr_cost=True
+    )
 
 
 @router.post("/{id}/end-employment", response_model=EmployeeResponse)
@@ -360,7 +419,9 @@ async def end_employee_employment(
         raise HTTPException(status_code=404, detail="Employee not found")
     user = await _user_for_employee(db, getattr(row, "user_id", None))
     hours_by_id = await _hours_map_for_rows(db, [row])
-    return _serialize(row, user, calculated_hours=hours_by_id.get(row.id))
+    return _serialize(
+        row, user, calculated_hours=hours_by_id.get(row.id), include_hr_cost=True
+    )
 
 
 @router.delete("/{id}")
@@ -379,4 +440,4 @@ async def delete_employee(id: int, db: AsyncSession = Depends(get_db), _user: Us
         "start_date": start.isoformat() if start else None,
         "hard_deleted": False,
     }
-
+

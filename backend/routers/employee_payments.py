@@ -6,6 +6,7 @@ from typing import List, Optional
 
 from core.database import get_db
 from dependencies.auth import get_current_user
+from dependencies.permissions import require_permission
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from schemas.auth import UserResponse
@@ -144,7 +145,7 @@ async def get_payment_situation(
     year: int = Query(..., ge=2000, le=2100),
     month: int = Query(..., ge=1, le=12),
     db: AsyncSession = Depends(get_db),
-    _user: UserResponse = Depends(get_current_user),
+    _user: UserResponse = Depends(require_permission("employee_payments.read")),
 ):
     try:
         data = await get_employee_payment_situation(db, year, month)
@@ -157,7 +158,7 @@ async def get_payment_situation(
 async def post_payment_record(
     body: PaymentRecordCreate,
     db: AsyncSession = Depends(get_db),
-    _user: UserResponse = Depends(get_current_user),
+    _user: UserResponse = Depends(require_permission("employee_payments.write")),
 ):
     try:
         row = await create_employee_payment_record(db, body.model_dump())
@@ -171,7 +172,7 @@ async def cancel_payment_record(
     record_id: int,
     body: PaymentCancelBody = PaymentCancelBody(),
     db: AsyncSession = Depends(get_db),
-    _user: UserResponse = Depends(get_current_user),
+    _user: UserResponse = Depends(require_permission("employee_payments.write")),
 ):
     try:
         row = await cancel_employee_payment_record(db, record_id, body.reason)

@@ -1,6 +1,11 @@
-"""Intake V5 router — simplified end-to-end flow.
+"""Intake V5 router — simplified end-to-end flow (DEPRECATED — not production-mounted).
 
-Endpoints:
+Historically shipped without auth. Zero FE consumers for `/api/v1/intake-v5`.
+V1 production security: keep module importable for seeds/scripts, but do NOT
+auto-mount. ``main.include_routers_from_package`` only discovers module-level
+names ``router`` / ``admin_router``.
+
+Endpoints (when manually mounted — not V1 production):
   POST   /analyze-svg        → parse SVG, extract geometry
   POST   /calculate          → preview BOM (no save)
   POST   /projects           → create project
@@ -14,12 +19,11 @@ Endpoints:
 
 from __future__ import annotations
 
-import json
-
 from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import db_manager
+from dependencies.auth import get_current_user
 from schemas.intake_v5 import (
     BomResult,
     IntakeV5CreateRequest,
@@ -29,9 +33,13 @@ from schemas.intake_v5 import (
     IntakeV5UpdateRequest,
 )
 from services import intake_v5_service as svc
-from services.svg_analyzer import analyze_svg
 
-router = APIRouter(prefix="/api/v1/intake-v5", tags=["intake-v5"])
+# DEPRECATED: unauthenticated Intake V5 superseded by Intake V6. Not auto-discovered.
+_deprecated_router = APIRouter(
+    prefix="/api/v1/intake-v5",
+    tags=["intake-v5"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 async def _get_db():
@@ -41,7 +49,7 @@ async def _get_db():
 
 # ── SVG Analysis ──
 
-@router.get("/config")
+@_deprecated_router.get("/config")
 async def get_config(db: AsyncSession = Depends(_get_db)):
     """Return template options and DB pricing readiness for the simplified V5 form."""
     return await svc.get_template_config(db)
@@ -49,15 +57,16 @@ async def get_config(db: AsyncSession = Depends(_get_db)):
 
 # ── SVG Analysis ──
 
-@router.post("/analyze-svg")
+@_deprecated_router.post("/analyze-svg")
 async def analyze_svg_endpoint(file: UploadFile = File(...)):
     """Parse an SVG file and return extracted geometry for auto-fill."""
+    from fastapi import HTTPException
+    from services.svg_analyzer import analyze_svg
+
     if not file.filename or not file.filename.lower().endswith(".svg"):
-        from fastapi import HTTPException
         raise HTTPException(400, "Doar fișiere SVG sunt acceptate.")
     content = await file.read()
     if len(content) > 10_000_000:  # 10 MB limit
-        from fastapi import HTTPException
         raise HTTPException(400, "Fișierul SVG depășește limita de 10 MB.")
     svg_text = content.decode("utf-8", errors="replace")
     return analyze_svg(svg_text, file.filename)
@@ -65,7 +74,7 @@ async def analyze_svg_endpoint(file: UploadFile = File(...)):
 
 # ── BOM Preview (no save) ──
 
-@router.post("/calculate", response_model=BomResult)
+@_deprecated_router.post("/calculate", response_model=BomResult)
 async def calculate_bom(
     inputs: IntakeV5Inputs,
     db: AsyncSession = Depends(_get_db),
@@ -76,7 +85,7 @@ async def calculate_bom(
 
 # ── Project CRUD ──
 
-@router.post("/projects", response_model=IntakeV5ProjectResponse)
+@_deprecated_router.post("/projects", response_model=IntakeV5ProjectResponse)
 async def create_project(
     req: IntakeV5CreateRequest,
     db: AsyncSession = Depends(_get_db),
@@ -85,13 +94,13 @@ async def create_project(
     return _to_response(project)
 
 
-@router.get("/projects", response_model=list[IntakeV5ListItem])
+@_deprecated_router.get("/projects", response_model=list[IntakeV5ListItem])
 async def list_projects(db: AsyncSession = Depends(_get_db)):
     projects = await svc.list_projects(db)
     return [_to_list_item(p) for p in projects]
 
 
-@router.get("/projects/{project_id}", response_model=IntakeV5ProjectResponse)
+@_deprecated_router.get("/projects/{project_id}", response_model=IntakeV5ProjectResponse)
 async def get_project(
     project_id: int,
     db: AsyncSession = Depends(_get_db),
@@ -100,7 +109,7 @@ async def get_project(
     return _to_response(project)
 
 
-@router.put("/projects/{project_id}", response_model=IntakeV5ProjectResponse)
+@_deprecated_router.put("/projects/{project_id}", response_model=IntakeV5ProjectResponse)
 async def update_project(
     project_id: int,
     req: IntakeV5UpdateRequest,
@@ -114,7 +123,7 @@ async def update_project(
 
 # ── Flow actions ──
 
-@router.post("/projects/{project_id}/quote")
+@_deprecated_router.post("/projects/{project_id}/quote")
 async def create_quote(
     project_id: int,
     db: AsyncSession = Depends(_get_db),
@@ -122,7 +131,7 @@ async def create_quote(
     return await svc.create_quote(db, project_id)
 
 
-@router.post("/projects/{project_id}/order")
+@_deprecated_router.post("/projects/{project_id}/order")
 async def create_order(
     project_id: int,
     db: AsyncSession = Depends(_get_db),
@@ -130,7 +139,7 @@ async def create_order(
     return await svc.create_order(db, project_id)
 
 
-@router.post("/projects/{project_id}/tasks")
+@_deprecated_router.post("/projects/{project_id}/tasks")
 async def generate_tasks(
     project_id: int,
     db: AsyncSession = Depends(_get_db),

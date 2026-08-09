@@ -71,7 +71,7 @@ def test_serialize_maps_salary_amount_to_company_cost_not_internal_pay():
         monthly_internal_pay_amount=4000.0,
         ore_productive_luna=160.0,
     )
-    payload = _serialize(row)
+    payload = _serialize(row, include_hr_cost=True)
     assert payload.cost_lunar_firma == 8500.0
     assert payload.monthly_internal_pay_amount == 4000.0
     assert payload.salary_amount == 8500.0

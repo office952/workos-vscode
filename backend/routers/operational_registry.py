@@ -11,7 +11,11 @@ from typing import Any, Dict, List, Optional
 
 from core.database import get_db
 from dependencies.auth import get_current_user
-from dependencies.permissions import require_permission
+from dependencies.permissions import (
+    has_permission,
+    require_permission,
+    resolve_effective_role,
+)
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 from schemas.auth import UserResponse
@@ -120,20 +124,35 @@ async def get_operational_catalog(db: AsyncSession = Depends(get_db)) -> Dict[st
     return await svc.get_catalog()
 
 
+def _may_view_hr_cost(user: UserResponse) -> bool:
+    return has_permission(resolve_effective_role(user.role), "employee.view_hr_cost")
+
+
 @router.get("/employees")
 async def list_registry_employees(
     skip: int = Query(0, ge=0),
     limit: int = Query(500, ge=1, le=2000),
     db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
 ) -> Dict[str, Any]:
     svc = OperationalRegistryService(db)
-    return await svc.list_employees_with_authorizations(skip=skip, limit=limit)
+    return await svc.list_employees_with_authorizations(
+        skip=skip,
+        limit=limit,
+        include_hr_cost=_may_view_hr_cost(current_user),
+    )
 
 
 @router.get("/employees/{employee_id}")
-async def get_registry_employee(employee_id: int, db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
+async def get_registry_employee(
+    employee_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> Dict[str, Any]:
     svc = OperationalRegistryService(db)
-    row = await svc.get_employee_registry(employee_id)
+    row = await svc.get_employee_registry(
+        employee_id, include_hr_cost=_may_view_hr_cost(current_user)
+    )
     if row is None:
         raise HTTPException(status_code=404, detail="employee_not_found")
     return row

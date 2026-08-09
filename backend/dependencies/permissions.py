@@ -167,6 +167,11 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     "employee.create": ["admin", "manager"],
     "employee.update": ["admin", "manager"],
     "employee.delete": ["admin", "manager"],
+    # HR cost / salary / internal pay — never ordinary operator/sales/mobile.
+    "employee.view_hr_cost": ["admin", "manager"],
+    # Internal payment situation (not fiscal payroll) — HR/management only.
+    "employee_payments.read": ["admin", "manager"],
+    "employee_payments.write": ["admin", "manager"],
 
     # Suppliers
     "supplier.create": ["admin", "manager"],

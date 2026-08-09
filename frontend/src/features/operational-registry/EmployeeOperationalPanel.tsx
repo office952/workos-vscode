@@ -143,12 +143,10 @@ export function EmployeeOperationalPanel({ employeeId, readOnly = false }: Props
             Sursă canonicală pentru skills, workcenters și resurse. Nu folosește HR demo (
             <code className="text-[10px]">employeeRecordsData</code>).
           </p>
-          {employee && (
+          {employee?.salary_amount != null && (
             <p className="text-[11px] text-muted-foreground mt-1">
               Salariu HR:{" "}
-              {employee.salary_amount != null
-                ? `${employee.salary_amount.toLocaleString("ro-RO")} ${employee.salary_currency}/lună`
-                : "—"}{" "}
+              {`${employee.salary_amount.toLocaleString("ro-RO")} ${employee.salary_currency ?? ""}/lună`}{" "}
               · boundary cost intern agregat, nu preț per operație.
             </p>
           )}

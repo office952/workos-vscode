@@ -150,7 +150,7 @@ class OperationalRegistryService:
         return await self.get_employee_authorizations(employee_id)
 
     async def list_employees_with_authorizations(
-        self, skip: int = 0, limit: int = 500
+        self, skip: int = 0, limit: int = 500, *, include_hr_cost: bool = False
     ) -> Dict[str, Any]:
         total = (await self.db.execute(select(func.count(Employees.id)))).scalar() or 0
         rows = (
@@ -162,20 +162,31 @@ class OperationalRegistryService:
         items = []
         for emp in rows:
             auth = await self.get_employee_authorizations(emp.id)
-            items.append(self._employee_registry_dict(emp, auth))
+            items.append(
+                self._employee_registry_dict(emp, auth, include_hr_cost=include_hr_cost)
+            )
         return {"items": items, "total": total, "skip": skip, "limit": limit}
 
-    async def get_employee_registry(self, employee_id: int) -> Optional[Dict[str, Any]]:
+    async def get_employee_registry(
+        self, employee_id: int, *, include_hr_cost: bool = False
+    ) -> Optional[Dict[str, Any]]:
         emp = (
             await self.db.execute(select(Employees).where(Employees.id == employee_id))
         ).scalar_one_or_none()
         if emp is None:
             return None
         auth = await self.get_employee_authorizations(employee_id)
-        return self._employee_registry_dict(emp, auth)
+        return self._employee_registry_dict(emp, auth, include_hr_cost=include_hr_cost)
 
-    def _employee_registry_dict(self, emp: Employees, auth: Dict[str, List[str]]) -> Dict[str, Any]:
-        return {
+    def _employee_registry_dict(
+        self,
+        emp: Employees,
+        auth: Dict[str, List[str]],
+        *,
+        include_hr_cost: bool = False,
+    ) -> Dict[str, Any]:
+        """Operational employee projection. HR cost fields only when authorized."""
+        base: Dict[str, Any] = {
             "id": emp.id,
             "name": emp.name,
             "role": emp.role,
@@ -183,13 +194,19 @@ class OperationalRegistryService:
             "status": emp.status,
             "employee_type": emp.employee_type,
             "user_id": emp.user_id,
-            "salary_amount": emp.cost_lunar_firma,
-            "salary_currency": emp.salary_currency or "RON",
-            "salary_period": emp.salary_period or "monthly",
             "skill_codes": auth["skill_codes"],
             "workcenter_codes": auth["workcenter_codes"],
             "resource_codes": auth["resource_codes"],
         }
+        if include_hr_cost:
+            base["salary_amount"] = emp.cost_lunar_firma
+            base["salary_currency"] = emp.salary_currency or "RON"
+            base["salary_period"] = emp.salary_period or "monthly"
+        else:
+            base["salary_amount"] = None
+            base["salary_currency"] = None
+            base["salary_period"] = None
+        return base
 
     async def list_resources(self) -> List[Dict[str, Any]]:
         rows = (
