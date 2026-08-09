@@ -432,9 +432,13 @@ QA_CAPACITY_SOURCE_ROWS = 0
 QA_CAPACITY_ROWS = 0
 PHASE_B_RESOURCE_STATE_WIRING = NOT_AUTHORIZED
 FRONTEND_REASSIGNMENT_UI = NO
-FRONTEND_START_COMPLETE_UI = NO
-MACHINE_RUN_SHOP_FLOOR_UI = NOT_STARTED
-RECOMMENDED_NEXT_SLICE = MACHINE_RUN_SHOP_FLOOR_UI
+FRONTEND_START_COMPLETE_UI = YES_MACHINE_RUN_ONLY
+MACHINE_RUN_SHOP_FLOOR_UI = PASS
+CREATE_UI = DEFERRED
+ADD_UI = DEFERRED
+CANDIDATE_DISCOVERY_API = MISSING
+SECONDARY_CONTEXT_LINKS = DEFERRED
+RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -478,11 +482,11 @@ Read API worklog: `docs/worklog/realignment/2026-08-07_machine_run_operator_read
 - MACHINE_RUN schema/contract readiness PASS (docs-only): run owns one Reservation; participants reference tasks; multi-plan allowed; machine time once; no ORM.
 - Reservation grain + commitment lifecycle runtime PASS; **s67 execution status schema foundation ACCEPTED_FINAL**; **QA rolled to s67**; **START/COMPLETE runtime PASS** (phase-aware coupling · RELEASE-after-COMPLETED · `execution.machine_run.execute`; no task/session side effects; QA runtime writes = 0).
 - **Shop-floor UI readiness PASS:** primary placement `/execution/machine-runs` (new page YES); secondary chips; Utilaje LATER.
-- **Operator read API PASS:** GET list + detail · `execution.machine_run.read` · modules/governance ownership rows updated · **no MachineRun UI yet**.
+- **Operator read API PASS:** GET list + detail · `execution.machine_run.read` · modules/governance ownership rows updated.
+- **Shop-floor UI PASS:** `/execution/machine-runs` list+detail · command wiring · light/dark · CREATE/ADD + secondary chips deferred (API gaps).
 
-**Next (future candidate only — not started):**  
-`MACHINE_RUN_SHOP_FLOOR_UI` — only with separate Owner GO.  
-Still deferred: PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile.
+**Next:** not authorized.  
+Still deferred: candidate discovery · secondary task chips · PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home.
 
 ---
 

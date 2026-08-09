@@ -31,9 +31,14 @@ MACHINE_RUN_READ_API = PASS
 UI_BLOCKER = CLEARED_BY_OPERATOR_READ_API
 MODULES_IMPACT = UPDATED_IN_OPERATOR_READ_API_GO
 GOVERNANCE_IMPACT = UPDATED_IN_OPERATOR_READ_API_GO
-FRONTEND_IMPLEMENTATION = NOT_STARTED
+FRONTEND_IMPLEMENTATION = PASS
+  (2026-08-09 · MACHINE_RUN_SHOP_FLOOR_UI_IMPLEMENTATION)
+CREATE_UI = DEFERRED
+ADD_UI = DEFERRED
+CANDIDATE_DISCOVERY_API = MISSING
+SECONDARY_CONTEXT_LINKS = DEFERRED
 QA_MUTATIONS = 0
-NEXT_IMPLEMENTATION_SCOPE = MACHINE_RUN_SHOP_FLOOR_UI
+NEXT_IMPLEMENTATION_SCOPE = NOT_AUTHORIZED
 PAUSE_RESUME = DEFERRED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE
 PHASE_B = NOT_AUTHORIZED
@@ -495,30 +500,24 @@ Phase B transfer/handoff UI
 
 ---
 
-## 25. Next implementation scope (bounded)
+## 25. Implementation status (2026-08-09)
 
 ```text
-NEXT_IMPLEMENTATION_SCOPE = MACHINE_RUN_OPERATOR_READ_API
+MACHINE_RUN_SHOP_FLOOR_UI_IMPLEMENTATION = PASS
+PRIMARY_ROUTE = /execution/machine-runs
+NAV_LABEL = Rulări utilaj (Producție)
+CREATE_UI / ADD_UI = DEFERRED (CANDIDATE_DISCOVERY_API = MISSING)
+SECONDARY_CONTEXT_LINKS = DEFERRED (REVERSE_LOOKUP_API_GAP)
+Evidence = docs/qa/machine-run-shop-floor-ui/
+Worklog = docs/worklog/realignment/2026-08-09_machine_run_shop_floor_ui_implementation.md
 ```
-
-Only after that Owner GO:
-
-```text
-MACHINE_RUN_SHOP_FLOOR_UI_IMPLEMENTATION
-  (list+detail under /execution/machine-runs
-   + secondary chips
-   + command wiring
-   · no Capacity · no Phase B · no Pause · no Mobile)
-```
-
-Modules/governance registration updates may ship with UI GO or a tiny docs/registry GO — not frontend MachineRun controls until READ API exists.
 
 ---
 
 ## 26. Boundaries respected
 
 ```text
-FRONTEND_CHANGED = NO
+FRONTEND_CHANGED = YES (MachineRun shop-floor only)
 QA_MUTATIONS = 0
 PAUSE_RESUME = DEFERRED
 CAPACITY_STAGE_1 = IMPLEMENTED_INACTIVE

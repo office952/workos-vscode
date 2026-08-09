@@ -1,0 +1,12 @@
+{
+  "db": "C:\\w\\psiso\\docs\\qa\\machine-run-shop-floor-ui\\_isolated_s67_ui.db",
+  "alembic": "s67_machine_run_execution_status",
+  "ids": {
+    "HELD": 1,
+    "RESERVED": 2,
+    "RUNNING": 3,
+    "COMPLETED": 4,
+    "RELEASED": 5
+  },
+  "note": "isolated only \u2014 never QA"
+}

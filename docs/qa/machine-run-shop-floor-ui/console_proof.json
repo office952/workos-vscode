@@ -1,0 +1,12 @@
+{
+  "route": "/execution/machine-runs",
+  "environments": ["http://127.0.0.1:3000", "http://127.0.0.1:3010"],
+  "observed": {
+    "uncaught_exceptions": 0,
+    "failed_route_loads": 0,
+    "unhandled_promise_rejections": 0,
+    "repeated_polling_error_loops": 0,
+    "react_warnings_introduced": "none observed beyond pre-existing React Router v7 future flags in unit tests"
+  },
+  "verdict": "PASS"
+}

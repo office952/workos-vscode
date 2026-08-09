@@ -1,0 +1,256 @@
+{
+  "base": "http://127.0.0.1:8010/api/v1/execution/resource-state/machine-runs",
+  "steps": [
+    {
+      "op": "CREATE",
+      "http": 200,
+      "id": 6,
+      "body": {
+        "machine_run_id": 6,
+        "status": "HELD",
+        "version": 1,
+        "reservation_id": 6,
+        "reservation_status": "HELD",
+        "reservation_version": 1,
+        "machine_id": 1,
+        "reservation_start": "2026-08-10T08:00:00Z",
+        "reservation_end": "2026-08-10T10:00:00Z",
+        "timezone": "Europe/Bucharest",
+        "participants": [
+          {
+            "execution_plan_id": 31,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+            "order_id": 880761,
+            "status": "ACTIVE"
+          },
+          {
+            "execution_plan_id": 32,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b",
+            "order_id": 880762,
+            "status": "ACTIVE"
+          }
+        ],
+        "operation": "CREATE_MACHINE_RUN",
+        "transition_id": "f47b382c-6e16-46f6-942a-8e6e7c57d2a0",
+        "reservation_transition_id": "40fd03f4-a8d3-4b4b-a513-8fa1c5bb3e03",
+        "already_applied": false,
+        "previous_status": null,
+        "previous_version": null,
+        "affected_participant": null,
+        "started_at": null,
+        "completed_at": null
+      }
+    },
+    {
+      "op": "GET_DETAIL",
+      "http": 200,
+      "version": 1,
+      "status": "HELD"
+    },
+    {
+      "op": "CONFIRM",
+      "http": 200,
+      "expected_version_sent": 1,
+      "version": 2,
+      "status": "RESERVED",
+      "reservation_status": "RESERVED",
+      "body": {
+        "machine_run_id": 6,
+        "status": "RESERVED",
+        "version": 2,
+        "reservation_id": 6,
+        "reservation_status": "RESERVED",
+        "reservation_version": 2,
+        "machine_id": 1,
+        "reservation_start": "2026-08-10T08:00:00",
+        "reservation_end": "2026-08-10T10:00:00",
+        "timezone": "Europe/Bucharest",
+        "participants": [
+          {
+            "execution_plan_id": 31,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+            "order_id": 880761,
+            "status": "ACTIVE"
+          },
+          {
+            "execution_plan_id": 32,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b",
+            "order_id": 880762,
+            "status": "ACTIVE"
+          }
+        ],
+        "operation": "CONFIRM_MACHINE_RUN",
+        "transition_id": "ee565e65-aba1-498c-a319-9dbf0bbf5450",
+        "reservation_transition_id": "3e95401a-0bc3-49f8-8514-2e55efd702a2",
+        "already_applied": false,
+        "previous_status": "HELD",
+        "previous_version": 1,
+        "affected_participant": null,
+        "started_at": null,
+        "completed_at": null
+      }
+    },
+    {
+      "op": "GET_DETAIL_REFETCH",
+      "after": "CONFIRM",
+      "http": 200,
+      "version": 2,
+      "status": "RESERVED"
+    },
+    {
+      "op": "START",
+      "http": 200,
+      "expected_version_sent": 2,
+      "version": 3,
+      "status": "RUNNING",
+      "reservation_status": "RESERVED",
+      "body": {
+        "machine_run_id": 6,
+        "status": "RUNNING",
+        "version": 3,
+        "reservation_id": 6,
+        "reservation_status": "RESERVED",
+        "reservation_version": 3,
+        "machine_id": 1,
+        "reservation_start": "2026-08-10T08:00:00",
+        "reservation_end": "2026-08-10T10:00:00",
+        "timezone": "Europe/Bucharest",
+        "participants": [
+          {
+            "execution_plan_id": 31,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+            "order_id": 880761,
+            "status": "ACTIVE"
+          },
+          {
+            "execution_plan_id": 32,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b",
+            "order_id": 880762,
+            "status": "ACTIVE"
+          }
+        ],
+        "operation": "START_MACHINE_RUN",
+        "transition_id": "7f1e9f8f-24d7-4f81-a7bd-9ce7efdf3bf9",
+        "reservation_transition_id": "e400a21e-83cf-4b83-8f2d-80c5ea3738aa",
+        "already_applied": false,
+        "previous_status": "RESERVED",
+        "previous_version": 2,
+        "affected_participant": null,
+        "started_at": "2026-08-09T09:19:55.612912Z",
+        "completed_at": null
+      }
+    },
+    {
+      "op": "GET_DETAIL_REFETCH",
+      "after": "START",
+      "http": 200,
+      "version": 3,
+      "status": "RUNNING"
+    },
+    {
+      "op": "COMPLETE",
+      "http": 200,
+      "expected_version_sent": 3,
+      "version": 4,
+      "status": "COMPLETED",
+      "reservation_status": "RESERVED",
+      "body": {
+        "machine_run_id": 6,
+        "status": "COMPLETED",
+        "version": 4,
+        "reservation_id": 6,
+        "reservation_status": "RESERVED",
+        "reservation_version": 4,
+        "machine_id": 1,
+        "reservation_start": "2026-08-10T08:00:00",
+        "reservation_end": "2026-08-10T10:00:00",
+        "timezone": "Europe/Bucharest",
+        "participants": [
+          {
+            "execution_plan_id": 31,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+            "order_id": 880761,
+            "status": "ACTIVE"
+          },
+          {
+            "execution_plan_id": 32,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b",
+            "order_id": 880762,
+            "status": "ACTIVE"
+          }
+        ],
+        "operation": "COMPLETE_MACHINE_RUN",
+        "transition_id": "c4702c42-9109-4b6a-b5e8-57ff3155805e",
+        "reservation_transition_id": "3927640b-c57f-4d48-8189-f74f782f8737",
+        "already_applied": false,
+        "previous_status": "RUNNING",
+        "previous_version": 3,
+        "affected_participant": null,
+        "started_at": "2026-08-09T09:19:55.612912",
+        "completed_at": "2026-08-09T09:19:55.652785Z"
+      }
+    },
+    {
+      "op": "GET_DETAIL_REFETCH",
+      "after": "COMPLETE",
+      "http": 200,
+      "version": 4,
+      "status": "COMPLETED"
+    },
+    {
+      "op": "RELEASE",
+      "http": 200,
+      "expected_version_sent": 4,
+      "version": 5,
+      "status": "RELEASED",
+      "reservation_status": "RELEASED",
+      "body": {
+        "machine_run_id": 6,
+        "status": "RELEASED",
+        "version": 5,
+        "reservation_id": 6,
+        "reservation_status": "RELEASED",
+        "reservation_version": 5,
+        "machine_id": 1,
+        "reservation_start": "2026-08-10T08:00:00",
+        "reservation_end": "2026-08-10T10:00:00",
+        "timezone": "Europe/Bucharest",
+        "participants": [
+          {
+            "execution_plan_id": 31,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+            "order_id": 880761,
+            "status": "ACTIVE"
+          },
+          {
+            "execution_plan_id": 32,
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_b",
+            "order_id": 880762,
+            "status": "ACTIVE"
+          }
+        ],
+        "operation": "RELEASE_MACHINE_RUN",
+        "transition_id": "dc6b299f-348c-480f-86a5-3d0226ba2d42",
+        "reservation_transition_id": "96307d52-9356-4832-bb60-87a7c8d40a5b",
+        "already_applied": false,
+        "previous_status": "COMPLETED",
+        "previous_version": 4,
+        "affected_participant": null,
+        "started_at": "2026-08-09T09:19:55.612912",
+        "completed_at": "2026-08-09T09:19:55.652785"
+      }
+    },
+    {
+      "op": "GET_DETAIL_REFETCH",
+      "after": "RELEASE",
+      "http": 200,
+      "version": 5,
+      "status": "RELEASED"
+    },
+    {
+      "op": "GET_LIST_OPEN",
+      "http": 200,
+      "count": 4
+    }
+  ]
+}

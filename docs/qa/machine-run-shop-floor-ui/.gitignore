@@ -1,0 +1,8 @@
+_isolated_s67_ui.db
+_iso_be.log
+_iso_be.log.err
+_iso_fe.log
+_iso_fe.err
+_iso_fe.log.err
+__pycache__/
+*.pyc
