@@ -158,10 +158,14 @@ export function ExecutionClosurePanel({
             </p>
           </div>
           <div>
-            <p className="text-wo-text-muted">Marjă actuală</p>
+            <p className="text-wo-text-muted">Contribuție cunoscută V1</p>
             <p className="font-medium text-wo-text-primary">
               {result?.actual_margin?.amount?.available
-                ? `${result.actual_margin.amount.value} (job închis)`
+                ? `${result.actual_margin.amount.value}${
+                    typeof result.actual_margin.currency === "string"
+                      ? ` ${result.actual_margin.currency}`
+                      : ""
+                  } (domeniu V1; nu profit contabil)`
                 : "Indisponibilă"}
             </p>
           </div>

@@ -56,12 +56,22 @@ export default function QuoteAcceptanceConversionPanel({
             {formatQuoteConversionSummary(quote)}
           </p>
           <p className="text-[11px] text-slate-300" data-testid="quote-conversion-total-eur">
-            Total ofertă: {formatQuoteMoney(roundedEurTotal, quoteCurrency)} (rotunjit comercial)
+            Total ofertă: {formatQuoteMoney(roundedEurTotal, quoteCurrency)}
+            {quoteCurrency === "EUR" ? " (rotunjit comercial)" : ""}
           </p>
-          {estimatedRonTotal != null && eurToRonRate ? (
-            <div className="text-[11px] text-slate-300 space-y-1" data-testid="quote-conversion-estimated-ron">
-              <p>Curs EUR/RON (Setări): {formatExchangeRate(eurToRonRate)}</p>
-              <p>Total comandă estimat: {formatOrderMoney(estimatedRonTotal, "RON")}</p>
+          {quoteCurrency === "EUR" ? (
+            <div className="text-[11px] text-slate-300 space-y-1" data-testid="quote-conversion-v2-eur-note">
+              <p>
+                Order Snapshot V2 păstrează totalul comercial în EUR (fără reprice). Cursul din
+                Setări se îngheață la convert doar pentru Profitability (Policy A), nu rescrie
+                totalul comenzii.
+              </p>
+              {estimatedRonTotal != null && eurToRonRate ? (
+                <p className="text-slate-400" data-testid="quote-conversion-estimated-ron">
+                  Echivalent informativ @{formatExchangeRate(eurToRonRate)}:{" "}
+                  {formatOrderMoney(estimatedRonTotal, "RON")} (nu total comandă V2)
+                </p>
+              ) : null}
             </div>
           ) : (
             <p className="text-[11px] text-slate-300">

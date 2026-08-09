@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_QUOTE_CURRENCY,
   extractQuoteCurrencyFromLineItems,
+  formatQuoteListKpiAmount,
   formatQuoteMoney,
   quoteCurrencyLabel,
 } from "./quoteCurrency";
@@ -53,8 +54,22 @@ describe("quoteCurrencyLabel", () => {
 
   it("marks mixed currencies", () => {
     expect(quoteCurrencyLabel([{ currency: "EUR" }, { currency: "RON" }])).toEqual({
-      label: "valori în monede diferite",
+      label: "valori în monede diferite — total agregat indisponibil",
       mixed: true,
     });
+  });
+});
+
+describe("formatQuoteListKpiAmount", () => {
+  it("suppresses mixed-currency aggregates", () => {
+    expect(
+      formatQuoteListKpiAmount(1000, { mixed: true, label: "mixed" }, (n) => String(n)),
+    ).toBe("—");
+  });
+
+  it("formats homogeneous currency totals", () => {
+    expect(
+      formatQuoteListKpiAmount(1000, { mixed: false, label: "EUR" }, (n) => `${n} EUR`),
+    ).toBe("1000 EUR");
   });
 });

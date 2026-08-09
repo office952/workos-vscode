@@ -8,6 +8,7 @@ import {
 } from "@/lib/commercialSpineNavigation";
 import {
   DEFAULT_QUOTE_CURRENCY,
+  formatQuoteListKpiAmount,
   formatQuoteMoney,
   quoteCurrencyLabel,
 } from "@/lib/quoteCurrency";
@@ -837,21 +838,27 @@ export default function Quotes() {
         </TechnicalDetailsDisclosure>
       )}
 
-      {/* Summary KPIs */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* Summary KPIs — suppress cross-currency sums (no invent aggregate) */}
+      <div className="grid grid-cols-3 gap-3" data-testid="quotes-list-kpi">
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Valoare Totală</p>
-          <p className="text-[20px] font-bold text-wo-text-primary mt-1">{formatAmount(totalValue)}</p>
+          <p className="text-[20px] font-bold text-wo-text-primary mt-1">
+            {formatQuoteListKpiAmount(totalValue, kpiCurrency, formatAmount)}
+          </p>
           <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Acceptate</p>
-          <p className="text-[20px] font-bold text-emerald-400 mt-1">{formatAmount(acceptedValue)}</p>
+          <p className="text-[20px] font-bold text-emerald-400 mt-1">
+            {formatQuoteListKpiAmount(acceptedValue, kpiCurrency, formatAmount)}
+          </p>
           <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">În Pipeline</p>
-          <p className="text-[20px] font-bold text-amber-400 mt-1">{formatAmount(pendingValue)}</p>
+          <p className="text-[20px] font-bold text-amber-400 mt-1">
+            {formatQuoteListKpiAmount(pendingValue, kpiCurrency, formatAmount)}
+          </p>
           <p className="text-[10px] text-wo-text-muted">{kpiCurrency.label}</p>
         </div>
       </div>
@@ -1012,7 +1019,11 @@ export default function Quotes() {
                     <AlertTriangle className="w-4 h-4 text-blue-300 mt-0.5 shrink-0" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-[12px] font-semibold text-blue-200">Ofertă client înghețată</p>
+                        <p className="text-[12px] font-semibold text-blue-200">
+                          {selectedQuote.acceptedSnapshotV2Id != null
+                            ? "Ofertă client înghețată"
+                            : "Ofertă client (Snapshot V2)"}
+                        </p>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/30 text-blue-300 border border-blue-700/30">
                           Ofertă client (Snapshot V2)
                         </span>
@@ -1291,7 +1302,7 @@ export default function Quotes() {
                 <SectionHeader title="Ofertă client — totaluri afișate" icon={<DollarSign className="w-4 h-4" />} />
                 <p className="text-[10px] text-wo-text-muted mt-2 mb-3">
                   {isUnpricedIntakeV6Quote(selectedQuote)
-                    ? "Draft V6 nepretuit: totalurile de mai jos sunt placeholder 0 RON până când bridge-ul V6 scrie totalurile backend oficiale."
+                    ? `Draft V6 nepretuit: totalurile de mai jos sunt placeholder 0 ${selectedCurrency} până când bridge-ul V6 scrie totalurile backend oficiale.`
                     : selectedQuote.acceptedSnapshotV2Id != null
                     ? "Frozen Snapshot V2 de mai sus rămâne sursa canonică pentru acceptare și conversie. Totalurile de aici sunt afișajul curent al ofertei selectate."
                     : "Până la freeze, aceste totaluri rămân afișajul curent al ofertei, nu un snapshot comercial înghețat."}

@@ -242,12 +242,12 @@ export default function Utilaje() {
       >
         <summary className="cursor-pointer list-none text-[11px] font-semibold text-wo-text-primary flex items-center gap-2">
           <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
-          Capacity — WC shift util% + utilaj GAP fără assignment
+          Capacity Stage 1 · IMPLEMENTED_INACTIVE — WC util% diagnostic
           <span className="text-[10px] font-normal text-wo-text-muted group-open:hidden">(detalii)</span>
         </summary>
         <div className="mt-2 space-y-2">
           <CapacityNotice
-            message="Utilaje = feasibility / capacity — NU tarif comercial. Util% WC = planned/shift; utilaj fără assignment = GAP."
+            message="Capacity Stage 1 = IMPLEMENTED_INACTIVE. Utilaje = feasibility diagnostic — NU tarif comercial, NU produs Capacity activ. Util% WC = planned/shift; utilaj fără assignment = GAP."
             compact
           />
           {calendarShiftOk ? (

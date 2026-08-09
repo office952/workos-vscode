@@ -103,14 +103,14 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
       },
       {
         to: "/operator",
-        label: "Acțiune task",
+        label: "Acțiune task (legacy)",
         icon: User,
         navKey: "operator",
         status: "compat",
       },
       {
         to: "/tablet",
-        label: "Stații",
+        label: "Stații (legacy)",
         icon: Zap,
         navKey: "tablet",
         status: "compat",

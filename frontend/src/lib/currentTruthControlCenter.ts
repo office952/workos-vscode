@@ -49,6 +49,7 @@ export type PresentStatus =
   | "PARTIAL"
   | "BLOCAT"
   | "INACTIV"
+  | "IMPLEMENTED_INACTIVE"
   | "NEVERIFICAT";
 
 export type GovernanceEnforcementStatus =
@@ -296,9 +297,10 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     status: "PARTIAL",
     inputRo: "ExecutionPlan + assigned employee (controlled session path)",
     outputRo: "Session observations / ExecutionActuals read model",
-    consumerRo: "Post-Job · Profitability actual labor input (time closed; rates deferred)",
+    consumerRo:
+      "Post-Job · Profitability actual labor input CLOSED · Monetary composition DONE_FOR_V1 (Policy A EUR)",
     limitationRo:
-      "SoT: execution_reality.tasks_json. WRITE AUTHORITY = controlled_task_session_service (assignment-gated, server timestamps). Compatibility bridges: /reality/start|end-task + operator task-action start/complete + mobile start/complete → same authority. Session END ≠ task complete (complete = separate stamp). Pause/block annotations remain side-channel. Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv. Profitability actual labor input = CLOSED. Labor rate authority = RoleSkillLaborCostPolicy → finalize_labor_lines → ActualLaborCostLine (frozen rate_used); role/skill snapshotted at session START. HISTORICAL_RATE_STABILITY = PROVEN. Monetary Profitability dashboard = NOT_STARTED.",
+      "SoT: execution_reality.tasks_json. WRITE AUTHORITY = controlled_task_session_service (assignment-gated, server timestamps). Compatibility bridges: /reality/start|end-task + operator task-action start/complete + mobile start/complete → same authority. Session END ≠ task complete (complete = separate stamp). Pause/block annotations remain side-channel. Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity Stage 1 = IMPLEMENTED_INACTIVE. Profitability actual labor input = CLOSED. Labor rate authority = RoleSkillLaborCostPolicy → finalize_labor_lines → ActualLaborCostLine (frozen rate_used); role/skill snapshotted at session START. HISTORICAL_RATE_STABILITY = PROVEN. Monetary Profitability = DONE_FOR_V1 (Policy A: RON costs→EUR via Order-convert FX stamp; machine/other N/A_FOR_V1).",
     verifyRoute: "/execution",
     spineOrder: 9,
   },
@@ -313,7 +315,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Reconciliere matched / missing / variance (read-only)",
     consumerRo: "Operator review / învățare",
     limitationRo:
-      "Fără write-back comercial; TE2E-028A static + TE2E-028B formula Letters PROVEN; TE2E-028 rămâne deschis (stoc G3 / labor $ / fixture / Letters breadth).",
+      "Fără write-back comercial; TE2E-028A static + TE2E-028B formula Letters PROVEN; labor actual + monetary Profitability = DONE_FOR_V1. TE2E-028 residual: stoc G3 / fixture breadth (nu labor $).",
     verifyRoute: "/execution",
     spineOrder: 10,
   },
@@ -383,6 +385,39 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     limitationRo:
       "MachineRun V1 E2E closed for current flow (write+read+CREATE/ADD+lifecycle+context links). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred. Phase B pre-start assignment/reassignment = SAFETY_PROVEN (domeniu separat). REASSIGNMENT_PHASE_E (post-start transfer) = DEFERRED. Employee Session ≠ MachineRun.",
     verifyRoute: "/execution/machine-runs",
+    spineOrder: 0,
+  },
+  {
+    id: "profitability_monetary_v1",
+    labelRo: "Profitabilitate monetară V1",
+    technicalName: "Profitability Monetary Composition",
+    owner: "Profitability Actual Read Model",
+    purposeRo:
+      "Contribuție cunoscută V1: venit acceptat − manoperă − material (Policy A EUR).",
+    status: "CONFIRMAT",
+    inputRo:
+      "Order Snapshot V2 revenue · ActualLaborCostLine · StockMovement cost · profitability_fx_v1 stamp",
+    outputRo:
+      "monetary_v1 / known contribution EUR · machine/other N/A_FOR_V1 · fail-closed fără stamp",
+    consumerRo: "/execution/:orderId (admin/manager) · FinalResult + CostsCompleteness",
+    limitationRo:
+      "Nu este profit contabil complet. Machine/Other = N/A_FOR_V1. FX = stamp Order convert, nu Settings live.",
+    verifyRoute: "/execution",
+    spineOrder: 0,
+  },
+  {
+    id: "capacity_stage_1",
+    labelRo: "Capacity Stage 1",
+    technicalName: "Capacity Stage 1",
+    owner: "Capacity (inactive)",
+    purposeRo: "Model planned load / shift — prezent în UI ca diagnostic, neactivat ca produs.",
+    status: "IMPLEMENTED_INACTIVE",
+    inputRo: "Company Calendar · WC planned minutes",
+    outputRo: "util% diagnostic (read-only)",
+    consumerRo: "Dashboard · Planificare · Utilaje (strips)",
+    limitationRo:
+      "IMPLEMENTED_INACTIVE — nu blochează ofertă/execuție; nu este Capacity produs activ.",
+    verifyRoute: "/dashboard",
     spineOrder: 0,
   },
   {
@@ -1391,15 +1426,23 @@ export const MODULE_CHAIN_TABS = [
 export type ModuleChainTabId = (typeof MODULE_CHAIN_TABS)[number]["id"];
 
 export function presentStatusBadgeClass(status: PresentStatus): string {
-  if (status === "CONFIRMAT")
-    return "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
-  if (status === "PARTIAL")
-    return "bg-wo-warning-muted text-wo-warning border-wo-warning/40";
-  if (status === "BLOCAT")
-    return "bg-red-50 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700";
-  if (status === "INACTIV")
-    return "bg-wo-surface-inset text-wo-text-muted border-wo-border-strong";
-  return "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong";
+  switch (status) {
+    case "CONFIRMAT":
+      return "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-700";
+    case "PARTIAL":
+      return "bg-wo-warning-muted text-wo-warning border-wo-warning/40";
+    case "BLOCAT":
+      return "bg-red-50 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700";
+    case "INACTIV":
+    case "IMPLEMENTED_INACTIVE":
+      return "bg-wo-surface-inset text-wo-text-muted border-wo-border-strong";
+    case "NEVERIFICAT":
+      return "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong";
+    default: {
+      const _exhaustive: never = status;
+      return _exhaustive;
+    }
+  }
 }
 
 export function governanceStatusBadgeClass(status: GovernanceEnforcementStatus): string {

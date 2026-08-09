@@ -225,6 +225,13 @@ export default function Orders() {
 
   const filtered = filterStatus === "all" ? orders : orders.filter((o) => o.status === filterStatus);
 
+  const orderBaseCurrencies = [
+    ...new Set(orders.map((o) => (o.baseCurrency ?? "RON").toUpperCase())),
+  ];
+  const ordersKpiMixed = orderBaseCurrencies.length > 1;
+  const ordersKpiCurrency = ordersKpiMixed
+    ? "monede diferite — total agregat indisponibil"
+    : (orderBaseCurrencies[0] ?? "RON");
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
   const inExecCount = orders.filter((o) => o.status === "in_execution").length;
   const completedCount = orders.filter((o) => o.status === "completed").length;
@@ -312,8 +319,10 @@ export default function Orders() {
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-wo-text-muted uppercase tracking-wide">Valoare Totală</p>
-          <p className="text-[16px] font-bold text-amber-700 dark:text-amber-400 mt-1">{formatCurrency(totalRevenue)}</p>
-          <p className="text-[10px] text-wo-text-muted">RON</p>
+          <p className="text-[16px] font-bold text-amber-700 dark:text-amber-400 mt-1">
+            {ordersKpiMixed ? "—" : formatCurrency(totalRevenue)}
+          </p>
+          <p className="text-[10px] text-wo-text-muted">{ordersKpiCurrency}</p>
         </div>
       </div>
 

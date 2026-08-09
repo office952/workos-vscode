@@ -1195,7 +1195,8 @@ export default function Dashboard() {
                 className="mb-3 rounded border border-wo-success/30 bg-wo-success-muted px-2 py-1.5 text-[10px] text-wo-success"
                 data-testid="capacity-calendar-active"
               >
-                Calendar/shift activ — util% = planned load / ore shift pe WC (warnings non-blocking).
+                Calendar/shift date disponibile — util% diagnostic. Capacity Stage 1 =
+                IMPLEMENTED_INACTIVE (nu produs Capacity activ).
               </div>
             ) : (
               <div

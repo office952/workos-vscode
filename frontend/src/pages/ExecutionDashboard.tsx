@@ -206,17 +206,21 @@ export default function ExecutionDashboard() {
           </p>
           {calendarShiftOk ? (
             <span className="text-[10px] text-wo-success border border-wo-success/35 bg-wo-success-muted px-1.5 py-0.5 rounded">
-              calendar/shift activ
+              calendar/shift date OK
             </span>
           ) : (
             <span className="text-[10px] text-wo-warning border border-wo-warning/35 bg-wo-warning-muted px-1.5 py-0.5 rounded">
               calendar/shift GAP
             </span>
           )}
+          <span className="text-[10px] text-wo-text-muted border border-wo-border-subtle px-1.5 py-0.5 rounded">
+            Capacity Stage 1 · IMPLEMENTED_INACTIVE
+          </span>
         </div>
         <p className="text-[10px] text-wo-text-muted">
-          Nu blochează oferta · nu CostEngine · nu POST materialize. Overload = warning only.
-          Minutes NULL+WARN: {minutesMissing}. Mentenanță: {maintAvail}. Materialize: BLOCAT.
+          Diagnostic planned load — nu Capacity produs activ · nu blochează oferta · nu CostEngine ·
+          nu POST materialize. Overload = warning only. Minutes NULL+WARN: {minutesMissing}.
+          Mentenanță: {maintAvail}. Materialize: BLOCAT.
         </p>
         <p className="text-[10px] text-wo-text-muted" data-testid="execution-batch04-gates">
           Assignment truth: {assignmentTruth} ·{" "}

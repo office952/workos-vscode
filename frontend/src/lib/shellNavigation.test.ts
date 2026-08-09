@@ -63,8 +63,8 @@ describe("shellNavigation — U7 role projection + production home", () => {
   it("operator primary ops home is Atelier without Control/Cereri/Oferte", () => {
     const labels = projectedNavLabels("operator");
     expect(labels).toContain("Atelier");
-    expect(labels).toContain("Acțiune task");
-    expect(labels).toContain("Stații");
+    expect(labels).toContain("Acțiune task (legacy)");
+    expect(labels).toContain("Stații (legacy)");
     expect(labels).not.toContain("Control producție");
     expect(labels).not.toContain("Shop Floor");
     expect(labels).not.toContain("Cereri");
@@ -128,8 +128,8 @@ describe("shellNavigation — U7 role projection + production home", () => {
     expect(byLabel.get("Planificare")).toBe("/execution");
     expect(byLabel.get("Rulări utilaj")).toBe("/execution/machine-runs");
     expect(byLabel.get("Atelier")).toBe("/shop-floor");
-    expect(byLabel.get("Stații")).toBe("/tablet");
-    expect(byLabel.get("Acțiune task")).toBe("/operator");
+    expect(byLabel.get("Stații (legacy)")).toBe("/tablet");
+    expect(byLabel.get("Acțiune task (legacy)")).toBe("/operator");
     expect(byLabel.get("Control producție")).toBe("/dashboard");
     expect(byLabel.get("Prețuri")).toBe("/inventory/pricing");
   });

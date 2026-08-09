@@ -80,5 +80,15 @@ export function quoteCurrencyLabel(
   if (unique.length === 1) {
     return { label: `${unique[0]} (cu TVA)`, mixed: false };
   }
-  return { label: "valori în monede diferite", mixed: true };
+  return { label: "valori în monede diferite — total agregat indisponibil", mixed: true };
+}
+
+/** Never show a cross-currency sum as a single money figure. */
+export function formatQuoteListKpiAmount(
+  amount: number,
+  currencyMeta: { mixed: boolean; label: string },
+  formatAmount: (n: number) => string,
+): string {
+  if (currencyMeta.mixed) return "—";
+  return formatAmount(amount);
 }

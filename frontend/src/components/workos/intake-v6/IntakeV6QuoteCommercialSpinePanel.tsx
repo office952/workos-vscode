@@ -292,7 +292,12 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     snapshotExists && snapshotAuthorityGross != null
       ? formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)
       : quoteTotalsAvailable
-        ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
+        ? formatMoney(
+            state?.quote_commercial_totals?.grand_total as number | null | undefined,
+            typeof state?.quote_commercial_totals?.currency === "string"
+              ? state.quote_commercial_totals.currency
+              : "EUR",
+          )
         : dryRunReady
           ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
           : "Nepretuit";
