@@ -1,0 +1,124 @@
+{
+  "base": "http://127.0.0.1:3010",
+  "screenshots": [
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_list_create_ready_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_create_dialog_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_create_candidates_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_create_selected_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_create_detail_after_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_create_dialog_dark.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_add_picker_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_add_after_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\mr_add_picker_dark.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\ops_graph_chip_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\ops_graph_chip_dark.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\execution_detail_chip_light.png",
+    "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\screenshots\\execution_detail_chip_dark.png"
+  ],
+  "network": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/execution/machine-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs?open_only=true",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/candidates?machine_id=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/3",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/execution/machine-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs?open_only=true",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/candidates?machine_id=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/execution/machine-runs/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/candidate-participants",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/add-participant",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/candidate-participants",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/by-task?execution_plan_id=25&task_key=node%3Aroot_product%3ATPL-VOLUMETRIC-LETTERS_v2%3Aface_cnc_cut_a",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/by-task?execution_plan_id=25&task_key=node%3Aroot_product%3ATPL-VOLUMETRIC-LETTERS_v2%3Aface_cnc_cut_a",
+      "status": 200
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "requestVolume": {
+    "opsGraph": {
+      "taskCount": "1",
+      "lookupCount": "1"
+    },
+    "executionDetail": {
+      "taskCount": "1",
+      "lookupCount": "1"
+    }
+  }
+}

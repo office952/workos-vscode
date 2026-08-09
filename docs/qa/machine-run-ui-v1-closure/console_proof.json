@@ -1,0 +1,19 @@
+{
+  "base": "http://127.0.0.1:3010",
+  "machine_run_routes": [
+    "/execution/machine-runs",
+    "/execution/machine-runs/1",
+    "/execution/ops-graph?orderId=880755",
+    "/execution/880755"
+  ],
+  "uncaught_exceptions": 0,
+  "unhandled_promise_rejections": 0,
+  "react_duplicate_key_warnings": 0,
+  "machine_run_candidate_loop_errors": 0,
+  "by_task_lookup_storm": false,
+  "notes": [
+    "Sparse isolated DB returns 404 for some ExecutionPlan V2 preview/audit endpoints unrelated to MachineRun.",
+    "CREATE/ADD/by-task calls returned HTTP 200; no duplicate POSTs observed for a single operator action."
+  ],
+  "ok_for_machine_run_closure": true
+}

@@ -1,0 +1,102 @@
+{
+  "base": "http://127.0.0.1:8010/api/v1/execution/resource-state/machine-runs",
+  "from": "browser_capture_plus_api",
+  "steps": [],
+  "lookup": {
+    "running_chip": {
+      "membership": {
+        "machine_run_id": 2,
+        "status": "RUNNING",
+        "machine_id": 1,
+        "machine_code": "CNC-1",
+        "machine_name": "CNC One",
+        "reservation_status": "RESERVED",
+        "execution_plan_id": 25,
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:face_cnc_cut_a",
+        "order_id": 880755,
+        "participant_status": "ACTIVE"
+      }
+    },
+    "no_active_after_create_consumed": {
+      "membership": null
+    }
+  },
+  "qa_machine_runs": 0,
+  "browser_api_calls": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs?open_only=true",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/candidates?machine_id=1",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/3",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs?open_only=true",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/candidates?machine_id=1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/candidate-participants",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/add-participant",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/1/candidate-participants",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/by-task?execution_plan_id=25&task_key=node%3Aroot_product%3ATPL-VOLUMETRIC-LETTERS_v2%3Aface_cnc_cut_a",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:3010/api/v1/execution/resource-state/machine-runs/by-task?execution_plan_id=25&task_key=node%3Aroot_product%3ATPL-VOLUMETRIC-LETTERS_v2%3Aface_cnc_cut_a",
+      "status": 200
+    }
+  ],
+  "requestVolume": {
+    "opsGraph": {
+      "taskCount": "1",
+      "lookupCount": "1"
+    },
+    "executionDetail": {
+      "taskCount": "1",
+      "lookupCount": "1"
+    }
+  }
+}

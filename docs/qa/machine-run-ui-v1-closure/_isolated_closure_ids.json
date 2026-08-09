@@ -1,0 +1,22 @@
+{
+  "db": "C:\\w\\psiso\\docs\\qa\\machine-run-ui-v1-closure\\_isolated_s67_closure.db",
+  "alembic": "s67_machine_run_execution_status",
+  "ids": {
+    "HELD": 1,
+    "RUNNING": 2
+  },
+  "create_candidate_plans": [
+    27,
+    28,
+    29
+  ],
+  "add_candidate_plans": [
+    23,
+    24
+  ],
+  "chip_plan_ids": [
+    25,
+    26
+  ],
+  "note": "isolated only \u2014 never QA"
+}

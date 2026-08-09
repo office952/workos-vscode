@@ -436,11 +436,11 @@ FRONTEND_START_COMPLETE_UI = YES_MACHINE_RUN_ONLY
 MACHINE_RUN_SHOP_FLOOR_UI = PASS
 CANDIDATE_DISCOVERY_API = PASS
 TASK_TO_ACTIVE_MACHINE_RUN_LOOKUP = PASS
-CREATE_UI = DEFERRED
-ADD_UI = DEFERRED
-SECONDARY_CONTEXT_LINKS = DEFERRED
-RECOMMENDED_NEXT_SLICE =
-MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE
+CREATE_UI = VERIFIED
+ADD_UI = VERIFIED
+SECONDARY_CONTEXT_LINKS = VERIFIED
+MACHINE_RUN_V1_E2E = CLOSED
+RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
 
@@ -478,7 +478,8 @@ Operator read API: `docs/architecture/MACHINE_RUN_OPERATOR_READ_API.md`
 Read API worklog: `docs/worklog/realignment/2026-08-07_machine_run_operator_read_api.md`  
 Candidate discovery + task lookup: `docs/architecture/MACHINE_RUN_CANDIDATE_DISCOVERY_AND_TASK_LOOKUP_READ_API.md`  
 Candidate/lookup worklog: `docs/worklog/realignment/2026-08-09_machine_run_candidate_discovery_and_task_lookup_read_api.md`  
-Shop-floor UI worklog: `docs/worklog/realignment/2026-08-09_machine_run_shop_floor_ui_implementation.md`
+Shop-floor UI worklog: `docs/worklog/realignment/2026-08-09_machine_run_shop_floor_ui_implementation.md`  
+UI CREATE/ADD/context closure worklog: `docs/worklog/realignment/2026-08-09_machine_run_ui_create_add_context_links_closure.md`
 
 **Why:**
 
@@ -489,11 +490,11 @@ Shop-floor UI worklog: `docs/worklog/realignment/2026-08-09_machine_run_shop_flo
 - **Shop-floor UI readiness PASS:** primary placement `/execution/machine-runs` (new page YES); secondary chips; Utilaje LATER.
 - **Operator read API PASS:** GET list + detail · `execution.machine_run.read` · modules/governance ownership rows updated.
 - **Shop-floor UI PASS:** `/execution/machine-runs` list+detail · command wiring · light/dark.
-- **Candidate discovery + task lookup PASS:** shared eligibility with CREATE/ADD · by-task active membership · CREATE/ADD UI + chips still deferred (UI closure).
+- **Candidate discovery + task lookup PASS:** shared eligibility with CREATE/ADD · by-task active membership.
+- **UI CREATE/ADD + context links PASS (2026-08-09):** `/execution/machine-runs` CREATE · HELD ADD · ExecutionDetail + Ops-Graph chips · `MACHINE_RUN_V1_E2E = CLOSED`.
 
-**Next (future candidate only):**  
-`MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE` — only with separate Owner GO.  
-Still deferred: PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home.
+**Still deferred (not V1 blockers):**  
+PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home · Capacity activation.
 
 ---
 
