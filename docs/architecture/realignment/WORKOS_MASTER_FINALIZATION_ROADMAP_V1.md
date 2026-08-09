@@ -69,7 +69,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | LABOR_COST_RATE_SNAPSHOT_AUTHORITY | PASS |
 | HISTORICAL_RATE_STABILITY | PROVEN |
 | PROFITABILITY_ACTUAL_LABOR_COST_READINESS | READY |
-| PROFITABILITY_MONETARY_CALCULATION | NOT_STARTED |
+| PROFITABILITY_MONETARY_CALCULATION | PARTIAL_BLOCKED (currency EUR/RON) |
 | REASSIGNMENT_PHASE_E | DEFERRED |
 | CAPACITY_STAGE_1 | IMPLEMENTED_INACTIVE |
 | QA_MUTATIONS (this GO) | 0 |
@@ -77,9 +77,10 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
 | MATERIAL_ACTUALS_V1 | DONE_FOR_V1 |
 | PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
-| MACHINE_COST_V1 | OWNER_DECISION_PENDING |
-| OTHER_DIRECT_COST_V1 | OWNER_DECISION_PENDING |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~85% |
+| MACHINE_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
+| OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
+| PROFITABILITY_MONETARY_COMPOSITION | PARTIAL_BLOCKED — currency EUR/RON gap |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~87% |
 
 ---
 
@@ -104,9 +105,9 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | O. Capacity Stage 1 | IMPLEMENTED_INACTIVE_BY_DECISION | NO | Code present, inactive | Activation | Owner Option D | NO |
 | P. Actual material cost | DONE_FOR_V1 | YES | Freeze-on-write StockMovement; material_input helper; historical stability PROVEN | Operator capture discipline for Letters jobs | — | NO inventory program |
 | Q. Actual labor cost | DONE_FOR_V1 | YES | Time + historical rate freeze | Monetary Profitability rollup | — | NO |
-| R. Actual machine cost | NOT_STARTED_V1_REQUIRED | CONDITIONAL | Runtime exists | Dated machine cost policy | Cost ≠ runtime | Later if N/A |
-| S. Other/service actuals | NOT_STARTED_V1_REQUIRED | CONDITIONAL | Fail-closed N/A | Declared other-direct ledger | — | Later if N/A |
-| T. Profitability monetary | NOT_STARTED_V1_REQUIRED | YES | RO models; labor READY | Composition + operator view | Gaps fail-closed | After inputs |
+| R. Actual machine cost | DECLARE_NA_FOR_V1 | NO (V1) | Runtime exists; Owner N/A for cost | — | — | Later if INCLUDE |
+| S. Other/service actuals | DECLARE_NA_FOR_V1 | NO (V1) | Explicit N/A_FOR_V1 (not zero) | — | — | Later if INCLUDE |
+| T. Profitability monetary | PARTIAL_V1_BLOCKER | YES | Composition + N/A + UI; same-currency COMPLETE | Historical FX / unify currency for Letters EUR vs RON | currency_mismatch_no_fx | After currency authority |
 | U. HR / Pontaj boundary | DONE_FOR_V1 | YES | Separation proven | — | Salary≠job cost | NO |
 | V. Utilaje registry | PARTIAL_NON_BLOCKING | YES | Registry + MR link | Capacity util% honesty | — | Bounded |
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
@@ -114,7 +115,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset; security write-gate DONE | Owner SQLite confirm; secrets; smoke pack | Deploy misconfig | Bounded |
 
-**Counts (exact):** DONE_FOR_V1 = 14 · OPEN/PARTIAL_V1_BLOCKER = 3 · PARTIAL_NON_BLOCKING = 8 · NOT_STARTED_V1_REQUIRED = 3 · IMPLEMENTED_INACTIVE = 1 · DEFERRED (cross-cutting Phase E / PAUSE) = listed in Later
+**Counts (exact):** DONE_FOR_V1 = 14 · OPEN/PARTIAL_V1_BLOCKER = 2 (T currency, Z prod readiness) · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later
 
 ---
 
@@ -143,7 +144,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material READY; revenue READY | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
+| Profitability monetary | Composition + N/A done; **EUR/RON currency gate blocks Letters** | Labor/material/revenue READY; Owner N/A machine/other | MEDIUM | SMALL | NONE | SMALL (currency authority) |
 | Production readiness pack | Owner SQLite record; secrets; smoke; APP_ENV discipline | Security DONE | LOW | NONE | NONE | SMALL |
 | Machine cost (if required) | Dated machine cost policy | MachineRun runtime | HIGH | SMALL | LIKELY | LARGE |
 
@@ -177,9 +178,10 @@ Verified against current truth:
 | Revenue | READY | Frozen `accepted_commercial_total` + currency; net/VAT/gross envelope when Quote had them |
 | Labor | READY | Closed sessions + finalize → frozen `ActualLaborCostLine` |
 | Material | READY | Freeze-on-write StockMovement + material_input; fail-closed if unused/missing cost |
-| Machine | BLOCKED / CONDITIONAL | Runtime ≠ cost; fail-closed until policy |
-| Other | BLOCKED / CONDITIONAL | `other_direct_not_declared` |
-| Provenance | PARTIAL | Labor/material strong; machine/other weak |
+| Monetary composition | PARTIAL | Same-currency DONE; Letters EUR/RON BLOCKED; machine/other N/A_FOR_V1 |
+| Machine | N_A_FOR_V1 | Owner `DECLARE_NA_FOR_V1` — not zero |
+| Other | N_A_FOR_V1 | Owner `DECLARE_NA_FOR_V1` — not zero |
+| Provenance | PARTIAL | Labor/material strong; N/A explicit for machine/other |
 | Currency | PARTIAL | Snapshot currency + labor RON; no FX |
 | Historical stability | PARTIAL→strong on labor | Labor PROVEN; full P&L rollup NOT_STARTED |
 
@@ -211,11 +213,11 @@ PROFITABILITY_MONETARY_CALCULATION = NOT_STARTED
 3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
 4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER; Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
 5. **SQLite as V1 production DB** — confirm laboratory/single-tenant freeze (Postgres LATER).  
-6. **Machine actual cost in V1** — `OWNER_DECISION_PENDING` — INCLUDE vs `DECLARE_NA_FOR_V1` (prep: `2026-08-09_profitability_v1_machine_other_cost_owner_decision.md`; agent recommends N/A).  
-7. **Other direct cost in V1** — `OWNER_DECISION_PENDING` — INCLUDE vs `DECLARE_NA_FOR_V1` (same prep; agent recommends N/A).
+6. ~~**Machine actual cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
+7. ~~**Other direct cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
+8. **Profitability currency composition** — Letters EUR revenue vs RON actual costs; no invent FX (`PROFITABILITY_CURRENCY_COMPOSITION_GAP`).
 
-Do **not** ask Owner to decide technical implementation details agents can resolve.  
-Do **not** start `PROFITABILITY_MONETARY_COMPOSITION_V1` until decisions 6–7 are answered.
+Do **not** ask Owner to decide technical implementation details agents can resolve.
 
 ---
 
@@ -249,7 +251,7 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE** (`WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE`)  
 2. ~~Production security gates (intake-v5 + HR salary read authz)~~ **DONE** (`WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE`)  
 3. ~~Material actuals V1 sufficiency~~ **DONE** (`WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY`)  
-4. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred — **Owner decision**)  
+4. Profitability currency composition authority (EUR revenue vs RON actuals — no invent FX)  
 5. Bounded operator UI honesty (quotes list currency aggregates; execution density)  
 6. Production readiness pack (SQLite confirm, secrets, smoke)  
 7. V1 exit criteria verification  
@@ -261,10 +263,10 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-PROFITABILITY_MONETARY_COMPOSITION_V1
+WORKOS_V1_PROFITABILITY_CURRENCY_COMPOSITION_AUTHORITY
 ```
 
-**Why:** Labor + material + revenue inputs are READY. Remaining is composition with fail-closed machine/other (Owner must declare N/A or required). No Inventory program.
+**Why:** Monetary composition + N/A semantics are implemented, but Letters EUR revenue cannot be subtracted from RON labor/material without inventing FX. Close this honestly (Owner unify currency or historical FX authority) before claiming Profitability DONE_FOR_V1.
 
 ### BUILD_AFTER_NEXT
 
@@ -272,7 +274,7 @@ PROFITABILITY_MONETARY_COMPOSITION_V1
 WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK
 ```
 
-Owner SQLite confirm, secrets posture, Letters E2E smoke.
+Owner SQLite confirm, secrets posture, Letters E2E smoke (after monetary unblocked).
 
 ### BUILD_AFTER_THAT
 
@@ -280,7 +282,7 @@ Owner SQLite confirm, secrets posture, Letters E2E smoke.
 WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES
 ```
 
-Quotes list currency aggregates + dense execution chrome — non-blocking polish after monetary path.
+Quotes list currency aggregates + dense execution chrome.
 
 ---
 
