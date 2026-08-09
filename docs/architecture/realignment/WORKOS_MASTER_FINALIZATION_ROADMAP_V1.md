@@ -81,7 +81,8 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
 | PROFITABILITY_MONETARY_COMPOSITION | DONE_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A (RON costs → EUR @ Order-convert stamp) |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~90% |
+| BOUNDED_UI_HONESTY | DONE_FOR_V1 |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~92% |
 
 ---
 
@@ -112,7 +113,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | U. HR / Pontaj boundary | DONE_FOR_V1 | YES | Separation proven | — | Salary≠job cost | NO |
 | V. Utilaje registry | PARTIAL_NON_BLOCKING | YES | Registry + MR link | Capacity util% honesty | — | Bounded |
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
-| X. Operator UI | PARTIAL_NON_BLOCKING | YES | Letters spine usable | Dense screens; ACM/Logo | — | Bounded only |
+| X. Operator UI | DONE_FOR_V1 (honesty) | YES | Currency/KPI/N/A/Capacity/Modules honesty closed | Residual density polish LATER | — | Polish only |
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset; security write-gate DONE | Owner SQLite confirm; secrets; smoke pack | Deploy misconfig | Bounded |
 
@@ -254,7 +255,7 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 2. ~~Production security gates (intake-v5 + HR salary read authz)~~ **DONE** (`WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE`)  
 3. ~~Material actuals V1 sufficiency~~ **DONE** (`WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY`)  
 4. ~~Profitability currency + monetary composition~~ **DONE** (Policy A)  
-5. Bounded operator UI honesty (quotes list currency aggregates; execution density)  
+5. ~~Bounded operator UI honesty~~ **DONE** (`WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES`)  
 6. Production readiness pack (SQLite confirm, secrets, smoke)  
 7. V1 exit criteria verification  
 
@@ -265,26 +266,24 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES
-```
-
-**Why:** Profitability monetary path is DONE_FOR_V1 (composition + Policy A). Remaining V1 blockers are mostly UI honesty polish and production readiness.
-
-### BUILD_AFTER_NEXT
-
-```text
 WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK
 ```
 
-Owner SQLite confirm, secrets posture, Letters E2E smoke.
+**Why:** Monetary + UI honesty closed for V1. Remaining critical path is production readiness (SQLite Owner confirm, secrets, Letters smoke) then exit verification.
 
-### BUILD_AFTER_THAT
+### BUILD_AFTER_NEXT
 
 ```text
 WORKOS_V1_EXIT_CRITERIA_VERIFICATION
 ```
 
 Final V1 exit checklist against roadmap §14.
+
+### BUILD_AFTER_THAT
+
+```text
+(none — V1 exit or Owner later program)
+```
 
 ---
 
