@@ -31,6 +31,20 @@ EXECUTION_PLAN_SOURCE_ORDER_SNAPSHOT_V2 = "order_snapshot_v2"
 OrderSnapshotV2ConvertStatus = Literal["converted", "blocked"]
 
 
+class ProfitabilityFxV1Stamp(BaseModel):
+    """Historical EUR↔RON rate frozen at Order Snapshot V2 convert (Policy A).
+
+    Used only by Profitability composition. Does not reprice commercial totals.
+    Live Settings must never override this stamp at P&L view.
+    """
+
+    policy: Literal["A"] = "A"
+    eur_to_ron_rate: float
+    rate_source: str = "company_commercial_settings.eur_to_ron_rate"
+    freeze_point: Literal["order_convert"] = "order_convert"
+    frozen_at: str
+
+
 class OrderSnapshotV2(BaseModel):
     """Frozen order snapshot — commercial authority separate from internal estimate."""
 
@@ -58,6 +72,8 @@ class OrderSnapshotV2(BaseModel):
     accepted_vat_percent: float | None = None
     accepted_commercial_gross: float | None = None
     commercial_adjustment_trace: dict[str, Any] | None = None
+    # Owner PROFITABILITY_CURRENCY_POLICY=A — stamp only; never mutates accepted_commercial_total.
+    profitability_fx_v1: ProfitabilityFxV1Stamp | None = None
     estimated_internal_total: float | None = None
     owner_decisions_snapshot: list[QuoteSnapshotOwnerDecision] = Field(default_factory=list)
     warnings_snapshot: list[str] = Field(default_factory=list)

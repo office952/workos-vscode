@@ -21,6 +21,8 @@ const COST_REASON_RO: Record<string, string> = {
   actual_material_cost_missing: "Cost material realizat incomplet",
   material_valuation_unavailable: "Valoare materială înghețată lipsă",
   currency_mismatch_no_fx: "Monede incompatibile — fără conversie FX inventată",
+  profitability_fx_stamp_missing:
+    "Lipsește cursul FX înghețat la convertirea comenzii (Policy A)",
 };
 
 export function CostsCompletenessPanel({ orderId, role }: { orderId: number; role: ExecutionResultRole }) {
@@ -56,6 +58,10 @@ export function CostsCompletenessPanel({ orderId, role }: { orderId: number; rol
   const laborCurrency = costs?.labor_actual_cost?.currency ?? monetary?.labor?.currency;
   const materialCurrency = costs?.actual_material_cost?.currency ?? monetary?.materials?.currency;
   const knownCost = costs?.actual_total_cost;
+  const knownCostEur = monetary?.known_actual_cost_normalized as Record<string, unknown> | undefined;
+  const fx = (model?.monetary_v1 as Record<string, unknown> | undefined)?.fx as
+    | Record<string, unknown>
+    | undefined;
 
   return (
     <section
@@ -65,6 +71,9 @@ export function CostsCompletenessPanel({ orderId, role }: { orderId: number; rol
       <h2 className="text-sm font-semibold text-wo-text-primary">Completitudinea costurilor realizate</h2>
       <p className="mt-1 text-[11px] text-wo-text-muted">
         Domeniu V1: venit + manoperă + material. Utilaj și alte directe = N/A pentru V1 (nu zero).
+        {fx?.applied === true
+          ? ` Costuri RON→EUR cu curs înghețat la convert (${String(fx.eur_to_ron_rate)}).`
+          : ""}
       </p>
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 text-[12px]">
         <Cost
@@ -79,6 +88,13 @@ export function CostsCompletenessPanel({ orderId, role }: { orderId: number; rol
           fact={knownCost}
           currency={knownCost?.currency ?? laborCurrency}
         />
+        {knownCostEur?.available === true ? (
+          <Cost
+            label="Cost cunoscut normalizat (Policy A)"
+            fact={knownCostEur}
+            currency={knownCostEur.currency ?? "EUR"}
+          />
+        ) : null}
         <Cost label="Cost utilaj" fact={costs?.machine_actual_cost} currency={revenueCurrency} />
         <Cost label="Alte costuri directe" fact={costs?.other_actual_cost} currency={revenueCurrency} />
       </div>

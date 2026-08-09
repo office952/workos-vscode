@@ -22,9 +22,9 @@ from models.stock_movements import StockMovement
 from services.actual_cost_policy_runtime_service import ActualCostPolicyRuntimeService
 from services.material_actuals_service import MaterialActualsService
 from services.profitability_actual_read_model_service import (
-    REASON_CURRENCY_MISMATCH_NO_FX,
     REASON_MACHINE_NA_FOR_V1,
     REASON_OTHER_DIRECT_NA_FOR_V1,
+    REASON_PROFITABILITY_FX_STAMP_MISSING,
     ProfitabilityActualReadModelService,
 )
 from tests._db_fixture import IsolatedDBFixture
@@ -75,25 +75,27 @@ async def _seed_job(
     material_currency: str = "RON",
     revenue: float = 1000.0,
     close: bool = True,
+    profitability_fx_v1: dict | None = None,
 ) -> None:
     now = datetime.now(timezone.utc)
+    snap: dict = {
+        "accepted_commercial_total": revenue,
+        "accepted_currency": revenue_currency,
+        "estimated_internal_total": 600.0,
+        "estimated_internal_cost_snapshot": {
+            "estimated_material_cost": 200.0,
+            "estimated_operation_cost": 400.0,
+        },
+    }
+    if profitability_fx_v1 is not None:
+        snap["profitability_fx_v1"] = profitability_fx_v1
     session.add(
         Orders(
             id=order_id,
             code=f"QA-PM-{order_id}",
             client_name="Monetary V1",
             status="in_production",
-            snapshot_v2_json=json.dumps(
-                {
-                    "accepted_commercial_total": revenue,
-                    "accepted_currency": revenue_currency,
-                    "estimated_internal_total": 600.0,
-                    "estimated_internal_cost_snapshot": {
-                        "estimated_material_cost": 200.0,
-                        "estimated_operation_cost": 400.0,
-                    },
-                }
-            ),
+            snapshot_v2_json=json.dumps(snap),
         )
     )
     session.add(
@@ -210,7 +212,7 @@ async def test_negative_contribution(db_fixture):
 
 
 @pytest.mark.asyncio
-async def test_eur_revenue_ron_costs_fail_closed(db_fixture):
+async def test_eur_revenue_ron_costs_fail_closed_without_fx_stamp(db_fixture):
     async with db_fixture.session_maker() as session:
         await _clear(session)
         await _seed_job(
@@ -226,11 +228,78 @@ async def test_eur_revenue_ron_costs_fail_closed(db_fixture):
         assert mv["scope_status"] == "BLOCKED_CURRENCY"
         assert mv["fx_required"] is True
         assert mv["known_contribution"]["available"] is False
-        assert mv["known_contribution"]["reason"] == REASON_CURRENCY_MISMATCH_NO_FX
+        assert mv["known_contribution"]["reason"] == REASON_PROFITABILITY_FX_STAMP_MISSING
         # Cost total still available in RON (labor+material same currency)
         assert mv["known_actual_cost"]["available"] is True
         assert model["actual_cost_truth"]["machine_actual_cost"]["reason"] == REASON_MACHINE_NA_FOR_V1
         assert model["actual_cost_truth"]["other_actual_cost"]["reason"] == REASON_OTHER_DIRECT_NA_FOR_V1
+
+
+@pytest.mark.asyncio
+async def test_policy_a_eur_revenue_ron_costs_with_stamp(db_fixture):
+    async with db_fixture.session_maker() as session:
+        await _clear(session)
+        await _seed_job(
+            session,
+            order_id=880077,
+            revenue_currency="EUR",
+            labor_currency="RON",
+            material_currency="RON",
+            revenue=1000.0,
+            profitability_fx_v1={
+                "policy": "A",
+                "eur_to_ron_rate": 5.0,
+                "rate_source": "company_commercial_settings.eur_to_ron_rate",
+                "freeze_point": "order_convert",
+                "frozen_at": "2026-08-09T12:00:00+00:00",
+            },
+        )
+        model = await ProfitabilityActualReadModelService(session).build(880077)
+        mv = model["monetary_v1"]
+        assert mv["scope_status"] == "COMPLETE_FOR_V1_SCOPE"
+        assert mv["composition_currency"] == "EUR"
+        assert mv["fx"]["applied"] is True
+        assert mv["fx"]["live_settings_used"] is False
+        assert mv["fx"]["eur_to_ron_rate"] == pytest.approx(5.0)
+        # native cost 110 RON → 22 EUR; contribution 1000 - 22 = 978
+        assert mv["known_actual_cost"]["value"] == pytest.approx(110.0)
+        assert mv["known_actual_cost"]["currency"] == "RON"
+        assert mv["known_actual_cost_normalized"]["value"] == pytest.approx(22.0)
+        assert mv["known_actual_cost_normalized"]["currency"] == "EUR"
+        assert mv["known_contribution"]["value"] == pytest.approx(978.0)
+        assert mv["machine"]["status"] == "N_A_FOR_V1"
+        assert mv["na_represented_as_zero"] is False
+
+
+@pytest.mark.asyncio
+async def test_policy_a_ignores_live_settings_rate_change(db_fixture):
+    async with db_fixture.session_maker() as session:
+        await _clear(session)
+        await _seed_job(
+            session,
+            order_id=880078,
+            revenue_currency="EUR",
+            labor_currency="RON",
+            material_currency="RON",
+            revenue=1000.0,
+            profitability_fx_v1={
+                "policy": "A",
+                "eur_to_ron_rate": 5.0,
+                "freeze_point": "order_convert",
+                "frozen_at": "2026-08-09T12:00:00+00:00",
+            },
+        )
+        before = await ProfitabilityActualReadModelService(session).build(880078)
+        c0 = before["monetary_v1"]["known_contribution"]["value"]
+        # Mutate only native catalog/policy rates (live FX not even read by RM).
+        mat = (
+            await session.execute(select(Inventory_materials).where(Inventory_materials.id == 801))
+        ).scalar_one()
+        mat.unit_cost = 999.0
+        await session.commit()
+        after = await ProfitabilityActualReadModelService(session).build(880078)
+        assert after["monetary_v1"]["known_contribution"]["value"] == c0
+        assert after["monetary_v1"]["fx"]["eur_to_ron_rate"] == pytest.approx(5.0)
 
 
 @pytest.mark.asyncio

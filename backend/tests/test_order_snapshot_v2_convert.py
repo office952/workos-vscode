@@ -626,6 +626,21 @@ async def test_order_snapshot_v2_json_policy_fields(volumetric_v2_db):
     assert payload.quote_snapshot_v2_id == accepted.accepted_snapshot_v2_id
     assert payload.commercial_price_proposal_snapshot is not None
     assert payload.estimated_internal_cost_snapshot is not None
+    # Policy A: EUR→RON rate frozen at convert for Profitability only
+    assert payload.profitability_fx_v1 is not None
+    assert payload.profitability_fx_v1.policy == "A"
+    assert payload.profitability_fx_v1.eur_to_ron_rate > 0
+    assert payload.profitability_fx_v1.freeze_point == "order_convert"
+    frozen_rate = payload.profitability_fx_v1.eur_to_ron_rate
+
+    from services.company_commercial_settings_service import CompanyCommercialSettingsService
+
+    await CompanyCommercialSettingsService(volumetric_v2_db).update_eur_to_ron_rate(
+        frozen_rate + 1.5 if frozen_rate < 100 else 4.0
+    )
+    order_reload = await volumetric_v2_db.get(Orders, result["order_id"])
+    payload2 = OrderSnapshotV2.model_validate_json(order_reload.snapshot_v2_json)
+    assert payload2.profitability_fx_v1.eur_to_ron_rate == pytest.approx(frozen_rate)
 
 
 @pytest.mark.asyncio

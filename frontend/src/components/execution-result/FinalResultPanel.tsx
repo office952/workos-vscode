@@ -61,6 +61,15 @@ export function FinalResultPanel({ orderId, role }: { orderId: number; role: Exe
         {scope ? (
           <p className="mt-1 text-[10px] text-wo-text-muted">Status domeniu: {scope}</p>
         ) : null}
+        {typeof monetary?.fx === "object" &&
+        monetary.fx !== null &&
+        (monetary.fx as Record<string, unknown>).applied === true ? (
+          <p className="mt-1 text-[10px] text-wo-text-muted">
+            FX Policy A: curs înghețat{" "}
+            {String((monetary.fx as Record<string, unknown>).eur_to_ron_rate)} RON/EUR (Order
+            convert)
+          </p>
+        ) : null}
       </div>
     </section>
   );

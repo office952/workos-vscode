@@ -50,11 +50,14 @@ REASON_OTHER_DIRECT_UNCLASSIFIED = "direct_cost_unclassified"
 REASON_MATERIAL_MOVEMENT_MISSING = "material_movement_missing"
 REASON_MATERIAL_VALUATION_MISSING = "material_valuation_missing"
 REASON_CURRENCY_MISMATCH_NO_FX = "currency_mismatch_no_fx"
+REASON_PROFITABILITY_FX_STAMP_MISSING = "profitability_fx_stamp_missing"
 
 PROVENANCE = "profitability_actual_read_model_v1"
 # Owner GO AUTHORIZE_PROFITABILITY_MONETARY_COMPOSITION_V1 — explicit B+B.
 MACHINE_COST_V1 = "N_A_FOR_V1"
 OTHER_DIRECT_COST_V1 = "N_A_FOR_V1"
+# Owner PROFITABILITY_CURRENCY_POLICY = A
+PROFITABILITY_CURRENCY_POLICY = "A"
 
 
 def _norm_currency(raw: Any) -> str | None:
@@ -70,6 +73,30 @@ def _currencies_compatible(*currencies: Any) -> bool:
     if len(present) < 2:
         return False
     return len(set(present)) == 1
+
+
+def _parse_profitability_fx_v1(raw: Any) -> dict[str, Any] | None:
+    """Accept frozen Order Snapshot FX stamp only — never invent a rate."""
+    if not isinstance(raw, dict):
+        return None
+    policy = str(raw.get("policy") or "").strip().upper() or "A"
+    if policy != "A":
+        return None
+    try:
+        rate = float(raw.get("eur_to_ron_rate"))
+    except (TypeError, ValueError):
+        return None
+    if rate <= 0:
+        return None
+    freeze_point = str(raw.get("freeze_point") or "order_convert").strip() or "order_convert"
+    return {
+        "policy": "A",
+        "eur_to_ron_rate": round(rate, 4),
+        "rate_source": raw.get("rate_source")
+        or "company_commercial_settings.eur_to_ron_rate",
+        "freeze_point": freeze_point,
+        "frozen_at": raw.get("frozen_at"),
+    }
 
 
 class OrderNotFoundError(LookupError):
@@ -182,8 +209,14 @@ class ProfitabilityActualReadModelService:
         if not isinstance(data, dict):
             return None
         # Prefer full validate when possible (provenance), else dict extract.
+        fx_raw = data.get("profitability_fx_v1")
         try:
             snap = OrderSnapshotV2.model_validate(data)
+            fx_stamp = (
+                snap.profitability_fx_v1.model_dump()
+                if snap.profitability_fx_v1 is not None
+                else _parse_profitability_fx_v1(fx_raw)
+            )
             return {
                 "accepted_commercial_total": snap.accepted_commercial_total,
                 "accepted_currency": snap.accepted_currency,
@@ -197,6 +230,7 @@ class ProfitabilityActualReadModelService:
                     if snap.estimated_internal_cost_snapshot is not None
                     else None
                 ),
+                "profitability_fx_v1": fx_stamp,
                 "validated": True,
             }
         except (TypeError, ValueError):
@@ -212,6 +246,7 @@ class ProfitabilityActualReadModelService:
                 "accepted_commercial_gross": data.get("accepted_commercial_gross"),
                 "estimated_internal_total": data.get("estimated_internal_total"),
                 "estimated_internal_cost_snapshot": eic if isinstance(eic, dict) else None,
+                "profitability_fx_v1": _parse_profitability_fx_v1(fx_raw),
                 "validated": False,
             }
 
@@ -532,10 +567,29 @@ class ProfitabilityActualReadModelService:
         labor_currency = _norm_currency(labor.get("currency"))
         material_currency = _norm_currency(material.get("currency"))
         cost_currency_ok = _currencies_compatible(labor_currency, material_currency)
-        composition_currency_ok = (
+        same_currency_ok = _currencies_compatible(
+            revenue_currency, labor_currency, material_currency
+        )
+        fx_stamp = _parse_profitability_fx_v1(
+            snapshot.get("profitability_fx_v1") if snapshot else None
+        )
+        # Policy A: EUR revenue + RON labor/material via Order-convert FX stamp only.
+        policy_a_pair = (
+            revenue_currency == "EUR"
+            and labor_currency == "RON"
+            and material_currency == "RON"
+            and cost_currency_ok
+        )
+        policy_a_ready = bool(
             inputs_complete
             and commercial["accepted_revenue"]["available"]
-            and _currencies_compatible(revenue_currency, labor_currency, material_currency)
+            and policy_a_pair
+            and fx_stamp is not None
+        )
+        composition_currency_ok = bool(
+            inputs_complete
+            and commercial["accepted_revenue"]["available"]
+            and (same_currency_ok or policy_a_ready)
         )
         if inputs_complete and not cost_currency_ok:
             unavailable_reasons.append(REASON_CURRENCY_MISMATCH_NO_FX)
@@ -544,7 +598,10 @@ class ProfitabilityActualReadModelService:
             and commercial["accepted_revenue"]["available"]
             and not composition_currency_ok
         ):
-            unavailable_reasons.append(REASON_CURRENCY_MISMATCH_NO_FX)
+            if policy_a_pair and fx_stamp is None:
+                unavailable_reasons.append(REASON_PROFITABILITY_FX_STAMP_MISSING)
+            else:
+                unavailable_reasons.append(REASON_CURRENCY_MISMATCH_NO_FX)
 
         # Same-currency labor+material may form known actual cost even if revenue currency differs.
         known_cost_ok = inputs_complete and cost_currency_ok
@@ -649,7 +706,54 @@ class ProfitabilityActualReadModelService:
                 "percent": _unavailable(REASON_ESTIMATED_INTERNAL_INCOMPLETE),
             }
 
-        if composition_currency_ok:
+        known_actual_cost_normalized: dict[str, Any] | None = None
+        fx_meta: dict[str, Any] | None = None
+        composition_currency = revenue_currency if composition_currency_ok else None
+
+        if composition_currency_ok and policy_a_ready and fx_stamp is not None:
+            rate = float(fx_stamp["eur_to_ron_rate"])
+            ron_total = float(actual_cost["actual_total_cost"]["value"])
+            eur_cost = round(ron_total / rate, 4)
+            revenue = float(commercial["accepted_revenue"]["value"])
+            contribution_amount = round(revenue - eur_cost, 4)
+            known_actual_cost_normalized = _available(
+                eur_cost,
+                provenance=(
+                    "frozen_labor_material_ron / order_snapshot_v2.profitability_fx_v1"
+                ),
+            )
+            known_actual_cost_normalized["currency"] = "EUR"
+            known_actual_cost_normalized["native_amount"] = ron_total
+            known_actual_cost_normalized["native_currency"] = "RON"
+            fx_meta = {
+                **fx_stamp,
+                "applied": True,
+                "direction": "ron_costs_to_eur",
+                "live_settings_used": False,
+            }
+            actual_margin = {
+                "amount": _available(
+                    contribution_amount,
+                    provenance=(
+                        "accepted_commercial_eur - "
+                        "(labor_ron+material_ron)/profitability_fx_v1"
+                    ),
+                ),
+                "percent": (
+                    _available(round(contribution_amount / revenue * 100.0, 4))
+                    if revenue
+                    else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+                ),
+                "label": (
+                    "Contribuție cunoscută V1 (venit EUR − manoperă/material RON→EUR)"
+                ),
+                "provisional": False,
+                "actual_margin_status": actual_margin_status,
+                "terminology": "known_v1_contribution",
+                "currency": "EUR",
+            }
+            composition_currency = "EUR"
+        elif composition_currency_ok:
             actual_total = float(actual_cost["actual_total_cost"]["value"])
             revenue = float(commercial["accepted_revenue"]["value"])
             contribution_amount = round(revenue - actual_total, 4)
@@ -670,15 +774,29 @@ class ProfitabilityActualReadModelService:
                 "currency": revenue_currency,
             }
         elif scope_status == "BLOCKED_CURRENCY":
+            block_reason = (
+                REASON_PROFITABILITY_FX_STAMP_MISSING
+                if policy_a_pair and fx_stamp is None
+                else REASON_CURRENCY_MISMATCH_NO_FX
+            )
             actual_margin = {
-                "amount": _unavailable(REASON_CURRENCY_MISMATCH_NO_FX),
-                "percent": _unavailable(REASON_CURRENCY_MISMATCH_NO_FX),
-                "label": "Contribuție V1 blocată — monede incompatibile (fără FX inventat)",
+                "amount": _unavailable(block_reason),
+                "percent": _unavailable(block_reason),
+                "label": (
+                    "Contribuție V1 blocată — lipsește stamp FX la Order convert"
+                    if block_reason == REASON_PROFITABILITY_FX_STAMP_MISSING
+                    else "Contribuție V1 blocată — monede incompatibile (fără FX inventat)"
+                ),
                 "provisional": True,
                 "actual_margin_status": actual_margin_status,
                 "explanation": (
                     f"Venit {revenue_currency}; manoperă {labor_currency}; "
-                    f"material {material_currency}. Nu se scade EUR−RON."
+                    f"material {material_currency}. "
+                    + (
+                        "Policy A necesită profitability_fx_v1 pe Order Snapshot."
+                        if block_reason == REASON_PROFITABILITY_FX_STAMP_MISSING
+                        else "Nu se scade EUR−RON fără autoritate înghețată."
+                    )
                 ),
                 "terminology": "known_v1_contribution",
             }
@@ -696,7 +814,12 @@ class ProfitabilityActualReadModelService:
         monetary_v1 = {
             "scope_status": scope_status,
             "all_real_world_costs_included": False,
-            "formula": "revenue - actual_labor - actual_material",
+            "formula": (
+                "revenue_eur - (actual_labor_ron + actual_material_ron) / eur_to_ron_stamp"
+                if policy_a_ready
+                else "revenue - actual_labor - actual_material"
+            ),
+            "currency_policy": PROFITABILITY_CURRENCY_POLICY,
             "revenue": {
                 "amount": commercial["accepted_revenue"].get("value"),
                 "available": commercial["accepted_revenue"].get("available"),
@@ -731,8 +854,10 @@ class ProfitabilityActualReadModelService:
                 "represented_as_zero": False,
             },
             "known_actual_cost": known_actual_cost,
+            "known_actual_cost_normalized": known_actual_cost_normalized,
             "known_contribution": actual_margin["amount"],
-            "composition_currency": revenue_currency if composition_currency_ok else None,
+            "composition_currency": composition_currency,
+            "fx": fx_meta,
             "fx_required": bool(
                 inputs_complete
                 and commercial["accepted_revenue"]["available"]
@@ -742,6 +867,7 @@ class ProfitabilityActualReadModelService:
             "owner_decisions": {
                 "machine_cost_v1": MACHINE_COST_V1,
                 "other_direct_cost_v1": OTHER_DIRECT_COST_V1,
+                "profitability_currency_policy": PROFITABILITY_CURRENCY_POLICY,
             },
         }
 

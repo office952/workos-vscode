@@ -21,8 +21,13 @@ from models.orders import Orders
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from models.quotes import Quotes
 from schemas.auth import UserResponse
-from schemas.order_snapshot_v2 import OrderSnapshotV2, OrderSnapshotV2ConvertResult
+from schemas.order_snapshot_v2 import (
+    OrderSnapshotV2,
+    OrderSnapshotV2ConvertResult,
+    ProfitabilityFxV1Stamp,
+)
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry, QuoteSnapshotV2
+from services.company_commercial_settings_service import get_eur_to_ron_rate
 from services.intake_v3_guarded_convert_to_order_service import (
     IV3_ORDER_STATUS_LOCKED,
     check_existing_order_for_iv3_quote,
@@ -285,6 +290,7 @@ def _build_order_snapshot_v2(
     linkage: dict[str, Any],
     current_user: UserResponse,
     order_id: int | None = None,
+    profitability_fx_v1: ProfitabilityFxV1Stamp | None = None,
 ) -> OrderSnapshotV2:
     accept_record = get_accept_decision_record(linkage) or {}
     internal_total = None
@@ -313,6 +319,7 @@ def _build_order_snapshot_v2(
         accepted_vat_percent=envelope["accepted_vat_percent"],
         accepted_commercial_gross=envelope["accepted_commercial_gross"],
         commercial_adjustment_trace=envelope["commercial_adjustment_trace"],
+        profitability_fx_v1=profitability_fx_v1,
         estimated_internal_total=internal_total,
         owner_decisions_snapshot=parsed.owner_decisions_snapshot,
         warnings_snapshot=parsed.warnings_snapshot,
@@ -428,6 +435,24 @@ async def convert_accepted_quote_snapshot_v2_to_order(
             ["internal_snapshot_missing"],
         )
 
+    # Policy A: freeze company EUR→RON once at convert for Profitability (not commercial reprice).
+    converted_at_fx = datetime.now(timezone.utc).isoformat()
+    try:
+        eur_to_ron = float(await get_eur_to_ron_rate(db))
+        if eur_to_ron <= 0:
+            raise ValueError("eur_to_ron_rate must be greater than 0")
+        profitability_fx_v1 = ProfitabilityFxV1Stamp(
+            policy="A",
+            eur_to_ron_rate=round(eur_to_ron, 4),
+            frozen_at=converted_at_fx,
+        )
+    except Exception as exc:
+        _raise_blocked(
+            "PROFITABILITY_FX_RATE_MISSING",
+            f"Cannot freeze Profitability FX stamp at convert: {exc}",
+            ["profitability_fx_stamp_missing"],
+        )
+
     orders_before = await db.scalar(select(func.count()).select_from(Orders))
     plans_before = await db.scalar(select(func.count()).select_from(ExecutionPlan))
 
@@ -439,6 +464,7 @@ async def convert_accepted_quote_snapshot_v2_to_order(
         currency=currency,
         linkage=linkage,
         current_user=current_user,
+        profitability_fx_v1=profitability_fx_v1,
     )
     snapshot_v2_json = order_snapshot.model_dump_json()
 
