@@ -296,9 +296,9 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     status: "PARTIAL",
     inputRo: "ExecutionPlan + assigned employee (controlled session path)",
     outputRo: "Session observations / ExecutionActuals read model",
-    consumerRo: "Post-Job · future Profitability labor input (rates out of scope)",
+    consumerRo: "Post-Job · Profitability actual labor input (time closed; rates deferred)",
     limitationRo:
-      "SoT: execution_reality.tasks_json. WRITE AUTHORITY = controlled_task_session_service (assignment-gated, server timestamps). Compatibility bridges: /reality/start|end-task + operator task-action start/complete + mobile start/complete → same authority. Session END ≠ task complete (complete = separate stamp). Pause/block annotations remain side-channel. Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv. Profitability labor input = READY (rates deferred).",
+      "SoT: execution_reality.tasks_json. WRITE AUTHORITY = controlled_task_session_service (assignment-gated, server timestamps). Compatibility bridges: /reality/start|end-task + operator task-action start/complete + mobile start/complete → same authority. Session END ≠ task complete (complete = separate stamp). Pause/block annotations remain side-channel. Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv. Profitability actual labor input = CLOSED (profitability_actual_labor_input/v1; closed sessions only). Monetary rates = PARTIAL/UNPROVEN — next gate LABOR_COST_RATE_SNAPSHOT_AUTHORITY.",
     verifyRoute: "/execution",
     spineOrder: 9,
   },

@@ -22,6 +22,9 @@ from services.actual_cost_policy_runtime_service import (
     REASON_HISTORICAL_POLICY_UNAVAILABLE,
 )
 from services.controlled_task_session_service import build_execution_actuals_read_model
+from services.profitability_actual_labor_input_service import (
+    build_profitability_actual_labor_input,
+)
 
 
 REASON_PLANNING_MINUTES_MISSING = "planning_minutes_source_missing"
@@ -251,7 +254,7 @@ class ProfitabilityActualReadModelService:
                 "provenance": "order_snapshot_v2",
             }
 
-        # --- Actual operational (ExecutionActuals) ---
+        # --- Actual operational (ExecutionActuals + closed-session labor input) ---
         try:
             actuals_rm = await build_execution_actuals_read_model(self.db, order_id=order_id)
         except Exception:
@@ -261,33 +264,77 @@ class ProfitabilityActualReadModelService:
                 "reality_total_actual_time_minutes": 0.0,
             }
 
+        try:
+            labor_input = await build_profitability_actual_labor_input(
+                self.db, order_id=order_id
+            )
+        except Exception:
+            labor_input = None
+
         tasks = list(actuals_rm.get("tasks") or [])
-        total_minutes = float(actuals_rm.get("reality_total_actual_time_minutes") or 0.0)
-        session_count = sum(int(t.get("session_count") or 0) for t in tasks)
-        active_any = any(bool(t.get("active_session")) for t in tasks)
-        tasks_with_actual = [t for t in tasks if int(t.get("session_count") or 0) > 0]
+        # Canonical closed-session employee-minutes (not MachineRun; not active elapsed).
+        if labor_input and labor_input.get("status") == "ok":
+            total_minutes = float(
+                (labor_input.get("totals") or {}).get("total_employee_minutes") or 0
+            )
+            session_count = int(
+                (labor_input.get("totals") or {}).get("closed_session_count") or 0
+            )
+            active_any = int(
+                (labor_input.get("totals") or {}).get("active_session_count") or 0
+            ) > 0
+            employees = [
+                {
+                    "employee_id": row.get("employee_id"),
+                    "task_id": row.get("task_id"),
+                    "total_employee_minutes": row.get("total_employee_minutes"),
+                }
+                for row in (labor_input.get("by_employee_task") or [])
+            ]
+            first_start = None
+            last_end = None
+            for s in labor_input.get("closed_sessions") or []:
+                started = s.get("started_at")
+                ended = s.get("ended_at")
+                if started and (first_start is None or started < first_start):
+                    first_start = started
+                if ended and (last_end is None or ended > last_end):
+                    last_end = ended
+            minutes_provenance = "profitability_actual_labor_input.closed_sessions"
+        else:
+            total_minutes = float(actuals_rm.get("reality_total_actual_time_minutes") or 0.0)
+            session_count = sum(int(t.get("session_count") or 0) for t in tasks)
+            active_any = any(bool(t.get("active_session")) for t in tasks)
+            employees = []
+            first_start = None
+            last_end = None
+            for t in tasks:
+                if t.get("first_started_at") and (
+                    first_start is None or t["first_started_at"] < first_start
+                ):
+                    first_start = t["first_started_at"]
+                if t.get("last_ended_at") and (
+                    last_end is None or t["last_ended_at"] > last_end
+                ):
+                    last_end = t["last_ended_at"]
+                if t.get("assigned_employee_id") is not None:
+                    employees.append(
+                        {
+                            "employee_id": t.get("assigned_employee_id"),
+                            "task_id": t.get("task_id"),
+                        }
+                    )
+            minutes_provenance = "execution_reality.total_actual_time_minutes"
+
+        tasks_with_actual = [
+            t
+            for t in tasks
+            if int(t.get("session_count") or 0) > 0
+            or int(t.get("total_actual_duration_minutes") or 0) > 0
+        ]
         coverage_ratio = (
             len(tasks_with_actual) / len(tasks) if tasks else 0.0
         )
-        employees: list[dict[str, Any]] = []
-        first_start = None
-        last_end = None
-        for t in tasks:
-            if t.get("first_started_at") and (
-                first_start is None or t["first_started_at"] < first_start
-            ):
-                first_start = t["first_started_at"]
-            if t.get("last_ended_at") and (
-                last_end is None or t["last_ended_at"] > last_end
-            ):
-                last_end = t["last_ended_at"]
-            if t.get("assigned_employee_id") is not None:
-                employees.append(
-                    {
-                        "employee_id": t.get("assigned_employee_id"),
-                        "task_id": t.get("task_id"),
-                    }
-                )
 
         planned_present = any(t.get("planned_minutes") is not None for t in tasks)
         duration_variance: dict[str, Any]
@@ -307,7 +354,7 @@ class ProfitabilityActualReadModelService:
             "session_count": session_count,
             "actual_duration_minutes": _available(
                 total_minutes,
-                provenance="execution_reality.total_actual_time_minutes",
+                provenance=minutes_provenance,
             ),
             "employees_involved": employees,
             "first_started_at": first_start,
@@ -320,7 +367,8 @@ class ProfitabilityActualReadModelService:
             },
             "duration_variance_minutes": duration_variance,
             "tasks": tasks,
-            "provenance": "controlled_task_session / execution_actuals_rm",
+            "labor_input": labor_input,
+            "provenance": "controlled_task_session / profitability_actual_labor_input",
         }
 
         # --- Actual cost truth — frozen standard role/skill policies only ---
