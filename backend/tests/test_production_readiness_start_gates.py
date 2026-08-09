@@ -99,6 +99,10 @@ def start_gate_fixture(db_fixture, db_session):
     async def _setup():
         worker = await _seed_employee(db_session, user_id=user_id, name="Gate Worker")
         tasks = _build_volumetric_tasks(sandu_id=worker.id)
+        # Assignment gate closure: every operational task must have an assignee for START.
+        for t in tasks:
+            if isinstance(t, dict):
+                t["assigned_employee_id"] = worker.id
         quote = Quotes(
             code=f"QT-{order_id}",
             intake_code="IR-GATE",

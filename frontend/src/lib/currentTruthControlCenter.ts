@@ -298,7 +298,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Session observations / ExecutionActuals read model",
     consumerRo: "Post-Job · future Profitability labor input (rates out of scope)",
     limitationRo:
-      "SoT: execution_reality.tasks_json. Controlled sessions/start|end = assignment-gated, server timestamps, end ≠ task complete. Legacy operator/raw start paths remain ACTIVE_LEGACY (weaker assignment gate). Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv.",
+      "SoT: execution_reality.tasks_json. WRITE AUTHORITY = controlled_task_session_service (assignment-gated, server timestamps). Compatibility bridges: /reality/start|end-task + operator task-action start/complete + mobile start/complete → same authority. Session END ≠ task complete (complete = separate stamp). Pause/block annotations remain side-channel. Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv. Profitability labor input = READY (rates deferred).",
     verifyRoute: "/execution",
     spineOrder: 9,
   },

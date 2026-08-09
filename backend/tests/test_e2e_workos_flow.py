@@ -563,10 +563,61 @@ class TestOrderToExecutionPlan:
 # 6. OPERATOR LIFECYCLE TESTS
 # ============================================================================
 
+def _assign_employee_for_task(auth_client, db_fixture, *, order_id: int, task_id: str) -> int:
+    """Create an active employee and stamp assignment on plan operational tasks.
+
+    E2E plan/from-order fixtures are often pre-V2 materialization; write assignment
+    directly into tasks_json (legacy list or V2 envelope) for session gate tests.
+    """
+    emp_resp = auth_client.post(
+        "/api/v1/entities/employees",
+        json={"name": f"E2E Worker {_ts()}", "status": "active", "employee_type": "productive"},
+    )
+    assert emp_resp.status_code in (200, 201), emp_resp.text
+    employee_id = emp_resp.json()["id"]
+
+    async def _stamp():
+        from sqlalchemy import select
+        from models.execution_plan import ExecutionPlan
+        from services.execution_plan_task_parser import (
+            parse_tasks_json_raw,
+            serialize_operational_tasks_to_plan_json,
+        )
+
+        async with db_fixture.session_maker() as session:
+            plan = (
+                await session.execute(
+                    select(ExecutionPlan).where(ExecutionPlan.order_id == order_id)
+                )
+            ).scalar_one()
+            parsed = parse_tasks_json_raw(plan.tasks_json)
+            ops = list(parsed.operational_tasks)
+            if not ops and parsed.format != "v2_envelope":
+                # Unexpected empty — leave as-is for clear downstream failure.
+                return
+            # If V2 planned-only, promote task into operational list for gate tests.
+            if not ops:
+                ops = [{"task_id": task_id}]
+                parsed = type(parsed)(
+                    format="legacy_list",
+                    operational_tasks=ops,
+                    envelope=None,
+                    planned_tasks=[],
+                )
+            for entry in ops:
+                if isinstance(entry, dict) and str(entry.get("task_id")) == str(task_id):
+                    entry["assigned_employee_id"] = employee_id
+            plan.tasks_json = serialize_operational_tasks_to_plan_json(parsed, ops)
+            await session.commit()
+
+    db_fixture.run(_stamp())
+    return employee_id
+
+
 class TestOperatorLifecycle:
     """Test operator task actions: start, pause, resume, block, unblock, complete."""
 
-    def _setup_order_with_plan(self, auth_client):
+    def _setup_order_with_plan(self, auth_client, db_fixture):
         """Helper: create order + execution plan, return order_id and first task_id."""
         snapshot = _make_single_layer_snapshot(product_id=f"PRD-OP-{_ts()}")
 
@@ -587,12 +638,14 @@ class TestOperatorLifecycle:
         tasks = plan_resp.json()["tasks"]
         assert len(tasks) > 0
         task_id = tasks[0]["task_id"]
-
+        _assign_employee_for_task(
+            auth_client, db_fixture, order_id=order_id, task_id=task_id
+        )
         return order_id, task_id
 
-    def test_start_task(self, auth_client):
+    def test_start_task(self, auth_client, db_fixture):
         """POST /task-action with action=start → 200."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         resp = auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id,
@@ -605,9 +658,9 @@ class TestOperatorLifecycle:
         assert data["action"] == "start"
         assert data["task_id"] == task_id
 
-    def test_pause_task(self, auth_client):
+    def test_pause_task(self, auth_client, db_fixture):
         """Start then pause a task."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -619,9 +672,9 @@ class TestOperatorLifecycle:
         assert resp.status_code == 200
         assert resp.json()["action"] == "pause"
 
-    def test_resume_task(self, auth_client):
+    def test_resume_task(self, auth_client, db_fixture):
         """Start → pause → resume a task."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -635,9 +688,9 @@ class TestOperatorLifecycle:
         assert resp.status_code == 200
         assert resp.json()["action"] == "resume"
 
-    def test_block_task(self, auth_client):
+    def test_block_task(self, auth_client, db_fixture):
         """Start then block a task with reason."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -650,9 +703,9 @@ class TestOperatorLifecycle:
         assert resp.status_code == 200
         assert resp.json()["action"] == "block"
 
-    def test_unblock_task(self, auth_client):
+    def test_unblock_task(self, auth_client, db_fixture):
         """Start → block → unblock a task."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -667,9 +720,9 @@ class TestOperatorLifecycle:
         assert resp.status_code == 200
         assert resp.json()["action"] == "unblock"
 
-    def test_complete_task(self, auth_client):
+    def test_complete_task(self, auth_client, db_fixture):
         """Start then complete a task."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -680,9 +733,9 @@ class TestOperatorLifecycle:
         assert resp.status_code == 200
         assert resp.json()["action"] == "complete"
 
-    def test_cannot_complete_blocked_task(self, auth_client):
+    def test_cannot_complete_blocked_task(self, auth_client, db_fixture):
         """Complete on a blocked task → 409."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -697,9 +750,9 @@ class TestOperatorLifecycle:
         })
         assert resp.status_code == 409
 
-    def test_cannot_complete_paused_task(self, auth_client):
+    def test_cannot_complete_paused_task(self, auth_client, db_fixture):
         """Complete on a paused task → 409."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -713,27 +766,27 @@ class TestOperatorLifecycle:
         })
         assert resp.status_code == 409
 
-    def test_cannot_pause_unstarted_task(self, auth_client):
+    def test_cannot_pause_unstarted_task(self, auth_client, db_fixture):
         """Pause on an unstarted task → 422."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         resp = auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "pause",
         })
         assert resp.status_code in (404, 422)
 
-    def test_cannot_block_unstarted_task(self, auth_client):
+    def test_cannot_block_unstarted_task(self, auth_client, db_fixture):
         """Block on an unstarted task → 422."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         resp = auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "block",
         })
         assert resp.status_code in (404, 422)
 
-    def test_resume_not_paused_returns_409(self, auth_client):
+    def test_resume_not_paused_returns_409(self, auth_client, db_fixture):
         """Resume on a non-paused task → 409."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -744,9 +797,9 @@ class TestOperatorLifecycle:
         })
         assert resp.status_code == 409
 
-    def test_unblock_not_blocked_returns_409(self, auth_client):
+    def test_unblock_not_blocked_returns_409(self, auth_client, db_fixture):
         """Unblock on a non-blocked task → 409."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "start",
@@ -757,7 +810,7 @@ class TestOperatorLifecycle:
         })
         assert resp.status_code == 409
 
-    def test_list_operator_tasks(self, auth_client):
+    def test_list_operator_tasks(self, auth_client, db_fixture):
         """GET /operator/tasks → 200 with enriched task list.
 
         NOTE: The operator_tasks router uses raw SQL referencing 'execution_plans'
@@ -765,7 +818,7 @@ class TestOperatorLifecycle:
         This causes a 500 on SQLite. The test documents this known issue and
         accepts 200 (if fixed) or 500 (current raw-SQL table name mismatch).
         """
-        self._setup_order_with_plan(auth_client)
+        self._setup_order_with_plan(auth_client, db_fixture)
 
         resp = auth_client.get("/api/v1/operator/tasks")
         if resp.status_code == 200:
@@ -777,9 +830,9 @@ class TestOperatorLifecycle:
             # Known issue: raw SQL table name mismatch (execution_plans vs execution_plan)
             assert resp.status_code == 500
 
-    def test_unknown_action_returns_400(self, auth_client):
+    def test_unknown_action_returns_400(self, auth_client, db_fixture):
         """POST /task-action with unknown action → 400."""
-        order_id, task_id = self._setup_order_with_plan(auth_client)
+        order_id, task_id = self._setup_order_with_plan(auth_client, db_fixture)
 
         resp = auth_client.post("/api/v1/operator/task-action", json={
             "order_id": order_id, "task_id": task_id, "action": "explode",
@@ -945,7 +998,7 @@ class TestMaterialsCapture:
 class TestExecutionRealityDirectAPI:
     """Test the direct execution reality start-task / end-task endpoints."""
 
-    def _create_order_and_plan(self, auth_client):
+    def _create_order_and_plan(self, auth_client, db_fixture):
         """Helper: create order + plan."""
         snapshot = _make_single_layer_snapshot(
             product_id=f"PRD-REAL-{_ts()}",
@@ -968,12 +1021,13 @@ class TestExecutionRealityDirectAPI:
         plan_resp = auth_client.post(f"/api/v1/execution/plan/from-order/{order_id}")
         assert plan_resp.status_code == 201, f"Plan creation failed: {plan_resp.text}"
         task_id = plan_resp.json()["tasks"][0]["task_id"]
+        _assign_employee_for_task(auth_client, db_fixture, order_id=order_id, task_id=task_id)
 
         return order_id, task_id
 
-    def test_start_task_direct(self, auth_client):
+    def test_start_task_direct(self, auth_client, db_fixture):
         """POST /reality/start-task → 200."""
-        order_id, task_id = self._create_order_and_plan(auth_client)
+        order_id, task_id = self._create_order_and_plan(auth_client, db_fixture)
         now = datetime.now(timezone.utc).isoformat()
 
         resp = auth_client.post("/api/v1/execution/reality/start-task", json={
@@ -989,9 +1043,9 @@ class TestExecutionRealityDirectAPI:
         assert data["tasks"][0]["task_id"] == task_id
         assert data["tasks"][0]["started_at"] is not None
 
-    def test_end_task_direct(self, auth_client):
+    def test_end_task_direct(self, auth_client, db_fixture):
         """POST /reality/end-task → 200 after start."""
-        order_id, task_id = self._create_order_and_plan(auth_client)
+        order_id, task_id = self._create_order_and_plan(auth_client, db_fixture)
         start_time = datetime.now(timezone.utc)
         end_time = start_time + timedelta(minutes=10)
 
@@ -1009,25 +1063,31 @@ class TestExecutionRealityDirectAPI:
         assert resp.status_code == 200
         data = resp.json()
         assert data["tasks"][0]["ended_at"] is not None
-        assert data["total_actual_time_minutes"] > 0
+        # Client timestamps are ignored; server clock may yield 0 minutes for fast close.
+        assert data["tasks"][0].get("duration_minutes") is not None
+        assert data["total_actual_time_minutes"] is not None
 
-    def test_duplicate_start_returns_422(self, auth_client):
-        """Starting the same task twice → 422."""
-        order_id, task_id = self._create_order_and_plan(auth_client)
+    def test_duplicate_start_idempotent(self, auth_client, db_fixture):
+        """Starting the same task twice → 200 idempotent (one active session)."""
+        order_id, task_id = self._create_order_and_plan(auth_client, db_fixture)
         now = datetime.now(timezone.utc).isoformat()
 
-        auth_client.post("/api/v1/execution/reality/start-task", json={
+        first = auth_client.post("/api/v1/execution/reality/start-task", json={
             "order_id": order_id, "task_id": task_id, "timestamp": now,
         })
+        assert first.status_code == 200
+        started = first.json()["tasks"][0]["started_at"]
 
         resp = auth_client.post("/api/v1/execution/reality/start-task", json={
             "order_id": order_id, "task_id": task_id, "timestamp": now,
         })
-        assert resp.status_code == 422
+        assert resp.status_code == 200
+        assert resp.json()["tasks"][0]["started_at"] == started
+        assert len(resp.json()["tasks"]) == 1
 
-    def test_end_before_start_returns_422(self, auth_client):
+    def test_end_before_start_returns_422(self, auth_client, db_fixture):
         """Ending a task before starting → 422."""
-        order_id, task_id = self._create_order_and_plan(auth_client)
+        order_id, task_id = self._create_order_and_plan(auth_client, db_fixture)
         now = datetime.now(timezone.utc).isoformat()
 
         resp = auth_client.post("/api/v1/execution/reality/end-task", json={
@@ -1035,9 +1095,9 @@ class TestExecutionRealityDirectAPI:
         })
         assert resp.status_code == 422
 
-    def test_get_reality(self, auth_client):
+    def test_get_reality(self, auth_client, db_fixture):
         """GET /reality/{order_id} → 200 after task started."""
-        order_id, task_id = self._create_order_and_plan(auth_client)
+        order_id, task_id = self._create_order_and_plan(auth_client, db_fixture)
         now = datetime.now(timezone.utc).isoformat()
 
         auth_client.post("/api/v1/execution/reality/start-task", json={
@@ -1051,7 +1111,7 @@ class TestExecutionRealityDirectAPI:
         assert "tasks" in data
         assert "materials" in data
 
-    def test_get_reality_nonexistent_returns_404(self, auth_client):
+    def test_get_reality_nonexistent_returns_404(self, auth_client, db_fixture):
         """GET /reality/99999 → 404."""
         resp = auth_client.get("/api/v1/execution/reality/99999")
         assert resp.status_code == 404

@@ -86,13 +86,22 @@ async def _load_active_employee(db: AsyncSession, employee_id: int) -> Employees
     return emp
 
 
-def _assert_v2_materialized(plan: ExecutionPlan) -> None:
+def _assert_operational_materialized(plan: ExecutionPlan) -> None:
+    """Require resolvable operational tasks (V2 envelope or legacy list shape)."""
     parsed = parse_tasks_json_raw(plan.tasks_json)
-    if parsed.format != "v2_envelope" or not parsed.operational_tasks:
+    if parsed.format == "v2_envelope":
+        if parsed.operational_tasks:
+            return
         raise HTTPException(
             status_code=422,
             detail={"error": "v2_not_materialized"},
         )
+    if parsed.format == "legacy_list" and parsed.operational_tasks:
+        return
+    raise HTTPException(
+        status_code=422,
+        detail={"error": "v2_not_materialized"},
+    )
 
 
 def _employee_has_any_active_session(tasks: list[dict[str, Any]], employee_id: int) -> bool:
@@ -140,7 +149,7 @@ async def start_controlled_task_session(
         raise HTTPException(status_code=422, detail={"error": "invalid_task_identity"})
 
     plan = await _load_plan(db, order_id)
-    _assert_v2_materialized(plan)
+    _assert_operational_materialized(plan)
     order = await _load_order(db, order_id)
     task = _find_operational_task(plan, tid)
     if task is None:
@@ -302,7 +311,7 @@ async def end_controlled_task_session(
         raise HTTPException(status_code=422, detail={"error": "invalid_task_identity"})
 
     plan = await _load_plan(db, order_id)
-    _assert_v2_materialized(plan)
+    _assert_operational_materialized(plan)
     task = _find_operational_task(plan, tid)
     if task is None:
         raise HTTPException(status_code=404, detail={"error": "operational_task_not_found"})
@@ -449,7 +458,7 @@ async def build_execution_actuals_read_model(
 ) -> dict[str, Any]:
     """Read-only ExecutionActuals projection from plan + reality sessions."""
     plan = await _load_plan(db, order_id)
-    _assert_v2_materialized(plan)
+    _assert_operational_materialized(plan)
     reality = (
         await db.execute(select(ExecutionReality).where(ExecutionReality.order_id == order_id))
     ).scalar_one_or_none()
@@ -515,4 +524,198 @@ async def build_execution_actuals_read_model(
             if reality and reality.total_actual_time_minutes is not None
             else 0.0
         ),
+    }
+
+
+async def resolve_assigned_employee_for_operational_task(
+    db: AsyncSession,
+    *,
+    order_id: int,
+    task_id: str,
+) -> int:
+    """Resolve current plan assignee for compatibility bridges (no client employee invent)."""
+    tid = (task_id or "").strip()
+    if not tid:
+        raise HTTPException(status_code=422, detail={"error": "invalid_task_identity"})
+    plan = await _load_plan(db, order_id)
+    _assert_operational_materialized(plan)
+    task = _find_operational_task(plan, tid)
+    if task is None:
+        parsed = parse_tasks_json_raw(plan.tasks_json)
+        planned_ids = {
+            str(t.get("task_id") or "")
+            for t in (parsed.planned_tasks or [])
+            if isinstance(t, dict)
+        }
+        if tid in planned_ids:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "v2_not_materialized",
+                    "message": "Planned task is not operational.",
+                },
+            )
+        raise HTTPException(status_code=404, detail={"error": "operational_task_not_found"})
+    assigned = _normalize_employee_id(task.get("assigned_employee_id"))
+    if assigned is None:
+        raise HTTPException(status_code=422, detail={"error": "task_unassigned"})
+    return assigned
+
+
+async def complete_controlled_task_session(
+    db: AsyncSession,
+    *,
+    order_id: int,
+    task_id: str,
+    employee_id: int,
+    actor_user_id: str | None = None,
+    actor_mode: str,
+    completion_notes: str | None = None,
+    clock: Clock | None = None,
+) -> dict[str, Any]:
+    """Close active session AND stamp explicit task completion (operator/mobile complete).
+
+    Distinct from ``end_controlled_task_session`` (session end ≠ task complete).
+    Still assignment-gated and server-timestamped under the same write authority.
+    """
+    tid = (task_id or "").strip()
+    if not tid:
+        raise HTTPException(status_code=422, detail={"error": "invalid_task_identity"})
+
+    plan = await _load_plan(db, order_id)
+    _assert_operational_materialized(plan)
+    task = _find_operational_task(plan, tid)
+    if task is None:
+        raise HTTPException(status_code=404, detail={"error": "operational_task_not_found"})
+
+    assigned = _normalize_employee_id(task.get("assigned_employee_id"))
+    if assigned is None or int(employee_id) != assigned:
+        raise HTTPException(status_code=422, detail={"error": "employee_not_assigned"})
+
+    emp = await _load_active_employee(db, int(employee_id))
+
+    reality = (
+        await db.execute(select(ExecutionReality).where(ExecutionReality.order_id == order_id))
+    ).scalar_one_or_none()
+    if reality is None:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "no_active_session", "message": "No reality row / no active session."},
+        )
+
+    sessions = _parse_reality_tasks(reality.tasks_json)
+    active = next(
+        (
+            e
+            for e in sessions_for_task(sessions, tid)
+            if is_session_active(e)
+            and _normalize_employee_id(e.get("employee_id")) == int(employee_id)
+        ),
+        None,
+    )
+    if active is None:
+        # Idempotent complete when prior explicit completion exists for this employee.
+        closed = next(
+            (
+                e
+                for e in sessions_for_task(sessions, tid)
+                if e.get("ended_at")
+                and (
+                    _normalize_employee_id(e.get("completed_by_employee_id")) == int(employee_id)
+                    or (
+                        _normalize_employee_id(e.get("employee_id")) == int(employee_id)
+                        and str(e.get("status") or "") == "completed"
+                    )
+                )
+            ),
+            None,
+        )
+        if closed is not None:
+            started = str(closed.get("started_at") or "")
+            ended = str(closed.get("ended_at") or "")
+            return {
+                "status": "ok",
+                "already_completed": True,
+                "order_id": order_id,
+                "execution_plan_id": plan.id,
+                "task_id": tid,
+                "employee_id": int(employee_id),
+                "session_id": closed.get("session_id"),
+                "started_at": started,
+                "ended_at": ended,
+                "duration_minutes": closed.get("duration_minutes")
+                or compute_duration_minutes(started, ended),
+                "controlled": True,
+                "actor_mode": actor_mode,
+                "task_auto_completed": True,
+                "completed_by_employee_id": int(employee_id),
+            }
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "no_active_session", "message": "No active session to complete."},
+        )
+
+    now = (clock or _utc_now)()
+    if now.tzinfo is None:
+        now = now.replace(tzinfo=timezone.utc)
+    ts = now.isoformat()
+    completion_fields: dict[str, Any] = {
+        "completed_by_employee_id": int(employee_id),
+        "completed_by_employee_name": emp.name,
+    }
+    if completion_notes:
+        completion_fields["completion_notes"] = completion_notes
+
+    svc = ExecutionRealityService(db)
+    try:
+        row = await svc.end_task(
+            order_id=order_id,
+            task_id=tid,
+            timestamp=ts,
+            employee_id=int(employee_id),
+            completion_fields=completion_fields,
+        )
+    except RealityInputError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": exc.code, "detail": exc.detail},
+        ) from exc
+
+    sessions = _parse_reality_tasks(row.tasks_json)
+    closed = next(
+        (
+            e
+            for e in sessions_for_task(sessions, tid)
+            if e.get("ended_at")
+            and _normalize_employee_id(e.get("employee_id")) == int(employee_id)
+            and str(e.get("session_id") or "") == str(active.get("session_id") or "")
+        ),
+        None,
+    )
+    started = str((closed or active).get("started_at") or "")
+    ended = str((closed or {}).get("ended_at") or ts)
+    duration = (closed or {}).get("duration_minutes")
+    if duration is None:
+        duration = compute_duration_minutes(started, ended)
+
+    return {
+        "status": "ok",
+        "already_completed": False,
+        "order_id": order_id,
+        "execution_plan_id": plan.id,
+        "task_id": tid,
+        "employee_id": int(employee_id),
+        "session_id": (closed or active).get("session_id"),
+        "started_at": started,
+        "ended_at": ended,
+        "duration_minutes": duration,
+        "controlled": True,
+        "actor_mode": actor_mode,
+        "actor_user_id": actor_user_id,
+        "source": CONTROLLED_SESSION_SOURCE,
+        "task_auto_completed": True,
+        "completed_by_employee_id": int(employee_id),
+        "commercial_mutated": False,
+        "inventory_mutated": False,
+        "hr_cost_calculated": False,
     }

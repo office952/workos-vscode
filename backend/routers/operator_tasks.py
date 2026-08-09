@@ -372,9 +372,12 @@ async def perform_task_action(
     _assert_task_action_permission(current_user, req.action)
 
     if req.action == "start":
-        from services.execution_reality_service import ExecutionRealityService, RealityInputError
-        from services.execution_reality_workforce import resolve_task_workforce_context
+        from services.controlled_task_session_service import (
+            resolve_assigned_employee_for_operational_task,
+            start_controlled_task_session,
+        )
         from services.operator_employee_guard import OperatorEmployeeGuard
+        from services.task_start_gate_service import assert_task_startable
 
         process_type = ""
         machine_type = ""
@@ -389,9 +392,26 @@ async def perform_task_action(
                     machine_type = str(pt.get("machine_type") or "")
                     break
 
+        # Assignment gate before readiness — same authority as controlled START.
+        assigned_employee_id = await resolve_assigned_employee_for_operational_task(
+            db, order_id=req.order_id, task_id=req.task_id
+        )
+        target_employee_id = (
+            int(req.employee_id) if req.employee_id is not None else assigned_employee_id
+        )
+        if int(target_employee_id) != int(assigned_employee_id):
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "employee_not_assigned",
+                    "message": "Session employee must match current assigned_employee_id.",
+                    "assigned_employee_id": assigned_employee_id,
+                },
+            )
+
         guard = OperatorEmployeeGuard(db)
         guard_result = await guard.validate_for_task_start(
-            employee_id=req.employee_id,
+            employee_id=target_employee_id,
             process_type=process_type,
             machine_type=machine_type,
         )
@@ -404,68 +424,63 @@ async def perform_task_action(
                 },
             )
 
-        from services.task_start_gate_service import assert_task_startable
-
         override_reason = req.override_reason or (
             req.reason if req.override_readiness else None
         )
-        gate = await assert_task_startable(
+        from models.execution_reality import ExecutionReality
+        from sqlalchemy import select as sa_select
+        from services.task_work_session_service import has_active_session_for_employee
+
+        eid = int(guard_result.employee_id or target_employee_id)
+        existing = (
+            await db.execute(
+                sa_select(ExecutionReality).where(ExecutionReality.order_id == req.order_id)
+            )
+        ).scalar_one_or_none()
+        already_active = False
+        if existing is not None:
+            try:
+                existing_tasks = json.loads(existing.tasks_json or "[]")
+            except (TypeError, ValueError, json.JSONDecodeError):
+                existing_tasks = []
+            already_active = isinstance(existing_tasks, list) and has_active_session_for_employee(
+                existing_tasks, task_id=req.task_id, employee_id=eid
+            )
+
+        gate: Dict[str, Any] = {}
+        if not already_active:
+            gate = await assert_task_startable(
+                db,
+                order_id=req.order_id,
+                task_id=req.task_id,
+                employee_id=eid,
+                override_readiness=req.override_readiness,
+                override_reason=override_reason,
+                override_user_id=str(current_user.id or ""),
+                override_user_name=str(current_user.name or ""),
+                override_user_role=str(current_user.role or ""),
+            )
+
+        started = await start_controlled_task_session(
             db,
             order_id=req.order_id,
             task_id=req.task_id,
-            employee_id=guard_result.employee_id,
-            override_readiness=req.override_readiness,
-            override_reason=override_reason,
-            override_user_id=str(current_user.id or ""),
-            override_user_name=str(current_user.name or ""),
-            override_user_role=str(current_user.role or ""),
+            employee_id=eid,
+            actor_user_id=str(current_user.id) if current_user.id else None,
+            actor_mode="supervisor",
         )
-
-        operator_name = req.operator_name or guard_result.employee_name
-
-        order_sql = text("SELECT code FROM orders WHERE id = :oid")
-        result = await db.execute(order_sql, {"oid": req.order_id})
-        row = result.first()
-        if not row:
-            raise HTTPException(status_code=404, detail="order_not_found")
-
-        workforce_ctx = await resolve_task_workforce_context(
-            db,
-            process_type=process_type,
-            machine_type=machine_type,
-        )
-        initial_fields = {
-            **workforce_ctx,
-            "employee_id": guard_result.employee_id,
-            "employee_name": guard_result.employee_name,
-            "operator_name": operator_name,
-        }
-        if gate.get("override_metadata"):
-            initial_fields.update(gate["override_metadata"])
-
-        svc = ExecutionRealityService(db)
-        try:
-            await svc.start_task(
-                order_id=req.order_id,
-                order_code=row[0],
-                task_id=req.task_id,
-                timestamp=now_iso,
-                initial_fields=initial_fields,
-            )
-        except RealityInputError as e:
-            raise HTTPException(status_code=422, detail={"error": e.code, "detail": e.detail})
 
         response: Dict[str, Any] = {
             "status": "ok",
             "action": "start",
             "task_id": req.task_id,
-            "timestamp": now_iso,
-            "employee_id": guard_result.employee_id,
-            "employee_name": guard_result.employee_name,
+            "timestamp": started.get("started_at") or now_iso,
+            "employee_id": started.get("employee_id"),
+            "employee_name": started.get("employee_name") or guard_result.employee_name,
             "authorization_status": guard_result.authorization_status,
+            "already_active": bool(started.get("already_active")),
+            "controlled": True,
         }
-        if guard_result.legacy_operator:
-            response["legacy_operator"] = True
         if guard_result.warnings:
             response["warnings"] = guard_result.warnings
         if gate.get("override_metadata"):
@@ -476,10 +491,14 @@ async def perform_task_action(
         return response
 
     elif req.action == "complete":
-        # Validate: cannot complete if task is actively blocked or paused
+        # Explicit task completion (≠ session-only END). Assignment-gated via controlled authority.
         from models.execution_reality import ExecutionReality
         from sqlalchemy import select as sa_select
-        from services.execution_reality_service import ExecutionRealityService, RealityInputError
+        from services.controlled_task_session_service import (
+            complete_controlled_task_session,
+            resolve_assigned_employee_for_operational_task,
+        )
+        from services.execution_task_help_service import close_open_help_for_task
         from services.operator_employee_guard import OperatorEmployeeGuard
 
         stmt = sa_select(ExecutionReality).where(ExecutionReality.order_id == req.order_id)
@@ -490,7 +509,6 @@ async def perform_task_action(
             tasks = _parse_json(reality.tasks_json)
             for t in tasks:
                 if isinstance(t, dict) and t.get("task_id") == req.task_id:
-                    # Reject if actively blocked
                     if t.get("blocked_at") and not t.get("unblocked_at"):
                         raise HTTPException(
                             status_code=409,
@@ -499,7 +517,6 @@ async def perform_task_action(
                                 "detail": "Cannot complete a blocked task. Unblock it first.",
                             },
                         )
-                    # Reject if actively paused
                     if t.get("paused_at") and not t.get("resumed_at"):
                         raise HTTPException(
                             status_code=409,
@@ -510,94 +527,47 @@ async def perform_task_action(
                         )
                     break
 
-        completion_fields: Dict[str, Any] = {}
-        if req.completion_notes:
-            completion_fields["completion_notes"] = req.completion_notes
-
-        if req.employee_id is not None:
-            guard = OperatorEmployeeGuard(db)
-            guard_result = await guard.validate_for_task_start(
-                employee_id=req.employee_id,
-                process_type="",
-                machine_type="",
+        target_employee_id = req.employee_id
+        if target_employee_id is None:
+            target_employee_id = await resolve_assigned_employee_for_operational_task(
+                db, order_id=req.order_id, task_id=req.task_id
             )
-            if not guard_result.allowed:
-                raise HTTPException(
-                    status_code=422,
-                    detail={
-                        "error": guard_result.errors[0] if guard_result.errors else "employee_invalid",
-                        "errors": guard_result.errors,
-                    },
-                )
-            completion_fields["completed_by_employee_id"] = guard_result.employee_id
-            if guard_result.employee_name:
-                completion_fields["completed_by_employee_name"] = guard_result.employee_name
 
-        svc = ExecutionRealityService(db)
-        from services.execution_task_help_service import close_open_help_for_task
-        from services.task_work_session_service import SESSION_STATUS_COMPLETED
-
-        async def _task_has_explicit_completion(task_id: str) -> bool:
-            """True only when reality shows a prior explicit complete (not helper stop)."""
-            row = (
-                await db.execute(
-                    sa_select(ExecutionReality).where(
-                        ExecutionReality.order_id == req.order_id
-                    )
-                )
-            ).scalar_one_or_none()
-            if row is None:
-                return False
-            for entry in _parse_json(row.tasks_json):
-                if not isinstance(entry, dict) or entry.get("task_id") != task_id:
-                    continue
-                if not entry.get("ended_at"):
-                    continue
-                if entry.get("completed_by_employee_id") is not None:
-                    return True
-                if str(entry.get("status") or "") == SESSION_STATUS_COMPLETED:
-                    return True
-            return False
-
-        try:
-            await svc.end_task(
-                order_id=req.order_id,
-                task_id=req.task_id,
-                timestamp=now_iso,
-                completion_fields=completion_fields or None,
-                employee_id=req.employee_id,
+        guard = OperatorEmployeeGuard(db)
+        guard_result = await guard.validate_for_task_start(
+            employee_id=target_employee_id,
+            process_type="",
+            machine_type="",
+        )
+        if not guard_result.allowed:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": guard_result.errors[0] if guard_result.errors else "employee_invalid",
+                    "errors": guard_result.errors,
+                },
             )
-        except RealityInputError as e:
-            # Idempotent complete only when prior explicit completion exists.
-            # Never treat "never started" as success (closes help falsely).
-            if e.code == "task_not_started" and await _task_has_explicit_completion(
-                req.task_id
-            ):
-                await close_open_help_for_task(
-                    db, order_id=req.order_id, task_id=req.task_id
-                )
-                return {
-                    "status": "ok",
-                    "action": "complete",
-                    "task_id": req.task_id,
-                    "timestamp": now_iso,
-                    "already_completed": True,
-                    "completion_notes": req.completion_notes,
-                    "completed_by_employee_id": completion_fields.get(
-                        "completed_by_employee_id"
-                    ),
-                }
-            raise HTTPException(status_code=422, detail={"error": e.code, "detail": e.detail})
 
+        completed = await complete_controlled_task_session(
+            db,
+            order_id=req.order_id,
+            task_id=req.task_id,
+            employee_id=int(guard_result.employee_id or target_employee_id),
+            actor_user_id=str(current_user.id) if current_user.id else None,
+            actor_mode="supervisor",
+            completion_notes=req.completion_notes,
+        )
         await close_open_help_for_task(db, order_id=req.order_id, task_id=req.task_id)
 
         return {
             "status": "ok",
             "action": "complete",
             "task_id": req.task_id,
-            "timestamp": now_iso,
+            "timestamp": completed.get("ended_at") or now_iso,
             "completion_notes": req.completion_notes,
-            "completed_by_employee_id": completion_fields.get("completed_by_employee_id"),
+            "completed_by_employee_id": completed.get("completed_by_employee_id"),
+            "already_completed": bool(completed.get("already_completed")),
+            "controlled": True,
         }
 
     elif req.action in ("pause", "block"):

@@ -76,6 +76,7 @@ from schemas.controlled_pre_start_reassignment import (
 from services.controlled_task_session_service import (
     build_execution_actuals_read_model,
     end_controlled_task_session,
+    resolve_assigned_employee_for_operational_task,
     start_controlled_task_session,
 )
 from services.employee_mobile_identity import resolve_employee_for_user
@@ -780,7 +781,7 @@ async def update_plan_task_instructions_endpoint(
     )
 
 
-# ---------- Reality endpoints ----------
+# ---------- Reality endpoints (COMPATIBILITY_BRIDGE → controlled session authority) ----------
 @router.post("/reality/start-task")
 async def start_task(
     req: StartTaskRequest,
@@ -788,42 +789,54 @@ async def start_task(
     current_user: UserResponse = Depends(get_current_user),
     _user=Depends(require_permission("execution.task_start")),
 ):
+    """Legacy URL — delegates to controlled START. Client timestamp is ignored."""
     from services.task_start_gate_service import assert_task_startable
 
-    order = await _get_order_or_404(db, req.order_id)
-    gate = await assert_task_startable(
+    await _get_order_or_404(db, req.order_id)
+    # Compatibility: req.timestamp is intentionally discarded (server clock in domain).
+    _ = req.timestamp
+
+    assigned_employee_id = await resolve_assigned_employee_for_operational_task(
+        db, order_id=req.order_id, task_id=req.task_id
+    )
+
+    from services.task_work_session_service import has_active_session_for_employee
+
+    existing = (
+        await db.execute(
+            select(ExecutionReality).where(ExecutionReality.order_id == req.order_id)
+        )
+    ).scalar_one_or_none()
+    if existing is not None:
+        try:
+            existing_tasks = json.loads(existing.tasks_json or "[]")
+        except (TypeError, ValueError, json.JSONDecodeError):
+            existing_tasks = []
+        if isinstance(existing_tasks, list) and has_active_session_for_employee(
+            existing_tasks, task_id=req.task_id, employee_id=assigned_employee_id
+        ):
+            return _reality_row_to_dict(existing)
+
+    await assert_task_startable(
         db,
         order_id=req.order_id,
         task_id=req.task_id,
-        employee_id=None,
+        employee_id=assigned_employee_id,
         override_readiness=req.override_readiness,
         override_reason=req.override_reason,
         override_user_id=str(current_user.id or ""),
         override_user_name=str(current_user.name or ""),
         override_user_role=str(current_user.role or ""),
     )
-    initial_fields: dict[str, Any] = {}
-    if gate.get("override_metadata"):
-        initial_fields.update(gate["override_metadata"])
-
-    normalized_initial_fields: dict[str, Any] | None = None
-    if initial_fields:
-        normalized_initial_fields = initial_fields
-
-    svc = ExecutionRealityService(db)
-    try:
-        row = await svc.start_task(
-            order_id=order.id,
-            order_code=order.code,
-            task_id=req.task_id,
-            timestamp=req.timestamp,
-            initial_fields=normalized_initial_fields,
-        )
-    except RealityInputError as e:
-        raise HTTPException(
-            status_code=422,
-            detail={"error": "reality_input_invalid", "code": e.code, "detail": e.detail},
-        )
+    await start_controlled_task_session(
+        db,
+        order_id=req.order_id,
+        task_id=req.task_id,
+        employee_id=assigned_employee_id,
+        actor_user_id=str(current_user.id) if current_user.id else None,
+        actor_mode="supervisor",
+    )
+    row = await _get_reality_or_404(db, req.order_id)
     return _reality_row_to_dict(row)
 
 
@@ -831,22 +844,24 @@ async def start_task(
 async def end_task(
     req: EndTaskRequest,
     db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
     _user=Depends(require_permission("execution.task_complete")),
 ):
-    # Validate order exists but don't touch it.
+    """Legacy URL — session END only (not task complete). Client timestamp ignored."""
     await _get_order_or_404(db, req.order_id)
-    svc = ExecutionRealityService(db)
-    try:
-        row = await svc.end_task(
-            order_id=req.order_id,
-            task_id=req.task_id,
-            timestamp=req.timestamp,
-        )
-    except RealityInputError as e:
-        raise HTTPException(
-            status_code=422,
-            detail={"error": "reality_input_invalid", "code": e.code, "detail": e.detail},
-        )
+    _ = req.timestamp
+    assigned_employee_id = await resolve_assigned_employee_for_operational_task(
+        db, order_id=req.order_id, task_id=req.task_id
+    )
+    await end_controlled_task_session(
+        db,
+        order_id=req.order_id,
+        task_id=req.task_id,
+        employee_id=assigned_employee_id,
+        actor_user_id=str(current_user.id) if getattr(current_user, "id", None) else None,
+        actor_mode="supervisor",
+    )
+    row = await _get_reality_or_404(db, req.order_id)
     return _reality_row_to_dict(row)
 
 

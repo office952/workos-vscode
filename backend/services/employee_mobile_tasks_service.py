@@ -892,44 +892,23 @@ async def start_my_task(db: AsyncSession, *, order_id: int, task_id: str, employ
             },
         )
 
-    order_sql = text("SELECT code FROM orders WHERE id = :oid")
-    order_row = (await db.execute(order_sql, {"oid": order_id})).first()
-    if order_row:
-        order_code = order_row[0]
-    else:
-        plan_code_sql = text(
-            "SELECT order_code FROM execution_plan WHERE order_id = :oid LIMIT 1"
-        )
-        plan_code_row = (await db.execute(plan_code_sql, {"oid": order_id})).first()
-        if not plan_code_row or not plan_code_row[0]:
-            raise HTTPException(status_code=404, detail={"error": "order_not_found"})
-        order_code = plan_code_row[0]
+    from services.controlled_task_session_service import start_controlled_task_session
 
-    now_iso = datetime.now(timezone.utc).isoformat()
-    svc = ExecutionRealityService(db)
-    try:
-        await svc.start_task(
-            order_id=order_id,
-            order_code=order_code,
-            task_id=task_id,
-            timestamp=now_iso,
-            initial_fields={
-                "employee_id": guard_result.employee_id,
-                "employee_name": guard_result.employee_name,
-                "operator_name": guard_result.employee_name,
-                "source": "employee_mobile",
-                "role": "primary",
-                "session_type": "work",
-            },
-        )
-    except RealityInputError as exc:
-        if exc.code == "task_already_started":
-            if active_session_for_employee(task_sessions, employee_id):
-                return {"status": "ok", "action": "start", "task_id": task_id, "already_started": True}
-            raise HTTPException(status_code=403, detail={"error": "task_owned_by_other_employee"})
-        raise HTTPException(status_code=422, detail={"error": exc.code, "detail": exc.detail})
-
-    return {"status": "ok", "action": "start", "task_id": task_id, "timestamp": now_iso}
+    started = await start_controlled_task_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=int(guard_result.employee_id or employee_id),
+        actor_mode="self",
+    )
+    return {
+        "status": "ok",
+        "action": "start",
+        "task_id": task_id,
+        "timestamp": started.get("started_at"),
+        "already_started": bool(started.get("already_active")),
+        "controlled": True,
+    }
 
 
 async def block_my_task(
@@ -1014,40 +993,24 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
     if my_session.get("paused_at") and not my_session.get("resumed_at"):
         raise HTTPException(status_code=409, detail={"error": "task_is_paused"})
 
-    emp_sql = text("SELECT name FROM employees WHERE id = :eid LIMIT 1")
-    emp_row = (await db.execute(emp_sql, {"eid": employee_id})).first()
-    employee_name = emp_row[0] if emp_row else task.get("employee_name")
+    from services.controlled_task_session_service import complete_controlled_task_session
 
-    now_iso = datetime.now(timezone.utc).isoformat()
-    svc = ExecutionRealityService(db)
-    try:
-        await svc.end_task(
-            order_id=order_id,
-            task_id=task_id,
-            timestamp=now_iso,
-            employee_id=employee_id,
-            completion_fields={
-                "completed_by_employee_id": employee_id,
-                "completed_by_employee_name": employee_name,
-            },
-        )
-    except RealityInputError as exc:
-        if exc.code == "task_not_started":
-            _, _, _, task_sessions_after = await _get_task_context(
-                db, order_id=order_id, task_id=task_id, employee_id=employee_id
-            )
-            if derive_task_status_for_employee(task_sessions_after, employee_id) == "done":
-                await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
-                return {
-                    "status": "ok",
-                    "action": "complete",
-                    "task_id": task_id,
-                    "already_completed": True,
-                }
-        raise HTTPException(status_code=422, detail={"error": exc.code, "detail": exc.detail})
-
+    completed = await complete_controlled_task_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=employee_id,
+        actor_mode="self",
+    )
     await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
-    return {"status": "ok", "action": "complete", "task_id": task_id, "timestamp": now_iso}
+    return {
+        "status": "ok",
+        "action": "complete",
+        "task_id": task_id,
+        "timestamp": completed.get("ended_at"),
+        "already_completed": bool(completed.get("already_completed")),
+        "controlled": True,
+    }
 
 
 async def unblock_my_task(db: AsyncSession, *, order_id: int, task_id: str, employee_id: int) -> dict:
