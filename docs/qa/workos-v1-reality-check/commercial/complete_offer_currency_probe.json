@@ -1,0 +1,309 @@
+{
+  "baseline_forex_sablon": {
+    "complete_offer_total": null,
+    "complete_offer_total_currency": null,
+    "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+    "presentation_currency": "EUR",
+    "currency_mix": true,
+    "subtotals_by_currency": [
+      {
+        "currency": "EUR",
+        "subtotal": 190.25
+      },
+      {
+        "currency": "RON",
+        "subtotal": 79.5
+      }
+    ],
+    "sablon_lines": [
+      {
+        "code": "sablon_montaj_forex",
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "subtotal": 37.5,
+        "commercial_unit_price": 15.0,
+        "unit": "m2"
+      }
+    ],
+    "finish_lines": [
+      {
+        "code": "finisaje_colantare_vopsire",
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "subtotal": 42.0,
+        "commercial_unit_price": 35.0,
+        "unit": "m2"
+      }
+    ],
+    "all_line_currencies": [
+      {
+        "code": "debitare_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.75
+      },
+      {
+        "code": "modelare_cant_aluminiu",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 62.5
+      },
+      {
+        "code": "debitare_spate",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.0
+      },
+      {
+        "code": "sistem_led_module",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 36.0
+      },
+      {
+        "code": "sursa_led",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 35.0
+      },
+      {
+        "code": "finisaje_colantare_vopsire",
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "subtotal": 42.0
+      },
+      {
+        "code": "sablon_montaj_forex",
+        "source_currency": "RON",
+        "cpp_currency": "RON",
+        "subtotal": 37.5
+      },
+      {
+        "code": "ambalare",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 20.0
+      }
+    ],
+    "preview_status": "ready",
+    "preview_currency": "EUR"
+  },
+  "second_paper_sablon_face_oracal_641": {
+    "complete_offer_total": 214.15,
+    "complete_offer_total_currency": "EUR",
+    "complete_offer_total_unavailable_reason": null,
+    "presentation_currency": "EUR",
+    "currency_mix": false,
+    "subtotals_by_currency": [
+      {
+        "currency": "EUR",
+        "subtotal": 214.15
+      }
+    ],
+    "sablon_lines": [
+      {
+        "code": "sablon_montaj_hartie",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 12.5,
+        "commercial_unit_price": 5.0,
+        "unit": "m2"
+      }
+    ],
+    "finish_lines": [
+      {
+        "code": "finisaje_oracal_641_material",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 7.8,
+        "commercial_unit_price": 6.5,
+        "unit": "m2"
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 3.6,
+        "commercial_unit_price": 3.0,
+        "unit": "m2"
+      }
+    ],
+    "all_line_currencies": [
+      {
+        "code": "debitare_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.75
+      },
+      {
+        "code": "modelare_cant_aluminiu",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 62.5
+      },
+      {
+        "code": "debitare_spate",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.0
+      },
+      {
+        "code": "sistem_led_module",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 36.0
+      },
+      {
+        "code": "sursa_led",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 35.0
+      },
+      {
+        "code": "finisaje_oracal_641_material",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 7.8
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 3.6
+      },
+      {
+        "code": "sablon_montaj_hartie",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 12.5
+      },
+      {
+        "code": "ambalare",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 20.0
+      }
+    ],
+    "preview_status": "ready",
+    "preview_currency": "EUR"
+  },
+  "alt_mounting_disabled_face_oracal_641": {
+    "complete_offer_total": 201.65,
+    "complete_offer_total_currency": "EUR",
+    "complete_offer_total_unavailable_reason": null,
+    "presentation_currency": "EUR",
+    "currency_mix": false,
+    "subtotals_by_currency": [
+      {
+        "currency": "EUR",
+        "subtotal": 201.65
+      }
+    ],
+    "sablon_lines": [],
+    "finish_lines": [
+      {
+        "code": "finisaje_oracal_641_material",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 7.8,
+        "commercial_unit_price": 6.5,
+        "unit": "m2"
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 3.6,
+        "commercial_unit_price": 3.0,
+        "unit": "m2"
+      }
+    ],
+    "all_line_currencies": [
+      {
+        "code": "debitare_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.75
+      },
+      {
+        "code": "modelare_cant_aluminiu",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 62.5
+      },
+      {
+        "code": "debitare_spate",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 18.0
+      },
+      {
+        "code": "sistem_led_module",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 36.0
+      },
+      {
+        "code": "sursa_led",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 35.0
+      },
+      {
+        "code": "finisaje_oracal_641_material",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 7.8
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 3.6
+      },
+      {
+        "code": "ambalare",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "subtotal": 20.0
+      }
+    ],
+    "preview_status": "ready",
+    "preview_currency": "EUR"
+  },
+  "finish_delta_baseline_to_second": {
+    "finish_line_deltas": [
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "baseline_subtotal": null,
+        "second_subtotal": 3.6,
+        "delta": 3.6,
+        "baseline_currency": null,
+        "second_currency": "EUR"
+      },
+      {
+        "code": "finisaje_colantare_vopsire",
+        "baseline_subtotal": 42.0,
+        "second_subtotal": null,
+        "delta": -42.0,
+        "baseline_currency": "RON",
+        "second_currency": null
+      },
+      {
+        "code": "finisaje_oracal_641_material",
+        "baseline_subtotal": null,
+        "second_subtotal": 7.8,
+        "delta": 7.8,
+        "baseline_currency": null,
+        "second_currency": "EUR"
+      }
+    ]
+  },
+  "verdict": {
+    "forex_makes_complete_offer_unavailable": true,
+    "baseline_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+    "baseline_currency_mix": true,
+    "second_complete_offer_total": 214.15,
+    "second_unavailable_reason": null
+  }
+}

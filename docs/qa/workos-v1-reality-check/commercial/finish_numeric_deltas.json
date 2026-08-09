@@ -1,0 +1,279 @@
+{
+  "template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "baseline": {
+    "face_finish_type": "none",
+    "return_finish_type": "white_aluminum",
+    "TOTAL_BEFORE": 190.25,
+    "eic_baseline_total": 543.9,
+    "geometry": {
+      "letter_face_area_m2": 1.2,
+      "letter_perimeter_m": 12.5,
+      "return_depth_mm": 60,
+      "wrap_area_m2": 0.75
+    }
+  },
+  "variants": [
+    {
+      "variant": "face_none",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 190.25,
+      "EXPECTED_FINISH_DELTA": 0.0,
+      "ACTUAL_FINISH_DELTA": 0.0,
+      "ACTUAL_FINISH_LINES_SUM": 0,
+      "BREAKDOWN_LINES_CREATED": [],
+      "RATE_SOURCE": null,
+      "QUANTITY_SOURCE": null,
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 190.25,
+        "delta_eic_vs_cpp": 353.65,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "face_oracal_641",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 201.65,
+      "EXPECTED_FINISH_DELTA": 11.4,
+      "ACTUAL_FINISH_DELTA": 11.4,
+      "ACTUAL_FINISH_LINES_SUM": 11.4,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_oracal_641_material",
+          "amount": 7.8
+        },
+        {
+          "code": "finisaje_aplicare_autocolant_fata",
+          "amount": 3.6
+        }
+      ],
+      "RATE_SOURCE": "commercial_rules_volumetric_v2:face_oracal_641_material; owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+      "QUANTITY_SOURCE": "finisaje_oracal_641_material:qty=1.2; finisaje_aplicare_autocolant_fata:qty=1.2",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 201.65,
+        "delta_eic_vs_cpp": 342.25,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "face_oracal_651",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 199.85,
+      "EXPECTED_FINISH_DELTA": 9.6,
+      "ACTUAL_FINISH_DELTA": 9.6,
+      "ACTUAL_FINISH_LINES_SUM": 9.6,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_oracal_651_material",
+          "amount": 6.0
+        },
+        {
+          "code": "finisaje_aplicare_autocolant_fata",
+          "amount": 3.6
+        }
+      ],
+      "RATE_SOURCE": "commercial_rules_volumetric_v2:face_oracal_651_material; owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+      "QUANTITY_SOURCE": "finisaje_oracal_651_material:qty=1.2; finisaje_aplicare_autocolant_fata:qty=1.2",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 199.85,
+        "delta_eic_vs_cpp": 344.05,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "face_print_laminate",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 205.85,
+      "EXPECTED_FINISH_DELTA": 15.6,
+      "ACTUAL_FINISH_DELTA": 15.6,
+      "ACTUAL_FINISH_LINES_SUM": 15.6,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_print_laminate_material",
+          "amount": 12.0
+        },
+        {
+          "code": "finisaje_aplicare_autocolant_fata",
+          "amount": 3.6
+        }
+      ],
+      "RATE_SOURCE": "owner_commercial_decision:f7f_2026_08_03:face_print_laminate_material; owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+      "QUANTITY_SOURCE": "finisaje_print_laminate_material:qty=1.2; finisaje_aplicare_autocolant_fata:qty=1.2",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 205.85,
+        "delta_eic_vs_cpp": 338.05,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "face_oracal_8500_w1260",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 210.05,
+      "EXPECTED_FINISH_DELTA": 19.8,
+      "ACTUAL_FINISH_DELTA": 19.8,
+      "ACTUAL_FINISH_LINES_SUM": 19.8,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_oracal_8500_material",
+          "amount": 16.2
+        },
+        {
+          "code": "finisaje_aplicare_autocolant_fata",
+          "amount": 3.6
+        }
+      ],
+      "RATE_SOURCE": "owner_commercial_decision:f7f_2026_08_03:face_oracal_8500_material_by_roll_width; owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+      "QUANTITY_SOURCE": "finisaje_oracal_8500_material:qty=1.2; finisaje_aplicare_autocolant_fata:qty=1.2",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 210.05,
+        "delta_eic_vs_cpp": 333.85,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "return_white_aluminum",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 190.25,
+      "EXPECTED_FINISH_DELTA": 0.0,
+      "ACTUAL_FINISH_DELTA": 0.0,
+      "ACTUAL_FINISH_LINES_SUM": 0,
+      "BREAKDOWN_LINES_CREATED": [],
+      "RATE_SOURCE": null,
+      "QUANTITY_SOURCE": null,
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 190.25,
+        "delta_eic_vs_cpp": 353.65,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "return_oracal_wrap",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 196.25,
+      "EXPECTED_FINISH_DELTA": 6.0,
+      "ACTUAL_FINISH_DELTA": 6.0,
+      "ACTUAL_FINISH_LINES_SUM": 6.0,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_cant_oracal_material",
+          "amount": 3.75
+        },
+        {
+          "code": "finisaje_cant_oracal_labor",
+          "amount": 2.25
+        }
+      ],
+      "RATE_SOURCE": "commercial_rules_volumetric_v2:cant_oracal_wrap_material; owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+      "QUANTITY_SOURCE": "finisaje_cant_oracal_material:qty=0.75; finisaje_cant_oracal_labor:qty=0.75",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 196.25,
+        "delta_eic_vs_cpp": 347.65,
+        "status": "DUAL_CALC"
+      }
+    },
+    {
+      "variant": "return_ral_paint",
+      "TOTAL_BEFORE": 190.25,
+      "TOTAL_AFTER": 234.0,
+      "EXPECTED_FINISH_DELTA": 43.75,
+      "ACTUAL_FINISH_DELTA": 43.75,
+      "ACTUAL_FINISH_LINES_SUM": 43.75,
+      "BREAKDOWN_LINES_CREATED": [
+        {
+          "code": "finisaje_cant_ral_material",
+          "amount": 31.25
+        },
+        {
+          "code": "finisaje_cant_ral_labor",
+          "amount": 12.5
+        }
+      ],
+      "RATE_SOURCE": "commercial_rules_volumetric_v2:cant_ral_paint_material; pricing_registry:operation:RETURN_CANT_RAL_PAINT_LABOR:EUR",
+      "QUANTITY_SOURCE": "finisaje_cant_ral_material:qty=12.5; finisaje_cant_ral_labor:qty=12.5",
+      "CURRENCY": "EUR",
+      "blockers": [
+        {
+          "code": "COMMERCIAL_RULE_CURRENCY_MISMATCH",
+          "message": "Line sablon_montaj_forex currency RON does not match presentation currency EUR (rule=VOL_V2_SABLON_FOREX_DEV_BRIDGE)."
+        }
+      ],
+      "preview_status": "ready",
+      "DUAL_CALC": {
+        "note": null,
+        "eic_total": 543.9,
+        "cpp_total": 234.0,
+        "delta_eic_vs_cpp": 309.9,
+        "status": "DUAL_CALC"
+      }
+    }
+  ]
+}

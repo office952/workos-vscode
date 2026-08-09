@@ -1,0 +1,28 @@
+{
+  "fixture": "tests.test_commercial_price_proposal_preview._full_quote_input (forex sablon)",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "mounting_template_material_type": "forex",
+  "preview": {
+    "subtotal_commercial": null,
+    "currency": "EUR",
+    "status": "ready"
+  },
+  "commercial_product_breakdown": {
+    "complete_offer_total": null,
+    "complete_offer_total_currency": null,
+    "subtotals_by_currency": [
+      {
+        "currency": "EUR",
+        "subtotal": 190.25
+      },
+      {
+        "currency": "RON",
+        "subtotal": 79.5
+      }
+    ]
+  },
+  "complete_offer_total_unavailable_reason": "COMMERCIAL_CURRENCY_MIX_UNRESOLVED",
+  "currency_mix_detected": true,
+  "dry_run_would_get_non_null_subtotal_while_complete_offer_null": false,
+  "note": "Intake V6 priced-quote dry-run uses preview.subtotal_commercial; CPP currently sets subtotal_commercial = complete_offer_total."
+}

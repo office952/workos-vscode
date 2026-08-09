@@ -73,7 +73,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | REASSIGNMENT_PHASE_E | DEFERRED |
 | CAPACITY_STAGE_1 | IMPLEMENTED_INACTIVE |
 | QA_MUTATIONS (this GO) | 0 |
-| COMMERCIAL_OFFER | DONE_FOR_V1 |
+| COMMERCIAL_OFFER | REOPEN_REQUIRED (reality check — EUR/RON mix + UI currency) |
 | PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
 | MATERIAL_ACTUALS_V1 | DONE_FOR_V1 |
 | PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
@@ -81,12 +81,12 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
 | PROFITABILITY_MONETARY_COMPOSITION | DONE_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A (RON costs → EUR @ Order-convert stamp) |
-| BOUNDED_UI_HONESTY | DONE_FOR_V1 |
+| BOUNDED_UI_HONESTY | REOPEN_REQUIRED (currency labels + Light P1) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | TECHNICALLY_READY_OWNER_ACK_PENDING |
-| WORKOS_V1_STATUS | NOT_FINALIZED_UNTIL_OWNER_ACK |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~99% (technical); formal finalize pending product-set ack |
+| WORKOS_V1_EXIT_VERIFICATION | HOLD_PENDING_REALITY_CHECK |
+| WORKOS_V1_STATUS | NOT_FINALIZED — reality defects reopen commercial/UI |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~92% (post reality check; was overstated at ~99%) |
 
 ---
 
@@ -99,7 +99,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | C. ProductDefinition | DONE_FOR_V1 | YES | Builder compile + guards | — | — | NO |
 | D. ProductAggregate | DONE_FOR_V1 | YES | task_rules / WC pilot | — | — | NO |
 | E. Pricing Registry | PARTIAL_NON_BLOCKING | CONDITIONAL | F7I honesty + F7I.1 provisional rates | Hub/tab legacy cleanup | Step 12 | NO for V1 |
-| F. CPP / EIC | DONE_FOR_V1 | YES | EUR native + fail-closed mix; Snapshot embed | ACM/Logo out of V1 | — | NO |
+| F. CPP / EIC | REOPEN_REQUIRED | YES | Finish EUR lines OK when pure; Forex RON sablon + legacy RON finish mix nulls complete_offer | EUR presentation vs RON sellable rules | YES | YES — commercial truth |
 | G. Quote Snapshot V2 | DONE_FOR_V1 | YES | Freeze/accept path | Preview vs official labeling | — | NO |
 | H. Order Snapshot V2 | DONE_FOR_V1 | YES | EUR\|RON convert; net/VAT/gross envelope; no_reprice | Thin ACM scope if activated | — | NO |
 | I. ExecutionPlan | DONE_FOR_V1 | YES | Preview/persist V2 | — | — | NO |
@@ -117,11 +117,11 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | U. HR / Pontaj boundary | DONE_FOR_V1 | YES | Separation proven | — | Salary≠job cost | NO |
 | V. Utilaje registry | PARTIAL_NON_BLOCKING | YES | Registry + MR link | Capacity util% honesty | — | Bounded |
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
-| X. Operator UI | DONE_FOR_V1 (honesty) | YES | Currency/KPI/N/A/Capacity/Modules honesty closed | Residual density polish LATER | — | Polish only |
+| X. Operator UI | REOPEN_REQUIRED | YES | Partial honesty; Quotes RON on EUR amounts; Light islands | Sell currency provenance + Light P0/P1 | YES | YES — UI truth |
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | DONE_FOR_V1 | YES | Detached start; Alembic; build; backup/restore; smoke pack | Cloud rollout LATER | — | NO for V1 lab |
 
-**Counts (exact):** DONE_FOR_V1 = 16 · OPEN/PARTIAL_V1_BLOCKER = 0 · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later
+**Counts (exact):** DONE_FOR_V1 = 14 · OPEN/PARTIAL_V1_BLOCKER = 2 (F commercial, X UI) · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later · EXIT = HOLD
 
 ---
 
@@ -270,21 +270,21 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-NONE_BEFORE_OWNER_PRODUCT_SET_ACK
+WORKOS_V1_COMMERCIAL_CURRENCY_TRUTH_CLOSURE
 ```
 
-**Why:** Technical exit criteria PASS. Sole remaining gate is formal Owner acknowledgment of `WORKOS_V1_PRODUCT_SET = LETTERS_ONLY`. No further feature build. After ack → `FINALIZED_FOR_AGREED_SCOPE`, then RELEASE/PUSH/DEPLOY decision or POST_V1 planning.
+**Why:** Reality check FAIL — sellable RON rules under EUR presentation null complete offer; Quotes/Intake mislabel currency. Do **not** finalize V1 or ask product-set ack until this closes. Evidence: `docs/qa/workos-v1-reality-check/`.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-NONE_BEFORE_V1_RELEASE_DECISION
+WORKOS_V1_LIGHT_THEME_SYSTEMIC_CLOSURE
 ```
 
 ### BUILD_AFTER_THAT
 
 ```text
-POST_V1 / V1.1 planning (Owner)
+WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
 ```
 
 ---
@@ -311,15 +311,15 @@ POST_V1 / V1.1 planning (Owner)
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~99% (technical)
+WORKOS_V1_COMPLETION_ESTIMATE = ~92%
 
 ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 9.5/10
-OPERATOR_UI_CLOSURE      = 8.5/10
+V1_FUNCTIONAL_CLOSURE    = 8/10
+OPERATOR_UI_CLOSURE      = 7/10
 PRODUCTION_READINESS     = 9/10
 ```
 
-**What dominates remaining work:** one Owner acknowledgment line for product-set lock — then V1 is `FINALIZED_FOR_AGREED_SCOPE`. No more pre-V1 feature domains.
+**What dominates remaining work:** commercial EUR truth + currency UI + Light P0/P1 — then golden E2E — then exit verification. Product-set Owner ack deferred until reality repairs close.
 
 ---
 
