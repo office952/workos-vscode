@@ -54,13 +54,25 @@ function Install-WorkOsBackendRequirements {
     )
 
     $pip = Join-Path $BackendDir ".venv\Scripts\pip.exe"
-    & $pip install -q -r (Join-Path $BackendDir "requirements.txt")
-
-    if ($IncludeDev) {
-        $devReq = Join-Path $BackendDir "requirements-dev.txt"
-        if (Test-Path $devReq) {
-            & $pip install -q -r $devReq
+    # pip writes progress to stderr; with $ErrorActionPreference=Stop that aborts startup.
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        & $pip install -q -r (Join-Path $BackendDir "requirements.txt")
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "pip install requirements.txt failed (exit $LASTEXITCODE)"
         }
+        if ($IncludeDev) {
+            $devReq = Join-Path $BackendDir "requirements-dev.txt"
+            if (Test-Path $devReq) {
+                & $pip install -q -r $devReq
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Error "pip install requirements-dev.txt failed (exit $LASTEXITCODE)"
+                }
+            }
+        }
+    } finally {
+        $ErrorActionPreference = $prevEap
     }
 }
 

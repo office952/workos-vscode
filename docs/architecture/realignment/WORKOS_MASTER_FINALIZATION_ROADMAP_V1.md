@@ -82,7 +82,9 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | PROFITABILITY_MONETARY_COMPOSITION | DONE_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A (RON costs → EUR @ Order-convert stamp) |
 | BOUNDED_UI_HONESTY | DONE_FOR_V1 |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~92% |
+| PRODUCTION_READINESS | DONE_FOR_V1 |
+| SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~95% |
 
 ---
 
@@ -115,7 +117,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
 | X. Operator UI | DONE_FOR_V1 (honesty) | YES | Currency/KPI/N/A/Capacity/Modules honesty closed | Residual density polish LATER | — | Polish only |
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
-| Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset; security write-gate DONE | Owner SQLite confirm; secrets; smoke pack | Deploy misconfig | Bounded |
+| Z. Production readiness | DONE_FOR_V1 | YES | Detached start; Alembic; build; backup/restore; smoke pack | Cloud rollout LATER | — | NO for V1 lab |
 
 **Counts (exact):** DONE_FOR_V1 = 15 · OPEN/PARTIAL_V1_BLOCKER = 1 (Z prod readiness) · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later
 
@@ -147,7 +149,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
 | Profitability monetary | DONE_FOR_V1 — Policy A wired | Stamp + RM normalize + tests | — | — | — | — |
-| Production readiness pack | Owner SQLite record; secrets; smoke; APP_ENV discipline | Security DONE | LOW | NONE | NONE | SMALL |
+| Production readiness pack | DONE_FOR_V1 — runbook + smoke evidence | — | — | — | — | — |
 | Machine cost (if required) | Dated machine cost policy | MachineRun runtime | HIGH | SMALL | LIKELY | LARGE |
 
 If Owner declares machine/other costs **N/A for V1 Letters jobs**, machine/other drop to CONDITIONAL → LATER.
@@ -215,7 +217,7 @@ PROFITABILITY_MONETARY_CALCULATION = DONE_FOR_V1
 2. ~~Complete offer currency law~~ **RESOLVED for V1** — native EUR ops (no invent FX); Order convert accepts EUR\|RON.  
 3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
 4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER; Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
-5. **SQLite as V1 production DB** — confirm laboratory/single-tenant freeze (Postgres LATER).  
+5. ~~**SQLite as V1 production DB**~~ **RESOLVED for V1 single-tenant** — DEC-DATABASE-01 + readiness pack; cloud Postgres LATER.  
 6. ~~**Machine actual cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
 7. ~~**Other direct cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
 8. ~~**Profitability currency composition**~~ **RESOLVED** — `PROFITABILITY_CURRENCY_POLICY = A` wired (`profitability_fx_v1` at Order convert).
@@ -256,7 +258,7 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 3. ~~Material actuals V1 sufficiency~~ **DONE** (`WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY`)  
 4. ~~Profitability currency + monetary composition~~ **DONE** (Policy A)  
 5. ~~Bounded operator UI honesty~~ **DONE** (`WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES`)  
-6. Production readiness pack (SQLite confirm, secrets, smoke)  
+6. ~~Production readiness pack~~ **DONE** (`WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK`)  
 7. V1 exit criteria verification  
 
 ---
@@ -266,23 +268,21 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK
+WORKOS_V1_EXIT_VERIFICATION
 ```
 
-**Why:** Monetary + UI honesty closed for V1. Remaining critical path is production readiness (SQLite Owner confirm, secrets, Letters smoke) then exit verification.
+**Why:** Production readiness DONE_FOR_V1. Remaining work is formal exit checklist verification against roadmap §14 — not new domains.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-WORKOS_V1_EXIT_CRITERIA_VERIFICATION
+(none — V1 exit declaration or Owner later program)
 ```
-
-Final V1 exit checklist against roadmap §14.
 
 ### BUILD_AFTER_THAT
 
 ```text
-(none — V1 exit or Owner later program)
+(none)
 ```
 
 ---
@@ -314,7 +314,7 @@ WORKOS_V1_COMPLETION_ESTIMATE = ~85%
 ARCHITECTURAL_FOUNDATION = 9/10
 V1_FUNCTIONAL_CLOSURE    = 8.5/10
 OPERATOR_UI_CLOSURE      = 6/10
-PRODUCTION_READINESS     = 7/10
+PRODUCTION_READINESS     = 9/10
 ```
 
 **What dominates remaining work:** profitability monetary composition (+ Owner machine/other decision), then production smoke — not Inventory/security/labor re-hardening.

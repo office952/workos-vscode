@@ -25,6 +25,26 @@ const EXPECTED_ROUTES = [
   '/api/v1/operator/tasks',
   '/api/v1/execution/plan/{order_id}',
   '/api/v1/intake-v6/workspaces',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/join',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/leave',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/help-requests',
+  '/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept',
+  '/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline',
+  '/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel',
+  '/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/close',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/manager-add',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start',
+  '/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop',
+  '/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/join',
+  '/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/leave',
+  '/api/v1/employee-mobile/tasks/help-opportunities',
+  '/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/help-requests',
+  '/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept',
+  '/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline',
+  '/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel',
+  '/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/close',
+  '/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start',
+  '/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop',
 ];
 
 test('vite default proxy targets canonical backend 8000 on 127.0.0.1', () => {
@@ -59,9 +79,11 @@ test('combined launcher uses backend port 8000 and passes BACKEND_PORT to fronte
 
 test('canonical dev.ps1 entry aligns stack to contract ports', () => {
   const dev = read('scripts/dev.ps1');
-  assert.match(dev, /backend :8000 \+ frontend :3000/);
+  // Agent primary is detached; legacy streaming launcher still must use port contract.
+  assert.match(dev, /dev-detached\.ps1/);
   assert.match(dev, /Get-WorkOsBackendUrl/);
   assert.match(dev, /\$env:BACKEND_PORT = \[string\]\(Get-WorkOsBackendPort\)/);
+  assert.match(dev, /Initialize-WorkOsDevPortContract/);
 });
 
 test('no canonical launcher hardcodes literal uvicorn --port 8000/8001', () => {
@@ -113,11 +135,12 @@ test('bash launcher defaults to 8000 when BACKEND_PORT unset', () => {
   assert.match(bash, /--port "\$\{BACKEND_PORT\}"/);
 });
 
-test('manifest v1 exists with five canonical OpenAPI paths', () => {
+test('manifest v1 exists with canonical OpenAPI paths (core + collaboration)', () => {
   const manifest = readJson(MANIFEST_PATH);
   assert.equal(manifest.manifest_version, 1);
   assert.deepEqual(manifest.required_paths, EXPECTED_ROUTES);
   assert.equal(new Set(manifest.required_paths).size, manifest.required_paths.length);
+  assert.ok(manifest.required_paths.includes('/api/v1/intake-v6/workspaces'));
 });
 
 test('freshness helper loads manifest and fails closed on empty list', () => {
