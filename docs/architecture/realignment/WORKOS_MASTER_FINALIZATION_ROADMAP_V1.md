@@ -3,7 +3,7 @@
 **Status:** ACTIVE — primary V1 finalization navigator  
 **Date:** 2026-08-09  
 **Owner GO:** `AUTHORIZE_WORKOS_MASTER_FINALIZATION_ROADMAP_V1`  
-**Baseline HEAD:** `0fb723b2` (`feat/f7i-owner-rate-activation`)  
+**Baseline HEAD:** `8f6e9f8c` accepted commercial tip; security closure lands on this branch after that tip (`feat/f7i-owner-rate-activation`)  
 **Principle:** `DONE ENOUGH FOR V1 > PERFECT EVERYWHERE`
 
 > **Use this document** for current V1 finalization priority and next-build selection.  
@@ -73,6 +73,9 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | REASSIGNMENT_PHASE_E | DEFERRED |
 | CAPACITY_STAGE_1 | IMPLEMENTED_INACTIVE |
 | QA_MUTATIONS (this GO) | 0 |
+| COMMERCIAL_OFFER | DONE_FOR_V1 |
+| PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~80% |
 
 ---
 
@@ -104,10 +107,10 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | V. Utilaje registry | PARTIAL_NON_BLOCKING | YES | Registry + MR link | Capacity util% honesty | — | Bounded |
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
 | X. Operator UI | PARTIAL_NON_BLOCKING | YES | Letters spine usable | Dense screens; ACM/Logo | — | Bounded only |
-| Y. Legacy / dead | PARTIAL_V1_BLOCKER | YES (safety) | Session legacy gated | intake-v5 mounted unauth; HR salary reads any-auth | Production multi-role | Bounded |
-| Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset | Owner SQLite confirm; secrets; smoke; authz | Deploy misconfig | Bounded |
+| Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
+| Z. Production readiness | PARTIAL_V1_BLOCKER | YES | Local stack + CI subset; security write-gate DONE | Owner SQLite confirm; secrets; smoke pack | Deploy misconfig | Bounded |
 
-**Counts (exact):** DONE_FOR_V1 = 11 · OPEN/PARTIAL_V1_BLOCKER = 6 · PARTIAL_NON_BLOCKING = 8 · NOT_STARTED_V1_REQUIRED = 3 · IMPLEMENTED_INACTIVE = 1 · DEFERRED (cross-cutting Phase E / PAUSE) = listed in Later
+**Counts (exact):** DONE_FOR_V1 = 13 · OPEN/PARTIAL_V1_BLOCKER = 4 · PARTIAL_NON_BLOCKING = 8 · NOT_STARTED_V1_REQUIRED = 3 · IMPLEMENTED_INACTIVE = 1 · DEFERRED (cross-cutting Phase E / PAUSE) = listed in Later
 
 ---
 
@@ -127,6 +130,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 | Labor rate snapshot | Historical stability PROVEN | `0fb723b2` | Rate editor UX |
 | HR/Pontaj boundary | Separation | Owner decision docs | Payroll reconciliation |
 | Commercial offer currency/rates (Letters) | EUR native + fail-closed mix; Order EUR\|RON; revenue envelope | `WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE` | Quotes list aggregate currency polish; `printed_vinyl` |
+| Production security write-gate | Intake V5 unmounted; HR cost projection gated; anonymous critical writes = 0 | `WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE` | External pentest LATER; APP_ENV discipline in smoke pack |
 
 ---
 
@@ -134,10 +138,9 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| Production security gates | Auth-lock/remove intake-v5; permission-gate HR salary reads | None | LOW | NONE | NONE | SMALL |
 | Actual material platform | Consistent freeze + valuation for V1 jobs | Inventory facts | MEDIUM | SMALL | POSSIBLE | MEDIUM |
-| Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material PARTIAL; revenue PARTIAL | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
-| Production readiness pack | Owner SQLite record; secrets; smoke; APP_ENV discipline | Security gates | LOW | NONE | NONE | SMALL |
+| Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material PARTIAL; revenue READY | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
+| Production readiness pack | Owner SQLite record; secrets; smoke; APP_ENV discipline | Security DONE | LOW | NONE | NONE | SMALL |
 | Machine cost (if required) | Dated machine cost policy | MachineRun runtime | HIGH | SMALL | LIKELY | LARGE |
 
 If Owner declares machine/other costs **N/A for V1 Letters jobs**, machine/other drop to CONDITIONAL → LATER.
@@ -238,7 +241,7 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ## 12. Critical path (max ~8 nodes)
 
 1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE** (`WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE`)  
-2. Production security gates (intake-v5 + HR salary read authz)  
+2. ~~Production security gates (intake-v5 + HR salary read authz)~~ **DONE** (`WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE`)  
 3. Material actuals V1 sufficiency  
 4. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred)  
 5. Bounded operator UI honesty (quotes list currency aggregates; execution density)  
@@ -252,26 +255,26 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE
-```
-
-**Why:** Commercial offer/revenue path is DONE_FOR_V1. Remaining production-critical blockers are unauthenticated `intake-v5` and over-broad HR salary reads. Small, high integrity, unblocks deploy readiness.
-
-### BUILD_AFTER_NEXT
-
-```text
 WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY
 ```
 
-Platform-complete material freeze/valuation for V1 Letters jobs (fail-closed when unit cost missing).
+**Why:** Security write-gate is DONE_FOR_V1. Material actuals remain the open V1 cost-input blocker before monetary Profitability composition. Verify sufficiency first — do not assume platform-complete.
 
-### BUILD_AFTER_THAT
+### BUILD_AFTER_NEXT
 
 ```text
 PROFITABILITY_MONETARY_COMPOSITION_V1
 ```
 
 Compose READY labor + material + READY revenue into deterministic actual cost/margin with fail-closed gaps. No dashboard redesign.
+
+### BUILD_AFTER_THAT
+
+```text
+WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK
+```
+
+Owner SQLite confirm, secrets posture, Letters E2E smoke — after monetary inputs are honest.
 
 ---
 
@@ -297,15 +300,15 @@ Compose READY labor + material + READY revenue into deterministic actual cost/ma
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~75%
+WORKOS_V1_COMPLETION_ESTIMATE = ~80%
 
 ARCHITECTURAL_FOUNDATION = 9/10
 V1_FUNCTIONAL_CLOSURE    = 8/10
 OPERATOR_UI_CLOSURE      = 6/10
-PRODUCTION_READINESS     = 5/10
+PRODUCTION_READINESS     = 7/10
 ```
 
-**What dominates remaining work:** production security gates, material actuals sufficiency, profitability monetary composition — not commercial/labor/MachineRun re-hardening.
+**What dominates remaining work:** material actuals sufficiency, profitability monetary composition, then production smoke — not commercial/labor/MachineRun/security re-hardening.
 
 ---
 
@@ -331,27 +334,29 @@ No redesign-every-screen program.
 
 | Class | Items |
 |-------|-------|
-| V1_BLOCKING | `intake-v5` router auto-mounted without auth; HR salary fields on any-auth GET list/detail |
+| V1_BLOCKING | _(none remaining in legacy auth class — security write-gate closed)_ |
 | V1_NON_BLOCKING | QuoteWizard/CostEngine as money authority (marked legacy); `/operator`/`/tablet` compat |
-| LATER_CLEANUP | Pricing hub tab debt; Product System planned shells; demo routes |
+| LATER_CLEANUP | Pricing hub tab debt; Product System planned shells; demo routes; external pentest |
 
 ---
 
 ## 18. Deployment / security (V1-critical)
 
 - **SQLite** = current canonical runtime; Postgres supported-in-code, **not** required for V1 if Owner confirms single-tenant.  
-- **Security blockers:** wrong `APP_ENV` → dev auth; intake-v5 unauth; HR salary read over-broad.  
-- No giant security program — close only V1-critical gates.
+- **Security write-gate:** DONE_FOR_V1 (`intake-v5` unmounted; HR salary/cost projection gated).  
+- **Residual deploy risk:** wrong `APP_ENV` → dev auth bypass (existing BUILD 20 fail-closed) — covered in production readiness pack.  
+- No giant security program — do not reopen SSO/MFA/SIEM for V1.
 
 ---
 
 ## 19. Modules / Governance drift (list only)
 
 - Reality node: labor CLOSED / rates PROVEN — keep aligned.  
+- Production security: auth authority = JWT/`get_current_user`; permission authority = `PERMISSION_MATRIX`; operational employee projection vs `employee.view_hr_cost`; Intake V5 = DEPRECATED_NOT_MOUNTED.  
 - Post-Job limitation text may still say “labor $ open” while labor freeze is READY — sync when monetary composition lands.  
 - Doc 21 materialization/session rows are stale vs Aug 2026 — superseded by this roadmap for priority.
 
-Trivial factual sync only; no feature work in this GO.
+Trivial factual sync only; no feature work beyond security closure evidence.
 
 ---
 
@@ -377,13 +382,15 @@ Keep this document short enough to stay useful.
 
 ---
 
-## 22. This GO constraints (honored)
+## 22. Latest security GO constraints (honored)
 
 ```text
-PRODUCT_CODE_CHANGES = 0
 DB_SCHEMA_CHANGES = 0
-NEW_ENDPOINTS = 0
-NEW_UI_FEATURES = 0
-RUNTIME_MUTATIONS = 0
+NEW_ALEMBIC = NO
+RBAC_PLATFORM = NO
+SSO_MFA = NO
 QA_MUTATIONS = 0
+PUSH = NO
+COMMERCIAL_BEHAVIOR_CHANGED = NO
+EXECUTION_BEHAVIOR_CHANGED = NO
 ```
