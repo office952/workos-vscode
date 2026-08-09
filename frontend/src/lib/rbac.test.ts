@@ -74,6 +74,16 @@ describe("BUILD 24 — Frontend RBAC Hardening", () => {
   });
 
   describe("Permission checks", () => {
+    it("machine_run permissions: operator execute without manage", () => {
+      expect(can("operator", "execution.machine_run.read")).toBe(true);
+      expect(can("operator", "execution.machine_run.execute")).toBe(true);
+      expect(can("operator", "execution.machine_run.manage")).toBe(false);
+      expect(can("sales", "execution.machine_run.read")).toBe(false);
+      expect(can("manager", "execution.machine_run.manage")).toBe(true);
+      expect(canViewNav("operator", "machine_runs")).toBe(true);
+      expect(canViewNav("sales", "machine_runs")).toBe(false);
+    });
+
     it("admin has all permissions", () => {
       expect(can("admin", "view:dashboard")).toBe(true);
       expect(can("admin", "edit:settings")).toBe(true);

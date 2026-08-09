@@ -48,6 +48,8 @@ const OutputBlocksPreview = lazy(() => import("./pages/OutputBlocksPreview"));
 import ErrorBoundary from "./components/ErrorBoundary";
 import ExecutionDashboard from "./pages/ExecutionDashboard";
 import ExecutionDetail from "./pages/ExecutionDetail";
+import MachineRunsListPage from "./pages/MachineRunsListPage";
+import MachineRunDetailPage from "./pages/MachineRunDetailPage";
 import MaterializedOpsGraph from "./pages/MaterializedOpsGraph";
 import OperationalRealityReview from "./pages/OperationalRealityReview";
 import OperationalReports from "./pages/OperationalReports";
@@ -273,6 +275,8 @@ export function AuthenticatedAppRoutes() {
           <Route path="/execution" element={<ExecutionDashboard />} />
           <Route path="/execution/reality-review" element={<OperationalRealityReview />} />
           <Route path="/execution/ops-graph" element={<MaterializedOpsGraph />} />
+          <Route path="/execution/machine-runs" element={<MachineRunsListPage />} />
+          <Route path="/execution/machine-runs/:machineRunId" element={<MachineRunDetailPage />} />
           <Route path="/execution/:order_id" element={<ExecutionDetail />} />
           <Route path="/demo/commercial-spine" element={<CommercialSpineDemo />} />
           <Route path="/demo/volumetric-letter-preview" element={<VolumetricLetterPreviewDemo />} />

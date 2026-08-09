@@ -126,6 +126,7 @@ describe("shellNavigation — U7 role projection + production home", () => {
     expect(byLabel.get("Cereri")).toBe("/intake");
     expect(byLabel.get("Produse")).toBe("/product-system/products");
     expect(byLabel.get("Planificare")).toBe("/execution");
+    expect(byLabel.get("Rulări utilaj")).toBe("/execution/machine-runs");
     expect(byLabel.get("Atelier")).toBe("/shop-floor");
     expect(byLabel.get("Stații")).toBe("/tablet");
     expect(byLabel.get("Acțiune task")).toBe("/operator");
@@ -141,6 +142,16 @@ describe("shellNavigation — U7 role projection + production home", () => {
     expect(pathAllowedForRole("admin", "/inventory/pricing")).toBe(true);
     expect(pathAllowedForRole("sales", "/execution/880041")).toBe(true);
     expect(pathAllowedForRole("operator", "/execution/880041")).toBe(false);
+    expect(pathAllowedForRole("operator", "/execution/machine-runs")).toBe(true);
+    expect(pathAllowedForRole("sales", "/execution/machine-runs")).toBe(false);
+    expect(pathAllowedForRole("admin", "/execution/machine-runs/12")).toBe(true);
+  });
+
+  it("exposes Rulări utilaj under Producție for machine_run roles", () => {
+    expect(projectedNavLabels("admin")).toContain("Rulări utilaj");
+    expect(projectedNavLabels("manager")).toContain("Rulări utilaj");
+    expect(projectedNavLabels("operator")).toContain("Rulări utilaj");
+    expect(projectedNavLabels("sales")).not.toContain("Rulări utilaj");
   });
 
   it("pathAllowedForRole allows Intake V6 for intake roles, not demos-only", () => {

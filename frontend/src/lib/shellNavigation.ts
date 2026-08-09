@@ -89,6 +89,12 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
       },
       { to: "/execution", label: "Planificare", icon: Activity, navKey: "execution" },
       {
+        to: "/execution/machine-runs",
+        label: "Rulări utilaj",
+        icon: Cog,
+        navKey: "machine_runs",
+      },
+      {
         to: "/execution/ops-graph",
         label: "Ops-Graph",
         icon: GitBranch,
@@ -294,6 +300,9 @@ export function pathAllowedForRole(role: Role, pathname: string): boolean {
 
   if (pathname.startsWith("/execution/ops-graph")) {
     return canViewNav(role, "ops_graph");
+  }
+  if (pathname.startsWith("/execution/machine-runs")) {
+    return canViewNav(role, "machine_runs");
   }
   if (pathname.startsWith("/execution/reality-review")) {
     return canViewNav(role, "execution");

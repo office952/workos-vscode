@@ -71,7 +71,11 @@ export type Permission =
   | "view:pricing"
   // Reality Quality (BUILD 18)
   | "reality.invalidate"
-  | "reality.restore_valid";
+  | "reality.restore_valid"
+  // MachineRun shop-floor (parity with backend execution.machine_run.*)
+  | "execution.machine_run.read"
+  | "execution.machine_run.manage"
+  | "execution.machine_run.execute";
 
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   viewer: ["view:dashboard"],
@@ -86,6 +90,8 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:inventory",
     "view:stock_movements",
     "view:utilaje",
+    "execution.machine_run.read",
+    "execution.machine_run.execute",
   ],
 
   sales: [
@@ -139,6 +145,9 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:reports",
     "view:reports_profit",
     "reality.invalidate",
+    "execution.machine_run.read",
+    "execution.machine_run.manage",
+    "execution.machine_run.execute",
   ],
 
   admin: [
@@ -181,6 +190,9 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "view:modules",
     "reality.invalidate",
     "reality.restore_valid",
+    "execution.machine_run.read",
+    "execution.machine_run.manage",
+    "execution.machine_run.execute",
   ],
 };
 
@@ -280,6 +292,7 @@ export type NavItem =
   | "operator"
   | "tablet"
   | "execution"
+  | "machine_runs"
   | "ops_graph"
   | "intake"
   | "products"
@@ -308,6 +321,7 @@ const NAV_PERMISSION_MAP: Partial<Record<NavItem, Permission>> = {
   operator: "view:operator",
   tablet: "view:shopfloor",
   execution: "view:execution",
+  machine_runs: "execution.machine_run.read",
   ops_graph: "view:execution",
   intake: "view:intake",
   products: "view:products",
@@ -362,6 +376,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   "operator",
   "tablet",
   "execution",
+  "machine_runs",
   "ops_graph",
   "intake",
   "products",
