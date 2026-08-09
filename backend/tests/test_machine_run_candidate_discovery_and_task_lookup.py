@@ -14,7 +14,7 @@ from unittest.mock import AsyncMock
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from core.database import get_db
@@ -26,6 +26,8 @@ from schemas.auth import UserResponse
 from schemas.resource_state_configuration import ResourceDomainConfigurationCommand
 from schemas.resource_state_machine_run import (
     AddMachineRunParticipantCommand,
+    CancelMachineRunCommand,
+    CompleteMachineRunCommand,
     ConfirmMachineRunCommand,
     CreateMachineRunCommand,
     MachineRunParticipantRef,
@@ -40,6 +42,8 @@ from services.machine_run_candidate_service import (
 )
 from services.machine_run_command_service import (
     add_machine_run_participant,
+    cancel_machine_run,
+    complete_machine_run,
     confirm_machine_run,
     create_machine_run,
     release_machine_run,
@@ -600,4 +604,222 @@ async def test_http_candidates_lookup_and_permission(cand_db: AsyncSession, tmp_
     finally:
         app.dependency_overrides.clear()
         await engine.dispose()
+
+
+def _cand_keys(cands) -> set[tuple[int, str]]:
+    return {(c.execution_plan_id, c.task_key) for c in cands.items}
+
+
+@pytest.mark.asyncio
+async def test_released_run_allows_reeligibility_and_preserves_history(
+    cand_db: AsyncSession,
+):
+    """TERMINAL_MEMBERSHIP_REELIGIBILITY — RELEASE path."""
+    created = await _create_ab(cand_db, hour=20)
+    await cand_db.commit()
+    confirmed = await confirm_machine_run(
+        cand_db,
+        machine_run_id=created.machine_run_id,
+        command=ConfirmMachineRunCommand(
+            expected_version=created.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    started = await start_machine_run(
+        cand_db,
+        machine_run_id=confirmed.machine_run_id,
+        command=StartMachineRunCommand(
+            expected_version=confirmed.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    completed = await complete_machine_run(
+        cand_db,
+        machine_run_id=started.machine_run_id,
+        command=CompleteMachineRunCommand(
+            expected_version=started.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    # COMPLETED still blocks
+    cands_mid = await list_create_candidates(cand_db, machine_id=1)
+    assert (21, FACE_A) not in _cand_keys(cands_mid)
+    mid_lookup = await lookup_active_machine_run_by_task(
+        cand_db, execution_plan_id=21, task_key=FACE_A
+    )
+    assert mid_lookup.membership is not None
+    assert mid_lookup.membership.status == "COMPLETED"
+    with pytest.raises(ResourceStateWriteError) as exc:
+        await create_machine_run(
+            cand_db,
+            command=CreateMachineRunCommand(
+                machine_id=1,
+                reservation_start=_window(30)[0],
+                reservation_end=_window(30)[1],
+                timezone="Europe/Bucharest",
+                participants=[
+                    MachineRunParticipantRef(execution_plan_id=21, task_key=FACE_A),
+                    MachineRunParticipantRef(execution_plan_id=22, task_key=FACE_B),
+                ],
+                idempotency_key=str(uuid.uuid4()),
+                reason_code="should_block_completed",
+            ),
+            actor_user_id="admin-1",
+        )
+    assert exc.value.code == "task_already_in_active_machine_run"
+
+    released = await release_machine_run(
+        cand_db,
+        machine_run_id=completed.machine_run_id,
+        command=ReleaseMachineRunCommand(
+            expected_version=completed.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    assert released.status == "RELEASED"
+
+    # Provenance preserved as REMOVED (partial unique ACTIVE index requires clear)
+    hist_removed = (
+        await cand_db.execute(
+            select(func.count())
+            .select_from(MachineRunParticipant)
+            .where(
+                MachineRunParticipant.machine_run_id == released.machine_run_id,
+                MachineRunParticipant.status == "REMOVED",
+            )
+        )
+    ).scalar_one()
+    hist_active = (
+        await cand_db.execute(
+            select(func.count())
+            .select_from(MachineRunParticipant)
+            .where(
+                MachineRunParticipant.machine_run_id == released.machine_run_id,
+                MachineRunParticipant.status == "ACTIVE",
+            )
+        )
+    ).scalar_one()
+    assert int(hist_removed) >= 2
+    assert int(hist_active) == 0
+
+    term_lookup = await lookup_active_machine_run_by_task(
+        cand_db, execution_plan_id=21, task_key=FACE_A
+    )
+    assert term_lookup.membership is None
+    cands = await list_create_candidates(cand_db, machine_id=1)
+    assert (21, FACE_A) in _cand_keys(cands)
+    assert (22, FACE_B) in _cand_keys(cands)
+
+    again = await create_machine_run(
+        cand_db,
+        command=CreateMachineRunCommand(
+            machine_id=1,
+            reservation_start=_window(32)[0],
+            reservation_end=_window(32)[1],
+            timezone="Europe/Bucharest",
+            participants=[
+                MachineRunParticipantRef(execution_plan_id=21, task_key=FACE_A),
+                MachineRunParticipantRef(execution_plan_id=22, task_key=FACE_B),
+            ],
+            idempotency_key=str(uuid.uuid4()),
+            reason_code="reelig_after_release",
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    assert again.status == "HELD"
+
+
+@pytest.mark.asyncio
+async def test_cancelled_run_allows_reeligibility(cand_db: AsyncSession):
+    """TERMINAL_MEMBERSHIP_REELIGIBILITY — CANCEL HELD + CANCEL RESERVED."""
+    held = await _create_ab(cand_db, hour=40)
+    await cand_db.commit()
+    cancelled = await cancel_machine_run(
+        cand_db,
+        machine_run_id=held.machine_run_id,
+        command=CancelMachineRunCommand(
+            expected_version=held.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    assert cancelled.status == "CANCELLED"
+    assert (
+        await lookup_active_machine_run_by_task(
+            cand_db, execution_plan_id=21, task_key=FACE_A
+        )
+    ).membership is None
+    assert (21, FACE_A) in _cand_keys(
+        await list_create_candidates(cand_db, machine_id=1)
+    )
+
+    again = await _create_ab(cand_db, hour=42)
+    await cand_db.commit()
+    conf = await confirm_machine_run(
+        cand_db,
+        machine_run_id=again.machine_run_id,
+        command=ConfirmMachineRunCommand(
+            expected_version=again.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    cancelled2 = await cancel_machine_run(
+        cand_db,
+        machine_run_id=conf.machine_run_id,
+        command=CancelMachineRunCommand(
+            expected_version=conf.version, idempotency_key=str(uuid.uuid4())
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    assert cancelled2.status == "CANCELLED"
+    third = await _create_ab(cand_db, hour=44)
+    await cand_db.commit()
+    assert third.status == "HELD"
+
+
+@pytest.mark.asyncio
+async def test_removed_participant_non_blocking_still(cand_db: AsyncSession):
+    created = await _create_ab(cand_db, hour=50)
+    await cand_db.commit()
+    # Need 3 participants for remove-to-min; add C then remove C
+    added = await add_machine_run_participant(
+        cand_db,
+        machine_run_id=created.machine_run_id,
+        command=AddMachineRunParticipantCommand(
+            execution_plan_id=23,
+            task_key=FACE_C,
+            expected_version=created.version,
+            idempotency_key=str(uuid.uuid4()),
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    removed = await remove_machine_run_participant(
+        cand_db,
+        machine_run_id=added.machine_run_id,
+        command=RemoveMachineRunParticipantCommand(
+            execution_plan_id=23,
+            task_key=FACE_C,
+            expected_version=added.version,
+            idempotency_key=str(uuid.uuid4()),
+        ),
+        actor_user_id="admin-1",
+    )
+    await cand_db.commit()
+    assert removed.status == "HELD"
+    assert (23, FACE_C) in _cand_keys(
+        await list_create_candidates(cand_db, machine_id=1)
+    )
+    assert (
+        await lookup_active_machine_run_by_task(
+            cand_db, execution_plan_id=23, task_key=FACE_C
+        )
+    ).membership is None
 

@@ -308,8 +308,9 @@ async def test_read_after_lifecycle(read_db: AsyncSession):
     assert d5.reservation.status == "RELEASED"
     assert d5.started_at is not None
     assert d5.completed_at is not None
-    assert d5.active_participant_count == 2
+    assert d5.active_participant_count == 0
     assert d5.total_participant_count == 2
+    assert all(p.status == "REMOVED" for p in d5.participants)
 
     closed = await list_machine_runs(read_db, open_only=True)
     assert closed.count == 0

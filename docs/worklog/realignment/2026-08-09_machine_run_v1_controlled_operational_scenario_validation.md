@@ -175,13 +175,13 @@ EMPLOYEE_SESSION_RELATION_OPERATIONAL_PRIORITY = UNPROVEN
 ```text
 MACHINE_RUN_V1_HARDENING_FIX_CANDIDATE = YES
 ID = TERMINAL_MEMBERSHIP_REELIGIBILITY
+STATUS = RESOLVED
+RESOLVED_BY_GO = AUTHORIZE_MACHINE_RUN_TERMINAL_MEMBERSHIP_REELIGIBILITY_HARDENING_FIX
+RESOLVED_WORKLOG = docs/worklog/realignment/2026-08-09_machine_run_terminal_membership_reeligibility_hardening_fix.md
 ```
 
-**Reproduction:** CREATE → CANCEL (or full path to RELEASE) → CREATE again with same participants → `task_already_in_active_machine_run`.  
-**Also:** after CANCEL, `list_create_candidates` omits the task while `lookup_active_machine_run_by_task` returns none.  
-**Root:** `find_active_membership` / `_active_membership_keys` ignore parent run terminal status; RELEASE/CANCEL do not REMOVED participants.  
-**Bounded fix:** join/filter non-terminal runs and/or REMOVED on terminalize + regression tests.  
-**Not fixed in this GO.**
+**Was:** CREATE → CANCEL/RELEASE → CREATE again → `task_already_in_active_machine_run`; candidates omitted while by-task clear.  
+**Fix:** blocking membership = ACTIVE participant on non-terminal run; RELEASE/CANCEL set participants REMOVED (provenance kept; no schema change).
 
 ---
 

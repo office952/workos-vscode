@@ -292,7 +292,11 @@ async def test_confirm_release_happy_path(lc_db: AsyncSession):
     assert released.reservation_status == "RELEASED"
     assert released.version == 3
     assert released.reservation_version == 3
-    assert _part_fp(released.participants) == parts_before
+    # Terminalize clears ACTIVE → REMOVED (re-eligibility); membership keys preserved
+    assert [(p[0], p[1], p[2]) for p in _part_fp(released.participants)] == [
+        (p[0], p[1], p[2]) for p in parts_before
+    ]
+    assert all(p[3] == "REMOVED" for p in _part_fp(released.participants))
     assert await _r6(lc_db) == ("CLEAR", "CLEAR")
 
     # Overlap closed — task-owned reservation can take same window.
@@ -329,7 +333,10 @@ async def test_cancel_from_held(lc_db: AsyncSession):
     assert cancelled.status == "CANCELLED"
     assert cancelled.reservation_status == "CANCELLED"
     assert cancelled.version == 2
-    assert _part_fp(cancelled.participants) == parts
+    assert [(p[0], p[1], p[2]) for p in _part_fp(cancelled.participants)] == [
+        (p[0], p[1], p[2]) for p in parts
+    ]
+    assert all(p[3] == "REMOVED" for p in _part_fp(cancelled.participants))
     assert await _r6(lc_db) == ("CLEAR", "CLEAR")
 
 

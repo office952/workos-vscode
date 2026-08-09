@@ -2,6 +2,14 @@
 
 Writers keep raising validation errors. Candidate discovery soft-evaluates the
 same predicates so GET and POST cannot drift for the same factual state.
+
+Active membership blocker (canonical):
+  participant.status == ACTIVE
+  AND machine_run.status in non-terminal blocking set
+    (HELD, RESERVED, RUNNING, COMPLETED)
+
+Terminal runs (RELEASED, CANCELLED, SUPERSEDED) keep historical ACTIVE
+participant provenance but must NOT block candidate discovery or CREATE/ADD.
 """
 
 from __future__ import annotations
@@ -9,7 +17,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from models.machine_run import MachineRunParticipant
+from models.machine_run import MachineRun, MachineRunParticipant
 from models.operational_registry import MachineRegistry
 from services.resource_state_write_common import (
     ResourceStateNotFoundError,
@@ -17,6 +25,14 @@ from services.resource_state_write_common import (
 )
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+# Commitment still open for machine clock / exclusivity.
+BLOCKING_MACHINE_RUN_STATUSES = frozenset(
+    {"HELD", "RESERVED", "RUNNING", "COMPLETED"}
+)
+TERMINAL_MACHINE_RUN_STATUSES = frozenset(
+    {"RELEASED", "CANCELLED", "SUPERSEDED"}
+)
 
 
 def parse_machine_capabilities(raw: Any) -> list[str]:
@@ -129,14 +145,29 @@ async def require_reservable_machine(
     return machine
 
 
+def _blocking_membership_stmt():
+    """Participant ACTIVE on a non-terminal MachineRun (shared filter)."""
+    return (
+        select(MachineRunParticipant)
+        .join(MachineRun, MachineRun.id == MachineRunParticipant.machine_run_id)
+        .where(
+            MachineRunParticipant.status == "ACTIVE",
+            MachineRun.status.in_(tuple(BLOCKING_MACHINE_RUN_STATUSES)),
+        )
+    )
+
+
 async def find_active_membership(
     db: AsyncSession, *, execution_plan_id: int, task_key: str
 ) -> MachineRunParticipant | None:
+    """Return blocking membership if task is bound to a non-terminal MachineRun.
+
+    Historical ACTIVE rows on RELEASED/CANCELLED/SUPERSEDED runs are ignored.
+    """
     result = await db.execute(
-        select(MachineRunParticipant).where(
+        _blocking_membership_stmt().where(
             MachineRunParticipant.execution_plan_id == execution_plan_id,
             MachineRunParticipant.task_key == task_key,
-            MachineRunParticipant.status == "ACTIVE",
         )
     )
     return result.scalar_one_or_none()
@@ -145,12 +176,31 @@ async def find_active_membership(
 async def find_all_active_memberships(
     db: AsyncSession, *, execution_plan_id: int, task_key: str
 ) -> list[MachineRunParticipant]:
-    """All ACTIVE memberships for integrity checks (should be 0 or 1)."""
+    """All blocking ACTIVE memberships (should be 0 or 1)."""
     result = await db.execute(
-        select(MachineRunParticipant).where(
+        _blocking_membership_stmt().where(
             MachineRunParticipant.execution_plan_id == execution_plan_id,
             MachineRunParticipant.task_key == task_key,
-            MachineRunParticipant.status == "ACTIVE",
         )
     )
     return list(result.scalars().all())
+
+
+async def blocking_membership_keys(
+    db: AsyncSession,
+) -> set[tuple[int, str]]:
+    """(plan_id, task_key) pairs blocked by an active non-terminal MachineRun."""
+    rows = (
+        await db.execute(
+            select(
+                MachineRunParticipant.execution_plan_id,
+                MachineRunParticipant.task_key,
+            )
+            .join(MachineRun, MachineRun.id == MachineRunParticipant.machine_run_id)
+            .where(
+                MachineRunParticipant.status == "ACTIVE",
+                MachineRun.status.in_(tuple(BLOCKING_MACHINE_RUN_STATUSES)),
+            )
+        )
+    ).all()
+    return {(int(pid), str(tk)) for pid, tk in rows}

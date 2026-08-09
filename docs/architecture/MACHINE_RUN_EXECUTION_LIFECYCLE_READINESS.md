@@ -182,6 +182,8 @@ Then back to commitment dispose:
   RELEASED/RELEASED   via RELEASE from COMPLETED+RESERVED
 ```
 
+**Terminal membership (2026-08-09 hardening):** RELEASE/CANCEL (and SUPERSEDED) set ACTIVE participants → `REMOVED` so tasks can re-enter a future MachineRun. Blocking eligibility = ACTIVE ∩ non-terminal run (`HELD|RESERVED|RUNNING|COMPLETED`). Historical rows retained; no schema change. Worklog: `docs/worklog/realignment/2026-08-09_machine_run_terminal_membership_reeligibility_hardening_fix.md`.
+
 **Version model (V1):** START and COMPLETE still bump **both** `run.version` and `reservation.version` (lockstep metadata), even if reservation status/window unchanged — same structural pattern as participant mutation / reschedule.  
 `_assert_coupled` becomes **phase-aware** (allowed pairs + version equality), not blind status equality.
 

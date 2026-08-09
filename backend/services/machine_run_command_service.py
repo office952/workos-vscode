@@ -60,6 +60,8 @@ DOMAIN = "MACHINE_RESERVATION"
 MIN_PARTICIPANTS = 2
 OPERATION = "CREATE_MACHINE_RUN"
 OWNER_FORM = "MACHINE_RUN"
+# Same terminal set as eligibility — free partial unique ACTIVE index on plan/task.
+_TERMINAL_CLEAR_PARTICIPANTS = frozenset({"CANCELLED", "RELEASED", "SUPERSEDED"})
 
 
 def _validate_window(start: datetime, end: datetime) -> None:
@@ -773,6 +775,23 @@ async def _mutate_machine_run_lifecycle(
             reservation.updated_by = actor_user_id
             reservation.updated_at = now
             stamp_fn(run, reservation, now)
+
+            # Partial unique index uq_machine_run_participant_active_plan_task
+            # requires ACTIVE rows cleared on terminalize so tasks can re-join
+            # a future MachineRun. Row + run_id provenance stays (status=REMOVED).
+            if target_status in _TERMINAL_CLEAR_PARTICIPANTS:
+                active_parts = (
+                    await db.execute(
+                        select(MachineRunParticipant).where(
+                            MachineRunParticipant.machine_run_id == run.id,
+                            MachineRunParticipant.status == "ACTIVE",
+                        )
+                    )
+                ).scalars().all()
+                for part in active_parts:
+                    part.status = "REMOVED"
+                    part.removed_at = now
+                    part.removed_by = actor_user_id
 
             run_tr = MachineRunTransition(
                 transition_id=str(uuid.uuid4()),

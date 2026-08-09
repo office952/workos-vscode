@@ -22,6 +22,9 @@ from schemas.resource_state_machine_run_candidate import (
 )
 from services.execution_plan_task_parser import load_operational_tasks_from_plan_json
 from services.machine_run_eligibility import (
+    BLOCKING_MACHINE_RUN_STATUSES,
+    TERMINAL_MACHINE_RUN_STATUSES,
+    blocking_membership_keys,
     evaluate_demand_stamps,
     find_all_active_memberships,
     machine_capability_compatible,
@@ -36,11 +39,9 @@ from services.resource_state_write_common import (
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# Chip / lookup: commitment still open for machine clock.
-_ACTIVE_LOOKUP_RUN_STATUSES = frozenset(
-    {"HELD", "RESERVED", "RUNNING", "COMPLETED"}
-)
-_TERMINAL_RUN_STATUSES = frozenset({"RELEASED", "CANCELLED", "SUPERSEDED"})
+# Chip / lookup: same non-terminal set as CREATE/ADD blockers.
+_ACTIVE_LOOKUP_RUN_STATUSES = BLOCKING_MACHINE_RUN_STATUSES
+_TERMINAL_RUN_STATUSES = TERMINAL_MACHINE_RUN_STATUSES
 _OPEN_RESERVATION_STATUSES = frozenset({"HELD", "RESERVED"})
 
 
@@ -98,15 +99,8 @@ async def _load_plans(
 async def _active_membership_keys(
     db: AsyncSession,
 ) -> set[tuple[int, str]]:
-    rows = (
-        await db.execute(
-            select(
-                MachineRunParticipant.execution_plan_id,
-                MachineRunParticipant.task_key,
-            ).where(MachineRunParticipant.status == "ACTIVE")
-        )
-    ).all()
-    return {(int(pid), str(tk)) for pid, tk in rows}
+    """Blocking keys only — terminal MachineRuns do not exclude candidates."""
+    return await blocking_membership_keys(db)
 
 
 async def _active_shared_capability_for_run(
