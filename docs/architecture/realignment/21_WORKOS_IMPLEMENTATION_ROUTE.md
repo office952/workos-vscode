@@ -1,13 +1,17 @@
 # 21 — WorkOS Implementation Route
 
-**Version:** 1.0.1  
-**Status:** Controlled implementation route synced to current validated runtime/doc truth  
-**Date:** 2026-06-30  
-**Branch context:** `feature/step-7g-commercial-price-proposal` — HEAD `1e32692`  
+**Version:** 1.0.2  
+**Status:** Historical controlled implementation route (architecture + phase history)  
+**Date:** 2026-06-30 (pointer updated 2026-08-09)  
+**Branch context:** originally `feature/step-7g-commercial-price-proposal` — HEAD `1e32692`  
 **Source audits:** Full Flow Alignment Audit (`2026-06-30_full_flow_alignment_audit.md`); Step 9 semantic alignment + owner review worklogs  
 **Verdict accepted:** `ALIGNED_MAP_COMPLETE_WITH_GAPS`
 
-**Related:** [20_ROADMAP_STEPS_7G_TO_12.md](./20_ROADMAP_STEPS_7G_TO_12.md) (step definitions) · [00_WORKOS_TARGET_ARCHITECTURE_OVERVIEW.md](./00_WORKOS_TARGET_ARCHITECTURE_OVERVIEW.md) (target architecture)
+> **V1 finalization priority (current):** use  
+> [`WORKOS_MASTER_FINALIZATION_ROADMAP_V1.md`](./WORKOS_MASTER_FINALIZATION_ROADMAP_V1.md)  
+> Spine status tables below may lag Aug 2026 execution/labor closures — do not treat this file as the competing “what next” SoT.
+
+**Related:** [WORKOS_MASTER_FINALIZATION_ROADMAP_V1.md](./WORKOS_MASTER_FINALIZATION_ROADMAP_V1.md) (current V1 navigator) · [20_ROADMAP_STEPS_7G_TO_12.md](./20_ROADMAP_STEPS_7G_TO_12.md) (step definitions) · [00_WORKOS_TARGET_ARCHITECTURE_OVERVIEW.md](./00_WORKOS_TARGET_ARCHITECTURE_OVERVIEW.md) (target architecture)
 
 ---
 
