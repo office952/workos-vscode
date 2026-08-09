@@ -79,7 +79,8 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
 | MACHINE_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
-| PROFITABILITY_MONETARY_COMPOSITION | PARTIAL_BLOCKED — currency EUR/RON gap |
+| PROFITABILITY_MONETARY_COMPOSITION | BUILT_BUT_BLOCKED_BY_CURRENCY |
+| PROFITABILITY_CURRENCY_AUTHORITY | PASS_DECISION_PREP — wait Owner A/B/C |
 | WORKOS_V1_COMPLETION_ESTIMATE | ~87% |
 
 ---
@@ -215,7 +216,9 @@ PROFITABILITY_MONETARY_CALCULATION = NOT_STARTED
 5. **SQLite as V1 production DB** — confirm laboratory/single-tenant freeze (Postgres LATER).  
 6. ~~**Machine actual cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
 7. ~~**Other direct cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
-8. **Profitability currency composition** — Letters EUR revenue vs RON actual costs; no invent FX (`PROFITABILITY_CURRENCY_COMPOSITION_GAP`).
+8. **Profitability currency composition** — **OWNER_DECISION_REQUIRED** (prep: `2026-08-09_workos_v1_profitability_currency_composition_authority.md`).  
+   Card: **[A]** costs RON→EUR @ Order-convert FX stamp (agent rec) · **[B]** revenue→RON derived · **[C]** named reporting currency · **[D]** reopen commercial (not rec).  
+   `HISTORICAL_FX_AUTHORITY = MISSING` today; live Settings `eur_to_ron_rate` is **not** safe at P&L view.
 
 Do **not** ask Owner to decide technical implementation details agents can resolve.
 
@@ -263,10 +266,12 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_PROFITABILITY_CURRENCY_COMPOSITION_AUTHORITY
+WAIT_FOR_OWNER_DECISION — PROFITABILITY_CURRENCY_POLICY (A/B/C)
 ```
 
-**Why:** Monetary composition + N/A semantics are implemented, but Letters EUR revenue cannot be subtracted from RON labor/material without inventing FX. Close this honestly (Owner unify currency or historical FX authority) before claiming Profitability DONE_FOR_V1.
+Then bounded wire GO (stamp FX at Order convert + Profitability RM normalize) → return immediately to `PROFITABILITY_MONETARY_COMPOSITION_V1` for PASS.
+
+**Why:** Authority audit complete (`PASS_DECISION_PREP`). No canonical historical FX for P&L exists yet; Owner must pick A/B/C before product wiring.
 
 ### BUILD_AFTER_NEXT
 
