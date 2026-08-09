@@ -1,9 +1,9 @@
 # WORKOS — Master Finalization Roadmap V1
 
 **Status:** ACTIVE — primary V1 finalization navigator  
-**Date:** 2026-08-09  
-**Owner GO:** `AUTHORIZE_WORKOS_MASTER_FINALIZATION_ROADMAP_V1`  
-**Baseline HEAD:** `8f6e9f8c` accepted commercial tip; security closure lands on this branch after that tip (`feat/f7i-owner-rate-activation`)  
+**Date:** 2026-08-10  
+**Owner GO:** `AUTHORIZE_WORKOS_MASTER_FINALIZATION_ROADMAP_V1` (living navigator)  
+**Baseline HEAD:** `71ec5b2b` (Golden Letters E2E PASS; Exit resume recorded) · branch `feat/f7i-owner-rate-activation`  
 **Principle:** `DONE ENOUGH FOR V1 > PERFECT EVERYWHERE`
 
 > **Use this document** for current V1 finalization priority and next-build selection.  
@@ -56,7 +56,7 @@ Intake V6 (Letters)
 
 ## 3. Current state summary (accepted recent truth)
 
-Verified against worklogs/QA at HEAD `0fb723b2`:
+Verified against worklogs/QA at HEAD `71ec5b2b` (Exit resume 2026-08-10):
 
 | Claim | Status |
 |-------|--------|
@@ -84,12 +84,13 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | BOUNDED_UI_HONESTY | DONE_FOR_V1 (Light Theme systemic closure 2026-08-10) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | READY_TO_RESUME (Golden Letters E2E PASS 2026-08-10) |
-| WORKOS_V1_STATUS | NOT_FINALIZED — Exit verification resume next |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~98% (Golden Letters E2E PASS; Exit resume + product-set ack remaining) |
+| WORKOS_V1_EXIT_VERIFICATION | TECHNICALLY_READY_OWNER_ACK_PENDING |
+| WORKOS_V1_STATUS | NOT_FINALIZED_UNTIL_OWNER_ACK |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~99% (technical exit PASS; product-set Owner ack remaining) |
 | LIGHT_THEME_V1 | DONE_FOR_V1 |
 | UI_HONESTY_V1 | DONE_FOR_V1 |
 | GOLDEN_LETTERS_E2E_FINAL_PROOF | PASS |
+| STATUS_RECONCILIATION_LABOR_MONEY | DOCUMENTED (Golden path ≠ DECLARE_NA; READY unchanged) |
 
 ---
 
@@ -102,7 +103,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | C. ProductDefinition | DONE_FOR_V1 | YES | Builder compile + guards | — | — | NO |
 | D. ProductAggregate | DONE_FOR_V1 | YES | task_rules / WC pilot | — | — | NO |
 | E. Pricing Registry | PARTIAL_NON_BLOCKING | CONDITIONAL | F7I honesty + F7I.1 provisional rates | Hub/tab legacy cleanup | Step 12 | NO for V1 |
-| F. CPP / EIC | REOPEN_REQUIRED | YES | Finish EUR lines OK when pure; Forex RON sablon + legacy RON finish mix nulls complete_offer | EUR presentation vs RON sellable rules | YES | YES — commercial truth |
+| F. CPP / EIC | DONE_FOR_V1 | YES | Letters EUR commercial truth + Golden CPP/Quote/Order match | Residual finish mix LATER; Adaos vs snapshot-authoritative freeze noted | — | NO |
 | G. Quote Snapshot V2 | DONE_FOR_V1 | YES | Freeze/accept path | Preview vs official labeling | — | NO |
 | H. Order Snapshot V2 | DONE_FOR_V1 | YES | EUR\|RON convert; net/VAT/gross envelope; no_reprice | Thin ACM scope if activated | — | NO |
 | I. ExecutionPlan | DONE_FOR_V1 | YES | Preview/persist V2 | — | — | NO |
@@ -113,18 +114,18 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | N. Scheduling | PARTIAL_NON_BLOCKING | NO | Order-centric execution UI | Advanced schedule | — | NO |
 | O. Capacity Stage 1 | IMPLEMENTED_INACTIVE_BY_DECISION | NO | Code present, inactive | Activation | Owner Option D | NO |
 | P. Actual material cost | DONE_FOR_V1 | YES | Freeze-on-write StockMovement; material_input helper; historical stability PROVEN | Operator capture discipline for Letters jobs | — | NO inventory program |
-| Q. Actual labor cost | DONE_FOR_V1 | YES | Time + historical rate freeze | Monetary Profitability rollup | — | NO |
+| Q. Actual labor cost | DONE_FOR_V1 | YES | Time + rate snapshot + finalize → ActualLaborCostLine; RM can include labor | Golden E2E did not call finalize (see Exit Record reconciliation) | — | NO |
 | R. Actual machine cost | DECLARE_NA_FOR_V1 | NO (V1) | Runtime exists; Owner N/A for cost | — | — | Later if INCLUDE |
 | S. Other/service actuals | DECLARE_NA_FOR_V1 | NO (V1) | Explicit N/A_FOR_V1 (not zero) | — | — | Later if INCLUDE |
 | T. Profitability monetary | DONE_FOR_V1 | YES | Composition + N/A + Policy A FX stamp; historical stability | — | — | NO |
 | U. HR / Pontaj boundary | DONE_FOR_V1 | YES | Separation proven | — | Salary≠job cost | NO |
 | V. Utilaje registry | PARTIAL_NON_BLOCKING | YES | Registry + MR link | Capacity util% honesty | — | Bounded |
 | W. Modules / Governance | PARTIAL_NON_BLOCKING | YES | Truth Control Center | Minor label drift | — | Docs sync |
-| X. Operator UI | REOPEN_REQUIRED | YES | Partial honesty; Quotes RON on EUR amounts; Light islands | Sell currency provenance + Light P0/P1 | YES | YES — UI truth |
+| X. Operator UI | DONE_FOR_V1 | YES | UI honesty + Light Theme systemic closure; Quotes EUR honesty | P2/P3 polish POST_V1 | — | NO |
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | DONE_FOR_V1 | YES | Detached start; Alembic; build; backup/restore; smoke pack | Cloud rollout LATER | — | NO for V1 lab |
 
-**Counts (exact):** DONE_FOR_V1 = 14 · OPEN/PARTIAL_V1_BLOCKER = 2 (F commercial, X UI) · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later · EXIT = HOLD
+**Counts (exact):** DONE_FOR_V1 = 17 · OPEN/PARTIAL_V1_BLOCKER = 0 · PARTIAL_NON_BLOCKING = 6 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later · EXIT = TECHNICALLY_READY_OWNER_ACK_PENDING
 
 ---
 
@@ -153,11 +154,10 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| Profitability monetary | DONE_FOR_V1 — Policy A wired | Stamp + RM normalize + tests | — | — | — | — |
-| Production readiness pack | DONE_FOR_V1 — runbook + smoke evidence | — | — | — | — | — |
-| Machine cost (if required) | Dated machine cost policy | MachineRun runtime | HIGH | SMALL | LIKELY | LARGE |
+| _(none technical)_ | — | — | — | — | — | — |
+| Owner product-set ack | Formal LETTERS_ONLY + Logo/ACM LATER lines | Owner chat paste | — | — | — | — |
 
-If Owner declares machine/other costs **N/A for V1 Letters jobs**, machine/other drop to CONDITIONAL → LATER.
+Technical V1 blockers = 0. Machine/other remain `DECLARE_NA_FOR_V1`.
 
 ---
 
@@ -235,36 +235,30 @@ Do **not** ask Owner to decide technical implementation details agents can resol
 
 ```mermaid
 flowchart TD
-  OD[Owner commercial + product-set decisions]
-  COMM[Commercial offer completeness]
-  SEC[Production security write/read gates]
-  MAT[Material actuals V1 sufficiency]
-  PROF[Profitability monetary composition]
-  PROD[Production readiness smoke pack]
-  UI[Bounded UI honesty closures]
+  GOLD[Golden Letters E2E PASS]
+  EXIT[Exit verification technical PASS]
+  ACK[Owner product-set ack]
+  REL[Release / push / deploy decision]
 
-  OD --> COMM
-  COMM --> PROF
-  MAT --> PROF
-  SEC --> PROD
-  PROF --> UI
-  PROD --> V1[WorkOS V1 exit]
-  UI --> V1
+  GOLD --> EXIT
+  EXIT --> ACK
+  ACK --> REL
 ```
 
-Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Session → Labor cost → MachineRun runtime.
+Closed upstream (do not re-enter): Commercial · Light · UI honesty · PD/PA → Snapshot → EP → Assign → Session → Labor authority → MachineRun → Material · Profitability Policy A · Golden E2E.
 
 ---
 
 ## 12. Critical path (max ~8 nodes)
 
-1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE** (`WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE`)  
-2. ~~Production security gates (intake-v5 + HR salary read authz)~~ **DONE** (`WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE`)  
-3. ~~Material actuals V1 sufficiency~~ **DONE** (`WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY`)  
+1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE**  
+2. ~~Production security gates~~ **DONE**  
+3. ~~Material actuals V1 sufficiency~~ **DONE**  
 4. ~~Profitability currency + monetary composition~~ **DONE** (Policy A)  
-5. ~~Bounded operator UI honesty~~ **DONE** (`WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES`)  
-6. ~~Production readiness pack~~ **DONE** (`WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK`)  
-7. ~~V1 exit criteria verification~~ **TECHNICALLY PASS** — Owner product-set ack pending (`WORKOS_V1_EXIT_RECORD.md`)  
+5. ~~Bounded operator UI honesty + Light Theme~~ **DONE**  
+6. ~~Production readiness pack~~ **DONE**  
+7. ~~Golden Letters E2E Final Proof~~ **DONE** (`PASS`)  
+8. ~~V1 exit verification resume~~ **TECHNICALLY PASS** — Owner product-set ack pending (`WORKOS_V1_EXIT_RECORD.md`)  
 
 ---
 
@@ -273,10 +267,10 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_EXIT_VERIFICATION_RESUME
+NONE_BEFORE_RELEASE_DECISION
 ```
 
-**Why:** Golden Letters E2E Final Proof = PASS (`docs/qa/workos-v1-golden-letters-e2e-final-proof/`). Exit HOLD cleared; resume formal Exit verification / status sync. Product-set Owner ack remains after Exit resume if still missing.
+**Why:** Technical exit criteria PASS. Remaining gate is Owner product-set acknowledgment only — not a feature build.
 
 ### BUILD_AFTER_NEXT
 
@@ -284,45 +278,60 @@ WORKOS_V1_EXIT_VERIFICATION_RESUME
 WORKOS_V1_EXIT_OWNER_PRODUCT_SET_ACK
 ```
 
+(Owner paste only — then `FINALIZED_FOR_AGREED_SCOPE`.)
+
 ### BUILD_AFTER_THAT
 
 ```text
-(none — Exit ack closes V1 sequencing)
+RELEASE_PUSH_DEPLOY_DECISION or POST_V1 / V1.1 ROADMAP
 ```
 
 ---
 
 ## 14. V1 exit criteria
 
-1. Letters Intake V6 → PD/PA → CPP/EIC → Snapshot → Order works with honest totals (or explicit incomplete status).  
-2. Commercial snapshots historically stable (no live reprice).  
-3. ExecutionPlan materializes sold-scope operational tasks.  
-4. Operator can assign eligible employee and run controlled sessions.  
-5. MachineRun observe path usable for required shop machines.  
-6. Actual labor cost frozen and historically stable.  
-7. Actual material cost available or fail-closed when used.  
-8. Profitability monetary read model shows available categories; never invents.  
-9. No active unauthenticated commercial/execution write bypass.  
-10. HR salary fields not readable by arbitrary authenticated roles.  
-11. Required UI flows discoverable (intake, quotes, orders, execution, machine-runs, shop-floor).  
-12. Capacity / Phase E / PAUSE remain inactive or deferred without false “live” claims.  
-13. Owner SQLite (or alternate) decision recorded; production smoke passes.  
-14. Modules/Governance labels match closed-domain truth.  
+Canonical list (status from Exit resume 2026-08-10 — full matrix in `WORKOS_V1_EXIT_RECORD.md`):
+
+| # | Criterion | Status | Blocker |
+|---|-----------|--------|---------|
+| 1 | Letters Intake→PD/PA→CPP/EIC→Snapshot→Order honest totals | PASS | — |
+| 2 | Commercial snapshots historically stable | PASS | — |
+| 3 | ExecutionPlan sold-scope tasks | PASS | — |
+| 4 | Assign + controlled sessions | PASS | — |
+| 5 | MachineRun observe usable | PASS | — |
+| 6 | Actual labor cost frozen/historically stable | PASS | — |
+| 7 | Actual material available/fail-closed | PASS | — |
+| 8 | Profitability never invents | PASS | — |
+| 9 | No unauthenticated commercial/exec write bypass | PASS | — |
+| 10 | HR salary not broadly readable | PASS | — |
+| 11 | Required UI flows discoverable | PASS | — |
+| 12 | Capacity / Phase E / PAUSE deferred honestly | PASS | — |
+| 13 | SQLite decision + production smoke | PASS | — |
+| 14 | Modules/Governance match closed-domain truth | PASS | — |
+
+```text
+EXIT_CRITERIA_BLOCKED = 0
+OPEN_V1_TECHNICAL_BLOCKERS = 0
+```
+
+Labor money: see Exit Record `STATUS_RECONCILIATION_REQUIRED` — Golden fixture path ≠ DECLARE_NA; READY unchanged.
 
 ---
 
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~92%
+WORKOS_V1_COMPLETION_ESTIMATE = ~99%
+WORKOS_V1_COMPLETION = NOT_YET_100_UNTIL_OWNER_ACK
+TECHNICAL_EXIT_CRITERIA = PASS
 
-ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 8/10
-OPERATOR_UI_CLOSURE      = 7/10
-PRODUCTION_READINESS     = 9/10
+ARCHITECTURAL_FOUNDATION = 10/10
+V1_FUNCTIONAL_CLOSURE    = 10/10
+OPERATOR_UI_CLOSURE      = 10/10
+PRODUCTION_READINESS     = 10/10
 ```
 
-**What dominates remaining work:** commercial EUR truth + currency UI + Light P0/P1 — then golden E2E — then exit verification. Product-set Owner ack deferred until reality repairs close.
+**What remains:** Owner product-set acknowledgment only. Then release/push/deploy decision or POST_V1 / V1.1 roadmap — not another V1 feature build.
 
 ---
 
