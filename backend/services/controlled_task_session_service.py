@@ -232,6 +232,11 @@ async def start_controlled_task_session(
         now = now.replace(tzinfo=timezone.utc)
     ts = now.isoformat()
 
+    # Role/skill at work-time — immutable inputs for later ActualLaborCostLine freeze.
+    # Do not re-read live employee.role at finalize for controlled sessions.
+    role_at_work = str(emp.role or "").strip() or None
+    skill_at_work = str(task.get("skill_code") or "").strip() or None
+
     svc = ExecutionRealityService(db)
     try:
         row = await svc.start_task(
@@ -250,6 +255,8 @@ async def start_controlled_task_session(
                 "execution_plan_id": plan.id,
                 # V1 policy eligibility is explicit. Historical sessions remain unvalued.
                 "actual_cost_policy_runtime_v1": True,
+                "role_code": role_at_work,
+                "skill_code": skill_at_work,
             },
         )
     except RealityInputError as exc:

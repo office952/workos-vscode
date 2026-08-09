@@ -38,6 +38,10 @@ REASON_MISSING_POLICY = "standard_role_skill_policy_unavailable"
 REASON_HISTORICAL_POLICY_UNAVAILABLE = "historical_policy_unavailable"
 REASON_HISTORICAL_COST_NOT_FROZEN = "historical_cost_not_frozen"
 REASON_POLICY_BOUNDARY_CROSSING = "policy_boundary_crossing_unsupported"
+REASON_ROLE_AT_WORK_TIME_MISSING = "role_at_work_time_missing"
+# Resolution order for role used at freeze (historical-safe):
+# 1) session.role_code snapshotted at controlled START
+# 2) legacy fallback: live employee.role (pre-snapshot sessions only)
 REASON_ACTIVE_SESSION = "active_session_open"
 REASON_INCOMPLETE_TASKS = "required_tasks_incomplete"
 REASON_MATERIAL_COST_MISSING = "actual_material_cost_missing"
@@ -188,16 +192,26 @@ class ActualCostPolicyRuntimeService:
             employee = (
                 await self.db.execute(select(Employees).where(Employees.id == employee_id))
             ).scalar_one_or_none()
-            if employee is None or not employee.role:
+            # Employee row must still exist for provenance (inactive/ended OK; never hard-delete).
+            if employee is None:
                 reasons.append(REASON_MISSING_POLICY)
                 continue
+            # Prefer role snapshotted at session START (work-time). Live role is legacy fallback only.
+            role_code = str(session.get("role_code") or "").strip() or None
+            if not role_code:
+                live_role = str(employee.role or "").strip() or None
+                if not live_role:
+                    reasons.append(REASON_ROLE_AT_WORK_TIME_MISSING)
+                    continue
+                role_code = live_role
             task = tasks.get(str(session.get("task_id") or ""), {})
+            # Prefer skill snapshotted on session; plan skill is secondary (may mutate later).
             skill_code = str(session.get("skill_code") or task.get("skill_code") or "").strip() or None
             start = _parse_timestamp(session.get("started_at"))
             end = _parse_timestamp(session.get("ended_at"))
             assert start is not None and end is not None
-            start_match = await self.match_policy(role_code=str(employee.role), skill_code=skill_code, at=start)
-            end_match = await self.match_policy(role_code=str(employee.role), skill_code=skill_code, at=end)
+            start_match = await self.match_policy(role_code=role_code, skill_code=skill_code, at=start)
+            end_match = await self.match_policy(role_code=role_code, skill_code=skill_code, at=end)
             if start_match.policy is None or end_match.policy is None:
                 reasons.append(REASON_MISSING_POLICY)
                 continue
@@ -211,7 +225,7 @@ class ActualCostPolicyRuntimeService:
                     task_id=str(session.get("task_id") or ""),
                     session_ref=session_ref,
                     employee_id=employee_id,
-                    role_code=str(employee.role),
+                    role_code=role_code,
                     skill_code=skill_code,
                     duration_seconds=seconds,
                     rate_used=float(policy.standard_internal_rate),
