@@ -132,6 +132,7 @@ All `backend/scripts/seed_*.py` are **DEV_ONLY**. Never run casually against a D
 - ACM/Logo sold-root expansion = LATER  
 - Postgres / multi-node = LATER  
 - Cloud production rollout = NOT_AUTHORIZED under DEC-DATABASE-01  
+- Formal V1 finalize status: technical exit PASS; Owner product-set ack may still be pending — see `docs/architecture/realignment/WORKOS_V1_EXIT_RECORD.md`
 
 ---
 

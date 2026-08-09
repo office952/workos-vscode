@@ -84,7 +84,9 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | BOUNDED_UI_HONESTY | DONE_FOR_V1 |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~95% |
+| WORKOS_V1_EXIT_VERIFICATION | TECHNICALLY_READY_OWNER_ACK_PENDING |
+| WORKOS_V1_STATUS | NOT_FINALIZED_UNTIL_OWNER_ACK |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~99% (technical); formal finalize pending product-set ack |
 
 ---
 
@@ -213,10 +215,10 @@ PROFITABILITY_MONETARY_CALCULATION = DONE_FOR_V1
 
 ## 10. Owner decisions required
 
-1. **V1 product set lock** — Letters-only vs Letters+ACM-shell; Logo in or out.  
+1. **V1 product set lock** — **OPEN — sole remaining Owner ack for exit.** Expected line: `WORKOS_V1_PRODUCT_SET = LETTERS_ONLY` (+ Logo/ACM expansion = LATER). Do not infer.  
 2. ~~Complete offer currency law~~ **RESOLVED for V1** — native EUR ops (no invent FX); Order convert accepts EUR\|RON.  
 3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
-4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER; Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
+4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER (non-blocking for Letters Oracal path); Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
 5. ~~**SQLite as V1 production DB**~~ **RESOLVED for V1 single-tenant** — DEC-DATABASE-01 + readiness pack; cloud Postgres LATER.  
 6. ~~**Machine actual cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
 7. ~~**Other direct cost in V1**~~ **RESOLVED** — `DECLARE_NA_FOR_V1`.  
@@ -259,7 +261,7 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 4. ~~Profitability currency + monetary composition~~ **DONE** (Policy A)  
 5. ~~Bounded operator UI honesty~~ **DONE** (`WORKOS_V1_BOUNDED_UI_HONESTY_CLOSURES`)  
 6. ~~Production readiness pack~~ **DONE** (`WORKOS_V1_PRODUCTION_READINESS_SMOKE_PACK`)  
-7. V1 exit criteria verification  
+7. ~~V1 exit criteria verification~~ **TECHNICALLY PASS** — Owner product-set ack pending (`WORKOS_V1_EXIT_RECORD.md`)  
 
 ---
 
@@ -268,21 +270,21 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_EXIT_VERIFICATION
+NONE_BEFORE_OWNER_PRODUCT_SET_ACK
 ```
 
-**Why:** Production readiness DONE_FOR_V1. Remaining work is formal exit checklist verification against roadmap §14 — not new domains.
+**Why:** Technical exit criteria PASS. Sole remaining gate is formal Owner acknowledgment of `WORKOS_V1_PRODUCT_SET = LETTERS_ONLY`. No further feature build. After ack → `FINALIZED_FOR_AGREED_SCOPE`, then RELEASE/PUSH/DEPLOY decision or POST_V1 planning.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-(none — V1 exit declaration or Owner later program)
+NONE_BEFORE_V1_RELEASE_DECISION
 ```
 
 ### BUILD_AFTER_THAT
 
 ```text
-(none)
+POST_V1 / V1.1 planning (Owner)
 ```
 
 ---
@@ -309,15 +311,15 @@ WORKOS_V1_EXIT_VERIFICATION
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~95%
+WORKOS_V1_COMPLETION_ESTIMATE = ~99% (technical)
 
 ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 9/10
+V1_FUNCTIONAL_CLOSURE    = 9.5/10
 OPERATOR_UI_CLOSURE      = 8.5/10
 PRODUCTION_READINESS     = 9/10
 ```
 
-**What dominates remaining work:** formal `WORKOS_V1_EXIT_VERIFICATION` against roadmap §14 — not new feature domains or infrastructure hardening.
+**What dominates remaining work:** one Owner acknowledgment line for product-set lock — then V1 is `FINALIZED_FOR_AGREED_SCOPE`. No more pre-V1 feature domains.
 
 ---
 
