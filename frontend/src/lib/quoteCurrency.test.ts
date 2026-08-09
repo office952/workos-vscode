@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  extractQuoteCurrency,
   extractQuoteCurrencyFromLineItems,
+  extractQuoteCurrencyFromNotes,
   formatCommercialAmount,
   formatQuoteListKpiAmount,
   formatQuoteMoney,
@@ -55,6 +57,30 @@ describe("extractQuoteCurrencyFromLineItems", () => {
   });
 });
 
+describe("extractQuoteCurrencyFromNotes", () => {
+  it("returns EUR from commercial_adjustment_trace", () => {
+    const raw = JSON.stringify({
+      commercial_adjustment_trace: { currency: "EUR", markup_percent: 0 },
+    });
+    expect(extractQuoteCurrencyFromNotes(raw)).toBe("EUR");
+  });
+
+  it("returns null when notes lack currency provenance", () => {
+    expect(extractQuoteCurrencyFromNotes(JSON.stringify({ human_summary: "x" }))).toBeNull();
+  });
+});
+
+describe("extractQuoteCurrency", () => {
+  it("prefers line_items then falls back to notes", () => {
+    expect(
+      extractQuoteCurrency(
+        JSON.stringify([{ description: "Line", total: 1 }]),
+        JSON.stringify({ commercial_adjustment_trace: { currency: "EUR" } }),
+      ),
+    ).toBe("EUR");
+  });
+});
+
 describe("formatQuoteMoney", () => {
   it("formats amount with currency code", () => {
     expect(formatQuoteMoney(768, "EUR")).toContain("768");
@@ -69,11 +95,13 @@ describe("formatCommercialAmount", () => {
     expect(formatCommercialAmount(100, "eur")).toContain("EUR");
   });
 
-  it("marks unavailable currency instead of inventing RON/EUR", () => {
-    expect(formatCommercialAmount(100, null)).toContain("monedă indisponibilă");
-    expect(formatCommercialAmount(100, undefined)).toContain("monedă indisponibilă");
-    expect(formatCommercialAmount(100, "")).toContain("monedă indisponibilă");
+  it("uses neutral em dash when currency missing — no invent, no technical jargon", () => {
+    expect(formatCommercialAmount(100, null)).toBe("—");
+    expect(formatCommercialAmount(100, undefined)).toBe("—");
+    expect(formatCommercialAmount(100, "")).toBe("—");
     expect(formatCommercialAmount(100, null)).not.toContain("RON");
+    expect(formatCommercialAmount(100, null)).not.toContain("EUR");
+    expect(formatCommercialAmount(100, null)).not.toMatch(/monedă|currency|indisponibil/i);
     expect(formatCommercialAmount(null, "EUR")).toBe("—");
   });
 });
@@ -82,6 +110,13 @@ describe("quoteCurrencyLabel", () => {
   it("uses single currency when all quotes share it", () => {
     expect(quoteCurrencyLabel([{ currency: "EUR" }, { currency: "EUR" }])).toEqual({
       label: "EUR (cu TVA)",
+      mixed: false,
+    });
+  });
+
+  it("uses neutral em dash when no quote has proven currency", () => {
+    expect(quoteCurrencyLabel([{ currency: null }, { currency: undefined }])).toEqual({
+      label: "—",
       mixed: false,
     });
   });

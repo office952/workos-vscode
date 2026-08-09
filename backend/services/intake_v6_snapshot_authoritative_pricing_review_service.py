@@ -6,6 +6,7 @@ Quote columns are projection validation only — never independent authority.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -45,6 +46,40 @@ def _money(value: Any) -> float:
 	return round(float(value), 2)
 
 
+def _quote_projection_currency(quote: Quotes) -> str:
+	"""Operator-facing quote currency for column projection — never invent FX.
+
+	Quotes table has no currency column; V6 Letters/ACM write currency into notes
+	(`commercial_adjustment_trace.currency`). Default remains RON only when no
+	provenance is present (legacy rows).
+	"""
+	raw = getattr(quote, "notes", None)
+	if isinstance(raw, str) and raw.strip():
+		try:
+			notes = json.loads(raw)
+		except Exception:
+			notes = None
+		if isinstance(notes, dict):
+			adj = notes.get("commercial_adjustment_trace")
+			if isinstance(adj, dict):
+				cur = str(adj.get("currency") or "").strip().upper()
+				if cur in ALLOWED_CURRENCIES:
+					return cur
+			linkage = notes.get("intake_v6_linkage_v1")
+			if isinstance(linkage, dict):
+				write = linkage.get("intake_v6_priced_quote_write_v1")
+				if isinstance(write, dict):
+					adj2 = write.get("commercial_adjustment_trace")
+					if isinstance(adj2, dict):
+						cur = str(adj2.get("currency") or "").strip().upper()
+						if cur in ALLOWED_CURRENCIES:
+							return cur
+					cur = str(write.get("currency") or "").strip().upper()
+					if cur in ALLOWED_CURRENCIES:
+						return cur
+	return "RON"
+
+
 def _quote_projection_totals(quote: Quotes) -> dict[str, Any] | None:
 	grand_total = float(quote.grand_total or 0)
 	if grand_total <= 0:
@@ -58,7 +93,7 @@ def _quote_projection_totals(quote: Quotes) -> dict[str, Any] | None:
 		"vat_amount": vat_amount,
 		"total": _money(grand_total),
 		"net_before_vat": _money(net),
-		"currency": "RON",
+		"currency": _quote_projection_currency(quote),
 		"pricing_totals_source": "quote_columns",
 	}
 

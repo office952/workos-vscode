@@ -22,6 +22,7 @@ src/lib/commercialSpineNavigation.test.ts
 src/lib/pricingRegistry.test.ts
 src/lib/pricing/pricingTypedCatalog.test.ts
 src/lib/quoteCommercialGuidance.test.ts
+src/lib/quoteCurrency.test.ts
 src/lib/quoteIntakeCommercialGuard.test.ts
 src/lib/volumetricCommercialPreview.test.ts
 src/lib/intakeV6/intakeV6OfficialPricing.test.ts

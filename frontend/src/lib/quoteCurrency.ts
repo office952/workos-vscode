@@ -1,8 +1,11 @@
 /**
  * Quote commercial currency helpers.
  * Never invent FX. Never guess EUR on historical records.
- * Missing snapshot currency → null (UI renders unavailable), not a hardcoded default.
+ * Missing snapshot currency → null; operator UI uses neutral "—" (no technical jargon).
  */
+
+/** Neutral operator presentation when amount/currency provenance is unavailable. */
+export const NEUTRAL_MONEY_UNAVAILABLE = "—";
 
 /** @deprecated Prefer null / unavailable when snapshot has no currency. Kept for legacy callers. */
 export const DEFAULT_QUOTE_CURRENCY = "RON";
@@ -95,6 +98,48 @@ export function extractQuoteCurrencyFromLineItems(raw?: string | null): string |
   return null;
 }
 
+/**
+ * Read V6 commercial currency from quote.notes provenance.
+ * Prefers commercial_adjustment_trace.currency, then write-trace currency.
+ * Never invents EUR/RON when provenance is absent.
+ */
+export function extractQuoteCurrencyFromNotes(raw?: string | null): string | null {
+  if (!raw) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  const notes = parsed as Record<string, unknown>;
+  const adj = notes.commercial_adjustment_trace;
+  if (adj && typeof adj === "object" && !Array.isArray(adj)) {
+    const fromAdj = normalizeCurrencyCode((adj as Record<string, unknown>).currency);
+    if (fromAdj) return fromAdj;
+  }
+  const linkage = notes.intake_v6_linkage_v1;
+  if (linkage && typeof linkage === "object" && !Array.isArray(linkage)) {
+    const write = (linkage as Record<string, unknown>).intake_v6_priced_quote_write_v1;
+    if (write && typeof write === "object" && !Array.isArray(write)) {
+      const writeObj = write as Record<string, unknown>;
+      const writeAdj = writeObj.commercial_adjustment_trace;
+      if (writeAdj && typeof writeAdj === "object" && !Array.isArray(writeAdj)) {
+        const fromWriteAdj = normalizeCurrencyCode((writeAdj as Record<string, unknown>).currency);
+        if (fromWriteAdj) return fromWriteAdj;
+      }
+      const fromWrite = normalizeCurrencyCode(writeObj.currency);
+      if (fromWrite) return fromWrite;
+    }
+  }
+  return null;
+}
+
+/** Prefer line_items snapshot currency; fall back to V6 notes provenance. */
+export function extractQuoteCurrency(lineItemsRaw?: string | null, notesRaw?: string | null): string | null {
+  return extractQuoteCurrencyFromLineItems(lineItemsRaw) ?? extractQuoteCurrencyFromNotes(notesRaw);
+}
+
 export function formatQuoteMoney(amount: number, currency: string): string {
   return `${amount.toLocaleString("ro-RO", {
     minimumFractionDigits: 2,
@@ -102,19 +147,17 @@ export function formatQuoteMoney(amount: number, currency: string): string {
   })} ${currency}`;
 }
 
-/** Official commercial amount + currency from backend; no currency invent. */
+/**
+ * Official commercial amount + currency from backend; no currency invent.
+ * Missing currency → neutral em dash (do not pair a raw amount with technical jargon).
+ */
 export function formatCommercialAmount(
   amount: number | null | undefined,
   currency: string | null | undefined,
 ): string {
-  if (amount == null || !Number.isFinite(amount)) return "—";
+  if (amount == null || !Number.isFinite(amount)) return NEUTRAL_MONEY_UNAVAILABLE;
   const code = normalizeCurrencyCode(currency);
-  if (!code) {
-    return `${amount.toLocaleString("ro-RO", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} (monedă indisponibilă)`;
-  }
+  if (!code) return NEUTRAL_MONEY_UNAVAILABLE;
   return formatQuoteMoney(amount, code);
 }
 
@@ -125,7 +168,7 @@ export function quoteCurrencyLabel(
     .map((q) => normalizeCurrencyCode(q.currency))
     .filter((c): c is string => Boolean(c));
   if (currencies.length === 0) {
-    return { label: "monedă indisponibilă", mixed: false };
+    return { label: NEUTRAL_MONEY_UNAVAILABLE, mixed: false };
   }
   const unique = [...new Set(currencies)];
   if (unique.length === 1) {
@@ -140,7 +183,7 @@ export function formatQuoteListKpiAmount(
   currencyMeta: { mixed: boolean; label: string },
   formatAmount: (n: number) => string,
 ): string {
-  if (currencyMeta.mixed) return "—";
-  if (currencyMeta.label === "monedă indisponibilă") return "—";
+  if (currencyMeta.mixed) return NEUTRAL_MONEY_UNAVAILABLE;
+  if (currencyMeta.label === NEUTRAL_MONEY_UNAVAILABLE) return NEUTRAL_MONEY_UNAVAILABLE;
   return formatAmount(amount);
 }

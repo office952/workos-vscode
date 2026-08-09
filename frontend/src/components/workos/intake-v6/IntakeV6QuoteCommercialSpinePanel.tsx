@@ -14,6 +14,7 @@ import {
   type IntakeV6PricedQuoteDryRunResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import { formatQuoteHandoffBlocker } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 type Props = {
@@ -62,12 +63,7 @@ function readBlockerCodes(dryRun: IntakeV6PricedQuoteDryRunResponse | null): str
 }
 
 function formatMoney(value: number | null | undefined, currency: string | null | undefined): string {
-  if (value == null || typeof value !== "number" || Number.isNaN(value)) return "—";
-  const code = typeof currency === "string" && currency.trim() ? currency.trim().toUpperCase() : null;
-  if (!code) {
-    return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (monedă indisponibilă)`;
-  }
-  return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${code}`;
+  return formatCommercialAmount(value, currency);
 }
 
 function dryRunStatusLabel(status: string | undefined, loading: boolean): string {

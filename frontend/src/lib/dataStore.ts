@@ -45,7 +45,7 @@ import {
 import { extractQuoteReadinessFromLineItems } from "./volumetricQuoteReady";
 import type { OrderCommercialCurrencyHandoff } from "./orderCurrency";
 import { extractOrderCommercialHandoff } from "./orderCurrency";
-import { extractQuoteCurrencyFromLineItems } from "./quoteCurrency";
+import { extractQuoteCurrency } from "./quoteCurrency";
 import { extractQuoteRevisionHistory } from "./quoteRevision";
 
 // ============================================================
@@ -430,7 +430,7 @@ function mapQuoteFromDB(e: QuoteEntity): Quote {
     componentBreakdown,
     volumetricReadiness,
     revisionHistory: revisionHistory.length > 0 ? revisionHistory : undefined,
-    currency: extractQuoteCurrencyFromLineItems(e.line_items),
+    currency: extractQuoteCurrency(e.line_items, e.notes),
     flatMaterialNestingSummary: extractFlatMaterialNestingSummaryFromLineItems(e.line_items),
   };
 }

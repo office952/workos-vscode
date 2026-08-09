@@ -624,6 +624,18 @@ async def create_v6_quote_snapshot_v2(
 				)
 			],
 		)
+	dry_net = _positive(dry_totals.get("subtotal_net"))
+	if dry_net is not None and abs(_money(dry_net) - commercial["total_before_vat"]) > 0.01:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[
+				_blocker(
+					V6_SNAPSHOT_COMMERCIAL_TOTAL_MISMATCH,
+					"Live 7G dry-run net does not match persisted quote total_before_vat.",
+				)
+			],
+		)
 
 	resolved = await resolve_intake_v6_canonical_quote_input(db, workspace_id_str)
 	if resolved is None:
@@ -678,10 +690,23 @@ async def create_v6_quote_snapshot_v2(
 		)
 
 	quote_snapshot_v2 = _apply_v6_commercial_first_readiness(quote_snapshot_v2)
+	# 7G CPP subtotal is the commercial BASE. Quote total_before_vat may include
+	# post-7G Adaos/Discount/Ajustare already proven by live dry-run parity above.
+	# When dry-run reports commercial_base_subtotal and adjusted net matches the quote,
+	# validate CPP against that base — not against the post-adjustment quote net.
+	dry_base = _positive(dry_totals.get("commercial_base_subtotal"))
+	quote_cpp_compare_net = commercial["total_before_vat"]
+	if (
+		dry_base is not None
+		and dry_net is not None
+		and abs(_money(dry_net) - commercial["total_before_vat"]) <= 0.01
+		and abs(_money(dry_base) - commercial["total_before_vat"]) > 0.01
+	):
+		quote_cpp_compare_net = _money(dry_base)
 	validation_blockers = _validate_canonical_snapshot(
 		quote_snapshot_v2,
 		quote_grand_total=commercial["grand_total"],
-		quote_total_before_vat=commercial["total_before_vat"],
+		quote_total_before_vat=quote_cpp_compare_net,
 	)
 	if validation_blockers:
 		return _blocked(

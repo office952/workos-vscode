@@ -16,6 +16,7 @@ import {
   intakeV6OperatorFacingPricingBlocker,
 } from "@/lib/intakeV6/intakeV6OfficialPricing";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
+import { formatCommercialAmount } from "@/lib/quoteCurrency";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 import { IntakeV6AggregateCostTruthNotice } from "./IntakeV6AggregateCostTruthNotice";
 
@@ -35,25 +36,7 @@ interface IntakeV6PricingInputPanelProps {
 }
 
 function formatCurrency(value: number, currency: string | null | undefined): string {
-  const code = typeof currency === "string" && currency.trim() ? currency.trim().toUpperCase() : null;
-  if (!code) {
-    return `${value.toLocaleString("ro-RO", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} (monedă indisponibilă)`;
-  }
-  try {
-    return new Intl.NumberFormat("ro-RO", {
-      style: "currency",
-      currency: code,
-      maximumFractionDigits: 2,
-    }).format(value);
-  } catch {
-    return `${value.toLocaleString("ro-RO", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} ${code}`;
-  }
+  return formatCommercialAmount(value, currency);
 }
 
 function formatNumber(value: number, digits = 2): string {
