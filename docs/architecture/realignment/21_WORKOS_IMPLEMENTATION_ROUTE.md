@@ -439,10 +439,12 @@ TASK_TO_ACTIVE_MACHINE_RUN_LOOKUP = PASS
 CREATE_UI = VERIFIED
 ADD_UI = VERIFIED
 SECONDARY_CONTEXT_LINKS = VERIFIED
-MACHINE_RUN_V1_E2E = CLOSED
+MACHINE_RUN_V1_E2E = CONFIRMED_CLOSED
+RECOMMENDED_NEXT_DOMAIN = HARDEN_AND_OBSERVE
 RECOMMENDED_NEXT_SLICE = NOT_AUTHORIZED
 NEXT_TASK = NOT_AUTHORIZED
 ```
+
 
 Task resource contract: `docs/architecture/TASK_RESOURCE_REQUIREMENT_READONLY_CONTRACT.md`  
 Source gap + pilot: `docs/architecture/TASK_RESOURCE_REQUIREMENT_SOURCE_GAP_AND_PILOT_SELECTION.md`  
@@ -492,9 +494,12 @@ UI CREATE/ADD/context closure worklog: `docs/worklog/realignment/2026-08-09_mach
 - **Shop-floor UI PASS:** `/execution/machine-runs` list+detail · command wiring · light/dark.
 - **Candidate discovery + task lookup PASS:** shared eligibility with CREATE/ADD · by-task active membership.
 - **UI CREATE/ADD + context links PASS (2026-08-09):** `/execution/machine-runs` CREATE · HELD ADD · ExecutionDetail + Ops-Graph chips · `MACHINE_RUN_V1_E2E = CLOSED`.
+- **V1 closure + next-domain audit PASS (2026-08-09):** E2E confirmed closed; recommended next domain = `HARDEN_AND_OBSERVE` (not authorized to implement).
 
-**Still deferred (not V1 blockers):**  
-PAUSE/RESUME · task/session coupling · Phase B · Employee Mobile · Utilaje MachineRun home · Capacity activation.
+**Still deferred (not V1 blockers; next implementation needs separate Owner GO):**  
+PAUSE/RESUME · Phase B / post-start transfer · employee/session coupling · Employee Mobile · Utilaje MachineRun home · Capacity activation.
+
+Closure/next-domain audit worklog: `docs/worklog/realignment/2026-08-09_machine_run_v1_closure_and_next_domain_audit.md`
 
 ---
 

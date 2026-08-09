@@ -101,11 +101,13 @@ Candidate discovery loads `ExecutionPlan` rows filtered by optional `execution_p
 
 ---
 
-## UI still deferred
+## UI closure (follow-on, 2026-08-09)
 
 ```text
-CREATE_UI = DEFERRED
-ADD_UI = DEFERRED
-SECONDARY_CONTEXT_LINKS = DEFERRED
-NEXT = MACHINE_RUN_UI_CREATE_ADD_AND_CONTEXT_LINKS_CLOSURE
+CREATE_UI = VERIFIED
+ADD_UI = VERIFIED
+SECONDARY_CONTEXT_LINKS = VERIFIED
+MACHINE_RUN_V1_E2E = CLOSED
 ```
+
+Worklog: `docs/worklog/realignment/2026-08-09_machine_run_ui_create_add_context_links_closure.md`

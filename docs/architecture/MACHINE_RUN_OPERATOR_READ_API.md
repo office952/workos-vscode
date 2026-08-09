@@ -3,7 +3,7 @@
 **Task:** `MACHINE_RUN_OPERATOR_READ_API`  
 **Owner GO:** `AUTHORIZE_MACHINE_RUN_OPERATOR_READ_API`  
 **Date:** 2026-08-07  
-**Status:** **PASS** · backend read-only · **no shop-floor UI**  
+**Status:** **PASS** · backend read API · shop-floor UI + CREATE/ADD/context links closed in V1 E2E  
 **Starting HEAD:** `4ae976e7`  
 **Worklog:** `docs/worklog/realignment/2026-08-07_machine_run_operator_read_api.md`
 
