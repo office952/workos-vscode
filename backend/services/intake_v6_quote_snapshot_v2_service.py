@@ -251,15 +251,30 @@ def _normalize_line_items(raw_line_items: Any) -> list[dict[str, Any]] | None:
 	return items
 
 
-def _commercial_payload(quote_obj: Any) -> dict[str, Any] | None:
+def _commercial_payload(quote_obj: Any, *, currency: str | None = None) -> dict[str, Any] | None:
 	subtotal = _positive(getattr(quote_obj, "subtotal", None))
 	total_before_vat = _positive(getattr(quote_obj, "total_before_vat", None))
 	vat = _non_negative(getattr(quote_obj, "vat", None))
 	grand_total = _positive(getattr(quote_obj, "grand_total", None))
 	if subtotal is None or total_before_vat is None or vat is None or grand_total is None:
 		return None
+	# Prefer explicit presentation/offer currency; never hardcode RON for Letters EUR path.
+	cur = (currency or "").strip().upper() or None
+	if cur is None:
+		raw_notes = getattr(quote_obj, "notes", None)
+		if isinstance(raw_notes, str) and raw_notes.strip():
+			try:
+				notes_obj = json.loads(raw_notes)
+			except (TypeError, ValueError, json.JSONDecodeError):
+				notes_obj = None
+			if isinstance(notes_obj, dict):
+				adj = notes_obj.get("commercial_adjustment_trace")
+				if isinstance(adj, dict) and adj.get("currency"):
+					cur = str(adj.get("currency")).strip().upper() or None
+	if cur is None:
+		cur = "RON"
 	return {
-		"currency": "RON",
+		"currency": cur,
 		"subtotal": _money(subtotal),
 		"discount": _money(getattr(quote_obj, "discount", 0) or 0),
 		"total_before_vat": _money(total_before_vat),

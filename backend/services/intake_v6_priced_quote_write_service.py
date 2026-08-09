@@ -466,6 +466,12 @@ async def write_intake_v6_priced_quote_totals(
 	except (TypeError, ValueError):
 		discount_amount = 0.0
 	linkage_payload["intake_v6_priced_quote_write_v1"]["commercial_adjustment_trace"] = adjustment_trace
+	# Top-level freeze helper for Order Snapshot V2 commercial envelope (currency + VAT %).
+	notes_payload["commercial_adjustment_trace"] = {
+		**adjustment_trace,
+		"currency": totals.get("currency") or adjustment_trace.get("currency") or "RON",
+		"vat_percent": totals.get("vat_rate"),
+	}
 	update_data = {
 		"status": "priced",
 		"line_items": json.dumps(mapped_line_items, default=str),

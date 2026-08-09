@@ -163,6 +163,10 @@ class ProfitabilityActualReadModelService:
             return {
                 "accepted_commercial_total": snap.accepted_commercial_total,
                 "accepted_currency": snap.accepted_currency,
+                "accepted_commercial_net": snap.accepted_commercial_net,
+                "accepted_vat_amount": snap.accepted_vat_amount,
+                "accepted_vat_percent": snap.accepted_vat_percent,
+                "accepted_commercial_gross": snap.accepted_commercial_gross,
                 "estimated_internal_total": snap.estimated_internal_total,
                 "estimated_internal_cost_snapshot": (
                     snap.estimated_internal_cost_snapshot.model_dump()
@@ -178,6 +182,10 @@ class ProfitabilityActualReadModelService:
             return {
                 "accepted_commercial_total": data.get("accepted_commercial_total"),
                 "accepted_currency": data.get("accepted_currency"),
+                "accepted_commercial_net": data.get("accepted_commercial_net"),
+                "accepted_vat_amount": data.get("accepted_vat_amount"),
+                "accepted_vat_percent": data.get("accepted_vat_percent"),
+                "accepted_commercial_gross": data.get("accepted_commercial_gross"),
                 "estimated_internal_total": data.get("estimated_internal_total"),
                 "estimated_internal_cost_snapshot": eic if isinstance(eic, dict) else None,
                 "validated": False,
@@ -194,6 +202,7 @@ class ProfitabilityActualReadModelService:
         # --- Commercial truth (frozen only) ---
         if snapshot is not None:
             commercial = {
+                # Tax-exclusive CPP commercial_total remains the canonical revenue scalar.
                 "accepted_revenue": _available(
                     float(snapshot["accepted_commercial_total"]),
                     provenance="order_snapshot_v2.accepted_commercial_total",
@@ -201,6 +210,30 @@ class ProfitabilityActualReadModelService:
                 "currency": _available(
                     snapshot.get("accepted_currency"),
                     provenance="order_snapshot_v2.accepted_currency",
+                ),
+                "accepted_commercial_net": (
+                    _available(
+                        float(snapshot["accepted_commercial_net"]),
+                        provenance="order_snapshot_v2.accepted_commercial_net",
+                    )
+                    if snapshot.get("accepted_commercial_net") is not None
+                    else _unavailable(REASON_ACCEPTED_COMMERCIAL_MISSING)
+                ),
+                "accepted_vat_amount": (
+                    _available(
+                        float(snapshot["accepted_vat_amount"]),
+                        provenance="order_snapshot_v2.accepted_vat_amount",
+                    )
+                    if snapshot.get("accepted_vat_amount") is not None
+                    else _unavailable(REASON_ACCEPTED_COMMERCIAL_MISSING)
+                ),
+                "accepted_commercial_gross": (
+                    _available(
+                        float(snapshot["accepted_commercial_gross"]),
+                        provenance="order_snapshot_v2.accepted_commercial_gross",
+                    )
+                    if snapshot.get("accepted_commercial_gross") is not None
+                    else _unavailable(REASON_ACCEPTED_COMMERCIAL_MISSING)
                 ),
                 "snapshot_present": True,
                 "revenue_source": "order_snapshot_v2",

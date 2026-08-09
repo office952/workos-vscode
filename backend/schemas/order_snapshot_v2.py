@@ -51,6 +51,13 @@ class OrderSnapshotV2(BaseModel):
     estimated_internal_cost_snapshot: EstimatedInternalCostPreview
     accepted_commercial_total: float
     accepted_currency: str
+    # Client commercial envelope (V6 adjustments + VAT), frozen at convert — not live Settings.
+    # accepted_commercial_total remains the tax-exclusive CPP commercial_total (7G base authority).
+    accepted_commercial_net: float | None = None
+    accepted_vat_amount: float | None = None
+    accepted_vat_percent: float | None = None
+    accepted_commercial_gross: float | None = None
+    commercial_adjustment_trace: dict[str, Any] | None = None
     estimated_internal_total: float | None = None
     owner_decisions_snapshot: list[QuoteSnapshotOwnerDecision] = Field(default_factory=list)
     warnings_snapshot: list[str] = Field(default_factory=list)

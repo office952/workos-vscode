@@ -193,11 +193,27 @@ async def test_convert_quote_not_found(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_convert_snapshot_v2_record_not_found(volumetric_v2_db):
+async def test_convert_snapshot_v2_record_not_found(volumetric_v2_db, monkeypatch):
+    from models.quote_snapshot_v2 import QuoteSnapshotV2Record
+
     quote, workspace_id, _ = await _seed_v6_quote(volumetric_v2_db)
+    snapshot = await _insert_snapshot(
+        volumetric_v2_db,
+        quote_id=quote.id,
+        workspace_id=workspace_id,
+    )
     quote.status = V4_ACCEPTED_STATUS
-    quote.accepted_snapshot_v2_id = 999999
+    quote.accepted_snapshot_v2_id = snapshot.id
     await volumetric_v2_db.commit()
+
+    real_get = volumetric_v2_db.get
+
+    async def _get(model, ident, **kwargs):
+        if model is QuoteSnapshotV2Record:
+            return None
+        return await real_get(model, ident, **kwargs)
+
+    monkeypatch.setattr(volumetric_v2_db, "get", _get)
 
     with pytest.raises(HTTPException) as exc:
         await convert_accepted_quote_snapshot_v2_to_order(
@@ -507,8 +523,21 @@ async def test_ron_currency_uses_commercial_total(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_non_ron_currency_blocked(volumetric_v2_db):
+async def test_eur_currency_converts_natively_no_fx(volumetric_v2_db):
+    """Letters presentation EUR must convert without inventing FX (native EUR ops)."""
     quote, workspace_id, _ = await _seed_v6_quote(volumetric_v2_db)
+    quote.total_before_vat = 1000.0
+    quote.vat = 190.0
+    quote.grand_total = 1190.0
+    notes = json.loads(quote.notes or "{}")
+    notes["commercial_adjustment_trace"] = {
+        "currency": "EUR",
+        "vat_percent": 19.0,
+        "markup_percent": 0,
+        "discount_percent": 0,
+        "manual_adjustment_ron": 0,
+    }
+    quote.notes = json.dumps(notes)
     snapshot = await _insert_snapshot(
         volumetric_v2_db,
         quote_id=quote.id,
@@ -516,6 +545,46 @@ async def test_non_ron_currency_blocked(volumetric_v2_db):
     )
     parsed = QuoteSnapshotV2.model_validate_json(snapshot.snapshot_json)
     parsed.commercial_price_proposal_snapshot.currency = "EUR"
+    parsed.commercial_price_proposal_snapshot.commercial_total = 1000.0
+    snapshot.snapshot_json = parsed.model_dump_json()
+    snapshot.content_hash = hashlib.sha256(snapshot.snapshot_json.encode()).hexdigest()[:32]
+    await volumetric_v2_db.commit()
+
+    await accept_v6_quote(
+        volumetric_v2_db,
+        quote.id,
+        _valid_accept_body(),
+        _test_user(),
+    )
+
+    result = await convert_v6_quote_to_order(
+        volumetric_v2_db,
+        quote.id,
+        _valid_convert_body(),
+        _test_user(),
+    )
+    order = await volumetric_v2_db.get(Orders, result["order_id"])
+    payload = OrderSnapshotV2.model_validate_json(order.snapshot_v2_json)
+    assert payload.accepted_currency == "EUR"
+    assert payload.accepted_commercial_total == 1000.0
+    assert payload.accepted_commercial_net == 1000.0
+    assert payload.accepted_vat_amount == 190.0
+    assert payload.accepted_commercial_gross == 1190.0
+    assert payload.accepted_vat_percent == 19.0
+    assert payload.no_reprice_policy is True
+    assert float(order.total_amount) == 1000.0
+
+
+@pytest.mark.asyncio
+async def test_unsupported_currency_still_blocked(volumetric_v2_db):
+    quote, workspace_id, _ = await _seed_v6_quote(volumetric_v2_db)
+    snapshot = await _insert_snapshot(
+        volumetric_v2_db,
+        quote_id=quote.id,
+        workspace_id=workspace_id,
+    )
+    parsed = QuoteSnapshotV2.model_validate_json(snapshot.snapshot_json)
+    parsed.commercial_price_proposal_snapshot.currency = "USD"
     snapshot.snapshot_json = parsed.model_dump_json()
     snapshot.content_hash = hashlib.sha256(snapshot.snapshot_json.encode()).hexdigest()[:32]
     await volumetric_v2_db.commit()

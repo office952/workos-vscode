@@ -140,6 +140,7 @@ def _apply_commercial_adjustments_to_base(
 			"manual_adjustment_ron": _round_money(manual_adjustment_ron),
 			"discount_percent": discount_percent,
 			"discount_value": discount_value,
+			"vat_percent": vat_percent,
 		},
 	}
 
@@ -768,6 +769,9 @@ async def build_intake_v6_priced_quote_dry_run(
 			commercial_inputs=commercial_inputs,
 		)
 		totals["currency"] = totals_currency
+		trace = totals.get("commercial_adjustment_trace")
+		if isinstance(trace, dict):
+			trace["currency"] = totals_currency
 		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	if internal_cost_total is not None or eic_internal_total is not None:

@@ -148,10 +148,12 @@ def _resolve_commercial_total_amount(
             ["commercial_total_missing"],
         )
     currency = str(commercial.currency or "RON").strip().upper()
-    if currency != "RON":
+    # Native offer currencies only — no live FX conversion at convert.
+    # EUR is required for Letters (VOLUMETRIC_PRESENTATION_CURRENCY); RON remains valid for other paths.
+    if currency not in ("RON", "EUR"):
         _raise_blocked(
             "ORDER_CONVERT_CURRENCY_POLICY_REQUIRED",
-            "Order convert from Quote Snapshot V2 requires RON commercial currency (no live FX).",
+            "Order convert from Quote Snapshot V2 requires RON or EUR commercial currency (no live FX).",
             ["ORDER_CONVERT_CURRENCY_POLICY_REQUIRED"],
         )
     return float(total), currency
@@ -214,6 +216,65 @@ def _order_provenance_entries(
     return entries
 
 
+def _commercial_envelope_from_quote(
+    quote: Quotes,
+    *,
+    currency: str,
+) -> dict[str, Any]:
+    """Freeze client net/VAT/gross from persisted Quote rows (V6 write path).
+
+    Does not re-read Company Settings or Registry. Missing envelope fields stay None
+    (fail-partial for Profitability gross readiness, not invent).
+    """
+    net = quote.total_before_vat
+    vat_amt = quote.vat
+    gross = quote.grand_total
+    vat_pct: float | None = None
+    trace: dict[str, Any] | None = None
+    raw_notes = quote.notes
+    if isinstance(raw_notes, str) and raw_notes.strip():
+        try:
+            notes_obj = json.loads(raw_notes)
+        except (TypeError, ValueError, json.JSONDecodeError):
+            notes_obj = None
+        if isinstance(notes_obj, dict):
+            adj = notes_obj.get("commercial_adjustment_trace")
+            if isinstance(adj, dict):
+                trace = adj
+                raw_pct = adj.get("vat_percent")
+                if raw_pct is not None:
+                    try:
+                        vat_pct = float(raw_pct)
+                    except (TypeError, ValueError):
+                        vat_pct = None
+            payload = notes_obj.get("snapshot_payload")
+            if isinstance(payload, dict):
+                commercial = payload.get("commercial")
+                if isinstance(commercial, dict):
+                    if net is None and commercial.get("total_before_vat") is not None:
+                        net = commercial.get("total_before_vat")
+                    if vat_amt is None and commercial.get("vat") is not None:
+                        vat_amt = commercial.get("vat")
+                    if gross is None and commercial.get("grand_total") is not None:
+                        gross = commercial.get("grand_total")
+    def _f(v: Any) -> float | None:
+        if v is None:
+            return None
+        try:
+            return float(v)
+        except (TypeError, ValueError):
+            return None
+
+    return {
+        "accepted_commercial_net": _f(net),
+        "accepted_vat_amount": _f(vat_amt),
+        "accepted_vat_percent": vat_pct,
+        "accepted_commercial_gross": _f(gross),
+        "commercial_adjustment_trace": trace,
+        "envelope_currency": currency,
+    }
+
+
 def _build_order_snapshot_v2(
     *,
     quote: Quotes,
@@ -233,6 +294,7 @@ def _build_order_snapshot_v2(
 
     converted_at = datetime.now(timezone.utc).isoformat()
     converted_by = current_user.name or current_user.email
+    envelope = _commercial_envelope_from_quote(quote, currency=currency)
 
     return OrderSnapshotV2(
         snapshot_code=record.snapshot_code,
@@ -246,6 +308,11 @@ def _build_order_snapshot_v2(
         estimated_internal_cost_snapshot=parsed.estimated_internal_cost_snapshot,
         accepted_commercial_total=commercial_total,
         accepted_currency=currency,
+        accepted_commercial_net=envelope["accepted_commercial_net"],
+        accepted_vat_amount=envelope["accepted_vat_amount"],
+        accepted_vat_percent=envelope["accepted_vat_percent"],
+        accepted_commercial_gross=envelope["accepted_commercial_gross"],
+        commercial_adjustment_trace=envelope["commercial_adjustment_trace"],
         estimated_internal_total=internal_total,
         owner_decisions_snapshot=parsed.owner_decisions_snapshot,
         warnings_snapshot=parsed.warnings_snapshot,
