@@ -25,6 +25,9 @@ from services.controlled_task_session_service import build_execution_actuals_rea
 from services.profitability_actual_labor_input_service import (
     build_profitability_actual_labor_input,
 )
+from services.profitability_actual_material_input_service import (
+    build_profitability_actual_material_input,
+)
 
 
 REASON_PLANNING_MINUTES_MISSING = "planning_minutes_source_missing"
@@ -304,6 +307,13 @@ class ProfitabilityActualReadModelService:
         except Exception:
             labor_input = None
 
+        try:
+            material_input = await build_profitability_actual_material_input(
+                self.db, order_id=order_id
+            )
+        except Exception:
+            material_input = None
+
         tasks = list(actuals_rm.get("tasks") or [])
         # Canonical closed-session employee-minutes (not MachineRun; not active elapsed).
         if labor_input and labor_input.get("status") == "ok":
@@ -401,6 +411,7 @@ class ProfitabilityActualReadModelService:
             "duration_variance_minutes": duration_variance,
             "tasks": tasks,
             "labor_input": labor_input,
+            "material_input": material_input,
             "provenance": "controlled_task_session / profitability_actual_labor_input",
         }
 
@@ -507,6 +518,7 @@ class ProfitabilityActualReadModelService:
             actual_margin_status = "unavailable"
         actual_cost = {
             "actual_material_cost": material,
+            "material_input": material_input,
             "labor_actual_cost": labor,
             "labor_cost_basis": "standard_role_skill",
             "labor_cost_status": labor_status,

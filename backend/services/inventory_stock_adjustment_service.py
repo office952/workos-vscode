@@ -136,6 +136,8 @@ class InventoryStockAdjustmentService:
 
         material.stock_current = new_stock
 
+        # Copy freeze snapshots so Profitability can exclude this consumption deterministically.
+        # material_actual_basis also excludes via source_id / idempotency when snapshots are absent (legacy rows).
         reversal = StockMovement(
             material_id=original.material_id,
             source_type="stock_movement_reversal",
@@ -151,6 +153,17 @@ class InventoryStockAdjustmentService:
             performed_at=now,
             reason=reason.strip(),
             idempotency_key=f"reversal:{original.id}",
+            reverses_movement_id=original.id,
+            unit_cost_snapshot=original.unit_cost_snapshot,
+            currency_snapshot=original.currency_snapshot,
+            valuation_method=original.valuation_method,
+            valuation_provenance=(
+                "reversal_of_frozen_consumption"
+                if original.extended_cost_snapshot is not None
+                else original.valuation_provenance
+            ),
+            extended_cost_snapshot=original.extended_cost_snapshot,
+            price_history_id_snapshot=original.price_history_id_snapshot,
         )
         self.db.add(reversal)
 

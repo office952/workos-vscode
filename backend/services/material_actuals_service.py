@@ -20,6 +20,7 @@ from services.closed_job_mutation_guard import assert_execution_open_for_materia
 MOVEMENT_CONSUMPTION = "consumption"
 MOVEMENT_RETURN = "return"
 MOVEMENT_SCRAP = "scrap"
+MOVEMENT_REVERSAL = "reversal"
 MOVEMENT_ADJUSTMENT = "adjustment"
 
 REASON_MATERIAL_VALUATION_UNAVAILABLE = "material_valuation_unavailable"
@@ -315,7 +316,35 @@ class MaterialActualsService:
             "distinct_from_consumption": True,
         }
 
-    async def material_actual_basis(self, order_id: int) -> dict[str, Any]:
+    @staticmethod
+    def _legacy_reversal_target_id(movement: StockMovement) -> int | None:
+        """Resolve consumption id fully reversed by a legacy stock-adjustment row."""
+        if movement.movement_type != MOVEMENT_REVERSAL:
+            return None
+        if movement.reverses_movement_id is not None:
+            try:
+                return int(movement.reverses_movement_id)
+            except (TypeError, ValueError):
+                return None
+        if movement.source_id is not None:
+            try:
+                return int(movement.source_id)
+            except (TypeError, ValueError):
+                return None
+        key = str(movement.idempotency_key or "")
+        if key.startswith("reversal:"):
+            try:
+                return int(key.split(":", 1)[1])
+            except (TypeError, ValueError, IndexError):
+                return None
+        return None
+
+    async def compute_material_actuals(self, order_id: int) -> dict[str, Any]:
+        """Canonical valued material actuals: consumption+scrap − return; legacy full reverse excluded.
+
+        Freeze authority = stock_movements.*_snapshot at write time.
+        Planned BOM / reservation never appear (rejected at write).
+        """
         movements = list(
             (
                 await self.db.execute(
@@ -323,9 +352,38 @@ class MaterialActualsService:
                 )
             ).scalars().all()
         )
-        consumptions = [m for m in movements if m.movement_type == MOVEMENT_CONSUMPTION]
-        returns = [m for m in movements if m.movement_type == MOVEMENT_RETURN]
+        consumptions_all = [m for m in movements if m.movement_type == MOVEMENT_CONSUMPTION]
         scraps = [m for m in movements if m.movement_type == MOVEMENT_SCRAP]
+        returns_all = [m for m in movements if m.movement_type == MOVEMENT_RETURN]
+        legacy_reversals = [m for m in movements if m.movement_type == MOVEMENT_REVERSAL]
+
+        excluded_consumption_ids: set[int] = set()
+        for rev in legacy_reversals:
+            target = self._legacy_reversal_target_id(rev)
+            if target is None:
+                return {
+                    "available": False,
+                    "value": None,
+                    "material_cost_status": "incomplete",
+                    "material_valuation_status": "unavailable",
+                    "reason": REASON_RETURN_UNRESOLVED,
+                    "lines": [],
+                    "currency": None,
+                    "provenance": "stock_movements.frozen_valuation",
+                    "consumption_count": 0,
+                    "return_count": 0,
+                    "scrap_count": 0,
+                    "legacy_reversal_count": len(legacy_reversals),
+                }
+            excluded_consumption_ids.add(target)
+
+        consumptions = [m for m in consumptions_all if m.id not in excluded_consumption_ids]
+        returns = [
+            m
+            for m in returns_all
+            if m.reverses_movement_id is None
+            or int(m.reverses_movement_id) not in excluded_consumption_ids
+        ]
 
         if not consumptions and not scraps:
             return {
@@ -334,6 +392,13 @@ class MaterialActualsService:
                 "material_cost_status": "incomplete",
                 "material_valuation_status": "unavailable",
                 "reason": REASON_MATERIAL_MOVEMENT_MISSING,
+                "lines": [],
+                "currency": None,
+                "provenance": "stock_movements.frozen_valuation",
+                "consumption_count": 0,
+                "return_count": 0,
+                "scrap_count": 0,
+                "legacy_reversal_count": len(legacy_reversals),
             }
 
         cost_rows = consumptions + scraps
@@ -344,6 +409,13 @@ class MaterialActualsService:
                 "material_cost_status": "incomplete",
                 "material_valuation_status": "unavailable",
                 "reason": REASON_MATERIAL_VALUATION_UNAVAILABLE,
+                "lines": [],
+                "currency": None,
+                "provenance": "stock_movements.frozen_valuation",
+                "consumption_count": len(consumptions),
+                "return_count": len(returns),
+                "scrap_count": len(scraps),
+                "legacy_reversal_count": len(legacy_reversals),
             }
 
         for ret in returns:
@@ -354,6 +426,13 @@ class MaterialActualsService:
                     "material_cost_status": "incomplete",
                     "material_valuation_status": "unavailable",
                     "reason": REASON_RETURN_UNRESOLVED,
+                    "lines": [],
+                    "currency": None,
+                    "provenance": "stock_movements.frozen_valuation",
+                    "consumption_count": len(consumptions),
+                    "return_count": len(returns),
+                    "scrap_count": len(scraps),
+                    "legacy_reversal_count": len(legacy_reversals),
                 }
             if ret.extended_cost_snapshot is None:
                 return {
@@ -362,7 +441,17 @@ class MaterialActualsService:
                     "material_cost_status": "incomplete",
                     "material_valuation_status": "unavailable",
                     "reason": REASON_MATERIAL_VALUATION_UNAVAILABLE,
+                    "lines": [],
+                    "currency": None,
+                    "provenance": "stock_movements.frozen_valuation",
+                    "consumption_count": len(consumptions),
+                    "return_count": len(returns),
+                    "scrap_count": len(scraps),
+                    "legacy_reversal_count": len(legacy_reversals),
                 }
+
+        # Valued legacy reversals (new writer path) may also carry snapshots — already excluded
+        # via consumption id; do not double-subtract.
 
         currencies = {m.currency_snapshot for m in cost_rows + returns}
         if len(currencies) != 1 or None in currencies:
@@ -372,21 +461,105 @@ class MaterialActualsService:
                 "material_cost_status": "incomplete",
                 "material_valuation_status": "unavailable",
                 "reason": REASON_MATERIAL_VALUATION_UNAVAILABLE,
+                "lines": [],
+                "currency": None,
+                "provenance": "stock_movements.frozen_valuation",
+                "consumption_count": len(consumptions),
+                "return_count": len(returns),
+                "scrap_count": len(scraps),
+                "legacy_reversal_count": len(legacy_reversals),
             }
+
+        material_ids = {int(m.material_id) for m in cost_rows + returns if m.material_id is not None}
+        catalog: dict[int, Inventory_materials] = {}
+        if material_ids:
+            rows = (
+                await self.db.execute(
+                    select(Inventory_materials).where(Inventory_materials.id.in_(material_ids))
+                )
+            ).scalars().all()
+            catalog = {int(r.id): r for r in rows}
+
+        lines: list[dict[str, Any]] = []
+        for m in cost_rows:
+            mat = catalog.get(int(m.material_id)) if m.material_id is not None else None
+            lines.append(
+                {
+                    "movement_id": m.id,
+                    "movement_type": m.movement_type,
+                    "material_id": m.material_id,
+                    "material_code": mat.code if mat else None,
+                    "material_name": mat.name if mat else None,
+                    "task_id": m.task_id,
+                    "quantity": float(m.quantity or 0),
+                    "quantity_sign": 1,
+                    "unit": m.unit,
+                    "unit_cost_snapshot": float(m.unit_cost_snapshot),
+                    "currency": m.currency_snapshot,
+                    "extended_cost_snapshot": float(m.extended_cost_snapshot),
+                    "valuation_method": m.valuation_method,
+                    "valuation_provenance": m.valuation_provenance,
+                    "contribution": "actual_cost",
+                }
+            )
+        for m in returns:
+            mat = catalog.get(int(m.material_id)) if m.material_id is not None else None
+            lines.append(
+                {
+                    "movement_id": m.id,
+                    "movement_type": m.movement_type,
+                    "material_id": m.material_id,
+                    "material_code": mat.code if mat else None,
+                    "material_name": mat.name if mat else None,
+                    "task_id": m.task_id,
+                    "quantity": float(m.quantity or 0),
+                    "quantity_sign": -1,
+                    "unit": m.unit,
+                    "unit_cost_snapshot": float(m.unit_cost_snapshot)
+                    if m.unit_cost_snapshot is not None
+                    else None,
+                    "currency": m.currency_snapshot,
+                    "extended_cost_snapshot": float(m.extended_cost_snapshot),
+                    "valuation_method": m.valuation_method,
+                    "valuation_provenance": m.valuation_provenance,
+                    "reverses_movement_id": m.reverses_movement_id,
+                    "contribution": "actual_cost_credit",
+                }
+            )
 
         total = sum(float(m.extended_cost_snapshot) for m in cost_rows)
         total -= sum(float(m.extended_cost_snapshot) for m in returns)
+        currency = next(iter(currencies))
         return {
             "available": True,
             "value": round(total, 4),
-            "currency": currencies.pop(),
+            "currency": currency,
             "material_cost_status": "complete",
             "material_valuation_status": "frozen",
             "reason": None,
             "provenance": "stock_movements.frozen_valuation",
+            "lines": lines,
             "consumption_count": len(consumptions),
             "return_count": len(returns),
             "scrap_count": len(scraps),
+            "legacy_reversal_count": len(legacy_reversals),
+            "excluded_consumption_ids": sorted(excluded_consumption_ids),
+        }
+
+    async def material_actual_basis(self, order_id: int) -> dict[str, Any]:
+        computed = await self.compute_material_actuals(order_id)
+        return {
+            "available": computed["available"],
+            "value": computed["value"],
+            "currency": computed.get("currency"),
+            "material_cost_status": computed.get("material_cost_status"),
+            "material_valuation_status": computed.get("material_valuation_status"),
+            "reason": computed.get("reason"),
+            "provenance": computed.get("provenance"),
+            "consumption_count": computed.get("consumption_count"),
+            "return_count": computed.get("return_count"),
+            "scrap_count": computed.get("scrap_count"),
+            "legacy_reversal_count": computed.get("legacy_reversal_count"),
         }
 
     def serialize_movement(self, movement: StockMovement, *, include_valuation: bool) -> dict[str, Any]:

@@ -73,6 +73,32 @@ async def test_missing_labor_and_materials_not_zero(monkeypatch):
         ),
     )
     monkeypatch.setattr(service, "_load_plan_tasks", AsyncMock(return_value=[]))
+    monkeypatch.setattr(
+        "services.profitability_actual_read_model_service.build_profitability_actual_labor_input",
+        AsyncMock(
+            return_value={
+                "status": "incomplete",
+                "totals": {
+                    "total_employee_minutes": 0,
+                    "closed_session_count": 0,
+                    "active_session_count": 0,
+                },
+                "by_employee_task": [],
+                "closed_sessions": [],
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        "services.profitability_actual_read_model_service.build_profitability_actual_material_input",
+        AsyncMock(
+            return_value={
+                "status": "incomplete",
+                "reason": "material_movement_missing",
+                "lines": [],
+                "totals": {"line_count": 0, "total_material_cost": None, "currency": None},
+            }
+        ),
+    )
 
     model = await service.build(973019)
     assert model["actual_operational_truth"]["actual_duration_minutes"]["value"] == 40.0
