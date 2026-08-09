@@ -34,8 +34,7 @@ from services.actual_cost_policy_runtime_service import ActualCostPolicyRuntimeS
 from services.closed_job_mutation_guard import REASON_EXECUTION_CLOSED_MUTATION_BLOCKED
 from services.material_actuals_service import MaterialActualsService
 from services.profitability_actual_read_model_service import (
-    REASON_MACHINE_ACTUAL_NOT_CAPTURED,
-    REASON_MACHINE_NOT_APPLICABLE,
+    REASON_MACHINE_NA_FOR_V1,
     ProfitabilityActualReadModelService,
 )
 from tests._db_fixture import IsolatedDBFixture
@@ -258,19 +257,21 @@ async def test_f6_three_operational_families_close_and_isolate(db_fixture):
             assert basis["available"] is True
             assert basis["value"] == pytest.approx(FAMILIES[key]["expected_material"])
 
-        # ACM declares machine applicability without inventing cost
+        # V1 Owner: machine/other monetary = N/A_FOR_V1 (even if plan declares machine)
         model_acm = await profit.build(seeded["F6-ACM"]["order_id"])
         machine = model_acm["actual_cost_truth"]["machine_actual_cost"]
-        assert machine["applicability"] == "applicable_optional"
+        assert machine["applicability"] == "not_applicable"
         assert machine["available"] is False
         assert machine["value"] is None
-        assert machine["reason"] == REASON_MACHINE_ACTUAL_NOT_CAPTURED
+        assert machine["status"] == "N_A_FOR_V1"
+        assert machine["reason"] == REASON_MACHINE_NA_FOR_V1
 
         model_led = await profit.build(seeded["F6-LED"]["order_id"])
         assert (
             model_led["actual_cost_truth"]["machine_actual_cost"]["reason"]
-            == REASON_MACHINE_NOT_APPLICABLE
+            == REASON_MACHINE_NA_FOR_V1
         )
+        assert model_led["actual_cost_truth"]["other_actual_cost"]["status"] == "N_A_FOR_V1"
         assert (
             model_led["actual_cost_truth"]["other_actual_cost"]["applicability"]
             == "not_applicable"

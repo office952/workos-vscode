@@ -43,12 +43,33 @@ REASON_COST_CATEGORY_REQUIRED_INCOMPLETE = "cost_category_required_incomplete"
 REASON_MACHINE_ACTUAL_NOT_CAPTURED = "machine_actual_not_captured"
 REASON_MACHINE_POLICY_MISSING = "machine_policy_missing"
 REASON_MACHINE_NOT_APPLICABLE = "machine_not_applicable_by_job_profile"
+REASON_MACHINE_NA_FOR_V1 = "machine_cost_na_for_v1"
 REASON_OTHER_DIRECT_NOT_APPLICABLE = "other_direct_not_declared"
+REASON_OTHER_DIRECT_NA_FOR_V1 = "other_direct_na_for_v1"
 REASON_OTHER_DIRECT_UNCLASSIFIED = "direct_cost_unclassified"
 REASON_MATERIAL_MOVEMENT_MISSING = "material_movement_missing"
 REASON_MATERIAL_VALUATION_MISSING = "material_valuation_missing"
+REASON_CURRENCY_MISMATCH_NO_FX = "currency_mismatch_no_fx"
 
 PROVENANCE = "profitability_actual_read_model_v1"
+# Owner GO AUTHORIZE_PROFITABILITY_MONETARY_COMPOSITION_V1 — explicit B+B.
+MACHINE_COST_V1 = "N_A_FOR_V1"
+OTHER_DIRECT_COST_V1 = "N_A_FOR_V1"
+
+
+def _norm_currency(raw: Any) -> str | None:
+    if raw is None:
+        return None
+    text = str(raw).strip().upper()
+    return text or None
+
+
+def _currencies_compatible(*currencies: Any) -> bool:
+    norms = [_norm_currency(c) for c in currencies]
+    present = [c for c in norms if c is not None]
+    if len(present) < 2:
+        return False
+    return len(set(present)) == 1
 
 
 class OrderNotFoundError(LookupError):
@@ -99,7 +120,11 @@ class ProfitabilityActualReadModelService:
 
     @staticmethod
     def _machine_cost_category(tasks: list[dict[str, Any]]) -> dict[str, Any]:
-        """Conditional machine actuals — never invent from WC rate or planned duration."""
+        """V1 Owner decision: machine monetary cost is N/A_FOR_V1 (never silent zero).
+
+        MachineRun remains operational truth. Plan machine declarations do not invent money.
+        Historical capture/policy reasons are retained only as secondary notes.
+        """
         declares_machine = False
         for task in tasks:
             for key in (
@@ -115,22 +140,18 @@ class ProfitabilityActualReadModelService:
                 declares_machine = True
             if declares_machine:
                 break
-        if not declares_machine:
-            return {
-                "applicability": "not_applicable",
-                "status": "not_applicable",
-                "reason": REASON_MACHINE_NOT_APPLICABLE,
-                "value": None,
-                "available": False,
-            }
-        # Declared applicable but runtime has no frozen machine usage + dated policy.
         return {
-            "applicability": "applicable_optional",
-            "status": "unavailable",
-            "reason": REASON_MACHINE_ACTUAL_NOT_CAPTURED,
-            "secondary_reason": REASON_MACHINE_POLICY_MISSING,
+            "applicability": "not_applicable",
+            "status": MACHINE_COST_V1,
+            "reason": REASON_MACHINE_NA_FOR_V1,
             "value": None,
             "available": False,
+            "v1_decision": MACHINE_COST_V1,
+            "operational_machine_declared": declares_machine,
+            "note": (
+                "Cost utilaj monetar exclus din Profitability V1 (Owner DECLARE_NA_FOR_V1). "
+                "MachineRun poate exista operațional; nu se folosește tarif comercial/WC."
+            ),
         }
 
     async def _load_actual_cost_facts(
@@ -445,13 +466,14 @@ class ProfitabilityActualReadModelService:
         machine_category = self._machine_cost_category([*tasks, *plan_tasks])
         other_direct_category = {
             "applicability": "not_applicable",
-            "status": "not_applicable",
-            "reason": REASON_OTHER_DIRECT_NOT_APPLICABLE,
+            "status": OTHER_DIRECT_COST_V1,
+            "reason": REASON_OTHER_DIRECT_NA_FOR_V1,
             "value": None,
             "available": False,
+            "v1_decision": OTHER_DIRECT_COST_V1,
             "note": (
-                "Alte costuri directe necesită fapte clasificate (categorie, sumă, "
-                "proveniență, actor). Nu există bucket generic editabil."
+                "Alte costuri directe excluse din Profitability V1 (Owner DECLARE_NA_FOR_V1). "
+                "Nu există ledger clasificat; N/A ≠ 0."
             ),
         }
         labor_status = "complete" if labor["available"] else "incomplete"
@@ -498,24 +520,73 @@ class ProfitabilityActualReadModelService:
         ):
             unavailable_reasons.append(str(machine_category["reason"]))
 
-        complete_actuals = (
+        inputs_complete = (
             labor["available"]
             and material["available"]
             and closed
             and not applicable_incomplete
         )
-        if not complete_actuals:
+        revenue_currency = _norm_currency(
+            commercial["currency"]["value"] if commercial["currency"].get("available") else None
+        )
+        labor_currency = _norm_currency(labor.get("currency"))
+        material_currency = _norm_currency(material.get("currency"))
+        cost_currency_ok = _currencies_compatible(labor_currency, material_currency)
+        composition_currency_ok = (
+            inputs_complete
+            and commercial["accepted_revenue"]["available"]
+            and _currencies_compatible(revenue_currency, labor_currency, material_currency)
+        )
+        if inputs_complete and not cost_currency_ok:
+            unavailable_reasons.append(REASON_CURRENCY_MISMATCH_NO_FX)
+        if (
+            inputs_complete
+            and commercial["accepted_revenue"]["available"]
+            and not composition_currency_ok
+        ):
+            unavailable_reasons.append(REASON_CURRENCY_MISMATCH_NO_FX)
+
+        # Same-currency labor+material may form known actual cost even if revenue currency differs.
+        known_cost_ok = inputs_complete and cost_currency_ok
+        if not inputs_complete:
             unavailable_reasons.append(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
-        cost_categories["execution"]["final_margin_available"] = complete_actuals
-        if complete_actuals:
+        cost_categories["execution"]["final_margin_available"] = composition_currency_ok
+        if composition_currency_ok:
             actual_cost_status = "closed_job_operational_actual"
             actual_margin_status = "closed_job_operational_actual"
+            scope_status = "COMPLETE_FOR_V1_SCOPE"
+        elif known_cost_ok and commercial["accepted_revenue"]["available"]:
+            actual_cost_status = "closed_job_operational_actual"
+            actual_margin_status = "unavailable"
+            scope_status = "BLOCKED_CURRENCY"
+        elif known_cost_ok:
+            actual_cost_status = "closed_job_operational_actual"
+            actual_margin_status = "unavailable"
+            scope_status = "INCOMPLETE_REVENUE"
         elif labor["available"] or material.get("available"):
             actual_cost_status = "provisional_operational"
             actual_margin_status = "unavailable"
+            scope_status = "INCOMPLETE_INPUTS"
         else:
             actual_cost_status = "unavailable"
             actual_margin_status = "unavailable"
+            scope_status = "INCOMPLETE_INPUTS"
+
+        known_actual_cost = (
+            _available(
+                round(float(material["value"]) + float(labor["value"]), 4),
+                provenance="frozen_material + frozen_labor",
+            )
+            if known_cost_ok
+            else _unavailable(
+                REASON_CURRENCY_MISMATCH_NO_FX
+                if inputs_complete and not cost_currency_ok
+                else REASON_ACTUAL_TOTAL_COST_INCOMPLETE
+            )
+        )
+        if known_cost_ok:
+            known_actual_cost["currency"] = labor_currency or material_currency
+
         actual_cost = {
             "actual_material_cost": material,
             "material_input": material_input,
@@ -533,10 +604,8 @@ class ProfitabilityActualReadModelService:
                 "reason": machine_category.get("reason"),
                 "status": machine_category.get("status"),
                 "applicability": machine_category.get("applicability"),
-                "note": (
-                    "Cost utilaj condițional. Fără fallback workcenter.rate, "
-                    "tarif comercial sau durată planificată ca actual."
-                ),
+                "v1_decision": MACHINE_COST_V1,
+                "note": machine_category.get("note"),
             },
             "other_actual_cost": {
                 "value": None,
@@ -544,21 +613,26 @@ class ProfitabilityActualReadModelService:
                 "reason": other_direct_category["reason"],
                 "status": other_direct_category["status"],
                 "applicability": other_direct_category["applicability"],
+                "v1_decision": OTHER_DIRECT_COST_V1,
+                "note": other_direct_category.get("note"),
             },
             "cost_category_applicability": cost_categories,
-            "actual_total_cost": (
-                _available(round(float(material["value"]) + float(labor["value"]), 4), provenance="frozen_material + frozen_labor")
-                if complete_actuals else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+            "actual_total_cost": known_actual_cost,
+            "note": (
+                "Cost intern standard pe rol/competență; fără salariu, tarif de client sau tarif workcenter. "
+                "V1 known cost = labor + material only; machine/other = N/A_FOR_V1 (nu zero)."
             ),
-            "note": "Cost intern standard pe rol/competență; fără salariu, tarif de client sau tarif workcenter.",
         }
 
         # --- Profitability result ---
-        est_margin: dict[str, Any]
-        if (
+        est_currency_ok = (
             commercial["accepted_revenue"]["available"]
             and estimated["estimated_total_cost"]["available"]
-        ):
+            and revenue_currency is not None
+            # Estimated internal snapshot historically shares order commercial currency when present.
+        )
+        est_margin: dict[str, Any]
+        if est_currency_ok:
             revenue = float(commercial["accepted_revenue"]["value"])
             cost = float(estimated["estimated_total_cost"]["value"])
             amount = round(revenue - cost, 4)
@@ -575,26 +649,101 @@ class ProfitabilityActualReadModelService:
                 "percent": _unavailable(REASON_ESTIMATED_INTERNAL_INCOMPLETE),
             }
 
-        if complete_actuals and commercial["accepted_revenue"]["available"]:
+        if composition_currency_ok:
             actual_total = float(actual_cost["actual_total_cost"]["value"])
             revenue = float(commercial["accepted_revenue"]["value"])
-            margin_amount = round(revenue - actual_total, 4)
+            contribution_amount = round(revenue - actual_total, 4)
             actual_margin = {
-                "amount": _available(margin_amount, provenance="accepted_commercial - frozen_actual_cost"),
-                "percent": _available(round(margin_amount / revenue * 100.0, 4)) if revenue else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-                "label": "Marjă actuală job închis",
+                "amount": _available(
+                    contribution_amount,
+                    provenance="accepted_commercial - known_actual_labor_material",
+                ),
+                "percent": (
+                    _available(round(contribution_amount / revenue * 100.0, 4))
+                    if revenue
+                    else _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE)
+                ),
+                "label": "Contribuție cunoscută V1 (venit − manoperă − material)",
                 "provisional": False,
                 "actual_margin_status": actual_margin_status,
+                "terminology": "known_v1_contribution",
+                "currency": revenue_currency,
+            }
+        elif scope_status == "BLOCKED_CURRENCY":
+            actual_margin = {
+                "amount": _unavailable(REASON_CURRENCY_MISMATCH_NO_FX),
+                "percent": _unavailable(REASON_CURRENCY_MISMATCH_NO_FX),
+                "label": "Contribuție V1 blocată — monede incompatibile (fără FX inventat)",
+                "provisional": True,
+                "actual_margin_status": actual_margin_status,
+                "explanation": (
+                    f"Venit {revenue_currency}; manoperă {labor_currency}; "
+                    f"material {material_currency}. Nu se scade EUR−RON."
+                ),
+                "terminology": "known_v1_contribution",
             }
         else:
             actual_margin = {
                 "amount": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
                 "percent": _unavailable(REASON_ACTUAL_TOTAL_COST_INCOMPLETE),
-                "label": "Marjă actuală indisponibilă",
+                "label": "Contribuție cunoscută V1 indisponibilă",
                 "provisional": True,
                 "actual_margin_status": actual_margin_status,
                 "explanation": "Necesită cost material și manoperă complete, plus închidere explicită job.",
+                "terminology": "known_v1_contribution",
             }
+
+        monetary_v1 = {
+            "scope_status": scope_status,
+            "all_real_world_costs_included": False,
+            "formula": "revenue - actual_labor - actual_material",
+            "revenue": {
+                "amount": commercial["accepted_revenue"].get("value"),
+                "available": commercial["accepted_revenue"].get("available"),
+                "currency": revenue_currency,
+                "source": commercial.get("revenue_source"),
+                "status": "KNOWN_VALUE" if commercial["accepted_revenue"].get("available") else "MISSING_BLOCKER",
+            },
+            "labor": {
+                "amount": labor.get("value"),
+                "available": labor.get("available"),
+                "currency": labor_currency,
+                "status": "KNOWN_VALUE" if labor.get("available") else "MISSING_BLOCKER",
+            },
+            "materials": {
+                "amount": material.get("value"),
+                "available": material.get("available"),
+                "currency": material_currency,
+                "status": "KNOWN_VALUE" if material.get("available") else "MISSING_BLOCKER",
+            },
+            "machine": {
+                "status": MACHINE_COST_V1,
+                "value": None,
+                "available": False,
+                "reason": REASON_MACHINE_NA_FOR_V1,
+                "represented_as_zero": False,
+            },
+            "other_direct": {
+                "status": OTHER_DIRECT_COST_V1,
+                "value": None,
+                "available": False,
+                "reason": REASON_OTHER_DIRECT_NA_FOR_V1,
+                "represented_as_zero": False,
+            },
+            "known_actual_cost": known_actual_cost,
+            "known_contribution": actual_margin["amount"],
+            "composition_currency": revenue_currency if composition_currency_ok else None,
+            "fx_required": bool(
+                inputs_complete
+                and commercial["accepted_revenue"]["available"]
+                and not composition_currency_ok
+            ),
+            "na_represented_as_zero": False,
+            "owner_decisions": {
+                "machine_cost_v1": MACHINE_COST_V1,
+                "other_direct_cost_v1": OTHER_DIRECT_COST_V1,
+            },
+        }
 
         # Deduplicate reasons preserving order
         seen: set[str] = set()
@@ -612,11 +761,22 @@ class ProfitabilityActualReadModelService:
             "estimated_internal_truth": estimated,
             "actual_operational_truth": operational,
             "actual_cost_truth": actual_cost,
+            "monetary_v1": monetary_v1,
             "profitability_result": {
                 "estimated_margin": est_margin,
                 "actual_margin": actual_margin,
+                "known_contribution": actual_margin,
                 "unavailable_reasons": reasons_unique,
-                "completeness": "complete_closed_job" if complete_actuals else "incomplete_or_open_job",
+                "completeness": (
+                    "complete_for_v1_scope"
+                    if composition_currency_ok
+                    else (
+                        "blocked_currency"
+                        if scope_status == "BLOCKED_CURRENCY"
+                        else "incomplete_or_open_job"
+                    )
+                ),
+                "scope_status": scope_status,
                 "provenance": PROVENANCE,
             },
             "access": {

@@ -8,6 +8,7 @@ export interface ProfitabilityActualReadModel {
   estimated_internal_truth: Record<string, unknown>;
   actual_operational_truth: Record<string, unknown>;
   actual_cost_truth: Record<string, unknown>;
+  monetary_v1?: Record<string, unknown>;
   profitability_result: Record<string, unknown>;
   access: Record<string, unknown>;
   mutated: Record<string, unknown>;
