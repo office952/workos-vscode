@@ -7,7 +7,6 @@ Participant mutation is HELD-only. RESERVED ≠ shop-floor RUNNING.
 
 from __future__ import annotations
 
-import json
 import uuid
 from collections.abc import Callable
 from datetime import datetime
@@ -19,7 +18,6 @@ from models.execution_task_machine_reservation import (
     ExecutionTaskMachineReservationTransition,
 )
 from models.machine_run import MachineRun, MachineRunParticipant, MachineRunTransition
-from models.operational_registry import MachineRegistry
 from schemas.resource_state_machine_run import (
     AddMachineRunParticipantCommand,
     CancelMachineRunCommand,
@@ -35,6 +33,12 @@ from schemas.resource_state_machine_run import (
 )
 from services.execution_task_machine_reservation_repository import (
     ExecutionTaskMachineReservationRepository,
+)
+from services.machine_run_eligibility import (
+    demand_stamps as _demand_stamps,
+    find_active_membership as _find_active_membership,
+    require_reservable_machine as _require_reservable_machine,
+    validate_machine_capability_join as _validate_machine_capability_join,
 )
 from services.resource_state_write_common import (
     ResourceStateNotFoundError,
@@ -66,63 +70,6 @@ def _validate_window(start: datetime, end: datetime) -> None:
         )
 
 
-async def _require_reservable_machine(
-    db: AsyncSession, machine_id: int
-) -> MachineRegistry:
-    machine = await db.get(MachineRegistry, machine_id)
-    if machine is None:
-        raise ResourceStateNotFoundError(
-            "machine_not_found", f"machine_id {machine_id} not found"
-        )
-    if not bool(machine.is_active):
-        raise ResourceStateValidationError(
-            "machine_not_reservable", "machine is_active=false"
-        )
-    if not bool(machine.is_available):
-        raise ResourceStateValidationError(
-            "machine_not_reservable", "machine is_available=false"
-        )
-    if machine.operational_status != "active":
-        raise ResourceStateValidationError(
-            "machine_not_reservable",
-            f"operational_status={machine.operational_status!r}",
-        )
-    return machine
-
-
-def _parse_machine_capabilities(raw: Any) -> list[str]:
-    if raw is None:
-        return []
-    if isinstance(raw, list):
-        return [str(v) for v in raw]
-    if isinstance(raw, str):
-        text = raw.strip()
-        if not text:
-            return []
-        try:
-            parsed = json.loads(text)
-            if isinstance(parsed, list):
-                return [str(v) for v in parsed]
-        except (TypeError, ValueError):
-            return []
-    return []
-
-
-def _validate_machine_capability_join(
-    machine: MachineRegistry, required_capability: str
-) -> None:
-    """Hard-join only when inventory capabilities are non-empty (readiness MVP)."""
-    caps = _parse_machine_capabilities(machine.capabilities)
-    if not caps:
-        return
-    if required_capability not in caps:
-        raise ResourceStateValidationError(
-            "machine_capability_mismatch",
-            f"machine {machine.id} capabilities={caps!r} "
-            f"missing {required_capability!r}",
-        )
-
-
 def _canonicalize_participants(
     command: CreateMachineRunCommand,
 ) -> list[tuple[int, str]]:
@@ -146,48 +93,6 @@ def _canonicalize_participants(
             f"CREATE_MACHINE_RUN requires at least {MIN_PARTICIPANTS} participants",
         )
     return canonical
-
-
-def _demand_stamps(task: dict[str, Any]) -> tuple[str, str, bool]:
-    mode = task.get("resource_mode")
-    if mode is None or (isinstance(mode, str) and not mode.strip()):
-        raise ResourceStateValidationError(
-            "task_not_machine_bound",
-            "resource_mode missing (hint-only fields are not accepted)",
-        )
-    mode_s = str(mode).strip()
-    if mode_s != "MACHINE_BOUND":
-        raise ResourceStateValidationError(
-            "task_not_machine_bound",
-            f"resource_mode={mode_s!r} (required MACHINE_BOUND)",
-        )
-    cap = task.get("machine_capability_code")
-    if cap is None or (isinstance(cap, str) and not str(cap).strip()):
-        raise ResourceStateValidationError(
-            "task_capability_unknown",
-            "machine_capability_code missing",
-        )
-    cap_s = str(cap).strip()
-    eligible = task.get("batch_eligible")
-    if eligible is not True:
-        raise ResourceStateValidationError(
-            "task_not_batch_eligible",
-            f"batch_eligible={eligible!r} (required true)",
-        )
-    return mode_s, cap_s, True
-
-
-async def _find_active_membership(
-    db: AsyncSession, *, execution_plan_id: int, task_key: str
-) -> MachineRunParticipant | None:
-    result = await db.execute(
-        select(MachineRunParticipant).where(
-            MachineRunParticipant.execution_plan_id == execution_plan_id,
-            MachineRunParticipant.task_key == task_key,
-            MachineRunParticipant.status == "ACTIVE",
-        )
-    )
-    return result.scalar_one_or_none()
 
 
 async def _get_run_by_idempotency(

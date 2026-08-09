@@ -33,6 +33,10 @@ from schemas.resource_state_machine_run import (
     RescheduleMachineRunCommand,
     StartMachineRunCommand,
 )
+from schemas.resource_state_machine_run_candidate import (
+    ActiveMachineRunByTaskResult,
+    MachineRunCandidateListResult,
+)
 from schemas.resource_state_machine_run_read import (
     MachineRunDetail,
     MachineRunListResult,
@@ -98,6 +102,11 @@ from services.machine_run_command_service import (
     remove_machine_run_participant,
     reschedule_machine_run,
     start_machine_run,
+)
+from services.machine_run_candidate_service import (
+    list_add_candidates,
+    list_create_candidates,
+    lookup_active_machine_run_by_task,
 )
 from services.machine_run_read_service import get_machine_run, list_machine_runs
 from services.execution_task_schedule_command_service import (
@@ -572,6 +581,77 @@ async def get_machine_runs(
             execution_plan_id=execution_plan_id,
             order_id=order_id,
             open_only=open_only,
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.get(
+    "/resource-state/machine-runs/candidates",
+    response_model=MachineRunCandidateListResult,
+)
+async def get_machine_run_create_candidates(
+    machine_id: int,
+    execution_plan_id: int | None = None,
+    order_id: int | None = None,
+    operation_code: str | None = None,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("execution.machine_run.read")),
+) -> MachineRunCandidateListResult:
+    """CREATE-context candidate discovery (eligible tasks for selected machine)."""
+    try:
+        return await list_create_candidates(
+            db,
+            machine_id=machine_id,
+            execution_plan_id=execution_plan_id,
+            order_id=order_id,
+            operation_code=operation_code,
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.get(
+    "/resource-state/machine-runs/by-task",
+    response_model=ActiveMachineRunByTaskResult,
+)
+async def get_active_machine_run_by_task(
+    execution_plan_id: int,
+    task_key: str,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("execution.machine_run.read")),
+) -> ActiveMachineRunByTaskResult:
+    """Task → active MachineRun lookup (secondary chips; not R6)."""
+    try:
+        return await lookup_active_machine_run_by_task(
+            db,
+            execution_plan_id=execution_plan_id,
+            task_key=task_key,
+        )
+    except ResourceStateWriteError as exc:
+        _raise_rs_write(exc)
+
+
+@router.get(
+    "/resource-state/machine-runs/{machine_run_id}/candidate-participants",
+    response_model=MachineRunCandidateListResult,
+)
+async def get_machine_run_add_candidates(
+    machine_run_id: int,
+    execution_plan_id: int | None = None,
+    order_id: int | None = None,
+    operation_code: str | None = None,
+    db: AsyncSession = Depends(get_db),
+    _user: UserResponse = Depends(require_permission("execution.machine_run.read")),
+) -> MachineRunCandidateListResult:
+    """ADD-context candidate discovery (HELD runs only; else empty + mutation_allowed=false)."""
+    try:
+        return await list_add_candidates(
+            db,
+            machine_run_id=machine_run_id,
+            execution_plan_id=execution_plan_id,
+            order_id=order_id,
+            operation_code=operation_code,
         )
     except ResourceStateWriteError as exc:
         _raise_rs_write(exc)
