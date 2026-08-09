@@ -70,7 +70,7 @@ const ACTION_DEFS: Record<MachineRunAction, Omit<MachineRunActionDef, "action">>
   },
 };
 
-/** Status → actions (CREATE/ADD omitted — candidate discovery API missing). */
+/** Status → lifecycle actions. CREATE/ADD are separate manage-gated dialogs, not status matrix rows. */
 export function actionsForStatus(status: MachineRunStatus): MachineRunAction[] {
   switch (status) {
     case "HELD":

@@ -497,7 +497,7 @@ task propagation from START/COMPLETE
 Utilaje dual home (NOW)
 allowed_actions engine (unless later proven needed)
 Employee Mobile
-Phase B transfer/handoff UI
+Post-start transfer/handoff UI (reassignment Phase E — not MachineRun V1)
 ```
 
 ---
