@@ -1,0 +1,30 @@
+{
+  "captured_at": "2026-08-09",
+  "served_head": "5daa3b86",
+  "routes": {
+    "/execution/880750": {
+      "ok": true,
+      "hasEligibility": true,
+      "hasAssignment": true,
+      "conflatesEligibleAssigned": false,
+      "claimsScheduled": false,
+      "phaseE": false
+    },
+    "/modules": {
+      "ok": true,
+      "machineRunConfirmat": true,
+      "stale_text_candidate": "MachineRun limitation still mentions Phase B as unauthorized",
+      "UI_HARDENING_CANDIDATE": "sync Phase B / assignment-safety wording after owner accepts PASS"
+    },
+    "/governance": {
+      "ok": true,
+      "hasAssignment": true,
+      "conflatesEligibleAssigned": false
+    }
+  },
+  "frontend_panels": {
+    "EmployeeEligibilityPanel": "read-only eligibility; never Assign/Schedule/Start",
+    "AssignmentReadinessPanel": "read-only readiness; surfaces assign endpoint contract",
+    "reassign_unassign_ui": "absent"
+  }
+}
