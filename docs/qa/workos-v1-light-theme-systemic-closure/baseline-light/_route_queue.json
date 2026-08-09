@@ -1,0 +1,34 @@
+[
+    {
+        "u":  "http://127.0.0.1:3000/execution",
+        "n":  "05-execution"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/execution/machine-runs",
+        "n":  "06-machine-runs"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/inventory/pricing",
+        "n":  "07-pricing"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/product-system/products",
+        "n":  "08-product-system"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/modules",
+        "n":  "09-modules"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/governance",
+        "n":  "10-governance"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/shop-floor",
+        "n":  "11-shop-floor"
+    },
+    {
+        "u":  "http://127.0.0.1:3000/utilaje",
+        "n":  "12-utilaje"
+    }
+]

@@ -81,12 +81,14 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
 | PROFITABILITY_MONETARY_COMPOSITION | DONE_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A (RON costs → EUR @ Order-convert stamp) |
-| BOUNDED_UI_HONESTY | PARTIAL_REOPEN_LIGHT_THEME_REMAINING (currency invent closed; Light systemic next) |
+| BOUNDED_UI_HONESTY | DONE_FOR_V1 (Light Theme systemic closure 2026-08-10) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | HOLD (commercial currency closed; Light + golden E2E remaining) |
-| WORKOS_V1_STATUS | NOT_FINALIZED — Exit HOLD pending Light Theme + golden Letters E2E |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~94% (commercial currency closed; Light systemic remaining) |
+| WORKOS_V1_EXIT_VERIFICATION | HOLD_PENDING_GOLDEN_FINAL_PROOF (Light Theme DONE; golden Letters E2E remaining) |
+| WORKOS_V1_STATUS | NOT_FINALIZED — Exit HOLD pending golden Letters E2E |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~96% (Light Theme closed; golden Letters E2E remaining) |
+| LIGHT_THEME_V1 | DONE_FOR_V1 |
+| UI_HONESTY_V1 | DONE_FOR_V1 |
 
 ---
 
@@ -270,21 +272,21 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_LIGHT_THEME_SYSTEMIC_CLOSURE
+WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
 ```
 
-**Why:** Commercial currency P0 closed (`WORKOS_V1_COMMERCIAL_CURRENCY_TRUTH_CLOSURE`, evidence `docs/qa/workos-v1-commercial-currency-truth-closure/`). Remaining UI honesty reopen is Light systemic page-local night chrome. Do **not** finalize V1 until Light + golden E2E.
+**Why:** Commercial currency + Light Theme systemic closure are `DONE_FOR_V1` (evidence `docs/qa/workos-v1-commercial-currency-truth-closure/`, `docs/qa/workos-v1-light-theme-systemic-closure/`). Exit remains HOLD until golden Letters E2E final proof.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
+WORKOS_V1_EXIT_OWNER_PRODUCT_SET_ACK
 ```
 
 ### BUILD_AFTER_THAT
 
 ```text
-WORKOS_V1_EXIT_OWNER_PRODUCT_SET_ACK
+(none — Exit ack closes V1 sequencing)
 ```
 
 ---
