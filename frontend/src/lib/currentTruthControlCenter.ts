@@ -294,10 +294,11 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     owner: "Execution path",
     purposeRo: "Deține adevărul execuției reale (sesiuni / actuals).",
     status: "PARTIAL",
-    inputRo: "ExecutionPlan",
-    outputRo: "Actuals / sesiuni închise",
-    consumerRo: "Post-Job",
-    limitationRo: "Nu rescrie Quote, Order sau planul înghețat; acoperire actuals parțială.",
+    inputRo: "ExecutionPlan + assigned employee (controlled session path)",
+    outputRo: "Session observations / ExecutionActuals read model",
+    consumerRo: "Post-Job · future Profitability labor input (rates out of scope)",
+    limitationRo:
+      "SoT: execution_reality.tasks_json. Controlled sessions/start|end = assignment-gated, server timestamps, end ≠ task complete. Legacy operator/raw start paths remain ACTIVE_LEGACY (weaker assignment gate). Nu rescrie Quote/Order/plan; nu cuplă MachineRun; Capacity inactiv.",
     verifyRoute: "/execution",
     spineOrder: 9,
   },
@@ -378,9 +379,9 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     outputRo:
       "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · CREATE/ADD UI · list/detail · candidate/lookup · context chips",
     consumerRo:
-      "Operator UI /execution/machine-runs · ExecutionDetail/Ops-Graph chips · R6 (via Reservation) · Phase B (viitor, neautorizat)",
+      "Operator UI /execution/machine-runs · ExecutionDetail/Ops-Graph chips · R6 (via Reservation) · Phase B pre-start assignment (separat, proven) · REASSIGNMENT_PHASE_E deferred",
     limitationRo:
-      "MachineRun V1 E2E closed for current flow (write+read+CREATE/ADD+lifecycle+context links). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred. Phase B neautorizat.",
+      "MachineRun V1 E2E closed for current flow (write+read+CREATE/ADD+lifecycle+context links). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred. Phase B pre-start assignment/reassignment = SAFETY_PROVEN (domeniu separat). REASSIGNMENT_PHASE_E (post-start transfer) = DEFERRED. Employee Session ≠ MachineRun.",
     verifyRoute: "/execution/machine-runs",
     spineOrder: 0,
   },
