@@ -1,0 +1,26 @@
+﻿{
+  "db": "C:\\w\\psiso\\backend\\dev.db",
+  "plan_23": {
+    "id": 23,
+    "order_id": 880750,
+    "order_code": "ORD-WAVE2-QA-880750",
+    "operational_tasks": 13,
+    "assigned_count": 1,
+    "unassigned_count": 12,
+    "led_install": {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+      "assigned_employee_id": 7,
+      "workcenter": "WC_LED_ASSEMBLY"
+    },
+    "assigned_tasks": [
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_install_letters",
+        "assigned_employee_id": 7
+      }
+    ]
+  },
+  "assignment_transitions": 7,
+  "machine_runs": 0,
+  "alembic": "s67_machine_run_execution_status",
+  "session_tables": []
+}
