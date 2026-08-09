@@ -178,9 +178,17 @@ export function mapMachineRunError(code: string, fallbackMessage?: string): Oper
         isCasStale: false,
       };
     case "participant_capability_mismatch":
+    case "machine_capability_mismatch":
+    case "machine_compatibility_failure":
       return {
         message: "Taskul nu se potrivește cu capabilitatea utilajului.",
         nextAction: "Alege alt task sau alt utilaj.",
+        isCasStale: false,
+      };
+    case "participant_already_exists":
+      return {
+        message: "Participantul este deja în această rulare.",
+        nextAction: "Reîncarcă lista de candidați.",
         isCasStale: false,
       };
     case "domain_disabled":
@@ -264,10 +272,29 @@ export function planOrderSummary(orderIds: number[], planIds: number[]): string 
   return `${orders} · ${plans}`;
 }
 
-/** Candidate discovery / CREATE+ADD are deferred until a backend eligible-task API exists. */
-export const CANDIDATE_DISCOVERY_API = "MISSING" as const;
-export const CREATE_UI = "DEFERRED" as const;
-export const ADD_UI = "DEFERRED" as const;
-export const SECONDARY_CONTEXT_LINKS = "DEFERRED" as const;
-export const REVERSE_LOOKUP_API_GAP =
-  "No task_key → active MachineRun reverse lookup endpoint; list filters lack task_key." as const;
+/** Backend candidate + by-task APIs are PASS; UI closure wires them. */
+export const CANDIDATE_DISCOVERY_API = "PRESENT" as const;
+export const CREATE_UI = "IMPLEMENTED" as const;
+export const ADD_UI = "IMPLEMENTED" as const;
+export const SECONDARY_CONTEXT_LINKS = "IMPLEMENTED" as const;
+export const MIN_CREATE_PARTICIPANTS = 2;
+export const DEFAULT_MACHINE_RUN_TIMEZONE = "Europe/Bucharest";
+
+export function candidateSelectionKey(
+  execution_plan_id: number,
+  task_key: string,
+): string {
+  return `${execution_plan_id}::${task_key}`;
+}
+
+export function candidateDisplayLabel(c: {
+  task_label?: string | null;
+  operation_code?: string | null;
+  task_key: string;
+}): string {
+  if (c.task_label?.trim()) return c.task_label.trim();
+  if (c.operation_code?.trim()) return c.operation_code.trim();
+  const key = c.task_key;
+  const short = key.includes(":") ? key.split(":").pop() || key : key;
+  return short.length > 48 ? `${short.slice(0, 45)}…` : short;
+}

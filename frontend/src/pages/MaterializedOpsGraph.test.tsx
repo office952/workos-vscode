@@ -27,6 +27,22 @@ vi.mock("@/hooks/useDashboardStats", () => ({
   }),
 }));
 
+vi.mock("@/hooks/useCurrentPermissions", () => ({
+  useCurrentPermissions: () => ({
+    role: "admin",
+    can: () => true,
+  }),
+}));
+
+vi.mock("@/hooks/useActiveMachineRunByTasks", () => ({
+  useActiveMachineRunByTasks: () => ({
+    byKey: new Map(),
+    loading: false,
+    requestCount: 0,
+    taskCount: 0,
+  }),
+}));
+
 const getExecutionPlan = vi.fn();
 const getExecutionPlanV2MaterializationAudit = vi.fn();
 const getReality = vi.fn();
@@ -37,6 +53,10 @@ vi.mock("@/api/execution", () => ({
     getExecutionPlanV2MaterializationAudit: (...args: unknown[]) =>
       getExecutionPlanV2MaterializationAudit(...args),
     getReality: (...args: unknown[]) => getReality(...args),
+    getEmployeeEligibilityReadModel: vi.fn().mockResolvedValue({
+      order_id: 973010,
+      tasks: [],
+    }),
   },
 }));
 

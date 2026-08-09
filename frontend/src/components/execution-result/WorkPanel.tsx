@@ -1,5 +1,10 @@
+import { useMemo } from "react";
 import { CheckCircle2, PlayCircle } from "lucide-react";
 import type { ExecutionPlanResponse, ExecutionRealityResponse } from "@/api/execution";
+import { MachineRunContextChip } from "@/components/machine-run/MachineRunContextChip";
+import { useActiveMachineRunByTasks } from "@/hooks/useActiveMachineRunByTasks";
+import { useCurrentPermissions } from "@/hooks/useCurrentPermissions";
+import { candidateSelectionKey } from "@/lib/machineRunUi";
 
 export function WorkPanel({
   plan,
@@ -17,6 +22,25 @@ export function WorkPanel({
   /** When false, planned/draft tasks are listed read-only — no Start/Finalize. */
   allowSessionActions?: boolean;
 }) {
+  const { can } = useCurrentPermissions();
+  const canReadMachineRun = can("execution.machine_run.read");
+
+  const lookupRefs = useMemo(
+    () =>
+      plan
+        ? plan.tasks.map((task) => ({
+            execution_plan_id: plan.id,
+            task_key: task.task_id,
+          }))
+        : [],
+    [plan],
+  );
+
+  const { byKey } = useActiveMachineRunByTasks(
+    lookupRefs,
+    Boolean(plan && canReadMachineRun),
+  );
+
   if (!plan) return null;
   return (
     <section className="rounded-lg border border-wo-border-subtle bg-wo-surface p-4" data-testid="execution-work-panel">
@@ -30,17 +54,25 @@ export function WorkPanel({
       ) : (
         <p className="mt-1 text-[11px] text-wo-text-muted">Înregistrările sunt confirmate prin backend înainte de reîncărcare.</p>
       )}
-      <div className="mt-3 space-y-2">
+      <div
+        className="mt-3 space-y-2"
+        data-testid="execution-work-panel-machine-run-lookups"
+        data-task-count={plan.tasks.length}
+        data-lookup-count={canReadMachineRun ? plan.tasks.length : 0}
+      >
         {plan.tasks.map((task) => {
           const last = reality?.tasks.filter((item) => item.task_id === task.task_id).at(-1);
           const status = !last ? "nepornit" : last.ended_at ? "finalizat" : "în curs";
           const busy = busyTaskId === task.task_id;
+          const membership = byKey.get(
+            candidateSelectionKey(plan.id, task.task_id),
+          );
           return (
             <div
               key={task.task_id}
               className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-wo-border-subtle bg-wo-surface-raised px-3 py-2"
             >
-              <div>
+              <div className="min-w-0 space-y-1">
                 <p className="text-[12px] font-semibold text-wo-text-primary">{task.display_name ?? task.name}</p>
                 <p className="text-[10px] text-wo-text-muted">
                   {status} ·{" "}
@@ -48,6 +80,10 @@ export function WorkPanel({
                     ? "durată neconfirmată"
                     : `${task.estimated_time_minutes.toFixed(1)} min planificate`}
                 </p>
+                <MachineRunContextChip
+                  membership={membership}
+                  testId={`execution-machine-run-chip-${task.task_id}`}
+                />
               </div>
               {allowSessionActions ? (
                 <div className="flex gap-2">

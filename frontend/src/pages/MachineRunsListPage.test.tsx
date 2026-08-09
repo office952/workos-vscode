@@ -14,6 +14,11 @@ vi.mock("@/api/machineRuns", () => ({
   },
 }));
 
+vi.mock("@/components/machine-run/MachineRunCreateDialog", () => ({
+  MachineRunCreateDialog: ({ open }: { open: boolean }) =>
+    open ? <div data-testid="machine-run-create-dialog-stub" /> : null,
+}));
+
 vi.mock("@/hooks/useCurrentPermissions", () => ({
   useCurrentPermissions: () => ({
     role: "admin",
@@ -28,7 +33,7 @@ describe("MachineRunsListPage", () => {
     canMock.mockImplementation((p: string) => p === "execution.machine_run.read");
   });
 
-  it("loads open_only list by default and shows empty state", async () => {
+  it("loads open_only list by default and shows empty state without CREATE for read-only", async () => {
     listMachineRuns.mockResolvedValue({ items: [], count: 0 });
     render(
       <MemoryRouter>
@@ -43,7 +48,23 @@ describe("MachineRunsListPage", () => {
     expect(screen.getByTestId("machine-runs-empty")).toHaveTextContent(
       "Nu există rulări de utilaj active.",
     );
-    expect(screen.getByTestId("machine-runs-create-deferred")).toBeInTheDocument();
+    expect(screen.queryByTestId("machine-runs-create-open")).not.toBeInTheDocument();
+  });
+
+  it("shows CREATE action when manage permission is present", async () => {
+    canMock.mockImplementation(
+      (p: string) =>
+        p === "execution.machine_run.read" || p === "execution.machine_run.manage",
+    );
+    listMachineRuns.mockResolvedValue({ items: [], count: 0 });
+    render(
+      <MemoryRouter>
+        <MachineRunsListPage />
+      </MemoryRouter>,
+    );
+    await waitFor(() => {
+      expect(screen.getByTestId("machine-runs-create-open")).toBeInTheDocument();
+    });
   });
 
   it("renders list rows with status copy and multi-order badge", async () => {

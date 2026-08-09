@@ -70,10 +70,10 @@ describe("machineRunUi — status copy + action matrix", () => {
     expect(planOrderSummary([10], [1])).toBe("Comandă 10 · Plan 1");
   });
 
-  it("defers CREATE/ADD and secondary links when discovery/reverse APIs are missing", () => {
-    expect(CANDIDATE_DISCOVERY_API).toBe("MISSING");
-    expect(CREATE_UI).toBe("DEFERRED");
-    expect(ADD_UI).toBe("DEFERRED");
-    expect(SECONDARY_CONTEXT_LINKS).toBe("DEFERRED");
+  it("marks CREATE/ADD/context links implemented after candidate + by-task APIs", () => {
+    expect(CANDIDATE_DISCOVERY_API).toBe("PRESENT");
+    expect(CREATE_UI).toBe("IMPLEMENTED");
+    expect(ADD_UI).toBe("IMPLEMENTED");
+    expect(SECONDARY_CONTEXT_LINKS).toBe("IMPLEMENTED");
   });
 });

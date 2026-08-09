@@ -4,17 +4,17 @@
  */
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Cog, RefreshCw } from "lucide-react";
+import { Cog, Plus, RefreshCw } from "lucide-react";
 import {
   listMachineRuns,
   MachineRunRequestError,
   type MachineRunListItem,
 } from "@/api/machineRuns";
+import { MachineRunCreateDialog } from "@/components/machine-run/MachineRunCreateDialog";
 import { Button } from "@/components/ui/button";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
 import { useCurrentPermissions } from "@/hooks/useCurrentPermissions";
 import {
-  CREATE_UI,
   MACHINE_RUN_STATUS_LABEL,
   formatReservationWindow,
   planOrderSummary,
@@ -28,12 +28,14 @@ export default function MachineRunsListPage() {
   const navigate = useNavigate();
   const { role, can } = useCurrentPermissions();
   const canRead = can("execution.machine_run.read");
+  const canManage = can("execution.machine_run.manage");
 
   const [scope, setScope] = useState<Scope>("active");
   const [items, setItems] = useState<MachineRunListItem[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const load = useCallback(async () => {
     if (!canRead) {
@@ -86,18 +88,33 @@ export default function MachineRunsListPage() {
             se referă la lucrul pe utilaj — nu la task sau sesiune angajat.
           </p>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => void load()}
-          disabled={loading}
-          className="border-wo-border bg-wo-surface-raised text-wo-text-primary"
-        >
-          <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-          Reîncarcă
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          {canManage ? (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setCreateOpen(true)}
+              data-testid="machine-runs-create-open"
+            >
+              <Plus className="mr-1.5 h-3.5 w-3.5" />
+              Rulare utilaj
+            </Button>
+          ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => void load()}
+            disabled={loading}
+            className="border-wo-border bg-wo-surface-raised text-wo-text-primary"
+          >
+            <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+            Reîncarcă
+          </Button>
+        </div>
       </header>
+
+      <MachineRunCreateDialog open={createOpen} onOpenChange={setCreateOpen} />
 
       <div
         className="inline-flex rounded-md border border-wo-border bg-wo-surface-raised p-0.5"
@@ -126,13 +143,6 @@ export default function MachineRunsListPage() {
           </button>
         ))}
       </div>
-
-      {CREATE_UI === "DEFERRED" ? (
-        <p className="text-xs text-wo-text-muted" data-testid="machine-runs-create-deferred">
-          Crearea unei rulări noi din UI este amânată — lipsește API-ul de descoperire a
-          taskurilor eligibile.
-        </p>
-      ) : null}
 
       {error ? (
         <div

@@ -372,14 +372,15 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     owner: "Execution / MachineRun",
     purposeRo:
       "Context partajat de execuție pe utilaj: participanți multi-plan, status execuție, started_at/completed_at.",
-    status: "PARTIAL",
+    status: "CONFIRMAT",
     inputRo:
       "Demand înghețat din ExecutionPlan task · utilaj selectat · participanți · fereastră rezervare",
     outputRo:
-      "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · list/detail + candidate/lookup read APIs",
-    consumerRo: "Operator UI /execution/machine-runs · R6 (via Reservation) · Phase B (viitor, neautorizat)",
+      "Stare MachineRun (HELD→RELEASED) · timestamps reale utilaj · CREATE/ADD UI · list/detail · candidate/lookup · context chips",
+    consumerRo:
+      "Operator UI /execution/machine-runs · ExecutionDetail/Ops-Graph chips · R6 (via Reservation) · Phase B (viitor, neautorizat)",
     limitationRo:
-      "Runtime + read + shop-floor UI active. Candidate discovery + task→run lookup APIs available; CREATE/ADD UI + secondary chips still deferred (UI closure). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred.",
+      "MachineRun V1 E2E closed for current flow (write+read+CREATE/ADD+lifecycle+context links). Nu mută task/session. Capacity inactiv. PAUSE/RESUME deferred. Phase B neautorizat.",
     verifyRoute: "/execution/machine-runs",
     spineOrder: 0,
   },
@@ -741,10 +742,10 @@ export const PRESENT_OWNERSHIP_ROWS: PresentOwnershipRow[] = [
     writeAuthorityRo:
       "CREATE/CONFIRM/START/COMPLETE/RELEASE/CANCEL (+ participant HELD-only)",
     readOnlyRo:
-      "GET list/detail + candidates + by-task · UI CREATE/ADD/chips still deferred",
+      "GET list/detail + candidates + by-task · UI CREATE/ADD + ExecutionDetail/Ops-Graph chips",
     enforcementRo:
       "execution.machine_run.manage|execute|read · phase-aware run/reservation coupling",
-    status: "PARTIAL",
+    status: "CONFIRMAT",
   },
   {
     systemId: "machine_reservation",

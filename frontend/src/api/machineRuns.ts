@@ -329,3 +329,166 @@ export async function removeMachineRunParticipant(
     }),
   );
 }
+
+export type MachineRunCandidateTask = {
+  execution_plan_id: number;
+  task_key: string;
+  order_id: number;
+  operation_code: string | null;
+  workcenter: string | null;
+  resource_mode: string;
+  machine_capability_code: string;
+  batch_eligible: boolean;
+  task_label: string | null;
+};
+
+export type MachineRunCandidateListResult = {
+  context: "create" | "add";
+  machine_id: number;
+  machine_run_id: number | null;
+  machine_code: string | null;
+  machine_name: string | null;
+  required_capability: string | null;
+  mutation_allowed: boolean;
+  reason_code: string | null;
+  message: string | null;
+  items: MachineRunCandidateTask[];
+  count: number;
+};
+
+export type ActiveMachineRunByTask = {
+  machine_run_id: number;
+  status: MachineRunStatus;
+  machine_id: number;
+  machine_code: string | null;
+  machine_name: string | null;
+  reservation_status: ReservationStatus;
+  execution_plan_id: number;
+  task_key: string;
+  order_id: number;
+  participant_status: "ACTIVE";
+};
+
+export type ActiveMachineRunByTaskResult = {
+  membership: ActiveMachineRunByTask | null;
+};
+
+export type MachinePickerRow = {
+  id: number;
+  machine_code: string;
+  name: string;
+  is_active: boolean;
+  is_available: boolean;
+  operational_status: string | null;
+};
+
+/** Canonical registry rows with numeric id (for CREATE machine_id). */
+export async function listMachinesForPicker(): Promise<MachinePickerRow[]> {
+  const res = await fetch(`${getAPIBaseURL()}/api/v1/machines`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new MachineRunRequestError(await parseApiError(res));
+  const rows = (await res.json()) as Array<{
+    id: number;
+    machine_code: string;
+    name: string;
+    is_active?: boolean;
+    is_available?: boolean;
+    operational_status?: string | null;
+  }>;
+  return rows.map((m) => ({
+    id: Number(m.id),
+    machine_code: String(m.machine_code || ""),
+    name: String(m.name || m.machine_code || `Utilaj ${m.id}`),
+    is_active: m.is_active !== false,
+    is_available: m.is_available !== false,
+    operational_status: m.operational_status ?? null,
+  }));
+}
+
+export async function listMachineRunCreateCandidates(args: {
+  machine_id: number;
+  execution_plan_id?: number;
+  order_id?: number;
+  operation_code?: string;
+}): Promise<MachineRunCandidateListResult> {
+  const qs = new URLSearchParams();
+  qs.set("machine_id", String(args.machine_id));
+  if (args.execution_plan_id != null) {
+    qs.set("execution_plan_id", String(args.execution_plan_id));
+  }
+  if (args.order_id != null) qs.set("order_id", String(args.order_id));
+  if (args.operation_code) qs.set("operation_code", args.operation_code);
+  return getJson<MachineRunCandidateListResult>(`${BASE()}/candidates?${qs}`);
+}
+
+export async function listMachineRunAddCandidates(
+  machineRunId: number,
+  args: {
+    execution_plan_id?: number;
+    order_id?: number;
+    operation_code?: string;
+  } = {},
+): Promise<MachineRunCandidateListResult> {
+  const qs = new URLSearchParams();
+  if (args.execution_plan_id != null) {
+    qs.set("execution_plan_id", String(args.execution_plan_id));
+  }
+  if (args.order_id != null) qs.set("order_id", String(args.order_id));
+  if (args.operation_code) qs.set("operation_code", args.operation_code);
+  const suffix = qs.toString() ? `?${qs.toString()}` : "";
+  return getJson<MachineRunCandidateListResult>(
+    `${BASE()}/${machineRunId}/candidate-participants${suffix}`,
+  );
+}
+
+export async function getActiveMachineRunByTask(
+  execution_plan_id: number,
+  task_key: string,
+): Promise<ActiveMachineRunByTaskResult> {
+  const qs = new URLSearchParams({
+    execution_plan_id: String(execution_plan_id),
+    task_key,
+  });
+  return getJson<ActiveMachineRunByTaskResult>(`${BASE()}/by-task?${qs}`);
+}
+
+export async function createMachineRun(args: {
+  machine_id: number;
+  reservation_start: string;
+  reservation_end: string;
+  timezone: string;
+  participants: Array<{ execution_plan_id: number; task_key: string }>;
+}): Promise<MachineRunCommandResult> {
+  return postJson(
+    BASE(),
+    withCommandMeta({
+      expected_version: 0,
+      machine_id: args.machine_id,
+      reservation_start: args.reservation_start,
+      reservation_end: args.reservation_end,
+      timezone: args.timezone,
+      participants: args.participants,
+      reason_code: "machine_run_create",
+    }),
+  );
+}
+
+export async function addMachineRunParticipant(
+  id: number,
+  args: {
+    expected_version: number;
+    execution_plan_id: number;
+    task_key: string;
+  },
+): Promise<MachineRunCommandResult> {
+  return postJson(
+    `${BASE()}/${id}/add-participant`,
+    withCommandMeta({
+      expected_version: args.expected_version,
+      execution_plan_id: args.execution_plan_id,
+      task_key: args.task_key,
+      reason_code: "machine_run_add_participant",
+    }),
+  );
+}

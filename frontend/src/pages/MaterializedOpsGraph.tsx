@@ -38,6 +38,7 @@ import {
 } from "@/api/execution";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
 import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
+import { MachineRunContextChip } from "@/components/machine-run/MachineRunContextChip";
 import OpsGraphFrozenTechnicalMaterials from "@/components/workos/OpsGraphFrozenTechnicalMaterials";
 import {
   MetricTile,
@@ -45,11 +46,14 @@ import {
   OwnerGoNotice,
   chromeBanner,
 } from "@/components/workos/design-system";
+import { useActiveMachineRunByTasks } from "@/hooks/useActiveMachineRunByTasks";
+import { useCurrentPermissions } from "@/hooks/useCurrentPermissions";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
 import {
   OPS_GRAPH_DISPLAY_ORDER_NOTE,
   sortTasksByDependencyDisplayOrder,
 } from "@/lib/opsGraphDisplayOrder";
+import { candidateSelectionKey } from "@/lib/machineRunUi";
 import { assignExecutionPlanTask } from "@/api/executionTaskAssignment";
 
 /** Canonical Batch 15 fixture — display default only; not invented data. */
@@ -286,6 +290,8 @@ function materializePhaseLabel(args: {
 export default function MaterializedOpsGraph() {
   const [searchParams, setSearchParams] = useSearchParams();
   const orderId = parseOrderId(searchParams.get("orderId"));
+  const { can } = useCurrentPermissions();
+  const canReadMachineRun = can("execution.machine_run.read");
   const { capacityModel, operationalTruth } = useDashboardStats();
   const preMat = capacityModel?.preMaterializeChecklist;
   const batch04 = operationalTruth?.capacityBatch04;
@@ -393,6 +399,22 @@ export default function MaterializedOpsGraph() {
     () => sortTasksByDependencyDisplayOrder(tasks),
     [tasks],
   );
+
+  const machineRunLookupRefs = useMemo(
+    () =>
+      plan?.id
+        ? sortedTasks.map((task) => ({
+            execution_plan_id: plan.id,
+            task_key: task.task_id,
+          }))
+        : [],
+    [plan?.id, sortedTasks],
+  );
+  const { byKey: machineRunByTask, requestCount: machineRunLookupRequests } =
+    useActiveMachineRunByTasks(
+      machineRunLookupRefs,
+      Boolean(plan?.id && canReadMachineRun && sortedTasks.length > 0),
+    );
 
   const sequenceNote = useMemo(() => {
     if (planClarity?.sequence) {
@@ -707,7 +729,15 @@ export default function MaterializedOpsGraph() {
             >
               {OPS_GRAPH_DISPLAY_ORDER_NOTE}
             </p>
-            <div className="overflow-x-auto" data-testid="ops-graph-task-list">
+            <div
+              className="overflow-x-auto"
+              data-testid="ops-graph-task-list"
+              data-machine-run-task-count={sortedTasks.length}
+              data-machine-run-lookup-count={
+                canReadMachineRun ? sortedTasks.length : 0
+              }
+              data-machine-run-lookup-batch={machineRunLookupRequests}
+            >
               <table className="w-full text-[12px]">
                 <thead className="bg-wo-surface-inset border-b border-wo-border-strong">
                   <tr className="text-left text-wo-text-muted uppercase text-[10px] tracking-wide">
@@ -795,6 +825,14 @@ export default function MaterializedOpsGraph() {
                             >
                               {taskLabel.display}
                             </span>
+                            {plan?.id ? (
+                              <MachineRunContextChip
+                                membership={machineRunByTask.get(
+                                  candidateSelectionKey(plan.id, task.task_id),
+                                )}
+                                testId={`ops-graph-machine-run-chip-${task.task_id}`}
+                              />
+                            ) : null}
                             <span className="text-[10px] font-mono text-wo-text-muted">
                               {shortCode}
                             </span>

@@ -93,8 +93,31 @@ vi.mock("@/api/machineRuns", async () => {
     cancelMachineRun: vi.fn(),
     rescheduleMachineRun: vi.fn(),
     removeMachineRunParticipant: vi.fn(),
+    listMachineRunAddCandidates: vi.fn().mockResolvedValue({
+      context: "add",
+      machine_id: 3,
+      machine_run_id: 12,
+      machine_code: "CNC-1",
+      machine_name: "Router CNC",
+      required_capability: null,
+      mutation_allowed: true,
+      reason_code: null,
+      message: null,
+      items: [],
+      count: 0,
+    }),
+    addMachineRunParticipant: vi.fn(),
   };
 });
+
+vi.mock("@/components/machine-run/MachineRunAddParticipantPanel", () => ({
+  MachineRunAddParticipantPanel: ({
+    visible,
+  }: {
+    visible: boolean;
+  }) =>
+    visible ? <div data-testid="machine-run-add-panel" /> : null,
+}));
 
 vi.mock("@/hooks/useCurrentPermissions", () => ({
   useCurrentPermissions: () => ({
@@ -121,7 +144,7 @@ describe("MachineRunDetailPage", () => {
     canMock.mockImplementation(() => true);
   });
 
-  it("renders HELD detail with Confirmă and add deferred notice", async () => {
+  it("renders HELD detail with Confirmă and ADD panel for manage", async () => {
     getMachineRun.mockResolvedValue(heldDetail());
     renderDetail();
     await waitFor(() => {
@@ -130,8 +153,20 @@ describe("MachineRunDetailPage", () => {
     expect(screen.getByTestId("machine-run-action-confirm")).toHaveTextContent(
       "Confirmă rularea",
     );
-    expect(screen.getByTestId("machine-run-add-deferred")).toBeInTheDocument();
+    expect(screen.getByTestId("machine-run-add-panel")).toBeInTheDocument();
     expect(screen.getByText("Mai multe comenzi")).toBeInTheDocument();
+  });
+
+  it("hides ADD panel when manage permission is absent", async () => {
+    canMock.mockImplementation(
+      (p: string) => p === "execution.machine_run.read" || p === "execution.machine_run.execute",
+    );
+    getMachineRun.mockResolvedValue(heldDetail());
+    renderDetail();
+    await waitFor(() => {
+      expect(screen.getByTestId("machine-run-status")).toHaveTextContent("Grupare");
+    });
+    expect(screen.queryByTestId("machine-run-add-panel")).not.toBeInTheDocument();
   });
 
   it("COMPLETED shows release primary + reservation hint", async () => {

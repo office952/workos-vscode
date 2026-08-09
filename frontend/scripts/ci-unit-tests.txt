@@ -9,6 +9,9 @@ src/lib/shellNavigation.test.ts
 src/lib/machineRunUi.test.ts
 src/pages/MachineRunsListPage.test.tsx
 src/pages/MachineRunDetailPage.test.tsx
+src/components/machine-run/MachineRunCreateDialog.test.tsx
+src/components/machine-run/MachineRunAddParticipantPanel.test.tsx
+src/components/machine-run/MachineRunContextChip.test.tsx
 src/lib/personalNavigation.test.ts
 src/lib/runtimeHealth.test.ts
 src/lib/localApiCompatibility.test.ts

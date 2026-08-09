@@ -18,12 +18,13 @@ import {
   type MachineRunDetail,
   type MachineRunParticipantRead,
 } from "@/api/machineRuns";
+import { MachineRunAddParticipantPanel } from "@/components/machine-run/MachineRunAddParticipantPanel";
 import { Button } from "@/components/ui/button";
 import FlowBreadcrumb from "@/components/workos/FlowBreadcrumb";
 import { useCurrentPermissions } from "@/hooks/useCurrentPermissions";
 import {
-  ADD_UI,
   MACHINE_RUN_STATUS_LABEL,
+  candidateDisplayLabel,
   formatReservationWindow,
   formatRuntimeSeconds,
   mapMachineRunError,
@@ -50,6 +51,7 @@ export default function MachineRunDetailPage() {
   const machineRunId = Number(rawId);
   const { role, can } = useCurrentPermissions();
   const canRead = can("execution.machine_run.read");
+  const canManage = can("execution.machine_run.manage");
 
   const [detail, setDetail] = useState<MachineRunDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -460,11 +462,12 @@ export default function MachineRunDetailPage() {
               Această rulare poate cuprinde mai multe planuri/comenzi. Nu aparține unui singur
               plan.
             </p>
-            {ADD_UI === "DEFERRED" && detail.status === "HELD" ? (
-              <p className="text-xs text-wo-text-muted" data-testid="machine-run-add-deferred">
-                Adăugarea de participanți din UI este amânată (fără API de candidați eligibili).
-              </p>
-            ) : null}
+            <MachineRunAddParticipantPanel
+              machineRunId={detail.machine_run_id}
+              expectedVersion={detail.version}
+              visible={detail.status === "HELD" && canManage}
+              onAdded={() => load()}
+            />
             {activeParticipants.length === 0 ? (
               <p className="text-sm text-wo-text-muted">Niciun participant activ.</p>
             ) : (
@@ -476,11 +479,16 @@ export default function MachineRunDetailPage() {
                     data-testid={`machine-run-participant-${p.participant_id}`}
                   >
                     <div className="min-w-0 text-sm">
-                      <p className="font-medium text-wo-text-primary">{p.task_key}</p>
+                      <p className="font-medium text-wo-text-primary">
+                        {candidateDisplayLabel(p)}
+                      </p>
                       <p className="text-xs text-wo-text-muted">
                         Comandă {p.order_id} · Plan {p.execution_plan_id}
                         {p.operation_code ? ` · ${p.operation_code}` : ""}
                         {p.workcenter ? ` · ${p.workcenter}` : ""}
+                      </p>
+                      <p className="truncate font-mono text-[10px] text-wo-text-dim">
+                        {p.task_key}
                       </p>
                     </div>
                     {actions.some((a) => a.action === "remove_participant") ? (
