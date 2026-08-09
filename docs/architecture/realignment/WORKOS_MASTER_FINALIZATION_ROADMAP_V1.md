@@ -119,7 +119,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | DONE_FOR_V1 | YES | Detached start; Alembic; build; backup/restore; smoke pack | Cloud rollout LATER | — | NO for V1 lab |
 
-**Counts (exact):** DONE_FOR_V1 = 15 · OPEN/PARTIAL_V1_BLOCKER = 1 (Z prod readiness) · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later
+**Counts (exact):** DONE_FOR_V1 = 16 · OPEN/PARTIAL_V1_BLOCKER = 0 · PARTIAL_NON_BLOCKING = 8 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later
 
 ---
 
@@ -309,15 +309,15 @@ WORKOS_V1_EXIT_VERIFICATION
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~85%
+WORKOS_V1_COMPLETION_ESTIMATE = ~95%
 
 ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 8.5/10
-OPERATOR_UI_CLOSURE      = 6/10
+V1_FUNCTIONAL_CLOSURE    = 9/10
+OPERATOR_UI_CLOSURE      = 8.5/10
 PRODUCTION_READINESS     = 9/10
 ```
 
-**What dominates remaining work:** profitability monetary composition (+ Owner machine/other decision), then production smoke — not Inventory/security/labor re-hardening.
+**What dominates remaining work:** formal `WORKOS_V1_EXIT_VERIFICATION` against roadmap §14 — not new feature domains or infrastructure hardening.
 
 ---
 
