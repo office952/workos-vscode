@@ -73,7 +73,7 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | REASSIGNMENT_PHASE_E | DEFERRED |
 | CAPACITY_STAGE_1 | IMPLEMENTED_INACTIVE |
 | QA_MUTATIONS (this GO) | 0 |
-| COMMERCIAL_OFFER | REOPEN_REQUIRED (reality check — EUR/RON mix + UI currency) |
+| COMMERCIAL_OFFER | DONE_FOR_V1 (currency truth closure 2026-08-10) |
 | PRODUCTION_SECURITY_WRITE_GATE | DONE_FOR_V1 |
 | MATERIAL_ACTUALS_V1 | DONE_FOR_V1 |
 | PROFITABILITY_ACTUAL_MATERIAL_COST_READINESS | READY |
@@ -81,12 +81,12 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 (Owner confirmed) |
 | PROFITABILITY_MONETARY_COMPOSITION | DONE_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A (RON costs → EUR @ Order-convert stamp) |
-| BOUNDED_UI_HONESTY | REOPEN_REQUIRED (currency labels + Light P1) |
+| BOUNDED_UI_HONESTY | PARTIAL_REOPEN_LIGHT_THEME_REMAINING (currency invent closed; Light systemic next) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | HOLD_PENDING_REALITY_CHECK |
-| WORKOS_V1_STATUS | NOT_FINALIZED — reality defects reopen commercial/UI |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~92% (post reality check; was overstated at ~99%) |
+| WORKOS_V1_EXIT_VERIFICATION | HOLD (commercial currency closed; Light + golden E2E remaining) |
+| WORKOS_V1_STATUS | NOT_FINALIZED — Exit HOLD pending Light Theme + golden Letters E2E |
+| WORKOS_V1_COMPLETION_ESTIMATE | ~94% (commercial currency closed; Light systemic remaining) |
 
 ---
 
@@ -270,21 +270,21 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_COMMERCIAL_CURRENCY_TRUTH_CLOSURE
+WORKOS_V1_LIGHT_THEME_SYSTEMIC_CLOSURE
 ```
 
-**Why:** Reality check FAIL — sellable RON rules under EUR presentation null complete offer; Quotes/Intake mislabel currency. Do **not** finalize V1 or ask product-set ack until this closes. Evidence: `docs/qa/workos-v1-reality-check/`.
+**Why:** Commercial currency P0 closed (`WORKOS_V1_COMMERCIAL_CURRENCY_TRUTH_CLOSURE`, evidence `docs/qa/workos-v1-commercial-currency-truth-closure/`). Remaining UI honesty reopen is Light systemic page-local night chrome. Do **not** finalize V1 until Light + golden E2E.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-WORKOS_V1_LIGHT_THEME_SYSTEMIC_CLOSURE
+WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
 ```
 
 ### BUILD_AFTER_THAT
 
 ```text
-WORKOS_V1_GOLDEN_LETTERS_E2E_FINAL_PROOF
+WORKOS_V1_EXIT_OWNER_PRODUCT_SET_ACK
 ```
 
 ---

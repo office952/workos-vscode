@@ -1,0 +1,36 @@
+{
+    "presentation":  "EUR",
+    "mix":  false,
+    "finish":  [
+                   {
+                       "code":  "finisaje_oracal_651_material",
+                       "cpp_currency":  "EUR",
+                       "commercial_unit_price":  5.0,
+                       "subtotal":  6.0
+                   },
+                   {
+                       "code":  "finisaje_aplicare_autocolant_fata",
+                       "cpp_currency":  "EUR",
+                       "commercial_unit_price":  3.0,
+                       "subtotal":  3.6
+                   }
+               ],
+    "unavailable":  null,
+    "complete_offer_total_currency":  "EUR",
+    "sablon":  [
+                   {
+                       "code":  "sablon_montaj_hartie",
+                       "cpp_currency":  "EUR",
+                       "commercial_unit_price":  5.0,
+                       "subtotal":  12.5
+                   }
+               ],
+    "status":  "ready",
+    "ron_lines":  [
+
+                  ],
+    "complete_offer_total":  141.35,
+    "blockers":  [
+
+                 ]
+}

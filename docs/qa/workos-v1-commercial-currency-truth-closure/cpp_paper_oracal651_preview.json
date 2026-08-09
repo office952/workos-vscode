@@ -1,0 +1,321 @@
+{
+    "preview_version":  "1.0.0",
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "source":  "commercial_price_proposal",
+    "status":  "ready",
+    "commercial_price_lines":  [
+                                   {
+                                       "code":  "debitare_fata",
+                                       "label":  "Debitare faÈ?Ä? litere",
+                                       "module_code":  "debitare_fata",
+                                       "component_code":  "comp_face_litere",
+                                       "basis_type":  "ml",
+                                       "quantity":  12.5,
+                                       "unit":  "ml",
+                                       "commercial_unit_price":  1.5,
+                                       "subtotal":  18.75,
+                                       "pricing_rule_code":  "VOL_V2_FACE_CNC_ML",
+                                       "source":  "pricing_registry:operation:CNC_ROUTER:EUR",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "F7H provisional commercial EUR/ml reused from CNC_ROUTER workcenter registry (1.5 EUR/ml). Not an Owner-final commercial sell decision. Legacy RON DEV_BRIDGE 25 retired, not renamed.",
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+                                                        "registry_bound=CNC_ROUTER;source_unit_price=1.5;rate_basis=per_linear_meter;presentation_currency=EUR;no_fx_normalization"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  "CNC_ROUTER",
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   },
+                                   {
+                                       "code":  "modelare_cant_aluminiu",
+                                       "label":  "Modelare cant aluminiu",
+                                       "module_code":  "modelare_cant",
+                                       "component_code":  "comp_lateral_litere",
+                                       "basis_type":  "ml",
+                                       "quantity":  12.5,
+                                       "unit":  "ml",
+                                       "commercial_unit_price":  5.0,
+                                       "subtotal":  62.5,
+                                       "pricing_rule_code":  "VOL_V2_RETURN_PROFILE_ML",
+                                       "source":  "pricing_registry:operation:RETURN_PROFILE_MACHINE_FORMING:EUR",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "Technical inputs: letter_perimeter_m, return_depth_mm â?? not minutes.",
+                                                        "F7H provisional commercial EUR/ml reused from RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml). Not an Owner-final commercial sell decision; bonding stays a separate op. Legacy RON DEV_BRIDGE 30 retired, not renamed.",
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+                                                        "registry_bound=RETURN_PROFILE_MACHINE_FORMING;source_unit_price=5.0;rate_basis=per_linear_meter;presentation_currency=EUR;no_fx_normalization"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  "RETURN_PROFILE_MACHINE_FORMING",
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   },
+                                   {
+                                       "code":  "debitare_spate",
+                                       "label":  "Debitare spate litere",
+                                       "module_code":  "debitare_spate",
+                                       "component_code":  "comp_spate_litere",
+                                       "basis_type":  "m2",
+                                       "quantity":  1.2,
+                                       "unit":  "m2",
+                                       "commercial_unit_price":  15.0,
+                                       "subtotal":  18.0,
+                                       "pricing_rule_code":  "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+                                       "source":  "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03",
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  null,
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   },
+                                   {
+                                       "code":  "finisaje_oracal_651_material",
+                                       "label":  "Finisaje â?? Oracal 651 faÈ?Ä? (material)",
+                                       "module_code":  "finisaje",
+                                       "component_code":  "comp_finisaj_litere",
+                                       "basis_type":  "m2",
+                                       "quantity":  1.2,
+                                       "unit":  "m2",
+                                       "commercial_unit_price":  5.0,
+                                       "subtotal":  6.0,
+                                       "pricing_rule_code":  "VOL_V2_FACE_ORACAL_651_MATERIAL_M2",
+                                       "source":  "commercial_rules_volumetric_v2:face_oracal_651_material",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  null,
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   },
+                                   {
+                                       "code":  "finisaje_aplicare_autocolant_fata",
+                                       "label":  "Finisaje â?? aplicare autocolant faÈ?Ä?",
+                                       "module_code":  "finisaje",
+                                       "component_code":  "comp_finisaj_litere",
+                                       "basis_type":  "m2",
+                                       "quantity":  1.2,
+                                       "unit":  "m2",
+                                       "commercial_unit_price":  3.0,
+                                       "subtotal":  3.6,
+                                       "pricing_rule_code":  "VOL_V2_FACE_VINYL_APPLICATION_M2",
+                                       "source":  "owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "Owner F7F: aplicare autocolant 3 EUR/mp, o singura data pe suprafata fetei. Nu se aplica pe deseu, pe cant stoc sau cand nu exista folie.",
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  null,
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "owner_confirmed"
+                                   },
+                                   {
+                                       "code":  "sablon_montaj_hartie",
+                                       "label":  "È?ablon montaj â?? hÃ¢rtie (documentat)",
+                                       "module_code":  "sablon_montaj",
+                                       "component_code":  "comp_finisaj_litere",
+                                       "basis_type":  "m2",
+                                       "quantity":  2.5,
+                                       "unit":  "m2",
+                                       "commercial_unit_price":  5.0,
+                                       "subtotal":  12.5,
+                                       "pricing_rule_code":  "VOL_V2_SABLON_HARTIE_EUR_M2",
+                                       "source":  "commercial_rules_volumetric_v2:sablon_hartie_documented",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  null,
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   },
+                                   {
+                                       "code":  "ambalare",
+                                       "label":  "Ambalare",
+                                       "module_code":  "ambalare_livrare_montaj",
+                                       "component_code":  "comp_finisaj_litere",
+                                       "basis_type":  "fixed",
+                                       "quantity":  1.0,
+                                       "unit":  "set",
+                                       "commercial_unit_price":  20.0,
+                                       "subtotal":  20.0,
+                                       "pricing_rule_code":  "VOL_V2_PACKAGING_PENDING",
+                                       "source":  "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+                                       "owner_decision_required":  false,
+                                       "warnings":  [
+                                                        "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03"
+                                                    ],
+                                       "segment_key":  null,
+                                       "layer_identity":  null,
+                                       "linked_template_code":  null,
+                                       "registry_pricing_code":  null,
+                                       "source_currency":  "EUR",
+                                       "cpp_currency":  "EUR",
+                                       "currency_conversion_rate":  null,
+                                       "currency_conversion_source":  null,
+                                       "commercial_product_key":  "letters",
+                                       "rate_publication_status":  "provisional"
+                                   }
+                               ],
+    "subtotal_commercial":  141.35,
+    "commercial_total":  141.35,
+    "currency":  "EUR",
+    "minimums_applied":  [
+
+                         ],
+    "complexity_adjustments":  [
+
+                               ],
+    "unknown_owner_decisions":  [
+
+                                ],
+    "commercial_blockers":  [
+
+                            ],
+    "warnings":  [
+                     "structura_suport correctly inactive for direct_wall mounting."
+                 ],
+    "forbidden_hourly_usage_detected":  [
+
+                                        ],
+    "provenance":  [
+                       {
+                           "key":  "product_definition",
+                           "source":  "product_definition_builder_service",
+                           "detail":  "read_only=true workspace_id=none"
+                       },
+                       {
+                           "key":  "commercial_rules",
+                           "source":  "commercial_rules_volumetric_v2",
+                           "detail":  "temporary_local_catalog_until_step_7i"
+                       },
+                       {
+                           "key":  "active_modules",
+                           "source":  "commercial_price_proposal_service",
+                           "detail":  "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sablon_montaj"
+                       },
+                       {
+                           "key":  "quote_input",
+                           "source":  "request_body",
+                           "detail":  "read_only_normalization_no_pricing_engine"
+                       }
+                   ],
+    "confidence":  "high",
+    "quote_ready_for_commercial_review":  true,
+    "notes":  [
+                  "Read-only CommercialPriceProposal preview â?? Step 7G / F7H.",
+                  "Does not call /price, CostEngine, or QuoteOrchestrator.",
+                  "Does not consume EstimatedInternalCost, HR, machine hourly, or inventory unit_cost as client price.",
+                  "Volumetric letters + ACM presentation currency is EUR (scoped). Registry EUR rates stay native EUR â?? no company FX, no live/online/inferred FX, no RON rename.",
+                  "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD (200 EUR fixed / locatie). Travel outside Bucharest is not auto-added. Fail closed if the rate is unavailable.",
+                  "Hourly commercial basis is forbidden."
+              ],
+    "input_summary":  {
+                          "has_payload":  true,
+                          "active_modules":  [
+                                                 "ambalare_livrare_montaj",
+                                                 "debitare_fata",
+                                                 "debitare_spate",
+                                                 "finisaje",
+                                                 "modelare_cant",
+                                                 "sablon_montaj"
+                                             ],
+                          "workspace_id":  null,
+                          "linked_logo_segments":  [
+
+                                                   ],
+                          "site_install_required":  false
+                      },
+    "commercial_product_breakdown":  {
+                                         "products":  [
+                                                          {
+                                                              "product_key":  "letters",
+                                                              "label":  "Litere volumetrice",
+                                                              "line_codes":  [
+                                                                                 "debitare_fata",
+                                                                                 "modelare_cant_aluminiu",
+                                                                                 "debitare_spate",
+                                                                                 "finisaje_oracal_651_material",
+                                                                                 "finisaje_aplicare_autocolant_fata",
+                                                                                 "sablon_montaj_hartie",
+                                                                                 "ambalare"
+                                                                             ],
+                                                              "subtotals_by_currency":  [
+                                                                                            {
+                                                                                                "currency":  "EUR",
+                                                                                                "subtotal":  141.35
+                                                                                            }
+                                                                                        ],
+                                                              "blocked":  false,
+                                                              "blocker_codes":  [
+
+                                                                                ],
+                                                              "pending_line_codes":  [
+
+                                                                                     ]
+                                                          }
+                                                      ],
+                                         "subtotals_by_currency":  [
+                                                                       {
+                                                                           "currency":  "EUR",
+                                                                           "subtotal":  141.35
+                                                                       }
+                                                                   ],
+                                         "currency_mix_detected":  false,
+                                         "presentation_currency":  "EUR",
+                                         "complete_offer_total":  141.35,
+                                         "complete_offer_total_currency":  "EUR",
+                                         "complete_offer_total_unavailable_reason":  null,
+                                         "complete_offer_total_is_partial":  false,
+                                         "pending_line_codes":  [
+
+                                                                ],
+                                         "tax_status":  "tax_exclusive",
+                                         "vat_policy_source":  null,
+                                         "vat_rate_percent":  null
+                                     }
+}

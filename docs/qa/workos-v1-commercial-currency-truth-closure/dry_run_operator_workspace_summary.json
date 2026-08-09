@@ -1,0 +1,35 @@
+{
+  "workspace_id": "5a5ce742-f50f-47b0-985b-32cc6f2fb6a4",
+  "pricing_status": "V6_PRICED_DRY_RUN_READY",
+  "commercial_totals": {
+    "subtotal_net": 571.3,
+    "vat_rate": 21.0,
+    "vat_amount": 119.97,
+    "total_gross": 691.27,
+    "currency": "EUR",
+    "commercial_base_subtotal": 571.3,
+    "commercial_adjustment_trace": {
+      "basis": "commercial_price_proposal_7g_subtotal",
+      "markup_percent": 0.0,
+      "markup_value": 0.0,
+      "manual_adjustment_ron": 0.0,
+      "discount_percent": 0.0,
+      "discount_value": 0.0,
+      "vat_percent": 21.0,
+      "currency": "EUR"
+    }
+  },
+  "presentation_currency": "EUR",
+  "complete_offer_total": 571.3027,
+  "complete_offer_total_currency": "EUR",
+  "currency_mix_detected": false,
+  "complete_offer_total_unavailable_reason": null,
+  "active_ron_commercial_line_codes": [],
+  "sablon_lines": [],
+  "PASS_CHECKS": {
+    "LETTERS_COMMERCIAL_CURRENCY_EUR": true,
+    "COMPLETE_OFFER_TOTAL_PROVEN": true,
+    "ACTIVE_V1_COMMERCIAL_RON_LINES_0": true,
+    "NO_CURRENCY_MIX": true
+  }
+}
