@@ -80,14 +80,14 @@ Verified against worklogs/QA at HEAD `0fb723b2`:
 
 | Domain | Current status | Required V1 | What is proven | Exact missing V1 piece | Blocker | Reopen? |
 |--------|----------------|-------------|----------------|------------------------|---------|---------|
-| A. Intake V6 | PARTIAL_V1_BLOCKER | YES | Letters operator path; PD handoff; F7E/F7F finish integrity | Honest complete offer (currency mix + residual rates) | Owner currency/rates | NO shell |
+| A. Intake V6 | DONE_FOR_V1 | YES | Letters path + EUR presentation + adjustments | List chrome mixed RON aggregates (non-blocking) | — | NO |
 | B. Product System | PARTIAL_NON_BLOCKING | CONDITIONAL | VL v2 template truth; freeze at EIC lab stop | Broader catalog polish | Product-set expansion only | NO |
 | C. ProductDefinition | DONE_FOR_V1 | YES | Builder compile + guards | — | — | NO |
 | D. ProductAggregate | DONE_FOR_V1 | YES | task_rules / WC pilot | — | — | NO |
 | E. Pricing Registry | PARTIAL_NON_BLOCKING | CONDITIONAL | F7I honesty + F7I.1 provisional rates | Hub/tab legacy cleanup | Step 12 | NO for V1 |
-| F. CPP / EIC | PARTIAL_V1_BLOCKER | YES | Engines + Snapshot embed | Complete totals / FX or EUR ops | Owner commercial law | Rates only |
+| F. CPP / EIC | DONE_FOR_V1 | YES | EUR native + fail-closed mix; Snapshot embed | ACM/Logo out of V1 | — | NO |
 | G. Quote Snapshot V2 | DONE_FOR_V1 | YES | Freeze/accept path | Preview vs official labeling | — | NO |
-| H. Order Snapshot V2 | DONE_FOR_V1 | YES | Sold-scope freeze; no_reprice | Thin ACM scope if activated | — | NO |
+| H. Order Snapshot V2 | DONE_FOR_V1 | YES | EUR\|RON convert; net/VAT/gross envelope; no_reprice | Thin ACM scope if activated | — | NO |
 | I. ExecutionPlan | DONE_FOR_V1 | YES | Preview/persist V2 | — | — | NO |
 | J. Task graph / materialize | PARTIAL_NON_BLOCKING | YES | Controlled materialize + sold-scope | Broad unscoped materialize policy | Owner GO if expanding | NO controlled path |
 | K. Eligibility / assignment | DONE_FOR_V1 | YES | Phase B safety PASS | Live workshop soak | — | NO |
@@ -126,6 +126,7 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 | Actual labor time | Proven | `7dfc2013` | — |
 | Labor rate snapshot | Historical stability PROVEN | `0fb723b2` | Rate editor UX |
 | HR/Pontaj boundary | Separation | Owner decision docs | Payroll reconciliation |
+| Commercial offer currency/rates (Letters) | EUR native + fail-closed mix; Order EUR\|RON; revenue envelope | `WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE` | Quotes list aggregate currency polish; `printed_vinyl` |
 
 ---
 
@@ -133,7 +134,6 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| Commercial complete offer | Currency law + residual/provisional rate honesty | Owner decisions | MEDIUM | SMALL | NONE | MEDIUM |
 | Production security gates | Auth-lock/remove intake-v5; permission-gate HR salary reads | None | LOW | NONE | NONE | SMALL |
 | Actual material platform | Consistent freeze + valuation for V1 jobs | Inventory facts | MEDIUM | SMALL | POSSIBLE | MEDIUM |
 | Profitability monetary | Compose revenue + labor + material; fail-closed machine/other | Labor READY; material PARTIAL; revenue PARTIAL | MEDIUM | SMALL–MATERIAL | NONE | MEDIUM |
@@ -167,7 +167,7 @@ Verified against current truth:
 
 | Input | Readiness | Evidence |
 |-------|-----------|----------|
-| Revenue | PARTIAL | Prefer `order_snapshot_v2.accepted_commercial_total`; fallback `order.total_amount` |
+| Revenue | READY | Frozen `accepted_commercial_total` + currency; net/VAT/gross envelope when Quote had them |
 | Labor | READY | Closed sessions + finalize → frozen `ActualLaborCostLine` |
 | Material | PARTIAL | Movement freeze closed-job; not all jobs complete |
 | Machine | BLOCKED / CONDITIONAL | Runtime ≠ cost; fail-closed until policy |
@@ -177,7 +177,7 @@ Verified against current truth:
 | Historical stability | PARTIAL→strong on labor | Labor PROVEN; full P&L rollup NOT_STARTED |
 
 ```text
-PROFITABILITY_REVENUE_READINESS = PARTIAL
+PROFITABILITY_REVENUE_READINESS = READY
 PROFITABILITY_ACTUAL_LABOR_COST_READINESS = READY
 PROFITABILITY_MONETARY_CALCULATION = NOT_STARTED
 ```
@@ -200,9 +200,9 @@ PROFITABILITY_MONETARY_CALCULATION = NOT_STARTED
 ## 10. Owner decisions required
 
 1. **V1 product set lock** — Letters-only vs Letters+ACM-shell; Logo in or out.  
-2. **Complete offer currency law** — EUR ops **or** provenance FX (resolves `COMMERCIAL_CURRENCY_MIX_UNRESOLVED`).  
-3. **Provisional rates** — Keep F7I.1 provisional as V1-acceptable, or require published finals.  
-4. **Residual finishes** — Oracal 641 / printed_vinyl (and any remaining vocabulary).  
+2. ~~Complete offer currency law~~ **RESOLVED for V1** — native EUR ops (no invent FX); Order convert accepts EUR\|RON.  
+3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
+4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER; Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
 5. **SQLite as V1 production DB** — confirm laboratory/single-tenant freeze (Postgres LATER).  
 6. **Machine/other actual cost in V1** — REQUIRED vs N/A fail-closed for Letters pilot.
 
@@ -237,14 +237,13 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 
 ## 12. Critical path (max ~8 nodes)
 
-1. Owner V1 scope + commercial law decisions  
-2. Commercial offer completeness closure  
-3. Production security gates (intake-v5 + HR salary read authz)  
-4. Material actuals V1 sufficiency  
-5. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred)  
-6. Bounded operator UI honesty (pricing/execution density only where blocking)  
-7. Production readiness pack (SQLite confirm, secrets, smoke)  
-8. V1 exit criteria verification  
+1. ~~Owner commercial/currency law + commercial offer completeness~~ **DONE** (`WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE`)  
+2. Production security gates (intake-v5 + HR salary read authz)  
+3. Material actuals V1 sufficiency  
+4. Profitability monetary composition (labor+material+revenue; machine/other N/A or deferred)  
+5. Bounded operator UI honesty (quotes list currency aggregates; execution density)  
+6. Production readiness pack (SQLite confirm, secrets, smoke)  
+7. V1 exit criteria verification  
 
 ---
 
@@ -253,19 +252,18 @@ Closed upstream (do not re-enter): PD/PA → Snapshot → EP → Assign → Sess
 ### NEXT_RECOMMENDED_BUILD
 
 ```text
-WORKOS_V1_COMMERCIAL_OFFER_CURRENCY_AND_RATE_CLOSURE
+WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE
 ```
 
-**Why (3–6 lines):**  
-Letters structural spine is already done. The remaining commercial V1 blocker is honest complete offer totals (currency mix + residual/provisional rates). Closing this unlocks credible Quote → Order handoff value and unblocks Profitability revenue quality. It is not another execution/labor hardening pass. Requires the Owner decisions in §10 first; implementation stays bounded to commercial honesty — not ACM/Logo expansion.
+**Why:** Commercial offer/revenue path is DONE_FOR_V1. Remaining production-critical blockers are unauthenticated `intake-v5` and over-broad HR salary reads. Small, high integrity, unblocks deploy readiness.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-WORKOS_V1_PRODUCTION_SECURITY_WRITE_GATE_CLOSURE
+WORKOS_V1_MATERIAL_ACTUALS_SUFFICIENCY
 ```
 
-Auth-lock or unmount `intake-v5`; permission-gate employee salary/cost reads. Small, high integrity, unblocks deploy.
+Platform-complete material freeze/valuation for V1 Letters jobs (fail-closed when unit cost missing).
 
 ### BUILD_AFTER_THAT
 
@@ -273,7 +271,7 @@ Auth-lock or unmount `intake-v5`; permission-gate employee salary/cost reads. Sm
 PROFITABILITY_MONETARY_COMPOSITION_V1
 ```
 
-Compose READY labor + PARTIAL material + PARTIAL revenue into deterministic actual cost/margin with fail-closed gaps. No dashboard redesign.
+Compose READY labor + material + READY revenue into deterministic actual cost/margin with fail-closed gaps. No dashboard redesign.
 
 ---
 
@@ -299,15 +297,15 @@ Compose READY labor + PARTIAL material + PARTIAL revenue into deterministic actu
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~70%
+WORKOS_V1_COMPLETION_ESTIMATE = ~75%
 
 ARCHITECTURAL_FOUNDATION = 9/10
-V1_FUNCTIONAL_CLOSURE    = 7/10
+V1_FUNCTIONAL_CLOSURE    = 8/10
 OPERATOR_UI_CLOSURE      = 6/10
 PRODUCTION_READINESS     = 5/10
 ```
 
-**What dominates remaining work:** commercial completeness (Owner-gated), security/production gates, material+profitability monetary composition — not more MachineRun/session/labor deep-dives.
+**What dominates remaining work:** production security gates, material actuals sufficiency, profitability monetary composition — not commercial/labor/MachineRun re-hardening.
 
 ---
 
