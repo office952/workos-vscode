@@ -293,8 +293,9 @@ function CompanyCommercialVatPanel() {
         <span className="text-[14px] font-bold text-foreground">TVA implicit (registry intern)</span>
       </div>
       <p className="text-[11px] text-muted-foreground mb-4">
-        Sursa TVA pentru oferte. Ofertele salvează snapshot-ul TVA la generare; documentele istorice
-        nu se actualizează când schimbi această valoare.
+        Sursa TVA implicită pentru oferte noi. După înghețarea comercială, review-ul de ofertă
+        și comanda păstrează TVA-ul înghețat din oferta acceptată — nu se actualizează când schimbi
+        această valoare.
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <div>

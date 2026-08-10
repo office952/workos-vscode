@@ -14,7 +14,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from models.quotes import Quotes
 from schemas.quote_snapshot_v2 import QuoteSnapshotV2
-from services.company_commercial_settings_service import get_default_vat_pct
+from services.frozen_commercial_vat_resolver import (
+	FrozenVatMissingError,
+	resolve_frozen_commercial_vat_rate,
+)
 from services.intake_v4_quote_linkage_utils import linkage_workspace_id
 from services.intake_v4_quote_to_order_service import (
 	ALLOWED_CURRENCIES,
@@ -29,6 +32,8 @@ from services.intake_v6_snapshot_authoritative_offer_service import (
 	commercial_totals_from_frozen_cpp,
 	resolve_frozen_quote_snapshot_v2_record,
 )
+
+FROZEN_VAT_PROVENANCE_INCOMPLETE = "FROZEN_VAT_PROVENANCE_INCOMPLETE"
 
 V6_PRICING_REVIEW_PRE_FREEZE_SOURCE = "pre_freeze_quote_projection"
 
@@ -315,8 +320,28 @@ async def resolve_v6_pricing_review_authority(
 		)
 
 	offer_stamp = _validate_offer_stamp_linkage(record, linkage, workspace_id=workspace_id)
-	vat_rate = await get_default_vat_pct(db)
-	snapshot_totals = _totals_from_frozen_snapshot_record(record, parsed, vat_rate=vat_rate)
+	notes_payload: dict[str, Any] = {}
+	raw_notes = getattr(quote, "notes", None)
+	if isinstance(raw_notes, str) and raw_notes.strip():
+		try:
+			parsed_notes = json.loads(raw_notes)
+			if isinstance(parsed_notes, dict):
+				notes_payload = parsed_notes
+		except json.JSONDecodeError:
+			notes_payload = {}
+	cpp = parsed.commercial_price_proposal_snapshot
+	try:
+		frozen_vat = resolve_frozen_commercial_vat_rate(notes=notes_payload, cpp=cpp)
+	except FrozenVatMissingError as exc:
+		_raise_blocked(
+			FROZEN_VAT_PROVENANCE_INCOMPLETE,
+			str(exc),
+			[FROZEN_VAT_PROVENANCE_INCOMPLETE],
+		)
+	snapshot_totals = _totals_from_frozen_snapshot_record(
+		record, parsed, vat_rate=float(frozen_vat.vat_rate)
+	)
+	snapshot_totals["vat_provenance"] = frozen_vat.provenance
 	quote_projection = _quote_projection_totals(quote)
 	column_drift = _detect_column_drift(quote_projection, snapshot_totals)
 

@@ -213,7 +213,13 @@ async def _seed_v6_quote(
         },
         "snapshot": {"workspace_payload_snapshot": {"svg_source": {"file_hash": ANALYSIS_HASH}}},
     }
-    notes = json.dumps({INTAKE_V6_LINKAGE_JSON_KEY: linkage})
+    # Frozen VAT primary source (WORKOS_VAT_SNAPSHOT_BOUNDARY_INTEGRITY_V1).
+    notes = json.dumps(
+        {
+            INTAKE_V6_LINKAGE_JSON_KEY: linkage,
+            "commercial_adjustment_trace": {"vat_percent": 21.0, "currency": "RON"},
+        }
+    )
 
     quote = Quotes(
         code=f"Q-V6-{uuid.uuid4().hex[:8]}",

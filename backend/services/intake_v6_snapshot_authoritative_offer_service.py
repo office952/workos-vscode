@@ -16,11 +16,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from schemas.commercial_price_proposal import CommercialPriceLine
 from schemas.quote_snapshot_v2 import QuoteSnapshotV2
-from services.company_commercial_settings_service import get_default_vat_pct
+from services.frozen_commercial_vat_resolver import (
+	FrozenVatMissingError,
+	resolve_frozen_commercial_vat_rate,
+	stamp_commercial_adjustment_trace_vat,
+)
 from services.intake_v6_commercial_quote_service import INTAKE_V6_LINKAGE_JSON_KEY, intake_v6_linkage_code
 from services.intake_v6_priced_quote_dry_run_service import _official_totals_from_7g
 from services.quote_snapshot_v2_service import FREEZE_ALLOWED_READINESS, HARD_BLOCKED_READINESS
 from services.quotes import QuotesService
+
+V6_OFFER_FROZEN_VAT_PROVENANCE_INCOMPLETE = "V6_OFFER_FROZEN_VAT_PROVENANCE_INCOMPLETE"
 
 V6_OFFER_FROM_SNAPSHOT_WRITTEN = "V6_OFFER_FROM_SNAPSHOT_WRITTEN"
 V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT = "V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT"
@@ -206,7 +212,8 @@ def commercial_totals_from_frozen_cpp(
 	subtotal = cpp.subtotal_commercial if cpp.subtotal_commercial is not None else cpp.commercial_total
 	if subtotal is None:
 		raise ValueError("Frozen commercial subtotal missing from snapshot.")
-	# Frozen snapshot totals: no live Adaos/Discount/Ajustare — only VAT from settings.
+	# Frozen snapshot totals: no live Adaos/Discount/Ajustare —
+	# VAT rate must be frozen commercial provenance (not live Settings).
 	totals = _official_totals_from_7g(
 		subtotal=float(subtotal),
 		commercial_inputs={
@@ -400,7 +407,30 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 		)
 
 	warnings = list(parsed.warnings_snapshot or [])
-	vat_rate = float(await get_default_vat_pct(db))
+	quotes_service = QuotesService(db)
+	quote_obj = await quotes_service.get_by_id(quote_id)
+	if quote_obj is None:
+		return _blocked(
+			quote_id=quote_id,
+			snapshot_v2=_snapshot_v2_meta(record),
+			blockers=[_blocker(V6_OFFER_SNAPSHOT_QUOTE_MISMATCH, "Target quote was not found.")],
+			warnings=warnings,
+		)
+
+	notes_payload, legacy_notes_raw, notes_invalid = _parse_notes_preserving_raw(
+		getattr(quote_obj, "notes", None)
+	)
+	try:
+		frozen_vat = resolve_frozen_commercial_vat_rate(notes=notes_payload, cpp=cpp)
+	except FrozenVatMissingError as exc:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=getattr(quote_obj, "code", None),
+			snapshot_v2=_snapshot_v2_meta(record),
+			blockers=[_blocker(V6_OFFER_FROZEN_VAT_PROVENANCE_INCOMPLETE, str(exc))],
+			warnings=warnings,
+		)
+	vat_rate = float(frozen_vat.vat_rate)
 	try:
 		totals = commercial_totals_from_frozen_cpp(cpp, vat_rate=vat_rate)
 	except ValueError as exc:
@@ -409,6 +439,7 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 			snapshot_v2=_snapshot_v2_meta(record),
 			blockers=[_blocker(V6_OFFER_SNAPSHOT_COMMERCIAL_BLOCKED, str(exc))],
 		)
+	totals["vat_provenance"] = frozen_vat.provenance
 
 	total_gross = _money(totals["total_gross"])
 	if abs(_money(expected_total_gross) - total_gross) > 0.01:
@@ -440,18 +471,6 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 			warnings=warnings,
 		)
 
-	quotes_service = QuotesService(db)
-	quote_obj = await quotes_service.get_by_id(quote_id)
-	if quote_obj is None:
-		return _blocked(
-			quote_id=quote_id,
-			commercial_totals=totals,
-			line_items=line_items,
-			snapshot_v2=_snapshot_v2_meta(record),
-			blockers=[_blocker(V6_OFFER_SNAPSHOT_QUOTE_MISMATCH, "Target quote was not found.")],
-			warnings=warnings,
-		)
-
 	if record.quote_id is not None and record.quote_id != quote_id:
 		return _blocked(
 			quote_id=quote_id,
@@ -468,7 +487,6 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 			warnings=warnings,
 		)
 
-	notes_payload, legacy_notes_raw, notes_invalid = _parse_notes_preserving_raw(getattr(quote_obj, "notes", None))
 	linkage = _existing_v6_linkage(notes_payload)
 	expected_intake_code = intake_v6_linkage_code(workspace_id_str)
 	quote_intake_code = str(getattr(quote_obj, "intake_code", "") or "")
@@ -586,6 +604,11 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 		"Totalurile comerciale provin din Quote Snapshot V2 (7G) — fara repricing live."
 	)
 	notes_payload[INTAKE_V6_LINKAGE_JSON_KEY] = linkage_payload
+	notes_payload = stamp_commercial_adjustment_trace_vat(
+		notes_payload,
+		vat_percent=vat_rate,
+		currency=str(totals.get("currency") or getattr(cpp, "currency", None) or "RON"),
+	)
 
 	vat_amount = _money(totals.get("vat_amount") or 0)
 	subtotal_net = _money(totals.get("subtotal_net") or 0)

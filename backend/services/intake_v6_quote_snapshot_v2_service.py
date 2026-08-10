@@ -17,6 +17,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.orders import Orders
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from schemas.quote_snapshot_v2 import QUOTE_SNAPSHOT_V2_VERSION, QuoteSnapshotV2
+from services.company_commercial_settings_service import get_default_vat_pct
+from services.frozen_commercial_vat_resolver import stamp_cpp_supplementary_vat_rate
 from services.intake_v6_commercial_quote_service import INTAKE_V6_LINKAGE_JSON_KEY, intake_v6_linkage_code
 from services.intake_v6_priced_quote_dry_run_service import (
 	V6_OFFICIAL_COMMERCIAL_AUTHORITY,
@@ -660,6 +662,16 @@ async def create_v6_quote_snapshot_v2(
 			quote_id=quote_id,
 			quote_code=quote_code,
 			blockers=[_blocker(V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED, "Canonical Quote Snapshot V2 preview could not be composed.")],
+		)
+
+	# Supplementary freeze stamp only (existing JSON fields). Notes remain primary VAT authority.
+	# PRE_FREEZE Settings default is allowed here for NEW freezes; never used post-freeze as live re-read.
+	settings_vat = float(await get_default_vat_pct(db))
+	cpp_snap = quote_snapshot_v2.commercial_price_proposal_snapshot
+	if cpp_snap is not None:
+		stamped_cpp = stamp_cpp_supplementary_vat_rate(cpp_snap, vat_percent=settings_vat)
+		quote_snapshot_v2 = quote_snapshot_v2.model_copy(
+			update={"commercial_price_proposal_snapshot": stamped_cpp}
 		)
 
 	# Fail-closed: PD = Aggregate = Quantity Builder = workspace job revision/hash.

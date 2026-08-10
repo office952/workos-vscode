@@ -72,7 +72,12 @@ async def _seed_v6_quote_for_review(
 		version=1,
 		intake_code=intake_code,
 		grand_total=grand_total,
-		notes=json.dumps({INTAKE_V6_LINKAGE_JSON_KEY: linkage}),
+		notes=json.dumps(
+			{
+				INTAKE_V6_LINKAGE_JSON_KEY: linkage,
+				"commercial_adjustment_trace": {"vat_percent": 21.0, "currency": "RON"},
+			}
+		),
 	)
 	db.add(quote)
 	await db.commit()
@@ -125,9 +130,12 @@ async def _quote_with_stamp(
 	stamp: dict,
 ) -> Quotes:
 	quote, ws_id = await _seed_v6_quote_for_review(db, grand_total=grand_total)
-	linkage = json.loads(quote.notes)[INTAKE_V6_LINKAGE_JSON_KEY]
+	notes_obj = json.loads(quote.notes)
+	linkage = notes_obj[INTAKE_V6_LINKAGE_JSON_KEY]
 	linkage[INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY] = stamp
-	quote.notes = json.dumps({INTAKE_V6_LINKAGE_JSON_KEY: linkage})
+	notes_obj[INTAKE_V6_LINKAGE_JSON_KEY] = linkage
+	notes_obj["commercial_adjustment_trace"] = {"vat_percent": 21.0, "currency": "RON"}
+	quote.notes = json.dumps(notes_obj)
 	quote.total_before_vat = net
 	quote.subtotal = net
 	quote.vat = round(grand_total - net, 2)
@@ -372,7 +380,8 @@ async def test_spine_state_exposes_snapshot_authoritative_review_read_model(volu
 	quote.grand_total = gross
 	quote.total_before_vat = 1000.0
 	await volumetric_v2_db.commit()
-	linkage = json.loads(quote.notes)[INTAKE_V6_LINKAGE_JSON_KEY]
+	notes_obj = json.loads(quote.notes)
+	linkage = notes_obj[INTAKE_V6_LINKAGE_JSON_KEY]
 	linkage[INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY] = _offer_stamp(
 		record,
 		workspace_id=workspace_id,
@@ -380,7 +389,9 @@ async def test_spine_state_exposes_snapshot_authoritative_review_read_model(volu
 		gross=gross,
 		net=1000.0,
 	)
-	quote.notes = json.dumps({INTAKE_V6_LINKAGE_JSON_KEY: linkage})
+	notes_obj[INTAKE_V6_LINKAGE_JSON_KEY] = linkage
+	notes_obj["commercial_adjustment_trace"] = {"vat_percent": 21.0, "currency": "RON"}
+	quote.notes = json.dumps(notes_obj)
 	await volumetric_v2_db.commit()
 
 	state = await get_v6_commercial_spine_state(volumetric_v2_db, workspace_id=workspace_id)
