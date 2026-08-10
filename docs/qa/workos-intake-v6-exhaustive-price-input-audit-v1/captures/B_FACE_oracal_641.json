@@ -1,0 +1,411 @@
+{
+  "scenario": {
+    "scenario_id": "B_FACE_oracal_641",
+    "lane": "bond",
+    "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+    "field": "finish_setup.face_finish_type",
+    "value": "oracal_641",
+    "EXPECTED_COMMERCIAL_EFFECT": "YES",
+    "ledger_ref": "A1/oracal_641",
+    "apply": {
+      "kind": "face",
+      "face_finish_type": "oracal_641",
+      "face_vinyl_roll_width_mm": 1260
+    }
+  },
+  "result": {
+    "scenario_id": "B_FACE_oracal_641",
+    "lane": "bond",
+    "BASELINE_VARIANT_ID": "BOND_LETTERS_ACM_OPTIONAL",
+    "field": "finish_setup.face_finish_type",
+    "value": "oracal_641",
+    "ledger_ref": "A1/oracal_641",
+    "EXPECTED_COMMERCIAL_EFFECT": "YES",
+    "OBSERVED_CLASS": "PRICED_LINE",
+    "DEFECT": false,
+    "RATIONALE": "attributable commercial delta observed",
+    "FIRST_BROKEN_BOUNDARY": "NONE",
+    "LINE_PRICING_STATUS": "priced_delta",
+    "COMPLETE_OFFER_STATUS": "total_valid",
+    "attribution": {
+      "BASE_TOTAL": 113.9,
+      "NEW_TOTAL": 115.1,
+      "TOTAL_DELTA": 1.2,
+      "LINE_CODES_ADDED": [
+        "finisaje_oracal_641_material"
+      ],
+      "LINE_CODES_REMOVED": [
+        "finisaje_oracal_651_material"
+      ],
+      "LINE_CODES_CHANGED": [],
+      "LINE_AMOUNTS": [
+        {
+          "code": "finisaje_oracal_641_material",
+          "LINE_AMOUNT_BEFORE": null,
+          "LINE_AMOUNT_AFTER": 5.2,
+          "currency": "EUR"
+        },
+        {
+          "code": "finisaje_oracal_651_material",
+          "LINE_AMOUNT_BEFORE": 4.0,
+          "LINE_AMOUNT_AFTER": null,
+          "currency": "EUR"
+        }
+      ],
+      "CURRENCY": "EUR"
+    },
+    "complete_offer": {
+      "complete_offer_total": 115.1,
+      "complete_offer_total_currency": "EUR",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": false,
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 115.1
+        }
+      ]
+    },
+    "blockers": [],
+    "acm_scope": {
+      "ACM_PRESENT_IN_PRODUCT_TRUTH": false,
+      "ACM_AVAILABLE_OPTIONAL": true,
+      "ACM_CONFIRMED": false,
+      "ACM_INCLUDED_IN_SOLD_COMPOSITION": false,
+      "ACM_PRICED": false
+    },
+    "http_status": 200,
+    "quote_input_sha256": "6353442db51407369dfdc1cbb64f8511469d25327d0db0b2ef3f7977551c3af0",
+    "cpp_sha256": "e712fadcad246dd9f44fc59b26a37d476d0976162bb9c10b3cec28baaa71b4b5"
+  },
+  "preview": {
+    "preview_version": "1.0.0",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "source": "commercial_price_proposal",
+    "status": "ready",
+    "commercial_price_lines": [
+      {
+        "code": "debitare_fata",
+        "label": "Debitare fa\u021b\u0103 litere",
+        "module_code": "debitare_fata",
+        "component_code": "comp_face_litere",
+        "basis_type": "ml",
+        "quantity": 6,
+        "unit": "ml",
+        "commercial_unit_price": 1.5,
+        "subtotal": 9.0,
+        "pricing_rule_code": "VOL_V2_FACE_CNC_ML",
+        "source": "pricing_registry:operation:CNC_ROUTER:EUR",
+        "owner_decision_required": false,
+        "warnings": [
+          "F7H provisional commercial EUR/ml reused from CNC_ROUTER workcenter registry (1.5 EUR/ml). Not an Owner-final commercial sell decision. Legacy RON DEV_BRIDGE 25 retired, not renamed.",
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+          "registry_bound=CNC_ROUTER;source_unit_price=1.5;rate_basis=per_linear_meter;presentation_currency=EUR;no_fx_normalization"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": "CNC_ROUTER",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "modelare_cant_aluminiu",
+        "label": "Modelare cant aluminiu",
+        "module_code": "modelare_cant",
+        "component_code": "comp_lateral_litere",
+        "basis_type": "ml",
+        "quantity": 6,
+        "unit": "ml",
+        "commercial_unit_price": 5.0,
+        "subtotal": 30.0,
+        "pricing_rule_code": "VOL_V2_RETURN_PROFILE_ML",
+        "source": "pricing_registry:operation:RETURN_PROFILE_MACHINE_FORMING:EUR",
+        "owner_decision_required": false,
+        "warnings": [
+          "Technical inputs: letter_perimeter_m, return_depth_mm \u2014 not minutes.",
+          "F7H provisional commercial EUR/ml reused from RETURN_PROFILE_MACHINE_FORMING (5 EUR/ml). Not an Owner-final commercial sell decision; bonding stays a separate op. Legacy RON DEV_BRIDGE 30 retired, not renamed.",
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+          "registry_bound=RETURN_PROFILE_MACHINE_FORMING;source_unit_price=5.0;rate_basis=per_linear_meter;presentation_currency=EUR;no_fx_normalization"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": "RETURN_PROFILE_MACHINE_FORMING",
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "debitare_spate",
+        "label": "Debitare spate litere",
+        "module_code": "debitare_spate",
+        "component_code": "comp_spate_litere",
+        "basis_type": "m2",
+        "quantity": 0.8,
+        "unit": "m2",
+        "commercial_unit_price": 15.0,
+        "subtotal": 12.0,
+        "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+        "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+        "owner_decision_required": false,
+        "warnings": [
+          "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03",
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "sistem_led_module",
+        "label": "Sistem LED \u2014 module",
+        "module_code": "sistem_led",
+        "component_code": "comp_led_litere",
+        "basis_type": "piece",
+        "quantity": 1.0,
+        "unit": "buc",
+        "commercial_unit_price": 1.5,
+        "subtotal": 1.5,
+        "pricing_rule_code": "VOL_V2_LED_MODULE_PIECE",
+        "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+        "owner_decision_required": false,
+        "warnings": [
+          "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "sursa_led",
+        "label": "Surs\u0103 LED (PSU)",
+        "module_code": "sistem_led",
+        "component_code": "comp_led_litere",
+        "basis_type": "piece",
+        "quantity": 1.0,
+        "unit": "buc",
+        "commercial_unit_price": 35.0,
+        "subtotal": 35.0,
+        "pricing_rule_code": "VOL_V2_LED_PSU_PIECE",
+        "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+        "owner_decision_required": false,
+        "warnings": [
+          "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03",
+          "Commercial sells one PSU unit; selected_psu_watts is reference only."
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "finisaje_oracal_641_material",
+        "label": "Finisaje \u2014 Oracal 641 fa\u021b\u0103 (material)",
+        "module_code": "finisaje",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "m2",
+        "quantity": 0.8,
+        "unit": "m2",
+        "commercial_unit_price": 6.5,
+        "subtotal": 5.2,
+        "pricing_rule_code": "VOL_V2_FACE_ORACAL_641_MATERIAL_M2",
+        "source": "commercial_rules_volumetric_v2:face_oracal_641_material",
+        "owner_decision_required": false,
+        "warnings": [
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      },
+      {
+        "code": "finisaje_aplicare_autocolant_fata",
+        "label": "Finisaje \u2014 aplicare autocolant fa\u021b\u0103",
+        "module_code": "finisaje",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "m2",
+        "quantity": 0.8,
+        "unit": "m2",
+        "commercial_unit_price": 3.0,
+        "subtotal": 2.4,
+        "pricing_rule_code": "VOL_V2_FACE_VINYL_APPLICATION_M2",
+        "source": "owner_commercial_decision:f7f_2026_08_03:vinyl_application",
+        "owner_decision_required": false,
+        "warnings": [
+          "Owner F7F: aplicare autocolant 3 EUR/mp, o singura data pe suprafata fetei. Nu se aplica pe deseu, pe cant stoc sau cand nu exista folie.",
+          "quantity_source=COMPATIBILITY_WORKSPACE_PATH"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "owner_confirmed"
+      },
+      {
+        "code": "ambalare",
+        "label": "Ambalare",
+        "module_code": "ambalare_livrare_montaj",
+        "component_code": "comp_finisaj_litere",
+        "basis_type": "fixed",
+        "quantity": 1.0,
+        "unit": "set",
+        "commercial_unit_price": 20.0,
+        "subtotal": 20.0,
+        "pricing_rule_code": "VOL_V2_PACKAGING_PENDING",
+        "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+        "owner_decision_required": false,
+        "warnings": [
+          "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03"
+        ],
+        "segment_key": null,
+        "layer_identity": null,
+        "linked_template_code": null,
+        "registry_pricing_code": null,
+        "source_currency": "EUR",
+        "cpp_currency": "EUR",
+        "currency_conversion_rate": null,
+        "currency_conversion_source": null,
+        "commercial_product_key": "letters",
+        "rate_publication_status": "provisional"
+      }
+    ],
+    "subtotal_commercial": 115.1,
+    "commercial_total": 115.1,
+    "currency": "EUR",
+    "minimums_applied": [],
+    "complexity_adjustments": [],
+    "unknown_owner_decisions": [],
+    "commercial_blockers": [],
+    "warnings": [],
+    "forbidden_hourly_usage_detected": [],
+    "provenance": [
+      {
+        "key": "product_definition",
+        "source": "product_definition_builder_service",
+        "detail": "read_only=true workspace_id=none"
+      },
+      {
+        "key": "commercial_rules",
+        "source": "commercial_rules_volumetric_v2",
+        "detail": "temporary_local_catalog_until_step_7i"
+      },
+      {
+        "key": "active_modules",
+        "source": "commercial_price_proposal_service",
+        "detail": "modules=ambalare_livrare_montaj,debitare_fata,debitare_spate,finisaje,modelare_cant,sistem_led"
+      },
+      {
+        "key": "quote_input",
+        "source": "request_body",
+        "detail": "read_only_normalization_no_pricing_engine"
+      }
+    ],
+    "confidence": "high",
+    "quote_ready_for_commercial_review": true,
+    "notes": [
+      "Read-only CommercialPriceProposal preview \u2014 Step 7G / F7H.",
+      "Does not call /price, CostEngine, or QuoteOrchestrator.",
+      "Does not consume EstimatedInternalCost, HR, machine hourly, or inventory unit_cost as client price.",
+      "Volumetric letters + ACM presentation currency is EUR (scoped). Registry EUR rates stay native EUR \u2014 no company FX, no live/online/inferred FX, no RON rename.",
+      "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD (200 EUR fixed / locatie). Travel outside Bucharest is not auto-added. Fail closed if the rate is unavailable.",
+      "Hourly commercial basis is forbidden."
+    ],
+    "input_summary": {
+      "has_payload": true,
+      "active_modules": [
+        "ambalare_livrare_montaj",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje",
+        "modelare_cant",
+        "sistem_led"
+      ],
+      "workspace_id": null,
+      "linked_logo_segments": [],
+      "site_install_required": false
+    },
+    "commercial_product_breakdown": {
+      "products": [
+        {
+          "product_key": "letters",
+          "label": "Litere volumetrice",
+          "line_codes": [
+            "debitare_fata",
+            "modelare_cant_aluminiu",
+            "debitare_spate",
+            "sistem_led_module",
+            "sursa_led",
+            "finisaje_oracal_641_material",
+            "finisaje_aplicare_autocolant_fata",
+            "ambalare"
+          ],
+          "subtotals_by_currency": [
+            {
+              "currency": "EUR",
+              "subtotal": 115.1
+            }
+          ],
+          "blocked": false,
+          "blocker_codes": [],
+          "pending_line_codes": []
+        }
+      ],
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 115.1
+        }
+      ],
+      "currency_mix_detected": false,
+      "presentation_currency": "EUR",
+      "complete_offer_total": 115.1,
+      "complete_offer_total_currency": "EUR",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": false,
+      "pending_line_codes": [],
+      "tax_status": "tax_exclusive",
+      "vat_policy_source": null,
+      "vat_rate_percent": null
+    }
+  }
+}

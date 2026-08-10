@@ -1,0 +1,130 @@
+{
+  "GRADI_EUR_SAFE": {
+    "baseline_variant_id": "GRADI_EUR_SAFE",
+    "quote_input_sha256": "9a141b93af41a87997f5c54e966b2037850a53bede986a14b63bc0783ada739d",
+    "cpp_sha256": "cb21c0697e828d0be48a7449b8d1b62b607eb7cf306fe2fe2dc001a6c8a3d565",
+    "money": {
+      "total": 708.5052,
+      "currency": "EUR"
+    },
+    "complete_offer": {
+      "complete_offer_total": 708.5052,
+      "complete_offer_total_currency": "EUR",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": false,
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 708.5052
+        }
+      ]
+    },
+    "blockers": [],
+    "line_codes": [
+      "ambalare",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje_aplicare_autocolant_fata",
+      "finisaje_oracal_8500_material",
+      "logo_application::logo_instance_001",
+      "logo_application::logo_instance_002",
+      "logo_back_cnc::logo_instance_001",
+      "logo_back_cnc::logo_instance_002",
+      "logo_face_cnc::logo_instance_001",
+      "logo_face_cnc::logo_instance_002",
+      "logo_laminate::logo_instance_001",
+      "logo_laminate::logo_instance_002",
+      "logo_led_modules::logo_instance_001",
+      "logo_led_modules::logo_instance_002",
+      "logo_print::logo_instance_001",
+      "logo_print::logo_instance_002",
+      "logo_return_cant::logo_instance_001",
+      "logo_return_cant::logo_instance_002",
+      "modelare_cant_aluminiu",
+      "montaj",
+      "sistem_led_module",
+      "sursa_led"
+    ],
+    "http_status": 200
+  },
+  "BOND_LETTERS_ACM_OPTIONAL": {
+    "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+    "quote_input_sha256": "bc3b1ac90115c07ef02e68ccb0c32cc5b8a9a57327c2577e1279d22eeb647b4b",
+    "cpp_sha256": "3ddb424883842cd5341b26331d86a525c2733bd72427b23c79c5d49180bf9270",
+    "money": {
+      "total": 113.9,
+      "currency": "EUR"
+    },
+    "complete_offer": {
+      "complete_offer_total": 113.9,
+      "complete_offer_total_currency": "EUR",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": false,
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 113.9
+        }
+      ]
+    },
+    "blockers": [],
+    "line_codes": [
+      "ambalare",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje_aplicare_autocolant_fata",
+      "finisaje_oracal_651_material",
+      "modelare_cant_aluminiu",
+      "sistem_led_module",
+      "sursa_led"
+    ],
+    "http_status": 200
+  },
+  "BOND_ACM_INCLUDED": {
+    "baseline_variant_id": "BOND_ACM_INCLUDED",
+    "quote_input_sha256": "2898b86f566769120b674152d56c076f5630d3b1db39cd8dd2a76a620b91180f",
+    "cpp_sha256": "6e8675755264386a0d7083fafef8de223e678f97ef8c0c19d136dbdbe1389191",
+    "money": {
+      "total": 472.4,
+      "currency": "EUR"
+    },
+    "complete_offer": {
+      "complete_offer_total": 472.4,
+      "complete_offer_total_currency": "EUR",
+      "complete_offer_total_unavailable_reason": null,
+      "complete_offer_total_is_partial": false,
+      "subtotals_by_currency": [
+        {
+          "currency": "EUR",
+          "subtotal": 472.4
+        }
+      ]
+    },
+    "blockers": [],
+    "line_codes": [
+      "acm_boxed_assembly",
+      "acm_fasteners",
+      "acm_panel_cut",
+      "acm_panel_face_material",
+      "acm_return_strip_material",
+      "acm_v_groove",
+      "ambalare",
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje_aplicare_autocolant_fata",
+      "finisaje_oracal_651_material",
+      "letters_acm_conn_attach_body",
+      "letters_acm_conn_cable_5m",
+      "letters_acm_conn_electric_psu",
+      "letters_acm_conn_fasten_forex",
+      "letters_acm_conn_light_test",
+      "letters_acm_conn_pack",
+      "letters_acm_conn_sablon_process",
+      "modelare_cant_aluminiu",
+      "montaj",
+      "sistem_led_module",
+      "sursa_led"
+    ],
+    "http_status": 200
+  }
+}

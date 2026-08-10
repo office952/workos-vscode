@@ -1,0 +1,649 @@
+{
+  "generated_at": "2026-08-10T11:56:55.043910+00:00",
+  "template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "currency": "EUR",
+  "scenarios": [
+    {
+      "scenario_id": "A_FACE_none",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_finish_type",
+      "value": "none",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A1/none",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "none"
+      }
+    },
+    {
+      "scenario_id": "A_FACE_oracal_641",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_finish_type",
+      "value": "oracal_641",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/oracal_641",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_641"
+      }
+    },
+    {
+      "scenario_id": "A_FACE_oracal_651",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_finish_type",
+      "value": "oracal_651",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/oracal_651",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_651"
+      }
+    },
+    {
+      "scenario_id": "A_FACE_oracal_8500",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_finish_type",
+      "value": "oracal_8500",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A1/oracal_8500",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_8500"
+      }
+    },
+    {
+      "scenario_id": "A_FACE_print_laminate",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_finish_type",
+      "value": "print_laminate",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/print_laminate",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "print_laminate"
+      }
+    },
+    {
+      "scenario_id": "A_FACE_8500_W1000",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_vinyl_roll_width_mm",
+      "value": 1000,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A2/1000",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_8500",
+        "face_vinyl_roll_width_mm": 1000
+      }
+    },
+    {
+      "scenario_id": "A_FACE_COLOR_032",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.face_oracal_code",
+      "value": "032",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A3/color",
+      "apply": {
+        "kind": "finish",
+        "face_oracal_code": "032"
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_white_aluminum",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "white_aluminum",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A4/white_aluminum",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "white_aluminum",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_black_aluminum",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "black_aluminum",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A4/black_aluminum",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "black_aluminum",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_gold_aluminum",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "gold_aluminum",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A4/gold_aluminum",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "gold_aluminum",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_mirror_silver",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "mirror_silver",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A4/mirror_silver",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "mirror_silver",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_ral_paint",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "ral_paint",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A4/ral_paint",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "ral_paint",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_RETURN_oracal_wrapped",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_finish_type",
+      "value": "oracal_wrapped",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A4/oracal_wrapped",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "oracal_wrapped",
+        "return_depth_mm": 60
+      }
+    },
+    {
+      "scenario_id": "A_DEPTH_30",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_depth_mm",
+      "value": 30,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A5/30",
+      "apply": {
+        "kind": "finish",
+        "return_depth_mm": 30
+      }
+    },
+    {
+      "scenario_id": "A_DEPTH_80",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_depth_mm",
+      "value": 80,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A5/80",
+      "apply": {
+        "kind": "finish",
+        "return_depth_mm": 80
+      }
+    },
+    {
+      "scenario_id": "A_DEPTH_100",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.return_depth_mm",
+      "value": 100,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A5/100",
+      "apply": {
+        "kind": "finish",
+        "return_depth_mm": 100
+      }
+    },
+    {
+      "scenario_id": "A_BACK_forex_10_no_bevel",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.backing_mode",
+      "value": "forex_10_no_bevel",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A7/forex_10_no_bevel",
+      "apply": {
+        "kind": "finish",
+        "backing_mode": "forex_10_no_bevel"
+      }
+    },
+    {
+      "scenario_id": "A_BACK_forex_10_with_bevel",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.backing_mode",
+      "value": "forex_10_with_bevel",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A7/forex_10_with_bevel",
+      "apply": {
+        "kind": "finish",
+        "backing_mode": "forex_10_with_bevel"
+      }
+    },
+    {
+      "scenario_id": "A_LED_OFF",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.illuminated",
+      "value": false,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B1/false",
+      "apply": {
+        "kind": "finish",
+        "illuminated": false
+      }
+    },
+    {
+      "scenario_id": "A_LED_STRIP",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.lighting_system_type",
+      "value": "led_strip",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B2/led_strip",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "lighting_system_type": "led_strip"
+      }
+    },
+    {
+      "scenario_id": "A_LIGHT_COLOR_warm",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.light_color",
+      "value": "warm",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "B3/warm",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "light_color": "warm"
+      }
+    },
+    {
+      "scenario_id": "A_LIGHT_COLOR_cool",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.light_color",
+      "value": "cool",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "B3/cool",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "light_color": "cool"
+      }
+    },
+    {
+      "scenario_id": "A_LED_POWER_1.0",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.led_module_power_w",
+      "value": 1.0,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B4/1.0",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "lighting_system_type": "led_modules",
+        "led_module_power_w": 1.0
+      }
+    },
+    {
+      "scenario_id": "A_LED_POWER_1.44",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.led_module_power_w",
+      "value": 1.44,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B4/1.44",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "lighting_system_type": "led_modules",
+        "led_module_power_w": 1.44
+      }
+    },
+    {
+      "scenario_id": "A_PSU_100",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.selected_psu_watts",
+      "value": 100,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B6/100",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "selected_psu_watts": 100
+      }
+    },
+    {
+      "scenario_id": "A_PSU_160",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.selected_psu_watts",
+      "value": 160,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B6/160",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "selected_psu_watts": 160
+      }
+    },
+    {
+      "scenario_id": "A_PSU_200",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.selected_psu_watts",
+      "value": 200,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "B6/200",
+      "apply": {
+        "kind": "finish",
+        "illuminated": true,
+        "selected_psu_watts": 200
+      }
+    },
+    {
+      "scenario_id": "A_MOUNT_TMPL_FOREX_ON",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.mounting_template_enabled",
+      "value": true,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "D2/true+forex",
+      "apply": {
+        "kind": "finish",
+        "mounting_template_enabled": true,
+        "mounting_template_material_type": "forex",
+        "mounting_template_area_m2": 1.5,
+        "mounting_scope": "preparation_only"
+      }
+    },
+    {
+      "scenario_id": "A_MOUNT_TMPL_PAPER",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.mounting_template_material_type",
+      "value": "paper",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "D4/paper",
+      "apply": {
+        "kind": "finish",
+        "mounting_template_enabled": true,
+        "mounting_template_material_type": "paper",
+        "mounting_template_area_m2": 1.5,
+        "mounting_scope": "preparation_only"
+      }
+    },
+    {
+      "scenario_id": "A_MOUNT_SITE_ON",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.site_installation_included",
+      "value": true,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "D6/true",
+      "apply": {
+        "kind": "finish",
+        "mounting_scope": "preparation_and_site_installation",
+        "site_installation_included": true,
+        "mounting_template_enabled": false
+      }
+    },
+    {
+      "scenario_id": "A_MARKUP_10",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "commercial_inputs.markup_percent",
+      "value": 10,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "E1/10",
+      "apply": {
+        "kind": "commercial",
+        "markup_percent": 10
+      }
+    },
+    {
+      "scenario_id": "A_DISCOUNT_5",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "commercial_inputs.discount_percent",
+      "value": 5,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "E2/5",
+      "apply": {
+        "kind": "commercial",
+        "discount_percent": 5
+      }
+    },
+    {
+      "scenario_id": "A_MANUAL_RON_100",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "commercial_inputs.manual_adjustment_ron",
+      "value": 100,
+      "EXPECTED_COMMERCIAL_EFFECT": "UNKNOWN",
+      "ledger_ref": "E4/100",
+      "apply": {
+        "kind": "commercial",
+        "manual_adjustment_ron": 100
+      },
+      "special": "manual_ron"
+    },
+    {
+      "scenario_id": "A_CONFIRMED_FALSE",
+      "lane": "gradi",
+      "baseline_variant_id": "GRADI_EUR_SAFE",
+      "field": "finish_setup.confirmed / letter_group confirmed",
+      "value": false,
+      "EXPECTED_COMMERCIAL_EFFECT": "UNKNOWN",
+      "ledger_ref": "gate/confirmed",
+      "apply": {
+        "kind": "finish",
+        "confirmed": false
+      }
+    },
+    {
+      "scenario_id": "B_FACE_none",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "finish_setup.face_finish_type",
+      "value": "none",
+      "EXPECTED_COMMERCIAL_EFFECT": "NO",
+      "ledger_ref": "A1/none",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "none",
+        "face_vinyl_roll_width_mm": 1260
+      }
+    },
+    {
+      "scenario_id": "B_FACE_oracal_641",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "finish_setup.face_finish_type",
+      "value": "oracal_641",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/oracal_641",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_641",
+        "face_vinyl_roll_width_mm": 1260
+      }
+    },
+    {
+      "scenario_id": "B_FACE_oracal_8500",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "finish_setup.face_finish_type",
+      "value": "oracal_8500",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/oracal_8500",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "oracal_8500",
+        "face_vinyl_roll_width_mm": 1260
+      }
+    },
+    {
+      "scenario_id": "B_FACE_print_laminate",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "finish_setup.face_finish_type",
+      "value": "print_laminate",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A1/print_laminate",
+      "apply": {
+        "kind": "face",
+        "face_finish_type": "print_laminate",
+        "face_vinyl_roll_width_mm": 1260
+      }
+    },
+    {
+      "scenario_id": "B_RETURN_RAL",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "finish_setup.return_finish_type",
+      "value": "ral_paint",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "A4/ral_paint",
+      "apply": {
+        "kind": "finish",
+        "return_finish_type": "ral_paint",
+        "return_depth_mm": 100
+      }
+    },
+    {
+      "scenario_id": "B_ACM_INCLUDE_SOLD",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_LETTERS_ACM_OPTIONAL",
+      "field": "acm sold composition",
+      "value": "included",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "ACM/sold-scope",
+      "apply": {
+        "kind": "baseline_switch",
+        "to": "BOND_ACM_INCLUDED"
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_ACM_FOLD_1",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "acm_panel_instance.configuration.fold_count",
+      "value": 1,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "C11/1",
+      "apply": {
+        "kind": "nested",
+        "path": "finish_setup.acm_panel_instance.configuration.fold_count",
+        "value": 1
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_ACM_THICKNESS_4",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "acm_panel_instance.configuration.acm_thickness_mm",
+      "value": 4,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "C12/4",
+      "apply": {
+        "kind": "nested",
+        "path": "finish_setup.acm_panel_instance.configuration.acm_thickness_mm",
+        "value": 4
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_ACM_L1_80",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "acm_panel_instance.configuration.l1_mm",
+      "value": 80,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "C12/l1_80",
+      "apply": {
+        "kind": "nested",
+        "path": "finish_setup.acm_panel_instance.configuration.l1_mm",
+        "value": 80
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_ACM_FOIL_AFTER_FRAME",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "shell_finish.apply_after_frame",
+      "value": true,
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "C4/after_frame",
+      "apply": {
+        "kind": "nested",
+        "path": "finish_setup.acm_panel_instance.shell_finish.apply_after_frame",
+        "value": true
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_ACM_SHEET_COLORAT",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "sheet_material.variant",
+      "value": "colorat",
+      "EXPECTED_COMMERCIAL_EFFECT": "YES",
+      "ledger_ref": "C1/colorat",
+      "apply": {
+        "kind": "nested",
+        "path": "finish_setup.acm_panel_instance.sheet_material.variant",
+        "value": "colorat"
+      },
+      "acm_flags_probe": true
+    },
+    {
+      "scenario_id": "B_MANUAL_RON_100",
+      "lane": "bond",
+      "baseline_variant_id": "BOND_ACM_INCLUDED",
+      "field": "commercial_inputs.manual_adjustment_ron",
+      "value": 100,
+      "EXPECTED_COMMERCIAL_EFFECT": "UNKNOWN",
+      "ledger_ref": "E4/100",
+      "apply": {
+        "kind": "commercial",
+        "manual_adjustment_ron": 100
+      },
+      "special": "manual_ron",
+      "acm_flags_probe": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "A_MANUAL_RON_100": {
+    "MANUAL_RON_INPUT_ACCEPTED": true,
+    "CONTRACT_SOURCE": "commercial_inputs.manual_adjustment_ron / finish_setup.commercial_inputs",
+    "CONVERSION_USED": false,
+    "FX_SOURCE": "NONE",
+    "CPP_RESULT": {
+      "status": "ready",
+      "subtotal": 708.5052,
+      "currency": "EUR",
+      "TOTAL_DELTA": 0.0
+    },
+    "COMPLETE_OFFER_TOTAL": 708.5052,
+    "OBSERVED_CLASS": "NO_EFFECT",
+    "P0_CURRENCY_POLICY": false
+  },
+  "B_MANUAL_RON_100": {
+    "MANUAL_RON_INPUT_ACCEPTED": true,
+    "CONTRACT_SOURCE": "commercial_inputs.manual_adjustment_ron / finish_setup.commercial_inputs",
+    "CONVERSION_USED": false,
+    "FX_SOURCE": "NONE",
+    "CPP_RESULT": {
+      "status": "ready",
+      "subtotal": 472.4,
+      "currency": "EUR",
+      "TOTAL_DELTA": 0.0
+    },
+    "COMPLETE_OFFER_TOTAL": 472.4,
+    "OBSERVED_CLASS": "NO_EFFECT",
+    "P0_CURRENCY_POLICY": false
+  }
+}
