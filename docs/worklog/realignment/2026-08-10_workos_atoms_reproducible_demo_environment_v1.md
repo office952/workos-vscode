@@ -3,6 +3,7 @@
 **Date:** 2026-08-10  
 **Owner GO:** `AUTHORIZE_WORKOS_ATOMS_REPRODUCIBLE_DEMO_ENVIRONMENT_V1`  
 **Branch:** `feat/f7i-owner-rate-activation`  
+**HEAD:** `16edbb85` (local; not pushed)  
 **Plan:** `docs/plans/2026-08-10-001-feat-atoms-reproducible-demo-environment-plan.md`  
 **Scope affirmed:** wipe-and-rebuild · full inventory · Golden extract-only  
 
