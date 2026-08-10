@@ -1,0 +1,125 @@
+{
+  "base": "http://127.0.0.1:3010",
+  "results": [
+    {
+      "name": "01-dashboard",
+      "route": "/dashboard",
+      "http": 200,
+      "bodyLen": 5061,
+      "demoSignal": false,
+      "screenshot": "01-dashboard.png"
+    },
+    {
+      "name": "02-intake",
+      "route": "/intake",
+      "http": 200,
+      "bodyLen": 1024,
+      "demoSignal": false,
+      "screenshot": "02-intake.png"
+    },
+    {
+      "name": "03-intake-v6-letters",
+      "route": "/intake-v6/d0e10001-0000-4000-8000-000000000001/operator",
+      "http": 200,
+      "bodyLen": 2213,
+      "demoSignal": true,
+      "screenshot": "03-intake-v6-letters.png"
+    },
+    {
+      "name": "04-intake-v6-draft",
+      "route": "/intake-v6/d0e10002-0000-4000-8000-000000000002/operator",
+      "http": 200,
+      "bodyLen": 2212,
+      "demoSignal": true,
+      "screenshot": "04-intake-v6-draft.png"
+    },
+    {
+      "name": "05-product-system-products",
+      "route": "/product-system/products",
+      "http": 200,
+      "bodyLen": 2279,
+      "demoSignal": false,
+      "screenshot": "05-product-system-products.png"
+    },
+    {
+      "name": "06-inventory-pricing",
+      "route": "/inventory/pricing",
+      "http": 200,
+      "bodyLen": 9569,
+      "demoSignal": false,
+      "screenshot": "06-inventory-pricing.png"
+    },
+    {
+      "name": "07-quotes",
+      "route": "/quotes",
+      "http": 200,
+      "bodyLen": 1385,
+      "demoSignal": true,
+      "screenshot": "07-quotes.png"
+    },
+    {
+      "name": "08-quotes-1",
+      "route": "/quotes/1",
+      "http": 200,
+      "bodyLen": 4478,
+      "demoSignal": true,
+      "screenshot": "08-quotes-1.png"
+    },
+    {
+      "name": "09-orders",
+      "route": "/orders",
+      "http": 200,
+      "bodyLen": 1222,
+      "demoSignal": true,
+      "screenshot": "09-orders.png"
+    },
+    {
+      "name": "10-orders-1",
+      "route": "/orders/1",
+      "http": 200,
+      "bodyLen": 1267,
+      "demoSignal": true,
+      "screenshot": "10-orders-1.png"
+    },
+    {
+      "name": "11-execution",
+      "route": "/execution",
+      "http": 200,
+      "bodyLen": 2240,
+      "demoSignal": true,
+      "screenshot": "11-execution.png"
+    },
+    {
+      "name": "12-execution-1",
+      "route": "/execution/1",
+      "http": 200,
+      "bodyLen": 30234,
+      "demoSignal": true,
+      "screenshot": "12-execution-1.png"
+    },
+    {
+      "name": "13-machine-runs",
+      "route": "/execution/machine-runs",
+      "http": 200,
+      "bodyLen": 910,
+      "demoSignal": false,
+      "screenshot": "13-machine-runs.png"
+    },
+    {
+      "name": "14-modules",
+      "route": "/modules",
+      "http": 200,
+      "bodyLen": 23177,
+      "demoSignal": false,
+      "screenshot": "14-modules.png"
+    },
+    {
+      "name": "15-governance",
+      "route": "/governance",
+      "http": 200,
+      "bodyLen": 17298,
+      "demoSignal": false,
+      "screenshot": "15-governance.png"
+    }
+  ]
+}

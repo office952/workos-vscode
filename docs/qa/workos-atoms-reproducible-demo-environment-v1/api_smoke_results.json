@@ -1,0 +1,57 @@
+[
+  {
+    "path": "/health",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/d0e10001-0000-4000-8000-000000000001",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/d0e10002-0000-4000-8000-000000000002",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/entities/quotes",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/entities/quotes/1",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/entities/orders",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/entities/orders/1",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/execution/plan/1",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/execution/resource-state/machine-runs",
+    "status": 200,
+    "ok": true
+  },
+  {
+    "path": "/api/v1/profitability-actual/order/1",
+    "status": 200,
+    "ok": true
+  }
+]

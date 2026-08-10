@@ -38,6 +38,15 @@ local_dev.db-journal
 *.sqlite
 *.sqlite3
 
+# Atoms demo generated runtime (seed rebuilds these; never commit binary DB)
+backend/demo/workos_demo.db
+backend/demo/workos_demo.db-*
+backend/demo/last_seed_summary.json
+backend/demo/smoke_results.json
+backend/demo/_u*.err
+backend/demo/_u*.out
+.workos-demo-detached.json
+
 # Archives / backups
 *.zip
 *.rar

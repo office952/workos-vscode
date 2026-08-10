@@ -1,0 +1,653 @@
+{
+  "started_at": "2026-08-10T07:18:03.635223+00:00",
+  "demo_db_path": "C:\\w\\psiso\\backend\\demo\\workos_demo.db",
+  "verdict": "PASS",
+  "registry": {
+    "product_families": {
+      "created": 14,
+      "updated": 0,
+      "skipped": 0,
+      "active_total": 14,
+      "elapsed_ms": 39.83
+    },
+    "workcenter_rates": {
+      "inserted": 6,
+      "skipped": 0,
+      "elapsed_ms": 8.42
+    },
+    "inventory_materials_stubs": {
+      "inserted": 10,
+      "skipped": 0,
+      "elapsed_ms": 13.7
+    },
+    "tpl_acp_light_routed": {
+      "template_code": "TPL-ACP-LIGHT-ROUTED",
+      "inserted": 1,
+      "skipped": 0,
+      "elapsed_ms": 5.4
+    },
+    "observation_config": {
+      "inserted": 1,
+      "updated": 0,
+      "skipped": 0,
+      "active_row_id": 1,
+      "canonical": {
+        "warning_time_delta_minutes": 15.0,
+        "critical_time_delta_minutes": 30.0,
+        "warning_time_delta_pct": 10.0,
+        "critical_time_delta_pct": 20.0,
+        "is_active": true
+      },
+      "elapsed_ms": 7.23
+    },
+    "build4_materials": {
+      "inserted": 46,
+      "skipped": 2,
+      "elapsed_ms": 40.01
+    },
+    "build4_workcenters": {
+      "inserted": 12,
+      "skipped": 0,
+      "elapsed_ms": 11.31
+    },
+    "build4_templates": {
+      "inserted": 6,
+      "skipped": 0,
+      "elapsed_ms": 8.86
+    },
+    "tpl_volumetric_letters_v2": {
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "template_id": 8,
+      "template_action": "created",
+      "dossier_id": 1,
+      "dossier_action": "created",
+      "dossier_status": "approved",
+      "structure_template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "structure_template_id": 9,
+      "structure_template_action": "created",
+      "structure_dossier_id": 2,
+      "structure_dossier_action": "created",
+      "structure_active": true,
+      "module_link_id": 1,
+      "module_link_action": "created",
+      "volum_aluminum_template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "volum_aluminum_template_id": 10,
+      "volum_aluminum_template_action": "created",
+      "volum_aluminum_dossier_id": 3,
+      "volum_aluminum_dossier_action": "created",
+      "volum_aluminum_active": true,
+      "volum_aluminum_module_link_id": 2,
+      "volum_aluminum_module_link_action": "created",
+      "pricing": {
+        "inserted_materials": 4,
+        "updated_materials": 23,
+        "inserted_rates": 6,
+        "updated_rates": 8
+      },
+      "elapsed_ms": 58.9
+    },
+    "tpl_volumetric_face_back_prep": {
+      "template_code": "TPL-VOLUMETRIC-FACE-BACK-PREP",
+      "inserted": true,
+      "skipped": false,
+      "operation_catalog_count": 7,
+      "component_count": 2,
+      "elapsed_ms": 2.94
+    },
+    "volumetric_workcenter_rates": {
+      "workcenters": {
+        "inserted": 2,
+        "patched": 1,
+        "skipped": 13,
+        "results": [
+          {
+            "code": "RETURN_PROFILE_MACHINE_FORMING",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "RETURN_PROFILE_FACE_BONDING",
+            "action": "PATCHED"
+          },
+          {
+            "code": "PREPRESS",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "CNC_ROUTER",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "WC_METAL_FAB",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "LARGE_FORMAT_PRINT",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "LAMINATION",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "LED_ASSEMBLY",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "ELECTRICAL_WIRING",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "PAINTING",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "RETURN_CANT_RAL_PAINT_LABOR",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "VINYL_APPLICATION",
+            "action": "INSERTED"
+          },
+          {
+            "code": "FACE_VINYL_APPLICATION_LABOR",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "RETURN_CANT_VINYL_APPLICATION_LABOR",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "PACKAGING",
+            "action": "SKIPPED_ALREADY_APPLIED"
+          },
+          {
+            "code": "SITE_INSTALLATION_STANDARD",
+            "action": "INSERTED"
+          }
+        ]
+      },
+      "template": {
+        "template_code": "TPL-VOLUMETRIC-LETTERS",
+        "action": "SKIPPED_UNCHANGED"
+      },
+      "elapsed_ms": 11.07
+    },
+    "acm_bond_materials": {
+      "inserted": 3,
+      "skipped": 0,
+      "elapsed_ms": 4.68
+    },
+    "acm_owner_confirmed_prices": {
+      "patched": 3,
+      "skipped": 0,
+      "not_found": 0,
+      "results": [
+        {
+          "code": "MAT-SURUBURI-GEN",
+          "action": "PATCHED"
+        },
+        {
+          "code": "MAT-ACM-BOND-3MM",
+          "action": "PATCHED"
+        },
+        {
+          "code": "MAT-ACM-BOND-4MM",
+          "action": "PATCHED_ESTIMATED"
+        }
+      ],
+      "elapsed_ms": 17.83
+    },
+    "acm_boxed_mounting_owner_rates": {
+      "inserted": 3,
+      "patched": 0,
+      "skipped": 0,
+      "results": [
+        {
+          "code": "ACM_PANEL_CUTTING",
+          "action": "INSERTED"
+        },
+        {
+          "code": "ACM_V_GROOVE",
+          "action": "INSERTED"
+        },
+        {
+          "code": "ACM_BOXED_ASSEMBLY",
+          "action": "INSERTED"
+        }
+      ],
+      "change_reason": "ACM boxed mounting owner-confirmed commercial rates (2026-07-13)",
+      "elapsed_ms": 4.72
+    },
+    "acm_template_pack": {
+      "inserted": 2,
+      "updated": 0,
+      "template_codes": [
+        "TPL-ACM-CASSETTED-PANEL",
+        "TPL-CUT-ACM-LETTERS"
+      ],
+      "elapsed_ms": 3.88
+    },
+    "tpl_acm_boxed_mounting_support_v1": {
+      "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "template_action": "created",
+      "dossier_action": "created",
+      "module_link_action": "created",
+      "composition_link_actions": {
+        "TPL-VOLUMETRIC-FACE_v1": "skipped_missing",
+        "TPL-VOLUMETRIC-BACK_v1": "skipped_missing",
+        "TPL-VOLUM-ALUMINIU_v1": "created",
+        "TPL-VOLUMETRIC-LED_v1": "skipped_missing",
+        "TPL-VOLUMETRIC-FINISH_v1": "skipped_missing",
+        "TPL-VOLUMETRIC-LOGO_v1": "skipped_missing"
+      },
+      "letters_parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "applied_content_xor": [
+        "letters",
+        "logo"
+      ],
+      "active": true,
+      "component_count": 3,
+      "operation_count": 5,
+      "elapsed_ms": 14.92
+    },
+    "tpl_volumetric_letters_component_modules_v1": {
+      "parent_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "created_templates": 4,
+      "updated_templates": 0,
+      "created_dossiers": 4,
+      "updated_dossiers": 0,
+      "created_links": 4,
+      "updated_links": 0,
+      "edge_stamps": 3,
+      "aluminiu_active_preserved": true,
+      "parent_bom_handoff": {
+        "stub_components": 5,
+        "kept_root_operations": 0,
+        "kept_root_materials": 0
+      },
+      "parent_dossier_patched": true,
+      "elapsed_ms": 31.08
+    },
+    "volumetric_owner_confirmed_prices": {
+      "patched": 27,
+      "skipped": 0,
+      "not_found": 0,
+      "results": [
+        {
+          "code": "MAT-ACP-FATA-LITERE",
+          "action": "PATCHED",
+          "unit_cost": 16.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-SPATE-PVC-LITERE",
+          "action": "PATCHED",
+          "unit_cost": 16.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-MODULE",
+          "action": "PATCHED",
+          "unit_cost": 0.5,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-SABLON-MONTAJ",
+          "action": "PATCHED",
+          "unit_cost": 6.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-SABLON-HARTIE",
+          "action": "PATCHED",
+          "unit_cost": 5.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VOPSEA-RAL",
+          "action": "PATCHED",
+          "unit_cost": 10.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VOPSEA-RAL-CANT-30MM",
+          "action": "PATCHED",
+          "unit_cost": 2.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VOPSEA-RAL-CANT-60MM",
+          "action": "PATCHED",
+          "unit_cost": 2.5,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VOPSEA-RAL-CANT-80MM",
+          "action": "PATCHED",
+          "unit_cost": 3.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VOPSEA-RAL-CANT-100MM",
+          "action": "PATCHED",
+          "unit_cost": 4.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-ORACAL-651",
+          "action": "PATCHED",
+          "unit_cost": 9.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VINYL-PRINT",
+          "action": "PATCHED",
+          "unit_cost": 1.5,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-VINYL-PRINT-LAMINATED",
+          "action": "PATCHED",
+          "unit_cost": 10.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-ORACAL-641",
+          "action": "PATCHED",
+          "unit_cost": 6.5,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-ORACAL-8500",
+          "action": "PATCHED",
+          "unit_cost": 20.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-STRIP",
+          "action": "PATCHED",
+          "unit_cost": 2.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PREMOUNT-BAR-STEEL",
+          "action": "PATCHED",
+          "unit_cost": 2.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PREMOUNT-BAR-ALUMINUM",
+          "action": "PATCHED",
+          "unit_cost": 3.5,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PROFIL-LATERAL-LITERE-30MM",
+          "action": "PATCHED",
+          "unit_cost": 2.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PROFIL-LATERAL-LITERE-60MM",
+          "action": "PATCHED",
+          "unit_cost": 3.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PROFIL-LATERAL-LITERE-80MM",
+          "action": "PATCHED",
+          "unit_cost": 4.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-PROFIL-LATERAL-LITERE-100MM",
+          "action": "PATCHED",
+          "unit_cost": 5.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-PSU-12V-60W",
+          "action": "PATCHED",
+          "unit_cost": 12.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-PSU-12V-100W",
+          "action": "PATCHED",
+          "unit_cost": 16.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-PSU-12V-160W",
+          "action": "PATCHED",
+          "unit_cost": 20.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-LED-PSU-12V-200W",
+          "action": "PATCHED",
+          "unit_cost": 40.0,
+          "currency": "EUR",
+          "status": "active"
+        },
+        {
+          "code": "MAT-CONSUMABILE-MONTAJ",
+          "action": "PATCHED_ESTIMATED",
+          "unit_cost": 5.0,
+          "source_review_status": "needs_review"
+        },
+        {
+          "code": "MAT-PROFIL-LATERAL-LITERE",
+          "action": "REFERENCE_NOTES_PATCHED"
+        },
+        {
+          "code": "MAT-LED-PSU-12V",
+          "action": "REFERENCE_NOTES_PATCHED"
+        }
+      ],
+      "elapsed_ms": 156.77
+    },
+    "cost_engine_template_base_currency": {
+      "action": "SKIPPED_ALREADY_APPLIED",
+      "currency": "EUR",
+      "previous": "EUR",
+      "elapsed_ms": 4.64
+    },
+    "active_template_scope": {
+      "owner_valid_active": "TPL-VOLUMETRIC-LETTERS_v2",
+      "owner_valid_active_codes": [
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_V1",
+        "TPL-METAL-PREMOUNT-STRUCTURE_V1",
+        "TPL-VOLUMETRIC-LETTERS_V2"
+      ],
+      "activated": [],
+      "deactivated": [
+        "TPL-ACP-LIGHT-ROUTED",
+        "TPL-BANNER-STANDARD",
+        "TPL-PLEXI-PLATE",
+        "TPL-VINYL-STICKER",
+        "TPL-LIGHTBOX-STANDARD",
+        "TPL-VOLUMETRIC-LETTERS",
+        "TPL-MESH-EXTERNALIZED",
+        "TPL-VOLUM-ALUMINIU_V1",
+        "TPL-VOLUMETRIC-FACE-BACK-PREP",
+        "TPL-ACM-CASSETTED-PANEL",
+        "TPL-CUT-ACM-LETTERS",
+        "TPL-VOLUMETRIC-FACE_V1",
+        "TPL-VOLUMETRIC-BACK_V1",
+        "TPL-VOLUMETRIC-LED_V1",
+        "TPL-VOLUMETRIC-FINISH_V1"
+      ],
+      "skipped_count": 3,
+      "archive_note": "Archived/experimental — not active for quote/pricing. Owner-valid scope is TPL-ACM-BOXED-MOUNTING-SUPPORT_V1, TPL-METAL-PREMOUNT-STRUCTURE_V1, TPL-VOLUMETRIC-LETTERS_V2.",
+      "elapsed_ms": 6.44
+    },
+    "operational_workforce_registry": {
+      "skipped": true,
+      "reason": "synthetic_demo_employees_only"
+    },
+    "cleanup_retired_product_templates": {
+      "skipped": true,
+      "reason": "demo_fresh_db_skip_retired_cleanup"
+    },
+    "intake_v6_unified_pricing": {
+      "inserted_materials": 4,
+      "updated_materials": 27,
+      "inserted_rates": 0,
+      "updated_rates": 14,
+      "elapsed_ms": 38.91
+    }
+  },
+  "clients": [
+    {
+      "temp_ref": "DEMO-CLIENT-001",
+      "id": 1,
+      "name": "Demo Client Alpha"
+    },
+    {
+      "temp_ref": "DEMO-CLIENT-002",
+      "id": 2,
+      "name": "Demo Client Beta"
+    },
+    {
+      "temp_ref": "DEMO-CLIENT-003",
+      "id": 3,
+      "name": "Demo Client Gamma Incomplete"
+    },
+    {
+      "temp_ref": "DEMO-CLIENT-004",
+      "id": 4,
+      "name": "Demo Client Delta"
+    }
+  ],
+  "employees": [
+    {
+      "code": "DEMO-EMP-CNC-001",
+      "id": 1,
+      "name": "Demo Operator CNC"
+    },
+    {
+      "code": "DEMO-EMP-ASSEMBLY-001",
+      "id": 2,
+      "name": "Demo Assembler"
+    },
+    {
+      "code": "DEMO-EMP-FINISH-001",
+      "id": 3,
+      "name": "Demo Finisher"
+    }
+  ],
+  "intake": {
+    "complete": {
+      "id": "d0e10001-0000-4000-8000-000000000001",
+      "code": "DEMO-INTAKE-LETTERS-001"
+    },
+    "draft": {
+      "id": "d0e10002-0000-4000-8000-000000000002",
+      "code": "DEMO-INTAKE-DRAFT-001"
+    }
+  },
+  "quote": {
+    "id": 1,
+    "code_target": "DEMO-QUOTE-EUR-001",
+    "currency": "EUR",
+    "total_gross": 862.65,
+    "subtotal_net": 712.93,
+    "vat_amount": 149.72,
+    "runtime_code": "Q-V4-DEMO-INTAKE-LETTERS-001-1786346286"
+  },
+  "order": {
+    "id": 1,
+    "code_target": "DEMO-ORDER-001",
+    "runtime_code": "ORD-IV6-V2-1786346286-1"
+  },
+  "execution": {
+    "plan_id": 1,
+    "operational_task_count": 18,
+    "task_ids": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FOREX_BACK",
+      "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:PREPARE_CANT_STRIP",
+      "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:FORM_CANT_CNC",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:BOND_FACE_TO_CANT",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:WIRE_LED_MODULES",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ROUTE_CABLES_THROUGH_BACK",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LED_ON",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ATTACH_BODY_TO_BACK",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LIGHT_UNIFORMITY",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:LABEL_POWER_SUPPLY",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_POWER_SUPPLY_SEPARATELY",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:QUALITY_CONTROL",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CLEAN_PRODUCT",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:RIGIDIZE_FOR_TRANSPORT",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_PRODUCT"
+    ]
+  },
+  "assignment": {
+    "ok": true,
+    "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+    "employee_id": 3,
+    "session_minutes": 40
+  },
+  "material_actual": {
+    "ok": true,
+    "material_id": 46,
+    "material_code": "MAT-ORACAL-8500",
+    "quantity": 0.25,
+    "unit_cost": 20.0,
+    "issue_keys": [
+      "status",
+      "movement_id",
+      "material_cost_status",
+      "reason"
+    ]
+  },
+  "profitability": {
+    "ok": true,
+    "keys": [
+      "status",
+      "order_id",
+      "model_version",
+      "commercial_truth",
+      "estimated_internal_truth",
+      "actual_operational_truth",
+      "actual_cost_truth",
+      "monetary_v1",
+      "profitability_result",
+      "access",
+      "mutated"
+    ],
+    "labor_cost_status": null,
+    "known_actual_cost": null
+  },
+  "ended_at": "2026-08-10T07:18:06.841895+00:00",
+  "synthetic": true,
+  "historical_golden_mutated": false
+}

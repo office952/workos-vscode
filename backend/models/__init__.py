@@ -49,4 +49,9 @@ from models import vector_assets  # noqa: F401
 from models import intake_v3_workspace  # noqa: F401
 from models import intake_v4_workspace  # noqa: F401
 from models import intake_v5_project  # noqa: F401
+from models import intake_v6_workspace  # noqa: F401
 from models import quote_snapshot_v2  # noqa: F401
+from models import quote_output_snapshots  # noqa: F401
+from models import order_output_snapshot_references  # noqa: F401
+from models import stock_movements  # noqa: F401
+from models import rendered_output_snapshots  # noqa: F401
