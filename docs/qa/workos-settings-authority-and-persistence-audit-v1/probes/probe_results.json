@@ -1,0 +1,213 @@
+{
+  "probe_id": "SETTINGS_AUTHORITY_PROBES_V1",
+  "started_at": "2026-08-10T12:10:26.887023+00:00",
+  "base": "http://127.0.0.1:8000",
+  "demo_db_only": true,
+  "owner_dev_db_writes": 0,
+  "steps": [
+    {
+      "step": "health",
+      "status": 200,
+      "body": {
+        "status": "healthy"
+      }
+    },
+    {
+      "step": "ccs_get_before",
+      "status": 200,
+      "body": {
+        "default_vat_pct": 21.0,
+        "eur_to_ron_rate": 5.0
+      }
+    },
+    {
+      "step": "ccs_put_vat",
+      "status": 200,
+      "requested": 19.0,
+      "body": {
+        "default_vat_pct": 19.0,
+        "eur_to_ron_rate": 5.0
+      },
+      "write_target": "DEMO_DB"
+    },
+    {
+      "step": "ccs_get_after_vat",
+      "status": 200,
+      "body": {
+        "default_vat_pct": 19.0,
+        "eur_to_ron_rate": 5.0
+      }
+    },
+    {
+      "step": "ccs_put_fx",
+      "status": 200,
+      "requested": 4.9876,
+      "body": {
+        "default_vat_pct": 19.0,
+        "eur_to_ron_rate": 4.9876
+      },
+      "write_target": "DEMO_DB"
+    },
+    {
+      "step": "ccs_get_after_fx",
+      "status": 200,
+      "body": {
+        "default_vat_pct": 19.0,
+        "eur_to_ron_rate": 4.9876
+      }
+    },
+    {
+      "step": "ccs_restore",
+      "status": 200,
+      "body": {
+        "default_vat_pct": 21.0,
+        "eur_to_ron_rate": 5.0
+      },
+      "write_target": "DEMO_DB"
+    },
+    {
+      "step": "ccs_get_final",
+      "status": 200,
+      "body": {
+        "default_vat_pct": 21.0,
+        "eur_to_ron_rate": 5.0
+      }
+    },
+    {
+      "step": "cost_engine_config",
+      "status": 200,
+      "body": {
+        "id": 1,
+        "moneda_implicita": "EUR",
+        "ore_productive_luna_firma": null,
+        "overhead_profile_name": "default",
+        "metoda_overhead": "pe_ora_productiva",
+        "cost_ora_manopera_default": null,
+        "allow_manual_override": false
+      }
+    },
+    {
+      "step": "cost_engine_base_config",
+      "status": 200,
+      "body": {
+        "currency": "EUR",
+        "total_productive_hours_month": 1176.0,
+        "average_labour_hour_cost": 43.7925,
+        "monthly_overhead_cost": 0.0,
+        "overhead_hour_cost": 0.0,
+        "valid": true,
+        "warnings": [],
+        "overhead_profile_name": "default",
+        "metoda_overhead": "pe_ora_productiva",
+        "cost_ora_manopera_default": null,
+        "allow_manual_override": false,
+        "productive_hours_source": "company_calendar_minus_approved_leave_clipped_employment",
+        "productive_hours_year": 2026,
+        "productive_hours_month": 8
+      }
+    },
+    {
+      "step": "recurring_payments_list",
+      "status": 200,
+      "body": {
+        "total": 0,
+        "skip": 0,
+        "limit": 500,
+        "items_count": 0,
+        "items_sample": []
+      }
+    },
+    {
+      "step": "smartbill_config",
+      "status": 404,
+      "body": {
+        "detail": "Not Found"
+      },
+      "side_effect": "NONE_READ_ONLY"
+    },
+    {
+      "step": "smartbill_provider_health",
+      "status": 404,
+      "body": {
+        "detail": "Not Found"
+      },
+      "side_effect": "NONE_READ_ONLY"
+    },
+    {
+      "step": "admin_settings_list",
+      "status": 404,
+      "note": "frontend/src/api/settings.ts \u2014 unused by Settings.tsx",
+      "body_type": "dict",
+      "body_preview": {
+        "keys": [
+          "detail"
+        ]
+      }
+    },
+    {
+      "step": "smartbill_config_correct",
+      "status": 200,
+      "body": {
+        "provider": "smartbill",
+        "source": "app_settings",
+        "enabled": false,
+        "base_url": null,
+        "username_present": false,
+        "username_hint": null,
+        "token_present": "<REDACTED>",
+        "lookup_path": "/fiscal-lookup",
+        "timeout_seconds": 5,
+        "last_test_status": "not_run",
+        "last_test_at": null,
+        "last_test_message": null
+      },
+      "side_effect": "NONE_READ_ONLY"
+    },
+    {
+      "step": "smartbill_health_correct",
+      "status": 200,
+      "body": {
+        "provider": "smartbill",
+        "source": "app_settings",
+        "enabled": false,
+        "configured": false,
+        "status": "disabled",
+        "missing_fields": [
+          "SMARTBILL_BASE_URL",
+          "SMARTBILL_USERNAME",
+          "SMARTBILL_TOKEN"
+        ],
+        "present_fields": {
+          "base_url": false,
+          "username": false,
+          "token": false,
+          "lookup_path": true,
+          "timeout_seconds": true
+        },
+        "masked": {
+          "base_url_host": null,
+          "username_hint": null
+        },
+        "settings": {
+          "timeout_seconds": 5.0,
+          "lookup_path": "/fiscal-lookup"
+        },
+        "live_validation": {
+          "performed": false,
+          "status": "not_run",
+          "message": "Configuration health does not perform live provider lookup."
+        },
+        "warnings": []
+      },
+      "side_effect": "NONE_READ_ONLY"
+    }
+  ],
+  "verdict": {
+    "vat_persist_roundtrip": "PASS",
+    "fx_persist_roundtrip": "PASS",
+    "restore_originals": "PASS",
+    "owner_dev_db_writes": 0,
+    "demo_db_only": true
+  },
+  "finished_at": "2026-08-10T12:10:27.401213+00:00"
+}
