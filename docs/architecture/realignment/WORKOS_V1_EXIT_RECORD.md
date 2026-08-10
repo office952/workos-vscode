@@ -3,17 +3,20 @@
 **Date:** 2026-08-10  
 **Owner GO:** `AUTHORIZE_WORKOS_V1_EXIT_VERIFICATION_RESUME`  
 **Starting HEAD:** `71ec5b2b`  
-**Baseline HEAD (this resume):** `71ec5b2b`  
+**Baseline HEAD (Golden accepted):** `71ec5b2b`  
+**Finalize note date:** 2026-08-10 (Owner product-set ack)  
 **Branch:** `feat/f7i-owner-rate-activation`  
 **Worktree:** `C:\w\psiso`
 
-## Final verdict (this resume)
+## Final verdict
 
 ```text
-WORKOS_V1_EXIT_VERIFICATION_RESUME = TECHNICALLY_READY_OWNER_ACK_PENDING
-WORKOS_V1_EXIT_VERIFICATION = TECHNICALLY_READY_OWNER_ACK_PENDING
+WORKOS_V1_EXIT_VERIFICATION_RESUME = PASS
+WORKOS_V1_EXIT_VERIFICATION = PASS
+WORKOS_V1_STATUS = FINALIZED_FOR_AGREED_SCOPE
+WORKOS_V1_COMPLETION = 100_PERCENT_FOR_AGREED_V1_SCOPE
 TECHNICAL_EXIT_CRITERIA = PASS
-WORKOS_V1_STATUS = NOT_FINALIZED_UNTIL_OWNER_ACK
+OWNER_ACKNOWLEDGMENTS = COMPLETE
 EXIT_CRITERIA_BLOCKED = 0
 OPEN_V1_TECHNICAL_BLOCKERS = 0
 ACTIVE_V1_RISK = 0
@@ -21,9 +24,11 @@ PRODUCT_CODE_CHANGES = 0
 DB_SCHEMA_CHANGES = 0
 QA_MUTATIONS = 0
 PUSH = NO
+NEXT_RECOMMENDED_BUILD = NONE_BEFORE_RELEASE_DECISION
+NEXT_TASK = NOT_AUTHORIZED
 ```
 
-Formal product-set Owner lines are still absent. Do not infer them. Do not finalize V1 until those lines are pasted.
+Owner product-set lines received 2026-08-10. V1 is finalized for the agreed Letters-only scope. Next action is a separate RELEASE / PUSH / DEPLOY decision or POST_V1 / V1.1 roadmap — not another V1 feature build.
 
 ## Locked accepted programs (not re-run)
 
@@ -36,10 +41,12 @@ Formal product-set Owner lines are still absent. Do not infer them. Do not final
 | PRODUCTION_READINESS_V1 | DONE_FOR_V1 |
 | LETTERS_COMMERCIAL_CURRENCY | EUR |
 
-## V1 scope (expected / pending formal lock)
+## V1 scope (Owner-locked)
 
 ```text
-V1_PRODUCT_SET = LETTERS_ONLY (awaiting formal Owner line)
+WORKOS_V1_PRODUCT_SET = LETTERS_ONLY
+LOGO_SOLD_ROOT_V1 = LATER
+ACM_EXPANSION_V1 = LATER
 Required product = Litere volumetrice luminoase (TPL-VOLUMETRIC-LETTERS_v2)
 Deferred = Logo sold-root, ACM treatments, ACM cassette, other families
 ```
@@ -59,9 +66,9 @@ DB_ENGINE = SQLite (DEC-DATABASE-01)
 | MACHINE_COST_V1 | DECLARE_NA_FOR_V1 |
 | OTHER_DIRECT_COST_V1 | DECLARE_NA_FOR_V1 |
 | PROFITABILITY_CURRENCY_POLICY | A |
-| WORKOS_V1_PRODUCT_SET = LETTERS_ONLY | **MISSING formal ack** |
-| LOGO_SOLD_ROOT_V1 = LATER | **MISSING formal ack** |
-| ACM_EXPANSION_V1 = LATER | **MISSING formal ack** |
+| WORKOS_V1_PRODUCT_SET = LETTERS_ONLY | **ACCEPTED** (Owner 2026-08-10) |
+| LOGO_SOLD_ROOT_V1 = LATER | **ACCEPTED** (Owner 2026-08-10) |
+| ACM_EXPANSION_V1 = LATER | **ACCEPTED** (Owner 2026-08-10) |
 
 ## Golden Letters proof reference
 
@@ -160,18 +167,17 @@ PRODUCTION_READINESS_V1 = DONE_FOR_V1
 - P2/P3 UI polish = `POST_V1`
 - Snapshot-authoritative freeze does not carry live Adaos (Golden uses 0% markup path)
 
-## POST_V1 / after Accept
+## POST_V1 / after FINALIZED
 
-1. Owner product-set acknowledgment (blocks formal FINALIZED only)  
-2. Separate RELEASE / PUSH / DEPLOY decision — not another feature build  
-3. Logo / ACM / Capacity / Phase E / PAUSE / Postgres / machine-other cost — only under new Owner GOs  
+1. Separate RELEASE / PUSH / DEPLOY decision — not another feature build  
+2. Logo / ACM / Capacity / Phase E / PAUSE / Postgres / machine-other cost — only under new Owner GOs  
+3. P2/P3 UI polish = POST_V1  
 
-## Owner reply required (exact)
+## Owner acknowledgments (complete)
 
 ```text
 WORKOS_V1_PRODUCT_SET = LETTERS_ONLY
 LOGO_SOLD_ROOT_V1 = LATER
 ACM_EXPANSION_V1 = LATER
+OWNER_ACKNOWLEDGMENTS = COMPLETE
 ```
-
-After those lines: update this record to `FINALIZED_FOR_AGREED_SCOPE` / `WORKOS_V1_COMPLETION = 100_PERCENT_FOR_AGREED_V1_SCOPE` — no further feature build required before the release decision.

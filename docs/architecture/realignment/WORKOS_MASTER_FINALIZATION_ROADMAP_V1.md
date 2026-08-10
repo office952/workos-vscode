@@ -3,7 +3,7 @@
 **Status:** ACTIVE — primary V1 finalization navigator  
 **Date:** 2026-08-10  
 **Owner GO:** `AUTHORIZE_WORKOS_MASTER_FINALIZATION_ROADMAP_V1` (living navigator)  
-**Baseline HEAD:** `71ec5b2b` (Golden Letters E2E PASS; Exit resume recorded) · branch `feat/f7i-owner-rate-activation`  
+**Baseline HEAD:** `71ec5b2b` (Golden Letters E2E PASS) · Exit FINALIZED after Owner product-set ack · branch `feat/f7i-owner-rate-activation`  
 **Principle:** `DONE ENOUGH FOR V1 > PERFECT EVERYWHERE`
 
 > **Use this document** for current V1 finalization priority and next-build selection.  
@@ -84,9 +84,12 @@ Verified against worklogs/QA at HEAD `71ec5b2b` (Exit resume 2026-08-10):
 | BOUNDED_UI_HONESTY | DONE_FOR_V1 (Light Theme systemic closure 2026-08-10) |
 | PRODUCTION_READINESS | DONE_FOR_V1 |
 | SQLITE_V1_STATUS | ACCEPTED (DEC-DATABASE-01; single-tenant) |
-| WORKOS_V1_EXIT_VERIFICATION | TECHNICALLY_READY_OWNER_ACK_PENDING |
-| WORKOS_V1_STATUS | NOT_FINALIZED_UNTIL_OWNER_ACK |
-| WORKOS_V1_COMPLETION_ESTIMATE | ~99% (technical exit PASS; product-set Owner ack remaining) |
+| WORKOS_V1_EXIT_VERIFICATION | PASS |
+| WORKOS_V1_STATUS | FINALIZED_FOR_AGREED_SCOPE |
+| WORKOS_V1_COMPLETION | 100_PERCENT_FOR_AGREED_V1_SCOPE |
+| WORKOS_V1_PRODUCT_SET | LETTERS_ONLY (Owner ack 2026-08-10) |
+| LOGO_SOLD_ROOT_V1 | LATER |
+| ACM_EXPANSION_V1 | LATER |
 | LIGHT_THEME_V1 | DONE_FOR_V1 |
 | UI_HONESTY_V1 | DONE_FOR_V1 |
 | GOLDEN_LETTERS_E2E_FINAL_PROOF | PASS |
@@ -125,7 +128,7 @@ Verified against worklogs/QA at HEAD `71ec5b2b` (Exit resume 2026-08-10):
 | Y. Legacy / dead | DONE_FOR_V1 (safety) | YES (safety) | Session legacy gated; intake-v5 unmounted; HR salary gated | Residual list chrome / hub cleanup | — | NO reopen for V1 |
 | Z. Production readiness | DONE_FOR_V1 | YES | Detached start; Alembic; build; backup/restore; smoke pack | Cloud rollout LATER | — | NO for V1 lab |
 
-**Counts (exact):** DONE_FOR_V1 = 17 · OPEN/PARTIAL_V1_BLOCKER = 0 · PARTIAL_NON_BLOCKING = 6 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later · EXIT = TECHNICALLY_READY_OWNER_ACK_PENDING
+**Counts (exact):** DONE_FOR_V1 = 17 · OPEN/PARTIAL_V1_BLOCKER = 0 · PARTIAL_NON_BLOCKING = 6 · DECLARE_NA_FOR_V1 = 2 (R,S) · IMPLEMENTED_INACTIVE = 1 · DEFERRED (Phase E / PAUSE) = Later · EXIT = PASS / FINALIZED_FOR_AGREED_SCOPE
 
 ---
 
@@ -154,10 +157,9 @@ Do **not** reopen unless concrete defect / V1 blocker / integrity issue.
 
 | Domain | Missing capability | Dependency | Arch risk | UI | Schema | Size |
 |--------|-------------------|------------|-----------|----|--------|------|
-| _(none technical)_ | — | — | — | — | — | — |
-| Owner product-set ack | Formal LETTERS_ONLY + Logo/ACM LATER lines | Owner chat paste | — | — | — | — |
+| _(none)_ | — | — | — | — | — | — |
 
-Technical V1 blockers = 0. Machine/other remain `DECLARE_NA_FOR_V1`.
+Technical V1 blockers = 0. Owner product-set ack complete. Machine/other remain `DECLARE_NA_FOR_V1`. All remaining work = POST_V1 / V1.1 / LATER.
 
 ---
 
@@ -210,7 +212,7 @@ PROFITABILITY_MONETARY_CALCULATION = DONE_FOR_V1
 | `TPL-VOLUMETRIC-LETTERS_v2` | **V1_REQUIRED** |
 | Letters + ACM shell (no treatments) | **V1_OPTIONAL** / CONDITIONAL |
 | ACM treatments / logo-on-ACM | **LATER** |
-| `TPL-VOLUMETRIC-LOGO_v1` sold root | **OWNER_DECISION_REQUIRED** (default LATER) |
+| `TPL-VOLUMETRIC-LOGO_v1` sold root | **LATER** (Owner ack 2026-08-10) |
 | `TPL-ACM-CASSETTED-PANEL` | **LATER** |
 | WorkIntake V2 / QuoteWizard as money authority | **ARCHIVED** for V1 spine (V6 canonical) |
 
@@ -218,7 +220,7 @@ PROFITABILITY_MONETARY_CALCULATION = DONE_FOR_V1
 
 ## 10. Owner decisions required
 
-1. **V1 product set lock** — **OPEN — sole remaining Owner ack for exit.** Expected line: `WORKOS_V1_PRODUCT_SET = LETTERS_ONLY` (+ Logo/ACM expansion = LATER). Do not infer.  
+1. ~~**V1 product set lock**~~ **RESOLVED** — `WORKOS_V1_PRODUCT_SET = LETTERS_ONLY`; `LOGO_SOLD_ROOT_V1 = LATER`; `ACM_EXPANSION_V1 = LATER` (Owner 2026-08-10).  
 2. ~~Complete offer currency law~~ **RESOLVED for V1** — native EUR ops (no invent FX); Order convert accepts EUR\|RON.  
 3. ~~Provisional rates~~ **RESOLVED for V1** — F7I.1 provisional retained as V1-acceptable with honesty labels.  
 4. **Residual finishes** — `printed_vinyl` remains fail-closed/LATER (non-blocking for Letters Oracal path); Oracal 641 live at 6.5 EUR (registry Owner confirmed).  
@@ -235,17 +237,15 @@ Do **not** ask Owner to decide technical implementation details agents can resol
 
 ```mermaid
 flowchart TD
-  GOLD[Golden Letters E2E PASS]
-  EXIT[Exit verification technical PASS]
-  ACK[Owner product-set ack]
+  V1[WorkOS V1 FINALIZED_FOR_AGREED_SCOPE]
   REL[Release / push / deploy decision]
+  POST[POST_V1 / V1.1 roadmap]
 
-  GOLD --> EXIT
-  EXIT --> ACK
-  ACK --> REL
+  V1 --> REL
+  V1 --> POST
 ```
 
-Closed upstream (do not re-enter): Commercial · Light · UI honesty · PD/PA → Snapshot → EP → Assign → Session → Labor authority → MachineRun → Material · Profitability Policy A · Golden E2E.
+Closed upstream (do not re-enter): Commercial · Light · UI honesty · PD/PA → Snapshot → EP → Assign · Session · Labor authority · MachineRun · Material · Profitability Policy A · Golden E2E · Exit + Owner product-set ack.
 
 ---
 
@@ -258,7 +258,7 @@ Closed upstream (do not re-enter): Commercial · Light · UI honesty · PD/PA �
 5. ~~Bounded operator UI honesty + Light Theme~~ **DONE**  
 6. ~~Production readiness pack~~ **DONE**  
 7. ~~Golden Letters E2E Final Proof~~ **DONE** (`PASS`)  
-8. ~~V1 exit verification resume~~ **TECHNICALLY PASS** — Owner product-set ack pending (`WORKOS_V1_EXIT_RECORD.md`)  
+8. ~~V1 exit verification + Owner product-set ack~~ **PASS** — `FINALIZED_FOR_AGREED_SCOPE` (`WORKOS_V1_EXIT_RECORD.md`)  
 
 ---
 
@@ -270,20 +270,18 @@ Closed upstream (do not re-enter): Commercial · Light · UI honesty · PD/PA �
 NONE_BEFORE_RELEASE_DECISION
 ```
 
-**Why:** Technical exit criteria PASS. Remaining gate is Owner product-set acknowledgment only — not a feature build.
+**Why:** WorkOS V1 is finalized for agreed Letters-only scope. No further V1 feature build.
 
 ### BUILD_AFTER_NEXT
 
 ```text
-WORKOS_V1_EXIT_OWNER_PRODUCT_SET_ACK
+RELEASE_PUSH_DEPLOY_DECISION
 ```
-
-(Owner paste only — then `FINALIZED_FOR_AGREED_SCOPE`.)
 
 ### BUILD_AFTER_THAT
 
 ```text
-RELEASE_PUSH_DEPLOY_DECISION or POST_V1 / V1.1 ROADMAP
+POST_V1 / V1.1 ROADMAP
 ```
 
 ---
@@ -321,9 +319,9 @@ Labor money: see Exit Record `STATUS_RECONCILIATION_REQUIRED` — Golden fixture
 ## 15. Completion estimate
 
 ```text
-WORKOS_V1_COMPLETION_ESTIMATE = ~99%
-WORKOS_V1_COMPLETION = NOT_YET_100_UNTIL_OWNER_ACK
-TECHNICAL_EXIT_CRITERIA = PASS
+WORKOS_V1_EXIT_VERIFICATION = PASS
+WORKOS_V1_STATUS = FINALIZED_FOR_AGREED_SCOPE
+WORKOS_V1_COMPLETION = 100_PERCENT_FOR_AGREED_V1_SCOPE
 
 ARCHITECTURAL_FOUNDATION = 10/10
 V1_FUNCTIONAL_CLOSURE    = 10/10
@@ -331,7 +329,7 @@ OPERATOR_UI_CLOSURE      = 10/10
 PRODUCTION_READINESS     = 10/10
 ```
 
-**What remains:** Owner product-set acknowledgment only. Then release/push/deploy decision or POST_V1 / V1.1 roadmap — not another V1 feature build.
+**What remains:** RELEASE / PUSH / DEPLOY decision or POST_V1 / V1.1 roadmap. Not another V1 feature build. `100%` means agreed V1 scope only — not all future features.
 
 ---
 
