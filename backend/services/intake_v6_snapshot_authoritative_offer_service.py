@@ -204,16 +204,139 @@ def map_cpp_lines_to_quote_items(lines: list[CommercialPriceLine]) -> list[dict[
 	return [line for line in mapped if _as_positive_number(line.get("total")) is not None]
 
 
+def _money_or_zero(raw: Any) -> float:
+	try:
+		return round(float(raw or 0), 2)
+	except (TypeError, ValueError):
+		return 0.0
+
+
+def _recompute_from_frozen_adjustment_trace(
+	cpp: Any,
+	*,
+	vat_rate: float,
+	trace: dict[str, Any],
+) -> dict[str, Any]:
+	"""Validation recompute from frozen trace — no live FX / Settings VAT."""
+	subtotal = cpp.subtotal_commercial if cpp.subtotal_commercial is not None else cpp.commercial_total
+	if subtotal is None:
+		raise ValueError("Frozen commercial subtotal missing from snapshot.")
+	manual_commercial = trace.get("manual_adjustment_commercial")
+	if manual_commercial is None:
+		manual_commercial = trace.get("manual_adjustment_eur")
+	if manual_commercial is None:
+		# Legacy pre-Policy-A traces stored bare RON into commercial math; keep frozen identity.
+		manual_commercial = trace.get("manual_adjustment_ron") or 0.0
+	totals = _official_totals_from_7g(
+		subtotal=float(subtotal),
+		commercial_inputs={
+			"markup_percent": float(trace.get("markup_percent") or 0.0),
+			"discount_percent": float(trace.get("discount_percent") or 0.0),
+			"vat_percent": float(vat_rate),
+			"manual_adjustment_ron": float(trace.get("manual_adjustment_ron") or 0.0),
+		},
+		manual_adjustment_commercial=float(manual_commercial or 0.0),
+		manual_trace={
+			k: v
+			for k, v in trace.items()
+			if k.startswith("manual_") or k in {"eur_to_ron_rate", "rate_source", "fx_freeze_point", "fx_conversion_applied"}
+		},
+	)
+	currency = str(trace.get("currency") or cpp.currency or "RON").strip().upper()
+	totals["currency"] = currency
+	if isinstance(totals.get("commercial_adjustment_trace"), dict):
+		totals["commercial_adjustment_trace"]["currency"] = currency
+		totals["commercial_adjustment_trace"]["vat_percent"] = float(vat_rate)
+	totals["pricing_totals_source"] = V6_SNAPSHOT_OFFER_PRICING_SOURCE
+	return totals
+
+
 def commercial_totals_from_frozen_cpp(
 	cpp: Any,
 	*,
 	vat_rate: float,
+	quote: Any | None = None,
+	notes: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+	"""Frozen commercial money authority for post-freeze offer/review.
+
+	Primary: priced-write Quote columns when present (no second live recalculation).
+	Validation: when adjustment trace exists, recompute from frozen inputs must match
+	quote gross within 0.01. Fallback (no priced write yet): CPP base + frozen VAT only.
+	"""
+	notes_obj = notes if isinstance(notes, dict) else {}
+	trace_raw = notes_obj.get("commercial_adjustment_trace")
+	trace = dict(trace_raw) if isinstance(trace_raw, dict) else {}
+
+	quote_gross = _money_or_zero(getattr(quote, "grand_total", None) if quote is not None else None)
+	quote_net = _money_or_zero(
+		getattr(quote, "total_before_vat", None) if quote is not None else None
+	) or _money_or_zero(getattr(quote, "subtotal", None) if quote is not None else None)
+	quote_vat = _money_or_zero(getattr(quote, "vat", None) if quote is not None else None)
+
+	has_adjustment_inputs = bool(trace) and (
+		float(trace.get("markup_percent") or 0) != 0
+		or float(trace.get("discount_percent") or 0) != 0
+		or float(trace.get("manual_adjustment_ron") or 0) != 0
+		or float(trace.get("manual_adjustment_commercial") or 0) != 0
+		or float(trace.get("manual_adjustment_eur") or 0) != 0
+	)
+
+	if quote is not None and quote_gross > 0:
+		if has_adjustment_inputs:
+			recomputed = _recompute_from_frozen_adjustment_trace(cpp, vat_rate=vat_rate, trace=trace)
+			if abs(_money_or_zero(recomputed.get("total_gross")) - quote_gross) > 0.01:
+				raise ValueError(
+					"Frozen quote gross does not match recomputation from frozen adjustment trace."
+				)
+			# Prefer quote columns as stamped truth; attach frozen trace provenance.
+			out = {
+				"subtotal_net": quote_net,
+				"vat_rate": float(vat_rate),
+				"vat_amount": quote_vat,
+				"total_gross": quote_gross,
+				"currency": str(
+					trace.get("currency") or recomputed.get("currency") or cpp.currency or "RON"
+				).strip().upper(),
+				"commercial_base_subtotal": recomputed.get("commercial_base_subtotal"),
+				"commercial_adjustment_trace": {
+					**trace,
+					"vat_percent": float(vat_rate),
+				},
+				"pricing_totals_source": "quote_columns_frozen_priced_write",
+			}
+			return out
+		# Priced quote without adjustment inputs — use quote columns; VAT from frozen resolver.
+		subtotal = cpp.subtotal_commercial if cpp.subtotal_commercial is not None else cpp.commercial_total
+		return {
+			"subtotal_net": quote_net if quote_net > 0 else _money_or_zero(subtotal),
+			"vat_rate": float(vat_rate),
+			"vat_amount": quote_vat,
+			"total_gross": quote_gross,
+			"currency": str(trace.get("currency") or cpp.currency or "RON").strip().upper(),
+			"commercial_base_subtotal": _money_or_zero(subtotal),
+			"commercial_adjustment_trace": {
+				**trace,
+				"vat_percent": float(vat_rate),
+			}
+			if trace
+			else {
+				"basis": "commercial_price_proposal_7g_subtotal",
+				"markup_percent": 0.0,
+				"discount_percent": 0.0,
+				"manual_adjustment_ron": 0.0,
+				"vat_percent": float(vat_rate),
+			},
+			"pricing_totals_source": "quote_columns_frozen_priced_write",
+		}
+
+	if has_adjustment_inputs:
+		return _recompute_from_frozen_adjustment_trace(cpp, vat_rate=vat_rate, trace=trace)
+
 	subtotal = cpp.subtotal_commercial if cpp.subtotal_commercial is not None else cpp.commercial_total
 	if subtotal is None:
 		raise ValueError("Frozen commercial subtotal missing from snapshot.")
-	# Frozen snapshot totals: no live Adaos/Discount/Ajustare —
-	# VAT rate must be frozen commercial provenance (not live Settings).
+	# No priced-write columns yet: CPP base + frozen VAT only (no live Settings adjustments).
 	totals = _official_totals_from_7g(
 		subtotal=float(subtotal),
 		commercial_inputs={
@@ -222,6 +345,7 @@ def commercial_totals_from_frozen_cpp(
 			"vat_percent": float(vat_rate),
 			"manual_adjustment_ron": 0.0,
 		},
+		manual_adjustment_commercial=0.0,
 	)
 	totals["currency"] = str(cpp.currency or "RON").strip().upper()
 	totals["pricing_totals_source"] = V6_SNAPSHOT_OFFER_PRICING_SOURCE
@@ -432,7 +556,12 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 		)
 	vat_rate = float(frozen_vat.vat_rate)
 	try:
-		totals = commercial_totals_from_frozen_cpp(cpp, vat_rate=vat_rate)
+		totals = commercial_totals_from_frozen_cpp(
+			cpp,
+			vat_rate=vat_rate,
+			quote=quote_obj,
+			notes=notes_payload,
+		)
 	except ValueError as exc:
 		return _blocked(
 			quote_id=quote_id,
@@ -612,16 +741,27 @@ async def write_intake_v6_offer_from_frozen_snapshot_v2(
 
 	vat_amount = _money(totals.get("vat_amount") or 0)
 	subtotal_net = _money(totals.get("subtotal_net") or 0)
+	adj_trace = (
+		totals.get("commercial_adjustment_trace")
+		if isinstance(totals.get("commercial_adjustment_trace"), dict)
+		else {}
+	)
+	# Preserve frozen adjustment provenance on restamp — do not force zeros.
+	if isinstance(adj_trace, dict) and adj_trace:
+		existing_trace = notes_payload.get("commercial_adjustment_trace")
+		merged = dict(existing_trace) if isinstance(existing_trace, dict) else {}
+		merged.update(adj_trace)
+		notes_payload["commercial_adjustment_trace"] = merged
 	update_data = {
 		"status": "priced",
 		"line_items": json.dumps(line_items, default=str),
 		"subtotal": subtotal_net,
-		"discount": 0.0,
-		"discount_pct": 0.0,
+		"discount": _money(adj_trace.get("discount_value") if isinstance(adj_trace, dict) else 0),
+		"discount_pct": _money(adj_trace.get("discount_percent") if isinstance(adj_trace, dict) else 0),
 		"total_before_vat": subtotal_net,
 		"vat": vat_amount,
 		"grand_total": total_gross,
-		"margin_pct": 0.0,
+		"margin_pct": _money(adj_trace.get("markup_percent") if isinstance(adj_trace, dict) else 0),
 		"notes": json.dumps(notes_payload, default=str),
 	}
 	updated = await quotes_service.update(quote_id, update_data)

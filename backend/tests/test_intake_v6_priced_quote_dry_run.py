@@ -147,12 +147,16 @@ def patch_dry_run_dependencies(monkeypatch):
     async def fake_eur(_db):
         return 5.0, None
 
+    async def fake_require_eur(_db):
+        return 5.0
+
     monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
     monkeypatch.setattr(dry_run, "_parse_payload", fake_parse_payload)
     monkeypatch.setattr(dry_run, "build_v6_pricing_input_preview", lambda **_kwargs: _pricing_preview())
     monkeypatch.setattr(dry_run, "get_material_breakdown_for_workspace", fake_material_breakdown)
     monkeypatch.setattr(dry_run, "get_default_vat_pct", fake_vat)
     monkeypatch.setattr(dry_run, "resolve_configured_eur_to_ron_rate", fake_eur)
+    monkeypatch.setattr(dry_run, "require_configured_eur_to_ron_rate", fake_require_eur)
     monkeypatch.setattr(dry_run, "CommercialPriceProposalService", FakeCommercialPriceProposalService)
     monkeypatch.setattr(dry_run, "EstimatedInternalCostService", FakeEstimatedInternalCostService)
     FakeCommercialPriceProposalService.preview = _commercial_preview()
@@ -328,13 +332,59 @@ async def test_dry_run_applies_discount_and_manual_adjustment_on_7g_base(monkeyp
     result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
 
     totals = result["commercial_totals"]
-    # base 1000 + manual 100 = 1100; discount 10% = 110; net 990; vat 19% = 188.1; gross 1178.1
+    # Policy A: 100 RON / FX 5.0 = 20 EUR; base 1000 + 20 = 1020; discount 10% = 102;
+    # net 918; vat 19% = 174.42; gross 1092.42
     assert totals["commercial_base_subtotal"] == 1000.0
-    assert totals["subtotal_net"] == 990.0
-    assert totals["vat_amount"] == 188.1
-    assert totals["total_gross"] == 1178.1
+    assert totals["subtotal_net"] == 918.0
+    assert totals["vat_amount"] == 174.42
+    assert totals["total_gross"] == 1092.42
     assert totals["commercial_adjustment_trace"]["discount_percent"] == 10.0
     assert totals["commercial_adjustment_trace"]["manual_adjustment_ron"] == 100.0
+    assert totals["commercial_adjustment_trace"]["manual_adjustment_eur"] == 20.0
+    assert totals["commercial_adjustment_trace"]["eur_to_ron_rate"] == 5.0
+    assert totals["commercial_adjustment_trace"]["fx_conversion_applied"] is True
+
+
+@pytest.mark.asyncio
+async def test_dry_run_blocks_manual_ron_when_fx_missing(monkeypatch) -> None:
+    async def fake_get_record(_db, workspace_id):
+        return SimpleNamespace(
+            id="workspace-v6",
+            workspace_code="IV6-TEST",
+            template_code="TPL-VOLUMETRIC-LETTERS_v2",
+            payload_json=(
+                '{"product_binding":{"template_code":"TPL-VOLUMETRIC-LETTERS_v2"},'
+                '"intake_request_code":"IR-TEST",'
+                '"finish_setup":{"commercial_inputs":{'
+                '"markup_percent":0.0,"discount_percent":0.0,'
+                '"vat_percent":19.0,"manual_adjustment_ron":100.0}}}'
+            ),
+        )
+
+    async def missing_fx(_db):
+        raise ValueError("eur_to_ron_rate_missing")
+
+    monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
+    monkeypatch.setattr(dry_run, "require_configured_eur_to_ron_rate", missing_fx)
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_BLOCKED
+    assert any(b["code"] == "MANUAL_RON_FX_REQUIRED" for b in result["blockers"])
+    assert result["commercial_totals"]["total_gross"] is None
+
+
+@pytest.mark.asyncio
+async def test_dry_run_zero_manual_ron_does_not_require_fx(monkeypatch) -> None:
+    async def missing_fx(_db):
+        raise ValueError("eur_to_ron_rate_missing")
+
+    monkeypatch.setattr(dry_run, "require_configured_eur_to_ron_rate", missing_fx)
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_READY
+    assert result["commercial_totals"]["total_gross"] == 1190.0
 
 
 def test_dry_run_service_does_not_call_v4_draft_builder() -> None:

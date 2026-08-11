@@ -76,6 +76,10 @@ export type IntakeV6CommercialAdjustmentTotals = {
 };
 
 /** Apply Adaos / Discount / Ajustare on a commercial base (7G subtotal), matching backend dry-run. */
+/**
+ * Non-authoritative helper for unit tests / legacy local estimates only.
+ * Official Ofertă client money must come from backend commercial_totals.
+ */
 export function applyIntakeV6CommercialAdjustments(
   baseSubtotal: number,
   commercialInputs: IntakeV6OfferCommercialInputs,

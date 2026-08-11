@@ -17,7 +17,6 @@ import {
   type LiveCalcFilterId,
 } from "@/lib/intakeV6/intakeV6LiveCalculationRowFilters";
 import {
-  applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
@@ -1140,23 +1139,9 @@ export default function IntakeV6LiveCalculationSummary({
       acmPanelCommercialPreview.estimated_total != null)
       ? "Breakdown litere VL: neaplicabil. Detaliile sunt în estimarea panou Alucobond."
       : "Nu există încă breakdown live.";
+  // Official Ofertă client money = backend dry-run only (no FE recalculation authority).
   const resolvedOfferTotals = useMemo(() => {
     if (!hasOfficialTotals || officialTotals == null) return null;
-    const baseFromServer =
-      officialTotals.commercial_base_subtotal != null &&
-      Number.isFinite(officialTotals.commercial_base_subtotal)
-        ? officialTotals.commercial_base_subtotal
-        : null;
-    if (baseFromServer != null && commercialInputs) {
-      const adjusted = applyIntakeV6CommercialAdjustments(baseFromServer, commercialInputs);
-      return {
-        net: adjusted.subtotalNet,
-        vat: adjusted.vatValue,
-        gross: adjusted.totalGross,
-        vatRate: adjusted.vatPercent,
-        adaosPercent: adjusted.markupPercent,
-      };
-    }
     return {
       net: officialTotals.subtotal_net ?? null,
       vat: officialTotals.vat_amount ?? null,
@@ -1164,7 +1149,7 @@ export default function IntakeV6LiveCalculationSummary({
       vatRate: officialTotals.vat_rate ?? null,
       adaosPercent: officialTotals.commercial_adjustment_trace?.markup_percent ?? null,
     };
-  }, [commercialInputs, hasOfficialTotals, officialTotals]);
+  }, [hasOfficialTotals, officialTotals]);
   const displayGrossRon = resolvedOfferTotals?.gross ?? null;
   const displayNetRon = resolvedOfferTotals?.net ?? null;
   const displayVatRon = resolvedOfferTotals?.vat ?? null;

@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.commercial_price_proposal_service import CommercialPriceProposalService
 from services.company_commercial_settings_service import (
 	get_default_vat_pct,
+	require_configured_eur_to_ron_rate,
 	resolve_configured_eur_to_ron_rate,
 )
 from services.estimated_internal_cost_service import EstimatedInternalCostService
@@ -111,23 +112,93 @@ def _read_commercial_inputs(
 	}
 
 
+async def resolve_manual_adjustment_for_commercial_currency(
+	db: AsyncSession,
+	*,
+	manual_adjustment_ron: float,
+	commercial_currency: str | None,
+	fx_freeze_point: str = "priced_dry_run",
+) -> tuple[float, dict[str, Any], str | None]:
+	"""Policy A: true RON adjustment → commercial currency units.
+
+	Returns (manual_in_commercial_currency, provenance, error_code).
+	Missing FX errors only when manual_adjustment_ron != 0 and currency needs conversion.
+	"""
+	ron = _round_money(manual_adjustment_ron)
+	currency = str(commercial_currency or "").strip().upper()
+	if ron == 0.0:
+		return 0.0, {
+			"manual_adjustment_ron": 0.0,
+			"manual_adjustment_commercial": 0.0,
+			"manual_adjustment_eur": 0.0,
+			"fx_conversion_applied": False,
+		}, None
+	if currency == "RON":
+		# Already commercial RON (e.g. diagnostic cost-plus) — no FX.
+		return ron, {
+			"manual_adjustment_ron": ron,
+			"manual_adjustment_commercial": ron,
+			"manual_currency": "RON",
+			"fx_conversion_applied": False,
+		}, None
+	# EUR (and any non-RON commercial presentation): convert RON → EUR via Settings FX.
+	try:
+		rate = float(await require_configured_eur_to_ron_rate(db))
+	except ValueError as exc:
+		return 0.0, {}, str(exc) or "eur_to_ron_rate_missing"
+	if rate <= 0:
+		return 0.0, {}, "eur_to_ron_rate_invalid"
+	eur = _round_money(ron / rate)
+	return eur, {
+		"manual_adjustment_ron": ron,
+		"manual_adjustment_eur": eur,
+		"manual_adjustment_commercial": eur,
+		"manual_currency": "EUR",
+		"eur_to_ron_rate": round(rate, 4),
+		"rate_source": "company_commercial_settings.eur_to_ron_rate",
+		"fx_freeze_point": fx_freeze_point,
+		"fx_conversion_applied": True,
+	}, None
+
+
 def _apply_commercial_adjustments_to_base(
 	*,
 	base_subtotal: float,
 	commercial_inputs: dict[str, float],
+	manual_adjustment_commercial: float | None = None,
+	manual_trace: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-	"""Apply operator Adaos / Discount / Ajustare on a commercial base (7G subtotal)."""
+	"""Apply operator Adaos / Discount / Ajustare on a commercial base (7G subtotal).
+
+	Sequence (historical, unchanged): base → +markup% → +manual → −discount% → +VAT%.
+	``manual_adjustment_commercial`` must already be in the commercial currency of ``base``.
+	"""
 	markup_percent = float(commercial_inputs["markup_percent"])
 	discount_percent = float(commercial_inputs["discount_percent"])
 	vat_percent = float(commercial_inputs["vat_percent"])
-	manual_adjustment_ron = float(commercial_inputs["manual_adjustment_ron"])
+	if manual_adjustment_commercial is None:
+		manual_commercial = _round_money(float(commercial_inputs.get("manual_adjustment_ron") or 0.0))
+	else:
+		manual_commercial = _round_money(manual_adjustment_commercial)
 	base = _round_money(base_subtotal)
 	markup_value = _round_money(base * markup_percent / 100)
-	subtotal_before_discount = _round_money(base + markup_value + manual_adjustment_ron)
+	subtotal_before_discount = _round_money(base + markup_value + manual_commercial)
 	discount_value = _round_money(subtotal_before_discount * discount_percent / 100)
 	subtotal_net = _round_money(subtotal_before_discount - discount_value)
 	vat_amount = _round_money(subtotal_net * vat_percent / 100)
 	total_gross = _round_money(subtotal_net + vat_amount)
+	trace: dict[str, Any] = {
+		"basis": "commercial_price_proposal_7g_subtotal",
+		"markup_percent": markup_percent,
+		"markup_value": markup_value,
+		"manual_adjustment_ron": _round_money(float(commercial_inputs.get("manual_adjustment_ron") or 0.0)),
+		"manual_adjustment_commercial": manual_commercial,
+		"discount_percent": discount_percent,
+		"discount_value": discount_value,
+		"vat_percent": vat_percent,
+	}
+	if manual_trace:
+		trace.update(manual_trace)
 	return {
 		"subtotal_net": subtotal_net,
 		"vat_rate": vat_percent,
@@ -136,15 +207,7 @@ def _apply_commercial_adjustments_to_base(
 		# Currency stamped by caller from CPP presentation (EUR for volumetric pilot).
 		"currency": "RON",
 		"commercial_base_subtotal": base,
-		"commercial_adjustment_trace": {
-			"basis": "commercial_price_proposal_7g_subtotal",
-			"markup_percent": markup_percent,
-			"markup_value": markup_value,
-			"manual_adjustment_ron": _round_money(manual_adjustment_ron),
-			"discount_percent": discount_percent,
-			"discount_value": discount_value,
-			"vat_percent": vat_percent,
-		},
+		"commercial_adjustment_trace": trace,
 	}
 
 
@@ -154,10 +217,19 @@ def _build_cost_plus_totals(
 	eur_to_ron_rate: float,
 	commercial_inputs: dict[str, float],
 ) -> dict[str, Any]:
+	"""Diagnostic RON path — manual RON is already commercial currency (no second FX)."""
 	production_base = _round_money(internal_cost_total * eur_to_ron_rate)
+	manual_ron = _round_money(float(commercial_inputs.get("manual_adjustment_ron") or 0.0))
 	adjusted = _apply_commercial_adjustments_to_base(
 		base_subtotal=production_base,
 		commercial_inputs=commercial_inputs,
+		manual_adjustment_commercial=manual_ron,
+		manual_trace={
+			"manual_adjustment_ron": manual_ron,
+			"manual_adjustment_commercial": manual_ron,
+			"manual_currency": "RON",
+			"fx_conversion_applied": False,
+		},
 	)
 	trace = adjusted.get("commercial_adjustment_trace") if isinstance(adjusted.get("commercial_adjustment_trace"), dict) else {}
 	return {
@@ -222,11 +294,15 @@ def _official_totals_from_7g(
 	*,
 	subtotal: float,
 	commercial_inputs: dict[str, float],
+	manual_adjustment_commercial: float | None = None,
+	manual_trace: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
 	# Preserve settings VAT on commercial_inputs (caller already set vat_percent).
 	return _apply_commercial_adjustments_to_base(
 		base_subtotal=subtotal,
 		commercial_inputs=commercial_inputs,
+		manual_adjustment_commercial=manual_adjustment_commercial,
+		manual_trace=manual_trace,
 	)
 
 
@@ -767,16 +843,36 @@ async def build_intake_v6_priced_quote_dry_run(
 		)
 		totals = _empty_totals(vat_rate=vat_rate, currency=totals_currency)
 	else:
-		# Operator Adaos/Discount/Ajustare adjust the official 7G commercial base.
-		totals = _official_totals_from_7g(
-			subtotal=subtotal,
-			commercial_inputs=commercial_inputs,
+		manual_commercial, manual_trace, manual_fx_err = await resolve_manual_adjustment_for_commercial_currency(
+			db,
+			manual_adjustment_ron=float(commercial_inputs.get("manual_adjustment_ron") or 0.0),
+			commercial_currency=totals_currency,
+			fx_freeze_point="priced_dry_run",
 		)
-		totals["currency"] = totals_currency
-		trace = totals.get("commercial_adjustment_trace")
-		if isinstance(trace, dict):
-			trace["currency"] = totals_currency
-		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
+		if manual_fx_err is not None:
+			blockers.append(
+				_blocker(
+					"MANUAL_RON_FX_REQUIRED",
+					(
+						"Ajustarea manuală în RON necesită un curs EUR/RON configurat în Setări. "
+						"Configurați cursul sau setați ajustarea la 0."
+					),
+				)
+			)
+			totals = _empty_totals(vat_rate=vat_rate, currency=totals_currency)
+		else:
+			# Operator Adaos/Discount/Ajustare adjust the official 7G commercial base.
+			totals = _official_totals_from_7g(
+				subtotal=subtotal,
+				commercial_inputs=commercial_inputs,
+				manual_adjustment_commercial=manual_commercial,
+				manual_trace=manual_trace,
+			)
+			totals["currency"] = totals_currency
+			trace = totals.get("commercial_adjustment_trace")
+			if isinstance(trace, dict):
+				trace["currency"] = totals_currency
+			pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	if internal_cost_total is not None or eic_internal_total is not None:
 		# Official commercial totals do not need FX. Diagnostic cost-plus is RON-only

@@ -108,6 +108,8 @@ def _totals_from_frozen_snapshot_record(
 	parsed: QuoteSnapshotV2,
 	*,
 	vat_rate: float,
+	quote: Quotes | None = None,
+	notes: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
 	cpp = parsed.commercial_price_proposal_snapshot
 	if cpp is None:
@@ -123,19 +125,30 @@ def _totals_from_frozen_snapshot_record(
 			"Quote Snapshot V2 has no commercial total for pricing review.",
 			["QUOTE_NOT_PRICED"],
 		)
-	frozen_totals = commercial_totals_from_frozen_cpp(cpp, vat_rate=vat_rate)
+	frozen_totals = commercial_totals_from_frozen_cpp(
+		cpp,
+		vat_rate=vat_rate,
+		quote=quote,
+		notes=notes,
+	)
 	currency = str(frozen_totals.get("currency") or "RON").strip().upper()
 	if currency not in ALLOWED_CURRENCIES:
 		currency = "RON"
+	adj = (
+		frozen_totals.get("commercial_adjustment_trace")
+		if isinstance(frozen_totals.get("commercial_adjustment_trace"), dict)
+		else {}
+	)
 	return {
 		"subtotal": _money(frozen_totals["subtotal_net"]),
-		"discount_amount": 0.0,
+		"discount_amount": _money(adj.get("discount_value") if isinstance(adj, dict) else 0),
 		"vat_percent": _money(frozen_totals["vat_rate"]),
 		"vat_amount": _money(frozen_totals["vat_amount"]),
 		"total": _money(frozen_totals["total_gross"]),
 		"net_before_vat": _money(frozen_totals["subtotal_net"]),
 		"currency": currency,
-		"pricing_totals_source": V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+		"pricing_totals_source": frozen_totals.get("pricing_totals_source")
+		or V6_SNAPSHOT_OFFER_PRICING_SOURCE,
 		"pricing_totals_captured": True,
 		"snapshot_v2_id": record.id,
 		"snapshot_code": record.snapshot_code,
@@ -339,7 +352,11 @@ async def resolve_v6_pricing_review_authority(
 			[FROZEN_VAT_PROVENANCE_INCOMPLETE],
 		)
 	snapshot_totals = _totals_from_frozen_snapshot_record(
-		record, parsed, vat_rate=float(frozen_vat.vat_rate)
+		record,
+		parsed,
+		vat_rate=float(frozen_vat.vat_rate),
+		quote=quote,
+		notes=notes_payload,
 	)
 	snapshot_totals["vat_provenance"] = frozen_vat.provenance
 	quote_projection = _quote_projection_totals(quote)

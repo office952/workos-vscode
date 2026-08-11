@@ -218,9 +218,22 @@ export default function IntakeV6FinalConfigurationSummary({
 						reasonCode: null,
 						message: OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE,
 					};
+		// Authoritative Ofertă client gross = commercial_totals (post-adjustment), not CPP complete_offer_total.
+		const adjustedHeadline: OfferTotalState =
+			reportedCurrency != null &&
+			typeof totals?.total_gross === "number" &&
+			Number.isFinite(totals.total_gross)
+				? {
+						kind: "available",
+						amount: totals.total_gross,
+						currency: reportedCurrency,
+						partial: false,
+						pendingLineCodes: [],
+					}
+				: fallbackTotal;
 		return {
 			products: summary?.products ?? [],
-			total: summary?.total ?? fallbackTotal,
+			total: adjustedHeadline,
 			taxNote: summary != null ? summary.taxNote : offerTaxNote(vatRatePercent),
 			net:
 				reportedCurrency != null && typeof netAmount === "number" && Number.isFinite(netAmount)

@@ -840,7 +840,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);
   });
 
-  it("recomputes Ofertă client when local Adaos changes on 7G commercial base", () => {
+  it("displays backend Ofertă client totals without local Adaos recalculation", () => {
     render(
       <IntakeV6LiveCalculationSummary
         breakdown={baseBreakdown}
@@ -858,19 +858,19 @@ describe("IntakeV6LiveCalculationSummary", () => {
           pricing_source: "intake_v6_backend_priced_dry_run",
           workspace_id: "ws",
           commercial_totals: {
-            subtotal_net: 1891.53,
-            total_gross: 2288.75,
+            // Authoritative post-save backend response after Adaos 50%.
+            subtotal_net: 2837.3,
+            total_gross: 3433.13,
             vat_rate: 21,
-            vat_amount: 397.22,
+            vat_amount: 595.83,
             currency: "RON",
             commercial_base_subtotal: 1891.53,
-            commercial_adjustment_trace: { markup_percent: 0 },
+            commercial_adjustment_trace: { markup_percent: 50 },
           },
         }}
       />,
     );
 
-    // 1891.53 * 1.5 = 2837.295 → 2837.3; vat 21% = 595.83; gross 3433.13
     expect(screen.getByTestId("intake-v6-live-offer-net")).toHaveTextContent(/2[,.]?837/);
     expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/3[,.]?433/);
     expect(screen.getByTestId("intake-v6-live-offer-adaos")).toHaveTextContent(/50/);

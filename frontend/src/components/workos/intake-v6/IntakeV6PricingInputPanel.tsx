@@ -5,7 +5,6 @@ import type {
   IntakeV6PricingInputPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import {
-  applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   resolveIntakeV6OfferCommercialDefaults,
   type IntakeV6OfferCommercialInputs,
@@ -120,28 +119,12 @@ function IntakeV6PricingInputPanelReady({
   const officialTotals = officialPricing?.commercial_totals ?? null;
   const hasOfficialTotals = intakeV6HasOfficialCommercialTotals(officialPricing);
   const officialPricingBlocker = intakeV6OfficialPricingBlockerMessage(officialPricing);
-  const commercialBaseSubtotal =
-    hasOfficialTotals &&
-    officialTotals?.commercial_base_subtotal != null &&
-    Number.isFinite(officialTotals.commercial_base_subtotal)
-      ? officialTotals.commercial_base_subtotal
-      : hasOfficialTotals &&
-          officialTotals?.subtotal_net != null &&
-          Number.isFinite(officialTotals.subtotal_net) &&
-          (officialTotals.commercial_adjustment_trace?.markup_percent ?? 0) === 0 &&
-          (officialTotals.commercial_adjustment_trace?.discount_percent ?? 0) === 0 &&
-          (officialTotals.commercial_adjustment_trace?.manual_adjustment_ron ?? 0) === 0
-        ? officialTotals.subtotal_net
-        : null;
-  const adjustedOfficialTotals =
-    hasOfficialTotals && commercialBaseSubtotal != null
-      ? applyIntakeV6CommercialAdjustments(commercialBaseSubtotal, activeCommercialInputs)
-      : null;
-  const displayOfficialNet = adjustedOfficialTotals?.subtotalNet ?? officialTotals?.subtotal_net ?? null;
-  const displayOfficialVat = adjustedOfficialTotals?.vatValue ?? officialTotals?.vat_amount ?? null;
-  const displayOfficialGross = adjustedOfficialTotals?.totalGross ?? officialTotals?.total_gross ?? null;
+  // Official Ofertă client money = backend dry-run only (no FE recalculation).
+  const displayOfficialNet = officialTotals?.subtotal_net ?? null;
+  const displayOfficialVat = officialTotals?.vat_amount ?? null;
+  const displayOfficialGross = officialTotals?.total_gross ?? null;
   const displayOfficialVatRate =
-    adjustedOfficialTotals?.vatPercent ?? officialTotals?.vat_rate ?? activeCommercialInputs.vatPercent;
+    officialTotals?.vat_rate ?? activeCommercialInputs.vatPercent;
   const officialCurrency =
     typeof officialTotals?.currency === "string" && officialTotals.currency.trim()
       ? officialTotals.currency.trim().toUpperCase()
@@ -264,6 +247,10 @@ function IntakeV6PricingInputPanelReady({
             className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
             data-testid="intake-v6-offer-manual-adjustment"
           />
+          <span className="mt-1 block text-[10px] text-wo-text-muted">
+            Conversia în valuta ofertei se face pe server cu cursul EUR/RON din Setări. Fără curs
+            configurat, o ajustare ≠ 0 blochează calculul.
+          </span>
         </label>
       </div>
       <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-wo-border-strong pt-3 text-[11px]">
@@ -527,7 +514,7 @@ function IntakeV6PricingInputPanelReady({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-wo-text-muted">Ajustare manuala (RON)</span>
+              <span className="mb-1 block text-wo-text-muted">Ajustare manuală (RON)</span>
               <input
                 type="number"
                 step={10}
@@ -541,6 +528,10 @@ function IntakeV6PricingInputPanelReady({
                 className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
                 data-testid="intake-v6-offer-manual-adjustment"
               />
+              <span className="mt-1 block text-[10px] text-wo-text-muted">
+                Conversia în valuta ofertei se face pe server cu cursul EUR/RON din Setări. Fără curs
+                configurat, o ajustare ≠ 0 blochează calculul.
+              </span>
             </label>
           </div>
 
