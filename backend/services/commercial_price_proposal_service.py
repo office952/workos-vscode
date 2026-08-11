@@ -193,6 +193,35 @@ def _cant_oracal_wrap_area_m2(payload: dict[str, Any]) -> tuple[float | None, li
     return None, warnings
 
 
+def _cant_oracal_application_perimeter_ml(payload: dict[str, Any]) -> tuple[float | None, list[str]]:
+    """RETURN-CANT Oracal application labor qty = real return perimeter (ml), depth-independent."""
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    default_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+    warnings: list[str] = []
+    groups = [
+        group
+        for group in _letter_group_finishes(payload)
+        if _group_return_finish_token(group, default=default_token)
+        in CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE
+    ]
+    if groups:
+        perimeters: list[float] = []
+        for group in groups:
+            perimeter = _group_return_perimeter_m(group)
+            if perimeter is None:
+                continue
+            perimeters.append(float(perimeter))
+        if perimeters and len(perimeters) == len(groups):
+            warnings.append("quantity_source=letter_group_perimeter_m_sum")
+            return round(sum(perimeters), 6), warnings
+
+    perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
+    if perimeter is not None:
+        warnings.append("quantity_source=letter_perimeter_m")
+        return float(perimeter), warnings
+    return None, warnings
+
+
 def _cant_ral_group_economics(
     payload: dict[str, Any],
 ) -> tuple[float | None, float | None, float | None, list[str]]:
@@ -820,10 +849,14 @@ async def _build_line(
             if dynamic_unit_price is not None:
                 dynamic_unit_price_currency = "EUR"
                 warnings.append(f"cant_oracal_series_resolved={series}")
-        # Material and application share the same proven applied surface: the developed wrap area.
-        # Prefer per-group perimeter×depth when letter_group_finishes carry cant truth.
-        quantity, qty_warnings = _cant_oracal_wrap_area_m2(payload)
-        warnings.extend(qty_warnings)
+            # Material only: developed wrap area = perimeter × depth (m2). Prefer per-group truth.
+            quantity, qty_warnings = _cant_oracal_wrap_area_m2(payload)
+            warnings.extend(qty_warnings)
+        elif rule.line_code == "finisaje_cant_oracal_labor":
+            # Labor: real return perimeter (ml) × RETURN_CANT_VINYL_APPLICATION_LABOR (1 EUR/ml).
+            # Depth must not scale application labor; do not reuse F7F face 3 EUR/m2.
+            quantity, qty_warnings = _cant_oracal_application_perimeter_ml(payload)
+            warnings.extend(qty_warnings)
 
     if rule.line_code == "finisaje_oracal_8500_material":
         roll_width_mm = _confirmed_oracal_8500_roll_width_mm(payload)

@@ -1,7 +1,9 @@
 """RETURN-CANT commercial depth × finish matrix integrity.
 
 Slice: WORKOS_INTAKE_V6_RETURN_CANT_COMMERCIAL_DEPTH_FINISH_MATRIX_INTEGRITY_V1
-Authority: existing CPP F7F/F7H rules + owner RAL depth tiers — no new rates.
+Authority: existing Pricing Registry + CPP rules — Oracal material area-based;
+Oracal labor RETURN_CANT_VINYL_APPLICATION_LABOR @ 1 EUR/ml; RAL depth tiers.
+No new commercial rates invented.
 """
 
 from __future__ import annotations
@@ -35,17 +37,15 @@ async def cpp_service(volumetric_v2_db):
     yield CommercialPriceProposalService(volumetric_v2_db)
 
 
-async def _ensure_ral_labor_rate(db) -> None:
+async def _ensure_labor_rate(db, code: str) -> None:
     existing = (
-        await db.execute(
-            select(Workcenter_rates).where(Workcenter_rates.code == "RETURN_CANT_RAL_PAINT_LABOR").limit(1)
-        )
+        await db.execute(select(Workcenter_rates).where(Workcenter_rates.code == code).limit(1))
     ).scalar_one_or_none()
     if existing is None:
         db.add(
             Workcenter_rates(
-                code="RETURN_CANT_RAL_PAINT_LABOR",
-                label="RETURN_CANT_RAL_PAINT_LABOR",
+                code=code,
+                label=code,
                 rate_basis="per_linear_meter",
                 rate_per_linear_meter=1.0,
                 currency="EUR",
@@ -60,6 +60,14 @@ async def _ensure_ral_labor_rate(db) -> None:
         existing.status = "active"
         existing.is_active = True
     await db.commit()
+
+
+async def _ensure_ral_labor_rate(db) -> None:
+    await _ensure_labor_rate(db, "RETURN_CANT_RAL_PAINT_LABOR")
+
+
+async def _ensure_oracal_labor_rate(db) -> None:
+    await _ensure_labor_rate(db, "RETURN_CANT_VINYL_APPLICATION_LABOR")
 
 
 def _payload(finish: str, depth: int, *, groups: list[dict] | None = None) -> dict:
@@ -120,7 +128,10 @@ async def test_stock_finish_zero_cant_surcharge_all_depths(
 
 
 @pytest.mark.asyncio
-async def test_oracal_material_monotone_with_depth(cpp_service: CommercialPriceProposalService):
+async def test_oracal_material_monotone_with_depth_and_constant_labor(
+    cpp_service: CommercialPriceProposalService, volumetric_v2_db
+):
+    await _ensure_oracal_labor_rate(volumetric_v2_db)
     rows = []
     for depth in (30, 60, 80, 100):
         preview = await cpp_service.build_preview(
@@ -128,18 +139,22 @@ async def test_oracal_material_monotone_with_depth(cpp_service: CommercialPriceP
         )
         material = _line(preview, "finisaje_cant_oracal_material")
         labor = _line(preview, "finisaje_cant_oracal_labor")
-        expected_qty = round(PERIMETER * (depth / 1000.0), 6)
-        assert material.quantity == pytest.approx(expected_qty)
+        expected_mat_qty = round(PERIMETER * (depth / 1000.0), 6)
+        assert material.quantity == pytest.approx(expected_mat_qty)
         assert material.commercial_unit_price == 5.0  # 651 series
-        assert material.subtotal == pytest.approx(5.0 * expected_qty)
-        # F7F authority: Oracal cant labor = 3 EUR/m2 on developed wrap area (same qty).
-        assert labor.basis_type == "m2"
-        assert labor.quantity == pytest.approx(expected_qty)
-        assert labor.commercial_unit_price == pytest.approx(3.0)
+        assert material.subtotal == pytest.approx(5.0 * expected_mat_qty)
+        # Dedicated RETURN-CANT authority: application = perimeter × 1 EUR/ml (depth-independent).
+        assert labor.basis_type == "ml"
+        assert labor.quantity == pytest.approx(PERIMETER)
+        assert labor.commercial_unit_price == pytest.approx(1.0)
+        assert labor.subtotal == pytest.approx(PERIMETER)
+        assert labor.registry_pricing_code == "RETURN_CANT_VINYL_APPLICATION_LABOR"
         rows.append((depth, material.subtotal, labor.subtotal))
     mats = [r[1] for r in rows]
+    labs = [r[2] for r in rows]
     assert mats == sorted(mats)
     assert mats[0] < mats[1] < mats[2] < mats[3]
+    assert len(set(round(x, 6) for x in labs)) == 1
 
 
 @pytest.mark.asyncio
@@ -279,9 +294,10 @@ async def test_mixed_group_depths_preserve_matrix_identity():
 
 @pytest.mark.asyncio
 async def test_cpp_mixed_oracal_depths_aggregate_developed_area(
-    cpp_service: CommercialPriceProposalService,
+    cpp_service: CommercialPriceProposalService, volumetric_v2_db
 ):
     """When groups carry distinct cant depths, CPP must not collapse to a single job depth."""
+    await _ensure_oracal_labor_rate(volumetric_v2_db)
     groups = [
         {
             "group_key": "g30",
@@ -306,6 +322,12 @@ async def test_cpp_mixed_oracal_depths_aggregate_developed_area(
     # 5.0*0.03 + 7.5*0.10 = 0.15 + 0.75 = 0.90 m2
     assert material.quantity == pytest.approx(0.90)
     assert material.subtotal == pytest.approx(4.5)
+    labor = _line(preview, "finisaje_cant_oracal_labor")
+    # Labor sums real perimeters only — no area, no dominant depth.
+    assert labor.basis_type == "ml"
+    assert labor.quantity == pytest.approx(12.5)
+    assert labor.commercial_unit_price == pytest.approx(1.0)
+    assert labor.subtotal == pytest.approx(12.5)
 
 
 @pytest.mark.asyncio

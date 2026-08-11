@@ -422,9 +422,9 @@ async def test_stock_cant_colors_zero_delta_preserved(cpp_service: CommercialPri
 async def test_cant_oracal_wrap_material_and_labor_pricing(
     cpp_service: CommercialPriceProposalService, volumetric_v2_db
 ):
-    """Owner F7F Oracal cant wrap: material 651 @ 5 EUR/m2 on the developed wrap area, plus the
-    3 EUR/m2 application on that same distinct surface. A seeded operation rate must NOT be able
-    to displace the Owner application rate."""
+    """RETURN-CANT Oracal: material 651 @ 5 EUR/m2 on developed wrap area (perimeter×depth),
+    plus application labor from RETURN_CANT_VINYL_APPLICATION_LABOR @ 1 EUR/ml on real perimeter.
+    F7F face 3 EUR/m2 must not silently replace the dedicated cant labor authority."""
     await _upsert_operation_rate(
         volumetric_v2_db,
         code="RETURN_CANT_VINYL_APPLICATION_LABOR",
@@ -450,11 +450,12 @@ async def test_cant_oracal_wrap_material_and_labor_pricing(
         line for line in preview.commercial_price_lines if line.code == "finisaje_cant_oracal_labor"
     )
     assert labor.owner_decision_required is False
-    assert labor.basis_type == "m2"
-    assert labor.quantity == pytest.approx(0.75)
-    assert labor.commercial_unit_price == pytest.approx(3.0)
+    assert labor.basis_type == "ml"
+    assert labor.quantity == pytest.approx(12.5)
+    assert labor.commercial_unit_price == pytest.approx(1.0)
     assert labor.source_currency == "EUR"
-    assert labor.subtotal == pytest.approx(2.25)
+    assert labor.subtotal == pytest.approx(12.5)
+    assert labor.registry_pricing_code == "RETURN_CANT_VINYL_APPLICATION_LABOR"
     assert preview.status in {"ready", "partial"}
 
 

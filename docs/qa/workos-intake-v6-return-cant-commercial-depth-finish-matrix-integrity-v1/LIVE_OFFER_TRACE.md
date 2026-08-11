@@ -6,7 +6,7 @@ Proof path used: CPP preview + pricing-input / enrich unit tests (same dry-run p
 
 | Change class | pricedQuote path | Expected totals |
 |---|---|---|
-| Oracal 30→100 | depth×perimeter qty | material & F7F labor rise |
+| Oracal 30→100 | depth×perimeter material qty; labor = perimeter | material rises; labor constant @ 1 EUR/ml |
 | RAL 30→100 | tier rate rise | material rises; labor constant |
 | Stock 30→100 | forming flat | sell total unchanged for cant finish |
 

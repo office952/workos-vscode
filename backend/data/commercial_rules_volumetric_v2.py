@@ -137,11 +137,16 @@ ORACAL_8500_SUPPORTED_ROLL_WIDTH_MM = tuple(sorted(ORACAL_8500_MATERIAL_EUR_M2_B
 FACE_ORACAL_641_EUR_M2 = ORACAL_641_MATERIAL_EUR_M2
 FACE_ORACAL_651_EUR_M2 = ORACAL_651_MATERIAL_EUR_M2
 
-# Vinyl application labour — Owner F7F: 3 EUR/m2, charged ONCE on the actual applied surface.
+# Face vinyl application labour — Owner F7F: 3 EUR/m2, charged ONCE on the face applied surface.
 # Not on waste, not on stock cant, not when no vinyl is selected, never duplicated for the same
-# token. Face and cant may carry separate application lines only because they are distinct
-# proven surfaces (face area vs developed wrap area).
+# face token. RETURN-CANT Oracal application is a separate commercial rule
+# (RETURN_CANT_VINYL_APPLICATION_LABOR @ 1 EUR/ml on real return perimeter) — do not reuse this
+# face rate for cant labor.
 VINYL_APPLICATION_EUR_M2 = 3.0
+
+# RETURN-CANT Oracal application labour — owner-confirmed 1 EUR/ml on real return perimeter.
+# Independent of return depth (30/60/80/100). Material remains perimeter×depth m2.
+RETURN_CANT_VINYL_APPLICATION_LABOR_EUR_ML = 1.0
 
 # ACM sheet commercial material — Owner F7F, EUR/m2 tax-exclusive.
 # "oglinda" is a REPLACEMENT rate (40), never 15 + a 25 surcharge, and never both.
@@ -363,18 +368,21 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         label="Finisaje — aplicare autocolant cant",
         module_code="finisaje",
         component_code="comp_finisaj_litere",
-        pricing_rule_code="VOL_V2_CANT_VINYL_APPLICATION_M2",
-        basis_type="m2",
-        quantity_paths=(),
-        unit="m2",
-        source=f"{OWNER_COMMERCIAL_LAW_SOURCE}:vinyl_application",
+        pricing_rule_code="VOL_V2_CANT_VINYL_APPLICATION_ML",
+        basis_type="ml",
+        quantity_paths=("quote_geometry.letter_perimeter_m", "letter_perimeter_m"),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:cant_vinyl_application_labor",
         criticality="critical",
         module_gate="finisaje",
-        documented_unit_price=VINYL_APPLICATION_EUR_M2,
+        registry_pricing_code="RETURN_CANT_VINYL_APPLICATION_LABOR",
+        documented_unit_price=RETURN_CANT_VINYL_APPLICATION_LABOR_EUR_ML,
         documented_unit_price_currency="EUR",
         warnings=(
-            "Owner F7F: aplicare autocolant 3 EUR/mp pe suprafata efectiv aplicata. "
-            "Cantul este o suprafata distincta de fata (arie desfasurata perimetru x adancime).",
+            "Owner-confirmed RETURN-CANT: aplicare Oracal = 1 EUR/ml pe perimetru real. "
+            "Independent of return depth (30/60/80/100). "
+            "Material remains perimeter×depth (m2). "
+            "Do not use F7F face VINYL_APPLICATION_EUR_M2 (3 EUR/m2) for cant labor.",
         ),
     ),
     CommercialRuleDefinition(
