@@ -657,9 +657,33 @@ def _enrich_quote_input_linked_logo_geometry(
 		"letters_layer_outbox_source",
 		"mounting_template_area_m2",
 		"mounting_template_enabled",
+		# Face/cant commercial identity for CPP material gates (never leave vinyl collapse).
+		"face_finish_type",
+		"return_finish_type",
+		"face_vinyl_roll_width_mm",
+		"face_oracal_code",
+		"face_oracal_name",
+		"letter_group_finishes",
+		"confirmed",
 	):
 		if (key not in finish or finish.get(key) in (None, [], {})) and key in raw_finish:
 			finish[key] = raw_finish[key]
+	# Prefer workspace face token over adapter ``vinyl`` / ``printed_vinyl`` when present.
+	workspace_face = raw_finish.get("face_finish_type")
+	if workspace_face not in (None, "") and finish.get("face_finish_type") in (
+		None,
+		"",
+		"vinyl",
+		"printed_vinyl",
+	):
+		finish["face_finish_type"] = workspace_face
+	if workspace_face not in (None, "") and out.get("face_finish_type") in (
+		None,
+		"",
+		"vinyl",
+		"printed_vinyl",
+	):
+		out["face_finish_type"] = workspace_face
 	# Top-level CPP markers when adapter omitted them.
 	if out.get("applied_content") in (None, "") and raw_finish.get("applied_content") not in (None, ""):
 		out["applied_content"] = raw_finish.get("applied_content")

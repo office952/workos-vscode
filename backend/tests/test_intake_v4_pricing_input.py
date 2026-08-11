@@ -111,7 +111,8 @@ class TestIntakeV4PricingInputPreview:
         assert preview.quote_input_payload.get("grouped_finish_pricing_mode") == "per_group_handoff"
         assert preview.quote_input_payload.get("letter_group_face_vinyl_handoff", {}).get("groups")
         assert preview.quote_input_payload.get("letter_group_return_vinyl_handoff", {}).get("groups")
-        assert preview.finish_summary.get("face_finish_type") in {"oracal_651", "vinyl"}
+        assert preview.finish_summary.get("face_finish_type") == "oracal_651"
+        assert preview.quote_input_payload.get("face_finish_type") == "oracal_651"
 
     def test_grouped_finish_handoff_preserves_each_letter_group(self):
         finish = IntakeV4FinishSetup(
@@ -161,8 +162,14 @@ class TestIntakeV4PricingInputPreview:
         assert qi.get("return_finish_variation_count") == 2
         matrix = qi.get("letter_group_finish_matrix") or []
         assert [row["group_id"] for row in matrix] == ["g1", "g2"]
-        assert matrix[1]["face_finish_template_type"] == "oracal_651"
+        assert matrix[1]["face_finish_template_type"] == "oracal_8500"
         assert matrix[1]["return_depth_mm"] == 80
+        face_groups = face_handoff.get("groups") or []
+        by_id = {g["group_id"]: g for g in face_groups}
+        assert by_id["g1"]["face_finish_type"] == "oracal_651"
+        assert by_id["g1"]["face_oracal_series"] == "651"
+        assert by_id["g2"]["face_finish_type"] == "oracal_8500"
+        assert by_id["g2"]["face_oracal_series"] == "8500"
 
     def test_grouped_finish_perimeter_overrides_canonical_return_perimeter(self):
         finish = IntakeV4FinishSetup(

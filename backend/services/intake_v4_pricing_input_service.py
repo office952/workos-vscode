@@ -156,15 +156,62 @@ def _face_oracal_series(raw_finish: str) -> str:
 
 
 def _template_face_finish_type(raw_finish: str) -> str:
+    """Map persisted face tokens to commercial/template identity for handoff + CPP.
+
+    Series identity must remain identifiable end-to-end. Generic ``vinyl`` / bare
+    ``oracal`` collapse only when the operator truly selected a non-series alias
+    (legacy V3 catalog gate), never when ``oracal_641`` / ``8500`` were chosen.
+    """
     if raw_finish in FACE_FINISH_NONE_TYPES:
         return "none"
     if raw_finish in {"print_laminate", "printed_laminated_vinyl"}:
         return "printed_laminated_vinyl"
     if raw_finish == "printed_vinyl":
         return "printed_vinyl"
+    if raw_finish in {"oracal_641", "641"}:
+        return "oracal_641"
+    if raw_finish in {"oracal_8500", "8500", "translucent_film"}:
+        return "oracal_8500"
+    if raw_finish in {"oracal_651", "651", "oracal", "vinyl"}:
+        return "oracal_651"
     if raw_finish in FACE_VINYL_FINISH_TYPES:
+        # Remaining vinyl-family aliases (e.g. printed_* already handled above).
         return "oracal_651"
     return raw_finish or "none"
+
+
+def _commercial_face_finish_token_from_setup(setup: IntakeV4FinishSetup) -> str | None:
+    """Persisted operator face token for CPP material gates (never V3 ``vinyl`` collapse)."""
+    raw = _token(setup.face_finish_type, default="")
+    if raw:
+        # Keep operator vocabulary tokens that CPP already recognizes (incl. print_laminate).
+        if raw in FACE_FINISH_NONE_TYPES:
+            return "none"
+        if raw in {
+            "oracal_641",
+            "oracal_651",
+            "oracal_8500",
+            "print_laminate",
+            "printed_laminated_vinyl",
+            "printed_vinyl",
+            "plexiglas_clear",
+        }:
+            return raw
+        return _template_face_finish_type(raw)
+
+    # Dominant projection when only per-group finishes exist.
+    group_tokens = [
+        _token(group.face_finish_type, default="")
+        for group in setup.letter_group_finishes or []
+        if _token(group.face_finish_type, default="")
+    ]
+    if not group_tokens:
+        return None
+    unique = sorted(set(group_tokens))
+    if len(unique) == 1:
+        return unique[0]
+    # Mixed groups: do not invent a single commercial series at job level.
+    return None
 
 
 def _template_return_finish_type(raw_finish: str) -> str:
@@ -501,6 +548,11 @@ def _patch_quote_input_from_v4_geometry(
 
     setup = payload.finish_setup
     if setup:
+        commercial_face = _commercial_face_finish_token_from_setup(setup)
+        if commercial_face is not None:
+            # V3 adapter maps 641/651 → ``vinyl`` for operation flags; restore commercial
+            # series/print identity so CPP material gates see the operator token.
+            patched["face_finish_type"] = commercial_face
         patched["illuminated"] = setup.illuminated is not False
         patched["lighting_system_type"] = setup.lighting_system_type
         patched["light_color"] = setup.light_color
@@ -689,7 +741,8 @@ def build_v4_pricing_input_preview(
         quote_input["requires_grouped_finish_review"] = False
 
     finish_summary_payload: dict[str, Any] = {
-        "face_finish_type": finish_summary.face_finish_type,
+        # Prefer commercial token restored onto quote_input (not V3 ``vinyl`` collapse).
+        "face_finish_type": quote_input.get("face_finish_type") or finish_summary.face_finish_type,
         "face_vinyl_enabled": finish_summary.face_vinyl_enabled,
         "return_finish_type": finish_summary.return_finish_type,
         "return_depth_mm": finish_summary.return_depth_mm,
