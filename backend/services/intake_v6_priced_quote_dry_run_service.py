@@ -660,6 +660,7 @@ def _enrich_quote_input_linked_logo_geometry(
 		# Face/cant commercial identity for CPP material gates (never leave vinyl collapse).
 		"face_finish_type",
 		"return_finish_type",
+		"return_depth_mm",
 		"face_vinyl_roll_width_mm",
 		"face_oracal_code",
 		"face_oracal_name",
@@ -684,6 +685,17 @@ def _enrich_quote_input_linked_logo_geometry(
 		"printed_vinyl",
 	):
 		out["face_finish_type"] = workspace_face
+	# Cant depth must reach CPP; adapter/job flatten must not drop workspace depth.
+	workspace_depth = raw_finish.get("return_depth_mm")
+	if workspace_depth not in (None, "") and finish.get("return_depth_mm") in (None, "", 0, 0.0):
+		finish["return_depth_mm"] = workspace_depth
+	if workspace_depth not in (None, "") and out.get("return_depth_mm") in (None, "", 0, 0.0):
+		out["return_depth_mm"] = workspace_depth
+	workspace_return = raw_finish.get("return_finish_type")
+	if workspace_return not in (None, "") and finish.get("return_finish_type") in (None, ""):
+		finish["return_finish_type"] = workspace_return
+	if workspace_return not in (None, "") and out.get("return_finish_type") in (None, ""):
+		out["return_finish_type"] = workspace_return
 	# Top-level CPP markers when adapter omitted them.
 	if out.get("applied_content") in (None, "") and raw_finish.get("applied_content") not in (None, ""):
 		out["applied_content"] = raw_finish.get("applied_content")

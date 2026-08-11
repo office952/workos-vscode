@@ -553,6 +553,11 @@ def _patch_quote_input_from_v4_geometry(
             # V3 adapter maps 641/651 → ``vinyl`` for operation flags; restore commercial
             # series/print identity so CPP material gates see the operator token.
             patched["face_finish_type"] = commercial_face
+        # Cant depth/finish must remain identifiable for CPP (Oracal wrap qty, RAL tiers).
+        if setup.return_depth_mm is not None:
+            patched["return_depth_mm"] = setup.return_depth_mm
+        if setup.return_finish_type:
+            patched["return_finish_type"] = _token(setup.return_finish_type)
         patched["illuminated"] = setup.illuminated is not False
         patched["lighting_system_type"] = setup.lighting_system_type
         patched["light_color"] = setup.light_color

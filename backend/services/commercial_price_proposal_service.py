@@ -147,6 +147,103 @@ def _letter_group_finishes(payload: dict[str, Any]) -> list[dict[str, Any]]:
     return [group for group in groups if isinstance(group, dict)]
 
 
+def _group_return_finish_token(group: dict[str, Any], *, default: str) -> str:
+    return _lower_str(group.get("return_finish_type") or default)
+
+
+def _group_return_depth_mm(group: dict[str, Any], *, default: float | None) -> float | None:
+    depth = _positive_number(group.get("return_depth_mm"))
+    if depth is not None:
+        return depth
+    return default
+
+
+def _group_return_perimeter_m(group: dict[str, Any]) -> float | None:
+    return _positive_number(group.get("perimeter_m") or group.get("letter_perimeter_m"))
+
+
+def _cant_oracal_wrap_area_m2(payload: dict[str, Any]) -> tuple[float | None, list[str]]:
+    """Developed wrap area (m2) = perimeter_m × depth_m, job-level or per-group sum."""
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    default_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+    default_depth = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
+    warnings: list[str] = []
+    groups = [
+        group
+        for group in _letter_group_finishes(payload)
+        if _group_return_finish_token(group, default=default_token)
+        in CANT_ORACAL_WRAP_SERIES_BY_RETURN_FINISH_TYPE
+    ]
+    if groups:
+        areas: list[float] = []
+        for group in groups:
+            perimeter = _group_return_perimeter_m(group)
+            depth_mm = _group_return_depth_mm(group, default=default_depth)
+            if perimeter is None or depth_mm is None:
+                continue
+            areas.append(float(perimeter) * (float(depth_mm) / 1000.0))
+        if areas and len(areas) == len(groups):
+            warnings.append("quantity_source=letter_group_perimeter_m_x_return_depth_mm_to_m2")
+            return round(sum(areas), 6), warnings
+
+    perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
+    if perimeter is not None and default_depth is not None:
+        warnings.append("quantity_source=perimeter_m_x_return_depth_mm_to_m2")
+        return round(float(perimeter) * (float(default_depth) / 1000.0), 6), warnings
+    return None, warnings
+
+
+def _cant_ral_group_economics(
+    payload: dict[str, Any],
+) -> tuple[float | None, float | None, float | None, list[str]]:
+    """Return (perimeter_ml, material_subtotal_eur, labor_subtotal_eur, warnings).
+
+    Mixed depths preserve per-group tiers; material unit price becomes the weighted average
+    so a single CPP line still carries the exact commercial subtotal.
+    """
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    default_token = _lower_str(finish.get("return_finish_type") or payload.get("return_finish_type"))
+    default_depth = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
+    warnings: list[str] = []
+    groups = [
+        group
+        for group in _letter_group_finishes(payload)
+        if _group_return_finish_token(group, default=default_token) in CANT_RAL_PAINT_GATE_VALUES
+    ]
+    if groups:
+        total_ml = 0.0
+        material_eur = 0.0
+        complete = True
+        depths: set[int] = set()
+        for group in groups:
+            perimeter = _group_return_perimeter_m(group)
+            depth_mm = _group_return_depth_mm(group, default=default_depth)
+            depth_tier = int(depth_mm) if depth_mm is not None and float(depth_mm).is_integer() else None
+            rate = CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM.get(depth_tier) if depth_tier else None
+            if perimeter is None or rate is None:
+                complete = False
+                break
+            total_ml += float(perimeter)
+            material_eur += float(perimeter) * float(rate)
+            depths.add(depth_tier)  # type: ignore[arg-type]
+        if complete and total_ml > 0:
+            if len(depths) > 1:
+                warnings.append("cant_ral_mixed_depth_weighted_avg")
+            warnings.append("quantity_source=letter_group_perimeter_m_sum")
+            return round(total_ml, 6), round(material_eur, 6), round(total_ml, 6), warnings
+
+    perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
+    depth_raw = default_depth
+    depth_tier = int(depth_raw) if depth_raw is not None and float(depth_raw).is_integer() else None
+    rate = CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM.get(depth_tier) if depth_tier else None
+    if perimeter is None:
+        return None, None, None, warnings
+    if rate is None:
+        return float(perimeter), None, float(perimeter), warnings
+    warnings.append(f"cant_ral_depth_tier_resolved={depth_tier}mm")
+    return float(perimeter), round(float(perimeter) * float(rate), 6), float(perimeter), warnings
+
+
 def _supported_8500_width(raw: Any) -> int | None:
     width = _positive_number(raw)
     if width is None:
@@ -724,13 +821,9 @@ async def _build_line(
                 dynamic_unit_price_currency = "EUR"
                 warnings.append(f"cant_oracal_series_resolved={series}")
         # Material and application share the same proven applied surface: the developed wrap area.
-        perimeter = _extract_quantity(payload, ("quote_geometry.letter_perimeter_m", "letter_perimeter_m"))
-        depth_mm = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
-        if perimeter is not None and depth_mm is not None:
-            quantity = round(float(perimeter) * (float(depth_mm) / 1000.0), 6)
-            warnings.append("quantity_source=perimeter_m_x_return_depth_mm_to_m2")
-        else:
-            quantity = None
+        # Prefer per-group perimeter×depth when letter_group_finishes carry cant truth.
+        quantity, qty_warnings = _cant_oracal_wrap_area_m2(payload)
+        warnings.extend(qty_warnings)
 
     if rule.line_code == "finisaje_oracal_8500_material":
         roll_width_mm = _confirmed_oracal_8500_roll_width_mm(payload)
@@ -761,16 +854,18 @@ async def _build_line(
             suppress_documented_fallback = True
             warnings.append(f"COMMERCIAL_RULE_MISSING:acm_sheet_variant={variant}")
 
-    if rule.line_code == "finisaje_cant_ral_material":
-        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
-        depth_raw = _positive_number(finish.get("return_depth_mm", payload.get("return_depth_mm")))
-        depth_tier = int(depth_raw) if depth_raw is not None and float(depth_raw).is_integer() else None
-        dynamic_unit_price = (
-            CANT_RAL_PAINT_MATERIAL_EUR_ML_BY_DEPTH_MM.get(depth_tier) if depth_tier else None
-        )
-        if dynamic_unit_price is not None:
-            dynamic_unit_price_currency = "EUR"
-            warnings.append(f"cant_ral_depth_tier_resolved={depth_tier}mm")
+    if rule.line_code in ("finisaje_cant_ral_material", "finisaje_cant_ral_labor"):
+        perimeter_ml, material_eur, labor_ml, ral_warnings = _cant_ral_group_economics(payload)
+        warnings.extend(ral_warnings)
+        if rule.line_code == "finisaje_cant_ral_material":
+            if perimeter_ml is not None and material_eur is not None and perimeter_ml > 0:
+                quantity = perimeter_ml
+                dynamic_unit_price = round(float(material_eur) / float(perimeter_ml), 6)
+                dynamic_unit_price_currency = "EUR"
+            elif perimeter_ml is not None:
+                quantity = perimeter_ml
+        elif labor_ml is not None:
+            quantity = labor_ml
 
     if rule.line_code in ("finisaje_cant_oracal_material", "finisaje_cant_ral_material") and (
         dynamic_unit_price is None
