@@ -2,22 +2,23 @@
 
 ## A. VERDICT
 
-**PASS** — Confirm-gate / A_CONFIRMED_FALSE honesty closed without reopening VAT, FX, or commercial-input authority.
+**PASS** ? Confirm-gate / A_CONFIRMED_FALSE honesty closed without reopening VAT, FX, or commercial-input authority.
 
 ## B. REPO IDENTITY
 
 - Repo: `office952/workos-vscode`
 - Branch: `feat/f7i-owner-rate-activation`
 - HEAD before: `9ad34e02`
-- HEAD after: `36c499de`
+- HEAD after (code): `36c499de`
+- Tip (docs note): `01fc8189`
 
 ## C. ROOT CAUSE
 
-Unconfirming finish/groups on Oracal 8500 correctly nulls `complete_offer_total`, but partial EUR product subtotals and Confirm chrome could still look like a living client offer. Gate/composition honesty defect — not adjustment law.
+Unconfirming finish/groups on Oracal 8500 correctly nulls `complete_offer_total`, but partial EUR product subtotals and Confirm chrome could still look like a living client offer. Gate/composition honesty defect ? not adjustment law.
 
 ## D. A_CONFIRMED_FALSE
 
-Reproduced via GRADI_EUR_SAFE + `confirmed=false` → `COMMERCIAL_CONFIGURATION_INCOMPLETE` → `complete_offer_total=null` / `COMMERCIAL_PRODUCT_BLOCKED`. Why P0: TOTAL_COMPOSITION honesty (priced lines vs invalid complete offer / false final presentation).
+Reproduced via GRADI_EUR_SAFE + `confirmed=false` ? `COMMERCIAL_CONFIGURATION_INCOMPLETE` ? `complete_offer_total=null` / `COMMERCIAL_PRODUCT_BLOCKED`. Why P0: TOTAL_COMPOSITION honesty (priced lines vs invalid complete offer / false final presentation).
 
 ## E. CANONICAL CONFIRM GATE
 
@@ -38,7 +39,7 @@ Remains product composition base.
 
 ## I. COMMERCIAL_TOTALS
 
-Remains official adjusted Ofertă money; empty when blocked.
+Remains official adjusted Ofert? money; empty when blocked.
 
 ## J. STALE TOTAL INVALIDATION
 
@@ -46,7 +47,7 @@ Confirm handoff clears `pricedQuoteDryRun` before fresh fetch on workspace refre
 
 ## K. PRICED WRITE
 
-Requires `V6_PRICED_DRY_RUN_READY` (+ operator confirmation). Incomplete → blocked.
+Requires `V6_PRICED_DRY_RUN_READY` (+ operator confirmation). Incomplete ? blocked.
 
 ## L. QUOTE SNAPSHOT
 
@@ -90,17 +91,17 @@ See `RUNTIME_PROOF.md` + screenshot.
 
 ## T. COMMIT
 
-Commit: `36c499de` � fix(intake-v6): align confirm gate with offer integrity
+Commit: `36c499de` ? fix(intake-v6): align confirm gate with offer integrity
 
 PUSH = NO.
 
 ## U. DIRTY/UNTRACKED
 
-Unrelated: `_qa_backups/`, capacity `_tmp_*`, other historical QA leftovers — excluded.
+Unrelated: `_qa_backups/`, capacity `_tmp_*`, other historical QA leftovers ? excluded.
 
 ## V. MODULES/GOVERNANCE
 
-`NO_CHANGE` — readiness ownership remains backend dry-run/CPP/freeze; FE display only. Docs in evidence pack only.
+`NO_CHANGE` ? readiness ownership remains backend dry-run/CPP/freeze; FE display only. Docs in evidence pack only.
 
 ## W. REMAINING PRICE INPUT ROOT CAUSES
 
@@ -139,8 +140,8 @@ Owner-picked first P1 cluster (mounting or qty/backing). Societate deferred.
 - Roadmap awareness: 8/10
 - Current position: confirm-gate integrity after commercial-input authority closure
 - Direction fit: ~85%
-- Method: root-cause map → derived readiness read-model → FE honesty → regressions → evidence → local commit
-- Impact Harta: Intake V6 Confirm / dry-run / Ofertă display boundary clarified
-- Impact Guvernanță: no new system; documentation of derived vs canonical gate
+- Method: root-cause map ? derived readiness read-model ? FE honesty ? regressions ? evidence ? local commit
+- Impact Harta: Intake V6 Confirm / dry-run / Ofert? display boundary clarified
+- Impact Guvernan??: no new system; documentation of derived vs canonical gate
 - Dead Pieces Check: no second FE readiness authority; no Oracal law rewrite
 - Forbidden Scope respected: **YES**
