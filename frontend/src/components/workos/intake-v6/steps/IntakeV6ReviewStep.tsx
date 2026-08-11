@@ -1212,7 +1212,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   }, [workspaceId, analysisReady, templateCode, segmentedTruthKey]);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!workspaceId || !analysisReady || !diagnosticSectionOpen) {
+      if (!diagnosticSectionOpen) setLoadingPreview(false);
+      return;
+    }
     let cancelled = false;
     setLoadingPreview(true);
     void getIntakeV6TaskPreview(workspaceId)
@@ -1230,7 +1233,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, previewRefresh.taskPreview, analysisIdentityKey, analysisReady]);
+  }, [
+    workspaceId,
+    previewRefresh.taskPreview,
+    analysisIdentityKey,
+    analysisReady,
+    diagnosticSectionOpen,
+    state.workspace?.updated_at,
+  ]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
@@ -1401,6 +1411,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       setProductionDryRun(null);
       return;
     }
+    if (!diagnosticSectionOpen) {
+      setLoadingProductionDryRun(false);
+      return;
+    }
     let cancelled = false;
     setLoadingProductionDryRun(true);
     void getIntakeV6ProductionTaskDryRun(workspaceId)
@@ -1416,7 +1430,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.productionDryRun]);
+  }, [
+    workspaceId,
+    analysisIdentityKey,
+    analysisReady,
+    diagnosticSectionOpen,
+    previewRefresh.productionDryRun,
+    state.workspace?.updated_at,
+  ]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
@@ -1445,6 +1466,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       setHandoffPreview(null);
       return;
     }
+    if (!diagnosticSectionOpen) {
+      setLoadingHandoffPreview(false);
+      return;
+    }
     let cancelled = false;
     setLoadingHandoffPreview(true);
     void getIntakeV6ProductionHandoffPreview(workspaceId)
@@ -1460,11 +1485,22 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.productionHandoff]);
+  }, [
+    workspaceId,
+    analysisIdentityKey,
+    analysisReady,
+    diagnosticSectionOpen,
+    previewRefresh.productionHandoff,
+    state.workspace?.updated_at,
+  ]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
       setTaskGenerationDryRun(null);
+      return;
+    }
+    if (!diagnosticSectionOpen) {
+      setLoadingTaskGenerationDryRun(false);
       return;
     }
     let cancelled = false;
@@ -1482,11 +1518,22 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.taskGeneration]);
+  }, [
+    workspaceId,
+    analysisIdentityKey,
+    analysisReady,
+    diagnosticSectionOpen,
+    previewRefresh.taskGeneration,
+    state.workspace?.updated_at,
+  ]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
       setOrderBoundReadiness(null);
+      return;
+    }
+    if (!diagnosticSectionOpen) {
+      setLoadingOrderBoundReadiness(false);
       return;
     }
     let cancelled = false;
@@ -1504,7 +1551,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.orderBoundReadiness]);
+  }, [
+    workspaceId,
+    analysisIdentityKey,
+    analysisReady,
+    diagnosticSectionOpen,
+    previewRefresh.orderBoundReadiness,
+    state.workspace?.updated_at,
+  ]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {

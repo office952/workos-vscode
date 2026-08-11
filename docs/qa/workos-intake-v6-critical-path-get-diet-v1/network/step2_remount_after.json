@@ -1,0 +1,22 @@
+{
+  "capture": "Step 2 Configurare remount after Confirm (read-only, no finish mutation)",
+  "workspace_id": "03a1da1e-003a-4139-9668-59ac6bcec812",
+  "OWNER_DEV_DB_MUTATIONS": 0,
+  "offer_critical_gets": [
+    "pricing-input-preview",
+    "material-breakdown",
+    "quote-handoff-preview",
+    "priced-quote-dry-run",
+    "logical-list-read-model"
+  ],
+  "production_diagnostic_gets": [],
+  "note": "production-task-dry-run / production-handoff / task-preview / task-generation / order-bound absent while diagnostic drawer closed",
+  "residual_eager_non_domain": [
+    "ai-informational-assist-candidate",
+    "product-system-binding",
+    "form-contract",
+    "template-form-contract"
+  ],
+  "priced_quote_ms": 705,
+  "logical_list_ms": 721
+}

@@ -19,15 +19,38 @@ export type IntakeV6ReviewRefetchGroup =
   | "taskPreview"
   | "orderBoundReadiness";
 
+/**
+ * Step 2 (configure) offer-critical refetch groups.
+ * Production / task / order-bound diagnostics refresh only when the diagnostic
+ * drawer opens (or Confirm loads its own handoff batch) — not on every finish save.
+ */
+export const INTAKE_V6_STEP2_OFFER_CRITICAL_GROUPS = [
+  "breakdown",
+  "pricing",
+  "pricedQuote",
+  "quoteHandoff",
+] as const satisfies readonly IntakeV6ReviewRefetchGroup[];
+
+/** Production / execution diagnostics — lazy / on-demand only. */
+export const INTAKE_V6_STEP2_PRODUCTION_DIAGNOSTIC_GROUPS = [
+  "productionDryRun",
+  "productionHandoff",
+  "taskGeneration",
+  "taskPreview",
+  "orderBoundReadiness",
+] as const satisfies readonly IntakeV6ReviewRefetchGroup[];
+
+const STEP2_OFFER_CRITICAL: readonly IntakeV6ReviewRefetchGroup[] = INTAKE_V6_STEP2_OFFER_CRITICAL_GROUPS;
+
 const DOMAIN_TO_GROUPS: Record<IntakeV6ReviewDirtyDomain, readonly IntakeV6ReviewRefetchGroup[]> = {
-  lighting: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskPreview", "orderBoundReadiness"],
-  face_finish: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskPreview", "orderBoundReadiness"],
-  artwork_finish: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskPreview", "orderBoundReadiness"],
-  backing: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskPreview", "orderBoundReadiness"],
-  mounting: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskGeneration", "orderBoundReadiness"],
-  template: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskGeneration", "taskPreview", "orderBoundReadiness"],
+  lighting: STEP2_OFFER_CRITICAL,
+  face_finish: STEP2_OFFER_CRITICAL,
+  artwork_finish: STEP2_OFFER_CRITICAL,
+  backing: STEP2_OFFER_CRITICAL,
+  mounting: STEP2_OFFER_CRITICAL,
+  template: STEP2_OFFER_CRITICAL,
   commercial_preview: ["pricing", "pricedQuote"],
-  sheet_footprint: ["breakdown", "pricing", "pricedQuote", "productionDryRun", "productionHandoff", "quoteHandoff", "taskGeneration", "taskPreview", "orderBoundReadiness"],
+  sheet_footprint: STEP2_OFFER_CRITICAL,
 };
 
 export function resolveIntakeV6ReviewRefetchGroups(
