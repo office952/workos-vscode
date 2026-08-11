@@ -9,7 +9,7 @@
 - Repo: `office952/workos-vscode`
 - Branch: `feat/f7i-owner-rate-activation`
 - HEAD before: `9ad34e02`
-- HEAD after: (see commit)
+- HEAD after: `36c499de`
 
 ## C. ROOT CAUSE
 
@@ -90,7 +90,9 @@ See `RUNTIME_PROOF.md` + screenshot.
 
 ## T. COMMIT
 
-Local commit required; PUSH = NO.
+Commit: `36c499de` — fix(intake-v6): align confirm gate with offer integrity
+
+PUSH = NO.
 
 ## U. DIRTY/UNTRACKED
 
