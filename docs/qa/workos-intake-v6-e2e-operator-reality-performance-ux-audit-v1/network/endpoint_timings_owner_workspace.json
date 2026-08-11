@@ -1,0 +1,48 @@
+{
+  "workspace_id": "03a1da1e-003a-4139-9668-59ac6bcec812",
+  "workspace_code": "IV6-362B31FC",
+  "head": "303add0f",
+  "measured_at": "2026-08-11T18:33Z",
+  "method": "sequential urllib GET against live :8000; no DB writes",
+  "payload_finish": {
+    "face_finish_type": "oracal_641",
+    "return_finish_type": "oracal_wrapped",
+    "return_depth_mm": 60.0,
+    "backing_mode": null,
+    "finish_setup.confirmed": true,
+    "letter_group.confirmed": false
+  },
+  "dry_run": {
+    "ms": 307,
+    "pricing_status": "V6_PRICED_DRY_RUN_READY",
+    "gross_eur": 657.54,
+    "net_eur": 543.42,
+    "face_oracal_material_line_present": false,
+    "cant_oracal_lines_present": true,
+    "note": "UI shows face Oracal 641 but CPP dry-run lines omit finisaje_oracal_641_material / aplicare"
+  },
+  "other_endpoints_ms": {
+    "material-breakdown": 20,
+    "pricing-input-preview": 10,
+    "logical-list-read-model": 322,
+    "quote-handoff-preview": 31,
+    "product-system-binding": 14,
+    "task-preview": 11,
+    "production-task-dry-run": 33,
+    "production-handoff-preview": 41
+  },
+  "eager_step2_estimated_serial_sum_ms": 789,
+  "cpp_ofat_preview_only_ms": {
+    "FACE_oracal_641": 47,
+    "CANT_ral_paint": 50,
+    "BACK_with_bevel": 46,
+    "note": "CPP alone is fast (~40-50ms). Operator latency dominated by autosave debounce + multi-GET fan-out."
+  },
+  "quote_input_token_drift": {
+    "operator_face": "oracal_641",
+    "quote_input.face_finish_type": "vinyl",
+    "letter_group_face_vinyl_handoff.face_finish_type": "oracal_651",
+    "letter_group_face_vinyl_handoff.face_finish_raw": "oracal_641",
+    "letter_group_face_vinyl_handoff.face_oracal_series": "641"
+  }
+}
