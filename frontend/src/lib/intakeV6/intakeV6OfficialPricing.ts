@@ -11,6 +11,13 @@ export function intakeV6HasOfficialCommercialTotals(
   if (pricing.pricing_authority !== V6_OFFICIAL_COMMERCIAL_AUTHORITY) {
     return false;
   }
+  const readiness = pricing.offer_composition_readiness;
+  if (readiness != null && readiness.canonical_gate === "blocked") {
+    return false;
+  }
+  if (readiness != null && readiness.commercial_composition_complete === false) {
+    return false;
+  }
   const totals = pricing.commercial_totals;
   return totals?.subtotal_net != null && totals?.total_gross != null;
 }

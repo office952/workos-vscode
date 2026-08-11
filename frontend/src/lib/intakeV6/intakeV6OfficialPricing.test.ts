@@ -48,6 +48,22 @@ describe("intakeV6OfficialPricing", () => {
     expect(intakeV6HasOfficialCommercialTotals(basePricing({ pricing_authority: null }))).toBe(false);
   });
 
+  it("rejects when derived readiness says commercial composition incomplete", () => {
+    expect(
+      intakeV6HasOfficialCommercialTotals(
+        basePricing({
+          offer_composition_readiness: {
+            product_composition_complete: true,
+            commercial_composition_complete: false,
+            confirmation_complete: false,
+            offer_ready_to_freeze: false,
+            canonical_gate: "blocked",
+          },
+        }),
+      ),
+    ).toBe(false);
+  });
+
   it("surfaces blocker message when official price absent", () => {
     expect(
       intakeV6OfficialPricingBlockerMessage(

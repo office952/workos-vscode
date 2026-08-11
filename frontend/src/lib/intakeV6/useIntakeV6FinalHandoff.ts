@@ -178,6 +178,8 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		const fetchGeneration = ++confirmationFetchGenRef.current;
 		setConfirmPreviewLoading(true);
 		setConfirmPreviewError(null);
+		// Invalidate prior dry-run so stale READY Ofertă money cannot flash during refetch.
+		setPricedQuoteDryRun(null);
 		void Promise.all([
 			getIntakeV6ProductSystemBinding(ws.id),
 			getIntakeV6MaterialBreakdown(ws.id),
@@ -582,6 +584,19 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		}).length;
 	}, [modularAwareness.preview, soldScopeVisibility]);
 
+	const commercialDryRunBlockerMessages = useMemo(() => {
+		const messages: string[] = [];
+		for (const blocker of pricedQuoteDryRunBlockers) {
+			const message = (blocker.message || blocker.code || "").trim();
+			if (message) messages.push(message);
+		}
+		const readinessMsg = pricedQuoteDryRun?.offer_composition_readiness?.primary_blocker_message;
+		if (typeof readinessMsg === "string" && readinessMsg.trim() && !messages.includes(readinessMsg.trim())) {
+			messages.unshift(readinessMsg.trim());
+		}
+		return messages;
+	}, [pricedQuoteDryRunBlockers, pricedQuoteDryRun?.offer_composition_readiness?.primary_blocker_message]);
+
 	const consolidatedStatus = useMemo(
 		(): IntakeV6ConfirmConsolidatedStatusDisplay =>
 			buildIntakeV6ConfirmConsolidatedStatus({
@@ -600,6 +615,10 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 				showHandoffCheckboxes,
 				checklistProgress,
 				modularPendingCount,
+				commercialDryRunBlockerMessages,
+				commercialCompositionComplete:
+					pricedQuoteDryRun?.offer_composition_readiness?.commercial_composition_complete ??
+					(pricedQuoteDryRunReady ? true : pricedQuoteDryRun != null ? false : null),
 				formatBlocker: formatQuoteHandoffBlocker,
 			}),
 		[
@@ -619,6 +638,9 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 			showHandoffCheckboxes,
 			checklistProgress,
 			modularPendingCount,
+			commercialDryRunBlockerMessages,
+			pricedQuoteDryRun,
+			pricedQuoteDryRunReady,
 		],
 	);
 

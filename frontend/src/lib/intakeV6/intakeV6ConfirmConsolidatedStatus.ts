@@ -44,6 +44,9 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
   showHandoffCheckboxes: boolean;
   checklistProgress: { done: number; total: number };
   modularPendingCount: number;
+  /** Backend dry-run commercial blockers (display only — not a FE readiness formula). */
+  commercialDryRunBlockerMessages?: string[];
+  commercialCompositionComplete?: boolean | null;
   formatBlocker?: (code: string) => string;
 }): IntakeV6ConfirmConsolidatedStatusDisplay {
   const formatBlocker = input.formatBlocker ?? formatQuoteHandoffBlocker;
@@ -75,6 +78,10 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
 
   for (const blocker of input.bindingBlockers) {
     pushObservation(observations, formatBlocker(blocker));
+  }
+
+  for (const message of input.commercialDryRunBlockerMessages ?? []) {
+    pushObservation(observations, message);
   }
 
   if (!input.effectiveHandoffAllowed) {
@@ -111,16 +118,21 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
     pushObservation(observations, "Confirmă limitele draftului intern (fără comandă / execuție / stoc).");
   }
 
+  const commercialIncomplete = input.commercialCompositionComplete === false;
   const hasBlockers =
     input.finishSetupIncomplete ||
     input.bindingBlockers.length > 0 ||
-    !input.effectiveHandoffAllowed;
+    !input.effectiveHandoffAllowed ||
+    commercialIncomplete ||
+    (input.commercialDryRunBlockerMessages?.length ?? 0) > 0;
 
   if (hasBlockers) {
     return {
       tier: "blocked",
       title: INTAKE_V6_CONFIRM_STATUS_TITLE,
-      headline: "Configurația nu este pregătită pentru confirmare.",
+      headline: commercialIncomplete
+        ? "Compoziția comercială este incompletă — Oferta client nu este disponibilă."
+        : "Configurația nu este pregătită pentru confirmare.",
       observations,
       indicatorLabel: confirmConsolidatedIndicatorLabelRo("blocked"),
     };

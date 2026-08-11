@@ -81,4 +81,18 @@ describe("buildIntakeV6ConfirmConsolidatedStatus", () => {
 
     expect(status.observations.length).toBeLessThanOrEqual(3);
   });
+
+  it("blocks when backend commercial composition is incomplete", () => {
+    const status = buildIntakeV6ConfirmConsolidatedStatus({
+      ...baseInput,
+      commercialCompositionComplete: false,
+      commercialDryRunBlockerMessages: [
+        "Oracal 8500 requires one confirmed face_vinyl_roll_width_mm",
+      ],
+    });
+
+    expect(status.tier).toBe("blocked");
+    expect(status.headline).toMatch(/Compoziția comercială este incompletă/i);
+    expect(status.observations.some((item) => /Oracal 8500/i.test(item))).toBe(true);
+  });
 });

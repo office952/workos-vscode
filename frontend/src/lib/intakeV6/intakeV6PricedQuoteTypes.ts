@@ -118,6 +118,20 @@ export interface IntakeV6CommercialProductBreakdown {
 	vat_rate_percent: number | null;
 }
 
+/** Derived dry-run read-model — mirrors existing gates; not a second READY authority. */
+export type IntakeV6OfferCompositionReadiness = {
+  product_composition_complete: boolean;
+  commercial_composition_complete: boolean;
+  confirmation_complete: boolean;
+  offer_ready_to_freeze: boolean;
+  canonical_gate: "ready" | "blocked" | string;
+  blocking_codes?: string[];
+  primary_blocker_code?: string | null;
+  primary_blocker_message?: string | null;
+  derived_from?: string;
+  authority_note?: string;
+};
+
 export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_status: "V6_PRICED_DRY_RUN_READY" | "V6_PRICED_DRY_RUN_BLOCKED" | string;
   pricing_authority?: string | null;
@@ -131,6 +145,8 @@ export type IntakeV6PricedQuoteDryRunResponse = {
 	commercial_totals: IntakeV6CommercialTotals;
 	/** Optional — absent on older responses and on blocked previews. */
 	commercial_product_breakdown?: IntakeV6CommercialProductBreakdown | null;
+	/** Derived read-model only — canonical READY remains pricing_status. */
+	offer_composition_readiness?: IntakeV6OfferCompositionReadiness | null;
 	commercial_line_items?: Array<Record<string, unknown>>;
   acm_panel_commercial_preview?: AcmPanelCommercialPreview | null;
   internal_cost_trace?: Record<string, unknown>;

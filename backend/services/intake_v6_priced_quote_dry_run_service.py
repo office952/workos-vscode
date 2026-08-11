@@ -23,6 +23,7 @@ from services.intake_v6_offer_scope_live_calc_service import (
 )
 from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
+from services.product_truth_job_confirm_service import commercial_freeze_allowed
 
 V6_PRICED_DRY_RUN_SOURCE = "intake_v6_backend_priced_dry_run"
 V6_PRICED_DRY_RUN_READY = "V6_PRICED_DRY_RUN_READY"
@@ -58,6 +59,54 @@ def _positive_number(raw: Any) -> float | None:
 
 def _blocker(code: str, message: str) -> dict[str, str]:
 	return {"code": code, "message": message}
+
+
+def build_offer_composition_readiness(
+	*,
+	pricing_status: str,
+	blockers: list[dict[str, str]],
+	commercial_preview: Any,
+	payload_raw: dict[str, Any],
+) -> dict[str, Any]:
+	"""Derived read-model only — mirrors existing dry-run / CPP / freeze gates.
+
+	Must never invent a second READY/BLOCKED authority.
+	"""
+	blocker_codes = [str(b.get("code") or "") for b in blockers if isinstance(b, dict)]
+	product_composition_complete = "PRODUCT_COMPOSITION_NOT_CONFIRMED" not in blocker_codes
+	breakdown = (
+		getattr(commercial_preview, "commercial_product_breakdown", None)
+		if commercial_preview is not None
+		else None
+	)
+	complete_offer = getattr(breakdown, "complete_offer_total", None) if breakdown is not None else None
+	try:
+		complete_offer_ok = complete_offer is not None and float(complete_offer) == float(complete_offer)
+	except (TypeError, ValueError):
+		complete_offer_ok = False
+	cpp_ready = (
+		commercial_preview is not None and getattr(commercial_preview, "status", None) == "ready"
+	)
+	commercial_composition_complete = bool(cpp_ready and complete_offer_ok)
+	confirmation_complete = "COMMERCIAL_CONFIGURATION_INCOMPLETE" not in blocker_codes
+	canonical_ready = pricing_status == V6_PRICED_DRY_RUN_READY
+	freeze_pin_ok = commercial_freeze_allowed(payload_raw) if isinstance(payload_raw, dict) else False
+	primary = blockers[0] if blockers else None
+	return {
+		"product_composition_complete": product_composition_complete,
+		"commercial_composition_complete": commercial_composition_complete,
+		"confirmation_complete": confirmation_complete,
+		"offer_ready_to_freeze": bool(canonical_ready and freeze_pin_ok),
+		"canonical_gate": "ready" if canonical_ready else "blocked",
+		"blocking_codes": [c for c in blocker_codes if c],
+		"primary_blocker_code": (primary or {}).get("code") if primary else None,
+		"primary_blocker_message": (primary or {}).get("message") if primary else None,
+		"derived_from": "dry_run_cpp_freeze_signals",
+		"authority_note": (
+			"Read-model only. Canonical READY/BLOCKED remains pricing_status / "
+			"CPP complete_offer / commercial_freeze_allowed."
+		),
+	}
 
 
 def _empty_totals(*, vat_rate: float | None = None, currency: str | None = None) -> dict[str, Any]:
@@ -903,6 +952,14 @@ async def build_intake_v6_priced_quote_dry_run(
 		for w in acm_panel_commercial_preview.get("warnings") or []:
 			warnings.append(f"acm_panel:{w}")
 
+	payload_for_readiness = payload_raw if isinstance(payload_raw, dict) else {}
+	offer_composition_readiness = build_offer_composition_readiness(
+		pricing_status=pricing_status,
+		blockers=blockers,
+		commercial_preview=commercial_preview,
+		payload_raw=payload_for_readiness,
+	)
+
 	return {
 		"pricing_status": pricing_status,
 		"pricing_authority": pricing_authority,
@@ -922,6 +979,7 @@ async def build_intake_v6_priced_quote_dry_run(
 			commercial_preview,
 			settings_vat_percent=settings_vat_percent,
 		),
+		"offer_composition_readiness": offer_composition_readiness,
 		"acm_panel_commercial_preview": acm_panel_commercial_preview,
 		"internal_cost_trace": _material_trace(material_breakdown, material_warning),
 		"estimated_internal_cost_trace": _estimated_internal_cost_trace(internal_preview),

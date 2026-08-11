@@ -433,6 +433,9 @@ describe("IntakeV6FinalConfigurationSummary — Ofertă client (product breakdow
     expect(screen.getByTestId("intake-v6-offer-product-row-acm_panel")).toHaveTextContent(
       "ACM_PANEL_MOUNTING_RATE_MISSING",
     );
+    expect(screen.getByTestId("intake-v6-offer-product-row-acm_panel")).toHaveTextContent(
+      /nu este Ofertă client/i,
+    );
     expect(screen.queryByTestId("intake-v6-offer-total")).not.toBeInTheDocument();
   });
 

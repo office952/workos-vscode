@@ -98,11 +98,14 @@ function OfferProductBreakdownList({ products }: { products: OfferProductRow[] }
 					className="rounded border border-wo-border-strong/60 bg-wo-surface-input/40 px-2.5 py-2"
 					data-testid={`intake-v6-offer-product-row-${product.productKey}`}
 					data-blocked={product.blocked ? "true" : "false"}
+					data-composition-only={product.blocked ? "true" : "false"}
 				>
 					<div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
 						<span className="text-[12px] font-medium text-wo-text-secondary">{product.label}</span>
 						<span className="text-[11px] text-wo-text-muted">
-							{offerSubtotalLabel(product.productKey, product.label)}
+							{product.blocked
+								? "Subtotal produs (compoziție parțială)"
+								: offerSubtotalLabel(product.productKey, product.label)}
 						</span>
 					</div>
 					{product.amounts.length > 0 ? (
@@ -113,7 +116,16 @@ function OfferProductBreakdownList({ products }: { products: OfferProductRow[] }
 									className="flex items-baseline justify-between gap-2 text-[12px]"
 								>
 									<span className="text-wo-text-dim">{amount.currency}</span>
-									<span className="tabular-nums text-wo-text-primary">
+									<span
+										className={`tabular-nums ${
+											product.blocked ? "text-wo-text-muted" : "text-wo-text-primary"
+										}`}
+										data-testid={
+											product.blocked
+												? "intake-v6-offer-product-composition-amount"
+												: "intake-v6-offer-product-amount"
+										}
+									>
 										{formatOfferMoney(amount.subtotal, amount.currency)}
 									</span>
 								</li>
@@ -123,8 +135,11 @@ function OfferProductBreakdownList({ products }: { products: OfferProductRow[] }
 						<p className="mt-1 text-[11px] text-wo-text-muted">Subtotal indisponibil</p>
 					)}
 					{product.blocked ? (
-						<p className="mt-1 text-[11px] leading-relaxed text-rose-200">
-							Blocat comercial
+						<p
+							className="mt-1 text-[11px] leading-relaxed text-rose-200"
+							data-testid="intake-v6-offer-product-blocked-note"
+						>
+							Blocat comercial — nu este Ofertă client
 							{product.blockerCodes.length > 0 ? `: ${product.blockerCodes.join(", ")}` : ""}
 						</p>
 					) : null}
@@ -203,34 +218,41 @@ export default function IntakeV6FinalConfigurationSummary({
 					: null;
 		const netAmount = totals?.subtotal_net;
 		const vatAmount = totals?.vat_amount;
-		const grossAmount = handoff.pricedQuoteDryRunTotal;
-		const fallbackTotal: OfferTotalState =
-			reportedCurrency != null && grossAmount != null && Number.isFinite(grossAmount)
-				? {
-						kind: "available",
-						amount: grossAmount,
-						currency: reportedCurrency,
-						partial: false,
-						pendingLineCodes: [],
-					}
-				: {
-						kind: "unavailable",
-						reasonCode: null,
-						message: OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE,
-					};
-		// Authoritative Ofertă client gross = commercial_totals (post-adjustment), not CPP complete_offer_total.
-		const adjustedHeadline: OfferTotalState =
+		const readiness = dryRun.offer_composition_readiness;
+		const commercialCompositionComplete = readiness?.commercial_composition_complete;
+		const dryRunReady = dryRun.pricing_status === "V6_PRICED_DRY_RUN_READY";
+		const officialGrossOk =
+			dryRunReady &&
+			commercialCompositionComplete !== false &&
+			readiness?.canonical_gate !== "blocked" &&
 			reportedCurrency != null &&
 			typeof totals?.total_gross === "number" &&
-			Number.isFinite(totals.total_gross)
-				? {
-						kind: "available",
-						amount: totals.total_gross,
-						currency: reportedCurrency,
-						partial: false,
-						pendingLineCodes: [],
-					}
-				: fallbackTotal;
+			Number.isFinite(totals.total_gross);
+		// Authoritative Ofertă client gross = commercial_totals only when dry-run READY.
+		// Never promote composition-blocked CPP into a final offer headline.
+		const compositionUnavailable: OfferTotalState =
+			summary?.total.kind === "unavailable"
+				? summary.total
+				: {
+						kind: "unavailable",
+						reasonCode: readiness?.primary_blocker_code ?? null,
+						message:
+							readiness?.primary_blocker_message?.trim() ||
+							OFFER_TOTAL_GENERIC_UNAVAILABLE_MESSAGE,
+					};
+		const adjustedHeadline: OfferTotalState =
+			summary?.total.kind === "unavailable"
+				? summary.total
+				: officialGrossOk
+					? {
+							kind: "available",
+							amount: totals!.total_gross as number,
+							currency: reportedCurrency as string,
+							partial: summary?.total.kind === "available" ? summary.total.partial : false,
+							pendingLineCodes:
+								summary?.total.kind === "available" ? summary.total.pendingLineCodes : [],
+						}
+					: compositionUnavailable;
 		return {
 			products: summary?.products ?? [],
 			total: adjustedHeadline,
@@ -331,7 +353,9 @@ export default function IntakeV6FinalConfigurationSummary({
 							<div className="mb-2">
 								<h3 className={v6.sectionTitle}>Ofertă client</h3>
 								<p className="mt-1 text-[11px] text-slate-400">
-									Subtotaluri pe produs și total comercial din backend — fără comandă sau stoc.
+									{offerCard.total.kind === "unavailable"
+										? "Totalul Ofertă client lipsește până la compoziție comercială completă. Subtotalurile de produs, dacă apar, sunt doar informație de compoziție — nu Ofertă client."
+										: "Subtotaluri pe produs și total comercial din backend — fără comandă sau stoc."}
 								</p>
 							</div>
 
