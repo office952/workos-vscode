@@ -126,6 +126,27 @@ async def _run_registry_seeds_without_workforce() -> dict[str, Any]:
     return results
 
 
+async def _seed_company_commercial_settings(db) -> dict[str, Any]:
+    """Explicit demo FX + VAT — never rely on Settings GET inventing 5.0."""
+    from services.company_commercial_settings_service import (
+        DEFAULT_EUR_TO_RON_RATE,
+        DEFAULT_VAT_PCT,
+        CompanyCommercialSettingsService,
+        ensure_eur_to_ron_column_explicit,
+    )
+
+    await ensure_eur_to_ron_column_explicit(db)
+    data = await CompanyCommercialSettingsService(db).update_settings(
+        default_vat_pct=DEFAULT_VAT_PCT,
+        eur_to_ron_rate=DEFAULT_EUR_TO_RON_RATE,
+    )
+    return {
+        "default_vat_pct": data["default_vat_pct"],
+        "eur_to_ron_rate": data["eur_to_ron_rate"],
+        "demo_fx_explicitly_seeded": True,
+    }
+
+
 async def _seed_synthetic_clients(db) -> list[dict[str, Any]]:
     from models.clients import Clients
     from sqlalchemy import select
@@ -747,6 +768,7 @@ async def run_atoms_demo_seed() -> dict[str, Any]:
         logger.warning("metadata.create_all (post-registry): %s", exc)
 
     async with db_manager.async_session_maker() as db:
+        summary["commercial_settings"] = await _seed_company_commercial_settings(db)
         summary["clients"] = await _seed_synthetic_clients(db)
         summary["employees"] = await _seed_synthetic_employees(db)
 

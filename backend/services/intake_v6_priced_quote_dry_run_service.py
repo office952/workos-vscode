@@ -11,7 +11,10 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.commercial_price_proposal_service import CommercialPriceProposalService
-from services.company_commercial_settings_service import get_default_vat_pct, get_eur_to_ron_rate
+from services.company_commercial_settings_service import (
+	get_default_vat_pct,
+	resolve_configured_eur_to_ron_rate,
+)
 from services.estimated_internal_cost_service import EstimatedInternalCostService
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
 from services.intake_v6_offer_scope_live_calc_service import (
@@ -776,17 +779,23 @@ async def build_intake_v6_priced_quote_dry_run(
 		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	if internal_cost_total is not None or eic_internal_total is not None:
-		eur_to_ron_rate = float(await get_eur_to_ron_rate(db))
+		# Official commercial totals do not need FX. Diagnostic cost-plus is RON-only
+		# and must not invent DEFAULT_EUR_TO_RON_RATE when FX is unset.
+		fx_rate, fx_err = await resolve_configured_eur_to_ron_rate(db)
 		diagnostic_base = internal_cost_total if internal_cost_total is not None else eic_internal_total
-		if diagnostic_base is not None:
+		if diagnostic_base is not None and fx_rate is not None:
 			diagnostic_cost_plus = _build_cost_plus_totals(
 				internal_cost_total=diagnostic_base,
-				eur_to_ron_rate=eur_to_ron_rate,
+				eur_to_ron_rate=float(fx_rate),
 				commercial_inputs=commercial_inputs,
 			)
 			diagnostic_cost_plus["diagnostic_only"] = True
 			diagnostic_cost_plus["td_id"] = TD_W3_V6_DIAG_COST_PLUS
 			diagnostic_cost_plus["canonical_authority"] = V6_OFFICIAL_COMMERCIAL_AUTHORITY
+		elif diagnostic_base is not None and fx_err is not None:
+			warnings.append(
+				f"diagnostic_cost_plus_unavailable:{fx_err}"
+			)
 
 	pricing_status = V6_PRICED_DRY_RUN_BLOCKED if blockers else V6_PRICED_DRY_RUN_READY
 	acm_panel_commercial_preview = _build_acm_panel_commercial_preview(

@@ -2,15 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 
 import { getCompanyCommercialSettings } from "@/api/companyCommercialSettings";
 import {
-  DEFAULT_EUR_TO_RON_RATE,
   DEFAULT_VAT_PCT,
-  normalizeEurToRonRate,
   normalizeVatPct,
+  parseConfiguredEurToRonRate,
 } from "@/lib/companyCommercialSettings";
 
 export function useCompanyCommercialSettings(enabled = true) {
   const [vatPct, setVatPct] = useState<number>(DEFAULT_VAT_PCT);
-  const [eurToRonRate, setEurToRonRate] = useState<number>(DEFAULT_EUR_TO_RON_RATE);
+  const [eurToRonRate, setEurToRonRate] = useState<number | null>(null);
+  const [fxConfigured, setFxConfigured] = useState(false);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,11 +21,14 @@ export function useCompanyCommercialSettings(enabled = true) {
     try {
       const data = await getCompanyCommercialSettings();
       setVatPct(normalizeVatPct(data.default_vat_pct));
-      setEurToRonRate(normalizeEurToRonRate(data.eur_to_ron_rate));
+      const rate = parseConfiguredEurToRonRate(data.eur_to_ron_rate);
+      setEurToRonRate(rate);
+      setFxConfigured(rate != null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load commercial settings");
       setVatPct(DEFAULT_VAT_PCT);
-      setEurToRonRate(DEFAULT_EUR_TO_RON_RATE);
+      setEurToRonRate(null);
+      setFxConfigured(false);
     } finally {
       setLoading(false);
     }
@@ -35,5 +38,5 @@ export function useCompanyCommercialSettings(enabled = true) {
     reload();
   }, [reload]);
 
-  return { vatPct, eurToRonRate, loading, error, reload };
+  return { vatPct, eurToRonRate, fxConfigured, loading, error, reload };
 }

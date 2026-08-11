@@ -331,7 +331,8 @@ function CompanyCommercialVatPanel() {
 }
 
 function CompanyCommercialFxPanel() {
-  const [rate, setRate] = useState(String(DEFAULT_EUR_TO_RON_RATE));
+  const [rate, setRate] = useState("");
+  const [configured, setConfigured] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -343,7 +344,13 @@ function CompanyCommercialFxPanel() {
     getCompanyCommercialSettings()
       .then((data) => {
         if (!alive) return;
-        setRate(String(data.eur_to_ron_rate));
+        if (data.eur_to_ron_rate != null && Number(data.eur_to_ron_rate) > 0) {
+          setRate(String(data.eur_to_ron_rate));
+          setConfigured(true);
+        } else {
+          setRate("");
+          setConfigured(false);
+        }
       })
       .catch((err: unknown) => {
         if (!alive) return;
@@ -368,7 +375,10 @@ function CompanyCommercialFxPanel() {
     setSaving(true);
     try {
       const data = await updateCompanyCommercialSettings({ eur_to_ron_rate: parsed });
-      setRate(String(data.eur_to_ron_rate));
+      if (data.eur_to_ron_rate != null) {
+        setRate(String(data.eur_to_ron_rate));
+        setConfigured(true);
+      }
       setSuccess("Curs EUR/RON salvat. Comenzile noi vor folosi această valoare.");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Eroare la salvare curs EUR/RON");
@@ -385,8 +395,17 @@ function CompanyCommercialFxPanel() {
       </div>
       <p className="text-[11px] text-muted-foreground mb-4">
         Curs EUR/RON folosit la conversia ofertelor în comenzi. Momentan se completează manual.
-        Preluarea automată a cursului va fi tratată separat.
+        Preluarea automată a cursului va fi tratată separat. Fără curs configurat, conversia
+        EUR→RON este blocată (nu se folosește automat {DEFAULT_EUR_TO_RON_RATE}).
       </p>
+      {!loading && !configured && (
+        <p
+          className="text-[11px] text-amber-700 dark:text-amber-300 mb-3"
+          data-testid="settings-eur-to-ron-missing"
+        >
+          Cursul EUR/RON nu este configurat.
+        </p>
+      )}
       <div className="flex flex-wrap items-end gap-3">
         <div>
           <label className={chromeForm.label}>
@@ -398,6 +417,7 @@ function CompanyCommercialFxPanel() {
             step={0.0001}
             disabled={loading || saving}
             value={rate}
+            placeholder={`ex. ${DEFAULT_EUR_TO_RON_RATE}`}
             onChange={(e) => setRate(e.target.value)}
             className={`w-40 ${chromeForm.input}`}
             data-testid="settings-eur-to-ron-rate"

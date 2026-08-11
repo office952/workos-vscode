@@ -4,7 +4,6 @@ import type {
   IntakeV6MaterialQuantityRow,
   IntakeV6PricingInputPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
-import { DEFAULT_EUR_TO_RON_RATE } from "@/lib/companyCommercialSettings";
 import { splitIntakeV6MaterialBreakdownOperationRows } from "@/lib/intakeV6/intakeV6OperatorUiDisplay";
 
 export interface IntakeV6OfferCommercialInputs {
@@ -47,7 +46,8 @@ export interface IntakeV6OfferModel {
   internalEstimateTotal: number | null;
   internalEstimateCurrency: string;
   offerCurrency: "RON";
-  eurToRonRate: number;
+  /** Null when company FX is not configured — never invent 5.0. */
+  eurToRonRate: number | null;
   productionBaseInternal: number;
   productionBaseInternalCurrency: string;
 }
@@ -135,9 +135,10 @@ function roundOfferMoney(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
 
-export function normalizeIntakeV6EurToRonRate(rate: number | null | undefined): number {
+/** Configured FX only — null when unset (never invent DEFAULT_EUR_TO_RON_RATE). */
+export function normalizeIntakeV6EurToRonRate(rate: number | null | undefined): number | null {
   if (rate == null || !Number.isFinite(rate) || rate <= 0) {
-    return DEFAULT_EUR_TO_RON_RATE;
+    return null;
   }
   return rate;
 }
@@ -152,13 +153,18 @@ export function normalizeIntakeV6CurrencyCode(raw: string | null | undefined, fa
 export function convertIntakeV6InternalCostToRon(
   amount: number,
   sourceCurrency: string | null | undefined,
-  eurToRonRate: number,
+  eurToRonRate: number | null | undefined,
 ): number {
   if (!Number.isFinite(amount)) return 0;
   const currency = normalizeIntakeV6CurrencyCode(sourceCurrency);
   if (currency === "RON") return roundOfferMoney(amount);
   if (currency === "EUR") {
-    return roundOfferMoney(amount * normalizeIntakeV6EurToRonRate(eurToRonRate));
+    const rate = normalizeIntakeV6EurToRonRate(eurToRonRate);
+    if (rate == null) {
+      // No silent 5.0 — leave EUR magnitude unconverted when FX is unset.
+      return roundOfferMoney(amount);
+    }
+    return roundOfferMoney(amount * rate);
   }
   return roundOfferMoney(amount);
 }
@@ -177,7 +183,7 @@ function aggregateCostBucket(
 function convertOfferCostLinesToRon(
   lines: IntakeV6OfferCostLine[],
   sourceCurrency: string,
-  eurToRonRate: number,
+  eurToRonRate: number | null,
 ): IntakeV6OfferCostLine[] {
   return lines.map((line) => ({
     ...line,

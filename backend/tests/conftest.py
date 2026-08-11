@@ -50,7 +50,13 @@ def pytest_configure(config):
 
 def _seed_reference_data(fixture: IsolatedDBFixture):
     """Seed reference/lookup tables required by business logic validators."""
+    from models.company_commercial_settings import CompanyCommercialSettings
     from models.product_families import Product_families
+    from services.company_commercial_settings_service import (
+        DEFAULT_EUR_TO_RON_RATE,
+        DEFAULT_VAT_PCT,
+        ensure_eur_to_ron_column_explicit,
+    )
 
     async def _do_seed():
         async with fixture.session_maker() as session:
@@ -79,6 +85,14 @@ def _seed_reference_data(fixture: IsolatedDBFixture):
                 ),
             ]
             session.add_all(families)
+            # Explicit FX seed for money paths — not write-on-read fallback.
+            await ensure_eur_to_ron_column_explicit(session)
+            session.add(
+                CompanyCommercialSettings(
+                    default_vat_pct=DEFAULT_VAT_PCT,
+                    eur_to_ron_rate=DEFAULT_EUR_TO_RON_RATE,
+                )
+            )
             await session.commit()
 
     fixture.run(_do_seed())

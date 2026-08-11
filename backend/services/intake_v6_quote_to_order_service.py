@@ -17,7 +17,7 @@ from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from models.quotes import Quotes
 from schemas.quote_snapshot_v2 import QuoteSnapshotV2
 from schemas.auth import UserResponse
-from services.company_commercial_settings_service import get_eur_to_ron_rate
+from services.company_commercial_settings_service import require_configured_eur_to_ron_rate
 from services.intake_v3_guarded_convert_to_order_service import (
     IV3_ORDER_STATUS_LOCKED,
     check_existing_order_for_iv3_quote,
@@ -246,7 +246,7 @@ async def _build_v6_order_financial_snapshot(
         _raise_blocked("FINAL_PRICE_MISSING", "Final commercial price is not present on the quote.")
 
     try:
-        eur_to_ron_rate = await get_eur_to_ron_rate(db)
+        eur_to_ron_rate = await require_configured_eur_to_ron_rate(db)
         currency_handoff = convert_quote_totals_to_order_base(
             gross_amount=gross_total,
             net_amount=net_total,

@@ -23,7 +23,7 @@ from schemas.intake_v3 import (
     IntakeV3ConvertToOrderState,
     IntakeV3OrderSnapshotPayload,
 )
-from services.company_commercial_settings_service import get_eur_to_ron_rate
+from services.company_commercial_settings_service import require_configured_eur_to_ron_rate
 from services.intake_v3_quote_linkage_utils import (
     CONVERT_DECISION_JSON_KEY,
     IV3_ACCEPTED_STATUS,
@@ -265,7 +265,7 @@ async def create_or_delegate_order_from_iv3_quote(
         _raise_blocked("FINAL_PRICE_MISSING", "Final commercial price is not present on the quote.")
 
     try:
-        eur_to_ron_rate = await get_eur_to_ron_rate(db)
+        eur_to_ron_rate = await require_configured_eur_to_ron_rate(db)
         currency_handoff = convert_quote_totals_to_order_base(
             gross_amount=gross_total,
             net_amount=net_total,
@@ -274,7 +274,12 @@ async def create_or_delegate_order_from_iv3_quote(
         )
     except ValueError as exc:
         code = str(exc)
-        if code in {"eur_to_ron_rate_missing", "eur_to_ron_rate_invalid"}:
+        if code in {
+            "eur_to_ron_rate_missing",
+            "eur_to_ron_rate_invalid",
+            "eur_to_ron_column_unavailable",
+            "company_commercial_settings_row_missing",
+        }:
             _raise_blocked(
                 code.upper(),
                 "Set EUR/RON rate in Settings before converting IV3 quote to order.",

@@ -97,6 +97,8 @@ def _commercial_preview(*, subtotal: float | None = 1000.0, status: str = "ready
         status=status,
         subtotal_commercial=subtotal,
         commercial_total=subtotal,
+        currency="EUR",
+        presentation_currency="EUR",
         quote_ready_for_commercial_review=status == "ready",
         warnings=[],
         commercial_blockers=[],
@@ -143,14 +145,14 @@ def patch_dry_run_dependencies(monkeypatch):
         return 19.0
 
     async def fake_eur(_db):
-        return 5.0
+        return 5.0, None
 
     monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
     monkeypatch.setattr(dry_run, "_parse_payload", fake_parse_payload)
     monkeypatch.setattr(dry_run, "build_v6_pricing_input_preview", lambda **_kwargs: _pricing_preview())
     monkeypatch.setattr(dry_run, "get_material_breakdown_for_workspace", fake_material_breakdown)
     monkeypatch.setattr(dry_run, "get_default_vat_pct", fake_vat)
-    monkeypatch.setattr(dry_run, "get_eur_to_ron_rate", fake_eur)
+    monkeypatch.setattr(dry_run, "resolve_configured_eur_to_ron_rate", fake_eur)
     monkeypatch.setattr(dry_run, "CommercialPriceProposalService", FakeCommercialPriceProposalService)
     monkeypatch.setattr(dry_run, "EstimatedInternalCostService", FakeEstimatedInternalCostService)
     FakeCommercialPriceProposalService.preview = _commercial_preview()
@@ -178,7 +180,7 @@ async def test_dry_run_returns_non_zero_totals_when_backend_pricing_available() 
     assert result["commercial_totals"]["vat_rate"] == 19.0
     assert result["commercial_totals"]["vat_amount"] == 190.0
     assert result["commercial_totals"]["total_gross"] == 1190.0
-    assert result["commercial_totals"]["currency"] == "RON"
+    assert result["commercial_totals"]["currency"] == "EUR"
     assert result["commercial_line_items"]
     assert result["internal_cost_trace"]["estimated_cost_total"] == 782.38
     assert result["pricing_authority"] == dry_run.V6_OFFICIAL_COMMERCIAL_AUTHORITY

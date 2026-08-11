@@ -459,6 +459,14 @@ export const SETTINGS_OWNERSHIP_ROWS: readonly SettingsOwnershipRow[] = [
     statusRo: "CODE_ENFORCED (workspace VAT not authority)",
   },
   {
+    setting: "EUR/RON FX",
+    category: "company",
+    currentOwnerRo: "Company commercial settings",
+    runtimeSourceRo: "company_commercial_settings.eur_to_ron_rate",
+    consumerRo: "Quote→Order / profitability_fx_v1 / Logo·CPP",
+    statusRo: "CODE_ENFORCED (fail-closed when unset; no silent 5.0)",
+  },
+  {
     setting: "Markup / discount operator",
     category: "workspace",
     currentOwnerRo: "Intake finish_setup.commercial_inputs",

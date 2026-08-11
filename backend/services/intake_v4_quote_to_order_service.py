@@ -18,7 +18,7 @@ from models.intake_v4_workspace import IntakeV4WorkspaceRecord
 from models.orders import Orders
 from models.quotes import Quotes
 from schemas.auth import UserResponse
-from services.company_commercial_settings_service import get_eur_to_ron_rate
+from services.company_commercial_settings_service import require_configured_eur_to_ron_rate
 from services.intake_v3_guarded_convert_to_order_service import (
     IV3_ORDER_STATUS_LOCKED,
     check_existing_order_for_iv3_quote,
@@ -819,7 +819,7 @@ async def convert_v4_quote_to_order(
     plans_before = await db.scalar(select(func.count()).select_from(ExecutionPlan))
 
     try:
-        eur_to_ron_rate = await get_eur_to_ron_rate(db)
+        eur_to_ron_rate = await require_configured_eur_to_ron_rate(db)
         currency_handoff = convert_quote_totals_to_order_base(
             gross_amount=gross_total,
             net_amount=net_total,

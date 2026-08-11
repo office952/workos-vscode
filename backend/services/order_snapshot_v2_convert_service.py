@@ -27,7 +27,7 @@ from schemas.order_snapshot_v2 import (
     ProfitabilityFxV1Stamp,
 )
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry, QuoteSnapshotV2
-from services.company_commercial_settings_service import get_eur_to_ron_rate
+from services.company_commercial_settings_service import require_configured_eur_to_ron_rate
 from services.intake_v3_guarded_convert_to_order_service import (
     IV3_ORDER_STATUS_LOCKED,
     check_existing_order_for_iv3_quote,
@@ -438,13 +438,14 @@ async def convert_accepted_quote_snapshot_v2_to_order(
     # Policy A: freeze company EUR→RON once at convert for Profitability (not commercial reprice).
     converted_at_fx = datetime.now(timezone.utc).isoformat()
     try:
-        eur_to_ron = float(await get_eur_to_ron_rate(db))
+        eur_to_ron = float(await require_configured_eur_to_ron_rate(db))
         if eur_to_ron <= 0:
-            raise ValueError("eur_to_ron_rate must be greater than 0")
+            raise ValueError("eur_to_ron_rate_invalid")
         profitability_fx_v1 = ProfitabilityFxV1Stamp(
             policy="A",
             eur_to_ron_rate=round(eur_to_ron, 4),
             frozen_at=converted_at_fx,
+            rate_source="company_commercial_settings.eur_to_ron_rate",
         )
     except Exception as exc:
         _raise_blocked(

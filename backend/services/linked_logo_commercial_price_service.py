@@ -248,30 +248,16 @@ async def _load_registry_operation_rate(
 
 
 async def _canonical_eur_to_ron_rate(db: AsyncSession) -> tuple[float | None, str | None]:
-    """Read persisted company FX without inventing/bootstrapping a diagnostic rate.
+    """Shared fail-closed FX authority (company_commercial_settings.eur_to_ron_rate)."""
+    from services.company_commercial_settings_service import resolve_configured_eur_to_ron_rate
 
-    Unlike get_eur_to_ron_rate(), this path fails closed when eur_to_ron_rate is NULL.
-    It does not write DEFAULT_EUR_TO_RON_RATE into the commercial logo binding path.
-    """
-    from models.company_commercial_settings import CompanyCommercialSettings
-
-    row = (
-        await db.execute(
-            select(CompanyCommercialSettings).order_by(CompanyCommercialSettings.id.asc()).limit(1)
-        )
-    ).scalar_one_or_none()
-    if row is None:
-        return None, "company_commercial_settings_row_missing"
-    rate = getattr(row, "eur_to_ron_rate", None)
+    rate, err = await resolve_configured_eur_to_ron_rate(db)
     if rate is None:
-        return None, "eur_to_ron_rate_unset"
-    try:
-        value = float(rate)
-    except (TypeError, ValueError):
-        return None, "eur_to_ron_rate_invalid"
-    if value <= 0:
-        return None, "eur_to_ron_rate_invalid"
-    return value, None
+        # Preserve prior logo error token for unset when row exists without rate.
+        if err == "eur_to_ron_rate_missing":
+            return None, "eur_to_ron_rate_unset"
+        return None, err or "eur_to_ron_rate_unset"
+    return rate, None
 
 
 async def _normalize_unit_price_to_cpp_ron(

@@ -3,6 +3,7 @@ import {
   applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   convertIntakeV6InternalCostToRon,
+  normalizeIntakeV6EurToRonRate,
   resolveIntakeV6OfferCommercialDefaults,
   type IntakeV6OfferCommercialInputs,
 } from "./intakeV6OfferCalculator";
@@ -63,6 +64,11 @@ describe("intakeV6OfferCalculator currency", () => {
   it("converts EUR internal costs to RON before commercial markup", () => {
     expect(convertIntakeV6InternalCostToRon(100, "EUR", 5)).toBe(500);
     expect(convertIntakeV6InternalCostToRon(100, "RON", 5)).toBe(100);
+  });
+
+  it("does not invent FX 5.0 when rate is unset", () => {
+    expect(convertIntakeV6InternalCostToRon(100, "EUR", null)).toBe(100);
+    expect(normalizeIntakeV6EurToRonRate(null)).toBeNull();
   });
 
   it("builds offer totals in RON using company EUR/RON rate", () => {

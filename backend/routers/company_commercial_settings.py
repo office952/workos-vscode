@@ -1,4 +1,4 @@
-"""Company commercial settings API — canonical VAT % for quotes."""
+"""Company commercial settings API — canonical VAT % and EUR/RON rate."""
 
 import logging
 
@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from schemas.auth import UserResponse
 from services.company_commercial_settings_service import (
+    EUR_TO_RON_COLUMN_UNAVAILABLE,
     CompanyCommercialSettingsService,
     validate_eur_to_ron_rate,
     validate_vat_pct,
@@ -31,7 +32,24 @@ class CompanyCommercialSettingsData(BaseModel):
 
 class CompanyCommercialSettingsResponse(BaseModel):
     default_vat_pct: float
-    eur_to_ron_rate: float
+    # Null when FX is not explicitly configured (not a silent 5.0).
+    eur_to_ron_rate: float | None = None
+
+
+def _schema_http_error(exc: ValueError) -> HTTPException | None:
+    if str(exc) != EUR_TO_RON_COLUMN_UNAVAILABLE:
+        return None
+    return HTTPException(
+        status_code=503,
+        detail={
+            "error": EUR_TO_RON_COLUMN_UNAVAILABLE,
+            "message": (
+                "Coloana cursului EUR/RON lipsește din baza de date. "
+                "Rulați bootstrap-ul explicit de schemă (demo/maintenance), "
+                "nu citirea Setărilor."
+            ),
+        },
+    )
 
 
 @router.get("", response_model=CompanyCommercialSettingsResponse)
@@ -40,7 +58,13 @@ async def get_company_commercial_settings(
     _user: UserResponse = Depends(require_permission("settings.view")),
 ):
     svc = CompanyCommercialSettingsService(db)
-    data = await svc.get_settings()
+    try:
+        data = await svc.get_settings()
+    except ValueError as exc:
+        mapped = _schema_http_error(exc)
+        if mapped is not None:
+            raise mapped from exc
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
     return CompanyCommercialSettingsResponse(**data)
 
 
@@ -58,8 +82,14 @@ async def update_company_commercial_settings(
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     svc = CompanyCommercialSettingsService(db)
-    data = await svc.update_settings(
-        default_vat_pct=body.default_vat_pct,
-        eur_to_ron_rate=body.eur_to_ron_rate,
-    )
+    try:
+        data = await svc.update_settings(
+            default_vat_pct=body.default_vat_pct,
+            eur_to_ron_rate=body.eur_to_ron_rate,
+        )
+    except ValueError as exc:
+        mapped = _schema_http_error(exc)
+        if mapped is not None:
+            raise mapped from exc
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     return CompanyCommercialSettingsResponse(**data)

@@ -16,7 +16,7 @@ from services.orders import OrdersService
 from services.quotes import QuotesService
 from services.order_snapshot_service import OrderSnapshotService
 from services.order_output_snapshot_reference_service import OrderOutputSnapshotReferenceService
-from services.company_commercial_settings_service import get_eur_to_ron_rate
+from services.company_commercial_settings_service import require_configured_eur_to_ron_rate
 from services.order_currency_conversion_service import (
     convert_quote_totals_to_order_base,
     extract_currency_from_quote_snapshot,
@@ -1003,7 +1003,7 @@ async def create_order_from_quote(
         order_snapshot_dict[key] = value
     source_currency = extract_currency_from_quote_snapshot(snapshot)
     try:
-        eur_to_ron_rate = await get_eur_to_ron_rate(db)
+        eur_to_ron_rate = await require_configured_eur_to_ron_rate(db)
         currency_handoff = convert_quote_totals_to_order_base(
             gross_amount=float(order_snapshot.final_price.gross),
             net_amount=float(order_snapshot.final_price.net),
@@ -1012,7 +1012,12 @@ async def create_order_from_quote(
         )
     except ValueError as exc:
         code = str(exc)
-        if code in {"eur_to_ron_rate_missing", "eur_to_ron_rate_invalid"}:
+        if code in {
+            "eur_to_ron_rate_missing",
+            "eur_to_ron_rate_invalid",
+            "eur_to_ron_column_unavailable",
+            "company_commercial_settings_row_missing",
+        }:
             raise HTTPException(
                 status_code=422,
                 detail={

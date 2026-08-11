@@ -4,7 +4,8 @@ const apiBase = () => `${getAPIBaseURL()}/api/v1`;
 
 export interface CompanyCommercialSettingsDTO {
   default_vat_pct: number;
-  eur_to_ron_rate: number;
+  /** Null when FX is not explicitly configured. */
+  eur_to_ron_rate: number | null;
 }
 
 async function parseError(res: Response): Promise<string> {
@@ -23,7 +24,7 @@ export async function getCompanyCommercialSettings(): Promise<CompanyCommercialS
 }
 
 export async function updateCompanyCommercialSettings(
-  payload: CompanyCommercialSettingsDTO
+  payload: Partial<CompanyCommercialSettingsDTO>
 ): Promise<CompanyCommercialSettingsDTO> {
   const res = await fetch(`${apiBase()}/company-commercial-settings`, {
     method: "PUT",
