@@ -10,7 +10,7 @@
 - Branch: `feat/f7i-owner-rate-activation`
 - HEAD before: `9ad34e02`
 - HEAD after (code): `36c499de`
-- Tip (docs note): `01fc8189`
+- Tip: see latest docs commit on branch (ahead of origin; PUSH=NO)
 
 ## C. ROOT CAUSE
 
@@ -39,7 +39,7 @@ Remains product composition base.
 
 ## I. COMMERCIAL_TOTALS
 
-Remains official adjusted Ofert? money; empty when blocked.
+Remains official adjusted Oferta money; empty when blocked.
 
 ## J. STALE TOTAL INVALIDATION
 
@@ -91,7 +91,8 @@ See `RUNTIME_PROOF.md` + screenshot.
 
 ## T. COMMIT
 
-Commit: `36c499de` ? fix(intake-v6): align confirm gate with offer integrity
+- Code: `36c499de` ? `fix(intake-v6): align confirm gate with offer integrity`
+- Docs follow-ups on same branch (local only)
 
 PUSH = NO.
 
@@ -129,7 +130,7 @@ Owner-picked first P1 cluster (mounting or qty/backing). Societate deferred.
 | DB_SCHEMA_CHANGES | **0** |
 | PRICING_RULE_CHANGES | **0** |
 | PRODUCT_TRUTH_MUTATIONS | **0** |
-| TASK_ARTIFACTS_COMMITTED | **YES** (at commit) |
+| TASK_ARTIFACTS_COMMITTED | **YES** |
 | PUSH | **NO** |
 | FIRST_REMAINING_ROOT_CAUSE | P1 `MOUNTING_TEMPLATE_OR_SITE_COMMERCIAL_PATH` or `QTY_OR_BACKING_DEPTH_NO_CPP_DELTA` (Owner pick) |
 | NEXT_RECOMMENDED_BUILD | first Owner-chosen P1 cluster |
@@ -141,7 +142,7 @@ Owner-picked first P1 cluster (mounting or qty/backing). Societate deferred.
 - Current position: confirm-gate integrity after commercial-input authority closure
 - Direction fit: ~85%
 - Method: root-cause map ? derived readiness read-model ? FE honesty ? regressions ? evidence ? local commit
-- Impact Harta: Intake V6 Confirm / dry-run / Ofert? display boundary clarified
-- Impact Guvernan??: no new system; documentation of derived vs canonical gate
+- Impact Harta: Intake V6 Confirm / dry-run / Oferta display boundary clarified
+- Impact Guvernanta: no new system; documentation of derived vs canonical gate
 - Dead Pieces Check: no second FE readiness authority; no Oracal law rewrite
 - Forbidden Scope respected: **YES**
