@@ -8,7 +8,8 @@
 
 - Branch: `feat/f7i-owner-rate-activation`
 - HEAD before: `e276c9a0`
-- HEAD after: (see commit)
+- HEAD after: `17ae316f`
+- Commit: `17ae316f` — `fix(commercial): enforce explicit EUR RON authority`
 
 ## C. ROOT CAUSE
 
