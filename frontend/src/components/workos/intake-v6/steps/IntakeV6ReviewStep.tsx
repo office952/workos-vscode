@@ -206,6 +206,12 @@ import {
 import {
   isIntakeV6SelectorStatePendingSave,
 } from "@/lib/intakeV6/intakeV6FinishHydration";
+import { deriveIntakeV6OfferLifecycleStatus } from "@/lib/intakeV6/intakeV6OfferLifecycleStatus";
+import {
+  INTAKE_V6_COMMERCIAL_INPUTS_AUTOSAVE_MS,
+  resolveIntakeV6ReviewAutosaveDebounceMs,
+  type IntakeV6ReviewAutosavePolicy,
+} from "@/lib/intakeV6/intakeV6ReviewAutosavePolicy";
 import {
   readIntakeV6OfferCommercialInputs,
   resolveIntakeV6OfferCommercialDefaults,
@@ -319,9 +325,12 @@ function normalizeIntakeV6MountingTemplateMaterial(value: unknown): IntakeV6Moun
   return value === "paper" ? "paper" : "forex";
 }
 
-type ReviewAutosavePolicy = "short" | "long";
+type ReviewAutosavePolicy = IntakeV6ReviewAutosavePolicy;
 
 type ReviewPreviewRefreshState = Record<IntakeV6ReviewRefetchGroup, number>;
+
+/** Brief success flash after pricedQuote lands — not a persistent banner. */
+const OFFER_UPDATED_FLASH_MS = 1800;
 
 const INITIAL_REVIEW_PREVIEW_REFRESH: ReviewPreviewRefreshState = {
   breakdown: 0,
@@ -770,6 +779,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [preview, setPreview] = useState<IntakeV6TaskPreviewResponse | null>(null);
   const [pricingPreview, setPricingPreview] = useState<IntakeV6PricingInputPreviewResponse | null>(null);
   const [pricedQuoteDryRun, setPricedQuoteDryRun] = useState<IntakeV6PricedQuoteDryRunResponse | null>(null);
+  const [loadingPricedQuote, setLoadingPricedQuote] = useState(false);
+  const [pricedQuoteError, setPricedQuoteError] = useState<string | null>(null);
+  const [offerRecentlyUpdated, setOfferRecentlyUpdated] = useState(false);
   const persistedCommercialInputs = useMemo(() => {
     const finishRaw = payload?.finish_setup;
     if (finishRaw == null || typeof finishRaw !== "object" || Array.isArray(finishRaw)) {
@@ -958,6 +970,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   );
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const commercialSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const offerUpdatedFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const artworkSectionRef = useRef<HTMLDivElement | null>(null);
   const liveCalcRef = useRef<HTMLDivElement | null>(null);
   const diagnosticRef = useRef<HTMLDivElement | null>(null);
@@ -1061,6 +1074,28 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     [workspaceId, syncedCommercialInputs],
   );
   const localReviewEditsPending = selectorPendingSave || commercialInputsPendingSave || saving;
+
+  const offerLifecycle = useMemo(
+    () =>
+      deriveIntakeV6OfferLifecycleStatus({
+        selectorPendingSave,
+        commercialInputsPendingSave,
+        saving,
+        loadingPricedQuote,
+        saveError: error,
+        pricedQuoteError,
+        recentlyUpdated: offerRecentlyUpdated,
+      }),
+    [
+      selectorPendingSave,
+      commercialInputsPendingSave,
+      saving,
+      loadingPricedQuote,
+      error,
+      pricedQuoteError,
+      offerRecentlyUpdated,
+    ],
+  );
 
   const sheetQuoteOverrideFromPayload = useMemo(() => {
     const raw = payload?.sheet_quote_override;
@@ -1292,15 +1327,51 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
       setPricedQuoteDryRun(null);
+      setLoadingPricedQuote(false);
+      setPricedQuoteError(null);
       return;
     }
     let cancelled = false;
+    const userDrivenRefresh = previewRefresh.pricedQuote > 0;
+    setLoadingPricedQuote(true);
+    setPricedQuoteError(null);
+    if (userDrivenRefresh) {
+      setOfferRecentlyUpdated(false);
+      if (offerUpdatedFlashTimerRef.current) {
+        clearTimeout(offerUpdatedFlashTimerRef.current);
+        offerUpdatedFlashTimerRef.current = null;
+      }
+    }
     void getIntakeV6PricedQuoteDryRun(workspaceId)
       .then((response) => {
-        if (!cancelled) setPricedQuoteDryRun(response);
+        if (cancelled) return;
+        setPricedQuoteDryRun(response);
+        setPricedQuoteError(null);
+        if (userDrivenRefresh) {
+          setOfferRecentlyUpdated(true);
+          if (offerUpdatedFlashTimerRef.current) {
+            clearTimeout(offerUpdatedFlashTimerRef.current);
+          }
+          offerUpdatedFlashTimerRef.current = setTimeout(() => {
+            offerUpdatedFlashTimerRef.current = null;
+            setOfferRecentlyUpdated(false);
+          }, OFFER_UPDATED_FLASH_MS);
+        }
       })
-      .catch(() => {
-        if (!cancelled) setPricedQuoteDryRun(null);
+      .catch((err) => {
+        if (cancelled) return;
+        // Keep prior dry-run money when a refresh fails mid-session so we can mark it stale
+        // rather than inventing a blank "current" offer. Clear only on hard unmount/reset.
+        if (!userDrivenRefresh) {
+          setPricedQuoteDryRun(null);
+        }
+        setPricedQuoteError(
+          err instanceof Error ? err.message : "Actualizare ofertă eșuată.",
+        );
+        setOfferRecentlyUpdated(false);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPricedQuote(false);
       });
     return () => {
       cancelled = true;
@@ -1782,7 +1853,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     if (autosaveTimerRef.current) {
       clearTimeout(autosaveTimerRef.current);
     }
-    const debounceMs = pendingAutosavePolicyRef.current === "long" ? 1400 : 700;
+    const debounceMs = resolveIntakeV6ReviewAutosaveDebounceMs(pendingAutosavePolicyRef.current);
     autosaveTimerRef.current = setTimeout(() => {
       autosaveTimerRef.current = null;
       void saveCurrentFinish(true);
@@ -1800,6 +1871,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       if (commercialSaveTimerRef.current) {
         clearTimeout(commercialSaveTimerRef.current);
         commercialSaveTimerRef.current = null;
+      }
+      if (offerUpdatedFlashTimerRef.current) {
+        clearTimeout(offerUpdatedFlashTimerRef.current);
+        offerUpdatedFlashTimerRef.current = null;
       }
     };
   }, []);
@@ -2351,6 +2426,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               layout="bar"
               operatorCantPerimeterM={operatorCantPerimeterM}
               pendingSave={localReviewEditsPending}
+              offerLifecycle={offerLifecycle}
               letterGroups={effectiveLetterGroups}
               artworkFinishes={artworkFinishes}
               pricingPreview={pricingPreview}
@@ -3704,6 +3780,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 layout="rightPanel"
                 operatorCantPerimeterM={operatorCantPerimeterM}
                 pendingSave={localReviewEditsPending}
+                offerLifecycle={offerLifecycle}
                 letterGroups={effectiveLetterGroups}
                 artworkFinishes={artworkFinishes}
                 pricingPreview={pricingPreview}
@@ -3744,7 +3821,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     commercialSaveTimerRef.current = setTimeout(() => {
                       commercialSaveTimerRef.current = null;
                       void saveCurrentFinish(true, nextCommercialInputs);
-                    }, 700);
+                    }, INTAKE_V6_COMMERCIAL_INPUTS_AUTOSAVE_MS);
                   }}
                   eurToRonRate={eurToRonRate}
                   variant="commercialSliders"

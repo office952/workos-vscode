@@ -8,6 +8,7 @@ import type {
 } from "@/lib/intakeV6/intakeV6Api";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
 import { INTAKE_V6_PENDING_SAVE_BANNER } from "@/lib/intakeV6/intakeV6FinishHydration";
+import type { IntakeV6OfferLifecycleView } from "@/lib/intakeV6/intakeV6OfferLifecycleStatus";
 import { buildIntakeV6LiveMaterialsUsedRows } from "@/lib/intakeV6/intakeV6LiveMaterialsUsedDisplay";
 import {
   LIVE_CALC_BASE_FILTER_OPTIONS,
@@ -1024,6 +1025,7 @@ export default function IntakeV6LiveCalculationSummary({
   className,
   operatorCantPerimeterM,
   pendingSave = false,
+  offerLifecycle = null,
   letterGroups = [],
   artworkFinishes = [],
   pricingPreview = null,
@@ -1045,6 +1047,8 @@ export default function IntakeV6LiveCalculationSummary({
   className?: string;
   operatorCantPerimeterM?: number | null;
   pendingSave?: boolean;
+  /** Derived save/reprice lifecycle — preferred over the coarse pendingSave banner alone. */
+  offerLifecycle?: IntakeV6OfferLifecycleView | null;
   letterGroups?: IntakeV6LetterGroupFinish[];
   artworkFinishes?: IntakeV6ArtworkFinish[];
   pricingPreview?: IntakeV6PricingInputPreviewResponse | null;
@@ -1057,6 +1061,9 @@ export default function IntakeV6LiveCalculationSummary({
   suppressLetterCantChrome?: boolean;
   hideAcmPanelProvisional?: boolean;
 }) {
+  const lifecycleLabel = offerLifecycle?.label ?? null;
+  const offerStale = offerLifecycle?.offerStale ?? pendingSave;
+  const lifecyclePhase = offerLifecycle?.phase ?? (pendingSave ? "pending_save" : "idle");
   const currency = breakdown?.totals.currency ?? faceBackDraft?.currency ?? "EUR";
   const breakdownTotal = artworkOnlyBlocked
     ? null
@@ -1401,7 +1408,22 @@ export default function IntakeV6LiveCalculationSummary({
             </span>
           ) : null}
 
-          {pendingSave ? (
+          {lifecycleLabel ? (
+            <span
+              className={joinClassNames(
+                "text-[10px]",
+                lifecyclePhase === "updated"
+                  ? "text-emerald-700 dark:text-emerald-300"
+                  : lifecyclePhase === "save_failed" || lifecyclePhase === "reprice_failed"
+                    ? "text-red-700 dark:text-red-300"
+                    : "text-amber-800 dark:text-amber-200/90",
+              )}
+              data-testid="intake-v6-live-offer-lifecycle-inline"
+              data-lifecycle-phase={lifecyclePhase}
+            >
+              {lifecycleLabel}
+            </span>
+          ) : pendingSave ? (
             <span className="text-[10px] text-amber-800 dark:text-amber-200/90" data-testid="intake-v6-live-pending-save-inline">
               Salvare…
             </span>
@@ -1469,9 +1491,16 @@ export default function IntakeV6LiveCalculationSummary({
         </div>
 
         <div
-          className="rounded-md border border-emerald-500/25 bg-wo-surface-raised/85 px-2.5 py-2.5"
+          className={joinClassNames(
+            "rounded-md border bg-wo-surface-raised/85 px-2.5 py-2.5",
+            offerStale
+              ? "border-amber-500/30"
+              : "border-emerald-500/25",
+          )}
           data-testid="intake-v6-live-totals-summary"
           data-offer-hero="true"
+          data-offer-stale={offerStale ? "true" : "false"}
+          data-lifecycle-phase={lifecyclePhase}
         >
           {offerMoney ? (
             <>
@@ -1479,8 +1508,12 @@ export default function IntakeV6LiveCalculationSummary({
                 {INTAKE_V6_LIVE_CALC_GROSS_LABEL}
               </span>
               <span
-                className="mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-700 dark:text-emerald-200"
+                className={joinClassNames(
+                  "mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-700 dark:text-emerald-200",
+                  offerStale && "opacity-55",
+                )}
                 data-testid="intake-v6-live-offer-gross"
+                aria-busy={offerStale || undefined}
               >
                 {formatFaceBackPrepMoney(offerMoney.gross, offerMoney.currency)}
               </span>
@@ -1525,6 +1558,22 @@ export default function IntakeV6LiveCalculationSummary({
               </p>
             </div>
           )}
+          {lifecycleLabel ? (
+            <p
+              className={joinClassNames(
+                "mt-1.5 text-[10px] font-medium leading-snug",
+                lifecyclePhase === "updated"
+                  ? "text-emerald-700 dark:text-emerald-300"
+                  : lifecyclePhase === "save_failed" || lifecyclePhase === "reprice_failed"
+                    ? "text-red-700 dark:text-red-300"
+                    : "text-amber-800 dark:text-amber-200/90",
+              )}
+              data-testid="intake-v6-live-offer-lifecycle"
+              aria-live="polite"
+            >
+              {lifecycleLabel}
+            </p>
+          ) : null}
         </div>
 
         {showCompositionSection ? (
@@ -1633,7 +1682,8 @@ export default function IntakeV6LiveCalculationSummary({
           </div>
         )}
 
-        {pendingSave ? (
+        {/* Prefer compact hero lifecycle status; keep legacy banner only as fallback. */}
+        {pendingSave && !lifecycleLabel ? (
           <p
             className="mb-2 mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-900/90 dark:text-amber-100/90"
             data-testid="intake-v6-live-pending-save"

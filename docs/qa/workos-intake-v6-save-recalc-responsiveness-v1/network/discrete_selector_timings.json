@@ -1,0 +1,42 @@
+﻿{
+  "workspace_id": "09cea6e2-41d3-44a3-a862-add13b01af84",
+  "workspace_code": "IV6-7EF4715C",
+  "source_clone_of": "03a1da1e-003a-4139-9668-59ac6bcec812",
+  "OWNER_DEV_DB_MUTATIONS": 0,
+  "QA_CLONE_MUTATIONS": 1,
+  "discrete_face_651": {
+    "SELECT_TO_SAVE_START_MS": 125,
+    "SAVE_ACK_MS": 249,
+    "SAVE_TO_PRICED_QUOTE_START_MS": 14,
+    "PRICED_QUOTE_MS": 1535,
+    "TOTAL_CLICK_TO_CURRENT_PRICE_MS": 1923,
+    "puts": 1,
+    "production_task_gets": 0
+  },
+  "discrete_face_641": {
+    "SELECT_TO_SAVE_START_MS": 125,
+    "SAVE_ACK_MS": 74,
+    "PRICED_QUOTE_MS": 1877,
+    "TOTAL_CLICK_TO_CURRENT_PRICE_MS": 2089,
+    "lifecycle_seen": "Ofertă actualizată",
+    "puts": 1,
+    "production_task_gets": 0
+  },
+  "rapid_depth_30_60_80_100": {
+    "interval_ms": 40,
+    "putCount": 1,
+    "finalDepth": "100",
+    "production_task_gets": 0
+  },
+  "rapid_face_641_651_8500": {
+    "interval_ms": 40,
+    "putCount": 1,
+    "finalFace": "oracal_8500",
+    "production_task_gets": 0
+  },
+  "lifecycle_probe_depth_change": {
+    "lifecycle": "Se salvează…",
+    "phase": "pending_save",
+    "stale": "true"
+  }
+}

@@ -704,6 +704,64 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-pending-save")).toHaveTextContent(/modificari in curs/i);
   });
 
+  it("marks offer money stale under lifecycle and prefers compact status over banner", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        pendingSave
+        offerLifecycle={{
+          phase: "recalculating",
+          label: "Recalculez oferta…",
+          offerStale: true,
+        }}
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
+          commercial_totals: {
+            subtotal_net: 2500,
+            total_gross: 2975,
+            vat_rate: 19,
+            vat_amount: 475,
+            currency: "EUR",
+          },
+        }}
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-live-totals-summary")).toHaveAttribute("data-offer-stale", "true");
+    expect(screen.getByTestId("intake-v6-live-offer-lifecycle")).toHaveTextContent("Recalculez oferta…");
+    expect(screen.queryByTestId("intake-v6-live-pending-save")).not.toBeInTheDocument();
+  });
+
+  it("does not show Ofertă actualizată when lifecycle reports save failure", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        offerLifecycle={{
+          phase: "save_failed",
+          label: "Salvare eșuată",
+          offerStale: true,
+        }}
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
+          commercial_totals: {
+            subtotal_net: 2500,
+            total_gross: 2975,
+            vat_rate: 19,
+            vat_amount: 475,
+            currency: "EUR",
+          },
+        }}
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-live-offer-lifecycle")).toHaveTextContent("Salvare eșuată");
+    expect(screen.queryByText("Ofertă actualizată")).not.toBeInTheDocument();
+  });
+
   it("limits preview lines in right panel and links to details sheet", () => {
     render(
       <IntakeV6LiveCalculationSummary
