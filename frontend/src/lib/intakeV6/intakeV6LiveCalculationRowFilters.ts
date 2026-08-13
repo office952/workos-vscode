@@ -60,6 +60,8 @@ const OPERATION_KEYS = new Set([
 
   "cnc_backing",
 
+  "cnc_backing_bevel",
+
   "print_service",
 
   "lamination_service",
@@ -73,6 +75,8 @@ const OPERATION_KEYS = new Set([
   "service.cnc_face_bevel",
 
   "service.cnc_back",
+
+  "service.cnc_back_bevel",
 
   "service.print",
 

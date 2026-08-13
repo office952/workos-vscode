@@ -18,6 +18,25 @@ CNC_TASK_DRY_RUN_SOURCE_COMPAT_FALLBACK = "legacy_parallel_mapping"
 CNC_TASK_DRY_RUN_SOURCE_LEGACY = CNC_TASK_DRY_RUN_SOURCE_COMPAT_FALLBACK
 
 _CNC_COMPAT_BRIDGE_JOB_KEYS = frozenset({"face_plexiglas_cutting", "forex_backing_cutting"})
+BACKING_CNC_CUT_OPERATION_KEY = "cnc_backing_cutting_forex_10mm"
+BACKING_CNC_BEVEL_OPERATION_KEY = "cnc_backing_bevel_forex_10mm"
+BACKING_CNC_GROUPED_TITLE = "CNC spate Forex 10 mm / pregătire spate"
+
+
+def _backing_row_by_key(
+    operation_rows: list[IntakeV4CncOperationRow],
+    key: str,
+) -> IntakeV4CncOperationRow | None:
+    return next((row for row in operation_rows if row.key == key), None)
+
+
+def _should_fold_backing_bevel(
+    operation_rows: list[IntakeV4CncOperationRow],
+    row: IntakeV4CncOperationRow,
+) -> bool:
+    return row.key == BACKING_CNC_BEVEL_OPERATION_KEY and any(
+        item.key == BACKING_CNC_CUT_OPERATION_KEY for item in operation_rows
+    )
 
 
 def _idempotency_key(workspace_id: str, template_code: str, task_key: str) -> str:
@@ -155,15 +174,25 @@ def build_cnc_dry_run_from_operation_rows(
     template_code: str,
     source_fingerprint: str,
 ) -> tuple[list[IntakeV4TaskGenerationTaskCandidate], list[IntakeV4CncOperationDryRunCandidate]]:
-    task_candidates = [
-        cnc_operation_row_to_task_candidate(
+    bevel_row = _backing_row_by_key(operation_rows, BACKING_CNC_BEVEL_OPERATION_KEY)
+    task_candidates: list[IntakeV4TaskGenerationTaskCandidate] = []
+    for row in operation_rows:
+        if _should_fold_backing_bevel(operation_rows, row):
+            continue
+        candidate = cnc_operation_row_to_task_candidate(
             row,
             workspace_id=workspace_id,
             template_code=template_code,
             source_fingerprint=source_fingerprint,
         )
-        for row in operation_rows
-    ]
+        if row.key == BACKING_CNC_CUT_OPERATION_KEY and bevel_row is not None:
+            candidate.title = BACKING_CNC_GROUPED_TITLE
+            candidate.warnings.append("backing_cnc_grouped:cut+bevel")
+            if bevel_row.quantity is not None:
+                candidate.warnings.append(
+                    f"backing_bevel_qty:{round(bevel_row.quantity, 4)}{bevel_row.unit or 'ml'}"
+                )
+        task_candidates.append(candidate)
     dry_run_candidates = [cnc_operation_row_to_dry_run_candidate(row) for row in operation_rows]
     return task_candidates, dry_run_candidates
 
@@ -188,7 +217,10 @@ def build_iv3_cnc_candidate_tasks_from_operation_rows(
 
     tasks: list[IntakeV3CandidateProductionTask] = []
     task_ids: list[str] = []
+    bevel_row = _backing_row_by_key(operation_rows, BACKING_CNC_BEVEL_OPERATION_KEY)
     for row in operation_rows:
+        if _should_fold_backing_bevel(operation_rows, row):
+            continue
         candidate_id = f"cnc_op:{row.key}"
         task_ids.append(candidate_id)
         inputs: list[IntakeV3CandidateTaskInput] = [
@@ -263,11 +295,40 @@ def build_iv3_cnc_candidate_tasks_from_operation_rows(
         for gap in row.mapping_gaps or []:
             warnings.append(f"mapping_gap:{gap}")
 
+        title = row.display_name
+        if row.key == BACKING_CNC_CUT_OPERATION_KEY and bevel_row is not None:
+            title = BACKING_CNC_GROUPED_TITLE
+            warnings.append("backing_cnc_grouped:cut+bevel")
+            inputs.append(
+                IntakeV3CandidateTaskInput(
+                    label="Operație inclusă",
+                    value=bevel_row.display_name or BACKING_CNC_BEVEL_OPERATION_KEY,
+                    quality="catalog",
+                )
+            )
+            inputs.append(
+                IntakeV3CandidateTaskInput(
+                    label="Cantitate șanfren",
+                    value=round(bevel_row.quantity, 4),
+                    unit=bevel_row.unit,
+                    quality="calculated",
+                )
+            )
+            if bevel_row.passes and bevel_row.passes > 1:
+                inputs.append(
+                    IntakeV3CandidateTaskInput(
+                        label="Treceri șanfren",
+                        value=bevel_row.passes,
+                        unit="pass",
+                        quality="calculated",
+                    )
+                )
+
         tasks.append(
             IntakeV3CandidateProductionTask(
                 candidate_task_id=candidate_id,
                 group_key="cnc_operation_rows",
-                title=row.display_name,
+                title=title,
                 description=row.basis_label,
                 operation_type=row.operation_type,
                 station_hint=row.workstation_key,

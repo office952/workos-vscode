@@ -1,0 +1,346 @@
+{
+  "captured_at": "2026-08-13T12:56:49.848619+00:00",
+  "owner_source": "e994927e-aa90-46b0-bde0-dd34e025e44e",
+  "owner_updated_at_before": "2026-08-13T10:09:51.370983",
+  "owner_updated_at_after": "2026-08-13T10:09:51.370983",
+  "owner_dev_db_mutations": 0,
+  "off": {
+    "workspace_id": "ce8f2b4e-de60-4cd7-9dc8-7a66ccc5853f",
+    "workspace_code": "IV6-131008F9",
+    "updated_at": "2026-08-13T12:56:49.216382",
+    "payload_global_backing_mode": null,
+    "payload_global_back_bevel_enabled": null,
+    "layer_backing_modes": [
+      "forex_10_no_bevel"
+    ],
+    "quote_input": {
+      "backing_mode": "forex_10_no_bevel",
+      "back_bevel_enabled": false,
+      "backing_bevel_perimeter_ml": null,
+      "backing_present": true
+    },
+    "totals": {
+      "net": 568.64,
+      "gross": 688.05,
+      "vat": 21.0,
+      "line_count": 24,
+      "line_codes": [
+        "acm_boxed_assembly",
+        "acm_fasteners",
+        "acm_panel_cut",
+        "acm_panel_face_material",
+        "acm_return_strip_material",
+        "acm_v_groove",
+        "ambalare",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje_aplicare_autocolant_fata",
+        "finisaje_cant_ral_labor",
+        "finisaje_cant_ral_material",
+        "finisaje_oracal_651_material",
+        "letters_acm_conn_attach_body",
+        "letters_acm_conn_cable_5m",
+        "letters_acm_conn_electric_psu",
+        "letters_acm_conn_fasten_forex",
+        "letters_acm_conn_light_test",
+        "letters_acm_conn_pack",
+        "letters_acm_conn_sablon_process",
+        "modelare_cant_aluminiu",
+        "montaj",
+        "sistem_led_module",
+        "sursa_led"
+      ]
+    },
+    "sanfren_spate": null,
+    "debitare_spate": {
+      "code": "debitare_spate",
+      "label": "Debitare spate litere",
+      "module_code": "debitare_spate",
+      "component_code": "comp_spate_litere",
+      "basis_type": "m2",
+      "quantity": 0.329834,
+      "unit": "m2",
+      "commercial_unit_price": 15.0,
+      "subtotal": 4.9475,
+      "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+      "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+      "owner_decision_required": false,
+      "warnings": [
+        "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03",
+        "quantity_source=product_aggregate.commercial_measurements"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": "EUR",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null,
+      "commercial_product_key": "letters"
+    },
+    "production_task_count": 16,
+    "generation_task_count": 21,
+    "generation_task_keys": [
+      "preflight_vector_and_layers",
+      "cnc_file_preparation",
+      "return_side_forming",
+      "led_module_install",
+      "return_face_bonding",
+      "letter_assembly",
+      "light_test_qc",
+      "packaging_delivery_prep",
+      "cnc_face_cutting",
+      "cnc_face_bevel",
+      "cnc_backing_cutting",
+      "APPLY_VINYL",
+      "vector_preflight",
+      "production_model_confirm",
+      "cnc_file_prep",
+      "return_forming_prep",
+      "cnc_face_back_cutting",
+      "led_installation",
+      "return_painting_after_assembly",
+      "face_vinyl_final",
+      "delivery_prep"
+    ],
+    "cnc_operation_keys": [
+      "cnc_face_cutting_plexiglas_3mm",
+      "cnc_face_bevel_plexiglas_3mm",
+      "cnc_backing_cutting_forex_10mm",
+      "letter_face_Litere_x0020_Volumetrice_application_service"
+    ],
+    "cnc_operations": [
+      {
+        "key": "cnc_face_cutting_plexiglas_3mm",
+        "title": "Debitare CNC față plexiglas 3mm PMMA - opal",
+        "quantity": 12.4174,
+        "passes": 1
+      },
+      {
+        "key": "cnc_face_bevel_plexiglas_3mm",
+        "title": "Șanfren CNC față plexiglas 3mm PMMA - opal",
+        "quantity": 12.4174,
+        "passes": 1
+      },
+      {
+        "key": "cnc_backing_cutting_forex_10mm",
+        "title": "Debitare CNC spate Forex 10 mm",
+        "quantity": 7.4175,
+        "passes": 3
+      },
+      {
+        "key": "letter_face_Litere_x0020_Volumetrice_application_service",
+        "title": "Serviciu aplicare — Litere_x0020_Volumetrice",
+        "quantity": 0.3958,
+        "passes": 1
+      }
+    ],
+    "backing_cnc_tasks": [
+      {
+        "id": "cnc_op:cnc_backing_cutting_forex_10mm",
+        "title": "Debitare CNC spate Forex 10 mm",
+        "seed_code": "cnc_backing_cutting",
+        "warnings": [
+          "cnc_preview_source:operation_rows",
+          "no_real_task_created",
+          "Preț neconfigurat / necesită tarif operație CNC"
+        ]
+      }
+    ],
+    "separate_bevel_task": false
+  },
+  "on": {
+    "workspace_id": "a1598742-ccb8-4228-b401-a255cd2bfe4f",
+    "workspace_code": "IV6-F823AA06",
+    "updated_at": "2026-08-13T12:56:49.283092",
+    "payload_global_backing_mode": null,
+    "payload_global_back_bevel_enabled": null,
+    "layer_backing_modes": [
+      "forex_10_with_bevel"
+    ],
+    "quote_input": {
+      "backing_mode": "forex_10_with_bevel",
+      "back_bevel_enabled": true,
+      "backing_bevel_perimeter_ml": 7.41749,
+      "backing_present": true
+    },
+    "totals": {
+      "net": 590.89,
+      "gross": 714.98,
+      "vat": 21.0,
+      "line_count": 25,
+      "line_codes": [
+        "acm_boxed_assembly",
+        "acm_fasteners",
+        "acm_panel_cut",
+        "acm_panel_face_material",
+        "acm_return_strip_material",
+        "acm_v_groove",
+        "ambalare",
+        "debitare_fata",
+        "debitare_spate",
+        "finisaje_aplicare_autocolant_fata",
+        "finisaje_cant_ral_labor",
+        "finisaje_cant_ral_material",
+        "finisaje_oracal_651_material",
+        "letters_acm_conn_attach_body",
+        "letters_acm_conn_cable_5m",
+        "letters_acm_conn_electric_psu",
+        "letters_acm_conn_fasten_forex",
+        "letters_acm_conn_light_test",
+        "letters_acm_conn_pack",
+        "letters_acm_conn_sablon_process",
+        "modelare_cant_aluminiu",
+        "montaj",
+        "sanfren_spate",
+        "sistem_led_module",
+        "sursa_led"
+      ]
+    },
+    "sanfren_spate": {
+      "code": "sanfren_spate",
+      "label": "Șanfren CNC spate Forex 10 mm",
+      "module_code": "debitare_spate",
+      "component_code": "comp_spate_litere",
+      "basis_type": "ml",
+      "quantity": 7.41749,
+      "unit": "ml",
+      "commercial_unit_price": 3.0,
+      "subtotal": 22.2525,
+      "pricing_rule_code": "VOL_V2_BACK_BEVEL_CNC_ML",
+      "source": "pricing_registry:operation:CNC_ROUTER:EUR",
+      "owner_decision_required": false,
+      "warnings": [
+        "OWNER_CONFIRMED_BACK_BEVEL_COMMERCIAL;rate=CNC_ROUTER;1.5_EUR_per_ml_pass;passes=2;category=Servicii/Operatii;not_manopera",
+        "quantity_source=COMPATIBILITY_WORKSPACE_PATH",
+        "registry_bound=CNC_ROUTER;source_unit_price=1.5;rate_basis=per_linear_meter;presentation_currency=EUR;no_fx_normalization",
+        "pass_factor=VOLUMETRIC_BACKING_BEVEL_RULE.passes:2"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": "CNC_ROUTER",
+      "source_currency": "EUR",
+      "cpp_currency": "EUR",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null,
+      "commercial_product_key": "letters"
+    },
+    "debitare_spate": {
+      "code": "debitare_spate",
+      "label": "Debitare spate litere",
+      "module_code": "debitare_spate",
+      "component_code": "comp_spate_litere",
+      "basis_type": "m2",
+      "quantity": 0.329834,
+      "unit": "m2",
+      "commercial_unit_price": 15.0,
+      "subtotal": 4.9475,
+      "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+      "source": "commercial_rules_volumetric_v2:owner_confirmed_provisional:f7i1_2026_08_03",
+      "owner_decision_required": false,
+      "warnings": [
+        "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;confirmation_date=2026-08-03",
+        "quantity_source=product_aggregate.commercial_measurements"
+      ],
+      "segment_key": null,
+      "layer_identity": null,
+      "linked_template_code": null,
+      "registry_pricing_code": null,
+      "source_currency": "EUR",
+      "cpp_currency": "EUR",
+      "currency_conversion_rate": null,
+      "currency_conversion_source": null,
+      "commercial_product_key": "letters"
+    },
+    "production_task_count": 16,
+    "generation_task_count": 21,
+    "generation_task_keys": [
+      "preflight_vector_and_layers",
+      "cnc_file_preparation",
+      "return_side_forming",
+      "led_module_install",
+      "return_face_bonding",
+      "letter_assembly",
+      "light_test_qc",
+      "packaging_delivery_prep",
+      "cnc_face_cutting",
+      "cnc_face_bevel",
+      "cnc_backing_cutting",
+      "APPLY_VINYL",
+      "vector_preflight",
+      "production_model_confirm",
+      "cnc_file_prep",
+      "return_forming_prep",
+      "cnc_face_back_cutting",
+      "led_installation",
+      "return_painting_after_assembly",
+      "face_vinyl_final",
+      "delivery_prep"
+    ],
+    "cnc_operation_keys": [
+      "cnc_face_cutting_plexiglas_3mm",
+      "cnc_face_bevel_plexiglas_3mm",
+      "cnc_backing_cutting_forex_10mm",
+      "cnc_backing_bevel_forex_10mm",
+      "letter_face_Litere_x0020_Volumetrice_application_service"
+    ],
+    "cnc_operations": [
+      {
+        "key": "cnc_face_cutting_plexiglas_3mm",
+        "title": "Debitare CNC față plexiglas 3mm PMMA - opal",
+        "quantity": 12.4174,
+        "passes": 1
+      },
+      {
+        "key": "cnc_face_bevel_plexiglas_3mm",
+        "title": "Șanfren CNC față plexiglas 3mm PMMA - opal",
+        "quantity": 12.4174,
+        "passes": 1
+      },
+      {
+        "key": "cnc_backing_cutting_forex_10mm",
+        "title": "Debitare CNC spate Forex 10 mm",
+        "quantity": 7.4175,
+        "passes": 3
+      },
+      {
+        "key": "cnc_backing_bevel_forex_10mm",
+        "title": "Șanfren CNC spate Forex 10 mm",
+        "quantity": 7.4175,
+        "passes": 2
+      },
+      {
+        "key": "letter_face_Litere_x0020_Volumetrice_application_service",
+        "title": "Serviciu aplicare — Litere_x0020_Volumetrice",
+        "quantity": 0.3958,
+        "passes": 1
+      }
+    ],
+    "backing_cnc_tasks": [
+      {
+        "id": "cnc_op:cnc_backing_cutting_forex_10mm",
+        "title": "CNC spate Forex 10 mm / pregătire spate",
+        "seed_code": "cnc_backing_cutting",
+        "warnings": [
+          "cnc_preview_source:operation_rows",
+          "no_real_task_created",
+          "Preț neconfigurat / necesită tarif operație CNC",
+          "backing_cnc_grouped:cut+bevel"
+        ]
+      }
+    ],
+    "separate_bevel_task": false
+  },
+  "deltas": {
+    "net": 22.25,
+    "gross": 26.930000000000064,
+    "production_task_count": 0,
+    "generation_task_count": 0,
+    "debitare_spate_subtotal": [
+      4.9475,
+      4.9475
+    ]
+  }
+}

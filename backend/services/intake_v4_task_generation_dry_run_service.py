@@ -30,7 +30,6 @@ from services.intake_v4_cnc_operation_dry_run_service import (
     CNC_TASK_DRY_RUN_SOURCE,
     CNC_TASK_DRY_RUN_SOURCE_COMPAT_FALLBACK,
     build_cnc_dry_run_from_operation_rows,
-    cnc_operation_row_to_task_candidate,
     should_skip_compat_bridge_cnc_material_job,
 )
 from services.intake_v4_edge_cant_dry_run_service import (
@@ -442,18 +441,19 @@ def _build_task_candidates(
             )
 
     if operation_rows:
-        for row in operation_rows:
-            op_row = (
-                row
-                if isinstance(row, IntakeV4CncOperationRow)
-                else IntakeV4CncOperationRow.model_validate(row)
-            )
-            cand = cnc_operation_row_to_task_candidate(
-                op_row,
-                workspace_id=workspace_id,
-                template_code=template_code,
-                source_fingerprint=source_fingerprint,
-            )
+        parsed_rows = [
+            row
+            if isinstance(row, IntakeV4CncOperationRow)
+            else IntakeV4CncOperationRow.model_validate(row)
+            for row in operation_rows
+        ]
+        cnc_tasks, _ = build_cnc_dry_run_from_operation_rows(
+            parsed_rows,
+            workspace_id=workspace_id,
+            template_code=template_code,
+            source_fingerprint=source_fingerprint,
+        )
+        for cand in cnc_tasks:
             candidates[cand.task_key] = cand
 
     if edge_cant_operation_rows:
@@ -473,6 +473,11 @@ def _build_task_candidates(
 
     for seed in handoff.task_seed_preview:
         if not seed.active:
+            continue
+        if seed.task_key == "cnc_backing_bevel_optional" and (
+            "cnc_backing_cutting" in candidates
+            or "cnc_backing_cutting_forex_10mm" in candidates
+        ):
             continue
         if seed.task_key in candidates:
             existing = candidates[seed.task_key]

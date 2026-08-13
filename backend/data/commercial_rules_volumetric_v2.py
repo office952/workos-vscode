@@ -77,6 +77,14 @@ OWNER_CONFIRMED_PROVISIONAL_SOURCE = (
 )
 OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE = "2026-08-03"
 BACK_CNC_COMMERCIAL_EUR_M2: float = 15.0
+# Owner GO 2026-08-13: back bevel is commercially price-bearing as a separate
+# Servicii / Operații line. Reuses CNC_ROUTER 1.5 EUR/ml/pass × 2 bevel passes.
+# Debitare spate (m²) stays unchanged. Not a new registry tariff.
+BACK_BEVEL_CNC_REGISTRY_CODE = FACE_CNC_REGISTRY_CODE
+BACK_BEVEL_CNC_COMMERCIAL_EUR_ML_PASS = FACE_CNC_COMMERCIAL_EUR_ML
+BACK_BEVEL_OWNER_SOURCE = (
+    "commercial_rules_volumetric_v2:owner_confirmed:back_bevel_cnc_router_2026_08_13"
+)
 # LED module / PSU commercial sell — Owner provisional; not LED_ASSEMBLY install labor (0.05).
 LED_MODULE_COMMERCIAL_EUR_BUC: float = 1.5
 PSU_COMMERCIAL_EUR_BUC: float = 35.0
@@ -267,6 +275,37 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         warnings=(
             "OWNER_CONFIRMED_PROVISIONAL_COMMERCIAL_RATE;final_pricing_review_required;"
             f"confirmation_date={OWNER_CONFIRMED_PROVISIONAL_CONFIRMATION_DATE}",
+        ),
+    ),
+    CommercialRuleDefinition(
+        line_code="sanfren_spate",
+        label="Șanfren CNC spate Forex 10 mm",
+        module_code="debitare_spate",
+        component_code="comp_spate_litere",
+        pricing_rule_code="VOL_V2_BACK_BEVEL_CNC_ML",
+        basis_type="ml",
+        quantity_paths=(
+            "backing_bevel_perimeter_ml",
+            "quote_geometry.backing_bevel_perimeter_ml",
+            "finish_setup.backing_bevel_perimeter_ml",
+        ),
+        unit="ml",
+        source=BACK_BEVEL_OWNER_SOURCE,
+        criticality="optional",
+        documented_unit_price=BACK_BEVEL_CNC_COMMERCIAL_EUR_ML_PASS,
+        documented_unit_price_currency="EUR",
+        registry_pricing_code=BACK_BEVEL_CNC_REGISTRY_CODE,
+        owner_decision_required=False,
+        owner_decision_code="SANFREN_SPATE_CNC_ROUTER_ML_PASS",
+        owner_decision_detail=(
+            "Owner GO 2026-08-13: CNC_ROUTER 1.5 EUR/ml/pass × "
+            "VOLUMETRIC_BACKING_BEVEL_RULE.passes (2). Tax-exclusive. "
+            "Quantity is bevel-enabled group contour only."
+        ),
+        warnings=(
+            "OWNER_CONFIRMED_BACK_BEVEL_COMMERCIAL;"
+            "rate=CNC_ROUTER;1.5_EUR_per_ml_pass;passes=2;"
+            "category=Servicii/Operatii;not_manopera",
         ),
     ),
     CommercialRuleDefinition(
@@ -1081,6 +1120,7 @@ WORKCENTER_REUSE_PROVISIONAL_COMMERCIAL_LINE_CODES = frozenset(
     {
         "debitare_fata",
         "modelare_cant_aluminiu",
+        "sanfren_spate",
     }
 )
 

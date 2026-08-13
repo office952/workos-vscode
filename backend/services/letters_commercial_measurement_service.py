@@ -103,6 +103,24 @@ def _source_keys(paths: tuple[str, ...]) -> list[str]:
     return keys
 
 
+def _sanfren_spate_applicable(facts: Mapping[str, Any]) -> bool:
+    if facts.get("back_bevel_enabled") is True:
+        return True
+    finish = facts.get("finish_setup") if isinstance(facts.get("finish_setup"), dict) else {}
+    if finish.get("back_bevel_enabled") is True:
+        return True
+    mode = str(finish.get("backing_mode") or facts.get("backing_mode") or "").strip().lower()
+    if mode == "forex_10_with_bevel":
+        return True
+    return (
+        _extract_quantity(
+            facts,
+            ("backing_bevel_perimeter_ml", "quote_geometry.backing_bevel_perimeter_ml"),
+        )
+        is not None
+    )
+
+
 def build_letters_commercial_measurements(
     *,
     template_code: str,
@@ -199,6 +217,24 @@ def build_letters_commercial_measurements(
                         "material_gate_value": rule.material_gate_value,
                     },
                     notes=["module_gate inactive"],
+                )
+            )
+            continue
+
+        if rule.line_code == "sanfren_spate" and not _sanfren_spate_applicable(facts):
+            measurements.append(
+                CommercialMeasurement(
+                    measurement_key=f"cm.{rule.line_code}",
+                    line_code=rule.line_code,
+                    quantity=None,
+                    unit=rule.unit,
+                    module_code=rule.module_code,
+                    component_code=rule.component_code,
+                    source_fact_keys=_source_keys(rule.quantity_paths),
+                    resolution_status="not_applicable",
+                    pricing_rule_code=rule.pricing_rule_code,
+                    selector={"backing_mode": "forex_10_with_bevel"},
+                    notes=["back_bevel inactive"],
                 )
             )
             continue

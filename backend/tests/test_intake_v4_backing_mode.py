@@ -7,7 +7,9 @@ import pytest
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup
 from services.intake_v4_backing_mode_service import (
     BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK,
+    resolve_backing_bevel_perimeter_ml,
     resolve_backing_material_area_m2,
+    resolve_volumetric_backing_state,
 )
 from services.intake_v4_material_breakdown_service import (
     PRICE_SOURCE_INFORMATIONAL,
@@ -93,6 +95,38 @@ def _material_keys(payload: dict) -> list[str]:
 def _operation_keys(payload: dict) -> list[str]:
     result = build_intake_v4_material_breakdown("ws-backing-test", payload)
     return [r.key for r in result.operation_rows]
+
+
+class TestLayerBackingBevelHandoff:
+    def test_layer_with_bevel_wins_when_global_mode_stripped(self):
+        finish = {
+            "letter_group_finishes": [
+                {"group_key": "g1", "backing_mode": "forex_10_with_bevel", "perimeter_m": 7.4175},
+            ],
+        }
+        mode, present, bevel = resolve_volumetric_backing_state(finish, None)
+        assert present is True
+        assert bevel is True
+        assert mode == "forex_10_with_bevel"
+
+    def test_mixed_groups_bill_only_bevel_enabled_perimeters(self):
+        finish = {
+            "letter_group_finishes": [
+                {"group_key": "on", "backing_mode": "forex_10_with_bevel", "perimeter_m": 4.0},
+                {"group_key": "off", "backing_mode": "forex_10_no_bevel", "perimeter_m": 3.0},
+            ],
+        }
+        qty = resolve_backing_bevel_perimeter_ml(finish, fallback_ml=99.0, back_bevel_enabled=True)
+        assert qty == pytest.approx(4.0)
+
+    def test_no_bevel_groups_do_not_use_fallback(self):
+        finish = {
+            "letter_group_finishes": [
+                {"group_key": "off", "backing_mode": "forex_10_no_bevel", "perimeter_m": 8.0},
+            ],
+        }
+        qty = resolve_backing_bevel_perimeter_ml(finish, fallback_ml=8.0, back_bevel_enabled=False)
+        assert qty is None
 
 
 class TestBackingMaterialAreaFallback:

@@ -27,7 +27,61 @@ def normalize_backing_mode(raw: str | None) -> VolumetricBackingMode | None:
 def resolve_backing_mode_from_finish(finish: dict[str, Any] | None) -> VolumetricBackingMode | None:
     if not isinstance(finish, dict):
         return None
+    if "backing_mode" not in finish or finish.get("backing_mode") is None:
+        return None
     return normalize_backing_mode(finish.get("backing_mode"))
+
+
+def iter_explicit_layer_backing_modes(finish: dict[str, Any] | None) -> list[VolumetricBackingMode]:
+    """Layer/group backing modes that the operator actually stored."""
+    if not isinstance(finish, dict):
+        return []
+    modes: list[VolumetricBackingMode] = []
+    for group in list(finish.get("letter_group_finishes") or []) + list(
+        finish.get("artwork_finishes") or []
+    ):
+        if not isinstance(group, dict) or group.get("backing_mode") is None:
+            continue
+        explicit = normalize_backing_mode(group.get("backing_mode"))
+        if explicit is not None:
+            modes.append(explicit)
+    return modes
+
+
+def resolve_backing_bevel_perimeter_ml(
+    finish: dict[str, Any] | None,
+    *,
+    fallback_ml: float | None = None,
+    back_bevel_enabled: bool = False,
+) -> float | None:
+    """Sum contour ml for bevel-enabled groups only; fallback when global bevel is on."""
+    if not isinstance(finish, dict):
+        return fallback_ml if back_bevel_enabled else None
+    total = 0.0
+    found = False
+    for group in finish.get("letter_group_finishes") or []:
+        if not isinstance(group, dict) or group.get("backing_mode") is None:
+            continue
+        if normalize_backing_mode(group.get("backing_mode")) != "forex_10_with_bevel":
+            continue
+        try:
+            perimeter = float(group.get("perimeter_m"))
+        except (TypeError, ValueError):
+            continue
+        if perimeter <= 0:
+            continue
+        total += perimeter
+        found = True
+    if found:
+        return round(total, 6)
+    if back_bevel_enabled:
+        try:
+            fallback = float(fallback_ml) if fallback_ml is not None else None
+        except (TypeError, ValueError):
+            fallback = None
+        if fallback is not None and fallback > 0:
+            return round(fallback, 6)
+    return None
 
 
 def resolve_layer_backing_mode(
@@ -63,7 +117,19 @@ def resolve_volumetric_backing_state(
     *,
     quote_geometry: dict[str, Any] | None = None,
 ) -> tuple[VolumetricBackingMode, bool, bool]:
-    """Return (backing_mode, backing_present, back_bevel_enabled)."""
+    """Return (backing_mode, backing_present, back_bevel_enabled).
+
+    Layer/group ``backing_mode`` is authoritative when present so persist-stripped
+    globals cannot hide cu-șanfren on a letter group.
+    """
+    layer_modes = iter_explicit_layer_backing_modes(finish)
+    if layer_modes:
+        any_bevel = any(mode == "forex_10_with_bevel" for mode in layer_modes)
+        summary: VolumetricBackingMode = (
+            "forex_10_with_bevel" if any_bevel else "forex_10_no_bevel"
+        )
+        return summary, True, any_bevel
+
     mode = resolve_backing_mode_from_finish(finish)
     if mode is not None:
         backing_present = mode != "none"
@@ -80,7 +146,7 @@ def resolve_volumetric_backing_state(
     if isinstance(quote_geometry, dict) and quote_geometry.get("back_bevel_enabled"):
         back_bevel = True
     if not backing_confirmed:
-        return "forex_10_no_bevel", True, False
+        return "forex_10_no_bevel", False, False
     if back_bevel:
         return "forex_10_with_bevel", True, True
     return "forex_10_no_bevel", True, False

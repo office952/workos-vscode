@@ -371,7 +371,7 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   });
   addOperationGroup(result, {
     groupKey: "cnc_backing_bevel",
-    label: "CNC sanfren spate Forex",
+    label: "Șanfren CNC spate Forex 10 mm",
     rows: operationRows.filter((row) => row.key === "cnc_backing_bevel_forex_10mm"),
     currency,
   });

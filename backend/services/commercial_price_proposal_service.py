@@ -66,6 +66,7 @@ from services.product_definition_builder_service import (
     _read_bool,
     _read_string,
 )
+from services.shared_cnc_operation_model import FOREX_10MM_BEVEL_PASSES_OWNER
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 GATE_ONLY_MODULES = frozenset({"geometry_svg"})
@@ -379,6 +380,8 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         "emblem_lighting_mode",
         "face_finish_type",
         "backing_mode",
+        "back_bevel_enabled",
+        "backing_bevel_perimeter_ml",
         "letter_group_finishes",
         "artwork_finishes",
         "mounting_solution",
@@ -402,6 +405,15 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         "letters_layer_outbox_m2"
     ) not in (None, "", 0, 0.0):
         out["letters_layer_outbox_m2"] = merged_finish.get("letters_layer_outbox_m2")
+    if out.get("back_bevel_enabled") in (None, "") and merged_finish.get("back_bevel_enabled") not in (
+        None,
+        "",
+    ):
+        out["back_bevel_enabled"] = merged_finish.get("back_bevel_enabled")
+    if out.get("backing_bevel_perimeter_ml") in (None, "", 0, 0.0) and merged_finish.get(
+        "backing_bevel_perimeter_ml"
+    ) not in (None, "", 0, 0.0):
+        out["backing_bevel_perimeter_ml"] = merged_finish.get("backing_bevel_perimeter_ml")
 
     geometry = out.get("quote_geometry") if isinstance(out.get("quote_geometry"), dict) else {}
     merged_geometry = dict(geometry)
@@ -633,6 +645,24 @@ def _extract_quantity(payload: dict[str, Any], paths: tuple[str, ...]) -> float 
     return None
 
 
+def _back_bevel_commercially_active(payload: dict[str, Any]) -> bool:
+    if _read_bool(payload.get("back_bevel_enabled")) is True:
+        return True
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if _read_bool(finish.get("back_bevel_enabled")) is True:
+        return True
+    mode = _read_string(payload.get("backing_mode") or finish.get("backing_mode"))
+    if mode == "forex_10_with_bevel":
+        return True
+    return (
+        _extract_quantity(
+            payload,
+            ("backing_bevel_perimeter_ml", "quote_geometry.backing_bevel_perimeter_ml"),
+        )
+        is not None
+    )
+
+
 def _material_gate_matches(payload: dict[str, Any], rule: CommercialRuleDefinition) -> bool:
     if not rule.material_gate_path:
         return True
@@ -766,6 +796,9 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
 
         if not is_acm_boxed_mounting_payload(payload):
             return False
+
+    if rule.line_code == "sanfren_spate":
+        return _back_bevel_commercially_active(payload)
 
     return True
 
@@ -987,6 +1020,16 @@ async def _build_line(
     if quantity is None and unit_price is not None:
         if basis_type in ("piece", "fixed", "set"):
             quantity = 1.0
+
+    if (
+        rule.line_code == "sanfren_spate"
+        and unit_price is not None
+        and FOREX_10MM_BEVEL_PASSES_OWNER > 1
+    ):
+        unit_price = float(unit_price) * FOREX_10MM_BEVEL_PASSES_OWNER
+        warnings.append(
+            f"pass_factor=VOLUMETRIC_BACKING_BEVEL_RULE.passes:{FOREX_10MM_BEVEL_PASSES_OWNER}"
+        )
 
     subtotal = None
     if unit_price is not None and quantity is not None and basis_type not in ("unknown",):

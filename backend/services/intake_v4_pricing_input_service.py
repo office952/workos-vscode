@@ -26,6 +26,12 @@ from services.intake_v4_ral_paint_rules_service import (
     VOLUME_FINISH_PAINT_RAL,
     estimate_intake_v4_ral_paint_spray,
 )
+from services.intake_v4_backing_mode_service import (
+    apply_backing_state_to_geometry_patch,
+    finish_has_explicit_layer_backing_modes,
+    resolve_backing_bevel_perimeter_ml,
+    resolve_volumetric_backing_state,
+)
 from services.intake_v4_volumetric_return_metrics_service import return_finish_active
 
 DEFAULT_FOREX_BACKING_THICKNESS_MM = 10.0
@@ -351,6 +357,7 @@ def _letter_group_finish_matrix(setup: IntakeV4FinishSetup) -> list[dict[str, An
             "return_oracal_name": _optional_string(group.return_oracal_name) or None,
             "return_depth_mm": _compact_number(group.return_depth_mm)
             or _compact_number(setup.return_depth_mm),
+            "backing_mode": group.backing_mode,
             "confirmed": group.confirmed is True or setup.confirmed is True,
         }
         _add_group_metrics(row, group)
@@ -457,16 +464,15 @@ def _apply_letter_group_finish_handoff(
 
 def _resolve_v4_backing_presence(payload: IntakeV4WorkspacePayload) -> dict[str, Any]:
     """Operator backing mode (finish_setup) with layer-role fallback."""
-    finish_raw = payload.finish_setup.model_dump(mode="json") if payload.finish_setup else {}
+    finish_raw = (
+        payload.finish_setup.model_dump(mode="json", exclude_unset=True)
+        if payload.finish_setup
+        else {}
+    )
     layer_setup_raw = (
         payload.layer_role_setup.model_dump(mode="json") if payload.layer_role_setup else None
     )
     quote_geom = payload.quote_geometry if isinstance(payload.quote_geometry, dict) else None
-    from services.intake_v4_backing_mode_service import (
-        apply_backing_state_to_geometry_patch,
-        resolve_volumetric_backing_state,
-    )
-
     mode, backing_present, back_bevel = resolve_volumetric_backing_state(
         finish_raw,
         layer_setup_raw,
@@ -585,7 +591,9 @@ def _patch_quote_input_from_v4_geometry(
         if setup.psu_configuration:
             patched["psu_configuration"] = list(setup.psu_configuration)
             patched.setdefault("selected_psu_watts", max(int(w) for w in setup.psu_configuration))
-        if setup.back_bevel_enabled is not None:
+        if setup.back_bevel_enabled is not None and not finish_has_explicit_layer_backing_modes(
+            setup.model_dump(mode="json")
+        ):
             patched["back_bevel_enabled"] = bool(setup.back_bevel_enabled)
         if setup.mounting_template_enabled is not None:
             patched["mounting_template_enabled"] = bool(setup.mounting_template_enabled)
@@ -666,6 +674,24 @@ def _patch_quote_input_from_v4_geometry(
                 patched["paint_ral_name"] = ral_estimate.paint_ral_name
             if ral_estimate.all_letter_returns_painted:
                 patched["volume_finish"] = VOLUME_FINISH_PAINT_RAL
+
+    finish_raw = setup.model_dump(mode="json") if setup else {}
+    fallback_bevel_ml = (
+        patched.get("letter_perimeter_m")
+        or path_geometry.get("letter_perimeter_m")
+        or path_geometry.get("face_cutting_perimeter_ml")
+        or patched.get("face_cutting_perimeter_ml")
+        or patched.get("cnc_cutting_perimeter_ml")
+    )
+    bevel_ml = resolve_backing_bevel_perimeter_ml(
+        finish_raw,
+        fallback_ml=float(fallback_bevel_ml) if fallback_bevel_ml is not None else None,
+        back_bevel_enabled=bool(patched.get("back_bevel_enabled")),
+    )
+    if bevel_ml is not None:
+        patched["backing_bevel_perimeter_ml"] = bevel_ml
+    elif "backing_bevel_perimeter_ml" not in patched:
+        patched["backing_bevel_perimeter_ml"] = None
 
     patched["intake_source"] = "intake_v4"
     patched["geometry_calculation_quality"] = path_geometry.get("calculation_quality")

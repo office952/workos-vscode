@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from schemas.intake_v4 import (
     IntakeV4ClientRequest,
     IntakeV4FinishSetup,
@@ -443,3 +445,63 @@ class TestIntakeV4PricingInputPreview:
         assert qi.get("backing_material") == "FOREX_10MM"
         assert qi.get("backing_thickness_mm") == 10.0
         assert qi.get("back_bevel_enabled") is False
+
+    def test_layer_with_bevel_reaches_quote_input_when_global_stripped(self):
+        finish = IntakeV4FinishSetup(
+            face_finish_type="oracal_651",
+            return_finish_type="oracal_wrapped",
+            return_depth_mm=60,
+            backing_mode=None,
+            back_bevel_enabled=None,
+            letter_group_finishes=[
+                IntakeV4LetterGroupFinish(
+                    group_key="g1",
+                    layer_name="litere",
+                    face_finish_type="oracal_651",
+                    backing_mode="forex_10_with_bevel",
+                    perimeter_m=7.4175,
+                    confirmed=True,
+                )
+            ],
+            confirmed=True,
+        )
+        preview = build_v4_pricing_input_preview(
+            workspace_id="ws-layer-bevel",
+            payload=_payload(finish=finish, layer_role_setup=_layer_roles_complete()),
+        )
+        qi = preview.quote_input_payload
+        assert qi.get("back_bevel_enabled") is True
+        assert qi.get("backing_mode") == "forex_10_with_bevel"
+        assert qi.get("backing_bevel_perimeter_ml") == pytest.approx(7.4175)
+
+    def test_mixed_groups_bill_only_bevel_enabled_perimeter(self):
+        finish = IntakeV4FinishSetup(
+            face_finish_type="oracal_651",
+            return_finish_type="oracal_wrapped",
+            return_depth_mm=60,
+            backing_mode=None,
+            letter_group_finishes=[
+                IntakeV4LetterGroupFinish(
+                    group_key="on",
+                    layer_name="on",
+                    backing_mode="forex_10_with_bevel",
+                    perimeter_m=4.0,
+                    confirmed=True,
+                ),
+                IntakeV4LetterGroupFinish(
+                    group_key="off",
+                    layer_name="off",
+                    backing_mode="forex_10_no_bevel",
+                    perimeter_m=3.0,
+                    confirmed=True,
+                ),
+            ],
+            confirmed=True,
+        )
+        preview = build_v4_pricing_input_preview(
+            workspace_id="ws-mixed-bevel",
+            payload=_payload(finish=finish, layer_role_setup=_layer_roles_complete()),
+        )
+        qi = preview.quote_input_payload
+        assert qi.get("back_bevel_enabled") is True
+        assert qi.get("backing_bevel_perimeter_ml") == pytest.approx(4.0)

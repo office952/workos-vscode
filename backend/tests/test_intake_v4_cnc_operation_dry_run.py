@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
+from schemas.intake_v4 import PILOT_V4_TEMPLATE_CODE
 from services.intake_v4_cnc_operation_dry_run_service import CNC_TASK_DRY_RUN_SOURCE
 from services.intake_v4_material_breakdown_service import build_intake_v4_material_breakdown
 from services.intake_v4_production_task_dry_run_service import build_v4_production_task_dry_run
@@ -23,7 +24,7 @@ _DEFAULT_PRICING = {
 }
 
 
-def _payload(backing_mode: str, **finish_extra: object) -> dict:
+def _payload(backing_mode: str, template_code: str = "TPL-VOLUMETRIC-LETTERS", **finish_extra: object) -> dict:
     finish = {
         "face_finish_type": "oracal_651",
         "return_finish_type": "oracal_wrapped",
@@ -35,7 +36,7 @@ def _payload(backing_mode: str, **finish_extra: object) -> dict:
     }
     return {
         "schema_version": "1.0.0",
-        "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS"},
+        "product_binding": {"template_code": template_code},
         "svg_analysis_json": {
             "schemaVersion": "1.10.0",
             "nesting": {
@@ -97,8 +98,13 @@ def seeded_db(db_fixture):
     return db_fixture
 
 
-async def _run_task_dry_run(seeded_db, backing_mode: str):
-    payload_dict = _payload(backing_mode)
+async def _run_task_dry_run(
+    seeded_db,
+    backing_mode: str,
+    *,
+    template_code: str = "TPL-VOLUMETRIC-LETTERS",
+):
+    payload_dict = _payload(backing_mode, template_code=template_code)
     payload = _parse_payload(payload_dict)
 
     async def _override_get_db():
@@ -177,6 +183,27 @@ async def test_forex_with_bevel_adds_backing_bevel(seeded_db):
 
 
 @pytest.mark.asyncio
+async def test_backing_cut_and_bevel_share_one_candidate_task(seeded_db):
+    off = await _run_task_dry_run(
+        seeded_db, "forex_10_no_bevel", template_code=PILOT_V4_TEMPLATE_CODE
+    )
+    on = await _run_task_dry_run(
+        seeded_db, "forex_10_with_bevel", template_code=PILOT_V4_TEMPLATE_CODE
+    )
+    off_cnc = [t for t in off.task_candidates if "cnc_backing" in (t.task_key or "")]
+    on_cnc = [t for t in on.task_candidates if "cnc_backing" in (t.task_key or "")]
+    assert len(on.task_candidates) == len(off.task_candidates)
+    assert len(on_cnc) == len(off_cnc)
+    assert not any(
+        (t.task_key or "") in {"cnc_backing_bevel_optional", "cnc_backing_bevel_forex_10mm"}
+        for t in on.task_candidates
+    )
+    cut = next(t for t in on.task_candidates if t.task_key == "cnc_backing_cutting")
+    assert "backing_cnc_grouped:cut+bevel" in cut.warnings
+    assert "cnc_backing_bevel_forex_10mm" in {c.operation_key for c in on.cnc_operation_candidates}
+
+
+@pytest.mark.asyncio
 async def test_all_cnc_candidates_source_operation_rows(seeded_db):
     dry_run = await _run_task_dry_run(seeded_db, "forex_10_with_bevel")
     assert all(c.source == CNC_TASK_DRY_RUN_SOURCE for c in dry_run.cnc_operation_candidates)
@@ -229,3 +256,22 @@ def test_production_preview_cnc_from_operation_rows():
     assert pass_input.value == 5
     equiv = next(i for i in back.inputs_preview if i.label == "Echivalent utilaj")
     assert equiv.value == pytest.approx(FACE_ML * 5, rel=1e-2)
+
+
+def test_production_preview_groups_backing_cut_and_bevel():
+    off = build_v4_production_task_dry_run(
+        workspace_id="ws-preview-off",
+        payload=_parse_payload(_payload("forex_10_no_bevel", template_code=PILOT_V4_TEMPLATE_CODE)),
+    )
+    on = build_v4_production_task_dry_run(
+        workspace_id="ws-preview-on",
+        payload=_parse_payload(_payload("forex_10_with_bevel", template_code=PILOT_V4_TEMPLATE_CODE)),
+    )
+    off_cnc = [t for t in off.candidate_tasks if t.group_key == "cnc_operation_rows"]
+    on_cnc = [t for t in on.candidate_tasks if t.group_key == "cnc_operation_rows"]
+    assert len(on_cnc) == len(off_cnc)
+    assert not any(t.seed_code == "cnc_backing_bevel" for t in on_cnc)
+    grouped = next(t for t in on_cnc if t.seed_code == "cnc_backing_cutting")
+    assert grouped.candidate_task_id == "cnc_op:cnc_backing_cutting_forex_10mm"
+    assert "backing_cnc_grouped:cut+bevel" in grouped.warnings
+    assert any(i.label == "Cantitate șanfren" for i in grouped.inputs_preview)
