@@ -1,0 +1,438 @@
+{
+  "task": "WAVE_3_EVIDENCE_GAP_CLOSURE_V1",
+  "mutations": {
+    "OWNER_DEV_DB_MUTATIONS": 0,
+    "TASK_MUTATIONS": 0,
+    "ASSIGNMENT_MUTATIONS": 0,
+    "SESSION_MUTATIONS": 0,
+    "MACHINE_RUN_MUTATIONS": 0
+  },
+  "operator": {
+    "api": {
+      "http": 200,
+      "taskCount": 234,
+      "byStatus": {
+        "done": 12,
+        "assigned": 220,
+        "in_progress": 2
+      },
+      "orderCount": 19,
+      "orderIdsSample": [
+        23099,
+        23150,
+        29991,
+        92350,
+        92400,
+        92401,
+        92402,
+        92403,
+        880750,
+        880811,
+        972901,
+        972910,
+        973010,
+        973015,
+        973018,
+        973019,
+        973022,
+        973023,
+        973024
+      ],
+      "has973024": true,
+      "has92400": true,
+      "tasks973024": [
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "file_preparation",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "CONFIRM_GEOMETRY"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+          "status": "done",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "cnc_routing",
+          "assigned_employee_id": 3,
+          "assigned_employee_name": "Florin CNC",
+          "employee_id": 3,
+          "employee_name": "Florin CNC",
+          "name": "CUT_FACE"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FOREX_BACK",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "cnc_routing",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "CUT_FOREX_BACK"
+        },
+        {
+          "task_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:PREPARE_CANT_STRIP",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "edge_bending",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "side_forming"
+        },
+        {
+          "task_id": "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:FORM_CANT_CNC",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "edge_bending",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "side_forming"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:BOND_FACE_TO_CANT",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "volumetric_letter_assembly",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "BOND_FACE_TO_CANT"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "led_assembly",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "INSTALL_LED_MODULES"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:WIRE_LED_MODULES",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "led_wiring",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "WIRE_LED_MODULES"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ROUTE_CABLES_THROUGH_BACK",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "led_wiring",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "WIRE_LED_MODULES"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LED_ON",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "quality_control",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "TEST_LED_ON"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:ATTACH_BODY_TO_BACK",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "volumetric_letter_assembly",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "ATTACH_BODY_TO_BACK"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:TEST_LIGHT_UNIFORMITY",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "quality_control",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "TEST_LED_ON"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:LABEL_POWER_SUPPLY",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "packaging",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "LABEL_POWER_SUPPLY"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_POWER_SUPPLY_SEPARATELY",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "packaging",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "LABEL_POWER_SUPPLY"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:QUALITY_CONTROL",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "quality_control",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "TEST_LED_ON"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CLEAN_PRODUCT",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "packaging",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "LABEL_POWER_SUPPLY"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:RIGIDIZE_FOR_TRANSPORT",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "packaging",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "LABEL_POWER_SUPPLY"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:PACK_PRODUCT",
+          "status": "assigned",
+          "order_code": "ORD-IV6-V2-1786318810-31",
+          "process_type": "packaging",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "LABEL_POWER_SUPPLY"
+        }
+      ],
+      "tasks92400": [
+        {
+          "task_id": "T-M06-CLAIM-POLICY",
+          "status": "in_progress",
+          "order_code": "ORD-92400",
+          "process_type": "print",
+          "assigned_employee_id": 4,
+          "assigned_employee_name": "Putaru Sandu",
+          "employee_id": 4,
+          "employee_name": "Putaru Sandu",
+          "name": "T06 Claim Probe"
+        }
+      ],
+      "painting": [
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+          "order_id": 23099,
+          "order_code": "ORD-W5INT02-GATE",
+          "status": "assigned",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "Painting"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+          "order_id": 880750,
+          "order_code": "ORD-WAVE2-QA-880750",
+          "status": "assigned",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "Painting module (alias)"
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+          "order_id": 880811,
+          "order_code": "ORD-F7B-880811",
+          "status": "assigned",
+          "assigned_employee_id": null,
+          "assigned_employee_name": null,
+          "employee_id": null,
+          "employee_name": null,
+          "name": "Painting module (alias)"
+        }
+      ]
+    },
+    "domStart": {
+      "nextRows": 220,
+      "assignRows": 222,
+      "neatribuit": [
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-23099 · assigned · Neatribuit",
+        "JOB-92401 · assigned · Neatribuit"
+      ],
+      "anyAssignedNeatribuit": true
+    },
+    "domEnd": {
+      "nextRows": 220,
+      "assignRows": 222
+    },
+    "INITIAL_SCROLL_HEIGHT": 75277,
+    "MID_SCROLL_TOP": 33491,
+    "DEEP_SCROLL_TOP": 63261,
+    "MAX_SCROLL_HEIGHT_OBSERVED": 75277,
+    "ITEM_COUNT_START": 234,
+    "ITEM_COUNT_END": 234,
+    "DOM_NEXT_START": 220,
+    "DOM_NEXT_END": 220,
+    "DOM_ASSIGN_START": 222,
+    "DOM_ASSIGN_END": 222,
+    "LOAD_TRIGGER": "single GET /api/v1/operator/tasks on mount; no poll; no cursor",
+    "APPEND_BEHAVIOR": "none — full snapshot rendered",
+    "TERMINATION_CONDITION": "scrollTop >= max after jump-to-end + 3s settle",
+    "HEIGHT_AFTER_JUMP": 75277,
+    "HEIGHT_AFTER_SETTLE": 75277,
+    "GREW_AFTER_SETTLE": false,
+    "BOTTOM_REACHED": true,
+    "NEW_NETWORK_PAGES": 0
+  },
+  "identity": {
+    "shopFloor": {
+      "currentJobLike": [
+        "ORD-92400"
+      ],
+      "has92400": true,
+      "has973024": false,
+      "hasIv6": false
+    },
+    "execution973024": {
+      "url": "/execution/973024",
+      "has973024": true,
+      "hasIv6": true,
+      "has92400": false
+    }
+  },
+  "assigned": {
+    "painting": [
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+        "order_id": 23099,
+        "order_code": "ORD-W5INT02-GATE",
+        "status": "assigned",
+        "assigned_employee_id": null,
+        "assigned_employee_name": null,
+        "employee_id": null,
+        "employee_name": null,
+        "name": "Painting"
+      },
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+        "order_id": 880750,
+        "order_code": "ORD-WAVE2-QA-880750",
+        "status": "assigned",
+        "assigned_employee_id": null,
+        "assigned_employee_name": null,
+        "employee_id": null,
+        "employee_name": null,
+        "name": "Painting module (alias)"
+      },
+      {
+        "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+        "order_id": 880811,
+        "order_code": "ORD-F7B-880811",
+        "status": "assigned",
+        "assigned_employee_id": null,
+        "assigned_employee_name": null,
+        "employee_id": null,
+        "employee_name": null,
+        "name": "Painting module (alias)"
+      }
+    ],
+    "neatribuitSamples": [
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-23099 · assigned · Neatribuit",
+      "JOB-92401 · assigned · Neatribuit"
+    ],
+    "anyAssignedNeatribuit": true
+  },
+  "tablet": {
+    "url": "/tablet/print",
+    "title": "WorkOS\n\nLUCRĂRI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUCȚIE\n\nAtelier\nPlanificare\nRulări utilaj\nOps-Graph\nAUDIT\nAcțiune task (legacy)\nCOMPAT\nStații (legacy)\nCOMPAT\n\nOAMENI\n\nAngajați\nPontaj\nEvidență HR\n\nRESURSE\n\nUtilaje\nInventar\nPrețuri\n\nRELAȚII\n\nClienți\nColaboratori\nDocumente\n\nMANAGEMENT\n\nControl producție\nPREVIEW\nRapoarte\nPlăți\nAvansuri\n\nADMINISTRARE\n\nHarta\nGuvernanță\nSetări\n\nDEV TOOLING\n\nDemo Comme",
+    "startButtons": 0,
+    "unknown": false
+  },
+  "machineRuns": {
+    "url": "/execution/machine-runs",
+    "emptyCopy": true,
+    "textSample": "WorkOS\n\nLUCRĂRI\n\nCereri\nProduse\nOferte\nComenzi\n\nPRODUCȚIE\n\nAtelier\nPlanificare\nRulări utilaj\nOps-Graph\nAUDIT\nAcțiune task (legacy)\nCOMPAT\nStații (legacy)\nCOMPAT\n\nOAMENI\n\nAngajați\nPontaj\nEvidență HR\n\nRESURSE\n\nUtilaje\nInventar\nPrețuri\n\nRELAȚII\n\nClienți\nColaboratori\nDocumente\n\nMANAGEMENT\n\nControl producție\nPREVIEW\nRapoarte\nPlăți\nAvansuri\n\nADMINISTRARE\n\nHarta\nGuvernanță\nSetări\n\nDEV TOOLING\n\nDemo Commercial Spine\nAUDIT\nDemo Volumetric Preview\nAUDIT\nBlueprint Dossier\nAUDIT\nRapoarte operaționale\nAUDIT\n",
+    "api": {
+      "http": 200,
+      "body": {
+        "items": [],
+        "count": 0
+      }
+    }
+  },
+  "shots": [
+    {
+      "region": "operator-top",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/operator-top/operator-top.png"
+    },
+    {
+      "region": "operator-mid",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/operator-mid/operator-mid.png"
+    },
+    {
+      "region": "operator-deep",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/operator-deep/operator-deep.png"
+    },
+    {
+      "region": "operator-bottom",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/operator-bottom/operator-bottom.png"
+    },
+    {
+      "region": "shop-floor-top",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/shop-floor-top/shop-floor-top.png"
+    },
+    {
+      "region": "tablet-print",
+      "file": "wave-3/runtime/screenshots-gap-closure/admin/light/tablet-print/tablet-print.png"
+    }
+  ]
+}

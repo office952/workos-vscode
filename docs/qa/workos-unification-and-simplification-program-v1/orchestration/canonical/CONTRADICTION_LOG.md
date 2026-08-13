@@ -12,3 +12,12 @@ Wave 2 resolutions (explicit):
 | C6 | Quote→client | DEAD_END | Code + observe; no invented link |
 
 No local “fix quote currency” recommendation promoted to global implementation.
+
+Wave 3 resolutions (gap closure):
+
+| ID | Conflict | Winner for synthesis | Why |
+|----|----------|----------------------|-----|
+| W3-C1 / W3-C4 | IV6/973024 vs Atelier `ORD-92400` | **DIFFERENT_ACTIVE_WORK** — not a contradiction | 92400 is a live print job; 973024 has 0 `in_progress` |
+| W3-C3 | `assigned · Neatribuit` | **FRONTEND_LABEL_COMPOSITION** | Lifecycle queued ≠ employee assigned |
+| W3-C2 | Monitor home vs action surfaces | Architectural split; keep as current truth | Atelier monitor; operator/tablet COMPAT_ACTIVE |
+| W3-C5 / W3-C6 | Status vocab / money vs production | Both projections | No implementation |

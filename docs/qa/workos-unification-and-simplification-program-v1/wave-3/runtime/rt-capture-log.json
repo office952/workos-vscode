@@ -1,0 +1,3217 @@
+{
+  "fe": "http://127.0.0.1:3000",
+  "seq": 306,
+  "surfaces": 48,
+  "scrollFail": 4,
+  "results": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/default/001-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/default/002-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/default/003-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/blocked-focus/004-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/blocked-focus/005-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/admin/light/_shop-floor/blocked-focus/006-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/default/007-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/default/008-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/default/009-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/blocked-focus/010-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/blocked-focus/011-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/operator/light/_shop-floor/blocked-focus/012-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/default/013-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/default/014-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/default/015-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/blocked-focus/016-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/blocked-focus/017-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/manager/light/_shop-floor/blocked-focus/018-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution/default/020-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution/default/021-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution/default/022-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3485,
+      "SCROLL_MAX": 3485,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 6,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=3485"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/023-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/024-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/025-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/026-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/027-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 3485,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_21099/detail/028-s05-y3485.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution/default/029-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution/default/030-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution/default/031-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3485,
+      "SCROLL_MAX": 3485,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 6,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=3485"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/032-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/033-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/034-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/035-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/036-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 3485,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_21099/detail/037-s05-y3485.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution/default/038-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution/default/039-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution/default/040-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1920,
+      "SCROLL_MAX": 1920,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1920"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution_21099/detail/041-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution_21099/detail/042-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution_21099/detail/043-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1920,
+          "file": "wave-3/runtime/screenshots/sales/light/_execution_21099/detail/044-s03-y1920.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/973024",
+      "tab": "known-detail",
+      "state": "existing-plan",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 12866,
+      "SCROLL_MAX": 12866,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 18,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=12866"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/046-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/047-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/048-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/049-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/050-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/051-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/052-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/053-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/054-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/055-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/056-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/057-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/058-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/059-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/060-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 12060,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/061-s15-y12060.png"
+        },
+        {
+          "index": 16,
+          "scrollTop": 12864,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/062-s16-y12864.png"
+        },
+        {
+          "index": 17,
+          "scrollTop": 12866,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/known-detail/063-s17-y12866.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/973024"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/orders/ORD-IV6-V2-1786318810-31",
+      "tab": "handoff-observe",
+      "state": "wave2-order",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2744,
+      "SCROLL_MAX": 2744,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2744"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_orders_ORD-IV6-V2-1786318810-31/handoff-observe/064-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_orders_ORD-IV6-V2-1786318810-31/handoff-observe/065-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_orders_ORD-IV6-V2-1786318810-31/handoff-observe/066-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_orders_ORD-IV6-V2-1786318810-31/handoff-observe/067-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2744,
+          "file": "wave-3/runtime/screenshots/admin/light/_orders_ORD-IV6-V2-1786318810-31/handoff-observe/068-s04-y2744.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/orders/ORD-IV6-V2-1786318810-31"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/973024",
+      "tab": "from-order",
+      "state": "handoff",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 11789,
+      "SCROLL_MAX": 11789,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 16,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=11789"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/069-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/070-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/071-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/072-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/073-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/074-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/075-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/076-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/077-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/078-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/079-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/080-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/081-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/082-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/083-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 11789,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_973024/from-order/084-s15-y11789.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/973024"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/machine-runs",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_machine-runs/default/085-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/machine-runs"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/execution/machine-runs",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/light/_execution_machine-runs/default/086-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/machine-runs"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2880,
+      "SCROLL_MAX": 2880,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2880"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_ops-graph/default/088-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_ops-graph/default/089-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_ops-graph/default/090-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_ops-graph/default/091-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2880,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_ops-graph/default/092-s04-y2880.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/ops-graph"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2880,
+      "SCROLL_MAX": 2880,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=2880"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_ops-graph/default/093-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_ops-graph/default/094-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_ops-graph/default/095-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_ops-graph/default/096-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2880,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_ops-graph/default/097-s04-y2880.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/ops-graph"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/reality-review",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 7684,
+      "SCROLL_MAX": 7684,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 11,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=7684"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/100-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/101-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/102-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/103-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/104-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/105-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/106-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/107-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/108-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/109-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 7684,
+          "file": "wave-3/runtime/screenshots/admin/light/_execution_reality-review/default/110-s10-y7684.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/reality-review"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution/reality-review",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 7684,
+      "SCROLL_MAX": 7684,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 11,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=7684"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/111-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/112-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/113-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/114-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/115-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/116-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/117-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/118-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/119-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/120-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 7684,
+          "file": "wave-3/runtime/screenshots/manager/light/_execution_reality-review/default/121-s10-y7684.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/reality-review"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/operator",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 74425,
+      "SCROLL_MAX": 74425,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "YES",
+      "SCROLL_SEGMENT_COUNT": 20,
+      "FULL_VERTICAL_SCROLL": "FAIL",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=74425"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/122-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/123-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/124-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/125-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/126-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/127-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/128-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/129-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/130-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/131-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/132-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/133-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/134-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/135-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/136-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 12060,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/137-s15-y12060.png"
+        },
+        {
+          "index": 16,
+          "scrollTop": 12864,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/138-s16-y12864.png"
+        },
+        {
+          "index": 17,
+          "scrollTop": 13668,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/139-s17-y13668.png"
+        },
+        {
+          "index": 18,
+          "scrollTop": 14472,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/140-s18-y14472.png"
+        },
+        {
+          "index": 19,
+          "scrollTop": 15276,
+          "file": "wave-3/runtime/screenshots/admin/light/_operator/default/141-s19-y15276.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/operator"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/operator",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 74425,
+      "SCROLL_MAX": 74425,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "YES",
+      "SCROLL_SEGMENT_COUNT": 20,
+      "FULL_VERTICAL_SCROLL": "FAIL",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=74425"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/142-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/143-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/144-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/145-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/146-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/147-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/148-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/149-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/150-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/151-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/152-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/153-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/154-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/155-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/156-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 12060,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/157-s15-y12060.png"
+        },
+        {
+          "index": 16,
+          "scrollTop": 12864,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/158-s16-y12864.png"
+        },
+        {
+          "index": 17,
+          "scrollTop": 13668,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/159-s17-y13668.png"
+        },
+        {
+          "index": 18,
+          "scrollTop": 14472,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/160-s18-y14472.png"
+        },
+        {
+          "index": 19,
+          "scrollTop": 15276,
+          "file": "wave-3/runtime/screenshots/operator/light/_operator/default/161-s19-y15276.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/operator"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/tablet",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 80,
+      "SCROLL_MAX": 80,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=80"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/light/_tablet/default/163-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 80,
+          "file": "wave-3/runtime/screenshots/admin/light/_tablet/default/164-s01-y80.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/tablet"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/tablet",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 80,
+      "SCROLL_MAX": 80,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=80"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/light/_tablet/default/165-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 80,
+          "file": "wave-3/runtime/screenshots/operator/light/_tablet/default/166-s01-y80.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/tablet"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/default/173-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/default/174-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/default/175-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/blocked-focus/176-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/blocked-focus/177-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/admin/dark/_shop-floor/blocked-focus/178-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/default/179-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/default/180-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/default/181-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/blocked-focus/182-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/blocked-focus/183-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/operator/dark/_shop-floor/blocked-focus/184-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/default/185-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/default/186-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/default/187-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "tab": "blocked-focus",
+      "state": "board",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/blocked-focus/188-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/blocked-focus/189-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-3/runtime/screenshots/manager/dark/_shop-floor/blocked-focus/190-s02-y818.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/shop-floor"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution/default/192-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution/default/193-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution/default/194-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3485,
+      "SCROLL_MAX": 3485,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 6,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=3485"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/195-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/196-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/197-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/198-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/199-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 3485,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_21099/detail/200-s05-y3485.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution/default/201-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution/default/202-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution/default/203-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3485,
+      "SCROLL_MAX": 3485,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 6,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=3485"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/204-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/205-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/206-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/207-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/208-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 3485,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_21099/detail/209-s05-y3485.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/execution",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1152,
+      "SCROLL_MAX": 1152,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1152"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution/default/210-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution/default/211-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1152,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution/default/212-s02-y1152.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/execution/21099",
+      "tab": "detail",
+      "state": "execution-detail",
+      "expandables": [
+        "Detalii tehnice",
+        "Detalii tehnice și diagnostic"
+      ],
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1920,
+      "SCROLL_MAX": 1920,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1920"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution_21099/detail/213-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution_21099/detail/214-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution_21099/detail/215-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1920,
+          "file": "wave-3/runtime/screenshots/sales/dark/_execution_21099/detail/216-s03-y1920.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/21099"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/machine-runs",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_machine-runs/default/218-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/machine-runs"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/execution/machine-runs",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/dark/_execution_machine-runs/default/219-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/machine-runs"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2880,
+      "SCROLL_MAX": 2880,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2880"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_ops-graph/default/221-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_ops-graph/default/222-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_ops-graph/default/223-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_ops-graph/default/224-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2880,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_ops-graph/default/225-s04-y2880.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/ops-graph"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2880,
+      "SCROLL_MAX": 2880,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=2880"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_ops-graph/default/226-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_ops-graph/default/227-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_ops-graph/default/228-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_ops-graph/default/229-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2880,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_ops-graph/default/230-s04-y2880.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/ops-graph"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/reality-review",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 7684,
+      "SCROLL_MAX": 7684,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 11,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=7684"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/233-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/234-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/235-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/236-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/237-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/238-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/239-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/240-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/241-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/242-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 7684,
+          "file": "wave-3/runtime/screenshots/admin/dark/_execution_reality-review/default/243-s10-y7684.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/reality-review"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution/reality-review",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 7684,
+      "SCROLL_MAX": 7684,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 11,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=7684"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/244-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/245-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/246-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/247-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/248-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/249-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/250-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/251-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/252-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/253-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 7684,
+          "file": "wave-3/runtime/screenshots/manager/dark/_execution_reality-review/default/254-s10-y7684.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/execution/reality-review"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/operator",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 74425,
+      "SCROLL_MAX": 74425,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "YES",
+      "SCROLL_SEGMENT_COUNT": 20,
+      "FULL_VERTICAL_SCROLL": "FAIL",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=74425"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/255-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/256-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/257-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/258-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/259-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/260-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/261-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/262-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/263-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/264-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/265-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/266-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/267-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/268-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/269-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 12060,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/270-s15-y12060.png"
+        },
+        {
+          "index": 16,
+          "scrollTop": 12864,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/271-s16-y12864.png"
+        },
+        {
+          "index": 17,
+          "scrollTop": 13668,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/272-s17-y13668.png"
+        },
+        {
+          "index": 18,
+          "scrollTop": 14472,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/273-s18-y14472.png"
+        },
+        {
+          "index": 19,
+          "scrollTop": 15276,
+          "file": "wave-3/runtime/screenshots/admin/dark/_operator/default/274-s19-y15276.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/operator"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/operator",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 74425,
+      "SCROLL_MAX": 74425,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "YES",
+      "SCROLL_SEGMENT_COUNT": 20,
+      "FULL_VERTICAL_SCROLL": "FAIL",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=74425"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/275-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/276-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/277-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/278-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/279-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/280-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/281-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/282-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6432,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/283-s08-y6432.png"
+        },
+        {
+          "index": 9,
+          "scrollTop": 7236,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/284-s09-y7236.png"
+        },
+        {
+          "index": 10,
+          "scrollTop": 8040,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/285-s10-y8040.png"
+        },
+        {
+          "index": 11,
+          "scrollTop": 8844,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/286-s11-y8844.png"
+        },
+        {
+          "index": 12,
+          "scrollTop": 9648,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/287-s12-y9648.png"
+        },
+        {
+          "index": 13,
+          "scrollTop": 10452,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/288-s13-y10452.png"
+        },
+        {
+          "index": 14,
+          "scrollTop": 11256,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/289-s14-y11256.png"
+        },
+        {
+          "index": 15,
+          "scrollTop": 12060,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/290-s15-y12060.png"
+        },
+        {
+          "index": 16,
+          "scrollTop": 12864,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/291-s16-y12864.png"
+        },
+        {
+          "index": 17,
+          "scrollTop": 13668,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/292-s17-y13668.png"
+        },
+        {
+          "index": 18,
+          "scrollTop": 14472,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/293-s18-y14472.png"
+        },
+        {
+          "index": 19,
+          "scrollTop": 15276,
+          "file": "wave-3/runtime/screenshots/operator/dark/_operator/default/294-s19-y15276.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/operator"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/tablet",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 80,
+      "SCROLL_MAX": 80,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=80"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/admin/dark/_tablet/default/296-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 80,
+          "file": "wave-3/runtime/screenshots/admin/dark/_tablet/default/297-s01-y80.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/tablet"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/tablet",
+      "tab": "default",
+      "state": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 80,
+      "SCROLL_MAX": 80,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=80"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-3/runtime/screenshots/operator/dark/_tablet/default/298-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 80,
+          "file": "wave-3/runtime/screenshots/operator/dark/_tablet/default/299-s01-y80.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/tablet"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-app-v2",
+      "tab": "observe",
+      "FULL_VERTICAL_SCROLL": "N/A",
+      "note": "standalone employee surface — observe only, no task start",
+      "actualUrl": "http://127.0.0.1:3000/employee-app-v2",
+      "segments": [
+        {
+          "file": "wave-3/runtime/screenshots/admin/light/_employee-app-v2/observe/306-observe.png"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "admin",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "manager",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "sales",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/orders/ORD-IV6-V2-1786318810-31",
+      "CONTROL_LABEL": "Vezi execuția",
+      "ROLE": "admin",
+      "TO_ROUTE": "/execution/973024",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "admin",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "manager",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "/execution",
+      "CONTROL_LABEL": "execution row",
+      "ROLE": "sales",
+      "TO_ROUTE": "/execution/21099",
+      "EXPECTED_PURPOSE": "execution plan detail",
+      "ACTUAL_DESTINATION": "/execution/21099",
+      "HONESTY_STATUS": "GOOD_EDGE"
+    },
+    {
+      "FOLLOWED": "YES",
+      "FROM_ROUTE": "direct",
+      "CONTROL_LABEL": "URL observe",
+      "ROLE": "admin",
+      "TO_ROUTE": "/employee-app-v2",
+      "HONESTY_STATUS": "TECHNICAL_DESTINATION",
+      "note": "not in desktop shell nav"
+    }
+  ],
+  "roleMatrix": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/execution",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/973024",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/973024",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/machine-runs",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/machine-runs",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/ops-graph",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/ops-graph",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/execution/reality-review",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/reality-review",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/execution/reality-review",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/reality-review",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/operator",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/operator",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/operator",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/operator",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/operator",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/tablet",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/tablet",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/tablet",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/tablet",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/shop-floor",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/execution",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/execution",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/machine-runs",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/machine-runs",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/execution/machine-runs",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/ops-graph",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/ops-graph",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/execution/ops-graph",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/execution/reality-review",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/reality-review",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/execution/reality-review",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/execution/reality-review",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/operator",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/operator",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/operator",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/operator",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/operator",
+      "ROLE_ALLOWED": "NO",
+      "SOURCE": "runtime",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/tablet",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/tablet",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "dark",
+      "route": "/tablet",
+      "ROLE_ALLOWED": "YES",
+      "SOURCE": "runtime",
+      "LANDING": "/tablet",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    }
+  ],
+  "orderHandoff": [
+    {
+      "ORDER_ROUTE": "/orders/ORD-IV6-V2-1786318810-31",
+      "ORDER_ID": "973024 / ORD-IV6-V2-1786318810-31",
+      "EXECUTION_ENTRY_CONTROL": "direct GET existing",
+      "DESTINATION": "/execution/973024",
+      "ORDER_ID_VISIBLE": "YES",
+      "EXECUTION_PLAN_ID_VISIBLE": "YES",
+      "USER_RELEVANCE": "numeric order_id in URL",
+      "TECHNICAL_LEAK": "973024",
+      "HONESTY_STATUS": "TECHNICAL_DESTINATION",
+      "role": "admin",
+      "theme": "light"
+    },
+    {
+      "ORDER_ROUTE": "/orders/ORD-IV6-V2-1786318810-31",
+      "ORDER_ID": "ORD-IV6-V2-1786318810-31",
+      "EXECUTION_ENTRY_CONTROL": "Vezi execuția",
+      "CONTROL_LABEL": "Vezi execuția",
+      "DESTINATION": "/execution/973024",
+      "CONTEXT_PRESERVED": "PARTIAL",
+      "ORDER_ID_VISIBLE": "YES",
+      "EXECUTION_PLAN_ID_VISIBLE": "PARTIAL",
+      "USER_RELEVANCE": "order code vs numeric execution id",
+      "TECHNICAL_LEAK": "dual flux + generate vs view",
+      "HONESTY_STATUS": "GOOD_EDGE",
+      "role": "admin",
+      "theme": "light",
+      "GENERATE_VISIBLE": false
+    }
+  ],
+  "hoverFocus": [
+    {
+      "theme": "light",
+      "kind": "nav-atelier",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "WEAK_OR_NONE",
+      "THEME_PARITY": "PENDING_COMPARE"
+    },
+    {
+      "theme": "light",
+      "kind": "primary-link",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "YES",
+      "THEME_PARITY": "PENDING_COMPARE"
+    },
+    {
+      "theme": "light",
+      "kind": "exec-row",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "WEAK_OR_NONE",
+      "THEME_PARITY": "PENDING_COMPARE"
+    },
+    {
+      "theme": "dark",
+      "kind": "nav-atelier",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "WEAK_OR_NONE",
+      "THEME_PARITY": "PENDING_COMPARE"
+    },
+    {
+      "theme": "dark",
+      "kind": "primary-link",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "YES",
+      "THEME_PARITY": "PENDING_COMPARE"
+    },
+    {
+      "theme": "dark",
+      "kind": "exec-row",
+      "HOVER_STATE": "CAPTURED",
+      "FOCUS_STATE": "CAPTURED",
+      "VISIBLE_FOCUS": "WEAK_OR_NONE",
+      "THEME_PARITY": "PENDING_COMPARE"
+    }
+  ],
+  "backNav": [
+    {
+      "FROM_ROUTE": "/execution",
+      "TO_ROUTE": "/execution/21099",
+      "BACK_ROUTE": "/execution",
+      "CONTEXT_PRESERVED": "YES",
+      "theme": "light",
+      "role": "admin"
+    },
+    {
+      "FROM_ROUTE": "/execution",
+      "TO_ROUTE": "/execution/21099",
+      "BACK_ROUTE": "/execution",
+      "CONTEXT_PRESERVED": "YES",
+      "theme": "dark",
+      "role": "admin"
+    }
+  ],
+  "notReached": [
+    {
+      "route": "/shop-floor",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/machine-runs/:id",
+      "role": "admin",
+      "theme": "light",
+      "blocker": "no existing machine-run row",
+      "MUTATION_REQUIRED": "YES",
+      "WHY_NOT_FORCED": "would create MachineRun"
+    },
+    {
+      "route": "/execution/machine-runs/:id",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "no existing machine-run row",
+      "MUTATION_REQUIRED": "YES",
+      "WHY_NOT_FORCED": "would create MachineRun"
+    },
+    {
+      "route": "/execution/machine-runs",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/ops-graph",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/ops-graph",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/operator",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/shop-floor",
+      "role": "sales",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution",
+      "role": "operator",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/machine-runs/:id",
+      "role": "admin",
+      "theme": "dark",
+      "blocker": "no existing machine-run row",
+      "MUTATION_REQUIRED": "YES",
+      "WHY_NOT_FORCED": "would create MachineRun"
+    },
+    {
+      "route": "/execution/machine-runs/:id",
+      "role": "operator",
+      "theme": "dark",
+      "blocker": "no existing machine-run row",
+      "MUTATION_REQUIRED": "YES",
+      "WHY_NOT_FORCED": "would create MachineRun"
+    },
+    {
+      "route": "/execution/machine-runs",
+      "role": "sales",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/ops-graph",
+      "role": "sales",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/execution/ops-graph",
+      "role": "operator",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor",
+      "SOURCE": "RBAC+runtime"
+    },
+    {
+      "route": "/operator",
+      "role": "sales",
+      "theme": "dark",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes",
+      "SOURCE": "RBAC+runtime"
+    }
+  ]
+}
