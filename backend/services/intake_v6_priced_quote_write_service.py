@@ -242,7 +242,12 @@ async def write_intake_v6_priced_quote_totals(
 			],
 		)
 
-	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="write_priced_quote")
+	dry_run = await build_intake_v6_priced_quote_dry_run(
+		db,
+		workspace_id_str,
+		pricing_mode="write_priced_quote",
+		include_internal_cost_diagnostics=True,
+	)
 	totals = dry_run.get("commercial_totals") if isinstance(dry_run.get("commercial_totals"), dict) else {}
 	dry_run_lines = dry_run.get("commercial_line_items") if isinstance(dry_run.get("commercial_line_items"), list) else []
 	warnings = list(dry_run.get("warnings") or [])

@@ -775,7 +775,15 @@ async def build_intake_v6_priced_quote_dry_run(
 	workspace_id: str | int,
 	*,
 	pricing_mode: str = "dry_run",
+	include_internal_cost_diagnostics: bool = False,
 ) -> dict[str, Any]:
+	"""Build the V6 priced dry-run response.
+
+	Official commercial totals come from CPP only. Material-breakdown / EIC /
+	diagnostic cost-plus are opt-in via ``include_internal_cost_diagnostics`` —
+	they are not required for Ofertă client readiness and must not dominate the
+	Step 2 critical path (sibling GETs already expose material-breakdown).
+	"""
 	workspace_id_str = str(workspace_id)
 	record = await _get_record_or_404(db, workspace_id_str)
 	payload_raw = _json_loads(record.payload_json, {})
@@ -834,10 +842,15 @@ async def build_intake_v6_priced_quote_dry_run(
 
 	material_breakdown = None
 	material_warning = None
-	try:
-		material_breakdown = await get_material_breakdown_for_workspace(db, workspace_id_str)
-	except Exception as exc:  # pragma: no cover - defensive trace, pricing preview may still explain blocker
-		material_warning = f"material_breakdown_unavailable:{type(exc).__name__}"
+	internal_preview = None
+	if include_internal_cost_diagnostics:
+		try:
+			material_breakdown = await get_material_breakdown_for_workspace(db, workspace_id_str)
+		except Exception as exc:  # pragma: no cover - defensive trace, pricing preview may still explain blocker
+			material_warning = f"material_breakdown_unavailable:{type(exc).__name__}"
+			warnings.append(material_warning)
+	else:
+		material_warning = "internal_cost_diagnostics_deferred:not_required_for_official_offer"
 		warnings.append(material_warning)
 
 	commercial_preview = await CommercialPriceProposalService(db).build_preview(
@@ -845,12 +858,13 @@ async def build_intake_v6_priced_quote_dry_run(
 		workspace_id=workspace_id_str,
 		quote_input=quote_input,
 	)
-	internal_preview = await EstimatedInternalCostService(db).build_preview(
-		record.template_code,
-		workspace_id=workspace_id_str,
-		quote_input=quote_input,
-		currency="RON",
-	)
+	if include_internal_cost_diagnostics:
+		internal_preview = await EstimatedInternalCostService(db).build_preview(
+			record.template_code,
+			workspace_id=workspace_id_str,
+			quote_input=quote_input,
+			currency="RON",
+		)
 	if commercial_preview is None:
 		blockers.append(
 			_blocker(
@@ -959,7 +973,9 @@ async def build_intake_v6_priced_quote_dry_run(
 				trace["currency"] = totals_currency
 			pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
-	if internal_cost_total is not None or eic_internal_total is not None:
+	if include_internal_cost_diagnostics and (
+		internal_cost_total is not None or eic_internal_total is not None
+	):
 		# Official commercial totals do not need FX. Diagnostic cost-plus is RON-only
 		# and must not invent DEFAULT_EUR_TO_RON_RATE when FX is unset.
 		fx_rate, fx_err = await resolve_configured_eur_to_ron_rate(db)

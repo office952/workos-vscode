@@ -1,0 +1,31 @@
+{
+  "workspace_id": "09cea6e2-41d3-44a3-a862-add13b01af84",
+  "captured_at": "2026-08-13",
+  "alone": [
+    { "ms": 262, "deferred": true, "diag": false, "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED" },
+    { "ms": 238, "deferred": true, "diag": false, "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED" },
+    { "ms": 366, "deferred": true, "diag": false, "pricing_status": "V6_PRICED_DRY_RUN_BLOCKED" }
+  ],
+  "concurrent": [
+    {
+      "wall_ms": 703,
+      "priced_quote_ms": 646,
+      "logical_list_ms": 702,
+      "material_breakdown_ms": 182,
+      "pricing_input_preview_ms": 112,
+      "quote_handoff_preview_ms": 282
+    },
+    {
+      "wall_ms": 563,
+      "priced_quote_ms": 500,
+      "logical_list_ms": 559,
+      "material_breakdown_ms": 135,
+      "pricing_input_preview_ms": 59,
+      "quote_handoff_preview_ms": 180
+    }
+  ],
+  "click_depth_change": [
+    { "PRICED_QUOTE_MS": 767, "TOTAL_CLICK_TO_PQ_DONE_MS": 1989, "production_task_gets": 0 },
+    { "PRICED_QUOTE_MS": 699, "TOTAL_CLICK_TO_PQ_DONE_MS": 1842, "production_task_gets": 0 }
+  ]
+}

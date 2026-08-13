@@ -186,13 +186,58 @@ async def test_dry_run_returns_non_zero_totals_when_backend_pricing_available() 
     assert result["commercial_totals"]["total_gross"] == 1190.0
     assert result["commercial_totals"]["currency"] == "EUR"
     assert result["commercial_line_items"]
-    assert result["internal_cost_trace"]["estimated_cost_total"] == 782.38
     assert result["pricing_authority"] == dry_run.V6_OFFICIAL_COMMERCIAL_AUTHORITY
+    # Official critical path defers internal-cost diagnostics (sibling material-breakdown owns EIC UI).
+    assert result["internal_cost_trace"]["available"] is False
+    assert result["estimated_internal_cost_trace"]["available"] is False
+    assert result["diagnostic_cost_plus_trace"] is None
+    assert any("internal_cost_diagnostics_deferred" in w for w in (result.get("warnings") or []))
+    assert "official_v6_pricing_uses_cost_plus" not in " ".join(result.get("warnings") or [])
+    assert result["dry_run_only"] is True
+
+
+@pytest.mark.asyncio
+async def test_dry_run_opt_in_internal_cost_diagnostics() -> None:
+    db = FakeDb()
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(
+        db,
+        "workspace-v6",
+        include_internal_cost_diagnostics=True,
+    )
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_READY
+    assert result["commercial_totals"]["total_gross"] == 1190.0
+    assert result["internal_cost_trace"]["estimated_cost_total"] == 782.38
     assert result["estimated_internal_cost_trace"]["available"] is True
     assert result["diagnostic_cost_plus_trace"] is not None
     assert result["diagnostic_cost_plus_trace"]["diagnostic_only"] is True
-    assert "official_v6_pricing_uses_cost_plus" not in " ".join(result.get("warnings") or [])
-    assert result["dry_run_only"] is True
+
+
+@pytest.mark.asyncio
+async def test_dry_run_official_commercial_parity_with_or_without_diagnostics() -> None:
+    """Deferring MB/EIC/cost-plus must not change official offer money or readiness."""
+    off = await dry_run.build_intake_v6_priced_quote_dry_run(
+        FakeDb(),
+        "workspace-v6",
+        include_internal_cost_diagnostics=False,
+    )
+    on = await dry_run.build_intake_v6_priced_quote_dry_run(
+        FakeDb(),
+        "workspace-v6",
+        include_internal_cost_diagnostics=True,
+    )
+
+    assert off["pricing_status"] == on["pricing_status"]
+    assert off["pricing_authority"] == on["pricing_authority"]
+    assert off["commercial_totals"] == on["commercial_totals"]
+    assert off["commercial_line_items"] == on["commercial_line_items"]
+    assert [b.get("code") for b in off.get("blockers") or []] == [
+        b.get("code") for b in on.get("blockers") or []
+    ]
+    assert off["dry_run_only"] is True
+    assert on["internal_cost_trace"]["available"] is True
+    assert off["internal_cost_trace"]["available"] is False
 
 
 @pytest.mark.asyncio
@@ -261,7 +306,11 @@ async def test_dry_run_does_not_copy_frontend_preview_totals() -> None:
 async def test_dry_run_does_not_use_cost_plus_when_7g_blocked() -> None:
     FakeCommercialPriceProposalService.preview = _commercial_preview(subtotal=None, status="partial")
 
-    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(
+        FakeDb(),
+        "workspace-v6",
+        include_internal_cost_diagnostics=True,
+    )
 
     assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_BLOCKED
     assert result["pricing_authority"] is None
@@ -273,7 +322,11 @@ async def test_dry_run_does_not_use_cost_plus_when_7g_blocked() -> None:
 
 @pytest.mark.asyncio
 async def test_dry_run_7g_official_total_differs_from_diagnostic_cost_plus() -> None:
-    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(
+        FakeDb(),
+        "workspace-v6",
+        include_internal_cost_diagnostics=True,
+    )
 
     assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_READY
     assert result["commercial_totals"]["total_gross"] == 1190.0

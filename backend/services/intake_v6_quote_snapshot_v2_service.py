@@ -595,7 +595,12 @@ async def create_v6_quote_snapshot_v2(
 		)
 	job_truth_meta = get_job_revision_metadata(ws_payload) or {}
 
-	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="snapshot_v2")
+	dry_run = await build_intake_v6_priced_quote_dry_run(
+		db,
+		workspace_id_str,
+		pricing_mode="snapshot_v2",
+		include_internal_cost_diagnostics=True,
+	)
 	if dry_run.get("pricing_status") != V6_PRICED_DRY_RUN_READY:
 		return _blocked(
 			quote_id=quote_id,
