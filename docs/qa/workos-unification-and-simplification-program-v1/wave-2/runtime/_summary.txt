@@ -1,0 +1,60 @@
+surfaces=42 shots=106 scrollFail=0 edges=13 notReached=0
+--- surfaces ---
+admin light /intake tab=default scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+admin light /intake tab=row-selected scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+admin light /intake-v6/IR-MSRB28PU/operator tab=layers scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /intake-v6/IR-MSRB28PU/operator tab=review scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /intake-v6/IR-MSRB28PU/operator tab=review-Finisaje scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /intake-v6/IR-MSRB28PU/operator tab=review-Iluminare scroll=PASS segs=2 0->131/131 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /intake-v6/IR-MSRB28PU/operator tab=review-Montaj scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /intake-v6/IR-MSRB28PU/operator tab=confirm scroll=PASS segs=2 0->394/394 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin light /orders tab=default scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders
+admin light /orders tab=status-filter scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders
+admin light /orders/ORD-IV6-V2-1786318810-31 tab=order-detail scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders/ORD-IV6-V2-1786318810-31
+admin light /clients tab=default scroll=PASS segs=3 0->835/835 url=http://127.0.0.1:3000/clients
+admin light /clients/SC%20CLIENT%20NOU%20SRL tab=overview scroll=PASS segs=5 0->2656/2656 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin light /clients/SC%20CLIENT%20NOU%20SRL tab=Cereri scroll=PASS segs=8 0->4993/4993 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin light /clients/SC%20CLIENT%20NOU%20SRL tab=Oferte scroll=PASS segs=2 0->602/602 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin light /clients/SC%20CLIENT%20NOU%20SRL tab=Comenzi scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin light /quotes tab=observe-detail scroll=N/A segs=1 None->None/None url=
+admin dark /intake tab=default scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+admin dark /intake tab=row-selected scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+admin dark /intake-v6/IR-MSRB28PU/operator tab=layers scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /intake-v6/IR-MSRB28PU/operator tab=review scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /intake-v6/IR-MSRB28PU/operator tab=review-Finisaje scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /intake-v6/IR-MSRB28PU/operator tab=review-Iluminare scroll=PASS segs=2 0->131/131 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /intake-v6/IR-MSRB28PU/operator tab=review-Montaj scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /intake-v6/IR-MSRB28PU/operator tab=confirm scroll=PASS segs=2 0->394/394 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+admin dark /orders tab=default scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders
+admin dark /orders tab=status-filter scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders
+admin dark /orders/ORD-IV6-V2-1786318810-31 tab=order-detail scroll=PASS segs=5 0->2744/2744 url=http://127.0.0.1:3000/orders/ORD-IV6-V2-1786318810-31
+admin dark /clients tab=default scroll=PASS segs=3 0->835/835 url=http://127.0.0.1:3000/clients
+admin dark /clients/SC%20CLIENT%20NOU%20SRL tab=overview scroll=PASS segs=5 0->2656/2656 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin dark /clients/SC%20CLIENT%20NOU%20SRL tab=Cereri scroll=PASS segs=8 0->4993/4993 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin dark /clients/SC%20CLIENT%20NOU%20SRL tab=Oferte scroll=PASS segs=2 0->602/602 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin dark /clients/SC%20CLIENT%20NOU%20SRL tab=Comenzi scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/clients/SC%20CLIENT%20NOU%20SRL
+admin dark /quotes tab=observe-detail scroll=N/A segs=1 None->None/None url=
+sales light /intake tab=default scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+sales light /intake tab=row-selected scroll=PASS segs=2 0->723/723 url=http://127.0.0.1:3000/intake
+sales light /intake-v6/IR-MSRB28PU/operator tab=layers scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+sales light /intake-v6/IR-MSRB28PU/operator tab=review scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+sales light /intake-v6/IR-MSRB28PU/operator tab=review-Finisaje scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+sales light /intake-v6/IR-MSRB28PU/operator tab=review-Iluminare scroll=PASS segs=2 0->131/131 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+sales light /intake-v6/IR-MSRB28PU/operator tab=review-Montaj scroll=PASS segs=1 0->0/0 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+sales light /intake-v6/IR-MSRB28PU/operator tab=confirm scroll=PASS segs=2 0->394/394 url=http://127.0.0.1:3000/intake-v6/IR-MSRB28PU/operator
+--- edges ---
+YES /intake --Deschide Intake V6--> /intake-v6/IR-MSRB28PU/operator | GOOD_EDGE 
+YES /orders --select order--> /orders/ORD-IV6-V2-1786318810-31 | GOOD_EDGE 
+YES /orders/ORD-IV6-V2-1786318810-31 --Oferte--> /quotes | GOOD_EDGE 
+YES /clients --client row--> /clients/SC%20CLIENT%20NOU%20SRL | GOOD_EDGE 
+YES /quotes --din cerere IV6-734601c4-c5d8-4c25-bced-0b958c81a5b4--> /intake-v6/734601c4-c5d8-4c25-bced-0b958c81a5b4/operator | GOOD_EDGE 
+YES /quotes --Comenzi--> /orders | GOOD_EDGE 
+YES /intake --Deschide Intake V6--> /intake-v6/IR-MSRB28PU/operator | GOOD_EDGE 
+YES /orders --select order--> /orders/ORD-IV6-V2-1786318810-31 | GOOD_EDGE 
+YES /orders/ORD-IV6-V2-1786318810-31 --Oferte--> /quotes | GOOD_EDGE 
+YES /clients --client row--> /clients/SC%20CLIENT%20NOU%20SRL | GOOD_EDGE 
+YES /quotes --din cerere IV6-734601c4-c5d8-4c25-bced-0b958c81a5b4--> /intake-v6/734601c4-c5d8-4c25-bced-0b958c81a5b4/operator | GOOD_EDGE 
+YES /quotes --Comenzi--> /orders | GOOD_EDGE 
+YES /intake --Deschide Intake V6--> /intake-v6/IR-MSRB28PU/operator | GOOD_EDGE 
+--- notReached ---
+[]

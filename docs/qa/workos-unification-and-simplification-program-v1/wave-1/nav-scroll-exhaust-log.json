@@ -1,0 +1,62 @@
+{
+  "results": [
+    {
+      "route": "/dashboard",
+      "role": "admin",
+      "theme": "light",
+      "tab": "appshell-nav",
+      "container": "workos-shell-nav",
+      "SCROLL_START": 0,
+      "SCROLL_END": 624,
+      "SCROLL_MAX": 624,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/nav/light/nav-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 624,
+          "file": "wave-1/screenshots/scroll/nav/light/nav-s01-y624.png"
+        }
+      ]
+    },
+    {
+      "route": "/dashboard",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "appshell-nav",
+      "container": "workos-shell-nav",
+      "SCROLL_START": 0,
+      "SCROLL_END": 624,
+      "SCROLL_MAX": 624,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/nav/dark/nav-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 624,
+          "file": "wave-1/screenshots/scroll/nav/dark/nav-s01-y624.png"
+        }
+      ]
+    }
+  ]
+}

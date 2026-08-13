@@ -1,0 +1,791 @@
+{
+  "fe": "http://127.0.0.1:3000",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "results": [
+    {
+      "route": "/dashboard",
+      "role": "admin",
+      "theme": "light",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1299,
+      "SCROLL_MAX": 1299,
+      "clientHeight": 852,
+      "scrollHeight": 2151,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=1299"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_dashboard/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/light/_dashboard/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1299,
+          "file": "wave-1/screenshots/scroll/admin/light/_dashboard/default/s02-y1299.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "light",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4440,
+      "SCROLL_MAX": 4440,
+      "clientHeight": 852,
+      "scrollHeight": 5292,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=4440"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4440,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/default/s06-y4440.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "light",
+      "tab": "Ciornă",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 488,
+      "SCROLL_MAX": 488,
+      "clientHeight": 852,
+      "scrollHeight": 1340,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=488"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Ciornă/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 488,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Ciornă/s01-y488.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "light",
+      "tab": "Tarifat",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 640,
+      "SCROLL_MAX": 640,
+      "clientHeight": 852,
+      "scrollHeight": 1492,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=640"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Tarifat/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 640,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Tarifat/s01-y640.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "light",
+      "tab": "Acceptat",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2464,
+      "SCROLL_MAX": 2464,
+      "clientHeight": 852,
+      "scrollHeight": 3316,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=2464"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Acceptat/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Acceptat/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Acceptat/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Acceptat/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2464,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/Acceptat/s04-y2464.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "light",
+      "tab": "quote-selected",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4389,
+      "SCROLL_MAX": 4389,
+      "clientHeight": 852,
+      "scrollHeight": 5241,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=4389"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4389,
+          "file": "wave-1/screenshots/scroll/admin/light/_quotes/quote-selected/s06-y4389.png"
+        }
+      ]
+    },
+    {
+      "route": "/shop-floor",
+      "role": "admin",
+      "theme": "light",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "clientHeight": 852,
+      "scrollHeight": 1670,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/light/_shop-floor/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/light/_shop-floor/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-1/screenshots/scroll/admin/light/_shop-floor/default/s02-y818.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "sales",
+      "theme": "light",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4440,
+      "SCROLL_MAX": 4440,
+      "clientHeight": 852,
+      "scrollHeight": 5292,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "main.relative.z-0.flex-1 max=4440"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4440,
+          "file": "wave-1/screenshots/scroll/sales/light/_quotes/default/s06-y4440.png"
+        }
+      ]
+    },
+    {
+      "route": "/shop-floor",
+      "role": "operator",
+      "theme": "light",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "clientHeight": 852,
+      "scrollHeight": 1670,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "main.relative.z-0.flex-1 max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/operator/light/_shop-floor/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/operator/light/_shop-floor/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-1/screenshots/scroll/operator/light/_shop-floor/default/s02-y818.png"
+        }
+      ]
+    },
+    {
+      "route": "/dashboard",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1299,
+      "SCROLL_MAX": 1299,
+      "clientHeight": 852,
+      "scrollHeight": 2151,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=1299"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_dashboard/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/dark/_dashboard/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1299,
+          "file": "wave-1/screenshots/scroll/admin/dark/_dashboard/default/s02-y1299.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4440,
+      "SCROLL_MAX": 4440,
+      "clientHeight": 852,
+      "scrollHeight": 5292,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=4440"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4440,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/default/s06-y4440.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "Ciornă",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 488,
+      "SCROLL_MAX": 488,
+      "clientHeight": 852,
+      "scrollHeight": 1340,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=488"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Ciornă/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 488,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Ciornă/s01-y488.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "Tarifat",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 640,
+      "SCROLL_MAX": 640,
+      "clientHeight": 852,
+      "scrollHeight": 1492,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=640"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Tarifat/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 640,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Tarifat/s01-y640.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "Acceptat",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2464,
+      "SCROLL_MAX": 2464,
+      "clientHeight": 852,
+      "scrollHeight": 3316,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=2464"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Acceptat/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Acceptat/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Acceptat/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Acceptat/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2464,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/Acceptat/s04-y2464.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "quote-selected",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4389,
+      "SCROLL_MAX": 4389,
+      "clientHeight": 852,
+      "scrollHeight": 5241,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=4389"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4389,
+          "file": "wave-1/screenshots/scroll/admin/dark/_quotes/quote-selected/s06-y4389.png"
+        }
+      ]
+    },
+    {
+      "route": "/shop-floor",
+      "role": "admin",
+      "theme": "dark",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "clientHeight": 852,
+      "scrollHeight": 1670,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "main.relative.z-0.flex-1 max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/admin/dark/_shop-floor/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/admin/dark/_shop-floor/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-1/screenshots/scroll/admin/dark/_shop-floor/default/s02-y818.png"
+        }
+      ]
+    },
+    {
+      "route": "/quotes",
+      "role": "sales",
+      "theme": "dark",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4440,
+      "SCROLL_MAX": 4440,
+      "clientHeight": 852,
+      "scrollHeight": 5292,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "main.relative.z-0.flex-1 max=4440"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4440,
+          "file": "wave-1/screenshots/scroll/sales/dark/_quotes/default/s06-y4440.png"
+        }
+      ]
+    },
+    {
+      "route": "/shop-floor",
+      "role": "operator",
+      "theme": "dark",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 818,
+      "SCROLL_MAX": 818,
+      "clientHeight": 852,
+      "scrollHeight": 1670,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENTS_CAPTURED": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "main.relative.z-0.flex-1 max=818"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-1/screenshots/scroll/operator/dark/_shop-floor/default/s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-1/screenshots/scroll/operator/dark/_shop-floor/default/s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 818,
+          "file": "wave-1/screenshots/scroll/operator/dark/_shop-floor/default/s02-y818.png"
+        }
+      ]
+    }
+  ]
+}
