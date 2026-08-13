@@ -143,6 +143,56 @@ describe("intakeV6WorkspaceReducer load during upload", () => {
     expect(reloaded.svg?.fileName).toBe("pbl-complex.svg");
   });
 
+  it("server_rehydrate ANALYZER_READY keeps Configurare step and does not mark unsaved when hash matches", () => {
+    const onReview = {
+      ...initialIntakeV6WorkspaceState,
+      currentStep: "review" as const,
+      operatorStepIntent: "review" as const,
+      phase: "svg_ready" as const,
+      workspace: {
+        id: "ws-rehydrate",
+        workspace_code: "IV6-RH",
+        title: "Rehydrate",
+        template_code: "TPL-VOLUMETRIC-LETTERS",
+        status: "ready_for_quote_preview",
+        payload: {
+          svg_source: { file_hash: "hash-1", upload_status: "analyzed" },
+          layer_role_setup: { confirmation_status: "complete", layers: [] },
+        },
+      },
+    };
+    const started = intakeV6WorkspaceReducer(onReview, {
+      type: "ANALYZER_START",
+      runId: 9,
+      fileName: "upload.svg",
+      fileSizeBytes: 100,
+      mode: "server_rehydrate",
+    });
+    expect(started.currentStep).toBe("review");
+    expect(started.operatorStepIntent).toBe("review");
+
+    const ready = intakeV6WorkspaceReducer(started, {
+      type: "ANALYZER_READY",
+      runId: 9,
+      fileName: "upload.svg",
+      fileSizeBytes: 100,
+      svgSource: "<svg/>",
+      previewSource: "<svg/>",
+      localFileHash: "hash-1",
+      report: { layers: [], document: { widthMm: 1, heightMm: 1 }, errors: [] } as never,
+      layerRoleConfirmation: {
+        schemaVersion: "layer_role_confirmation_v1",
+        confirmationStatus: "complete",
+        layers: [],
+      },
+      layerChips: [],
+      mode: "server_rehydrate",
+    });
+    expect(ready.currentStep).toBe("review");
+    expect(ready.operatorStepIntent).toBe("review");
+    expect(ready.unsavedAnalysis).toBe(false);
+  });
+
   it("preserves local analyzer result when LOAD_SUCCESS has no persisted analysis yet", () => {
     const ready = intakeV6WorkspaceReducer(
       intakeV6WorkspaceReducer(initialIntakeV6WorkspaceState, {

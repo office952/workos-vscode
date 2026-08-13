@@ -1336,6 +1336,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     };
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.pricing]);
 
+  // Reset LL identity when workspace/analysis changes (not on every commercial_preview).
+  // Runs before the PQ effect so initial mount clears prior settle, then PQ publishes a
+  // fresh gen-0 settle — LL never waits on a signal that was wiped after PQ completed.
+  useEffect(() => {
+    lastFetchedBreakdownGenRef.current = null;
+    logicalListFetchTokenRef.current += 1;
+    setLogicalListReadModel(null);
+    setPricedQuoteSettleSignal(null);
+  }, [workspaceId, analysisIdentityKey]);
+
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
       setPricedQuoteDryRun(null);
@@ -1347,6 +1357,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     const pricedQuoteGenAtStart = previewRefresh.pricedQuote;
     const breakdownGenAtStart = previewRefresh.breakdown;
     const userDrivenRefresh = pricedQuoteGenAtStart > 0;
+    // New PQ wave: LL must wait for this request's settle (covers initial gen 0/0).
+    setPricedQuoteSettleSignal(null);
     setLoadingPricedQuote(true);
     setPricedQuoteError(null);
     if (userDrivenRefresh) {
@@ -1388,6 +1400,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         if (cancelled) return;
         setLoadingPricedQuote(false);
         // D2: publish settle for this PQ generation so LL may start after CURRENT.
+        // Includes initial mount (gen 0/0) — no prior settle state required.
         setPricedQuoteSettleSignal({
           pricedQuoteGen: pricedQuoteGenAtStart,
           breakdownGen: breakdownGenAtStart,
@@ -1397,14 +1410,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       cancelled = true;
     };
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.pricedQuote, previewRefresh.breakdown]);
-
-  // Reset LL identity when workspace/analysis changes (not on every commercial_preview).
-  useEffect(() => {
-    lastFetchedBreakdownGenRef.current = null;
-    logicalListFetchTokenRef.current += 1;
-    setLogicalListReadModel(null);
-    setPricedQuoteSettleSignal(null);
-  }, [workspaceId, analysisIdentityKey]);
 
   // D2: logical-list launches only after pricedQuote settles for the latest revision.
   // Markup-only (pricedQuote gen advances, breakdown unchanged) does not refetch LL.

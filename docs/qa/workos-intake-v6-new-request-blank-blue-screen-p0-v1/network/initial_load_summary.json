@@ -1,0 +1,17 @@
+{
+  "workspace_id": "e994927e-aa90-46b0-bde0-dd34e025e44e",
+  "workspace_get_status": 200,
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "sibling_statuses": {
+    "product-system-binding": 200,
+    "template-form-contract": 200,
+    "pricing-input-preview": 200,
+    "material-breakdown": 200,
+    "priced-quote-dry-run": 200,
+    "quote-handoff-preview": 200,
+    "logical-list-read-model": 200,
+    "ai-informational-assist-candidate": 200
+  },
+  "failed_initial_request": null,
+  "blank_cause": "frontend_render_exception_eurToRonRate_null"
+}

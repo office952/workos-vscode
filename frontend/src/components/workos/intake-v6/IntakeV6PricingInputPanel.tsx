@@ -130,13 +130,13 @@ function IntakeV6PricingInputPanelReady({
       ? officialTotals.currency.trim().toUpperCase()
       : null;
   const internalEstimateRon =
-    offerModel.internalEstimateTotal != null
-      ? roundMoney(
-          offerModel.internalEstimateCurrency === "RON"
-            ? offerModel.internalEstimateTotal
-            : offerModel.internalEstimateTotal * offerModel.eurToRonRate,
-        )
-      : null;
+    offerModel.internalEstimateTotal == null
+      ? null
+      : offerModel.internalEstimateCurrency === "RON"
+        ? roundMoney(offerModel.internalEstimateTotal)
+        : offerModel.eurToRonRate != null && Number.isFinite(offerModel.eurToRonRate)
+          ? roundMoney(offerModel.internalEstimateTotal * offerModel.eurToRonRate)
+          : null;
   const officialNetRon = hasOfficialTotals ? displayOfficialNet : null;
   const internalMarginVsNetRon =
     internalEstimateRon != null && officialNetRon != null ? roundMoney(officialNetRon - internalEstimateRon) : null;
@@ -283,7 +283,9 @@ function IntakeV6PricingInputPanelReady({
               %
             </dd>
           </div>
-        ) : offerModel.internalEstimateCurrency === "EUR" ? (
+        ) : offerModel.internalEstimateCurrency === "EUR" &&
+          offerModel.eurToRonRate != null &&
+          Number.isFinite(offerModel.eurToRonRate) ? (
           <div className="col-span-2 flex justify-between gap-2 text-[11px] text-slate-500">
             <dt>Curs cost intern</dt>
             <dd data-testid="intake-v6-offer-eur-ron-rate">

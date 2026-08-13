@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getAnalysisIdentityKey,
   getPersistedFileHash,
   hasUnsavedAnalysis,
   resolveHydratedFileHashSync,
@@ -49,6 +50,37 @@ describe("getPersistedFileHash", () => {
       },
     });
     expect(hash).toBe("source-file-hash");
+  });
+});
+
+describe("getAnalysisIdentityKey", () => {
+  it("ignores workspace.updated_at so autosave does not thrash D2/PQ identity", () => {
+    const base = {
+      ...initialIntakeV6WorkspaceState,
+      analysisRunId: 3,
+      localFileHash: "abc",
+      workspace: {
+        id: "ws-1",
+        workspace_code: "IV6-1",
+        title: "Test",
+        template_code: "TPL-VOLUMETRIC-LETTERS",
+        status: "draft",
+        updated_at: "2026-08-13T10:00:00.000Z",
+        payload: {
+          svg_source: { file_hash: "abc", upload_status: "analyzed" },
+        },
+      },
+    };
+    const before = getAnalysisIdentityKey(base);
+    const after = getAnalysisIdentityKey({
+      ...base,
+      workspace: {
+        ...base.workspace!,
+        updated_at: "2026-08-13T10:00:05.000Z",
+      },
+    });
+    expect(before).toBe("abc:abc:3");
+    expect(after).toBe(before);
   });
 });
 

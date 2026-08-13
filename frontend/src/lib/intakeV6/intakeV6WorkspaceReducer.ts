@@ -171,7 +171,8 @@ export function intakeV6WorkspaceReducer(
         currentStep: action.step,
         operatorStepIntent: action.step,
       };
-    case "ANALYZER_START":
+    case "ANALYZER_START": {
+      const serverRehydrate = action.mode === "server_rehydrate";
       return {
         ...state,
         phase: "analyzing_svg",
@@ -180,18 +181,26 @@ export function intakeV6WorkspaceReducer(
         error: null,
         loadErrorCode: null,
         analysisRunId: action.runId,
-        currentStep: "layers",
-        operatorStepIntent: "layers",
+        // Operator file import owns Straturi. Background server-text rehydrate must
+        // not wipe step intent — that produced Configurare→empty Straturi flashes
+        // (and blocked review) on otherwise ready workspaces.
+        currentStep: serverRehydrate ? state.currentStep : "layers",
+        operatorStepIntent: serverRehydrate ? state.operatorStepIntent : "layers",
         svg: { fileName: action.fileName, fileSizeBytes: action.fileSizeBytes, previewSource: null },
-        layerChips: [],
-        svgSource: null,
-        analyzerReport: null,
-        layerRoleConfirmation: null,
-        localFileHash: null,
-        unsavedAnalysis: true,
+        layerChips: serverRehydrate ? state.layerChips : [],
+        svgSource: serverRehydrate ? state.svgSource : null,
+        analyzerReport: serverRehydrate ? state.analyzerReport : null,
+        layerRoleConfirmation: serverRehydrate ? state.layerRoleConfirmation : null,
+        localFileHash: serverRehydrate ? state.localFileHash : null,
+        unsavedAnalysis: serverRehydrate ? state.unsavedAnalysis : true,
       };
-    case "ANALYZER_READY":
+    }
+    case "ANALYZER_READY": {
       if (action.runId !== state.analysisRunId) return state;
+      const serverRehydrate = action.mode === "server_rehydrate";
+      const persistedHash = getPersistedFileHash(state.workspace?.payload);
+      const hashSynced =
+        persistedHash != null && action.localFileHash === persistedHash;
       return {
         ...state,
         phase: "svg_ready",
@@ -206,13 +215,14 @@ export function intakeV6WorkspaceReducer(
         },
         svgSource: action.svgSource,
         localFileHash: action.localFileHash,
-        unsavedAnalysis: true,
+        unsavedAnalysis: serverRehydrate ? !hashSynced : true,
         analyzerReport: action.report,
         layerRoleConfirmation: action.layerRoleConfirmation,
         layerChips: action.layerChips,
-        currentStep: "layers",
-        operatorStepIntent: "layers",
+        currentStep: serverRehydrate ? state.currentStep : "layers",
+        operatorStepIntent: serverRehydrate ? state.operatorStepIntent : "layers",
       };
+    }
     case "ANALYZER_ERROR":
       if (action.runId !== state.analysisRunId) return state;
       return {

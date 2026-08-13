@@ -167,7 +167,13 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     fetchStartedRef.current = workspaceId;
 
     const cached = getCachedIntakeV6Workspace(workspaceId);
-    dispatch({ type: "LOAD_START", workspaceId });
+    // Prefer cache hydrate before LOAD_START wipe so a workspace-id switch does not
+    // flash an empty blue shell ("Pregătesc…") when we already know the payload.
+    if (cached) {
+      dispatch(hydrateFromWorkspace(cached));
+    } else {
+      dispatch({ type: "LOAD_START", workspaceId });
+    }
 
     let cancelled = false;
 
@@ -191,13 +197,15 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
       }
     };
 
-    if (cached) {
-      dispatch(hydrateFromWorkspace(cached));
-    }
-
     void load();
     return () => {
       cancelled = true;
+      // Allow the same workspaceId to reload after effect cleanup (route remount /
+      // param flicker). Without this, a cancelled first GET never retries and the
+      // operator shell can stay empty after LOAD_START.
+      if (fetchStartedRef.current === workspaceId) {
+        fetchStartedRef.current = null;
+      }
     };
   }, [workspaceId]);
 
@@ -224,6 +232,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
       runId,
       fileName: meta.fileName,
       fileSizeBytes: meta.fileSizeBytes,
+      mode: "server_rehydrate",
     });
 
     void (async () => {
@@ -254,6 +263,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
           layerRoleConfirmation: hydrated.layerRoleConfirmation,
           layerChips: hydrated.layerChips,
           parseWarning: null,
+          mode: "server_rehydrate",
         });
       } catch (err) {
         if (cancelled || analysisRunRef.current !== runId || !mountedRef.current) return;

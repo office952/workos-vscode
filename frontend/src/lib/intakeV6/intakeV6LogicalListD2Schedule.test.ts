@@ -17,6 +17,30 @@ describe("decideLogicalListFetchAfterPricedQuoteSettle", () => {
     expect(decision.reason).toBe("initial_or_breakdown");
   });
 
+  it("does not require a prior settle — null settle stays not_ready until PQ finally", () => {
+    const decision = decideLogicalListFetchAfterPricedQuoteSettle({
+      analysisReady: true,
+      settle: null,
+      currentPricedQuoteGen: 0,
+      currentBreakdownGen: 0,
+      lastFetchedBreakdownGen: null,
+    });
+    expect(decision.shouldFetch).toBe(false);
+    expect(decision.reason).toBe("not_ready");
+  });
+
+  it("new/empty workspace initial gen 0/0 is not classified as markup_only_skip", () => {
+    const decision = decideLogicalListFetchAfterPricedQuoteSettle({
+      analysisReady: true,
+      settle: { pricedQuoteGen: 0, breakdownGen: 0 },
+      currentPricedQuoteGen: 0,
+      currentBreakdownGen: 0,
+      lastFetchedBreakdownGen: null,
+    });
+    expect(decision.reason).not.toBe("markup_only_skip");
+    expect(decision.shouldFetch).toBe(true);
+  });
+
   it("fetches when breakdown advanced after finish save wave", () => {
     const decision = decideLogicalListFetchAfterPricedQuoteSettle({
       analysisReady: true,

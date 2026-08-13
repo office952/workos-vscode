@@ -61,7 +61,14 @@ export type IntakeV6WorkspaceAction =
 	| { type: "LOAD_SUCCESS"; workspace: IntakeV6WorkspaceResponse }
 	| { type: "LOAD_ERROR"; message: string; code: IntakeV6LoadErrorCode }
 	| { type: "SET_STEP"; step: IntakeV6StepId }
-	| { type: "ANALYZER_START"; runId: number; fileName: string; fileSizeBytes: number }
+	| {
+			type: "ANALYZER_START";
+			runId: number;
+			fileName: string;
+			fileSizeBytes: number;
+			/** server_rehydrate must not kick the operator back to Straturi */
+			mode?: "operator_import" | "server_rehydrate";
+		}
 	| {
 			type: "ANALYZER_READY";
 			runId: number;
@@ -74,6 +81,7 @@ export type IntakeV6WorkspaceAction =
 			layerRoleConfirmation: LayerRoleConfirmation;
 			layerChips: IntakeV6LayerChip[];
 			parseWarning?: string | null;
+			mode?: "operator_import" | "server_rehydrate";
 		}
 	| { type: "ANALYZER_ERROR"; runId: number; message: string }
 	| {

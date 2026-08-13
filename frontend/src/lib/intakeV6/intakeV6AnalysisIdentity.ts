@@ -78,8 +78,12 @@ export function getAnalysisIdentityKey(state: IntakeV6WorkspaceState): string {
   const persistedHash = getPersistedFileHash(state.workspace?.payload) ?? "none";
   const localHash = state.localFileHash ?? "none";
   const runId = state.analysisRunId;
-  const updatedAt = state.workspace?.updated_at ?? "none";
-  return `${persistedHash}:${localHash}:${runId}:${updatedAt}`;
+  // Intentionally exclude workspace.updated_at: finish/commercial autosave bumps
+  // updated_at on every persist and would thrash preview/D2 effects (cancel PQ
+  // before settle, clear LL signal, appear as first-load deadlock / blank offer).
+  // Payload/analysis changes are already covered by file hashes + analysisRunId;
+  // commercial/finish refreshes use previewRefresh.* generation counters.
+  return `${persistedHash}:${localHash}:${runId}`;
 }
 
 export function isAnalysisReadyForReview(state: IntakeV6WorkspaceState): boolean {
