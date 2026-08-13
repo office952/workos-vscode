@@ -1,0 +1,57 @@
+{
+  "workspace_id": "09cea6e2-41d3-44a3-a862-add13b01af84",
+  "baseline_head": "979d22d2",
+  "captured_at": "2026-08-13",
+  "OWNER_DEV_DB_MUTATIONS": 0,
+  "contention": {
+    "pqAlone_ms": [526, 881, 868],
+    "llAlone_ms": [763, 471, 400],
+    "pqWithLl": [
+      { "wall_ms": 1064, "pq_ms": 975, "ll_ms": 1062 },
+      { "wall_ms": 898, "pq_ms": 717, "ll_ms": 897 }
+    ],
+    "fullFanout": [
+      {
+        "wall_ms": 770,
+        "get_count": 5,
+        "pq_ms": 705,
+        "ll_ms": 769,
+        "mb_ms": 164,
+        "pip_ms": 72,
+        "qh_ms": 277
+      },
+      {
+        "wall_ms": 940,
+        "get_count": 5,
+        "pq_ms": 938,
+        "ll_ms": 880,
+        "mb_ms": 86,
+        "pip_ms": 45,
+        "qh_ms": 256
+      }
+    ],
+    "d2SequentialSim": [
+      { "click_to_current_proxy_ms": 383, "pq_ms": 383, "ll_ms": 597, "total_to_ll_done_ms": 981 },
+      { "click_to_current_proxy_ms": 661, "pq_ms": 660, "ll_ms": 714, "total_to_ll_done_ms": 1376 }
+    ]
+  },
+  "discrete_depth_change": {
+    "next": "100",
+    "SELECT_TO_SAVE_START_MS": 1637,
+    "SAVE_ACK_MS": 82,
+    "PQ_START_MS": 1729,
+    "PQ_END_MS": 2798,
+    "PQ_DURATION_MS": 1069,
+    "LL_START_MS": 1729,
+    "LL_END_MS": 2836,
+    "LL_DURATION_MS": 1107,
+    "CLICK_TO_PQ_DONE_MS": 2798,
+    "PUT_COUNT": 1,
+    "GET_COUNT": 7,
+    "PRICED_QUOTE_COUNT": 1,
+    "LOGICAL_LIST_COUNT": 1,
+    "MATERIAL_BREAKDOWN_COUNT": 1,
+    "PRODUCTION_TASK_GET_COUNT": 0,
+    "note": "SELECT_TO_SAVE_START includes pre-settle UI idle; PUT and GETs after save are the critical window. PQ and LL start at identical START_MS (concurrent)."
+  }
+}

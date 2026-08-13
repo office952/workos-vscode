@@ -208,6 +208,11 @@ import {
 } from "@/lib/intakeV6/intakeV6FinishHydration";
 import { deriveIntakeV6OfferLifecycleStatus } from "@/lib/intakeV6/intakeV6OfferLifecycleStatus";
 import {
+  decideLogicalListFetchAfterPricedQuoteSettle,
+  shouldApplyLogicalListResponse,
+  type IntakeV6LogicalListD2SettleSignal,
+} from "@/lib/intakeV6/intakeV6LogicalListD2Schedule";
+import {
   INTAKE_V6_COMMERCIAL_INPUTS_AUTOSAVE_MS,
   resolveIntakeV6ReviewAutosaveDebounceMs,
   type IntakeV6ReviewAutosavePolicy,
@@ -1009,6 +1014,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const localRevisionRef = useRef(0);
   const autosaveRequestRef = useRef(0);
   const commercialInputsSyncKeyRef = useRef<string | null>(null);
+  /** D2: LL follows pricedQuote settle; reuse previewRefresh gens as revision identity. */
+  const [pricedQuoteSettleSignal, setPricedQuoteSettleSignal] =
+    useState<IntakeV6LogicalListD2SettleSignal | null>(null);
+  const previewRefreshRef = useRef(previewRefresh);
+  previewRefreshRef.current = previewRefresh;
+  const logicalListFetchTokenRef = useRef(0);
+  const lastFetchedBreakdownGenRef = useRef<number | null>(null);
 
   const selectorPendingSave = useMemo(
     () =>
@@ -1332,7 +1344,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       return;
     }
     let cancelled = false;
-    const userDrivenRefresh = previewRefresh.pricedQuote > 0;
+    const pricedQuoteGenAtStart = previewRefresh.pricedQuote;
+    const breakdownGenAtStart = previewRefresh.breakdown;
+    const userDrivenRefresh = pricedQuoteGenAtStart > 0;
     setLoadingPricedQuote(true);
     setPricedQuoteError(null);
     if (userDrivenRefresh) {
@@ -1371,30 +1385,88 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         setOfferRecentlyUpdated(false);
       })
       .finally(() => {
-        if (!cancelled) setLoadingPricedQuote(false);
+        if (cancelled) return;
+        setLoadingPricedQuote(false);
+        // D2: publish settle for this PQ generation so LL may start after CURRENT.
+        setPricedQuoteSettleSignal({
+          pricedQuoteGen: pricedQuoteGenAtStart,
+          breakdownGen: breakdownGenAtStart,
+        });
       });
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.pricedQuote]);
+  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.pricedQuote, previewRefresh.breakdown]);
 
+  // Reset LL identity when workspace/analysis changes (not on every commercial_preview).
+  useEffect(() => {
+    lastFetchedBreakdownGenRef.current = null;
+    logicalListFetchTokenRef.current += 1;
+    setLogicalListReadModel(null);
+    setPricedQuoteSettleSignal(null);
+  }, [workspaceId, analysisIdentityKey]);
+
+  // D2: logical-list launches only after pricedQuote settles for the latest revision.
+  // Markup-only (pricedQuote gen advances, breakdown unchanged) does not refetch LL.
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
-      setLogicalListReadModel(null);
       return;
     }
+    const decision = decideLogicalListFetchAfterPricedQuoteSettle({
+      analysisReady,
+      settle: pricedQuoteSettleSignal,
+      currentPricedQuoteGen: previewRefresh.pricedQuote,
+      currentBreakdownGen: previewRefresh.breakdown,
+      lastFetchedBreakdownGen: lastFetchedBreakdownGenRef.current,
+    });
+    if (!decision.shouldFetch) {
+      return;
+    }
+    const fetchToken = logicalListFetchTokenRef.current + 1;
+    logicalListFetchTokenRef.current = fetchToken;
+    const expectedBreakdownGen = decision.expectedBreakdownGen;
     let cancelled = false;
     void getIntakeV6LogicalListReadModel(workspaceId)
       .then((response) => {
-        if (!cancelled) setLogicalListReadModel(response);
+        if (cancelled) return;
+        if (
+          !shouldApplyLogicalListResponse({
+            responseFetchToken: fetchToken,
+            latestFetchToken: logicalListFetchTokenRef.current,
+            responseBreakdownGen: expectedBreakdownGen,
+            currentBreakdownGen: previewRefreshRef.current.breakdown,
+          })
+        ) {
+          return;
+        }
+        setLogicalListReadModel(response);
+        lastFetchedBreakdownGenRef.current = expectedBreakdownGen;
       })
       .catch(() => {
-        if (!cancelled) setLogicalListReadModel(null);
+        if (cancelled) return;
+        if (
+          !shouldApplyLogicalListResponse({
+            responseFetchToken: fetchToken,
+            latestFetchToken: logicalListFetchTokenRef.current,
+            responseBreakdownGen: expectedBreakdownGen,
+            currentBreakdownGen: previewRefreshRef.current.breakdown,
+          })
+        ) {
+          return;
+        }
+        setLogicalListReadModel(null);
       });
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.breakdown, previewRefresh.pricedQuote]);
+  }, [
+    workspaceId,
+    analysisIdentityKey,
+    analysisReady,
+    pricedQuoteSettleSignal,
+    previewRefresh.pricedQuote,
+    previewRefresh.breakdown,
+  ]);
 
   // Lazy: fetch diagnostic read-models only when the separate drawer opens.
   useEffect(() => {
