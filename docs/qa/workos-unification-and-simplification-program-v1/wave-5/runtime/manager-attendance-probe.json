@@ -1,0 +1,86 @@
+{
+  "task": "WAVE_5_EVIDENCE_GAP_CLOSURE_V1",
+  "mutations": 0,
+  "probes": [
+    {
+      "label": "dev_bypass_admin",
+      "endpoints": [
+        {
+          "path": "/api/v1/employee-attendance/summary?year=2026&month=8",
+          "status": 200,
+          "body_prefix": "{\"year\":2026,\"month\":8,\"standard_work_hours_per_day\":8.0,\"employees\":[{\"employee_id\":7,\"employee_name\":\"Andrei Goghi\",\"standard_work_days\":21,\"standard_hours\":168.0,\"present_days\":21,\"absent_days\":0,\"leave_days\":0,\"sick_days\":0,\"partial_day"
+        },
+        {
+          "path": "/api/v1/employee-attendance/events",
+          "status": 422,
+          "body_prefix": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"start_date\"],\"msg\":\"Field required\",\"input\":null},{\"type\":\"missing\",\"loc\":[\"query\",\"end_date\"],\"msg\":\"Field required\",\"input\":null}]}"
+        },
+        {
+          "path": "/api/v1/employee-attendance/effects",
+          "status": 200,
+          "body_prefix": "[]"
+        }
+      ]
+    },
+    {
+      "label": "minted_manager_jwt",
+      "endpoints": [
+        {
+          "path": "/api/v1/employee-attendance/summary?year=2026&month=8",
+          "status": 403,
+          "body_prefix": "{\"detail\":{\"error\":\"attendance_operator_required\",\"role\":\"manager\",\"message\":\"Employee attendance access requires role 'admin' or 'operator'.\"}}"
+        },
+        {
+          "path": "/api/v1/employee-attendance/events",
+          "status": 403,
+          "body_prefix": "{\"detail\":{\"error\":\"attendance_operator_required\",\"role\":\"manager\",\"message\":\"Employee attendance access requires role 'admin' or 'operator'.\"}}"
+        },
+        {
+          "path": "/api/v1/employee-attendance/effects",
+          "status": 403,
+          "body_prefix": "{\"detail\":{\"error\":\"attendance_operator_required\",\"role\":\"manager\",\"message\":\"Employee attendance access requires role 'admin' or 'operator'.\"}}"
+        }
+      ]
+    },
+    {
+      "label": "minted_operator_jwt",
+      "endpoints": [
+        {
+          "path": "/api/v1/employee-attendance/summary?year=2026&month=8",
+          "status": 200,
+          "body_prefix": "{\"year\":2026,\"month\":8,\"standard_work_hours_per_day\":8.0,\"employees\":[{\"employee_id\":7,\"employee_name\":\"Andrei Goghi\",\"standard_work_days\":21,\"standard_hours\":168.0,\"present_days\":21,\"absent_days\":0,\"leave_days\":0,\"sick_days\":0,\"partial_day"
+        },
+        {
+          "path": "/api/v1/employee-attendance/events",
+          "status": 422,
+          "body_prefix": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"start_date\"],\"msg\":\"Field required\",\"input\":null},{\"type\":\"missing\",\"loc\":[\"query\",\"end_date\"],\"msg\":\"Field required\",\"input\":null}]}"
+        },
+        {
+          "path": "/api/v1/employee-attendance/effects",
+          "status": 200,
+          "body_prefix": "[]"
+        }
+      ]
+    },
+    {
+      "label": "minted_admin_jwt",
+      "endpoints": [
+        {
+          "path": "/api/v1/employee-attendance/summary?year=2026&month=8",
+          "status": 200,
+          "body_prefix": "{\"year\":2026,\"month\":8,\"standard_work_hours_per_day\":8.0,\"employees\":[{\"employee_id\":7,\"employee_name\":\"Andrei Goghi\",\"standard_work_days\":21,\"standard_hours\":168.0,\"present_days\":21,\"absent_days\":0,\"leave_days\":0,\"sick_days\":0,\"partial_day"
+        },
+        {
+          "path": "/api/v1/employee-attendance/events",
+          "status": 422,
+          "body_prefix": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"start_date\"],\"msg\":\"Field required\",\"input\":null},{\"type\":\"missing\",\"loc\":[\"query\",\"end_date\"],\"msg\":\"Field required\",\"input\":null}]}"
+        },
+        {
+          "path": "/api/v1/employee-attendance/effects",
+          "status": 200,
+          "body_prefix": "[]"
+        }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,8 @@ Nav-follow landings remain first-viewport only by Wave 1 charter (destinations a
 
 Coverage: `COVERED` · `STATE_NOT_REACHED` · `NOT_APPLICABLE`
 
+Wave 5 gap-closure shots are **not** copied here. See [`wave-5/WAVE_5_EVIDENCE_RECONCILIATION.md`](wave-5/WAVE_5_EVIDENCE_RECONCILIATION.md) and [`wave-5/runtime/rt-gap-closure-log.json`](wave-5/runtime/rt-gap-closure-log.json) (18 shots, `/employees-records/7` only).
+
 ## Surface scroll exhaustion
 
 | route | role | theme | tab | container | SCROLL_START | SCROLL_END | SCROLL_MAX | BOTTOM_REACHED | NEW_CONTENT_AFTER_FINAL_SCROLL | SCROLL_SEGMENT_COUNT | FULL_VERTICAL_SCROLL | NESTED_SCROLL_CONTAINERS |
@@ -237,4 +239,8 @@ These rows prove `FOLLOWED=YES`. `FULL_VERTICAL_SCROLL = N/A` — destination pa
 Product System / Modules / Governance captures: [`wave-4/WAVE_4_SCREENSHOT_COVERAGE_SUMMARY.md`](./wave-4/WAVE_4_SCREENSHOT_COVERAGE_SUMMARY.md) · [`wave-4/runtime/rt-capture-log.json`](./wave-4/runtime/rt-capture-log.json). 21 surfaces, 109 shots, scroll FAIL=0.
 
 Gap closure (do not copy rows): [`wave-4/WAVE_4_EVIDENCE_RECONCILIATION.md`](./wave-4/WAVE_4_EVIDENCE_RECONCILIATION.md) · [`wave-4/runtime/rt-gap-closure-log.json`](./wave-4/runtime/rt-gap-closure-log.json). 27 surfaces, 87 shots, scroll FAIL=0.
+
+## Wave 5 pointer (do not copy rows here)
+
+HR / resources / admin / reports: [`wave-5/WAVE_5_SCREENSHOT_COVERAGE_SUMMARY.md`](./wave-5/WAVE_5_SCREENSHOT_COVERAGE_SUMMARY.md) · [`wave-5/runtime/rt-capture-log.json`](./wave-5/runtime/rt-capture-log.json). 54 surfaces, 170 shots, scroll FAIL=0.
 

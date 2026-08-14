@@ -36,3 +36,15 @@ Wave 4 resolutions (audit-only; do not implement):
 | W4-U12 | 12 unregistered systems | **RETRACTED** as Level-1 count | Gap closure: aliases/pages/internals; TRUE_UNREGISTERED_SYSTEM=0 |
 
 Wave 4 gap closure: C1 kept as PARTIAL (compiler may have no page). C2–C7 remain ACTIVE. U12 count retracted.
+
+Wave 5 (audit-only; do not implement):
+
+| ID | Conflict | Winner for synthesis | Why |
+|----|----------|----------------------|-----|
+| W5-C1 | FE manager pontaj vs BE attendance admin/operator | Both real | MIXED; manager GET 403 proven; operator inverse |
+| W5-C2 | Evidență HR live names + demo dossier | Master = `/employees` | DEMO_DOSSIER_ON_REAL_EMPLOYEE; detail proven |
+| W5-C3 | Colaboratori vs Inventory Furnizori | Same `suppliers` entity | SAME_TRUTH_DIFFERENT_PROJECTION |
+| W5-C4 | Documents looks live | Mock hub | MOCK; no store/upload/download |
+| W5-C5 | Reports live order totals vs snapshot | Snapshot remains sold money | LIVE_OPERATIONAL_PROJECTION; PRICE_DRIFT if used as sold |
+| W5-C6 | Three labor languages | Keep labeled | employee / CostEngine / pricing rates |
+| W5-C7 | Utilaje util% vs MachineRun | Catalog ≠ run | PARTIAL |

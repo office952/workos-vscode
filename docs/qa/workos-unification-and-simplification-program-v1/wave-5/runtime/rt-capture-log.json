@@ -1,0 +1,2490 @@
+{
+  "results": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 474,
+      "SCROLL_MAX": 474,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=474"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_employees/landing/001-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 474,
+          "file": "wave-5/runtime/screenshots/admin/light/_employees/landing/002-s01-y474.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/attendance",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 159,
+      "SCROLL_MAX": 159,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=159"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_attendance/landing/003-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 159,
+          "file": "wave-5/runtime/screenshots/admin/light/_attendance/landing/004-s01-y159.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/attendance/effects",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_attendance_effects/landing/005-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance/effects"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/attendance/effects",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_attendance_effects/tabs/006-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance/effects"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 126,
+      "SCROLL_MAX": 126,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=126"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_employees-records/landing/007-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 126,
+          "file": "wave-5/runtime/screenshots/admin/light/_employees-records/landing/008-s01-y126.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-payments",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 482,
+      "SCROLL_MAX": 482,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=482"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-payments/landing/009-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 482,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-payments/landing/010-s01-y482.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-payments"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-payments",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 482,
+      "SCROLL_MAX": 482,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=482"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-payments/tabs/011-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 482,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-payments/tabs/012-s01-y482.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-payments"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-advances",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 33,
+      "SCROLL_MAX": 33,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=33"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-advances/landing/013-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 33,
+          "file": "wave-5/runtime/screenshots/admin/light/_employee-advances/landing/014-s01-y33.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-advances"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/utilaje",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 945,
+      "SCROLL_MAX": 945,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=945"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_utilaje/landing/015-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_utilaje/landing/016-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 945,
+          "file": "wave-5/runtime/screenshots/admin/light/_utilaje/landing/017-s02-y945.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/utilaje"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4791,
+      "SCROLL_MAX": 4791,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=4791"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/018-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/019-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/020-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/021-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/022-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/023-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4791,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/landing/024-s06-y4791.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1205,
+      "SCROLL_MAX": 1205,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1205"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/tabs/025-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/tabs/026-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1205,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory/tabs/027-s02-y1205.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory?tab=placi"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory/pricing",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5805,
+      "SCROLL_MAX": 5805,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5805"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/028-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/029-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/030-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/031-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/032-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/033-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/034-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/035-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5805,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/landing/036-s08-y5805.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory/pricing"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory/pricing",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1176,
+      "SCROLL_MAX": 1176,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1176"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/tabs/037-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/tabs/038-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1176,
+          "file": "wave-5/runtime/screenshots/admin/light/_inventory_pricing/tabs/039-s02-y1176.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory/pricing"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/settings",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 284,
+      "SCROLL_MAX": 284,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=284"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_settings/landing/040-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 284,
+          "file": "wave-5/runtime/screenshots/admin/light/_settings/landing/041-s01-y284.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/settings"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/settings",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1052,
+      "SCROLL_MAX": 1052,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1052"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_settings/tabs/042-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_settings/tabs/043-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1052,
+          "file": "wave-5/runtime/screenshots/admin/light/_settings/tabs/044-s02-y1052.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/settings"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/documents",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2576,
+      "SCROLL_MAX": 2576,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2576"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_documents/landing/045-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/light/_documents/landing/046-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/light/_documents/landing/047-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/light/_documents/landing/048-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2576,
+          "file": "wave-5/runtime/screenshots/admin/light/_documents/landing/049-s04-y2576.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/documents"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/colaboratori",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_colaboratori/landing/050-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/colaboratori"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/reports",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 206,
+      "SCROLL_MAX": 206,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=206"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_reports/landing/051-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 206,
+          "file": "wave-5/runtime/screenshots/admin/light/_reports/landing/052-s01-y206.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/reports/operational",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_reports_operational/landing/053-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports/operational"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/reports/operational",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/light/_reports_operational/tabs/054-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports/operational"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 474,
+      "SCROLL_MAX": 474,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=474"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employees/landing/055-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 474,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employees/landing/056-s01-y474.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/attendance",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 159,
+      "SCROLL_MAX": 159,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=159"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_attendance/landing/057-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 159,
+          "file": "wave-5/runtime/screenshots/admin/dark/_attendance/landing/058-s01-y159.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/attendance/effects",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_attendance_effects/landing/059-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance/effects"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/attendance/effects",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_attendance_effects/tabs/060-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance/effects"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 126,
+      "SCROLL_MAX": 126,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=126"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employees-records/landing/061-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 126,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employees-records/landing/062-s01-y126.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employee-payments",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 482,
+      "SCROLL_MAX": 482,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=482"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-payments/landing/063-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 482,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-payments/landing/064-s01-y482.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-payments"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employee-payments",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 482,
+      "SCROLL_MAX": 482,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=482"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-payments/tabs/065-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 482,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-payments/tabs/066-s01-y482.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-payments"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employee-advances",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 33,
+      "SCROLL_MAX": 33,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=33"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-advances/landing/067-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 33,
+          "file": "wave-5/runtime/screenshots/admin/dark/_employee-advances/landing/068-s01-y33.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-advances"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/utilaje",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 945,
+      "SCROLL_MAX": 945,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=945"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_utilaje/landing/069-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_utilaje/landing/070-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 945,
+          "file": "wave-5/runtime/screenshots/admin/dark/_utilaje/landing/071-s02-y945.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/utilaje"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4791,
+      "SCROLL_MAX": 4791,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=4791"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/072-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/073-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/074-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/075-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/076-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/077-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4791,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/landing/078-s06-y4791.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1205,
+      "SCROLL_MAX": 1205,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1205"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/tabs/079-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/tabs/080-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1205,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory/tabs/081-s02-y1205.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory?tab=placi"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory/pricing",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5805,
+      "SCROLL_MAX": 5805,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5805"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/082-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/083-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/084-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/085-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/086-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/087-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/088-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/089-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5805,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/landing/090-s08-y5805.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory/pricing"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory/pricing",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1176,
+      "SCROLL_MAX": 1176,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1176"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/tabs/091-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/tabs/092-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1176,
+          "file": "wave-5/runtime/screenshots/admin/dark/_inventory_pricing/tabs/093-s02-y1176.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory/pricing"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/settings",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 284,
+      "SCROLL_MAX": 284,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=284"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_settings/landing/094-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 284,
+          "file": "wave-5/runtime/screenshots/admin/dark/_settings/landing/095-s01-y284.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/settings"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/settings",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1052,
+      "SCROLL_MAX": 1052,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1052"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_settings/tabs/096-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_settings/tabs/097-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1052,
+          "file": "wave-5/runtime/screenshots/admin/dark/_settings/tabs/098-s02-y1052.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/settings"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/documents",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2576,
+      "SCROLL_MAX": 2576,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2576"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_documents/landing/099-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/admin/dark/_documents/landing/100-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/admin/dark/_documents/landing/101-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/admin/dark/_documents/landing/102-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2576,
+          "file": "wave-5/runtime/screenshots/admin/dark/_documents/landing/103-s04-y2576.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/documents"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/colaboratori",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_colaboratori/landing/104-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/colaboratori"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/reports",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 206,
+      "SCROLL_MAX": 206,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=206"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_reports/landing/105-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 206,
+          "file": "wave-5/runtime/screenshots/admin/dark/_reports/landing/106-s01-y206.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/reports/operational",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_reports_operational/landing/107-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports/operational"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/reports/operational",
+      "tab": "tabs",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/admin/dark/_reports_operational/tabs/108-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports/operational"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 474,
+      "SCROLL_MAX": 474,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=474"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_employees/landing/109-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 474,
+          "file": "wave-5/runtime/screenshots/manager/light/_employees/landing/110-s01-y474.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/attendance",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 159,
+      "SCROLL_MAX": 159,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=159"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_attendance/landing/111-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 159,
+          "file": "wave-5/runtime/screenshots/manager/light/_attendance/landing/112-s01-y159.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/attendance"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 126,
+      "SCROLL_MAX": 126,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=126"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_employees-records/landing/113-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 126,
+          "file": "wave-5/runtime/screenshots/manager/light/_employees-records/landing/114-s01-y126.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employee-payments",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 482,
+      "SCROLL_MAX": 482,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=482"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_employee-payments/landing/115-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 482,
+          "file": "wave-5/runtime/screenshots/manager/light/_employee-payments/landing/116-s01-y482.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employee-payments"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/utilaje",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 945,
+      "SCROLL_MAX": 945,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=945"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_utilaje/landing/117-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/manager/light/_utilaje/landing/118-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 945,
+          "file": "wave-5/runtime/screenshots/manager/light/_utilaje/landing/119-s02-y945.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/utilaje"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/inventory",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4791,
+      "SCROLL_MAX": 4791,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=4791"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/120-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/121-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/122-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/123-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/124-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/125-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4791,
+          "file": "wave-5/runtime/screenshots/manager/light/_inventory/landing/126-s06-y4791.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/documents",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2576,
+      "SCROLL_MAX": 2576,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=2576"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_documents/landing/127-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/manager/light/_documents/landing/128-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/manager/light/_documents/landing/129-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/manager/light/_documents/landing/130-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2576,
+          "file": "wave-5/runtime/screenshots/manager/light/_documents/landing/131-s04-y2576.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/documents"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/colaboratori",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_colaboratori/landing/132-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/colaboratori"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/reports",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 206,
+      "SCROLL_MAX": 206,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=206"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/manager/light/_reports/landing/133-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 206,
+          "file": "wave-5/runtime/screenshots/manager/light/_reports/landing/134-s01-y206.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/inventory",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4791,
+      "SCROLL_MAX": 4791,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=4791"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/138-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/139-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/140-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/141-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/142-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/143-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4791,
+          "file": "wave-5/runtime/screenshots/sales/light/_inventory/landing/144-s06-y4791.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/documents",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2576,
+      "SCROLL_MAX": 2576,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=2576"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/sales/light/_documents/landing/145-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/sales/light/_documents/landing/146-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/sales/light/_documents/landing/147-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/sales/light/_documents/landing/148-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2576,
+          "file": "wave-5/runtime/screenshots/sales/light/_documents/landing/149-s04-y2576.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/documents"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/reports",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 206,
+      "SCROLL_MAX": 206,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=206"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/sales/light/_reports/landing/150-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 206,
+          "file": "wave-5/runtime/screenshots/sales/light/_reports/landing/151-s01-y206.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/reports"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/inventory",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4791,
+      "SCROLL_MAX": 4791,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=4791"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/156-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/157-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/158-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/159-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/160-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/161-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4791,
+          "file": "wave-5/runtime/screenshots/operator/light/_inventory/landing/162-s06-y4791.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/inventory"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/utilaje",
+      "tab": "landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 945,
+      "SCROLL_MAX": 945,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=945"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots/operator/light/_utilaje/landing/163-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-5/runtime/screenshots/operator/light/_utilaje/landing/164-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 945,
+          "file": "wave-5/runtime/screenshots/operator/light/_utilaje/landing/165-s02-y945.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/utilaje"
+    }
+  ],
+  "edges": [],
+  "roleMatrix": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/attendance",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/attendance",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/attendance/effects",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/attendance/effects",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-payments",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employee-payments",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employee-advances",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employee-advances",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/utilaje",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/utilaje",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/inventory/pricing",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory/pricing",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/settings",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/settings",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/documents",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/documents",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/colaboratori",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/colaboratori",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/reports",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/reports/operational",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports/operational",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/attendance",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/attendance",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/attendance/effects",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/attendance/effects",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employee-payments",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employee-payments",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employee-advances",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employee-advances",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/utilaje",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/utilaje",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/inventory/pricing",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory/pricing",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/settings",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/settings",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/documents",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/documents",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/colaboratori",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/colaboratori",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/reports",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/reports/operational",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports/operational",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/attendance",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/attendance",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employee-payments",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employee-payments",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/utilaje",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/utilaje",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/inventory",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/documents",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/documents",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/colaboratori",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/colaboratori",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/reports",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/settings",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/inventory/pricing",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employee-advances",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/inventory",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/documents",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/documents",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/reports",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/reports",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/employees",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/utilaje",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/settings",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/inventory/pricing",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/inventory",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/inventory",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/utilaje",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/utilaje",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/employees",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/attendance",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/documents",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/reports",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/settings",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    }
+  ],
+  "notReached": [
+    {
+      "route": "/employees-records/:id",
+      "role": "admin",
+      "theme": "light",
+      "blocker": "no employee-record row link"
+    },
+    {
+      "route": "/employees-records/:id",
+      "role": "admin",
+      "theme": "dark",
+      "blocker": "no employee-record row link"
+    },
+    {
+      "route": "/settings",
+      "role": "manager",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/inventory/pricing",
+      "role": "manager",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/employee-advances",
+      "role": "manager",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/employees",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/utilaje",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/settings",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/inventory/pricing",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/employees",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/attendance",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/documents",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/reports",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/settings",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    }
+  ],
+  "fail": 0,
+  "shots": 170,
+  "mutations": 0
+}

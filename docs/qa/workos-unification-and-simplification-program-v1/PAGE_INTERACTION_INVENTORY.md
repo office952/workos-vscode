@@ -76,4 +76,8 @@ Reconciliation verdict: Wave 1 homes = **RECONCILED** for non-mutating journey. 
 
 ## Wave 4 pointer (do not copy rows here)
 
-Product System / Modules / Governance: [`wave-4/WAVE_4_INTERACTION_RECONCILIATION.md`](./wave-4/WAVE_4_INTERACTION_RECONCILIATION.md). Structure workshops remain PARTIAL / SNR.
+Product System / Modules / Governance: [`wave-4/WAVE_4_INTERACTION_RECONCILIATION.md`](./wave-4/WAVE_4_INTERACTION_RECONCILIATION.md).
+
+## Wave 5 pointer (do not copy rows here)
+
+HR / resources / admin / reports: [`wave-5/WAVE_5_INTERACTION_RECONCILIATION.md`](./wave-5/WAVE_5_INTERACTION_RECONCILIATION.md). `/employees-records/:id` initial SNR (`a[href]` miss) is **RESOLVED_BY_GAP_CLOSURE** — row `<button>` + `/employees-records/7`.

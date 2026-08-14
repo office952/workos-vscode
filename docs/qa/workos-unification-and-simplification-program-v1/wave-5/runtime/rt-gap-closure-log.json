@@ -1,0 +1,448 @@
+{
+  "task": "WAVE_5_EVIDENCE_GAP_CLOSURE_V1",
+  "mutations": 0,
+  "surfaces": 15,
+  "shots": 18,
+  "FULL_SCROLL_FAILURES": 0,
+  "ROLE_MATCH_FAILURES": 0,
+  "navProof": {
+    "listPath": "/employees-records",
+    "anchorHrefCount": 0,
+    "rowButtonCount": 8,
+    "affordance": "BUTTON_ONCLICK_NOT_ANCHOR",
+    "rowClick": "REACHED",
+    "employeeId": "7",
+    "deepLink": "/employees-records/7"
+  },
+  "results": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "row-click-landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/light/_employees-records_7/row-click-landing/002-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Profil",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/light/_employees-records_7/Profil/003-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Documente",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/light/_employees-records_7/Documente/004-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Medicina muncii",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/light/_employees-records_7/Medicina_muncii/005-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Alerte",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/light/_employees-records_7/Alerte/006-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7",
+      "DEMO_BADGE": "YES",
+      "ENTRY": "ROW_BUTTON_CLICK"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "tab": "deeplink-landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/dark/_employees-records_7/deeplink-landing/007-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "tab": "Profil",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/dark/_employees-records_7/Profil/008-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "tab": "Documente",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/dark/_employees-records_7/Documente/009-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "tab": "Medicina muncii",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/dark/_employees-records_7/Medicina_muncii/010-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "tab": "Alerte",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/admin/dark/_employees-records_7/Alerte/011-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7",
+      "DEMO_BADGE": "YES",
+      "CONFIDENTIAL_LABEL": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "deeplink-landing",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/manager/light/_employees-records_7/deeplink-landing/012-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Profil",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/manager/light/_employees-records_7/Profil/013-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Documente",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/manager/light/_employees-records_7/Documente/014-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Medicina muncii",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/manager/light/_employees-records_7/Medicina_muncii/015-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "tab": "Alerte",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-5/runtime/screenshots-gap-closure/manager/light/_employees-records_7/Alerte/016-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/employees-records/7",
+      "DEMO_BADGE": "YES",
+      "CONFIDENTIAL_LABEL": "YES"
+    }
+  ],
+  "roleMatrix": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records/7",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/employees-records/7",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records/7",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/employees-records/7",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/employees-records/7",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    }
+  ],
+  "notReached": []
+}

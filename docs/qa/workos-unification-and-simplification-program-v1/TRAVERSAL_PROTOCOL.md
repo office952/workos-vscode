@@ -11,7 +11,7 @@ Repeat in **light**, then **dark**:
 3. Visit every tab and subtab.
 4. Open every accordion / expandable card.
 5. Open every drawer / modal / popover that belongs to the **normal** operator journey (do not invent admin-debug paths).
-6. Follow every relevant internal link. Record destination and relationship.
+6. Follow every relevant internal navigation. Record destination and relationship. **Do not discover destinations by `a[href]` alone** — see §1.2.
 7. Inspect loading, empty, error, disabled, and read-only states when reproducible without mutating Owner `dev.db`.
 8. Inspect dense-data and low-data states when an existing fixture can show them.
 9. Record screenshots in a deterministic ordered set.
@@ -55,6 +55,21 @@ Manifest fields required per audited surface:
 - `BOTTOM_REACHED` = `YES` / `NO`
 - `SCROLL_SEGMENT_COUNT` =
 - `NESTED_SCROLL_CONTAINERS` =
+
+### 1.2 Interactive surface discovery (binding)
+
+`INTERACTIVE_SURFACE_DISCOVERY` must include:
+
+- anchors (`<a href>`)
+- buttons
+- row click handlers
+- menu items
+- programmatic navigation (`navigate()`, `Link`, `onClick`)
+- keyboard-interactive controls
+
+A missing `<a href>` is **not** proof that a row has no navigation.
+
+Wave 5 lesson (keep): initial RT marked `/employees-records/:id` as SNR because it searched only `a[href]`. The list uses row `<button onClick>`. Final truth: `DEFINED_AND_REACHABLE`, `NAVIGATION_GAP = NO`, `/employees-records/7` reached. The initial miss is **SUPERSEDED** / **RESOLVED_BY_GAP_CLOSURE**.
 
 ## 2. Coverage values
 

@@ -96,3 +96,5 @@ Redirects: `/pricing`, `/products`, `/templates`, `/personal`, three `/inventory
 See `SHELL_NAV_SECTIONS` in `shellNavigation.ts`. Wave 1 follows each **visible** item per role. Destination pages are not fully audited in Wave 1.
 
 Wave 4 audited (read-only): `/product-system/products` (+ Letters v2, ACM boxed), planned `components`/`operations`, `/product-system/blueprint-dossier`, `/product-system/output-blocks-preview`, `/modules`, `/governance`. See [`wave-4/WAVE_4_REPORT.md`](./wave-4/WAVE_4_REPORT.md).
+
+Wave 5 audited (read-only): `/employees`, `/attendance`, `/employees-records`, `/employees-records/:employeeId` (row `<button>` + deep-link `/employees-records/7`), `/employee-payments`, `/employee-advances`, `/utilaje`, `/inventory`, `/inventory/pricing`, `/settings`, `/documents`, `/colaboratori`, `/reports`, `/reports/operational`. See [`wave-5/WAVE_5_REPORT.md`](./wave-5/WAVE_5_REPORT.md) · [`wave-5/WAVE_5_GAP_CLOSURE_REPORT.md`](./wave-5/WAVE_5_GAP_CLOSURE_REPORT.md).
