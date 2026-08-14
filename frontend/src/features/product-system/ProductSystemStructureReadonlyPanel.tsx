@@ -69,6 +69,7 @@ import {
   countOwnerVerifiedConnectionPrices,
   LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO,
 } from "./lettersAcmCompositionConnectionPrices";
+import { formatLettersAcmSablonProcessRateRo } from "./lettersAcmCompositionSablonProcess";
 import { buildLettersAcmComposerPath } from "./lettersAcmComposerIaMockRoutes";
 
 /** Day/Night structure-card footer — inset wash, not dark *-950/15. */
@@ -174,13 +175,14 @@ function LettersAcmConnectionPricesEntryCard({ templateCode }: { templateCode: s
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-bold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
-            Prețuri conexiune
+            Referință șablon
           </p>
           <p className="mt-0.5 truncate text-[13px] font-semibold text-wo-text-primary">
             {LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO}
           </p>
           <p className="mt-0.5 text-[11px] text-emerald-700/80 dark:text-emerald-200/70">
-            Șablon 20 EUR/mp · {verifiedCount} linii verificate owner
+            Șablon {formatLettersAcmSablonProcessRateRo()} · {verifiedCount} linii
+            verificate owner · nu ofertă client
           </p>
         </div>
         <ChevronRight className="h-4 w-4 shrink-0 text-emerald-700/80 dark:text-emerald-300/80" aria-hidden />

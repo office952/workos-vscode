@@ -13,6 +13,7 @@ import {
   GOVERNANCE_TAB_HONESTY,
   type GovernanceTabHonestyMeta,
 } from "@/lib/truthPagesHonestyBaseline";
+import { WorkosReferenceFreezeBanner } from "@/components/workos/WorkosReferenceFreezeBanner";
 import {
   ACTIVE_SCOPE_OWNERSHIP,
   ACTIVE_SCOPE_READINESS_LAW,
@@ -1483,8 +1484,11 @@ function ProductCatalogView() {
             <span className="text-[10px] px-1.5 py-0.5 rounded border border-wo-border-strong text-wo-text-secondary">
               REFERINȚĂ
             </span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded border border-wo-border-strong text-wo-text-muted">
+              nomenclator
+            </span>
             <span className="text-[11px] text-wo-text-secondary">
-              {productCatalog.length} categorii / {totalProducts} rânduri (static)
+              {productCatalog.length} categorii / {totalProducts} rânduri (static) · nu catalog activ
             </span>
           </div>
         </div>
@@ -1502,7 +1506,7 @@ function ProductCatalogView() {
                 <span className="text-[10px] font-mono font-bold text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded">
                   {cat.code}
                 </span>
-                <span className="text-[10px] text-wo-text-muted">{cat.products.length} produse</span>
+                <span className="text-[10px] text-wo-text-muted">{cat.products.length} rânduri</span>
               </div>
               <p className="text-[13px] font-semibold text-wo-text-primary">{cat.name}</p>
               {expandedCat === cat.id && (
@@ -2099,6 +2103,11 @@ export default function Governance() {
           și nu înlocuiește documentele aprobate.
         </p>
       </div>
+
+      <WorkosReferenceFreezeBanner
+        testId="governance-reference-freeze-banner"
+        showBoundedException
+      />
 
       <AdminTruthFlowStrip active="settings" />
 

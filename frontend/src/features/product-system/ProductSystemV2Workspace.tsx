@@ -32,6 +32,12 @@ import {
   partitionProductModulesForDisplay,
   type ProductSystemV2ModuleRow,
 } from "./productSystemV2WorkspaceModel";
+import {
+  PRODUCT_SYSTEM_V2_RAIL_TITLE_RO,
+  productSystemV2MissingTemplateCopy,
+  productSystemV2RailStatus,
+  type ProductSystemV2RailStatus,
+} from "./productSystemV2RailStatus";
 
 export type ProductSystemV2WorkspaceProps = {
   templates: ProductTemplateEntity[];
@@ -43,6 +49,42 @@ export type ProductSystemV2WorkspaceProps = {
   onRequestedTemplateCodeChange?: (code: string | null) => void;
   onOpenTemplate?: (template: ProductTemplateEntity) => void;
 };
+
+function RailStatusChip({
+  status,
+  testId,
+}: {
+  status: ProductSystemV2RailStatus;
+  testId: string;
+}) {
+  return (
+    <span
+      data-testid={testId}
+      data-status={status.kind}
+      className="mt-1 inline-block rounded border border-wo-border-strong px-1.5 py-0.5 text-[10px] font-medium text-wo-text-secondary"
+    >
+      {status.labelRo}
+    </span>
+  );
+}
+
+function MissingTemplateNotice({ templateCode }: { templateCode: string }) {
+  const missing = productSystemV2MissingTemplateCopy(templateCode);
+  return (
+    <div data-testid="product-system-v2-unknown-template">
+      {missing.status ? (
+        <RailStatusChip status={missing.status} testId="product-system-v2-missing-status" />
+      ) : null}
+      <p className="mt-1 text-[13px] font-medium text-wo-text-primary">{missing.headlineRo}</p>
+      {missing.detailRo ? (
+        <p className="mt-1 max-w-md text-[12px] leading-relaxed text-wo-text-muted">
+          {missing.detailRo}
+        </p>
+      ) : null}
+      <p className="mt-1 font-mono text-[11px] text-wo-text-dim">{templateCode}</p>
+    </div>
+  );
+}
 
 function OptionalSupportRow({ row }: { row: ProductSystemV2ModuleRow }) {
   return (
@@ -113,6 +155,7 @@ export function ProductSystemV2Workspace({
     layers.optional.length > 0 &&
     !isVolumetricLettersTemplate(selected?.templateCode);
   const [adminOpen, setAdminOpen] = useState(false);
+  const selectedStatus = selected ? productSystemV2RailStatus(selected.templateCode) : null;
 
   return (
     <div
@@ -148,8 +191,11 @@ export function ProductSystemV2Workspace({
             data-testid="product-system-v2-search"
             className="w-full rounded-md border border-wo-border-strong bg-wo-surface-input px-2.5 py-2 text-sm text-wo-text-primary outline-none placeholder:text-wo-text-dim focus:border-wo-info/50"
           />
-          <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim">
-            Produse active
+          <p
+            className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim"
+            data-testid="product-system-v2-rail-title"
+          >
+            {PRODUCT_SYSTEM_V2_RAIL_TITLE_RO}
           </p>
           <ul
             className="mt-1.5 flex-1 space-y-1 overflow-y-auto"
@@ -166,6 +212,7 @@ export function ProductSystemV2Workspace({
                 const active =
                   normalizeTemplateCode(item.templateCode) ===
                   normalizeTemplateCode(requestedTemplateCode ?? "");
+                const railStatus = productSystemV2RailStatus(item.templateCode);
                 return (
                   <li key={item.templateCode}>
                     <button
@@ -182,6 +229,12 @@ export function ProductSystemV2Workspace({
                       <span className="block truncate text-[13px] font-medium text-wo-text-primary">
                         {item.displayName}
                       </span>
+                      {railStatus ? (
+                        <RailStatusChip
+                          status={railStatus}
+                          testId={`product-system-v2-rail-status-${item.templateCode}`}
+                        />
+                      ) : null}
                       <span className="mt-0.5 block truncate font-mono text-[10px] text-wo-text-dim">
                         {item.templateCode}
                       </span>
@@ -204,12 +257,7 @@ export function ProductSystemV2Workspace({
                 Structura produsului apare aici — ca în editorul clasic, doar pentru citire.
               </p>
               {requestedTemplateCode ? (
-                <p
-                  className="font-mono text-[11px] text-amber-300/90"
-                  data-testid="product-system-v2-unknown-template"
-                >
-                  Template necunoscut în listă: {requestedTemplateCode}
-                </p>
+                <MissingTemplateNotice templateCode={requestedTemplateCode} />
               ) : null}
             </div>
           ) : (
@@ -225,6 +273,14 @@ export function ProductSystemV2Workspace({
                   <h3 className="text-xl font-semibold text-wo-text-primary">{selected.displayName}</h3>
                   <span className="font-mono text-xs text-wo-text-muted">{selected.templateCode}</span>
                 </div>
+                {selectedStatus ? (
+                  <div className="mt-2">
+                    <RailStatusChip
+                      status={selectedStatus}
+                      testId="product-system-v2-selected-status"
+                    />
+                  </div>
+                ) : null}
               </section>
 
               {hasClassicStructure && template ? (

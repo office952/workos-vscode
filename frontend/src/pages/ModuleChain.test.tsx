@@ -47,6 +47,15 @@ describe("ModuleChain present-truth control center", () => {
     expect(screen.getByTestId("module-chain-alias")).toHaveTextContent("Module Chain");
   });
 
+  it("shows frozen-reference status without listing a release log", () => {
+    renderModuleChain();
+    const banner = screen.getByTestId("module-chain-reference-freeze-banner");
+    expect(banner).toHaveTextContent("CURRENT_WORKOS_FROZEN_AS_REFERENCE = ON");
+    expect(banner).toHaveTextContent("Referință înghețată");
+    expect(banner).toHaveTextContent("valuri delimitate");
+    expect(screen.queryByTestId("workos-bounded-exception-note")).not.toBeInTheDocument();
+  });
+
   it("renders one canonical spine and demotes legacy OC→TK", () => {
     renderModuleChain();
     expect(screen.getByTestId("canonical-spine-label")).toHaveTextContent(

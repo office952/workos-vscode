@@ -489,7 +489,7 @@ export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = 
     status: "REFERINȚĂ",
     source: "governanceData.productCatalog (static local)",
     noteRo:
-      "Referință, fără autoritate operațională. Catalogul activ este /product-system.",
+      "Nomenclator de guvernanță (referință). Fără autoritate operațională. Nu este catalogul activ Product System — acela este /product-system.",
   },
   "ui-rules": {
     tabId: "ui-rules",

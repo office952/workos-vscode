@@ -117,9 +117,9 @@ export function intakeListNextStepHint(status: string): CommercialNextStepHint {
 
 export function productsNextStepHint(): CommercialNextStepHint {
   return {
-    title: "Următorul pas: Continuă spre ofertă",
+    title: "Următorul pas: Oferta se creează din Cereri",
     description:
-      "Produsele și template-urile definesc ce se poate oferi. Oferta se creează din Cereri / Oferte — nu din acest ecran.",
+      "Acest ecran definește structura produsului. Pregătirea diferă pe produs — nu toate șabloanele sunt gata de ofertă. Oferta se creează din Cereri / Oferte, nu de aici.",
     primaryLabel: "Deschide oferte",
     primaryTo: "/quotes",
     secondaryLabel: "Înapoi la cereri",

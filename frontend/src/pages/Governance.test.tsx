@@ -118,6 +118,18 @@ describe("Governance tab completion", () => {
     expect(screen.queryByText("25 canonical docs")).not.toBeInTheDocument();
   });
 
+  it("shows frozen-reference status and durable bounded-exception copy", () => {
+    render(<Governance />);
+    const banner = screen.getByTestId("governance-reference-freeze-banner");
+    expect(banner).toHaveTextContent("CURRENT_WORKOS_FROZEN_AS_REFERENCE = ON");
+    expect(banner).toHaveTextContent("Referință înghețată");
+    const note = screen.getByTestId("workos-bounded-exception-note");
+    expect(note).toHaveTextContent("excepții delimitate, autorizate explicit de owner");
+    expect(note).toHaveTextContent("nu reprezintă o dezghețare generală");
+    expect(note).not.toHaveTextContent("S1–S4");
+    expect(note).not.toHaveTextContent("S1–S5");
+  });
+
   it("discovers every real tab by stable technical id and can select each", () => {
     render(<Governance />);
     for (const id of TAB_IDS) {
@@ -145,6 +157,8 @@ describe("Governance tab completion", () => {
     expect(screen.getByTestId("governance-tab-honesty-products")).toHaveTextContent(
       /fără autoritate operațională|Nu înlocuiește Catalog produse/i
     );
+    expect(screen.getByTestId("governance-panel-products")).toHaveTextContent("nomenclator");
+    expect(screen.getByTestId("governance-panel-products")).toHaveTextContent("nu catalog activ");
 
     fireEvent.click(screen.getByTestId("governance-tab-status-flows"));
     expect(screen.getByTestId("governance-tab-honesty-status-flows")).toHaveTextContent("HONESTY_BASELINE");

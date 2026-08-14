@@ -81,3 +81,14 @@ Status only. Do not treat this as a rewrite of the synthesis table.
 | GS-15 | IMPLEMENTED | Shop Floor breadcrumb → Atelier. WC card titles use existing station names. P2 English chrome (`Blocked Jobs`, `tick #`) deferred. Option B also demoted planning implementation chrome (not a GS-15 line). |
 
 S5+ items remain open. Evidence: `../s4-runtime/S4_TECHNICAL_MODEL_LEAK_REPORT.md`.
+
+## S5 implementation status (2026-08-14)
+
+Status only. Do not treat this as a rewrite of the synthesis table.
+
+| ID | STATUS | NOTE |
+|----|--------|------|
+| GS-11 | IMPLEMENTED | S5 chrome honesty (not “hide planned shells”). Rail title Produse; live/partial/blocked chips from existing modularity vocabulary. Planned shells already ÎN DEZVOLTARE — left unchanged. |
+| GS-12 | IMPLEMENTED | Freeze banner on `/modules` + `/governance`. Governance also states S1–S4 bounded exceptions. Products tab remains REFERINȚĂ / nomenclator. |
+
+S6+ items remain open. Evidence: `../s5-runtime/S5_PRODUCT_SYSTEM_GOVERNANCE_CHROME_TRUTH_REPORT.md`.

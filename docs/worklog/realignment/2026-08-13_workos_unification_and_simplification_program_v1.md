@@ -172,6 +172,40 @@ Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s3-runtime/`
 
 Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s4-runtime/`.
 
+## Stop (S4, historical)
+
+`NEXT_TASK = NOT_AUTHORIZED` was the S4 close. Owner later authorized S5 GS-11 + GS-12 display-only. Record below.
+
+---
+
+# S5 — Product System / Governance chrome truth (2026-08-14)
+
+| Field | Value |
+|-------|--------|
+| GO | `S5_PRODUCT_SYSTEM_AND_GOVERNANCE_CHROME_TRUTH_V1` |
+| Boundary | GS-11 + GS-12 display only. No authority choice. |
+| Implementation | YES |
+| Unfreeze | NO (bounded display exception; freeze remains ON) |
+| Owner DB mutations | 0 |
+| Push | NO |
+
+## Done
+
+- GS-11: V2 rail title **Produse**. Letters chip **Rădăcină folosită azi**. ACM stays on rail with **Montaj ACM · parțial**. Logo deep-link **Candidat · rădăcină blocată**. Next-step no longer “Continuă spre ofertă”. Connection card **Referință șablon** / 20 EUR/mp unchanged / **nu ofertă client**.
+- GS-12: compact freeze banner on `/modules` and `/governance` (`CURRENT_WORKOS_FROZEN_AS_REFERENCE = ON`). Governance adds S1–S4 bounded-exception sentence.
+- Governance products tab: nomenclator / nu catalog activ. No family deletion.
+- Planned shells, Dossier, DEV MODE, component-first, ACM name/activation: untouched.
+
+## Runtime
+
+- `/product-system/products` admin light+dark: rail Produse; Letters live chip; ACM PARTIAL chip.
+- ACM selected: still present; reference price not offer.
+- Logo URL: blocked / not offerable; not in live list.
+- `/modules` admin light+dark: Referință înghețată.
+- `/governance` admin light+dark: freeze + S1–S4; products tab nomenclator.
+
+Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s5-runtime/`.
+
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Do not start S5. No push, PR, cleanup, or unfreeze.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S6. No push, PR, cleanup, or unfreeze.

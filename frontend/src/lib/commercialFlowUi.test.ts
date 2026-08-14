@@ -52,5 +52,7 @@ describe("commercialFlowUi", () => {
     const hint = productsNextStepHint();
     expect(hint.primaryTo).toBe("/quotes");
     expect(hint.secondaryTo).toBe("/intake");
+    expect(hint.title).not.toMatch(/Continuă spre ofertă/i);
+    expect(hint.description).toMatch(/nu toate șabloanele sunt gata de ofertă/i);
   });
 });

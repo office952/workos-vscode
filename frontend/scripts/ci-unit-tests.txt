@@ -16,6 +16,11 @@ src/pages/Reports.honesty.test.tsx
 src/pages/DocumentCenter.honesty.test.tsx
 src/pages/EmployeeRecords.honesty.test.tsx
 src/lib/commercialFlowUi.test.ts
+src/lib/workosReferenceFreezePresentation.test.ts
+src/features/product-system/productSystemV2RailStatus.test.ts
+src/features/product-system/productSystemV2Workspace.test.ts
+src/pages/ModuleChain.test.tsx
+src/pages/Governance.test.tsx
 src/lib/intakeV6/intakeV6OfferCostChromeVocabulary.test.ts
 src/pages/WorkIntake.badges.test.tsx
 src/components/workos/design-system/StatusBadge.test.tsx

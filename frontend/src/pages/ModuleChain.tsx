@@ -42,6 +42,7 @@ import {
   type ModuleChainTabId,
 } from "@/lib/currentTruthControlCenter";
 import { Link } from "react-router-dom";
+import { WorkosReferenceFreezeBanner } from "@/components/workos/WorkosReferenceFreezeBanner";
 
 function runtimeLabelRo(
   aggregateStatus: string,
@@ -177,6 +178,8 @@ export default function ModuleChain() {
           Control center — adevărul prezent oficial al sistemelor WorkOS (Level 1). Proiecție read-only.
         </p>
       </div>
+
+      <WorkosReferenceFreezeBanner testId="module-chain-reference-freeze-banner" />
 
       <div
         className="flex items-start gap-2 px-3 py-2.5 bg-blue-900/20 border border-blue-700/40 rounded-lg"

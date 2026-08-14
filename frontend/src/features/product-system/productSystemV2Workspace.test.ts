@@ -102,10 +102,18 @@ describe("productSystemV2Workspace", () => {
     expect(structure).toMatch(/isHiddenLettersFinisajStructureRow/);
     expect(structure).toMatch(/Finisaj produs ascuns/);
     expect(structure).not.toMatch(/product-system-v2-letters-finishes-hint/);
+    expect(structure).toMatch(/Referință șablon/);
+    expect(structure).toMatch(/nu ofertă client/);
+    expect(structure).toMatch(/formatLettersAcmSablonProcessRateRo/);
+    expect(structure).not.toMatch(/>\s*Prețuri conexiune\s*</);
     expect(v2).toMatch(/product-system-v2-compiler/);
     expect(v2).toMatch(/product-system-v2-readiness/);
     expect(v2).toMatch(/product-system-v2-admin-drawer/);
     expect(v2).toMatch(/product-system-v2-downstream/);
+    expect(v2).toMatch(/product-system-v2-rail-title/);
+    expect(v2).toMatch(/PRODUCT_SYSTEM_V2_RAIL_TITLE_RO/);
+    expect(v2).not.toMatch(/Produse active/);
+    expect(v2).toMatch(/product-system-v2-rail-status-/);
     expect(v2).not.toMatch(/CANONICAL_CATALOG_OPERATOR_FILTERS/);
     expect(v2).not.toMatch(/product-system-canonical-filter/);
     expect(v2).not.toMatch(/Laboratory closure/);
@@ -131,6 +139,16 @@ describe("productSystemV2Workspace", () => {
   it("formats structure chips for owner scanning", () => {
     expect(formatModuleStructureChip("Fata litera")).toBe("FATA LITERA");
     expect(formatModuleStructureChip("Cant / laterale")).toBe("CANT");
+  });
+
+  it("leaves planned Product System shells honest and unbuilt", () => {
+    const planned = readFileSync(
+      resolve(__dirname, "ProductSystemPlannedSectionPage.tsx"),
+      "utf8",
+    );
+    expect(planned).toMatch(/PRODUCT_SYSTEM_PLANNED_BADGE_RO/);
+    expect(planned).toMatch(/Secțiune neoperațională/);
+    expect(planned).toMatch(/data-operational="false"/);
   });
 
   it("keeps downstream channels as secondary links only", () => {
