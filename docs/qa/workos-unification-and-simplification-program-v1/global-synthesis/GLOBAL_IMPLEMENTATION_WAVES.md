@@ -1,6 +1,6 @@
 # Global implementation waves
 
-Proposed sequence after Owner GO. **S1 locally implemented 2026-08-14.** S2+ **not authorized.** No big-bang rewrite. Label before contract rename.
+Proposed sequence after Owner GO. **S1 and S2 locally implemented 2026-08-14.** S3+ **not authorized.** No big-bang rewrite. Label before contract rename.
 
 ## Sequence (derived, not copied)
 
@@ -32,6 +32,7 @@ OWNER_GATE = YES — OD-1 before nav change
 ### S2 — Placeholders / demo honesty
 
 ```text
+STATUS = LOCALLY_IMPLEMENTED 2026-08-14 (PUSH = NO)
 GOAL = Mock/demo cannot look like live modules
 WHY_NOW = Documents + Evidență + planned PS already have badges; still sit in primary IA
 USER_VALUE = Operators stop treating mock hubs as work

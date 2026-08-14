@@ -156,7 +156,6 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
         icon: Handshake,
         navKey: "colaboratori",
       },
-      { to: "/documents", label: "Documente", icon: FileText, navKey: "documents" },
     ],
   },
   {
@@ -338,6 +337,9 @@ export function pathAllowedForRole(role: Role, pathname: string): boolean {
   }
   if (pathname.startsWith("/intake/")) {
     return canViewNav(role, "intake");
+  }
+  if (pathname === "/documents" || pathname.startsWith("/documents/")) {
+    return canViewNav(role, "documents");
   }
   if (pathname.startsWith("/employees-records/")) {
     return canViewNav(role, "employees_records");

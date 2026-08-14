@@ -48,3 +48,15 @@ Status only. Do not treat this as a rewrite of the synthesis table.
 | GS-03 | IMPLEMENTED | Display Marcat intern. Enum/API/DB unchanged. No V6 join. |
 
 S2+ items remain open. Evidence: `../s1-runtime/S1_COMMERCIAL_TRUTH_REPORT.md`.
+
+## S2 implementation status (2026-08-14)
+
+Status only. Do not treat this as a rewrite of the synthesis table.
+
+| ID | STATUS | NOTE |
+|----|--------|------|
+| GS-04 | IMPLEMENTED | `/reports` = Proiecție operațională. Numeric logic unchanged. |
+| GS-05 | IMPLEMENTED | Documente removed from primary Relații. `/documents` kept as MOCK. |
+| GS-06 | IMPLEMENTED | Evidență HR hybrid honesty. `/employees` not DEMO. |
+
+S3+ items remain open. Evidence: `../s2-runtime/S2_MOCK_DEMO_PROJECTION_HONESTY_REPORT.md`.

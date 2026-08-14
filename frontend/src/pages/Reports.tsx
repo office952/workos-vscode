@@ -120,13 +120,22 @@ function HeatmapCell({ value }: { value: number }) {
   );
 }
 
+export const REPORTS_TITLE = "Rapoarte operaționale";
+export const REPORTS_PROJECTION_LABEL = "Proiecție operațională";
+export const REPORTS_DB_HELP =
+  "Date operaționale curente din comenzi. Nu este venit contabil și nu este ofertă înghețată.";
+export const REPORTS_MONEY_LABEL = "Valoare comenzi 7z";
+export const REPORTS_MONEY_CHART_TITLE = "Valoare comenzi — ultimele 7 zile";
+export const REPORTS_KPI_MODEL_HELP =
+  "OTIF, utilizare și lead time pot include valori model, nu doar măsurători.";
+
 function DataSourceBanner({ source }: { source: string }) {
   if (source === "db") {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-900/20 border border-emerald-800/30 rounded-lg">
-        <Database className="w-3.5 h-3.5 text-emerald-400" />
-        <p className="text-[11px] text-emerald-300">
-          Connected to production database — showing real data
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-wo-info-muted border border-wo-info/30 rounded-lg">
+        <Database className="w-3.5 h-3.5 text-wo-info" />
+        <p className="text-[11px] text-wo-text-primary">
+          {REPORTS_PROJECTION_LABEL} — {REPORTS_DB_HELP}
         </p>
       </div>
     );
@@ -256,7 +265,7 @@ export default function Reports() {
       <div className="flex items-center gap-2">
         <BarChart3 className="w-5 h-5 text-purple-400" />
         <h1 className="text-[18px] font-bold text-wo-text-primary">
-          Rapoarte &amp; Analiză
+          {REPORTS_TITLE}
         </h1>
         <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
           Ultimele 30 zile
@@ -333,7 +342,7 @@ export default function Reports() {
           icon={<Clock className="w-4 h-4" />}
         />
         <MetricCard
-          label="Revenue 7d"
+          label={REPORTS_MONEY_LABEL}
           value={(revenueTotal / 1000).toFixed(1) + "k"}
           unit="RON"
           trend={pctChange(revenueTotal, prevRevenueTotal)}
@@ -504,7 +513,7 @@ export default function Reports() {
           {/* Revenue by Day */}
           <div className="mt-6">
             <SectionHeader
-              title="Revenue \u2014 Ultimele 7 Zile"
+              title={REPORTS_MONEY_CHART_TITLE}
               icon={<DollarSign className="w-4 h-4" />}
             />
             <div className="flex items-end gap-2 h-24">
@@ -536,8 +545,9 @@ export default function Reports() {
       </div>
 
       {/* Operator Hint */}
+      <p className="text-[11px] text-wo-text-muted">{REPORTS_KPI_MODEL_HELP}</p>
       <OperatorHint
-        text="Rapoartele reflectă datele din backend. Pentru date actualizate, asigurați-vă că backend-ul rulează și comenzile au fost procesate."
+        text="Proiecție operațională din backend. Nu înlocuiește oferta, comanda înghețată sau contabilitatea."
         variant="info"
       />
     </div>

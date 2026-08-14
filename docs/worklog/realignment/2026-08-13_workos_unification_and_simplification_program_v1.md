@@ -65,6 +65,38 @@ Registries: `orchestration/canonical/README.md` now points synthesis SoT for pur
 
 Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s1-runtime/`.
 
+## Stop (S1, historical)
+
+`NEXT_TASK = NOT_AUTHORIZED` was the S1 close. Owner later authorized S2 only. Record below.
+
+---
+
+# S2 — Mock / demo / projection honesty (2026-08-14)
+
+| Field | Value |
+|-------|--------|
+| GO | `S2_MOCK_DEMO_PROJECTION_HONESTY_V1` |
+| Boundary | Reports copy; Documents nav entry + page honesty; HR records copy |
+| Implementation | YES (display / nav display only) |
+| Unfreeze | NO (bounded exception; freeze remains ON) |
+| Owner DB mutations | 0 |
+| OD-2 | APPROVED — REMOVE_FROM_PRIMARY_NAV + KEEP_ROUTE |
+| Push | NO |
+
+## Done
+
+- GS-04: `/reports` title and banner = Proiecție operațională. Money label = Valoare comenzi 7z. Same API and KPI math.
+- GS-05: Documente removed from Relații. `/documents` kept. Page = ÎN PREGĂTIRE. No store/API.
+- GS-06: Evidență HR list/detail hybrid copy. Program labeled demonstrativ. `/employees` remains LIVE DB.
+
+## Runtime
+
+- `/reports` admin + sales: projection wording; Relatii without Documente.
+- `/documents` direct route works; sidebar has no `/documents` link.
+- `/employees-records` and `/employees-records/7`: live identity + demo dossier boundary.
+
+Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s2-runtime/`.
+
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Do not start S2. No push, PR, cleanup, or unfreeze.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S3. No push, PR, cleanup, or unfreeze.

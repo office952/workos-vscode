@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBackendData } from "@/hooks/useBackendData";
+import { SourceBadge } from "@/components/workos/design-system";
 import type { Quote, Order } from "@/lib/mockData";
 import {
   FileText,
@@ -126,9 +127,11 @@ function StatusBadge({ label, cls }: { label: string; cls: string }) {
 function DisabledActionBtn({ label, reason, icon }: { label: string; reason: string; icon?: React.ReactNode }) {
   return (
     <button
+      type="button"
       disabled
+      aria-disabled="true"
       title={reason}
-      className="group relative inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-slate-700/40 bg-slate-800/20 text-slate-600 cursor-not-allowed"
+      className="group relative inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium rounded border border-wo-border-subtle bg-wo-surface-inset text-wo-text-muted opacity-70 cursor-not-allowed"
     >
       {icon || <Ban className="w-2.5 h-2.5" />}
       {label}
@@ -332,12 +335,17 @@ export default function DocumentCenter() {
       {/* HEADER */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-[20px] font-bold text-wo-text-primary flex items-center gap-2">
+          <h1 className="text-[20px] font-bold text-wo-text-primary flex items-center gap-2 flex-wrap">
             <FileText className="w-5 h-5 text-blue-400" />
             Document Center
+            <SourceBadge
+              source="mock"
+              label="ÎN PREGĂTIRE"
+              title="Proiecție din oferte și comenzi. Nu este arhivă de documente."
+            />
           </h1>
-          <p className="text-[12px] text-slate-500 mt-0.5">
-            Documente comerciale, contracte, facturi și acte operaționale.
+          <p className="text-[12px] text-wo-text-muted mt-0.5">
+            Proiecție din oferte și comenzi. Nu este arhivă de documente și nu stochează fișiere.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -412,9 +420,12 @@ export default function DocumentCenter() {
         </select>
         <div className="ml-auto text-[11px] text-slate-600 flex items-center gap-1">
           <Filter className="w-3 h-3" />
-          {filtered.length} / {documents.length} documente
+          {filtered.length} / {documents.length} proiecții
         </div>
       </div>
+      <p className="text-[11px] text-wo-text-muted">
+        Rândurile sunt generate din oferte și comenzi. Nu sunt documente stocate.
+      </p>
 
       {/* MAIN CONTENT: Table + Side Panel */}
       <div className="flex gap-3">
@@ -555,9 +566,11 @@ export default function DocumentCenter() {
 function RowAction({ icon, label, reason }: { icon: React.ReactNode; label: string; reason: string }) {
   return (
     <button
+      type="button"
       disabled
+      aria-disabled="true"
       title={`${label}: ${reason}`}
-      className="p-1 rounded text-slate-700 cursor-not-allowed hover:text-slate-600"
+      className="p-1 rounded text-wo-text-muted opacity-60 cursor-not-allowed"
     >
       {icon}
     </button>

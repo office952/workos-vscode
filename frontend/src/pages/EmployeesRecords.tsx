@@ -106,7 +106,7 @@ export default function EmployeesRecords() {
       <Alert className="bg-amber-900/20 border-amber-700/50 text-amber-100">
         <Info className="h-4 w-4 text-amber-400" />
         <AlertDescription className="text-[12px] text-amber-100/90">
-          Datele modulului sunt demonstrative, dar lista de angajați vine din registry-ul operațional live. Nu
+          Identitatea angajaților este live. Dosarul (documente, medicina muncii, alerte) este demonstrativ. Nu
           calculează payroll fiscal.
         </AlertDescription>
       </Alert>
@@ -123,14 +123,14 @@ export default function EmployeesRecords() {
         <div className={`bg-wo-surface-raised border rounded-lg p-3 ${totalAlerts > 0 ? "border-amber-800/40" : "border-wo-border-strong"}`}>
           <div className="flex items-center gap-2 mb-1">
             <Bell className="w-4 h-4 text-amber-400" />
-            <span className="text-[10px] text-slate-500 uppercase">Alerte active</span>
+            <span className="text-[10px] text-slate-500 uppercase">Alerte active (demo)</span>
           </div>
           <p className={`text-[22px] font-bold ${totalAlerts > 0 ? "text-amber-400" : "text-slate-500"}`}>{totalAlerts}</p>
         </div>
         <div className={`bg-wo-surface-raised border rounded-lg p-3 ${medicinaProblems > 0 ? "border-red-800/40" : "border-wo-border-strong"}`}>
           <div className="flex items-center gap-2 mb-1">
             <Heart className="w-4 h-4 text-pink-400" />
-            <span className="text-[10px] text-slate-500 uppercase">Medicina muncii</span>
+            <span className="text-[10px] text-slate-500 uppercase">Medicina muncii (demo)</span>
           </div>
           <p className={`text-[22px] font-bold ${medicinaProblems > 0 ? "text-red-400" : "text-emerald-400"}`}>
             {medicinaProblems > 0 ? `${medicinaProblems} probleme` : "OK"}
@@ -139,7 +139,7 @@ export default function EmployeesRecords() {
         <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <div className="flex items-center gap-2 mb-1">
             <FileText className="w-4 h-4 text-slate-400" />
-            <span className="text-[10px] text-slate-500 uppercase">Documente lipsa</span>
+            <span className="text-[10px] text-slate-500 uppercase">Documente lipsa (demo)</span>
           </div>
           <p className={`text-[22px] font-bold ${docsLipsa > 0 ? "text-amber-400" : "text-slate-500"}`}>{docsLipsa}</p>
         </div>

@@ -140,6 +140,14 @@ export default function EmployeeProfile() {
         </div>
       </div>
 
+      <div className="flex items-start gap-2 px-3 py-2 rounded-lg border border-amber-700/50 bg-amber-900/20">
+        <Info className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+        <p className="text-[12px] text-amber-100/90">
+          Identitatea angajatului este live. Dosarul (documente, medicina muncii, alerte, program, datorii) este
+          demonstrativ.
+        </p>
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-1">
         {TABS.map((tab) => (
@@ -205,7 +213,9 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
             <InfoField icon={<Clock className="w-3.5 h-3.5 text-slate-500" />} label="Program" value="Luni – Vineri" />
             <InfoField icon={<Clock className="w-3.5 h-3.5 text-slate-500" />} label="Ore/zi" value="8h (+ 30 min pauză masă)" />
           </div>
-          <p className="text-[10px] text-slate-600 italic">Program standard intern. Configurabil dacă există orar special.</p>
+          <p className="text-[10px] text-wo-text-muted italic">
+            Program demonstrativ — nu vine din registry-ul operațional al angajatului.
+          </p>
         </div>
 
         <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-3">

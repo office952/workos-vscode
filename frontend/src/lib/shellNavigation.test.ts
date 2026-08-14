@@ -164,6 +164,19 @@ describe("shellNavigation — U7 role projection + production home", () => {
     expect(pathAllowedForRole("sales", "/demo/foo")).toBe(false);
   });
 
+  it("removes Documente from primary Relații but keeps the direct route", () => {
+    const relatii = SHELL_NAV_SECTIONS.find((s) => s.id === "relatii");
+    expect(relatii?.items.some((i) => i.label === "Documente")).toBe(false);
+    expect(relatii?.items.some((i) => i.to === "/documents")).toBe(false);
+    expect(projectedNavLabels("admin")).not.toContain("Documente");
+    expect(projectedNavLabels("manager")).not.toContain("Documente");
+    expect(projectedNavLabels("sales")).not.toContain("Documente");
+    expect(pathAllowedForRole("admin", "/documents")).toBe(true);
+    expect(pathAllowedForRole("manager", "/documents")).toBe(true);
+    expect(pathAllowedForRole("sales", "/documents")).toBe(true);
+    expect(pathAllowedForRole("operator", "/documents")).toBe(false);
+  });
+
   it("does not expose Intake V6 (diag) under DEV tooling", () => {
     const labels = projectedNavLabels("admin");
     expect(labels).not.toContain("Intake V6 (diag)");
