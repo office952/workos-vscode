@@ -58,6 +58,7 @@ Recurring operator lesson (back bevel GO): **serviciu comercial separat ≠ task
 | **A** | Architecture / ownership vs realignment 00–23 | Not authorized |
 | **L** | Dead / legacy / overengineering classification | Not authorized |
 | **C / S** | Cleaning E2E + simplification | Later Owner GO; usually requires unfreeze |
+| **Global synthesis** | Convert Waves 1–5 into target model + plan | **COMPLETE** — `global-synthesis/` · implementation still not authorized |
 
 ## 5. Mandatory evidence (PNG folder is insufficient)
 

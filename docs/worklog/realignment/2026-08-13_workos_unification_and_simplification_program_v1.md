@@ -3,29 +3,34 @@
 | Field | Value |
 |-------|--------|
 | Date | 2026-08-14 |
-| GO | Wave 5 gap closure (after Wave 5 audit) |
-| Boundary | Docs + live evidence only |
+| GO | Global synthesis evidence commit V1 |
+| Boundary | Docs / evidence only |
 | Implementation | NO |
 | Cleanup | NO |
 | Unfreeze | NO |
-| Owner DB / HR / attendance / payment / inventory / pricing / machine / settings mutations | 0 |
+| Owner DB mutations | 0 |
 | Wave 0–2 commit | `4bc988c0` (pushed) |
 | Wave 3 commit | `2af20f4e` (pushed) |
 | Wave 4 commit | `9cbcc7e5` (pushed) |
-| Wave 5 commit | local evidence only (this GO); push still NO |
+| Wave 5 commit | `4018cf271cee156b8014f19c7928f7fd781cefa3` (pushed) |
+| Synthesis commit | local evidence only (this GO); **PUSH = NO** |
 
 ## Done
 
-- Waves 0–4 remote-closed through `9cbcc7e5`. **WAVE_4_CLOSED = YES.**
-- Wave 5 audit-only: HR, inventory, pricing, utilaje, settings, documents, colaboratori, reports. RT 54/170, scroll FAIL=0. Initial **REV = PASS_WITH_GAPS**.
-- Wave 5 gap closure: `/employees-records/7` reached via row button; model/suppliers/documents/reports/pontaj RBAC classified. **REV = PASS**. **WAVE_5_CLOSED = YES.** Support domain remains a lateral belt.
+- Waves 1–5 remotely closed at `4018cf27`. `WAVE_5_EVIDENCE = REMOTE_CLOSED`.
+- `GLOBAL_AUDIT_PHASE = SUFFICIENT_FOR_SYNTHESIS`. No new domain audit.
+- Global synthesis pack written under `docs/qa/workos-unification-and-simplification-program-v1/global-synthesis/`.
+- Current model = **PARTIAL**. Target model = **DEFINED**. Level-1 systems = **7**.
+- Recommended commercial teaching: Cerere → Intake V6 → Ofertă → Comandă. Product System = admin language.
+- First implementation wave if Owner later authorizes: **S1** (nav / truth labeling). Not started.
+- REV = **PASS_WITH_GAPS** (family-level route table; no silent finding drop).
 
 ## Evidence
 
-`docs/qa/workos-unification-and-simplification-program-v1/wave-5/` (uncommitted)
-Canonical: `wave-5/WAVE_5_REPORT.md` · `wave-5/WAVE_5_GAP_CLOSURE_REPORT.md`
-REV: `wave-5/review/WAVE_5_CONSISTENCY_REVIEW.md`
+Canonical: `global-synthesis/GLOBAL_SYNTHESIS_REPORT.md`  
+REV: `global-synthesis/GLOBAL_CONSISTENCY_REVIEW.md`  
+Registries: `orchestration/canonical/README.md` now points synthesis SoT for purpose / duplicate / legacy / backlog.
 
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Wave 6 / Global Synthesis not started. No implementation. Local Wave 5 evidence commit only. `PUSH = NO`.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S1. No implementation, cleanup, unfreeze, or push. Local synthesis evidence commit only.

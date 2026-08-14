@@ -48,3 +48,5 @@ Wave 5 (audit-only; do not implement):
 | W5-C5 | Reports live order totals vs snapshot | Snapshot remains sold money | LIVE_OPERATIONAL_PROJECTION; PRICE_DRIFT if used as sold |
 | W5-C6 | Three labor languages | Keep labeled | employee / CostEngine / pricing rates |
 | W5-C7 | Utilaje util% vs MachineRun | Catalog ≠ run | PARTIAL |
+
+Global synthesis (2026-08-14): contradictions above are **closed for audit**. Disposition lives in [`../../global-synthesis/GLOBAL_SYNTHESIS_REPORT.md`](../../global-synthesis/GLOBAL_SYNTHESIS_REPORT.md) (finding table) and [`../../global-synthesis/GLOBAL_DUPLICATE_TRUTH_RECONCILIATION.md`](../../global-synthesis/GLOBAL_DUPLICATE_TRUTH_RECONCILIATION.md). Do not reopen as a new domain wave unless a material blind spot appears. Implementation still not authorized.
