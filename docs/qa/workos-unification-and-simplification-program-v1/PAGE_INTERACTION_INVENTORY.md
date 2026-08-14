@@ -73,3 +73,7 @@ Hardcoded-UI: list+detail is page-local, not `DataTableWrapper`. KPI money tiles
 Hardcoded-UI: workcenter keys leak (`CNC_ROUTING`, `METAL_FAB`, `LETTER_FORMING`). `SourceBadge` is shared. Connection chip uses raw emerald/slate classes. H1 “Atelier” matches nav — good. English breadcrumb “Shop Floor” vs Romanian H1.
 
 Reconciliation verdict: Wave 1 homes = **RECONCILED** for non-mutating journey. Mutating quote/dashboard create paths remain `STATE_NOT_REACHED` by charter.
+
+## Wave 4 pointer (do not copy rows here)
+
+Product System / Modules / Governance: [`wave-4/WAVE_4_INTERACTION_RECONCILIATION.md`](./wave-4/WAVE_4_INTERACTION_RECONCILIATION.md). Structure workshops remain PARTIAL / SNR.

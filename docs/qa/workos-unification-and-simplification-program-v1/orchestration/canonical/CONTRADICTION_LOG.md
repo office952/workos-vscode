@@ -21,3 +21,18 @@ Wave 3 resolutions (gap closure):
 | W3-C3 | `assigned · Neatribuit` | **FRONTEND_LABEL_COMPOSITION** | Lifecycle queued ≠ employee assigned |
 | W3-C2 | Monitor home vs action surfaces | Architectural split; keep as current truth | Atelier monitor; operator/tablet COMPAT_ACTIVE |
 | W3-C5 / W3-C6 | Status vocab / money vs production | Both projections | No implementation |
+
+Wave 4 resolutions (audit-only; do not implement):
+
+| ID | Conflict | Winner for synthesis | Why |
+|----|----------|----------------------|-----|
+| W4-C1 | /modules says PD lives at `/intake-v6`; humans look in Product System | Both real; PD has **no page** | verifyRoute ≠ mental model; do not invent a PD home |
+| W4-C2 | Governance products tab ≠ live `/product-system` | Live catalog wins for current products | Static `governanceData.productCatalog` is STALE |
+| W4-C3 | Two documentation hierarchies | Keep both flagged | `DOCUMENTATION_HIERARCHY` vs `governanceData.truthHierarchy` |
+| W4-C4 | BE premount `root_offerable` vs FE `activeTemplateScope` omit | Scope drift | Do not activate premount in this GO |
+| W4-C5 | Repo freeze ON vs modules/governance “active spine” | Freeze is real; pages omit it | UNDERDOCUMENTED / MISSING_GATE |
+| W4-C6 | V6 confirm blocked vs order already frozen | Both real (Wave 2/3 fixture) | DEFINITION_DRIFT; do not unfreeze/reconfirm |
+| W4-C7 | FLUX Produse vs V6 work path | Actual edit path (V6) | Wave 2 C5 still true |
+| W4-U12 | 12 unregistered systems | **RETRACTED** as Level-1 count | Gap closure: aliases/pages/internals; TRUE_UNREGISTERED_SYSTEM=0 |
+
+Wave 4 gap closure: C1 kept as PARTIAL (compiler may have no page). C2–C7 remain ACTIVE. U12 count retracted.

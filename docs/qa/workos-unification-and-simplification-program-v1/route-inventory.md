@@ -94,3 +94,5 @@ Redirects: `/pricing`, `/products`, `/templates`, `/personal`, three `/inventory
 ## 4. Sidebar IA (not the same as route table)
 
 See `SHELL_NAV_SECTIONS` in `shellNavigation.ts`. Wave 1 follows each **visible** item per role. Destination pages are not fully audited in Wave 1.
+
+Wave 4 audited (read-only): `/product-system/products` (+ Letters v2, ACM boxed), planned `components`/`operations`, `/product-system/blueprint-dossier`, `/product-system/output-blocks-preview`, `/modules`, `/governance`. See [`wave-4/WAVE_4_REPORT.md`](./wave-4/WAVE_4_REPORT.md).

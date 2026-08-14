@@ -1,0 +1,1192 @@
+{
+  "results": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/001-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/002-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/003-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/004-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "letters-detail",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/005-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/006-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/007-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/008-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "letters-direct",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/009-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/010-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/011-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/012-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "tab": "acm-direct",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 938,
+      "SCROLL_MAX": 938,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=938"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/acm-direct/013-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/acm-direct/014-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 938,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/acm-direct/015-s02-y938.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/components",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_components/default/016-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/components"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/operations",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_operations/default/017-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/operations"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/blueprint-dossier",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 4608,
+      "SCROLL_MAX": 4608,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 7,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=4608"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/018-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/019-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/020-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/021-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/022-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/023-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4608,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_blueprint-dossier/default/024-s06-y4608.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/blueprint-dossier"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/output-blocks-preview",
+      "tab": "default",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 16,
+      "SCROLL_MAX": 16,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=16"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_output-blocks-preview/default/025-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 16,
+          "file": "wave-4/runtime/screenshots/admin/light/_product-system_output-blocks-preview/default/026-s01-y16.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/output-blocks-preview"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/027-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/028-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/029-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/030-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "letters-detail",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/031-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/032-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/033-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-detail/034-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "letters-direct",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1648,
+      "SCROLL_MAX": 1648,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1648"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/035-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/036-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/037-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1648,
+          "file": "wave-4/runtime/screenshots/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/letters-direct/038-s03-y1648.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/modules",
+      "tab": "harta",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5792,
+      "SCROLL_MAX": 5792,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5792"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/039-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/040-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/041-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/042-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/043-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/044-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/045-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/046-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5792,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/harta/047-s08-y5792.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/modules"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/modules",
+      "tab": "tabs-expanded",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5792,
+      "SCROLL_MAX": 5792,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5792"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/048-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/049-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/050-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/051-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/052-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/053-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/054-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/055-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5792,
+          "file": "wave-4/runtime/screenshots/admin/light/_modules/tabs-expanded/056-s08-y5792.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/modules"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/governance",
+      "tab": "ownership",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 6193,
+      "SCROLL_MAX": 6193,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=6193"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/057-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/058-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/059-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/060-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/061-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/062-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/063-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/064-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6193,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/ownership/065-s08-y6193.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/governance"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/governance",
+      "tab": "tabs-expanded",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 861,
+      "SCROLL_MAX": 861,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=861"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/tabs-expanded/066-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/tabs-expanded/067-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 861,
+          "file": "wave-4/runtime/screenshots/admin/light/_governance/tabs-expanded/068-s02-y861.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/governance"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/modules",
+      "tab": "harta",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5792,
+      "SCROLL_MAX": 5792,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5792"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/069-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/070-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/071-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/072-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/073-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/074-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/075-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/076-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5792,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/harta/077-s08-y5792.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/modules"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/modules",
+      "tab": "tabs-expanded",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 5792,
+      "SCROLL_MAX": 5792,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=5792"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/078-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/079-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/080-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/081-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/082-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/083-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/084-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/085-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 5792,
+          "file": "wave-4/runtime/screenshots/admin/dark/_modules/tabs-expanded/086-s08-y5792.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/modules"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/governance",
+      "tab": "ownership",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 6193,
+      "SCROLL_MAX": 6193,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 9,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=6193"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/087-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/088-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/089-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/090-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3216,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/091-s04-y3216.png"
+        },
+        {
+          "index": 5,
+          "scrollTop": 4020,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/092-s05-y4020.png"
+        },
+        {
+          "index": 6,
+          "scrollTop": 4824,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/093-s06-y4824.png"
+        },
+        {
+          "index": 7,
+          "scrollTop": 5628,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/094-s07-y5628.png"
+        },
+        {
+          "index": 8,
+          "scrollTop": 6193,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/ownership/095-s08-y6193.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/governance"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/governance",
+      "tab": "tabs-expanded",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 861,
+      "SCROLL_MAX": 861,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=861"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/tabs-expanded/096-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/tabs-expanded/097-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 861,
+          "file": "wave-4/runtime/screenshots/admin/dark/_governance/tabs-expanded/098-s02-y861.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/governance"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1606,
+      "SCROLL_MAX": 1606,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=1606"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/manager/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/099-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/manager/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/100-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1606,
+          "file": "wave-4/runtime/screenshots/manager/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/101-s02-y1606.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1606,
+      "SCROLL_MAX": 1606,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1606"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots/sales/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/104-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots/sales/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/105-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1606,
+          "file": "wave-4/runtime/screenshots/sales/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library/106-s02-y1606.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    }
+  ],
+  "edges": [
+    {
+      "FROM": "/product-system/products",
+      "CONTROL": "product card",
+      "TO": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "HONESTY": "GOOD_EDGE"
+    },
+    {
+      "FROM": "/product-system/products",
+      "CONTROL": "product card",
+      "TO": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "HONESTY": "GOOD_EDGE"
+    }
+  ],
+  "roleMatrix": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/components",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/components",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/operations",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/operations",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/blueprint-dossier",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/blueprint-dossier",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/output-blocks-preview",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/output-blocks-preview",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/modules",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/modules",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/governance",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/governance",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/modules",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/modules",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/governance",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/governance",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/modules",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "light",
+      "route": "/governance",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/modules",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "light",
+      "route": "/governance",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/quotes",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    },
+    {
+      "role": "operator",
+      "theme": "light",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/shop-floor",
+      "EXPECTED": "NO",
+      "MATCH": "YES"
+    }
+  ],
+  "notReached": [
+    {
+      "route": "/modules",
+      "role": "manager",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/governance",
+      "role": "manager",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    },
+    {
+      "route": "/modules",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/governance",
+      "role": "sales",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/quotes"
+    },
+    {
+      "route": "/product-system/products",
+      "role": "operator",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/shop-floor"
+    }
+  ],
+  "fail": 0,
+  "shots": 109
+}

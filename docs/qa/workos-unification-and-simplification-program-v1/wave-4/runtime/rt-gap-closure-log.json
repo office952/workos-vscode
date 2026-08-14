@@ -1,0 +1,1285 @@
+{
+  "results": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2733,
+      "SCROLL_MAX": 2733,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2733"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/001-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/002-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/003-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/004-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2733,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/005-s04-y2733.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2935,
+      "SCROLL_MAX": 2935,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2935"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/006-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/007-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/008-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/009-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2935,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/010-s04-y2935.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2726,
+      "SCROLL_MAX": 2726,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2726"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/011-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/012-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/013-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/014-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2726,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/015-s04-y2726.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3055,
+      "SCROLL_MAX": 3055,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=3055"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/016-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/017-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/018-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/019-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3055,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/020-s04-y3055.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 845,
+      "SCROLL_MAX": 845,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=845"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/021-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/022-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 845,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/023-s02-y845.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 12,
+      "SCROLL_MAX": 12,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=12"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_composer-litere-acm/workshop/024-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 12,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_composer-litere-acm/workshop/025-s01-y12.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2852,
+      "SCROLL_MAX": 2852,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2852"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/026-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/027-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/028-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/029-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2852,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/030-s04-y2852.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2160,
+      "SCROLL_MAX": 2160,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2160"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/031-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/032-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/033-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2160,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/034-s03-y2160.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/resources",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_resources/planned/035-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/resources"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/dependencies",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_dependencies/planned/036-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/dependencies"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/validation",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_validation/planned/037-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/validation"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/advanced",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_advanced/planned/038-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/advanced"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2733,
+      "SCROLL_MAX": 2733,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2733"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/039-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/040-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/041-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/042-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2733,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_vizual-fata/workshop/043-s04-y2733.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2935,
+      "SCROLL_MAX": 2935,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2935"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/044-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/045-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/046-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/047-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2935,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_volum-aluminiu/workshop/048-s04-y2935.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2726,
+      "SCROLL_MAX": 2726,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2726"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/049-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/050-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/051-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/052-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2726,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_capac-spate/workshop/053-s04-y2726.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 3055,
+      "SCROLL_MAX": 3055,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=3055"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/054-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/055-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/056-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/057-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 3055,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_sistem-led/workshop/058-s04-y3055.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 845,
+      "SCROLL_MAX": 845,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=845"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/059-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/060-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 845,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_conexiune-litere-acm-preturi/workshop/061-s02-y845.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 12,
+      "SCROLL_MAX": 12,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 2,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=12"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_composer-litere-acm/workshop/062-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 12,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2_structure_composer-litere-acm/workshop/063-s01-y12.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2852,
+      "SCROLL_MAX": 2852,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 5,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2852"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/064-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/065-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/066-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2412,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/067-s03-y2412.png"
+        },
+        {
+          "index": 4,
+          "scrollTop": 2852,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_corp-casetat/workshop/068-s04-y2852.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "tab": "workshop",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 2160,
+      "SCROLL_MAX": 2160,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=2160"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/069-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/070-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/071-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 2160,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_products_TPL-ACM-BOXED-MOUNTING-SUPPORT_v1_structure_structura-metalica/workshop/072-s03-y2160.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/resources",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_resources/planned/073-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/resources"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/dependencies",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_dependencies/planned/074-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/dependencies"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/validation",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_validation/planned/075-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/validation"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/advanced",
+      "tab": "planned",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 0,
+      "SCROLL_MAX": 0,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 1,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/dark/_product-system_advanced/planned/076-s00-y0.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/advanced"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "legacy-editor",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1709,
+      "SCROLL_MAX": 1709,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 4,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=624",
+        "MAIN max=1709",
+        "product-system-detail-panel max=1025"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/legacy-editor/078-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/legacy-editor/079-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1608,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/legacy-editor/080-s02-y1608.png"
+        },
+        {
+          "index": 3,
+          "scrollTop": 1709,
+          "file": "wave-4/runtime/screenshots-gap-closure/admin/light/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/legacy-editor/081-s03-y1709.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2?ps_legacy=1"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library-dark",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1606,
+      "SCROLL_MAX": 1606,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "workos-shell-nav max=224",
+        "MAIN max=1606"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/manager/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/082-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/manager/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/083-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1606,
+          "file": "wave-4/runtime/screenshots-gap-closure/manager/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/084-s02-y1606.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "tab": "library-dark",
+      "container": "main.overflow-auto",
+      "SCROLL_START": 0,
+      "SCROLL_END": 1606,
+      "SCROLL_MAX": 1606,
+      "BOTTOM_REACHED": "YES",
+      "NEW_CONTENT_AFTER_FINAL_SCROLL": "NO",
+      "SCROLL_SEGMENT_COUNT": 3,
+      "FULL_VERTICAL_SCROLL": "PASS",
+      "NESTED_SCROLL_CONTAINERS": [
+        "MAIN max=1606"
+      ],
+      "segments": [
+        {
+          "index": 0,
+          "scrollTop": 0,
+          "file": "wave-4/runtime/screenshots-gap-closure/sales/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/085-s00-y0.png"
+        },
+        {
+          "index": 1,
+          "scrollTop": 804,
+          "file": "wave-4/runtime/screenshots-gap-closure/sales/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/086-s01-y804.png"
+        },
+        {
+          "index": 2,
+          "scrollTop": 1606,
+          "file": "wave-4/runtime/screenshots-gap-closure/sales/dark/_product-system_products_TPL-VOLUMETRIC-LETTERS_v2/library-dark/087-s02-y1606.png"
+        }
+      ],
+      "actualUrl": "http://127.0.0.1:3000/product-system/products/TPL-VOLUMETRIC-LETTERS_v2"
+    }
+  ],
+  "roleMatrix": [
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/resources",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/resources",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/dependencies",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/dependencies",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/validation",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/validation",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/advanced",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/advanced",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/vizual-fata",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/volum-aluminiu",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/capac-spate",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/sistem-led",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/conexiune-litere-acm-preturi",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2/structure/composer-litere-acm",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/corp-casetat",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/structura-metalica",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/resources",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/resources",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/dependencies",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/dependencies",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/validation",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/validation",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "dark",
+      "route": "/product-system/advanced",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/advanced",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/fata-panou",
+      "ROLE_ALLOWED": "NO",
+      "LANDING": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_V1/structure/corp-casetat",
+      "EXPECTED": "YES",
+      "MATCH": "NO"
+    },
+    {
+      "role": "admin",
+      "theme": "light",
+      "route": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2?ps_legacy=1",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "manager",
+      "theme": "dark",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    },
+    {
+      "role": "sales",
+      "theme": "dark",
+      "route": "/product-system/products",
+      "ROLE_ALLOWED": "YES",
+      "LANDING": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2",
+      "EXPECTED": "YES",
+      "MATCH": "YES"
+    }
+  ],
+  "notReached": [
+    {
+      "route": "/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_v1/structure/fata-panou",
+      "role": "admin",
+      "theme": "light",
+      "blocker": "ROLE_ALLOWED=NO landing=/product-system/products/TPL-ACM-BOXED-MOUNTING-SUPPORT_V1/structure/corp-casetat"
+    }
+  ],
+  "apiProbe": {
+    "operatorTasks": {
+      "http": 200,
+      "total": 234,
+      "count973024": 18,
+      "sampleIds": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CONFIRM_GEOMETRY",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FACE",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:CUT_FOREX_BACK",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:PREPARE_CANT_STRIP",
+        "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:FORM_CANT_CNC",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:BOND_FACE_TO_CANT",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:INSTALL_LED_MODULES",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:WIRE_LED_MODULES"
+      ],
+      "sampleNames": [
+        "CONFIRM_GEOMETRY",
+        "CUT_FACE",
+        "CUT_FOREX_BACK",
+        "side_forming",
+        "side_forming",
+        "BOND_FACE_TO_CANT",
+        "INSTALL_LED_MODULES",
+        "WIRE_LED_MODULES"
+      ]
+    }
+  },
+  "fail": 0,
+  "shots": 87,
+  "mutations": 0
+}

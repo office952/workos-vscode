@@ -232,3 +232,9 @@ These rows prove `FOLLOWED=YES`. `FULL_VERTICAL_SCROLL = N/A` — destination pa
 | `/shop-floor` | empty / error board | STATE_NOT_REACHED | live DB is dense and healthy |
 | AppShell | narrow nav drawer | STATE_NOT_REACHED | Wave 1 viewport 1440; drawer is mobile-only |
 
+## Wave 4 pointer (do not copy rows here)
+
+Product System / Modules / Governance captures: [`wave-4/WAVE_4_SCREENSHOT_COVERAGE_SUMMARY.md`](./wave-4/WAVE_4_SCREENSHOT_COVERAGE_SUMMARY.md) · [`wave-4/runtime/rt-capture-log.json`](./wave-4/runtime/rt-capture-log.json). 21 surfaces, 109 shots, scroll FAIL=0.
+
+Gap closure (do not copy rows): [`wave-4/WAVE_4_EVIDENCE_RECONCILIATION.md`](./wave-4/WAVE_4_EVIDENCE_RECONCILIATION.md) · [`wave-4/runtime/rt-gap-closure-log.json`](./wave-4/runtime/rt-gap-closure-log.json). 27 surfaces, 87 shots, scroll FAIL=0.
+
