@@ -35,12 +35,13 @@ describe("FlowBreadcrumb helpers", () => {
     expect(items[1].label).toBe("Detaliu Cerere");
   });
 
-  it("quotesBreadcrumb links back to intake", () => {
+  it("quotesBreadcrumb links back to intake without Product System", () => {
     const items = quotesBreadcrumb();
     expect(items).toHaveLength(2);
     expect(items[0].to).toBe("/intake");
     expect(items[1].label).toBe("Oferte");
     expect(items[1].active).toBe(true);
+    expect(items.some((item) => item.label === "Produse")).toBe(false);
   });
 
   it("quoteDetailBreadcrumb has 3 levels", () => {

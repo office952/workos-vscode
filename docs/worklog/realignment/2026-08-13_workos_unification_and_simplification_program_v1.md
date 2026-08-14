@@ -31,6 +31,40 @@ Canonical: `global-synthesis/GLOBAL_SYNTHESIS_REPORT.md`
 REV: `global-synthesis/GLOBAL_CONSISTENCY_REVIEW.md`  
 Registries: `orchestration/canonical/README.md` now points synthesis SoT for purpose / duplicate / legacy / backlog.
 
+## Stop (synthesis, historical)
+
+`NEXT_TASK = NOT_AUTHORIZED` was the synthesis close. Owner later authorized S1 only. Record below.
+
+---
+
+# S1 — Commercial truth and workflow honesty (2026-08-14)
+
+| Field | Value |
+|-------|--------|
+| GO | `S1_COMMERCIAL_TRUTH_AND_WORKFLOW_HONESTY_V1` |
+| Boundary | Frontend display / FLUX membership / readiness copy |
+| Implementation | YES (labels only) |
+| Unfreeze | NO (bounded display exception; freeze remains ON) |
+| Owner DB mutations | 0 |
+| Synthesis baseline | `506007a3` |
+| Push | NO |
+
+## Done
+
+- GS-01: `COMMERCIAL_FLOW_STAGES` = Cereri → Oferte → Comenzi. Strip removed from Product System layout. Commercial breadcrumbs / next-step copy no longer teach Cerere → Produs.
+- GS-02: V6 live rail uses Estimare curentă / Estimare cu TVA / Estimare netă. Amounts still from priced-quote-dry-run `commercial_totals`.
+- GS-03: `ready_for_quote` display = Marcat intern. Enum/API/DB unchanged. No V6 join.
+- Deferred: Lucrări sidebar Produse, Product System page title, `productsNextStepHint`.
+
+## Runtime
+
+- `/intake` admin+sales, light+dark: FLUX without Produse; sidebar Produse still there.
+- `/quotes` sales light: same FLUX.
+- `/intake-v6/IR-MSRB28PU/operator`: Estimare curentă **729,04 EUR** (Wave 2 live observation was 725,25 EUR; dry-run drifted independently of S1).
+- Readiness card **Marcat intern** = 0. Non-ready **Nou** rows visible. No `ready_for_quote` list row (`STATE_NOT_REACHED` for row chip).
+
+Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s1-runtime/`.
+
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Do not start S1. No implementation, cleanup, unfreeze, or push. Local synthesis evidence commit only.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S2. No push, PR, cleanup, or unfreeze.

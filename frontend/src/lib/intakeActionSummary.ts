@@ -148,7 +148,7 @@ export function buildIntakeActionSummary(input: {
     primaryDisabled = false;
   } else if (!intakeReady && readiness.canMarkReady) {
     primaryAction = "mark_ready";
-    primaryActionLabel = "Marchează Gata pt. Ofertă";
+    primaryActionLabel = "Marchează intern";
     primaryDisabled = false;
   } else if (!intakeReady && !readiness.canMarkReady) {
     if (input.status === "new") {
@@ -157,7 +157,7 @@ export function buildIntakeActionSummary(input: {
       primaryDisabled = false;
     } else {
       primaryAction = "mark_ready";
-      primaryActionLabel = "Marchează Gata pt. Ofertă";
+      primaryActionLabel = "Marchează intern";
       primaryDisabled = true;
       primaryDisabledReason =
         readinessMissing.length > 0
@@ -181,7 +181,7 @@ export function buildIntakeActionSummary(input: {
   const intakeStatusLabel = isStage0
     ? "Alege tip lucrare"
     : intakeReady
-      ? "Gata pt. Ofertă (comercial)"
+      ? "Marcat intern"
       : stages.stageLabel;
 
   return {

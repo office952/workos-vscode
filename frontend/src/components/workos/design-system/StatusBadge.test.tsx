@@ -177,7 +177,7 @@ describe("StatusBadge", () => {
 
   it("renders intake ready_for_quote with emerald tone", () => {
     render(<StatusBadge domain="intake" status="ready_for_quote" />);
-    const badge = screen.getByText("Gata pt. Ofertă");
+    const badge = screen.getByText("Marcat intern");
     expect(badge).toHaveAttribute("data-status-tone", "emerald");
     expect(badge.className).toMatch(/emerald/);
   });

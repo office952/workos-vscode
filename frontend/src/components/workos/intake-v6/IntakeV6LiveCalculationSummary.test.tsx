@@ -889,6 +889,12 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByText(INTAKE_V6_LIVE_CALC_GROSS_LABEL)).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-calc-preview-header")).toHaveTextContent(
+      "Estimare curentă",
+    );
+    expect(screen.getByTestId("intake-v6-live-calc-preview-header")).not.toHaveTextContent(
+      /^ofertă client$/i,
+    );
     expect(screen.queryByText(/Preț oficial/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Total cu TVA/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Total final/i)).not.toBeInTheDocument();
@@ -999,7 +1005,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-live-estimate-unavailable")).toHaveTextContent(
-      /Oferta client nu este disponibilă|Oferta client necesită/i,
+      /Estimarea necesită|Estimare curentă/i,
     );
     expect(screen.queryByTestId("intake-v6-live-offer-gross")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);

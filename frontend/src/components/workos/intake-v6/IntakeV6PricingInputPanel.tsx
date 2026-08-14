@@ -16,6 +16,10 @@ import {
 } from "@/lib/intakeV6/intakeV6OfficialPricing";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
 import { formatCommercialAmount } from "@/lib/quoteCurrency";
+import {
+  ESTIMARE_CURENTA_GROSS_LABEL,
+  ESTIMARE_CURENTA_LABEL,
+} from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 import { IntakeV6AggregateCostTruthNotice } from "./IntakeV6AggregateCostTruthNotice";
 
@@ -261,7 +265,7 @@ function IntakeV6PricingInputPanelReady({
           </dd>
         </div>
         <div className="flex justify-between gap-2 font-semibold text-emerald-300">
-          <dt>{hasOfficialTotals ? "Ofertă client" : "Ofertă client (estimată)"}</dt>
+          <dt>{hasOfficialTotals ? ESTIMARE_CURENTA_GROSS_LABEL : ESTIMARE_CURENTA_LABEL}</dt>
           <dd data-testid="intake-v6-offer-final-price">
             {hasOfficialTotals && displayOfficialGross != null ? formatCurrency(displayOfficialGross, officialCurrency) : "—"}
           </dd>

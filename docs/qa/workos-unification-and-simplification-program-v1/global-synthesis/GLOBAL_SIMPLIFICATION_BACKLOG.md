@@ -36,3 +36,15 @@ P1_COUNT = 8
 P2_COUNT = 8
 P3_COUNT = 6
 ```
+
+## S1 implementation status (2026-08-14)
+
+Status only. Do not treat this as a rewrite of the synthesis table.
+
+| ID | STATUS | NOTE |
+|----|--------|------|
+| GS-01 | IMPLEMENTED | FLUX Cereri → Oferte → Comenzi. Sidebar Produse deferred. |
+| GS-02 | IMPLEMENTED | V6 rail = Estimare curentă. Amounts unchanged by S1. |
+| GS-03 | IMPLEMENTED | Display Marcat intern. Enum/API/DB unchanged. No V6 join. |
+
+S2+ items remain open. Evidence: `../s1-runtime/S1_COMMERCIAL_TRUTH_REPORT.md`.

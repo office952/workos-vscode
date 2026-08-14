@@ -1661,11 +1661,11 @@ export default function Quotes() {
               </div>
               <NextStepPanel
                 title="Flux comercial"
-                description="Oferta urmează după Cerere și Produs. Selectează o ofertă pentru readiness și acțiuni — fără auto-accept."
+                description="Oferta urmează după configurarea din cerere. Selectează o ofertă pentru acțiuni — fără auto-accept."
                 primaryAction={{ label: "Înapoi la cereri", to: "/intake", variant: "secondary" }}
                 secondaryAction={{
-                  label: "Vezi produse",
-                  to: "/product-system/products",
+                  label: "Vezi comenzi",
+                  to: "/orders",
                   variant: "ghost",
                 }}
               />

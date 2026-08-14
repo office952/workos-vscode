@@ -60,7 +60,7 @@ export default function TemplateStatusPanel({
         <p className="inline-flex items-start gap-1 text-amber-400/90 mt-1">
           <span>Comercial: {readinessMissing.join(", ")}</span>
           <InfoHint label="Detalii readiness">
-            Condiții pentru marcare Gata pt. Ofertă (comercial). Simularea poate
+            Condiții pentru marcare internă pe cerere. Simularea poate
             fi disponibilă separat.
           </InfoHint>
         </p>

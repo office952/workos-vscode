@@ -95,7 +95,6 @@ export function productsBreadcrumb(templateLabel?: string): BreadcrumbItem[] {
 export function quotesBreadcrumb(): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
-    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", active: true },
   ];
 }
@@ -103,7 +102,6 @@ export function quotesBreadcrumb(): BreadcrumbItem[] {
 export function quoteDetailBreadcrumb(id?: string): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
-    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: id ? `Ofertă ${id}` : "Detaliu Ofertă", active: true },
   ];
@@ -112,7 +110,6 @@ export function quoteDetailBreadcrumb(id?: string): BreadcrumbItem[] {
 export function ordersBreadcrumb(): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
-    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: "Comenzi", active: true },
   ];
@@ -121,7 +118,6 @@ export function ordersBreadcrumb(): BreadcrumbItem[] {
 export function orderDetailBreadcrumb(id?: string): BreadcrumbItem[] {
   return [
     { label: "Cereri", to: "/intake" },
-    { label: "Produse", to: "/product-system/products" },
     { label: "Oferte", to: "/quotes" },
     { label: "Comenzi", to: "/orders" },
     { label: id ? `Comandă ${id}` : "Detaliu Comandă", active: true },

@@ -6,6 +6,11 @@ src/lib/apiError.test.ts
 src/lib/auth.test.ts
 src/lib/rbac.test.ts
 src/lib/shellNavigation.test.ts
+src/lib/commercialFlowUi.test.ts
+src/lib/intakeV6/intakeV6OfferCostChromeVocabulary.test.ts
+src/pages/WorkIntake.badges.test.tsx
+src/components/workos/design-system/StatusBadge.test.tsx
+src/components/workos/ux-helpers.test.ts
 src/lib/machineRunUi.test.ts
 src/pages/MachineRunsListPage.test.tsx
 src/pages/MachineRunDetailPage.test.tsx

@@ -64,7 +64,7 @@ const statusConfig: Record<IntakeStatus, { label: string; cls: string; icon: Rea
     icon: <AlertTriangle className="w-3 h-3" />,
   },
   ready_for_quote: {
-    label: "Gata pt. Ofertă",
+    label: "Marcat intern",
     cls: "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
     icon: <CheckCircle2 className="w-3 h-3" />,
   },
@@ -204,7 +204,7 @@ export default function WorkIntake() {
       <PageShell
         compact
         title="Cereri"
-        subtitle="Cerere → Produs → Ofertă → Comandă. Selectează o cerere pentru pasul următor."
+        subtitle="Cerere → Configurare → Ofertă → Comandă. Selectează o cerere pentru pasul următor."
         actions={
           <div className="flex items-center gap-2">
             <SourceBadge source={intakeSource} />
@@ -545,8 +545,8 @@ export default function WorkIntake() {
                         variant: "secondary",
                       }
                     : {
-                        label: "Vezi produse",
-                        to: "/product-system/products",
+                        label: "Vezi oferte",
+                        to: "/quotes",
                         variant: "ghost",
                       }
                 }
@@ -611,7 +611,7 @@ export default function WorkIntake() {
                                 : "bg-wo-surface-inset text-wo-text-muted border border-wo-border-strong cursor-not-allowed"
                             }`}
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Marchează Gata pt. Ofertă
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Marchează intern
                           </button>
                           {!canSendToQuote && (
                             <div className="hidden group-hover:block absolute z-20 bottom-full left-0 right-0 mb-2 bg-wo-surface-raised border border-red-200 dark:border-red-800/40 rounded-lg p-3 shadow-xl">
@@ -743,8 +743,8 @@ export default function WorkIntake() {
               </div>
               <NextStepPanel
                 title="Flux comercial"
-                description="Alege o cerere din listă, configurează produsul, apoi creează oferta. Comanda apare după acceptare."
-                primaryAction={{ label: "Vezi produse", to: "/product-system/products" }}
+                description="Alege o cerere din listă, configurează în cerere, apoi creează oferta. Comanda apare după acceptare."
+                primaryAction={{ label: "Deschide cererile", to: "/intake" }}
                 secondaryAction={{ label: "Vezi oferte", to: "/quotes", variant: "ghost" }}
               />
             </div>

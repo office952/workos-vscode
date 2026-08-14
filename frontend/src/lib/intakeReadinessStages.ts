@@ -90,7 +90,7 @@ const STAGE_DESCRIPTIONS: Record<IntakeReadinessStageId, string> = {
   stage2_simulation:
     "Poți rula simularea preliminară. Oferta comercială finală poate avea condiții suplimentare.",
   stage3_commercial_quote:
-    "Condițiile pentru ofertă comercială și marcare Gata pt. Ofertă sunt îndeplinite.",
+    "Condițiile pentru marcare internă pe cerere sunt îndeplinite.",
   stage4_production:
     "Detaliile de producție și montaj sunt complete pentru handoff comandă.",
 };

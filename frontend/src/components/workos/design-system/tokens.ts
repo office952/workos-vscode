@@ -327,7 +327,7 @@ const intakeStatusLabels: Record<string, string> = {
   new: "Nou",
   in_review: "În Analiză",
   needs_info: "Lipsă Info",
-  ready_for_quote: "Gata pt. Ofertă",
+  ready_for_quote: "Marcat intern",
   blocked: "Blocat",
   cancelled: "Anulat",
   quoted: "Ofertat",

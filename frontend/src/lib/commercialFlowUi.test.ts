@@ -8,14 +8,21 @@ import {
 } from "./commercialFlowUi";
 
 describe("commercialFlowUi", () => {
-  it("keeps Cereri → Produse → Oferte → Comenzi order", () => {
+  it("keeps Cereri → Oferte → Comenzi order without Product System", () => {
     expect(COMMERCIAL_FLOW_STAGES.map((s) => s.id)).toEqual([
       "cereri",
-      "produse",
       "oferte",
       "comenzi",
     ]);
-    expect(commercialFlowStageIndex("oferte")).toBe(2);
+    expect(COMMERCIAL_FLOW_STAGES.map((s) => s.label)).toEqual([
+      "Cereri",
+      "Oferte",
+      "Comenzi",
+    ]);
+    expect(COMMERCIAL_FLOW_STAGES.some((s) => s.path.includes("product-system"))).toBe(
+      false,
+    );
+    expect(commercialFlowStageIndex("oferte")).toBe(1);
     expect(commercialFlowStageIndex("cereri")).toBe(0);
   });
 
@@ -29,7 +36,16 @@ describe("commercialFlowUi", () => {
   it("gives ready_for_quote a clear offer next step without inventing mutation", () => {
     const hint = intakeListNextStepHint("ready_for_quote");
     expect(hint.primaryTo).toBe("/quotes");
+    expect(hint.secondaryTo).toBe("/intake");
     expect(hint.title.toLowerCase()).toMatch(/ofert/);
+    expect(JSON.stringify(hint)).not.toMatch(/product-system/);
+  });
+
+  it("does not send intake next-step through Product System", () => {
+    for (const status of ["new", "in_review", "needs_info", "blocked", "unknown"]) {
+      const hint = intakeListNextStepHint(status);
+      expect(JSON.stringify(hint)).not.toMatch(/product-system/);
+    }
   });
 
   it("keeps products next step pointing at quotes/intake only", () => {

@@ -417,7 +417,7 @@ export default function VolumetricLettersQuoteFlow({
       {openedFromIntake && intakeStatus && intakeStatus !== "ready_for_quote" && (
         <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg text-[11px] text-amber-300/90">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-          Poți calcula preliminar, dar cererea nu este marcată Gata pt. Ofertă.
+          Poți calcula preliminar, dar cererea nu este marcată intern.
         </div>
       )}
 

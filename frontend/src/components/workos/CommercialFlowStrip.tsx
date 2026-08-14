@@ -1,5 +1,5 @@
 /**
- * CommercialFlowStrip — compact Cereri → Produse → Oferte → Comenzi continuity rail.
+ * CommercialFlowStrip — compact Cereri → Oferte → Comenzi continuity rail.
  * Presentation only; does not mutate business state.
  */
 import { Link } from "react-router-dom";

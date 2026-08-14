@@ -140,7 +140,7 @@ const statusConfig: Record<IntakeStatus, { label: string; cls: string }> = {
   new: { label: "Nou", cls: "bg-slate-700/60 text-slate-300 border-slate-600" },
   in_review: { label: "În Analiză", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
   needs_info: { label: "Lipsă Info", cls: "bg-amber-900/40 text-amber-300 border-amber-700" },
-  ready_for_quote: { label: "Gata pt. Ofertă", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
+  ready_for_quote: { label: "Marcat intern", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
   blocked: { label: "Blocat", cls: "bg-red-900/40 text-red-300 border-red-700" },
   cancelled: { label: "Anulat", cls: "bg-slate-800/60 text-slate-400 border-slate-600" },
 };
@@ -2517,7 +2517,7 @@ export default function IntakeDetail() {
         await persistIntakeField({ assigned_to: assigneeTrimmed });
       }
       await markIntakeReadyForQuote(dbId, request.status);
-      setMarkReadyMessage("Cererea a fost marcată Gata pt. Ofertă.");
+      setMarkReadyMessage("Cererea a fost marcată intern.");
       await refresh();
     } catch (err) {
       setMarkReadyMessage(
@@ -3015,7 +3015,7 @@ export default function IntakeDetail() {
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
               <p className="text-[12px] text-red-300 font-semibold">
-                Nu se poate marca Gata pt. Ofertă — {displayReadinessMissing.length} condiție(i):
+                Nu se poate marca intern — {displayReadinessMissing.length} condiție(i):
               </p>
             </div>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5 ml-6">
@@ -3067,7 +3067,7 @@ export default function IntakeDetail() {
               }`}
             >
               <CheckCircle2 className="w-4 h-4" />
-              {markReadyLoading ? "Se salvează…" : "Marchează Gata pt. Ofertă"}
+              {markReadyLoading ? "Se salvează…" : "Marchează intern"}
             </button>
           </div>
         </div>
@@ -3077,7 +3077,7 @@ export default function IntakeDetail() {
         <div className="flex items-start gap-2 mt-3 px-3 py-2 bg-blue-900/10 border border-blue-800/20 rounded-lg">
           <Info className="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0" />
           <p className="text-[10px] text-blue-300/80">
-            <strong>Gata pt. Ofertă</strong> = cererea este completă pentru ofertare (date persistate).
+            <strong>Marcat intern</strong> = cererea a fost marcată operațional (date persistate).
             Oferta comercială finală are gate separat (<code>can_create_commercial_quote</code>).
             CUI-ul devine obligatoriu la acceptarea ofertei.
           </p>
@@ -3090,7 +3090,7 @@ export default function IntakeDetail() {
       {request.status === "ready_for_quote" && !workTypeUnresolved && (
         <NextStepPanel
           title="Următorul pas: Ofertare preliminară"
-          description="Cererea este marcată Gata pt. Ofertă. Deschide workspace-ul de ofertare sau lista Oferte."
+          description="Cererea este marcată intern. Deschide workspace-ul de configurare sau lista Oferte."
           primaryAction={{
             label: showProduct001Spec ? "Deschide ofertare preliminară" : "Mergi la Oferte",
             onClick: showProduct001Spec

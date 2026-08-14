@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   COST_INTERN_ESTIMATIV_LABEL,
+  ESTIMARE_CURENTA_LABEL,
   OFERTA_CLIENT_LABEL,
   OFERTA_VS_COST_BOUNDARY_HELP,
   REGISTRY_INTERN_LABEL,
@@ -20,8 +21,9 @@ describe("intakeV6OfferCostChromeVocabulary", () => {
     expect(OFERTA_VS_COST_BOUNDARY_HELP).toMatch(/Cost intern/i);
   });
 
-  it("wires live-calc chrome constants to offer/cost vocabulary", () => {
-    expect(INTAKE_V6_LIVE_CALC_TITLE).toBe(OFERTA_CLIENT_LABEL);
+  it("wires live-calc chrome to preview vocabulary, not official offer", () => {
+    expect(INTAKE_V6_LIVE_CALC_TITLE).toBe(ESTIMARE_CURENTA_LABEL);
+    expect(INTAKE_V6_LIVE_CALC_TITLE).not.toBe(OFERTA_CLIENT_LABEL);
     expect(INTAKE_V6_LIVE_CALC_INTERNAL_LABEL).toBe(COST_INTERN_ESTIMATIV_LABEL);
   });
 });

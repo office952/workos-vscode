@@ -84,7 +84,7 @@ const intakeStatusConfig: Record<IntakeStatus, { label: string; cls: string }> =
   new: { label: "Nou", cls: "bg-wo-surface-inset text-wo-text-secondary border-wo-border-strong" },
   in_review: { label: "În Analiză", cls: "bg-wo-info-muted text-wo-info border-wo-info/35" },
   needs_info: { label: "Lipsă Info", cls: "bg-wo-warning-muted text-wo-warning border-wo-warning/35" },
-  ready_for_quote: { label: "Gata pt. Ofertă", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
+  ready_for_quote: { label: "Marcat intern", cls: "bg-wo-success-muted text-wo-success border-wo-success/35" },
   blocked: { label: "Blocat", cls: "bg-wo-error-muted text-wo-error border-wo-error/35" },
   cancelled: { label: "Anulat", cls: "bg-wo-surface-inset text-wo-text-muted border-wo-border-subtle" },
 };
@@ -1195,7 +1195,7 @@ function TimelineTab({
           icon: <FileCheck className="w-3.5 h-3.5 text-wo-success" />,
           label: `Cerere pregătită pentru ofertare`,
           entityId: i.id,
-          status: "Gata pt. Ofertă",
+          status: "Marcat intern",
           route: resolveIntakeEditPath({
             id: i.id,
             confirmedTemplateCode: i.confirmedTemplateCode,

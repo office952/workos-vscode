@@ -1,10 +1,11 @@
 /**
- * Commercial flow UI helpers — Cereri → Produse → Oferte → Comenzi.
+ * Commercial flow UI helpers — Cereri → Oferte → Comenzi.
  * Presentation-only: labels, next-step copy, and continuity links.
+ * Configuration happens inside the request (Intake V6), not as a Product System step.
  * Does not invent business truth, gates, or mutations.
  */
 
-export type CommercialFlowStage = "cereri" | "produse" | "oferte" | "comenzi";
+export type CommercialFlowStage = "cereri" | "oferte" | "comenzi";
 
 export const COMMERCIAL_FLOW_STAGES: ReadonlyArray<{
   id: CommercialFlowStage;
@@ -12,7 +13,6 @@ export const COMMERCIAL_FLOW_STAGES: ReadonlyArray<{
   path: string;
 }> = [
   { id: "cereri", label: "Cereri", path: "/intake" },
-  { id: "produse", label: "Produse", path: "/product-system/products" },
   { id: "oferte", label: "Oferte", path: "/quotes" },
   { id: "comenzi", label: "Comenzi", path: "/orders" },
 ] as const;
@@ -61,20 +61,20 @@ export function intakeListNextStepHint(status: string): CommercialNextStepHint {
       return {
         title: "Următorul pas: Deschide cererea",
         description:
-          "Preia cererea în analiză și configurează produsul înainte de ofertă.",
-        primaryLabel: "Configurează produsul",
-        primaryTo: "/product-system/products",
-        secondaryLabel: "Vezi produse",
-        secondaryTo: "/product-system/products",
+          "Preia cererea în analiză și configurează în spațiul cererii înainte de ofertă.",
+        primaryLabel: "Deschide cererile",
+        primaryTo: "/intake",
+        secondaryLabel: "Vezi oferte",
+        secondaryTo: "/quotes",
       };
     case "in_review":
     case "needs_info":
       return {
-        title: "Următorul pas: Completează produsul",
+        title: "Următorul pas: Completează cererea",
         description:
-          "Definirea produsului și datele lipsă se rezolvă în spațiul de lucru al cererii. Apoi poți trece la ofertă.",
-        primaryLabel: "Vezi produse",
-        primaryTo: "/product-system/products",
+          "Configurarea și datele lipsă se rezolvă în spațiul de lucru al cererii. Apoi poți trece la ofertă.",
+        primaryLabel: "Deschide cererile",
+        primaryTo: "/intake",
         secondaryLabel: "Vezi oferte",
         secondaryTo: "/quotes",
       };
@@ -82,19 +82,19 @@ export function intakeListNextStepHint(status: string): CommercialNextStepHint {
       return {
         title: "Următorul pas: Creează / continuă oferta",
         description:
-          "Cererea este gata pentru ofertă. Folosește acțiunea din panou — nu se creează automat.",
+          "Cererea este marcată intern. Folosește acțiunea din panou — nu se creează automat.",
         primaryLabel: "Deschide oferte",
         primaryTo: "/quotes",
-        secondaryLabel: "Vezi produse",
-        secondaryTo: "/product-system/products",
+        secondaryLabel: "Înapoi la cereri",
+        secondaryTo: "/intake",
       };
     case "blocked":
       return {
         title: "Cerere blocată",
         description:
           "Rezolvați blocajul din spațiul cererii înainte de ofertă. Diagnosticul detaliat rămâne secundar.",
-        primaryLabel: "Vezi produse",
-        primaryTo: "/product-system/products",
+        primaryLabel: "Deschide cererile",
+        primaryTo: "/intake",
       };
     case "cancelled":
       return {
@@ -106,9 +106,9 @@ export function intakeListNextStepHint(status: string): CommercialNextStepHint {
     default:
       return {
         title: "Flux comercial",
-        description: "Cerere → Produs → Ofertă → Comandă. Alege o cerere pentru pasul următor.",
-        primaryLabel: "Vezi produse",
-        primaryTo: "/product-system/products",
+        description: "Cerere → Configurare → Ofertă → Comandă. Alege o cerere pentru pasul următor.",
+        primaryLabel: "Deschide cererile",
+        primaryTo: "/intake",
         secondaryLabel: "Vezi oferte",
         secondaryTo: "/quotes",
       };

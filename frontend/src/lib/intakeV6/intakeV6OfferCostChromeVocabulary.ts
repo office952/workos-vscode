@@ -8,6 +8,12 @@ export const OFERTA_CLIENT_CHIP_LABEL = "Preț pentru client";
 export const OFERTA_CLIENT_HELP =
   "Valoare comercială destinată clientului (CPP / Snapshot V2). Nu este cost de atelier.";
 
+/** Pre-quote dry-run chrome — display only. Not official Quote / Order snapshot. */
+export const ESTIMARE_CURENTA_LABEL = "Estimare curentă";
+export const ESTIMARE_CURENTA_GROSS_LABEL = "Estimare cu TVA";
+export const ESTIMARE_CURENTA_NET_LABEL = "Estimare netă";
+export const ESTIMARE_CURENTA_HELP = "Nu este ofertă înghețată.";
+
 export const COST_INTERN_ESTIMATIV_LABEL = "Cost intern estimativ";
 export const COST_INTERN_HELP =
   "Estimare internă pentru atelier / marjă (EIC / breakdown). Nu înlocuiește Oferta client.";

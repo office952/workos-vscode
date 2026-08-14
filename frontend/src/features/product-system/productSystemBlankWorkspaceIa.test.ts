@@ -56,12 +56,12 @@ describe("productSystemBlankWorkspaceIa", () => {
     expect(layout).toMatch(/data-workspace="blank"/);
   });
 
-  it("keeps a single Produse title with commercial-flow continuity chrome", () => {
+  it("keeps a single Produse title without commercial FLUX teaching Produse", () => {
     const layout = readFileSync(resolve(__dirname, "ProductSystemLayout.tsx"), "utf8");
     expect(layout).toMatch(/showSectionNav = operationalNav\.length > 1/);
     expect(layout).toMatch(/product-system-shell-title/);
     expect(layout).toMatch(/Produse/);
-    expect(layout).toMatch(/CommercialFlowStrip/);
+    expect(layout).not.toMatch(/CommercialFlowStrip/);
     expect(layout).not.toMatch(/PRODUCT_SYSTEM_WORKSPACE_SUBTITLE/);
 
     const page = readFileSync(resolve(__dirname, "../../pages/ProductSystem.tsx"), "utf8");

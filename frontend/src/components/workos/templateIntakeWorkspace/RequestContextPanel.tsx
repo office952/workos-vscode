@@ -12,7 +12,7 @@ const statusConfig: Record<IntakeStatus, { label: string; cls: string }> = {
   in_review: { label: "În Analiză", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
   needs_info: { label: "Lipsă Info", cls: "bg-amber-900/40 text-amber-300 border-amber-700" },
   ready_for_quote: {
-    label: "Gata pt. Ofertă",
+    label: "Marcat intern",
     cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700",
   },
   blocked: { label: "Blocat", cls: "bg-red-900/40 text-red-300 border-red-700" },

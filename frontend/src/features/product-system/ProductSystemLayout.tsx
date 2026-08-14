@@ -4,7 +4,6 @@ import { PRODUCT_SYSTEM_SHELL_NAV } from "./productSystemShellConfig";
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
 import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStackBanner";
 import FlowBreadcrumb, { productsBreadcrumb } from "@/components/workos/FlowBreadcrumb";
-import CommercialFlowStrip from "@/components/workos/CommercialFlowStrip";
 import NextStepPanel from "@/components/workos/NextStepPanel";
 import { AdminTruthFlowStrip } from "@/components/workos/AdminTruthFlowStrip";
 import { productsNextStepHint } from "@/lib/commercialFlowUi";
@@ -35,7 +34,6 @@ function ProductSystemLayoutInner() {
   return (
     <div className="space-y-3" data-testid="product-system-shell" data-workspace="blank">
       <FlowBreadcrumb items={productsBreadcrumb(crumbLabel)} />
-      <CommercialFlowStrip active="produse" />
       <AdminTruthFlowStrip active="product" />
 
       <header className="flex flex-wrap items-end justify-between gap-2">

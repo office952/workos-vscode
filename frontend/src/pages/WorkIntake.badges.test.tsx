@@ -140,9 +140,12 @@ describe("WorkIntake design-system badges", () => {
 
     renderWorkIntake();
     const row = screen.getByTestId("work-intake-row-WI-READY");
-    const badge = within(row).getByText("Gata pt. Ofertă");
+    const badge = within(row).getByText("Marcat intern");
     expect(badge).toHaveAttribute("data-status-domain", "intake");
     expect(badge).toHaveAttribute("data-status-tone", "emerald");
+    expect(row.textContent).not.toMatch(/2\s*\/\s*3/);
+    expect(row.textContent).not.toMatch(/handoff_allowed|is_ready_for_quote/);
+    expect(screen.queryByText("Gata pt. Ofertă")).not.toBeInTheDocument();
   });
 
   it("renders needs_info intake status with amber semantic badge", () => {

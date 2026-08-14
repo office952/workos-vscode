@@ -814,11 +814,11 @@ export default function Orders() {
               </div>
               <NextStepPanel
                 title="Flux comercial"
-                description="Comanda închide lanțul Cerere → Produs → Ofertă. Selectează o comandă pentru pasul următor."
+                description="Comanda închide lanțul Cerere → Configurare → Ofertă. Selectează o comandă pentru pasul următor."
                 primaryAction={{ label: "Vezi oferte", to: "/quotes", variant: "secondary" }}
                 secondaryAction={{
-                  label: "Vezi produse",
-                  to: "/product-system/products",
+                  label: "Înapoi la cereri",
+                  to: "/intake",
                   variant: "ghost",
                 }}
               />

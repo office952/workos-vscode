@@ -161,7 +161,7 @@ describe("IntakeDetail unresolved generic draft", () => {
     expect(screen.queryByTestId("intake-action-summary")).not.toBeInTheDocument();
     expect(screen.queryByText(/Confirmă template/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Deschide ofertare preliminară/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Marchează Gata pt. Ofertă/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Marchează intern/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Template produs — neconfirmat/i)).not.toBeInTheDocument();
   });
 

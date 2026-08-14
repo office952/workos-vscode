@@ -1,6 +1,6 @@
 # Global implementation waves
 
-Proposed sequence after Owner GO. **Not authorized now.** No big-bang rewrite. Label before contract rename.
+Proposed sequence after Owner GO. **S1 locally implemented 2026-08-14.** S2+ **not authorized.** No big-bang rewrite. Label before contract rename.
 
 ## Sequence (derived, not copied)
 
@@ -13,6 +13,7 @@ S6 waits. S8 last. Do not run S5–S7 together with S1.
 ### S1 — Navigation / truth labeling
 
 ```text
+STATUS = LOCALLY_IMPLEMENTED 2026-08-14 (PUSH = NO)
 GOAL = Teach the real commercial path; stop selling preview as offer
 WHY_NOW = Highest user-facing lie in Lucrări (FLUX Produse + V6 money + readiness chip)
 USER_VALUE = Sales see Cerere → Intake → Ofertă, not Product System

@@ -44,28 +44,30 @@ import AcmPanelProvisionalPricingBlock from "./AcmPanelProvisionalPricingBlock";
 import { v6 } from "./atoms/intakeV6Presentation";
 import {
   COST_INTERN_ESTIMATIV_LABEL,
-  OFERTA_CLIENT_HELP,
-  OFERTA_CLIENT_LABEL,
+  ESTIMARE_CURENTA_GROSS_LABEL,
+  ESTIMARE_CURENTA_HELP,
+  ESTIMARE_CURENTA_LABEL,
+  ESTIMARE_CURENTA_NET_LABEL,
   OFERTA_VS_COST_BOUNDARY_HELP,
 } from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
 import { LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME } from "@/lib/materials/lettersFacePlexiMaterialDisplay";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
-export const INTAKE_V6_LIVE_CALC_TITLE = OFERTA_CLIENT_LABEL;
+export const INTAKE_V6_LIVE_CALC_TITLE = ESTIMARE_CURENTA_LABEL;
 export const INTAKE_V6_LIVE_CALC_PREVIEW_HINT =
-  `${OFERTA_CLIENT_HELP} Detaliile de linii se deschid la cerere.`;
-export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Ofertă client cu TVA";
-export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Ofertă client netă";
+  `${ESTIMARE_CURENTA_HELP} Detaliile de linii se deschid la cerere.`;
+export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = ESTIMARE_CURENTA_GROSS_LABEL;
+export const INTAKE_V6_LIVE_CALC_NET_LABEL = ESTIMARE_CURENTA_NET_LABEL;
 export const INTAKE_V6_LIVE_CALC_VAT_LABEL = "TVA";
 export const INTAKE_V6_LIVE_CALC_ADAOS_LABEL = "Adaos comercial";
 export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = COST_INTERN_ESTIMATIV_LABEL;
 export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
-  "Oferta client necesită completarea configurației curente.";
+  "Estimarea necesită completarea configurației curente.";
 /** No FX, no assumed RON — the operator must get a commercial rate with an explicit currency. */
 export const INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING =
-  "Oferta client nu are monedă raportată de backend — nu presupunem RON. Cere Owner-ului tariful comercial cu monedă explicită.";
-export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Ofertă client — detalii estimate";
+  "Estimarea nu are monedă raportată de backend — nu presupunem RON. Cere Owner-ului tariful comercial cu monedă explicită.";
+export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Estimare curentă — detalii";
 export const INTAKE_V6_LIVE_CALC_BOUNDARY_HINT = OFERTA_VS_COST_BOUNDARY_HELP;
 
 /** Pricing reports availability only — Produs CTA owns the composition action. */
@@ -1554,7 +1556,9 @@ export default function IntakeV6LiveCalculationSummary({
               <p className="mt-0.5 text-[10px] leading-relaxed text-slate-500">
                 {displayGrossRon != null && offerCurrency == null
                   ? INTAKE_V6_LIVE_CALC_OFFER_CURRENCY_MISSING
-                  : operatorBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+                  : !operatorBlocker || /oferta client nu este disponibil/i.test(operatorBlocker)
+                    ? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE
+                    : operatorBlocker}
               </p>
             </div>
           )}

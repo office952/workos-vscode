@@ -168,19 +168,19 @@ export default function ReadinessGatePanel({
           }`}
         >
           <CheckCircle2 className="w-4 h-4" />
-          {markReadyLoading ? "Se salvează…" : "Gata pt. Ofertă"}
+          {markReadyLoading ? "Se salvează…" : "Marchează intern"}
         </button>
         {layout === "stack" ? (
           <div className="flex justify-end">
             <InfoHint label="Despre marcare ready">
-              „Gata pt. Ofertă” = readiness comercial (legacy ready_for_quote).
+              „Marcat intern” = marcare operațională pe cerere.
               Simularea preliminară nu creează ofertă comercială și poate rula
               mai devreme.
             </InfoHint>
           </div>
         ) : (
           <InfoHint label="Despre marcare ready">
-            „Gata pt. Ofertă” = readiness comercial (legacy ready_for_quote).
+            „Marcat intern” = marcare operațională pe cerere.
             Simularea preliminară nu creează ofertă comercială și poate rula
             mai devreme.
           </InfoHint>
