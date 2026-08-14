@@ -7,6 +7,7 @@ import { resolveMappingFromList } from "@/features/operational-registry/operatio
 import type { OperatorTask, TaskStatus } from "@/lib/mockData";
 import {
   getRoutingForOperation,
+  getWorkstation,
   type TabletTask,
   type TabletTaskStatus,
 } from "@/lib/workstationRouting";
@@ -106,6 +107,15 @@ export function mapOperatorTaskToTabletTask(
   const routing = getRoutingForOperation(op, task.processId);
   const { mappingConfirmed } = taskBelongsToStation(task, stationId, mappings);
   const orderIdNum = extractOrderIdFromJob(task.jobId);
+  const stationName = getWorkstation(stationId)?.name ?? "stație";
+  const operationLabel = task.operationName?.trim();
+  const routingExplanation = mappingConfirmed
+    ? operationLabel
+      ? `Operație ${operationLabel} → ${stationName}`
+      : `Operație de producție → ${stationName}`
+    : operationLabel
+      ? `Rutare neconfirmată pentru ${operationLabel}`
+      : "Rutare neconfirmată — verificați postul";
 
   return {
     id: task.id,
@@ -128,9 +138,7 @@ export function mapOperatorTaskToTabletTask(
     quantity: 1,
     observations: task.intakeCode ? `Cerere: ${task.intakeCode}` : task.quoteCode ? `Ofertă: ${task.quoteCode}` : "",
     attachments: [],
-    routingExplanation: mappingConfirmed
-      ? `Operație ${task.operationCode} → stație ${stationId}`
-      : `Mapping neconfirmat pentru ${task.operationCode} — afișat cu atenție`,
+    routingExplanation,
     isLive: true,
     mappingConfirmed,
     liveStatus: task.status,

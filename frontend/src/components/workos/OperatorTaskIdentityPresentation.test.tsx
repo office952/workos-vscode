@@ -172,6 +172,27 @@ describe("OperatorTaskIdentityPresentation", () => {
     );
   });
 
+  it("does not use raw node id as headline when display_label is missing", () => {
+    render(
+      <OperatorTaskIdentityPresentation
+        truth={buildTask({
+          display_label: "",
+          component_role: "root_product",
+          component_label: null,
+        })}
+      />,
+    );
+    expect(screen.getByTestId("operator-task-primary-label")).toHaveTextContent(
+      "Produs principal",
+    );
+    expect(screen.getByTestId("operator-task-primary-label")).not.toHaveTextContent(
+      "node:root_product",
+    );
+    expect(screen.getByTestId("operator-task-fallback-id")).toHaveTextContent(
+      "node:root_product:TPL:vector_prep",
+    );
+  });
+
   it("falls back without fabricating component role when truth absent", () => {
     render(
       <OperatorTaskIdentityPresentation

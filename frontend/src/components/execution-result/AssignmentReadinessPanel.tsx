@@ -76,7 +76,7 @@ export function AssignmentReadinessPanel({ orderId }: { orderId: number }) {
             : "Taskuri operaționale nematerializate — atribuirea rămâne neautorizată."}
         </p>
         <p className="mt-2 text-[11px] font-medium text-wo-error">
-          Assignment neautorizat — {data.wave5_boundary?.authorization_blocker}
+          Atribuire neautorizată — {data.wave5_boundary?.authorization_blocker}
         </p>
       </section>
     );
@@ -107,7 +107,7 @@ export function AssignmentReadinessPanel({ orderId }: { orderId: number }) {
 
       <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
         <span className="rounded bg-wo-error/10 px-2 py-0.5 font-medium text-wo-error">
-          Assignment neautorizat
+          Atribuire neautorizată
         </span>
         <span className="rounded bg-wo-surface-raised px-2 py-0.5 text-wo-text-muted">
           {data.operational_task_count ?? 0} taskuri operaționale
@@ -174,26 +174,31 @@ export function AssignmentReadinessPanel({ orderId }: { orderId: number }) {
         </table>
       </div>
 
-      <div className="mt-3 space-y-1 text-[11px] text-wo-text-muted">
-        <p>
-          Contract canonic:{" "}
-          <code className="text-wo-text-secondary">
-            {data.command_contract?.canonical_route ||
-              "PATCH /api/v1/execution/plan/{order_id}/tasks/{task_id}/assign"}
-          </code>
-        </p>
-        <p>
-          Idempotency: {data.command_contract?.idempotency?.status || "—"} ·
-          Transactionality: {data.command_contract?.transactionality?.status || "—"}
-          {data.command_contract?.legacy_bypass?.classification
-            ? ` · Legacy bypass: ${data.command_contract.legacy_bypass.classification}`
-            : null}
-        </p>
-        <p className="text-wo-warning">
-          Protecții lipsă / parțiale:{" "}
-          {(data.protections?.missing_or_partial || []).slice(0, 3).join("; ") || "—"}
-        </p>
-      </div>
+      <details className="mt-3 text-[11px] text-wo-text-muted">
+        <summary className="cursor-pointer select-none font-medium text-wo-text-secondary">
+          Detalii contract atribuire
+        </summary>
+        <div className="mt-1 space-y-1">
+          <p>
+            Contract canonic:{" "}
+            <code className="text-wo-text-secondary">
+              {data.command_contract?.canonical_route ||
+                "PATCH /api/v1/execution/plan/{order_id}/tasks/{task_id}/assign"}
+            </code>
+          </p>
+          <p>
+            Idempotency: {data.command_contract?.idempotency?.status || "—"} ·
+            Transactionality: {data.command_contract?.transactionality?.status || "—"}
+            {data.command_contract?.legacy_bypass?.classification
+              ? ` · Legacy bypass: ${data.command_contract.legacy_bypass.classification}`
+              : null}
+          </p>
+          <p className="text-wo-warning">
+            Protecții lipsă / parțiale:{" "}
+            {(data.protections?.missing_or_partial || []).slice(0, 3).join("; ") || "—"}
+          </p>
+        </div>
+      </details>
     </section>
   );
 }

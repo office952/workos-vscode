@@ -131,6 +131,47 @@ Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s2-runtime/`
 
 Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s3-runtime/`.
 
+## Stop (S3, historical)
+
+`NEXT_TASK = NOT_AUTHORIZED` was the S3 close. Owner later authorized S4 Option B only. Record below.
+
+---
+
+# S4 — Technical-model leak reduction (2026-08-14)
+
+| Field | Value |
+|-------|--------|
+| GO | `S4_TECHNICAL_MODEL_LEAK_REDUCTION_V1` |
+| Option | B — Atelier/operator leaks + planning chrome demotion |
+| Boundary | Display only. No i18n project. No execution/task logic. |
+| Implementation | YES |
+| Unfreeze | NO (bounded display exception; freeze remains ON) |
+| Owner DB mutations | 0 |
+| Push | NO |
+
+## Done
+
+- GS-15: Shop Floor breadcrumb → Atelier. Workcenter card titles use existing tablet station names (CNC, Lăcătușerie / Sudură, Modelare litere). P2 English chrome (`Blocked Jobs`, `tick #`) left in place.
+- Operator primary task title never falls back to raw `node:` / `task:` id. Fallback: display_label → component label → `Task producție`.
+- Component role badge uses existing Romanian role map, not `root product`.
+- Release policy raw string moved into collapsed Detalii politică. Logic unchanged.
+- Tablet routing explanation uses operation/station human names. Routing logic unchanged.
+- Planning `/execution` first fold: capacity strip + EXECUTION PLAN strip collapsed under Detalii tehnice planificare. `NEEDS ASSIGNMENT TRUTH` → necesită atribuire. DEC-009 / IMPLEMENTED_INACTIVE retained inside details.
+- Execution detail V2 truth panel collapsed under Detalii tehnice plan. Panel/model still exists.
+- Machine-run `task_key` moved into per-participant Detalii tehnice. No live run existed at QA (`STATE_NOT_REACHED`).
+- Intake V6 not reopened.
+
+## Runtime
+
+- `/shop-floor` admin light+dark: H1 + breadcrumb Atelier; WC titles human; no Shop Floor / CNC_ROUTING.
+- `/operator` admin light: primary titles human (`T06 Claim Probe`); Producție permisă; policy in details.
+- `/tablet/print` light+dark: routing `Operație … → Print` / `Rutare neconfirmată pentru …`.
+- `/execution` admin dark: first fold operational; implementation chrome only after opening Detalii tehnice planificare.
+- `/execution/92401`: V2 panel collapsed as Detalii tehnice plan.
+- `/execution/machine-runs`: no active run.
+
+Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s4-runtime/`.
+
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Do not start S4. No push, PR, cleanup, or unfreeze.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S5. No push, PR, cleanup, or unfreeze.

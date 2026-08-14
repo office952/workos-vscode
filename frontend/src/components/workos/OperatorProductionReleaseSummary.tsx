@@ -56,8 +56,7 @@ export function OperatorProductionReleaseSummary({ truth, onOpenDetails, testId 
                   : "text-emerald-800/85 dark:text-emerald-200/75"
               }`}
             >
-              Domeniu: {productionScopeLabel("ORDER_SCOPE")} · Politica:{" "}
-              {summary.policy.replace(/_/g, " ")}
+              Domeniu: {productionScopeLabel("ORDER_SCOPE")}
             </p>
           </div>
         </div>
@@ -99,6 +98,18 @@ export function OperatorProductionReleaseSummary({ truth, onOpenDetails, testId 
           fiecare task.
         </p>
       )}
+
+      <details className="text-[10px] text-slate-600 dark:text-slate-400">
+        <summary
+          className="cursor-pointer select-none"
+          data-testid="operator-production-release-policy-details"
+        >
+          Detalii politică
+        </summary>
+        <p className="mt-1 font-mono" data-testid="operator-production-release-policy">
+          {summary.policy}
+        </p>
+      </details>
     </section>
   );
 }

@@ -97,7 +97,8 @@ describe("FlowBreadcrumb helpers", () => {
     const items = shopFloorBreadcrumb();
     expect(items).toHaveLength(2);
     expect(items[0].to).toBe("/execution");
-    expect(items[1].label).toBe("Shop Floor");
+    expect(items[1].label).toBe("Atelier");
+    expect(items[1].label).not.toBe("Shop Floor");
     expect(items[1].active).toBe(true);
   });
 

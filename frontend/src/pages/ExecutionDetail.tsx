@@ -156,30 +156,38 @@ export default function ExecutionDetail() {
       ) : null}
 
       {validOrderId ? (
-        <div data-testid="execution-plan-v2-truth-slot">
-          {v2Truth.loading && !v2Truth.preview ? (
-            <p className="rounded-md border border-wo-border-subtle bg-wo-surface px-3 py-2 text-[12px] text-wo-text-muted">
-              Se încarcă planul de execuție (draft / audit)…
-            </p>
-          ) : null}
-          {v2Truth.previewError && !v2Truth.preview ? (
-            <div
-              className="rounded-md border border-amber-800/50 bg-amber-950/20 px-3 py-2 text-[12px] text-amber-100"
-              data-testid="execution-plan-v2-preview-error"
-            >
-              <p className="font-semibold">Previzualizare ExecutionPlan V2 indisponibilă</p>
-              <p className="mt-1 text-[11px] text-amber-100/80">{v2Truth.previewError}</p>
-            </div>
-          ) : null}
-          {v2Truth.preview ? (
-            <ExecutionPlanV2TruthPanel
-              preview={v2Truth.preview}
-              audit={v2Truth.audit}
-              auditError={v2Truth.auditError}
-              loading={v2Truth.loading}
-            />
-          ) : null}
-        </div>
+        <details
+          className="rounded-lg border border-wo-border-subtle bg-wo-surface"
+          data-testid="execution-plan-v2-truth-slot"
+        >
+          <summary className="cursor-pointer select-none px-3 py-2 text-[12px] font-medium text-wo-text-secondary">
+            Detalii tehnice plan
+          </summary>
+          <div className="px-3 pb-3 space-y-2">
+            {v2Truth.loading && !v2Truth.preview ? (
+              <p className="rounded-md border border-wo-border-subtle bg-wo-surface px-3 py-2 text-[12px] text-wo-text-muted">
+                Se încarcă planul de execuție…
+              </p>
+            ) : null}
+            {v2Truth.previewError && !v2Truth.preview ? (
+              <div
+                className="rounded-md border border-amber-800/50 bg-amber-950/20 px-3 py-2 text-[12px] text-amber-100"
+                data-testid="execution-plan-v2-preview-error"
+              >
+                <p className="font-semibold">Previzualizare plan indisponibilă</p>
+                <p className="mt-1 text-[11px] text-amber-100/80">{v2Truth.previewError}</p>
+              </div>
+            ) : null}
+            {v2Truth.preview ? (
+              <ExecutionPlanV2TruthPanel
+                preview={v2Truth.preview}
+                audit={v2Truth.audit}
+                auditError={v2Truth.auditError}
+                loading={v2Truth.loading}
+              />
+            ) : null}
+          </div>
+        </details>
       ) : null}
 
       {observability ? (

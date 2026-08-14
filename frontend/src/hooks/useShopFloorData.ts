@@ -57,17 +57,36 @@ interface DBTask {
   order_status: string;
 }
 
-// Map workcenter_code to a friendly name
+/**
+ * Shop-floor workcenter titles — existing operator vocabulary from tablet stations.
+ * Display only. Unknown codes stay generic; they never become WC_* / SNAKE_CASE titles.
+ */
 const wcNameMap: Record<string, string> = {
   WC_PRINT: "Print",
   WC_LAMINATE: "Laminare",
-  WC_CUT: "Cut / Plotter",
+  WC_CUT: "Cutter plotter",
   WC_CNC: "CNC",
-  WC_METAL: "Metal / Sudură",
-  WC_ASSEMBLY: "Asamblare",
-  WC_ELECTRIC: "Electric",
+  WC_CNC_ROUTING: "CNC",
+  WC_LASER_CUTTING: "CNC",
+  WC_METAL: "Lăcătușerie / Sudură",
+  WC_METAL_FAB: "Lăcătușerie / Sudură",
+  WC_ASSEMBLY: "Asamblare / Lipire",
+  WC_ELECTRIC: "Montaj LED / Electric",
+  WC_LED_ASSEMBLY: "Montaj LED / Electric",
   WC_OUTPUT: "Ambalare / Livrare",
+  WC_LETTER_FORMING: "Modelare litere",
+  WC_VINYL_APPLICATION: "Montaj autocolant",
 };
+
+export function shopFloorWorkcenterTitle(wcIdOrCode: string): string {
+  const cleaned = wcIdOrCode
+    .trim()
+    .replace(/^wc_/i, "")
+    .replace(/^WC_/, "")
+    .toUpperCase();
+  const keyed = cleaned.startsWith("WC_") ? cleaned : `WC_${cleaned}`;
+  return wcNameMap[keyed] ?? "Post de lucru";
+}
 
 function mapDBMachineToMachine(m: DBMachine, tasks: DBTask[]): Machine {
   // Find active task for this machine (by machine_type match)
@@ -122,10 +141,9 @@ function buildWorkcenters(machines: Machine[]): Workcenter[] {
   for (const m of machines) {
     const wcId = m.workcenterId;
     if (!wcMap.has(wcId)) {
-      const cleanCode = wcId.replace("wc_", "").toUpperCase();
       wcMap.set(wcId, {
         id: wcId,
-        name: wcNameMap[`WC_${cleanCode}`] ?? cleanCode,
+        name: shopFloorWorkcenterTitle(wcId),
         machineIds: [],
         queueCount: 0,
         activeJobs: 0,

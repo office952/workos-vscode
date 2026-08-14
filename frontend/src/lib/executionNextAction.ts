@@ -1,6 +1,6 @@
 import type { PlannedTaskRow, RealityTaskRow } from "@/api/execution";
 import type { OperatorTaskTruthTask } from "@/api/operatorTaskTruth";
-import { taskPrimaryLabel } from "@/lib/operatorTaskPresentation";
+import { GENERIC_PRODUCTION_TASK_LABEL, taskPrimaryLabel } from "@/lib/operatorTaskPresentation";
 
 export type RealityTaskStatus = "not_started" | "in_progress" | "completed";
 
@@ -68,7 +68,9 @@ export function resolveExecutionNextAction(
   for (const t of planTasks) {
     const status = statusOf(t.task_id, reality);
     const truth = truthByTaskId[t.task_id];
-    const label = truth ? taskPrimaryLabel(truth.identity) : t.name || t.task_id;
+    const label = truth
+      ? taskPrimaryLabel(truth.identity)
+      : t.name?.trim() || GENERIC_PRODUCTION_TASK_LABEL;
 
     if (status === "in_progress") {
       return {
@@ -84,7 +86,9 @@ export function resolveExecutionNextAction(
     const status = statusOf(t.task_id, reality);
     if (status !== "not_started") continue;
     const truth = truthByTaskId[t.task_id];
-    const label = truth ? taskPrimaryLabel(truth.identity) : t.name || t.task_id;
+    const label = truth
+      ? taskPrimaryLabel(truth.identity)
+      : t.name?.trim() || GENERIC_PRODUCTION_TASK_LABEL;
     const productionBlocked = truth?.runtime.production_release_blocked === true;
     const startable = truth ? truth.runtime.is_startable === true : true;
     const blocked = truth?.runtime.is_blocked === true || !startable || productionBlocked;

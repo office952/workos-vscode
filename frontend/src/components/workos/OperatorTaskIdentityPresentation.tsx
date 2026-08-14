@@ -4,9 +4,11 @@ import {
   componentRoleBadgeLabel,
   diagnosticTaskKey,
   firstReadinessMessage,
+  GENERIC_PRODUCTION_TASK_LABEL,
   identitySourceLabel,
   isLegacyTaskIdentity,
   isPartialLogoIdentity,
+  looksLikeRawTaskId,
   taskPrimaryLabel,
   taskTruthReadinessFromRuntime,
   type TaskTruthReadiness,
@@ -65,10 +67,16 @@ export function OperatorTaskIdentityPresentation({
   testId,
 }: OperatorTaskIdentityPresentationProps) {
   if (!truth) {
+    const fallbackName = fallbackOperationName?.trim();
+    const fallbackId = fallbackTaskId?.trim() || null;
+    const title =
+      (fallbackName && !looksLikeRawTaskId(fallbackName) ? fallbackName : null) ||
+      (fallbackId && !looksLikeRawTaskId(fallbackId) ? fallbackId : null) ||
+      GENERIC_PRODUCTION_TASK_LABEL;
     return (
       <div data-testid={testId} className="space-y-0.5">
         <p className="text-[13px] font-medium text-slate-100">
-          {fallbackOperationName || fallbackTaskId || "Task necunoscut"}
+          {title}
         </p>
         {fallbackTaskId ? (
           <details className="text-[10px] text-slate-500">
@@ -99,11 +107,14 @@ export function OperatorTaskIdentityPresentation({
   const operationalNotReady =
     !productionBlocked && (readiness.is_blocked || readiness.is_startable === false);
   const blockers = blockingTaskNames(runtime);
+  const usedFallback =
+    !identity.display_label?.trim() || looksLikeRawTaskId(identity.display_label);
   const hasTechnical =
     Boolean(identity.source_operation_code) ||
     Boolean(identity.component_template_code) ||
     Boolean(identity.parent_graph_node_id) ||
     Boolean(identity.logo_segment_key) ||
+    usedFallback ||
     showDiagnostics;
 
   return (
@@ -143,7 +154,9 @@ export function OperatorTaskIdentityPresentation({
               {componentLabel}
             </span>
           ) : null}
-          {roleBadge && !legacy ? <RoleBadge label={roleBadge} tone="role" /> : null}
+          {roleBadge && !legacy && roleBadge !== componentLabel ? (
+            <RoleBadge label={roleBadge} tone="role" />
+          ) : null}
         </div>
       )}
 
@@ -201,6 +214,11 @@ export function OperatorTaskIdentityPresentation({
                 <span className="text-slate-400">{identity.logo_segment_key}</span>
               </p>
             ) : null}
+            {usedFallback ? (
+              <p className="font-mono" data-testid="operator-task-fallback-id">
+                Task ID: {identity.task_id}
+              </p>
+            ) : null}
             {showDiagnostics ? (
               <div className="space-y-0.5 font-mono pt-0.5">
                 <p data-testid="operator-task-diagnostic-key">
@@ -213,7 +231,7 @@ export function OperatorTaskIdentityPresentation({
                   <p>Rule: {identity.source_task_rule_code}</p>
                 ) : null}
                 <p>Source: {identitySourceLabel(identity)}</p>
-                <p>Task ID: {identity.task_id}</p>
+                {!usedFallback ? <p>Task ID: {identity.task_id}</p> : null}
               </div>
             ) : null}
           </div>

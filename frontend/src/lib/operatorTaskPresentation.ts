@@ -66,17 +66,27 @@ export function componentLabelFromBackend(identity: TaskIdentityTruth): string |
   return null;
 }
 
+export const GENERIC_PRODUCTION_TASK_LABEL = "Task producție";
+
+export function looksLikeRawTaskId(value: string | null | undefined): boolean {
+  const v = value?.trim() ?? "";
+  if (!v) return false;
+  return v.startsWith("node:") || v.startsWith("task:");
+}
+
 export function componentRoleBadgeLabel(identity: TaskIdentityTruth): string | null {
   if (isLegacyTaskIdentity(identity)) return "Legacy";
   const role = identity.component_role?.trim();
   if (!role) return null;
-  return role.replace(/_/g, " ");
+  return COMPONENT_ROLE_LABEL_FALLBACK[role] ?? "Componentă";
 }
 
 export function taskPrimaryLabel(identity: TaskIdentityTruth): string {
   const label = identity.display_label?.trim();
-  if (label) return label;
-  return identity.task_id;
+  if (label && !looksLikeRawTaskId(label)) return label;
+  const component = componentLabelFromBackend(identity);
+  if (component) return component;
+  return GENERIC_PRODUCTION_TASK_LABEL;
 }
 
 export function taskTruthReadinessFromRuntime(runtime: TaskRuntimeTruth): TaskTruthReadiness {

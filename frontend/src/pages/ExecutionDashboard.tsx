@@ -189,63 +189,78 @@ export default function ExecutionDashboard() {
       </div>
 
       <ExecutionFlowNextStep hint={executionListNextStepHint()} />
-      <ExecutionPlanStatesStrip hasPreview hasDraftPlan={false} hasOperationalTasks={false} operationalBlocked />
       <OwnerGoNotice
         detail="Plan operațional (materializare) blocat — necesită Owner GO. Planned tasks ≠ taskuri active în atelier."
         compact
       />
 
-      <div
-        className={`rounded-lg px-3 py-2 space-y-1.5 ${chromeBanner.neutral}`}
-        data-testid="execution-capacity-strip"
+      <details
+        className="rounded-lg border border-wo-border-subtle bg-wo-surface"
+        data-testid="execution-planning-technical-details"
       >
-        <div className="flex items-center gap-2">
-          <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
-          <p className="text-[11px] font-semibold text-wo-text-primary">
-            Capacity strip (read-only) — util% = planned / shift WC
-          </p>
-          {calendarShiftOk ? (
-            <span className="text-[10px] text-wo-success border border-wo-success/35 bg-wo-success-muted px-1.5 py-0.5 rounded">
-              calendar/shift date OK
-            </span>
-          ) : (
-            <span className="text-[10px] text-wo-warning border border-wo-warning/35 bg-wo-warning-muted px-1.5 py-0.5 rounded">
-              calendar/shift GAP
-            </span>
-          )}
-          <span className="text-[10px] text-wo-text-muted border border-wo-border-subtle px-1.5 py-0.5 rounded">
-            Capacity Stage 1 · IMPLEMENTED_INACTIVE
-          </span>
+        <summary className="cursor-pointer select-none px-3 py-2 text-[12px] font-medium text-wo-text-secondary">
+          Detalii tehnice planificare
+        </summary>
+        <div className="px-3 pb-3 space-y-2">
+          <ExecutionPlanStatesStrip
+            hasPreview
+            hasDraftPlan={false}
+            hasOperationalTasks={false}
+            operationalBlocked
+          />
+          <div
+            className={`rounded-lg px-3 py-2 space-y-1.5 ${chromeBanner.neutral}`}
+            data-testid="execution-capacity-strip"
+          >
+            <div className="flex items-center gap-2">
+              <Gauge className="w-3.5 h-3.5 text-wo-info shrink-0" />
+              <p className="text-[11px] font-semibold text-wo-text-primary">
+                Capacity strip (read-only) — util% = planned / shift WC
+              </p>
+              {calendarShiftOk ? (
+                <span className="text-[10px] text-wo-success border border-wo-success/35 bg-wo-success-muted px-1.5 py-0.5 rounded">
+                  calendar/shift date OK
+                </span>
+              ) : (
+                <span className="text-[10px] text-wo-warning border border-wo-warning/35 bg-wo-warning-muted px-1.5 py-0.5 rounded">
+                  calendar/shift GAP
+                </span>
+              )}
+              <span className="text-[10px] text-wo-text-muted border border-wo-border-subtle px-1.5 py-0.5 rounded">
+                Capacity Stage 1 · IMPLEMENTED_INACTIVE
+              </span>
+            </div>
+            <p className="text-[10px] text-wo-text-muted">
+              Diagnostic planned load — nu Capacity produs activ · nu blochează oferta · nu CostEngine ·
+              nu POST materialize. Overload = warning only. Minutes NULL+WARN: {minutesMissing}.
+              Mentenanță: {maintAvail}. Materialize: BLOCAT.
+            </p>
+            <p className="text-[10px] text-wo-text-muted" data-testid="execution-batch04-gates">
+              Atribuiri cunoscute: {assignmentTruth} ·{" "}
+              <span className="text-wo-warning font-semibold">
+                {needsAssignment} necesită atribuire
+              </span>
+              {" · "}Machine util%:{" "}
+              <span className="text-wo-warning font-semibold">GAP</span> fără CAP-012/013.
+              Pre-materialize blockers:{" "}
+              {preMat?.blockerCount ?? batch04?.preMaterializeBlockerCount ?? "—"} —{" "}
+              {preMat?.summary ?? batch04?.preMaterializeSummary ?? "DEC-009 blocked"}
+            </p>
+            {calendarShiftOk && activeWcCapacity.length > 0 && (
+              <ul className="flex flex-wrap gap-2 pt-0.5">
+                {activeWcCapacity.slice(0, 6).map((c) => (
+                  <li
+                    key={c.workcenterId}
+                    className="text-[10px] font-mono text-wo-text-secondary border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset"
+                  >
+                    {c.workcenterName}: {c.loadToday}%
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
-        <p className="text-[10px] text-wo-text-muted">
-          Diagnostic planned load — nu Capacity produs activ · nu blochează oferta · nu CostEngine ·
-          nu POST materialize. Overload = warning only. Minutes NULL+WARN: {minutesMissing}.
-          Mentenanță: {maintAvail}. Materialize: BLOCAT.
-        </p>
-        <p className="text-[10px] text-wo-text-muted" data-testid="execution-batch04-gates">
-          Assignment truth: {assignmentTruth} ·{" "}
-          <span className="text-wo-warning font-semibold">
-            {needsAssignment} NEEDS ASSIGNMENT TRUTH
-          </span>
-          {" · "}Machine util%:{" "}
-          <span className="text-wo-warning font-semibold">GAP</span> fără CAP-012/013.
-          Pre-materialize blockers:{" "}
-          {preMat?.blockerCount ?? batch04?.preMaterializeBlockerCount ?? "—"} —{" "}
-          {preMat?.summary ?? batch04?.preMaterializeSummary ?? "DEC-009 blocked"}
-        </p>
-        {calendarShiftOk && activeWcCapacity.length > 0 && (
-          <ul className="flex flex-wrap gap-2 pt-0.5">
-            {activeWcCapacity.slice(0, 6).map((c) => (
-              <li
-                key={c.workcenterId}
-                className="text-[10px] font-mono text-wo-text-secondary border border-wo-border-subtle rounded px-1.5 py-0.5 bg-wo-surface-inset"
-              >
-                {c.workcenterName}: {c.loadToday}%
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      </details>
 
       {/* Summary cards — one per status. Purely reflective. */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

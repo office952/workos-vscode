@@ -6,6 +6,12 @@ src/lib/apiError.test.ts
 src/lib/auth.test.ts
 src/lib/rbac.test.ts
 src/lib/shellNavigation.test.ts
+src/lib/operatorTaskPresentation.test.ts
+src/lib/tabletLiveBridge.test.ts
+src/hooks/useShopFloorData.test.ts
+src/pages/ExecutionDashboard.s4Chrome.test.tsx
+src/components/workos/OperatorTaskIdentityPresentation.test.tsx
+src/components/workos/OperatorProductionBlocker.test.tsx
 src/pages/Reports.honesty.test.tsx
 src/pages/DocumentCenter.honesty.test.tsx
 src/pages/EmployeeRecords.honesty.test.tsx

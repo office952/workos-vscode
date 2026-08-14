@@ -61,6 +61,13 @@ describe("Operator production blocker UI", () => {
     expect(screen.getByTestId("operator-production-blocker-count")).toHaveTextContent(
       /decizie/i,
     );
+    expect(screen.queryByText(/Politica:/)).toBeNull();
+    expect(screen.getByTestId("operator-production-release-policy")).toHaveTextContent(
+      "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+    );
+    expect(
+      screen.getByTestId("operator-production-release-policy").closest("details"),
+    ).toBeTruthy();
   });
 
   it("lists blocking decisions before nonblocking section", () => {

@@ -155,6 +155,11 @@ describe("ExecutionDetail Step 9B", () => {
     await waitFor(() => {
       expect(screen.getByTestId("execution-plan-v2-truth-panel")).toBeInTheDocument();
     });
+    const slot = screen.getByTestId("execution-plan-v2-truth-slot");
+    expect(slot.tagName).toBe("DETAILS");
+    expect((slot as HTMLDetailsElement).open).toBe(false);
+    expect(slot.querySelector("summary")).toHaveTextContent("Detalii tehnice plan");
+    expect(slot.querySelector("summary")).not.toHaveTextContent(/V2/);
     expect(screen.getByTestId("execution-plan-v2-draft-badge")).toHaveTextContent(/DRAFT|AUDIT_ONLY/);
     expect(screen.getByTestId("execution-work-panel-sessions-blocked")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Start/i })).toBeNull();

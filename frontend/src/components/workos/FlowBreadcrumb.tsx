@@ -164,7 +164,7 @@ export function reportsBreadcrumb(): BreadcrumbItem[] {
 export function shopFloorBreadcrumb(): BreadcrumbItem[] {
   return [
     { label: "Producție", to: "/execution" },
-    { label: "Shop Floor", active: true },
+    { label: "Atelier", active: true },
   ];
 }
 

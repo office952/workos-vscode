@@ -487,9 +487,12 @@ export default function MachineRunDetailPage() {
                         {p.operation_code ? ` · ${p.operation_code}` : ""}
                         {p.workcenter ? ` · ${p.workcenter}` : ""}
                       </p>
-                      <p className="truncate font-mono text-[10px] text-wo-text-dim">
-                        {p.task_key}
-                      </p>
+                      <details className="text-[10px] text-wo-text-dim">
+                        <summary className="cursor-pointer select-none">Detalii tehnice</summary>
+                        <p className="mt-1 truncate font-mono" data-testid={`machine-run-task-key-${p.participant_id}`}>
+                          {p.task_key}
+                        </p>
+                      </details>
                     </div>
                     {actions.some((a) => a.action === "remove_participant") ? (
                       <Button

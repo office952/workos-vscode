@@ -155,6 +155,12 @@ describe("MachineRunDetailPage", () => {
     );
     expect(screen.getByTestId("machine-run-add-panel")).toBeInTheDocument();
     expect(screen.getByText("Mai multe comenzi")).toBeInTheDocument();
+    const taskKey = screen.getByTestId("machine-run-task-key-1");
+    expect(taskKey).toHaveTextContent("FACE_A");
+    expect(taskKey.closest("details")).toBeTruthy();
+    expect(
+      screen.getByTestId("machine-run-participant-1").querySelector("p.font-medium"),
+    ).not.toHaveTextContent("FACE_A");
   });
 
   it("hides ADD panel when manage permission is absent", async () => {

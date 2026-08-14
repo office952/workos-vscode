@@ -3,11 +3,14 @@ import type { OperatorTaskTruthTask, TaskIdentityTruth } from "@/api/operatorTas
 import {
   COMPONENT_ROLE_LABEL_FALLBACK,
   componentLabelFromBackend,
+  componentRoleBadgeLabel,
   diagnosticTaskKey,
   firstReadinessMessage,
+  GENERIC_PRODUCTION_TASK_LABEL,
   indexOperatorTaskTruth,
   isLegacyTaskIdentity,
   isPartialLogoIdentity,
+  looksLikeRawTaskId,
   taskPrimaryLabel,
   taskTruthReadinessFromRuntime,
 } from "./operatorTaskPresentation";
@@ -169,5 +172,48 @@ describe("operatorTaskPresentation", () => {
     });
     expect(componentLabelFromBackend(misleading)).toBe("Panou montaj");
     expect(taskPrimaryLabel(misleading)).toBe("root_product mounting_panel");
+  });
+
+  it("never uses raw node/task id as the primary title", () => {
+    const raw = identity({
+      task_id: "node:root_product:TPL:vector_prep",
+      display_label: "",
+      component_role: null,
+      component_label: null,
+    });
+    expect(looksLikeRawTaskId(raw.task_id)).toBe(true);
+    expect(taskPrimaryLabel(raw)).toBe(GENERIC_PRODUCTION_TASK_LABEL);
+    expect(taskPrimaryLabel(raw)).not.toContain("node:");
+  });
+
+  it("falls back to component human label when display_label is missing", () => {
+    const id = identity({
+      task_id: "node:root_product:TPL:vector_prep",
+      display_label: "",
+      component_role: "root_product",
+      component_label: null,
+    });
+    expect(taskPrimaryLabel(id)).toBe(COMPONENT_ROLE_LABEL_FALLBACK.root_product);
+  });
+
+  it("treats display_label that is itself a raw id as missing", () => {
+    const id = identity({
+      task_id: "node:root_product:RAW",
+      display_label: "node:root_product:RAW",
+      component_label: "Produs principal",
+    });
+    expect(taskPrimaryLabel(id)).toBe("Produs principal");
+  });
+
+  it("maps known component roles to human labels, not enum formatting", () => {
+    expect(
+      componentRoleBadgeLabel(identity({ component_role: "root_product" })),
+    ).toBe("Produs principal");
+    expect(
+      componentRoleBadgeLabel(identity({ component_role: "unknown_compiler_role" })),
+    ).toBe("Componentă");
+    expect(
+      componentRoleBadgeLabel(identity({ component_role: "unknown_compiler_role" })),
+    ).not.toBe("unknown compiler role");
   });
 });

@@ -91,7 +91,7 @@ export function productionPolicyExplanation(policy: string): string {
   if (policy === "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED") {
     return "Comanda si planul pot exista, dar pornirea task-urilor de productie este blocata pana la rezolvarea deciziilor.";
   }
-  return policy;
+  return "Politica de lansare este aplicată. Detaliile rămân în evidența internă.";
 }
 
 export type StructuredActionError = {

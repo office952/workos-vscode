@@ -303,7 +303,7 @@ export default function ShopFloor() {
 
       {/* Operator Hint */}
       <OperatorHint
-        text="Shop Floor afișează starea live a utilajelor și cozilor. Pentru acțiuni pe task-uri individuale, accesați pagina Operator."
+        text="Atelierul afișează starea live a utilajelor și cozilor. Pentru acțiuni pe task-uri individuale, accesați pagina Operator."
         variant="info"
       />
     </div>

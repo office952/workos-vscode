@@ -71,3 +71,13 @@ Status only. Do not treat this as a rewrite of the synthesis table.
 | GS-10 | DEFERRED_PARTIAL | Ops-Graph stays in Producție with existing AUDIT badge. No Sistem / Audit group in S3. |
 
 S4+ items remain open. Evidence: `../s3-runtime/S3_PEOPLE_MONEY_NAV_REPORT.md`.
+
+## S4 implementation status (2026-08-14)
+
+Status only. Do not treat this as a rewrite of the synthesis table.
+
+| ID | STATUS | NOTE |
+|----|--------|------|
+| GS-15 | IMPLEMENTED | Shop Floor breadcrumb → Atelier. WC card titles use existing station names. P2 English chrome (`Blocked Jobs`, `tick #`) deferred. Option B also demoted planning implementation chrome (not a GS-15 line). |
+
+S5+ items remain open. Evidence: `../s4-runtime/S4_TECHNICAL_MODEL_LEAK_REPORT.md`.
