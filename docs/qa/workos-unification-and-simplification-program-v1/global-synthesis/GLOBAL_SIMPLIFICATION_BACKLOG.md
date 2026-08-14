@@ -60,3 +60,14 @@ Status only. Do not treat this as a rewrite of the synthesis table.
 | GS-06 | IMPLEMENTED | Evidență HR hybrid honesty. `/employees` not DEMO. |
 
 S3+ items remain open. Evidence: `../s2-runtime/S2_MOCK_DEMO_PROJECTION_HONESTY_REPORT.md`.
+
+## S3 implementation status (2026-08-14)
+
+Status only. Do not treat this as a rewrite of the synthesis table.
+
+| ID | STATUS | NOTE |
+|----|--------|------|
+| GS-09 | IMPLEMENTED | Plăți + Avansuri primary nav moved to Oameni. Routes/RBAC unchanged. |
+| GS-10 | DEFERRED_PARTIAL | Ops-Graph stays in Producție with existing AUDIT badge. No Sistem / Audit group in S3. |
+
+S4+ items remain open. Evidence: `../s3-runtime/S3_PEOPLE_MONEY_NAV_REPORT.md`.

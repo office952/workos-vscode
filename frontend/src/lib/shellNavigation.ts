@@ -129,6 +129,18 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
         icon: FileText,
         navKey: "employees_records",
       },
+      {
+        to: "/employee-payments",
+        label: "Plăți",
+        icon: BarChart3,
+        navKey: "payments",
+      },
+      {
+        to: "/employee-advances",
+        label: "Avansuri",
+        icon: Warehouse,
+        navKey: "advances",
+      },
     ],
   },
   {
@@ -170,18 +182,6 @@ export const SHELL_NAV_SECTIONS: ShellNavSectionDef[] = [
         status: "preview",
       },
       { to: "/reports", label: "Rapoarte", icon: BarChart3, navKey: "reports" },
-      {
-        to: "/employee-payments",
-        label: "Plăți",
-        icon: BarChart3,
-        navKey: "payments",
-      },
-      {
-        to: "/employee-advances",
-        label: "Avansuri",
-        icon: Warehouse,
-        navKey: "advances",
-      },
     ],
   },
   {

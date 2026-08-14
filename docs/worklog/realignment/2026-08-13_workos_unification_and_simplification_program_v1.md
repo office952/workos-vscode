@@ -97,6 +97,40 @@ Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s1-runtime/`
 
 Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s2-runtime/`.
 
+## Stop (S2, historical)
+
+`NEXT_TASK = NOT_AUTHORIZED` was the S2 close. Owner later authorized S3 only. Record below.
+
+---
+
+# S3 — People-money navigation alignment (2026-08-14)
+
+| Field | Value |
+|-------|--------|
+| GO | `S3_NAVIGATION_AND_INFORMATION_ARCHITECTURE_ALIGNMENT_V1` |
+| Boundary | Primary nav grouping only (`SHELL_NAV_SECTIONS`) |
+| Implementation | YES (findability; two menu items) |
+| Unfreeze | NO (bounded nav-group exception; freeze remains ON) |
+| OD-10 | APPROVED — Plăți + Avansuri → Oameni |
+| Ops-Graph | OPTION B — keep in Producție with AUDIT |
+| Owner DB mutations | 0 |
+| Push | NO |
+
+## Done
+
+- GS-09: Plăți (`/employee-payments`) and Avansuri (`/employee-advances`) moved from Management to Oameni. Same `navKey`s, routes, and `canViewNav` filters.
+- GS-10: DEFERRED_PARTIAL. Ops-Graph stays in Producție with existing AUDIT badge. No Sistem / Audit group.
+- Reality Review remains deep-link only. `/operator` and `/tablet` remain ACTIVE_COMPAT. Product System stays Lucrări → Produse.
+
+## Runtime
+
+- Admin: Oameni = Angajați, Pontaj, Evidență HR, Plăți, Avansuri. Management = Control producție, Rapoarte.
+- Manager: Oameni includes Plăți, not Avansuri. Direct `/employee-advances` still redirects to `/shop-floor`.
+- Sales / operator: no money nav; direct payments still redirect to role home.
+- Drawer 390px uses the same projected groups.
+
+Evidence: `docs/qa/workos-unification-and-simplification-program-v1/s3-runtime/`.
+
 ## Stop
 
-`NEXT_TASK = NOT_AUTHORIZED`. Do not start S3. No push, PR, cleanup, or unfreeze.
+`NEXT_TASK = NOT_AUTHORIZED`. Do not start S4. No push, PR, cleanup, or unfreeze.

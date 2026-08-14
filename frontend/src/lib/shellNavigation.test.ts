@@ -190,3 +190,113 @@ describe("shellNavigation — U7 role projection + production home", () => {
     },
   );
 });
+
+function sectionItemLabels(sectionId: string): string[] {
+  return (
+    SHELL_NAV_SECTIONS.find((s) => s.id === sectionId)?.items.map((i) => i.label) ??
+    []
+  );
+}
+
+function projectedSectionLabels(role: Role, sectionId: string): string[] {
+  return (
+    projectNavSectionsForRole(role)
+      .find((s) => s.id === sectionId)
+      ?.items.map((i) => i.label) ?? []
+  );
+}
+
+describe("shellNavigation — S3 people-money grouping (findability only)", () => {
+  it("places Plăți and Avansuri under Oameni, not Management", () => {
+    expect(sectionItemLabels("oameni")).toEqual([
+      "Angajați",
+      "Pontaj",
+      "Evidență HR",
+      "Plăți",
+      "Avansuri",
+    ]);
+    expect(sectionItemLabels("management")).toEqual([
+      "Control producție",
+      "Rapoarte",
+    ]);
+    expect(sectionItemLabels("management")).not.toContain("Plăți");
+    expect(sectionItemLabels("management")).not.toContain("Avansuri");
+  });
+
+  it("keeps payment and advance routes and navKeys unchanged", () => {
+    const plati = SHELL_NAV_SECTIONS.flatMap((s) => s.items).find(
+      (i) => i.label === "Plăți",
+    );
+    const avansuri = SHELL_NAV_SECTIONS.flatMap((s) => s.items).find(
+      (i) => i.label === "Avansuri",
+    );
+    expect(plati?.to).toBe("/employee-payments");
+    expect(plati?.navKey).toBe("payments");
+    expect(avansuri?.to).toBe("/employee-advances");
+    expect(avansuri?.navKey).toBe("advances");
+  });
+
+  it("admin sees both money items in Oameni", () => {
+    expect(projectedSectionLabels("admin", "oameni")).toEqual([
+      "Angajați",
+      "Pontaj",
+      "Evidență HR",
+      "Plăți",
+      "Avansuri",
+    ]);
+    expect(projectedSectionLabels("admin", "management")).not.toContain("Plăți");
+    expect(projectedSectionLabels("admin", "management")).not.toContain(
+      "Avansuri",
+    );
+  });
+
+  it("manager sees Plăți in Oameni and never gains Avansuri", () => {
+    expect(projectedSectionLabels("manager", "oameni")).toContain("Plăți");
+    expect(projectedSectionLabels("manager", "oameni")).not.toContain("Avansuri");
+    expect(projectedNavLabels("manager")).not.toContain("Avansuri");
+  });
+
+  it("sales and operator do not gain money nav from the group move", () => {
+    expect(projectedNavLabels("sales")).not.toContain("Plăți");
+    expect(projectedNavLabels("sales")).not.toContain("Avansuri");
+    expect(projectedNavLabels("operator")).not.toContain("Plăți");
+    expect(projectedNavLabels("operator")).not.toContain("Avansuri");
+    expect(projectedSectionLabels("sales", "oameni")).toEqual([]);
+    expect(projectedSectionLabels("operator", "oameni")).toEqual([]);
+  });
+
+  it("preserves direct-route RBAC for payments and advances", () => {
+    expect(pathAllowedForRole("admin", "/employee-payments")).toBe(true);
+    expect(pathAllowedForRole("admin", "/employee-advances")).toBe(true);
+    expect(pathAllowedForRole("manager", "/employee-payments")).toBe(true);
+    expect(pathAllowedForRole("manager", "/employee-advances")).toBe(false);
+    expect(pathAllowedForRole("sales", "/employee-payments")).toBe(false);
+    expect(pathAllowedForRole("sales", "/employee-advances")).toBe(false);
+    expect(pathAllowedForRole("operator", "/employee-payments")).toBe(false);
+    expect(pathAllowedForRole("operator", "/employee-advances")).toBe(false);
+  });
+
+  it("keeps Ops-Graph in Producție with AUDIT and Reality Review off-nav", () => {
+    const productie = SHELL_NAV_SECTIONS.find((s) => s.id === "productie");
+    const opsGraph = productie?.items.find((i) => i.label === "Ops-Graph");
+    expect(opsGraph?.to).toBe("/execution/ops-graph");
+    expect(opsGraph?.status).toBe("audit");
+    const allTos = SHELL_NAV_SECTIONS.flatMap((s) => s.items.map((i) => i.to));
+    expect(allTos).not.toContain("/execution/reality-review");
+    expect(SHELL_NAV_SECTIONS.some((s) => s.id === "sistem")).toBe(false);
+    expect(SHELL_NAV_SECTIONS.map((s) => s.title)).not.toContain("Sistem / Audit");
+  });
+
+  it("keeps operator/tablet ACTIVE_COMPAT and Product System in Lucrări", () => {
+    const productie = SHELL_NAV_SECTIONS.find((s) => s.id === "productie");
+    const operator = productie?.items.find((i) => i.to === "/operator");
+    const tablet = productie?.items.find((i) => i.to === "/tablet");
+    expect(operator?.label).toBe("Acțiune task (legacy)");
+    expect(operator?.status).toBe("compat");
+    expect(tablet?.label).toBe("Stații (legacy)");
+    expect(tablet?.status).toBe("compat");
+    const lucrari = SHELL_NAV_SECTIONS.find((s) => s.id === "lucrari");
+    const produse = lucrari?.items.find((i) => i.label === "Produse");
+    expect(produse?.to).toBe("/product-system/products");
+  });
+});
